@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core;
 
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.StringWriter;
@@ -53,94 +52,93 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractSettings {
-  private static final Logger    LOGGER                = LoggerFactory.getLogger(Settings.class);
+  private static final Logger   LOGGER                 = LoggerFactory.getLogger(Settings.class);
 
-  public final static String     DEFAULT_CONFIG_FOLDER = "data";
+  public final static String    DEFAULT_CONFIG_FOLDER  = "data";
 
-  private String                 settingsFolder        = DEFAULT_CONFIG_FOLDER;
-  private static Settings        instance;
+  private String                settingsFolder         = DEFAULT_CONFIG_FOLDER;
+  private static Settings       instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String    CONFIG_FILE           = "tmm.xml";
-  private final static String    TITLE_PREFIX          = "titlePrefix";
-  private final static String    PREFIX                = "prefix";
-  private final static String    VIDEO_FILE_TYPE       = "videoFileTypes";
-  private final static String    AUDIO_FILE_TYPE       = "audioFileTypes";
-  private final static String    SUBTITLE_FILE_TYPE    = "subtitleFileTypes";
-  private final static String    FILETYPE              = "filetype";
-  private final static String    PROXY_HOST            = "proxyHost";
-  private final static String    PROXY_PORT            = "proxyPort";
-  private final static String    PROXY_USERNAME        = "proxyUsername";
-  private final static String    PROXY_PASSWORD        = "proxyPassword";
-  private final static String    IMAGE_CACHE           = "imageCache";
-  private final static String    IMAGE_CACHE_TYPE      = "imageCacheType";
-  private final static String    LANGUAGE              = "language";
-  private final static String    WOL_DEVICES           = "wolDevices";
-  private final static String    ENABLE_ANALYTICS      = "enableAnalytics";
+  private final static String   CONFIG_FILE            = "tmm.xml";
+  private final static String   TITLE_PREFIX           = "titlePrefix";
+  private final static String   PREFIX                 = "prefix";
+  private final static String   VIDEO_FILE_TYPE        = "videoFileTypes";
+  private final static String   AUDIO_FILE_TYPE        = "audioFileTypes";
+  private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileTypes";
+  private final static String   FILETYPE               = "filetype";
+  private final static String   PROXY_HOST             = "proxyHost";
+  private final static String   PROXY_PORT             = "proxyPort";
+  private final static String   PROXY_USERNAME         = "proxyUsername";
+  private final static String   PROXY_PASSWORD         = "proxyPassword";
+  private final static String   IMAGE_CACHE            = "imageCache";
+  private final static String   IMAGE_CACHE_TYPE       = "imageCacheType";
+  private final static String   LANGUAGE               = "language";
+  private final static String   WOL_DEVICES            = "wolDevices";
+  private final static String   ENABLE_ANALYTICS       = "enableAnalytics";
 
-  private final static String         UPNP_SHARE_LIBRARY          = "upnpShareLibrary";
-  private final static String         UPNP_PLAY_ON_REMOTE         = "upnpRemotePlay";
+  private final static String   UPNP_SHARE_LIBRARY     = "upnpShareLibrary";
+  private final static String   UPNP_PLAY_ON_REMOTE    = "upnpRemotePlay";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
-  private final List<String>     titlePrefix           = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>    titlePrefix            = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>     videoFileTypes        = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = AUDIO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>     audioFileTypes        = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>     subtitleFileTypes     = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = WOL_DEVICES)
-  private final List<WolDevice>  wolDevices            = ObservableCollections.observableList(new ArrayList<WolDevice>());
+  private final List<WolDevice> wolDevices             = ObservableCollections.observableList(new ArrayList<WolDevice>());
 
   @XmlAttribute
-  private String                 version               = "";
+  private String                version                = "";
 
-  private String                 proxyHost;
-  private String                 proxyPort;
-  private String                 proxyUsername;
-  private String                 proxyPassword;
+  private String                proxyHost;
+  private String                proxyPort;
+  private String                proxyUsername;
+  private String                proxyPassword;
 
-  private String                 traktAccessToken      = "";
-  private String                 traktRefreshToken     = "";
+  private String                traktAccessToken       = "";
+  private String                traktRefreshToken      = "";
 
-  private String                 xbmcHost              = "";
-  private String                 xbmcUsername          = "";
-  private String                 xbmcPassword          = "";
+  private String                xbmcHost               = "";
+  private String                xbmcUsername           = "";
+  private String                xbmcPassword           = "";
 
-  private boolean                imageCache            = true;
-  private CacheType              imageCacheType        = CacheType.SMOOTH;
+  private boolean               imageCache             = true;
+  private CacheType             imageCacheType         = CacheType.SMOOTH;
 
   // language 2 char - saved to config
-  private String                 language;
-  private String                 mediaPlayer           = "";
+  private String                language;
+  private String                mediaPlayer            = "";
 
-  private int                    fontSize              = 12;
-  private String                 fontFamily            = "Dialog";
+  private int                   fontSize               = 12;
+  private String                fontFamily             = "Dialog";
 
-  private boolean                deleteTrashOnExit     = false;
-  private boolean                enableAnalytics       = true;
+  private boolean               storeWindowPreferences = true;
 
-  private PropertyChangeListener propertyChangeListener;
+  private boolean               deleteTrashOnExit      = false;
+  private boolean               enableAnalytics        = true;
 
-  private boolean                     upnpShareLibrary            = false;
-  private boolean                     upnpRemotePlay              = false;
+  private boolean               upnpShareLibrary       = false;
+  private boolean               upnpRemotePlay         = false;
 
   /**
    * Instantiates a new settings.
    */
   public Settings() {
-    propertyChangeListener = evt -> setDirty();
-    addPropertyChangeListener(propertyChangeListener);
+    addPropertyChangeListener(evt -> setDirty());
   }
 
   @Override
@@ -941,5 +939,15 @@ public class Settings extends AbstractSettings {
     boolean oldValue = this.enableAnalytics;
     this.enableAnalytics = newValue;
     firePropertyChange(ENABLE_ANALYTICS, oldValue, newValue);
+  }
+
+  public void setStoreWindowPreferences(boolean newValue) {
+    boolean oldValue = storeWindowPreferences;
+    storeWindowPreferences = newValue;
+    firePropertyChange("storeWindowPreferences", oldValue, newValue);
+  }
+
+  public boolean isStoreWindowPreferences() {
+    return storeWindowPreferences;
   }
 }

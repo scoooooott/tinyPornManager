@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,12 +31,17 @@ import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -57,6 +63,7 @@ public class UiSettingsPanel extends JPanel {
   private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 
+  private Settings                    settings           = Settings.getInstance();
   private List<LocaleComboBox>        locales            = new ArrayList<>();
 
   private JComboBox                   cbLanguage;
@@ -65,6 +72,7 @@ public class UiSettingsPanel extends JPanel {
   private JComboBox                   cbFontSize;
   private JComboBox                   cbFontFamily;
   private JLabel                      lblLanguageChangeHint;
+  private JCheckBox                   chckbxStoreWindowPreferences;
 
   public UiSettingsPanel() {
     LocaleComboBox actualLocale = null;
@@ -79,6 +87,7 @@ public class UiSettingsPanel extends JPanel {
 
     // ui init
     initComponents();
+    initDataBindings();
 
     // data init
     if (actualLocale != null) {
@@ -119,7 +128,7 @@ public class UiSettingsPanel extends JPanel {
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][][20lp][]"));
+    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][][][20lp][][]"));
     {
       final JLabel lblLanguageT = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblLanguageT, 1.16667, Font.BOLD);
@@ -174,7 +183,16 @@ public class UiSettingsPanel extends JPanel {
     {
       lblFontChangeHint = new JLabel("");
       TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-      add(lblFontChangeHint, "cell 0 11 3 1");
+      add(lblFontChangeHint, "cell 0 10 3 1");
+    }
+    {
+      final JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
+      add(lblMiscT, "cell 0 12 3 1");
+    }
+    {
+      chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
+      add(chckbxStoreWindowPreferences, "cell 1 13 2 1");
     }
   }
 
@@ -245,5 +263,13 @@ public class UiSettingsPanel extends JPanel {
 
       return loc.getDisplayLanguage(loc);
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("storeWindowPreferences");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxStoreWindowPreferences, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
 }

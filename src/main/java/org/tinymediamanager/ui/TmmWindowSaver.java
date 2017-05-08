@@ -29,9 +29,8 @@ import javax.swing.JFrame;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.TmmProperties;
-import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
  * The Class TmmWindowSaver. To save window/dialog settings (like size/position)
@@ -82,6 +81,14 @@ public class TmmWindowSaver implements AWTEventListener {
    *          the frame
    */
   public void loadSettings(JFrame frame) {
+    if (!Globals.settings.isStoreWindowPreferences()) {
+      // at least display the main frame centered
+      if ("mainWindow".equals(frame.getName())) {
+        frame.setLocationRelativeTo(null);
+      }
+      return;
+    }
+
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
       // was the main window maximized?
@@ -110,6 +117,11 @@ public class TmmWindowSaver implements AWTEventListener {
    *          the dialog
    */
   public void loadSettings(JDialog dialog) {
+    if (!Globals.settings.isStoreWindowPreferences()) {
+      dialog.pack();
+      return;
+    }
+
     if (!dialog.getName().contains("dialog")) {
       Rectangle rect = getWindowBounds(dialog.getName());
       if (rect.width > 0) {
@@ -128,6 +140,10 @@ public class TmmWindowSaver implements AWTEventListener {
    *          the frame
    */
   public void saveSettings(JFrame frame) {
+    if (!Globals.settings.isStoreWindowPreferences()) {
+      return;
+    }
+
     // settings for main window
     if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
       addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
@@ -142,6 +158,10 @@ public class TmmWindowSaver implements AWTEventListener {
    *          the dialog
    */
   public void saveSettings(JDialog dialog) {
+    if (!Globals.settings.isStoreWindowPreferences()) {
+      return;
+    }
+
     if (!dialog.getName().contains("dialog")) {
       storeWindowBounds(dialog.getName(), dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
     }
