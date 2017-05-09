@@ -7,10 +7,10 @@
         </encoder>
     </appender>
 
-    <logger name="org.tinymediamanager" level="DEBUG" />
+    <logger name="org.tinymediamanager" level="DEBUG"/>
 
     <root level="DEBUG">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 
 </configuration>
