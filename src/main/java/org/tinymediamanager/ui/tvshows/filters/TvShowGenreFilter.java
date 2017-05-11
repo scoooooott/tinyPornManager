@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -34,6 +36,12 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
  */
 public class TvShowGenreFilter extends AbstractTvShowUIFilter {
   private TmmCheckComboBox<MediaGenres> checkComboBox;
+
+  public TvShowGenreFilter() {
+    super();
+    buildAndInstallMediaGenres();
+    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaGenres()));
+  }
 
   @Override
   public String getId() {
@@ -90,7 +98,23 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    checkComboBox = new TmmCheckComboBox<>(MediaGenres.values());
+    checkComboBox = new TmmCheckComboBox<>();
     return checkComboBox;
+  }
+
+  private void buildAndInstallMediaGenres() {
+    // remove the listener to not firing unnecessary events
+    checkComboBox.removeActionListener(actionListener);
+
+    List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
+
+    checkComboBox.setItems(Arrays.asList(MediaGenres.values()));
+
+    if (!selectedItems.isEmpty()) {
+      checkComboBox.setSelectedItems(selectedItems);
+    }
+
+    // re-add the itemlistener
+    checkComboBox.addActionListener(actionListener);
   }
 }
