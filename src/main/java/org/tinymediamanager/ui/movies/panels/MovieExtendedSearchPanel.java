@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.movies.filters.MovieDatasourceFilter;
 import org.tinymediamanager.ui.movies.filters.MovieDuplicateFilter;
 import org.tinymediamanager.ui.movies.filters.MovieGenreFilter;
 import org.tinymediamanager.ui.movies.filters.MovieInMovieSetFilter;
+import org.tinymediamanager.ui.movies.filters.MovieLanguageFilter;
 import org.tinymediamanager.ui.movies.filters.MovieMediaSourceFilter;
 import org.tinymediamanager.ui.movies.filters.MovieMissingArtworkFilter;
 import org.tinymediamanager.ui.movies.filters.MovieMissingMetadataFilter;
@@ -126,6 +127,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     addFilter(new MovieYearFilter());
     addFilter(new MovieCastFilter());
     addFilter(new MovieCountryFilter());
+    addFilter(new MovieLanguageFilter());
     addFilter(new MovieTagFilter());
     addFilter(new MovieInMovieSetFilter());
     addFilter(new MovieVideoFormatFilter());
