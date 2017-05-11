@@ -288,4 +288,24 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
       return o1.toString().compareTo(o2.toString());
     }
   }
+
+  /**
+   * add a new DynaEnumEventListener. This listener will be informed if any new value has been added
+   *
+   * @param listener
+   *          the new listener to be added
+   */
+  public static void addListener(DynaEnumEventListener listener) {
+    addListener(MediaGenres.class, listener);
+  }
+
+  /**
+   * remove the given DynaEnumEventListener
+   *
+   * @param listener
+   *          the listener to be removed
+   */
+  public static void removeListener(DynaEnumEventListener listener) {
+    removeListener(MediaGenres.class, listener);
+  }
 }

@@ -21,8 +21,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The class DynaEnum is used to create a "dynamic" enum - an enum which is extensible at runtime
@@ -33,9 +35,10 @@ import java.util.Map;
  * @since 1.0
  */
 public class DynaEnum<E extends DynaEnum<E>> {
-  private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>> elements = new LinkedHashMap<>();
-  private final String                                                       name;
-  protected final int                                                        ordinal;
+  private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>>   elements  = new LinkedHashMap<>();
+  private static Map<Class<? extends DynaEnum<?>>, Set<DynaEnumEventListener>> listeners = new LinkedHashMap<>();
+  private final String                                                         name;
+  protected final int                                                          ordinal;
 
   public final String name() {
     return name;
@@ -67,6 +70,8 @@ public class DynaEnum<E extends DynaEnum<E>> {
       elements.put(getDynaEnumClass(), typeElements);
     }
     typeElements.put(name, this);
+
+    valueAdded(getClass(), this);
   }
 
   /**
@@ -188,5 +193,60 @@ public class DynaEnum<E extends DynaEnum<E>> {
     }
 
     return typedValues;
+  }
+
+  /**
+   * add a new DynaEnumEventListener. This listener will be informed if any new value has been added
+   *
+   * @param clazz
+   *          the class to register the listener for
+   * @param listener
+   *          the new listener to be added
+   */
+  protected static void addListener(Class<? extends DynaEnum<?>> clazz, DynaEnumEventListener listener) {
+    Set<DynaEnumEventListener> listenerSet = listeners.get(clazz);
+    if (listenerSet == null) {
+      listenerSet = new HashSet<>();
+      listeners.put(clazz, listenerSet);
+    }
+    listenerSet.add(listener);
+  }
+
+  /**
+   * remove the given DynaEnumEventListener
+   *
+   * @param clazz
+   *          the class to de-register the listener for
+   * @param listener
+   *          the listener to be removed
+   */
+  protected static void removeListener(Class<? extends DynaEnum<?>> clazz, DynaEnumEventListener listener) {
+    Set<DynaEnumEventListener> listenerSet = listeners.get(clazz);
+    if (listenerSet != null) {
+      listenerSet.remove(listener);
+    }
+  }
+
+  protected static void valueAdded(Class<? extends DynaEnum> clazz, DynaEnum<?> value) {
+    Set<DynaEnumEventListener> listenerSet = listeners.get(clazz);
+    if (listenerSet != null) {
+      try {
+        for (DynaEnumEventListener listener : listenerSet) {
+          listener.valueAdded(value);
+        }
+      }
+      catch (Exception ignored) {
+      }
+    }
+  }
+
+  /**
+   * DynaEnumEventListener is the interface for getting informed if any new items are added
+   * 
+   * @param <E>
+   *          the type of the enum
+   */
+  public interface DynaEnumEventListener<E> {
+    void valueAdded(E value);
   }
 }
