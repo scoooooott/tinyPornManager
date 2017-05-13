@@ -229,7 +229,10 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       }
 
       MediaScraper ms = (MediaScraper) getSelectedItem();
-      return defaultRenderer.getListCellRendererComponent(list, ms.getName(), index, isSelected, cellHasFocus);
+      if (ms != null) {
+        return defaultRenderer.getListCellRendererComponent(list, ms.getName(), index, isSelected, cellHasFocus);
+      }
+      return defaultRenderer.getListCellRendererComponent(list, "", index, isSelected, cellHasFocus);
     }
   }
 }

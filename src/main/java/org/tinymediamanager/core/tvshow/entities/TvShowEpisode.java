@@ -950,7 +950,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     if (!videoFiles.isEmpty()) {
       return videoFiles.get(0);
     }
-    return null;
+
+    // just return a dummy MF to prevent NPE
+    return new MediaFile();
   }
 
   /**
