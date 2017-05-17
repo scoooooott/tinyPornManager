@@ -243,6 +243,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          storeUiSorting                       = false;
   private SortColumn                       sortColumn                           = SortColumn.TITLE;
   private boolean                          sortAscending                        = true;
+  private boolean                          displayOriginalTitleInTable          = false;
 
   public MovieSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -845,6 +846,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.sortAscending;
     this.sortAscending = newValue;
     firePropertyChange(SORT_ASCENDING, oldValue, newValue);
+  }
+
+  public boolean isDisplayOriginalTitleInTable() {
+    return displayOriginalTitleInTable;
+  }
+
+  public void setDisplayOriginalTitleInTable(boolean newValue) {
+    boolean oldValue = this.displayOriginalTitleInTable;
+    this.displayOriginalTitleInTable = newValue;
+    firePropertyChange("displayOriginalTitleInTable", oldValue, newValue);
   }
 
   public boolean isWriteActorImages() {

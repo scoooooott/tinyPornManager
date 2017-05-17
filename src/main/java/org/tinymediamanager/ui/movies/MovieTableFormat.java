@@ -38,10 +38,10 @@ import org.tinymediamanager.ui.components.table.TmmTableFormat;
  *
  * @author Manuel Laggner
  */
-public class MovieTableFormat2 extends TmmTableFormat<Movie> {
+public class MovieTableFormat extends TmmTableFormat<Movie> {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieTableFormat2() {
+  public MovieTableFormat() {
 
     Comparator<Movie> movieComparator = new MovieComparator();
     Comparator<String> stringComparator = new StringComparator();

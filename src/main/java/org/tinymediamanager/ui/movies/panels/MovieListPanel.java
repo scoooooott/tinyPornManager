@@ -33,7 +33,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 
-import ca.odell.glazedlists.ObservableElementList;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -49,11 +48,12 @@ import org.tinymediamanager.ui.movies.MovieComparator;
 import org.tinymediamanager.ui.movies.MovieFilterator;
 import org.tinymediamanager.ui.movies.MovieMatcherEditor;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
-import org.tinymediamanager.ui.movies.MovieTableFormat2;
+import org.tinymediamanager.ui.movies.MovieTableFormat;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
@@ -99,7 +99,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     FilterList<Movie> extendedFilteredMovies = new FilterList<>(sortedMovies, movieMatcherEditor);
     FilterList<Movie> textFilteredMovies = new FilterList<>(extendedFilteredMovies, textMatcherEditor);
     selectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<>(textFilteredMovies, new MovieTableFormat2());
+    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<>(textFilteredMovies, new MovieTableFormat());
 
     // build the table
     movieTable = new TmmTable(movieTableModel);

@@ -25,6 +25,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
@@ -70,7 +71,12 @@ public class BorderTableCellRenderer extends DefaultTableCellRenderer {
 
     if (value instanceof Movie) {
       Movie movie = (Movie) value;
-      setValue(movie.getTitleSortable());
+      if (MovieModuleManager.SETTINGS.isDisplayOriginalTitleInTable()) {
+        setValue(movie.getOriginalTitleSortable());
+      }
+      else {
+        setValue(movie.getTitleSortable());
+      }
       if (movie.isNewlyAdded()) {
         setHorizontalTextPosition(SwingConstants.LEADING);
         setIcon(IconManager.NEW);

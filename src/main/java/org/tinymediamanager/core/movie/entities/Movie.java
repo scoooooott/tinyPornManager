@@ -191,6 +191,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
+  private String                                originalTitleSortable      = "";
   private Date                                  lastWatched                = null;
 
   /**
@@ -321,14 +322,28 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the title in its sortable format
    */
   public String getTitleSortable() {
-    if (StringUtils.isEmpty(titleSortable)) {
-      titleSortable = Utils.getSortableName(this.getTitle());
+    if (StringUtils.isBlank(titleSortable)) {
+      titleSortable = Utils.getSortableName(getTitle());
     }
     return titleSortable;
   }
 
+  /**
+   * Returns the sortable variant of the original title<br>
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The".
+   *
+   * @return the original title in its sortable format
+   */
+  public String getOriginalTitleSortable() {
+    if (StringUtils.isBlank(originalTitleSortable)) {
+      originalTitleSortable = Utils.getSortableName(getOriginalTitle());
+    }
+    return originalTitleSortable;
+  }
+
   public void clearTitleSortable() {
     titleSortable = "";
+    originalTitleSortable = "";
   }
 
   /**
@@ -1054,6 +1069,18 @@ public class Movie extends MediaEntity implements IMediaInformation {
     oldValue = this.titleSortable;
     titleSortable = "";
     firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
+  }
+
+  @Override
+  public void setOriginalTitle(String newValue) {
+    String oldValue = this.originalTitle;
+    super.setOriginalTitle(newValue);
+
+    firePropertyChange(TITLE_FOR_UI, oldValue, newValue);
+
+    oldValue = this.originalTitleSortable;
+    originalTitleSortable = "";
+    firePropertyChange(TITLE_SORTABLE, oldValue, originalTitleSortable);
   }
 
   /**
