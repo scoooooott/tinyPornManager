@@ -19,13 +19,11 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmUIFilter;
 
@@ -108,22 +106,6 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
       MovieModuleManager.SETTINGS.setUiFilters(filterValues);
       MovieModuleManager.SETTINGS.saveSettings();
     }
-  }
-
-  /**
-   * Filter movies.
-   * 
-   * @param filter
-   *          the filter
-   */
-  @Deprecated
-  public void filterMovies(Map<MovieSearchOptions, Object> filter) {
-    Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
-    fireChanged(matcher);
-    // if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
-    // MovieModuleManager.SETTINGS.setUiFilters(filter);
-    // Globals.settings.saveSettings();
-    // }
   }
 
   /*

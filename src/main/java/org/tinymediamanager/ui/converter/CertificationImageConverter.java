@@ -25,7 +25,6 @@ import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
 /**
  * The Class CertificationImageConverter.
@@ -33,34 +32,26 @@ import org.tinymediamanager.ui.movies.MovieGenresPanel;
  * @author Manuel Laggner
  */
 public class CertificationImageConverter extends Converter<Certification, Icon> {
-
-  /** The Constant LOGGER. */
   private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
 
-  /** The Constant emptyImage. */
-  public final static ImageIcon emptyImage = new ImageIcon();
+  public static final ImageIcon emptyImage = new ImageIcon();
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
-   */
   @Override
   public Icon convertForward(Certification cert) {
     // try to find an image for this genre
     try {
-      StringBuilder sb = new StringBuilder("/images/certifications/");
+      StringBuilder sb = new StringBuilder("/org/tinymediamanager/ui/images/certifications/");
       sb.append(cert.name().toLowerCase(Locale.ROOT));
       sb.append(".png");
 
-      URL file = MovieGenresPanel.class.getResource(sb.toString());
+      URL file = getClass().getResource(sb.toString());
       if (file == null) {
         // try to find the image without the country name in path
-        sb = new StringBuilder("/images/certifications/");
+        sb = new StringBuilder("/org/tinymediamanager/ui/images/certifications/");
         String certName = cert.name();
         sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase(Locale.ROOT));
         sb.append(".png");
-        file = MovieGenresPanel.class.getResource(sb.toString());
+        file = getClass().getResource(sb.toString());
       }
 
       if (file != null) {
@@ -74,14 +65,8 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
     return emptyImage;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
-   */
   @Override
   public Certification convertReverse(Icon arg0) {
     return null;
   }
-
 }

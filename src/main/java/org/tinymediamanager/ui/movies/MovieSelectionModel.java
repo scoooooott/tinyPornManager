@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -26,7 +25,6 @@ import javax.swing.event.ListSelectionListener;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 import ca.odell.glazedlists.EventList;
@@ -194,18 +192,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public void setSelectedMovies(List<Movie> selectedMovies) {
     this.selectedMovies = selectedMovies;
-  }
-
-  /**
-   * Filter movies.
-   * 
-   * @param filter
-   *          the filter
-   */
-  @Deprecated
-  public void filterMovies(Map<MovieSearchOptions, Object> filter) {
-    matcherEditor.filterMovies(filter);
-    firePropertyChange("filterChanged", filter.isEmpty(), !filter.isEmpty());
   }
 
   /**

@@ -84,12 +84,9 @@ import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.images.LogoCircle;
-import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.panels.ToolbarPanel;
-import org.tinymediamanager.ui.tvshows.TvShowPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -107,20 +104,13 @@ import ch.qos.logback.classic.LoggerContext;
  * @author Manuel Laggner
  */
 public class MainWindow extends JFrame {
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
   private static final long           serialVersionUID = 1L;
 
   public final static List<Image>     LOGOS            = createLogos();
   private static MainWindow           instance;
-
-  private JPanel                      panelMovies;
-  private JPanel                      panelMovieSets;
-  private JPanel                      panelTvShows;
-  private JPanel                      panelStatusBar;
 
   private ToolbarPanel                toolbarPanel;
   private JTabbedPane                 tabbedPane;
@@ -546,23 +536,6 @@ public class MainWindow extends JFrame {
    */
   public static MainWindow getActiveInstance() {
     return instance;
-  }
-
-  /**
-   * Gets the movie panel.
-   * 
-   * @return the movie panel
-   */
-  public MoviePanel getMoviePanel() {
-    return (MoviePanel) panelMovies;
-  }
-
-  public MovieSetPanel getMovieSetPanel() {
-    return (MovieSetPanel) panelMovieSets;
-  }
-
-  public TvShowPanel getTvShowPanel() {
-    return (TvShowPanel) panelTvShows;
   }
 
   /**
