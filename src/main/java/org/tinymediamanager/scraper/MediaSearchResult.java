@@ -36,6 +36,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private String        title;
   private int           year;
   private String        originalTitle;
+  private String        originalLanguage;
   private String        id;
   private float         score;
   private String        imdbId;
@@ -79,6 +80,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     title = StringUtils.isEmpty(title) ? msr.getTitle() : title;
     year = year == 0 ? msr.getYear() : year;
     originalTitle = StringUtils.isEmpty(originalTitle) ? msr.getOriginalTitle() : originalTitle;
+    originalLanguage = StringUtils.isEmpty(originalLanguage) ? msr.getOriginalLanguage() : originalLanguage;
     id = StringUtils.isEmpty(id) ? msr.getId() : id;
     imdbId = StringUtils.isEmpty(imdbId) ? msr.getIMDBId() : imdbId;
     posterUrl = StringUtils.isEmpty(posterUrl) ? msr.getPosterUrl() : posterUrl;
@@ -94,7 +96,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   /**
    * Get the original title of this search result
    * 
-   * @return the orignal title
+   * @return the original title
    */
   public String getOriginalTitle() {
     return originalTitle;
@@ -109,6 +111,23 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public void setOriginalTitle(String originalTitle) {
     this.originalTitle = StrgUtils.getNonNullString(originalTitle);
   }
+
+  /**
+   * Get the original language of this search result
+   *
+   * @return the original language
+   */
+  public String getOriginalLanguage() {
+    return originalLanguage;
+  }
+
+  /**
+   * Set the original language for this search result
+   *
+   * @param originalLanguage
+   *          the original language
+   */
+  public void setOriginalLanguage(String originalLanguage) { this.originalLanguage = StrgUtils.getNonNullString(originalLanguage); }
 
   /**
    * Get the provider id

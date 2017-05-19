@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.scraper.entities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Enum MediaLanguages. All languages we support for scraping
  * 
@@ -52,9 +55,34 @@ public enum MediaLanguages {
 
   private String title;
 
+  private static final Map<String, MediaLanguages> lookup = new HashMap<String, MediaLanguages>();
+
+  static {
+    for (MediaLanguages lang : MediaLanguages.values()) {
+      lookup.put(lang.getTitle(), lang);
+    }
+  }
+
+  /**
+   * Get MediaLanguage by Title
+   *
+   * @param title
+   * @return the MediaLanguages Enum Object.
+   */
+  public static MediaLanguages get(String title) {
+    return lookup.get(title);
+  }
+
   MediaLanguages(String title) {
     this.title = title;
   }
+
+  /**
+   * return the title
+   *
+   * @return the title
+   */
+  public String getTitle() { return title; }
 
   /**
    * return the first 2 letters which is the language part
