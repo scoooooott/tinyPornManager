@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.uwetrottmann.tmdb2.entities.BaseCompany;
+import com.uwetrottmann.tmdb2.entities.BaseTvShow;
+import com.uwetrottmann.tmdb2.entities.TvShowResultsPage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +48,9 @@ import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.AppendToResponse;
 import com.uwetrottmann.tmdb2.entities.CastMember;
 import com.uwetrottmann.tmdb2.entities.ContentRating;
-import com.uwetrottmann.tmdb2.entities.ProductionCompany;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
-import com.uwetrottmann.tmdb2.entities.TvResultsPage;
 import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.entities.TvShow;
-import com.uwetrottmann.tmdb2.entities.TvShowComplete;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 
 class TmdbTvShowMetadataProvider {
@@ -100,7 +100,7 @@ class TmdbTvShowMetadataProvider {
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
-    TvResultsPage resultsPage = null;
+    TvShowResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
       try {
@@ -117,7 +117,7 @@ class TmdbTvShowMetadataProvider {
     }
 
     LOGGER.info("found " + resultsPage.results.size() + " results");
-    for (TvShow show : resultsPage.results) {
+    for (BaseTvShow show : resultsPage.results) {
       MediaSearchResult result = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.TV_SHOW);
       result.setId(Integer.toString(show.id));
       result.setTitle(show.name);
@@ -179,7 +179,7 @@ class TmdbTvShowMetadataProvider {
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
       try {
-        TvShowComplete complete = api.tvService().tv(tmdbId, language, null).execute().body();
+        TvShow complete = api.tvService().tv(tmdbId, language, null).execute().body();
         if (complete != null) {
           for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
             TmdbConnectionCounter.trackConnections();
@@ -260,7 +260,7 @@ class TmdbTvShowMetadataProvider {
       language += "-" + options.getLanguage().getCountry();
     }
     // get the data from tmdb
-    TvShowComplete complete = null;
+    TvShow complete = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
       try {
@@ -296,7 +296,7 @@ class TmdbTvShowMetadataProvider {
       md.addMediaArt(ma);
     }
 
-    for (ProductionCompany company : ListUtils.nullSafe(complete.production_companies)) {
+    for (BaseCompany company : ListUtils.nullSafe(complete.production_companies)) {
       md.addProductionCompany(company.name.trim());
     }
     md.setStatus(complete.status);

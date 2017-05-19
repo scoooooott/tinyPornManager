@@ -18,6 +18,8 @@ package org.tinymediamanager.scraper.tmdb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.uwetrottmann.tmdb2.entities.BaseCollection;
+import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,6 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.Collection;
 import com.uwetrottmann.tmdb2.entities.CollectionResultsPage;
-import com.uwetrottmann.tmdb2.entities.Part;
 
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
@@ -91,7 +92,7 @@ class TmdbMovieSetMetadataProvider {
       return movieSetsFound;
     }
 
-    for (Collection collection : ListUtils.nullSafe(resultsPage.results)) {
+    for (BaseCollection collection : ListUtils.nullSafe(resultsPage.results)) {
       MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE_SET);
       searchResult.setId(Integer.toString(collection.id));
       searchResult.setTitle(collection.name);
@@ -191,7 +192,7 @@ class TmdbMovieSetMetadataProvider {
     }
 
     // add all movies belonging to this movie set
-    for (Part part : ListUtils.nullSafe(collection.parts)) {
+    for (BaseMovie part : ListUtils.nullSafe(collection.parts)) {
       MediaMetadata mdSubItem = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
       mdSubItem.setId(TmdbMetadataProvider.providerInfo.getId(), part.id);
       mdSubItem.setTitle(part.title);
