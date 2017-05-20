@@ -39,7 +39,6 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -147,7 +146,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private AutocompleteComboBox<String> cbTags;
   private AutoCompleteSupport<String>  cbTagsAutoCompleteSupport;
   private JList<String>                listTags;
-  private JComboBox<MediaSource>       cbMediaSource;
+  private AutocompleteComboBox<MediaSource> cbMediaSource;
   private MediaFileEditorPanel         mediaFilesPanel;
   private MediaScraperComboBox         cbScraper;
 
@@ -327,7 +326,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         detailsPanel.add(lblMediasource, "cell 0 6,alignx right");
 
-        cbMediaSource = new JComboBox(MediaSource.values());
+        cbMediaSource = new AutocompleteComboBox(MediaSource.values());
         detailsPanel.add(cbMediaSource, "cell 1 6 2 1,growx");
       }
       {
@@ -623,8 +622,18 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDvdEpisode((Integer) spDvdEpisode.getValue());
       episodeToEdit.setDisplaySeason((Integer) spDisplaySeason.getValue());
       episodeToEdit.setDisplayEpisode((Integer) spDisplayEpisode.getValue());
-      episodeToEdit.setMediaSource((MediaSource) cbMediaSource.getSelectedItem());
       episodeToEdit.setPlot(taPlot.getText());
+
+      Object mediaSource = cbMediaSource.getSelectedItem();
+      if (mediaSource instanceof MediaSource) {
+        episodeToEdit.setMediaSource((MediaSource) mediaSource);
+      }
+      else if (mediaSource instanceof String) {
+        episodeToEdit.setMediaSource(MediaSource.getMediaSource((String) mediaSource));
+      }
+      else {
+        episodeToEdit.setMediaSource(MediaSource.UNKNOWN);
+      }
 
       // sync media files with the media file editor and fire the mediaFiles event
       MediaFileEditorPanel.syncMediaFiles(mediaFiles, episodeToEdit.getMediaFiles());

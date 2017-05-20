@@ -161,7 +161,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                         tfCountry;
   private DatePicker                         dpReleaseDate;
   private JSpinner                           spTop250;
-  private JComboBox                          cbSource;
+  private AutocompleteComboBox<MediaSource>  cbSource;
   private MediaFileEditorPanel               mediaFilesPanel;
   private AutocompleteComboBox<MovieEdition> cbEdition;
 
@@ -519,7 +519,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         details2Panel.add(lblSourceT, "cell 0 1,alignx trailing");
 
-        cbSource = new JComboBox(MediaSource.values());
+        cbSource = new AutocompleteComboBox(MediaSource.values());
         details2Panel.add(cbSource, "cell 1 1,growx");
       }
       {
@@ -958,7 +958,6 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
-      movieToEdit.setMediaSource((MediaSource) cbSource.getSelectedItem());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
 
       Object movieEdition = cbEdition.getSelectedItem();
@@ -970,6 +969,17 @@ public class MovieEditorDialog extends TmmDialog {
       }
       else {
         movieToEdit.setEdition(MovieEdition.NONE);
+      }
+
+      Object mediaSource = cbSource.getSelectedItem();
+      if (mediaSource instanceof MediaSource) {
+        movieToEdit.setMediaSource((MediaSource) mediaSource);
+      }
+      else if (mediaSource instanceof String) {
+        movieToEdit.setMediaSource(MediaSource.getMediaSource((String) mediaSource));
+      }
+      else {
+        movieToEdit.setMediaSource(MediaSource.UNKNOWN);
       }
 
       // sync of media ids

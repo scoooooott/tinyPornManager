@@ -15,12 +15,17 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import javax.swing.JComboBox;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -29,7 +34,13 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
  * @author Manuel Laggner
  */
 public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
-  private JComboBox<MediaSource> comboBox;
+  private TmmCheckComboBox<MediaSource> checkComboBox;
+
+  public MovieMediaSourceFilter() {
+    super();
+    buildAndInstallMediaSources();
+    MediaSource.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaSources()));
+  }
 
   @Override
   public String getId() {
@@ -38,8 +49,12 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
 
   @Override
   public String getFilterValueAsString() {
+    List<String> values = new ArrayList<>();
+    for (MediaSource mediaSource : checkComboBox.getSelectedItems()) {
+      values.add(mediaSource.name());
+    }
     try {
-      return ((MediaSource) comboBox.getSelectedItem()).name();
+      return objectMapper.writeValueAsString(values);
     }
     catch (Exception e) {
       return null;
@@ -48,23 +63,27 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-    if (value instanceof MediaSource) {
-      comboBox.setSelectedItem(value);
-    }
-    else if (value instanceof String) {
-      MediaSource mediaSource = MediaSource.valueOf((String) value);
-      if (mediaSource != null) {
-        comboBox.setSelectedItem(mediaSource);
+    List<MediaSource> selectedItems = new ArrayList<>();
+
+    try {
+      List<String> values = objectMapper.readValue((String) value, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+
+      for (String source : values) {
+        MediaSource mediaSource = MediaSource.getMediaSource(source);
+        selectedItems.add(mediaSource);
       }
+
     }
+    catch (Exception ignored) {
+    }
+
+    checkComboBox.setSelectedItems(selectedItems);
   }
 
   @Override
   public boolean accept(Movie movie) {
-    if (movie.getMediaSource() == comboBox.getSelectedItem()) {
+    List<MediaSource> selectedItems = checkComboBox.getSelectedItems();
+    if (selectedItems.contains(movie.getMediaSource())) {
       return true;
     }
 
@@ -78,7 +97,23 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(MediaSource.values());
-    return comboBox;
+    checkComboBox = new TmmCheckComboBox<>();
+    return checkComboBox;
+  }
+
+  private void buildAndInstallMediaSources() {
+    // remove the listener to not firing unnecessary events
+    checkComboBox.removeActionListener(actionListener);
+
+    List<MediaSource> selectedItems = checkComboBox.getSelectedItems();
+
+    checkComboBox.setItems(Arrays.asList(MediaSource.values()));
+
+    if (!selectedItems.isEmpty()) {
+      checkComboBox.setSelectedItems(selectedItems);
+    }
+
+    // re-add the itemlistener
+    checkComboBox.addActionListener(actionListener);
   }
 }

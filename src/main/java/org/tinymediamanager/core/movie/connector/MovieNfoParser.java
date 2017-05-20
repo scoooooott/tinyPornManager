@@ -1088,7 +1088,7 @@ public class MovieNfoParser {
     Element element = getSingleElement(root, "source");
     if (element != null) {
       try {
-        source = MediaSource.valueOf(element.ownText());
+        source = MediaSource.getMediaSource(element.ownText());
       }
       catch (Exception ignored) {
       }

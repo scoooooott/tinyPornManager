@@ -99,7 +99,7 @@ public enum MovieSearchOptions {
               break;
 
             case "MEDIA_SOURCE":
-              options.put(MovieSearchOptions.valueOf(entry.key), MediaSource.valueOf(entry.value));
+              options.put(MovieSearchOptions.valueOf(entry.key), MediaSource.getMediaSource(entry.value));
               break;
 
             default:

@@ -115,7 +115,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
    *
    * @param name
    *          the name
-   * @return the genre
+   * @return the movie edition
    */
   @JsonCreator
   public static MovieEdition getMovieEdition(String name) {
@@ -137,7 +137,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
   /**
    * Comparator for sorting our MovieEditions in a localized fashion
    */
-  public static class MovieEditionComparator implements Comparator<MovieEdition> {
+  private static class MovieEditionComparator implements Comparator<MovieEdition> {
     @Override
     public int compare(MovieEdition o1, MovieEdition o2) {
       // toString is localized name
