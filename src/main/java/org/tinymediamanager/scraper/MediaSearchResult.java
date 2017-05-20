@@ -127,7 +127,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    * @param originalLanguage
    *          the original language
    */
-  public void setOriginalLanguage(String originalLanguage) { this.originalLanguage = StrgUtils.getNonNullString(originalLanguage); }
+  public void setOriginalLanguage(String originalLanguage) {
+    this.originalLanguage = StrgUtils.getNonNullString(originalLanguage);
+  }
 
   /**
    * Get the provider id

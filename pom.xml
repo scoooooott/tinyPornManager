@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>api-scraper</artifactId>
-	<version>2.7.3-SNAPSHOT</version>
+	<version>2.6-SNAPSHOT</version>
 
 	<name>tinyMediaManager scraper API</name>
 	<description>API for tinyMediaManager scrapers</description>
@@ -23,11 +23,7 @@
 	</scm>
 
 	<properties>
-        <okhttp.version>3.4.1</okhttp.version>
-		<transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<surefire-plugin.version>2.19.1</surefire-plugin.version>
+		<okhttp.version>3.4.1</okhttp.version>
 	</properties>
 
 	<dependencies>

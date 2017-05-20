@@ -55,12 +55,14 @@ public enum MediaLanguages {
 
   private String title;
 
-  private static final Map<String, MediaLanguages> lookup = new HashMap<String, MediaLanguages>();
+  private static final Map<String, MediaLanguages> lookup = prepareLookup();
 
-  static {
+  private static Map<String,MediaLanguages> prepareLookup() {
+    Map<String,MediaLanguages> mlMap = new HashMap<>();
     for (MediaLanguages lang : MediaLanguages.values()) {
-      lookup.put(lang.getTitle(), lang);
+      mlMap.put(lang.getTitle(), lang);
     }
+    return mlMap;
   }
 
   /**
@@ -82,7 +84,9 @@ public enum MediaLanguages {
    *
    * @return the title
    */
-  public String getTitle() { return title; }
+  public String getTitle() {
+    return title;
+  }
 
   /**
    * return the first 2 letters which is the language part
