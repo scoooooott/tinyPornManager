@@ -62,6 +62,7 @@ public class MediaMetadata {
   // general media entity
   private String                  title                = "";
   private String                  originalTitle        = "";
+  private String                  originalLanguage     = "";
   private int                     year                 = 0;
   private Date                    releaseDate          = null;
   private String                  plot                 = "";
@@ -128,6 +129,7 @@ public class MediaMetadata {
 
     title = merge(title, md.getTitle());
     originalTitle = merge(originalTitle, md.getOriginalTitle());
+    originalLanguage = merge(originalLanguage,md.getOriginalLanguage());
     year = merge(year, md.getYear());
     releaseDate = merge(releaseDate, md.getReleaseDate());
     plot = merge(plot, md.getPlot());
@@ -634,6 +636,23 @@ public class MediaMetadata {
   public void setOriginalTitle(String originalTitle) {
     this.originalTitle = StrgUtils.getNonNullString(originalTitle);
   }
+
+  /**
+   * Get the original title's language
+   *
+   * @return the original language
+   */
+  public String getOriginalLanguage() {
+    return originalLanguage;
+  }
+
+  /**
+   * Set the original title's language
+   *
+   * @param originalLanguage
+   *          the origial title to be set
+   */
+  public void setOriginalLanguage(String originalLanguage) { this.originalLanguage = StrgUtils.getNonNullString(originalLanguage); }
 
   /**
    * Get the year
