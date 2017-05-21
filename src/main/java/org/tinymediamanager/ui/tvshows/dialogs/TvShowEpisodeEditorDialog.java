@@ -84,6 +84,7 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -113,7 +114,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
   private static final Logger          LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
-  private static final Insets          BUTTON_MARGIN    = new Insets(2, 2, 2, 2);
+  private static final Insets               BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private static final String          DIALOG_ID        = "tvShowEpisodeEditor";
 

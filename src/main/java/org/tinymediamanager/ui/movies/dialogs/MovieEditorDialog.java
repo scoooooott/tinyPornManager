@@ -80,6 +80,7 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -112,7 +113,7 @@ public class MovieEditorDialog extends TmmDialog {
   private static final long                  serialVersionUID = -286251957529920347L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-  private static final Insets                BUTTON_MARGIN    = new Insets(2, 2, 2, 2);
+  private static final Insets                BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private Movie                              movieToEdit;
   private MovieList                          movieList        = MovieList.getInstance();

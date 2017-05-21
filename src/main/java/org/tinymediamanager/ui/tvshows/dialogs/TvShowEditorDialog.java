@@ -79,6 +79,7 @@ import org.tinymediamanager.ui.LeftDotTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
+import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -115,7 +116,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private static final long                 serialVersionUID = 3270218410302989845L;
   /** @wbp.nls.resourceBundle messages */
   private final static ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Insets               BUTTON_MARGIN    = new Insets(2, 2, 2, 2);
+  private static final Insets               BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private TvShow                            tvShowToEdit;
   private TvShowList                        tvShowList       = TvShowList.getInstance();
