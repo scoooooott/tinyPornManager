@@ -28,6 +28,7 @@ import java.util.Map;
 public enum MediaLanguages {
 
   //@formatter:off
+  ar("العَرَبِيَّة"),
   cs("Český"),
   de("Deutsch"),
   da("Dansk"),
