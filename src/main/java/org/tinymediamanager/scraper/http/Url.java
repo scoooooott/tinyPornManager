@@ -276,7 +276,7 @@ public class Url {
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
-      LOGGER.error("proxy or host not found/reachable; " + e.getMessage(), e);
+      LOGGER.error("proxy or host not found/reachable; " + e.getMessage());
     }
     catch (Exception e) {
       LOGGER.error("Exception getting url " + logUrl + " ; " + e.getMessage(), e);
