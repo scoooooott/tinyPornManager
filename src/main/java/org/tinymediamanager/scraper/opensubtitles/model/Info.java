@@ -63,6 +63,7 @@ public class Info {
     public String movieReleaseName = "";
     public String subFormat        = "";
     public String subDownloadLink  = "";
+    public Float subRating         = 0f;
     public String zipDownloadLink  = "";
     public String season           = "";
     public String episode          = "";
@@ -76,6 +77,7 @@ public class Info {
       this.movieReleaseName = (String) values.get("MovieReleaseName");
       this.subFormat = (String) values.get("SubFormat");
       this.subDownloadLink = (String) values.get("SubDownloadLink");
+      this.subRating = Float.parseFloat((String) values.get("SubRating"));
       this.zipDownloadLink = (String) values.get("ZipDownloadLink");
       this.season = (String) values.get("SeriesSeason");
       this.episode = (String) values.get("SeriesEpisode");

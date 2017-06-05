@@ -133,6 +133,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
             result.setTitle(movieInfo.movieTitle);
             result.setReleaseName(movieInfo.movieReleaseName);
             result.setUrl(movieInfo.zipDownloadLink);
+            result.setRating(movieInfo.subRating);
 
             results.add(result);
           }
@@ -175,6 +176,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           result.setTitle(movieInfo.movieTitle);
           result.setReleaseName(movieInfo.movieReleaseName);
           result.setUrl(movieInfo.zipDownloadLink);
+          result.setRating(movieInfo.subRating);
 
           results.add(result);
         }
@@ -205,6 +207,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           result.setTitle(movieInfo.movieTitle);
           result.setReleaseName(movieInfo.movieReleaseName);
           result.setUrl(movieInfo.zipDownloadLink);
+          result.setRating(movieInfo.subRating);
 
           results.add(result);
         }
