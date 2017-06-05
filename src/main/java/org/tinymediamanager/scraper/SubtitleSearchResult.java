@@ -32,6 +32,7 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
   private String releaseName = "";
   private String url         = "";
   private float  score       = 0f;
+  private float  rating      = 0f;
 
   public SubtitleSearchResult(String providerId) {
     this.providerId = providerId;
@@ -168,9 +169,32 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
     this.url = StrgUtils.getNonNullString(url);
   }
 
+
+  /**
+   * Get the rating of this search result
+   *
+   * @return the rating
+   */
+  public float getRating() {
+    return rating;
+  }
+
+  /**
+   * Set the rating to this search result
+   *
+   * @param rating
+   *          the rating
+   */
+  public void setRating(float rating) {
+    this.rating = rating;
+  }
+
   @Override
   public int compareTo(SubtitleSearchResult arg0) {
     if (getScore() < arg0.getScore()) {
+      return -1;
+    }
+    else if (getScore() == arg0.getScore() && getRating() < arg0.getRating()) {
       return -1;
     }
     else {
