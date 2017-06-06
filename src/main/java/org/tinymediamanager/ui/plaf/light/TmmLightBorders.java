@@ -15,22 +15,37 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseBorders;
-import com.jtattoo.plaf.ColorHelper;
-import com.jtattoo.plaf.luna.LunaBorders.RolloverToolButtonBorder;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.Transparency;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 
-import javax.swing.*;
+import javax.swing.JMenuBar;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.UIResource;
-import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
+import javax.swing.text.JTextComponent;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseBorders;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.luna.LunaBorders.RolloverToolButtonBorder;
 
 /**
  * @author Manuel Laggner
@@ -172,7 +187,8 @@ public class TmmLightBorders extends BaseBorders {
             focus |= component.hasFocus();
           }
         }
-        if (focus) {
+        // do not draw a focus indicator to non editable text components
+        if (focus && !(c instanceof JTextComponent && !((JTextComponent) c).isEditable())) {
           x = focusWidth;
           y = focusWidth;
           int w = width - 2 * focusWidth;
