@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
@@ -195,7 +196,7 @@ public class ImdbTvShowParser extends ImdbParser {
     }
 
     // then parse the actors page to get the rest
-    CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epcast");
+    Url url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epcast");
     url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
@@ -264,6 +265,39 @@ public class ImdbTvShowParser extends ImdbParser {
           next = next.nextElementSibling();
         }
         break;
+      }
+    }
+
+    // last but not least get the directors/writers
+    if (wantedEpisode.ids.get(providerInfo.getId()) instanceof String
+        && StringUtils.isNotBlank((String) wantedEpisode.ids.get(providerInfo.getId()))) {
+      String epId = (String) wantedEpisode.ids.get(providerInfo.getId());
+      url = new Url(imdbSite.getSite() + "/title/" + epId);
+      url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
+      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+
+      Elements elements = doc.getElementsByClass("plot_summary");
+      if (!elements.isEmpty()) {
+        Elements directors = elements.get(0).getElementsByAttributeValue("itemprop", "director");
+        for (Element director : directors) {
+          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+          cm.setName(director.text());
+          md.addCastMember(cm);
+        }
+
+        Elements writers = elements.get(0).getElementsByAttributeValue("itemprop", "creator");
+        for (Element writer : writers) {
+          if (writer.text().contains("(created by)")) {
+            continue;
+          }
+          if (!"http://schema.org/Person".equals(writer.attr("itemtype"))) {
+            continue;
+          }
+
+          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+          cm.setName(writer.text());
+          md.addCastMember(cm);
+        }
       }
     }
 

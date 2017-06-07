@@ -260,6 +260,8 @@ public class ImdbMetadataProviderTest {
       assertEquals("The police department in Santa Barbara hires someone they think is a psychic detective.", md.getPlot());
       assertEquals("7 July 2006", sdf.format(md.getReleaseDate()));
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
+      assertEquals(1, md.getCastMembers(CastType.DIRECTOR).size());
+      assertEquals(1, md.getCastMembers(CastType.WRITER).size());
       assertThat(md.getRating()).isGreaterThan(0);
       assertThat(md.getVoteCount()).isGreaterThan(0);
     }
