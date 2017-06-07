@@ -143,7 +143,7 @@ public class UiSettingsPanel extends JPanel {
       add(lblLanguageHint, "cell 1 2 2 1");
     }
     {
-      lblLinkTransifex = new LinkLabel("https://www.transifex.com/projects/p/tinymediamanager/");
+      lblLinkTransifex = new LinkLabel("https://forum.kodi.tv/showthread.php?tid=174987");
       add(lblLinkTransifex, "cell 1 3 2 1");
     }
     {
