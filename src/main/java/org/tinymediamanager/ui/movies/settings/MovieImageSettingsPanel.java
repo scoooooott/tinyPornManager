@@ -481,7 +481,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       add(panelFileNaming, "cell 1 6 3 1");
       panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][][]"));
 
-      JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));//$NON-NLS-1$
+      JLabel lblPosterFilename = new JLabel(BUNDLE.getString("mediafiletype.poster"));//$NON-NLS-1$
       panelFileNaming.add(lblPosterFilename, "cell 0 0");
 
       chckbxMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
@@ -499,7 +499,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxMoviePosterFilename6 = new JCheckBox("folder.ext");
       panelFileNaming.add(chckbxMoviePosterFilename6, "cell 1 1");
 
-      JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));//$NON-NLS-1$
+      JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("mediafiletype.fanart"));//$NON-NLS-1$
       panelFileNaming.add(lblFanartFileNaming, "cell 0 2");
 
       chckbxMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
@@ -528,7 +528,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       add(panelExtraArtwork, "cell 1 9 3 1");
       panelExtraArtwork.setLayout(new MigLayout("insets 0", "[][][]", "[][][][][][][][]"));
 
-      JLabel lblBannerNamingT = new JLabel(BUNDLE.getString("image.banner.naming"));//$NON-NLS-1$
+      JLabel lblBannerNamingT = new JLabel(BUNDLE.getString("mediafiletype.banner"));//$NON-NLS-1$
       panelExtraArtwork.add(lblBannerNamingT, "cell 0 0");
 
       chckbxBanner2 = new JCheckBox("banner.ext");
@@ -537,7 +537,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxBanner1 = new JCheckBox("<dynamic>-banner.ext");
       panelExtraArtwork.add(chckbxBanner1, "cell 2 0");
 
-      JLabel lblClearartNamingT = new JLabel(BUNDLE.getString("image.clearart.naming"));//$NON-NLS-1$
+      JLabel lblClearartNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearart"));//$NON-NLS-1$
       panelExtraArtwork.add(lblClearartNamingT, "cell 0 1");
 
       chckbxClearart2 = new JCheckBox("clearart.ext");
@@ -546,7 +546,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxClearart1 = new JCheckBox("<dynamic>-clearart.ext");
       panelExtraArtwork.add(chckbxClearart1, "cell 2 1");
 
-      JLabel lblThumbNamingT = new JLabel(BUNDLE.getString("image.thumb.naming"));//$NON-NLS-1$
+      JLabel lblThumbNamingT = new JLabel(BUNDLE.getString("mediafiletype.thumb"));//$NON-NLS-1$
       panelExtraArtwork.add(lblThumbNamingT, "cell 0 2");
 
       chckbxThumb2 = new JCheckBox("thumb.ext");
@@ -561,7 +561,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxThumb3 = new JCheckBox("<dynamic>-landscape.ext");
       panelExtraArtwork.add(chckbxThumb3, "cell 2 3");
 
-      JLabel lblLogoNamingT = new JLabel(BUNDLE.getString("image.logo.naming"));//$NON-NLS-1$
+      JLabel lblLogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.logo"));//$NON-NLS-1$
       panelExtraArtwork.add(lblLogoNamingT, "cell 0 4");
 
       chckbxLogo2 = new JCheckBox("logo.ext");
@@ -570,7 +570,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxLogo1 = new JCheckBox("<dynamic>-logo.ext");
       panelExtraArtwork.add(chckbxLogo1, "cell 2 4");
 
-      JLabel lblClearlogoNamingT = new JLabel(BUNDLE.getString("image.clearlogo.naming"));//$NON-NLS-1$
+      JLabel lblClearlogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo"));//$NON-NLS-1$
       panelExtraArtwork.add(lblClearlogoNamingT, "cell 0 5");
 
       chckbxClearlogo2 = new JCheckBox("clearlogo.ext");
@@ -579,7 +579,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxClearlogo1 = new JCheckBox("<dynamic>-clearlogo.ext");
       panelExtraArtwork.add(chckbxClearlogo1, "cell 2 5");
 
-      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("image.discart.naming"));//$NON-NLS-1$
+      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("mediafiletype.discart"));//$NON-NLS-1$
       panelExtraArtwork.add(lblDiscartNamingT, "cell 0 6");
 
       chckbxDiscart2 = new JCheckBox("disc.ext");

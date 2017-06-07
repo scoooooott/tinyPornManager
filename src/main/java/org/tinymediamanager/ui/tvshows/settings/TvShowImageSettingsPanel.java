@@ -224,7 +224,7 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
       add(panel, "cell 1 4 3 1,grow");
       panel.setLayout(new MigLayout("", "[][][grow]", "[][][][][][][][][][][grow]"));
       {
-        JLabel lblPosterT = new JLabel(BUNDLE.getString("image.poster.naming"));//$NON-NLS-1$
+        JLabel lblPosterT = new JLabel(BUNDLE.getString("mediafiletype.poster"));//$NON-NLS-1$
         panel.add(lblPosterT, "cell 0 0");
 
         chckbxPoster1 = new JCheckBox("poster.ext");
@@ -234,28 +234,28 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
         panel.add(chckbxPoster2, "cell 2 0");
       }
       {
-        JLabel lblFanartT = new JLabel(BUNDLE.getString("image.fanart.naming"));//$NON-NLS-1$
+        JLabel lblFanartT = new JLabel(BUNDLE.getString("mediafiletype.fanart"));//$NON-NLS-1$
         panel.add(lblFanartT, "cell 0 1");
 
         chckbxFanart1 = new JCheckBox("fanart.ext");
         panel.add(chckbxFanart1, "cell 1 1");
       }
       {
-        JLabel lblBannerT = new JLabel(BUNDLE.getString("image.banner.naming"));//$NON-NLS-1$
+        JLabel lblBannerT = new JLabel(BUNDLE.getString("mediafiletype.banner"));//$NON-NLS-1$
         panel.add(lblBannerT, "cell 0 2");
 
         chckbxBanner1 = new JCheckBox("banner.ext");
         panel.add(chckbxBanner1, "cell 1 2");
       }
       {
-        JLabel lblClearartT = new JLabel(BUNDLE.getString("image.clearart.naming"));//$NON-NLS-1$
+        JLabel lblClearartT = new JLabel(BUNDLE.getString("mediafiletype.clearart"));//$NON-NLS-1$
         panel.add(lblClearartT, "cell 0 3");
 
         chckbxClearart1 = new JCheckBox("clearart.ext");
         panel.add(chckbxClearart1, "cell 1 3");
       }
       {
-        JLabel lblThumbT = new JLabel(BUNDLE.getString("image.thumb.naming"));//$NON-NLS-1$
+        JLabel lblThumbT = new JLabel(BUNDLE.getString("mediafiletype.thumb"));//$NON-NLS-1$
         panel.add(lblThumbT, "cell 0 4");
 
         chckbxThumb1 = new JCheckBox("thumb.ext");
@@ -265,21 +265,21 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
         panel.add(chckbxThumb2, "cell 2 4");
       }
       {
-        JLabel lblLogoT = new JLabel(BUNDLE.getString("image.logo.naming"));//$NON-NLS-1$
+        JLabel lblLogoT = new JLabel(BUNDLE.getString("mediafiletype.logo"));//$NON-NLS-1$
         panel.add(lblLogoT, "cell 0 5");
 
         chckbxLogo1 = new JCheckBox("logo.ext");
         panel.add(chckbxLogo1, "cell 1 5");
       }
       {
-        JLabel lblClearlogoT = new JLabel(BUNDLE.getString("image.clearlogo.naming"));//$NON-NLS-1$
+        JLabel lblClearlogoT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo"));//$NON-NLS-1$
         panel.add(lblClearlogoT, "cell 0 6");
 
         chckbxClearlogo1 = new JCheckBox("clearlogo.ext");
         panel.add(chckbxClearlogo1, "cell 1 6");
       }
       {
-        JLabel lblSeasonPosterT = new JLabel(BUNDLE.getString("image.seasonposter.naming"));//$NON-NLS-1$
+        JLabel lblSeasonPosterT = new JLabel(BUNDLE.getString("mediafiletype.season_poster"));//$NON-NLS-1$
         panel.add(lblSeasonPosterT, "cell 0 7");
 
         chckbxSeasonPoster1 = new JCheckBox("seasonXX-poster.ext");
@@ -289,7 +289,7 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
         panel.add(chckbxSeasonPoster2, "cell 2 7");
       }
       {
-        JLabel lblThumbNaming = new JLabel(BUNDLE.getString("image.episodethumb.naming"));
+        JLabel lblThumbNaming = new JLabel(BUNDLE.getString("mediafiletype.episode_thumb"));
         panel.add(lblThumbNaming, "cell 0 8");
 
         chckbxEpisodeThumb1 = new JCheckBox("<dynamic>-thumb.ext");
