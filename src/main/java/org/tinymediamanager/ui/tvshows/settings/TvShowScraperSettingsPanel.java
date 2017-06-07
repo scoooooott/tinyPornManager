@@ -171,6 +171,13 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
 
+    // implement checkBoxListener for preset events
+    settings.addPropertyChangeListener(evt -> {
+      if ("preset".equals(evt.getPropertyName())) {
+        buildComboBoxes();
+      }
+    });
+
     buildComboBoxes();
   }
 

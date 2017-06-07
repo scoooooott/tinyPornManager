@@ -26,7 +26,7 @@ import org.tinymediamanager.core.IFileNaming;
  */
 public enum TvShowEpisodeThumbNaming implements IFileNaming {
 
-  /** [filename]-thumb.* */
+  /** [filename].* */
   FILENAME {
     @Override
     public String getFilename(String basename, String extension) {

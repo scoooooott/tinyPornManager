@@ -25,6 +25,6 @@ public enum TvShowSeasonPosterNaming {
   /** seasonXX-poster.* */
   SEASON_POSTER,
 
-  /** <season_folder>/seasonXX.* */
+  /** season_folder/seasonXX.* */
   SEASON_FOLDER
 }

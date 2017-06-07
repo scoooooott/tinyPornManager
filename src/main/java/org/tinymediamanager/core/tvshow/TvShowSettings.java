@@ -180,7 +180,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              displayMissingEpisodes         = false;
   private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
   private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
-  private CertificationStyle                   certificationStyle             = CertificationStyle.SHORT;
+  private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -220,6 +220,9 @@ public class TvShowSettings extends AbstractSettings {
     return LOGGER;
   }
 
+  /**
+   * the tmm defaults
+   */
   @Override
   protected void writeDefaultSettings() {
     // activate default scrapers
@@ -250,7 +253,7 @@ public class TvShowSettings extends AbstractSettings {
     clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
     thumbFilenames.add(TvShowThumbNaming.THUMB);
     seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_POSTER);
-    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_THUMB);
 
     saveSettings();
   }
@@ -733,5 +736,173 @@ public class TvShowSettings extends AbstractSettings {
     TvShowConnectors oldValue = this.tvShowConnector;
     this.tvShowConnector = newValue;
     firePropertyChange(TV_SHOW_CONNECTOR, oldValue, newValue);
+  }
+
+  /*****************************************************************
+   * defaults
+   *****************************************************************/
+
+  /**
+   * XBMC/Kodi <17 defaults
+   */
+  public void setDefaultSettingsForXbmc() {
+    posterFilenames.clear();
+    posterFilenames.add(TvShowPosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    fanartFilenames.add(TvShowFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    clearartFilenames.add(TvShowClearartNaming.CLEARART);
+
+    logoFilenames.clear();
+    logoFilenames.add(TvShowLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    thumbFilenames.clear();
+    thumbFilenames.add(TvShowThumbNaming.THUMB);
+
+    seasonPosterFilenames.clear();
+    seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_POSTER);
+
+    episodeThumbFilenames.clear();
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_THUMB);
+
+    // other settings
+    setTvShowConnector(TvShowConnectors.XBMC);
+    setRenamerTvShowFoldername(DEFAULT_RENAMER_FOLDER_PATTERN);
+    setRenamerSeasonFoldername(DEFAULT_RENAMER_SEASON_PATTERN);
+    setRenamerFilename(DEFAULT_RENAMER_FILE_PATTERN);
+    setCertificationStyle(CertificationStyle.LARGE);
+
+    firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * Kodi 17+ defaults
+   */
+  public void setDefaultSettingsForKodi() {
+    posterFilenames.clear();
+    posterFilenames.add(TvShowPosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    fanartFilenames.add(TvShowFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    clearartFilenames.add(TvShowClearartNaming.CLEARART);
+
+    logoFilenames.clear();
+    logoFilenames.add(TvShowLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    thumbFilenames.clear();
+    thumbFilenames.add(TvShowThumbNaming.THUMB);
+
+    seasonPosterFilenames.clear();
+    seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_POSTER);
+
+    episodeThumbFilenames.clear();
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_LANDSCAPE);
+
+    // other settings
+    setTvShowConnector(TvShowConnectors.KODI);
+    setRenamerTvShowFoldername(DEFAULT_RENAMER_FOLDER_PATTERN);
+    setRenamerSeasonFoldername(DEFAULT_RENAMER_SEASON_PATTERN);
+    setRenamerFilename(DEFAULT_RENAMER_FILE_PATTERN);
+    setCertificationStyle(CertificationStyle.LARGE);
+
+    firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * MediaPortal defaults
+   */
+  public void setDefaultSettingsForMediaPortal() {
+    posterFilenames.clear();
+    posterFilenames.add(TvShowPosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    fanartFilenames.add(TvShowFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    clearartFilenames.add(TvShowClearartNaming.CLEARART);
+
+    logoFilenames.clear();
+    logoFilenames.add(TvShowLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    thumbFilenames.clear();
+    thumbFilenames.add(TvShowThumbNaming.THUMB);
+
+    seasonPosterFilenames.clear();
+    seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_POSTER);
+
+    episodeThumbFilenames.clear();
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);
+
+    // other settings
+    setTvShowConnector(TvShowConnectors.XBMC);
+    setRenamerTvShowFoldername(DEFAULT_RENAMER_FOLDER_PATTERN);
+    setRenamerSeasonFoldername(DEFAULT_RENAMER_SEASON_PATTERN);
+    setRenamerFilename(DEFAULT_RENAMER_FILE_PATTERN);
+    setCertificationStyle(CertificationStyle.TECHNICAL);
+
+    firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * Plex defaults
+   */
+  public void setDefaultSettingsForPlex() {
+    posterFilenames.clear();
+    posterFilenames.add(TvShowPosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    fanartFilenames.add(TvShowFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    clearartFilenames.add(TvShowClearartNaming.CLEARART);
+
+    logoFilenames.clear();
+    logoFilenames.add(TvShowLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    thumbFilenames.clear();
+    thumbFilenames.add(TvShowThumbNaming.THUMB);
+
+    seasonPosterFilenames.clear();
+    seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_FOLDER);
+
+    episodeThumbFilenames.clear();
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);
+
+    // other settings
+    setTvShowConnector(TvShowConnectors.XBMC);
+    setRenamerTvShowFoldername(DEFAULT_RENAMER_FOLDER_PATTERN);
+    setRenamerSeasonFoldername(DEFAULT_RENAMER_SEASON_PATTERN);
+    setRenamerFilename(DEFAULT_RENAMER_FILE_PATTERN);
+    setCertificationStyle(CertificationStyle.SHORT);
+
+    firePropertyChange("preset", false, true);
   }
 }
