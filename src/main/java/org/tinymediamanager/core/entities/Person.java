@@ -19,8 +19,6 @@ import static org.tinymediamanager.core.Constants.NAME;
 import static org.tinymediamanager.core.Constants.ROLE;
 import static org.tinymediamanager.core.Constants.THUMB;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,8 +55,6 @@ public class Person extends AbstractModelObject {
   private String                    role       = "";
   @JsonProperty
   private String                    thumbUrl   = "";
-  @JsonProperty
-  private String                    entityRoot = "";              // movie or TV show/episode root
 
   @JsonProperty
   protected HashMap<String, Object> ids        = new HashMap<>(0);
@@ -102,7 +98,6 @@ public class Person extends AbstractModelObject {
     this.name = source.name;
     this.role = source.role;
     this.thumbUrl = source.thumbUrl;
-    this.entityRoot = source.entityRoot;
     this.ids.putAll(source.ids);
   }
 
@@ -163,20 +158,6 @@ public class Person extends AbstractModelObject {
   }
 
   /**
-   * Absolute path on filesystem;<br>
-   * constructed out of entityRoot+actorsfolder+cleanname.ext
-   * 
-   * @return path or NULL
-   */
-  @Deprecated
-  public Path getStoragePath() {
-    if (StringUtils.isEmpty(entityRoot) || StringUtils.isEmpty(name)) {
-      return null;
-    }
-    return Paths.get(entityRoot, ACTOR_DIR, getNameForStorage()).toAbsolutePath();
-  }
-
-  /**
    * get the role of that person (character for actors, role for other ones)
    * 
    * @return the actual role
@@ -216,34 +197,6 @@ public class Person extends AbstractModelObject {
     String oldValue = this.thumbUrl;
     thumbUrl = newValue;
     firePropertyChange(THUMB, oldValue, newValue);
-  }
-
-  /**
-   * The root folder of entity (either movie / tv show/episode path)
-   * 
-   * @return the root folder for that entity
-   */
-  @Deprecated
-  public String getEntityRoot() {
-    return entityRoot;
-  }
-
-  /**
-   * The root folder of entity (either movie / tv show/episode path)
-   * 
-   * @param entityRoot
-   *          the root folder for that entity
-   */
-  @Deprecated
-  public void setEntityRoot(String entityRoot) {
-    this.entityRoot = entityRoot;
-  }
-
-  @Deprecated
-  public void setEntityRoot(Path entityRoot) {
-    if (entityRoot != null) {
-      this.entityRoot = entityRoot.toString();
-    }
   }
 
   /**

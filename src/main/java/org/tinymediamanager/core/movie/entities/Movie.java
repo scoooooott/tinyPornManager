@@ -51,6 +51,7 @@ import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1558,8 +1559,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // actor image files
     if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
       for (Person actor : actors) {
-        Path imagePath = actor.getStoragePath();
-        if (imagePath != null) {
+        String actorImageFilename = actor.getNameForStorage();
+        if (StringUtils.isNotBlank(actorImageFilename)) {
+          Path imagePath = Paths.get(path, Person.ACTOR_DIR, actorImageFilename);
           filesToCache.add(imagePath);
         }
       }
@@ -1751,11 +1753,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    // and re-set movie path the actors
-    if (StringUtils.isBlank(actor.getEntityRoot())) {
-      actor.setEntityRoot(getPathNIO());
-    }
-
     actors.add(actor);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -1781,36 +1778,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setActors(List<Person> newActors) {
     // two way sync of actors
     ListUtils.mergeLists(actors, newActors);
-
-    // and re-set movie path to the actors
-    for (Person actor : actors) {
-      if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO());
-      }
-    }
-
-    // third - rename thumbs if needed
-    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
-    // actor writing/caching is done somewhere else...
-
-    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-    // Path actorDir = getPathNIO().resolve(Person.ACTOR_DIR);
-    //
-    // for (Person actor : actors) {
-    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
-    // try {
-    // // build expected filename
-    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-    // Path oldFile = Paths.get(actor.getThumbPath());
-    // Utils.moveFileSafe(oldFile, actorName);
-    // }
-    // catch (IOException e) {
-    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-    // }
-    // }
-    // }
-    // }
-
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1834,13 +1801,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    // and re-set movie path of the producer
-    if (StringUtils.isBlank(producer.getEntityRoot())) {
-      producer.setEntityRoot(getPathNIO());
-    }
-
     producers.add(producer);
-
     firePropertyChange(PRODUCERS, null, producers);
   }
 
@@ -1866,14 +1827,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setProducers(List<Person> newProducers) {
     // two way sync of producers
     ListUtils.mergeLists(producers, newProducers);
-
-    // and re-set movie path to the producers
-    for (Person producer : producers) {
-      if (StringUtils.isBlank(producer.getEntityRoot())) {
-        producer.setEntityRoot(getPathNIO());
-      }
-    }
-
     firePropertyChange(PRODUCERS, null, producers);
   }
 
@@ -1895,11 +1848,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void addDirector(Person director) {
     if (director.getType() != Person.Type.DIRECTOR) {
       return;
-    }
-
-    // and re-set movie path the directors
-    if (StringUtils.isBlank(director.getEntityRoot())) {
-      director.setEntityRoot(getPathNIO());
     }
 
     directors.add(director);
@@ -1929,13 +1877,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setDirectors(List<Person> newDirectors) {
     // two way sync of directors
     ListUtils.mergeLists(directors, newDirectors);
-
-    // and re-set movie path to the actors
-    for (Person director : directors) {
-      if (StringUtils.isBlank(director.getEntityRoot())) {
-        director.setEntityRoot(getPathNIO());
-      }
-    }
 
     firePropertyChange(DIRECTORS, null, this.getDirectors());
     firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
@@ -1974,11 +1915,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    // and re-set movie path the writers
-    if (StringUtils.isBlank(writer.getEntityRoot())) {
-      writer.setEntityRoot(getPathNIO());
-    }
-
     writers.add(writer);
     firePropertyChange(WRITERS, null, this.getWriters());
     firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
@@ -2006,13 +1942,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setWriters(List<Person> newWriters) {
     // two way sync of writers
     ListUtils.mergeLists(writers, newWriters);
-
-    // and re-set movie path to the actors
-    for (Person writer : writers) {
-      if (StringUtils.isBlank(writer.getEntityRoot())) {
-        writer.setEntityRoot(getPathNIO());
-      }
-    }
 
     firePropertyChange(WRITERS, null, this.getWriters());
     firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());

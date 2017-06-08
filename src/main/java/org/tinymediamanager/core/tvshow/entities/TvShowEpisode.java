@@ -669,11 +669,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the actor to be added
    */
   public void addActor(Person newActor) {
-    // and re-set episode path to the actor
-    if (StringUtils.isBlank(newActor.getEntityRoot())) {
-      newActor.setEntityRoot(getPathNIO());
-    }
-
     actors.add(newActor);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -730,14 +725,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // two way sync of actors
     ListUtils.mergeLists(actors, newActors);
-
-    // and re-set episode path to the actors
-    for (Person actor : actors) {
-      if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO());
-      }
-    }
-
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -748,11 +735,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the director to be added
    */
   public void addDirector(Person director) {
-    // and re-set movie path the directors
-    if (StringUtils.isBlank(director.getEntityRoot())) {
-      director.setEntityRoot(getPathNIO());
-    }
-
     directors.add(director);
     firePropertyChange(DIRECTORS, null, this.getDirectors());
     firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
@@ -780,13 +762,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setDirectors(List<Person> newDirectors) {
     // two way sync of directors
     ListUtils.mergeLists(directors, newDirectors);
-
-    // and re-set movie path to the actors
-    for (Person director : directors) {
-      if (StringUtils.isBlank(director.getEntityRoot())) {
-        director.setEntityRoot(getPathNIO());
-      }
-    }
 
     firePropertyChange(DIRECTORS, null, this.getDirectors());
     firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
@@ -821,11 +796,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the writer to be added
    */
   public void addWriter(Person writer) {
-    // and re-set movie path the writers
-    if (StringUtils.isBlank(writer.getEntityRoot())) {
-      writer.setEntityRoot(getPathNIO());
-    }
-
     writers.add(writer);
     firePropertyChange(WRITERS, null, this.getWriters());
     firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
@@ -853,13 +823,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setWriters(List<Person> newWriters) {
     // two way sync of writers
     ListUtils.mergeLists(writers, newWriters);
-
-    // and re-set movie path to the actors
-    for (Person writer : writers) {
-      if (StringUtils.isBlank(writer.getEntityRoot())) {
-        writer.setEntityRoot(getPathNIO());
-      }
-    }
 
     firePropertyChange(WRITERS, null, this.getWriters());
     firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());

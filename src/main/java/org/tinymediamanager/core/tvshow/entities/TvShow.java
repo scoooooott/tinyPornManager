@@ -1115,11 +1115,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the obj
    */
   public void addActor(Person obj) {
-    // and re-set TV show path to the actor
-    if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO());
-    }
-
     actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -1155,14 +1150,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void setActors(List<Person> newActors) {
     // two way sync of actors
     ListUtils.mergeLists(actors, newActors);
-
-    // and re-set TV show path to the actors
-    for (Person actor : actors) {
-      if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO());
-      }
-    }
-
     firePropertyChange(ACTORS, null, this.getActors());
   }
 

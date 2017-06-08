@@ -88,7 +88,7 @@ public class MovieCastPanel extends JPanel {
         int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
         if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
           Person actor = actorEventList.get(selectedRow);
-          lblActorThumb.setActor(actor);
+          lblActorThumb.setActor(selectionModel.getSelectedMovie(), actor);
         }
         else {
           lblActorThumb.setImageUrl("");

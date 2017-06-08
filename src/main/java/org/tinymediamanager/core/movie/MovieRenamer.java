@@ -46,7 +46,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -549,12 +548,6 @@ public class MovieRenamer {
     movie.removeAllMediaFiles();
     movie.addToMediaFiles(needed);
     movie.setPath(newPathname);
-
-    // update .actors
-    for (Person actor : movie.getActors()) {
-      actor.setEntityRoot(newPathname);
-    }
-
     movie.saveToDb();
 
     // cleanup & rename subtitle files

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,11 +46,6 @@ public class MovieActorImageFetcher implements Runnable {
     this.movie = movie;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Runnable#run()
-   */
   @Override
   public void run() {
     // try/catch block in the root of the thread to log crashes
@@ -87,12 +83,16 @@ public class MovieActorImageFetcher implements Runnable {
           }
         }
       }
-      catch (IOException ex) {
+      catch (IOException ignored) {
       }
 
       // second download missing images
       for (Person actor : movie.getActors()) {
-        Path actorImage = actor.getStoragePath();
+        String actorImageFilename = actor.getNameForStorage();
+        if (StringUtils.isBlank(actorImageFilename)) {
+          continue;
+        }
+        Path actorImage = Paths.get(movie.getPath(), Person.ACTOR_DIR, actorImageFilename);
 
         if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && !Files.exists(actorImage)) {
           Path cache = ImageCache.getCachedFile(actor.getThumbUrl());

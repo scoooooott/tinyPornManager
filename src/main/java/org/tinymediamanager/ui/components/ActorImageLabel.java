@@ -18,12 +18,14 @@ package org.tinymediamanager.ui.components;
 import java.awt.Graphics;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -38,10 +40,12 @@ public class ActorImageLabel extends ImageLabel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   protected SwingWorker<Void, Void>   actorWorker      = null;
+  protected MediaEntity               mediaEntity      = null;
   protected Person                    actor            = null;
 
-  public void setActor(Person actor) {
-    if (actor != null && actor != this.actor) {
+  public void setActor(MediaEntity mediaEntity, Person actor) {
+    if (mediaEntity != null && actor != null && actor != this.actor) {
+      this.mediaEntity = mediaEntity;
       this.actor = actor;
 
       scaledImage = null;
@@ -119,8 +123,9 @@ public class ActorImageLabel extends ImageLabel {
     @Override
     protected Void doInBackground() throws Exception {
       // set file (or cached one) if existent
-      if (StringUtils.isNotBlank(actor.getEntityRoot())) {
-        Path p = ImageCache.getCachedFile(actor.getStoragePath());
+      String actorImageFilename = actor.getNameForStorage();
+      if (StringUtils.isNotBlank(actorImageFilename)) {
+        Path p = ImageCache.getCachedFile(Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename));
         if (p != null && Files.exists(p)) {
           imagePath = p;
           return null;
