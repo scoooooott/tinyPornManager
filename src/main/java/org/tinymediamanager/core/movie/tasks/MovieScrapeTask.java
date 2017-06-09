@@ -201,6 +201,7 @@ public class MovieScrapeTask extends TmmThreadPool {
               // scrape trailer if wanted
               if (scraperMetadataConfig.isTrailer()) {
                 movie.setTrailers(getTrailers(movie, md, trailerScrapers));
+                movie.writeNFO();
               }
             }
           }

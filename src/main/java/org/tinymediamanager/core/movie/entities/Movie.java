@@ -209,73 +209,67 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
    * 
    * @param other
-   *          ther movie to merge in
+   *          the movie to merge in
    */
-
   public void merge(Movie other) {
+    merge(other, false);
+  }
+
+  /**
+   * Overwrites all elements with "other" value<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   *
+   * @param other
+   *          the movie to merge in
+   */
+  public void forceMerge(Movie other) {
+    merge(other, true);
+  }
+
+  void merge(Movie other, boolean force) {
     if (other == null) {
       return;
     }
-    super.merge(other);
+    super.merge(other, force);
 
-    this.sortTitle = StringUtils.isEmpty(this.sortTitle) ? other.getSortTitle() : this.sortTitle;
-    this.tagline = StringUtils.isEmpty(this.tagline) ? other.getTagline() : this.tagline;
-    this.spokenLanguages = StringUtils.isEmpty(this.spokenLanguages) ? other.getSpokenLanguages() : this.spokenLanguages;
-    this.country = StringUtils.isEmpty(this.country) ? other.getCountry() : this.country;
-    this.titleSortable = StringUtils.isEmpty(this.titleSortable) ? other.getTitleSortable() : this.titleSortable;
+    setSortTitle(StringUtils.isEmpty(sortTitle) || force ? other.sortTitle : sortTitle);
+    setTagline(StringUtils.isEmpty(tagline) || force ? other.tagline : tagline);
+    setSpokenLanguages(StringUtils.isEmpty(spokenLanguages) || force ? other.spokenLanguages : spokenLanguages);
+    setCountry(StringUtils.isEmpty(country) || force ? other.country : country);
+    setWatched(!watched || force ? other.watched : watched);
+    setRuntime(runtime == 0 || force ? other.runtime : runtime);
+    setTop250(top250 == 0 || force ? other.top250 : top250);
+    setReleaseDate(releaseDate == null || force ? other.releaseDate : releaseDate);
+    setMovieSet(movieSet == null || force ? other.movieSet : movieSet);
+    setMediaSource(mediaSource == MediaSource.UNKNOWN || force ? other.mediaSource : mediaSource);
+    setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
+    setEdition(edition == MovieEdition.NONE || force ? other.edition : edition);
 
-    this.runtime = this.runtime == 0 ? other.getRuntime() : this.runtime;
-    this.top250 = this.top250 == 0 ? other.getTop250() : this.top250;
-    this.releaseDate = this.releaseDate == null ? other.getReleaseDate() : this.releaseDate;
-    this.movieSet = this.movieSet == null ? other.getMovieSet() : this.movieSet;
-    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : this.mediaSource;
-    this.certification = this.certification == Certification.NOT_RATED ? other.getCertification() : this.certification;
-    this.edition = this.edition == MovieEdition.NONE ? other.getEdition() : this.edition;
-
-    for (MediaGenres genre : other.getGenres()) {
-      addGenre(genre); // already checks dupes
-    }
-    for (Person actor : other.getActors()) {
-      if (!this.actors.contains(actor)) {
-        this.actors.add(actor);
-      }
-    }
-    for (Person prod : other.getProducers()) {
-      if (!this.producers.contains(prod)) {
-        this.producers.add(prod);
-      }
-    }
-    for (Person director : other.getDirectors()) {
-      if (!this.directors.contains(director)) {
-        this.directors.add(director);
-      }
-    }
-    for (Person writer : other.getWriters()) {
-      if (!this.writers.contains(writer)) {
-        this.writers.add(writer);
-      }
-    }
-    for (MovieTrailer trail : other.getTrailer()) {
-      if (!this.trailer.contains(trail)) {
-        this.trailer.add(trail);
-      }
+    // when force is set, clear the lists/maps and add all other values
+    if (force) {
+      genres.clear();
+      actors.clear();
+      producers.clear();
+      directors.clear();
+      writers.clear();
+      tags.clear();
+      trailer.clear();
+      extraFanarts.clear();
+      extraFanarts.clear();
     }
 
-    for (String key : other.getTags()) {
-      if (!this.tags.contains(key)) {
-        this.tags.add(key);
-      }
-    }
-    for (String key : other.getExtraThumbs()) {
-      if (!this.extraThumbs.contains(key)) {
-        this.extraThumbs.add(key);
-      }
-    }
-    for (String key : other.getExtraFanarts()) {
-      if (!this.extraFanarts.contains(key)) {
-        this.extraFanarts.add(key);
-      }
-    }
+    setGenres(other.genres);
+    setActors(other.actors);
+    setProducers(other.producers);
+    setDirectors(other.directors);
+    setWriters(other.writers);
+    setTags(other.tags);
+    setExtraFanarts(other.extraFanarts);
+    setExtraThumbs(other.extraThumbs);
+
+    ArrayList<MovieTrailer> mergedTrailers = new ArrayList<>(trailer);
+    ListUtils.mergeLists(mergedTrailers, other.trailer);
+    setTrailers(mergedTrailers);
   }
 
   @Override
@@ -513,7 +507,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setTags(List<String> newTags) {
     // two way sync of tags
     ListUtils.mergeLists(tags, newTags);
-
     Utils.removeEmptyStringsFromList(tags);
 
     firePropertyChange(TAG, null, newTags);
@@ -697,8 +690,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   @JsonSetter
   public void setExtraThumbs(List<String> extraThumbs) {
-    this.extraThumbs.clear();
-    this.extraThumbs.addAll(extraThumbs);
+    ListUtils.mergeLists(this.extraThumbs, extraThumbs);
   }
 
   /**
@@ -718,8 +710,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   @JsonSetter
   public void setExtraFanarts(List<String> extraFanarts) {
-    this.extraFanarts.clear();
-    this.extraFanarts.addAll(extraFanarts);
+    ListUtils.mergeLists(this.extraFanarts, extraFanarts);
   }
 
   /**
@@ -1004,8 +995,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
       TmmTaskManager.getInstance().addDownloadTask(task);
     }
 
-    // persist
-    writeNFO();
     saveToDb();
   }
 

@@ -46,12 +46,10 @@ public class TvShowRenameAction extends AbstractAction {
   private static final long           serialVersionUID = -8988748633666277616L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowRenameAction(boolean withTitle) {
+  public TvShowRenameAction() {
     putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
-    }
+    putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }

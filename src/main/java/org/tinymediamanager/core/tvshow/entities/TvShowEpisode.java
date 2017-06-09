@@ -161,44 +161,50 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
    *
    * @param other
+   *          the other episode to merge in
    */
-
   public void merge(TvShowEpisode other) {
+    merge(other, false);
+  }
+
+  /**
+   * Overwrites all elements with "other" value<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   *
+   * @param other
+   *          the other episode to merge in
+   */
+  public void forceMerge(TvShowEpisode other) {
+    merge(other, true);
+  }
+
+  void merge(TvShowEpisode other, boolean force) {
     if (other == null) {
       return;
     }
-    super.merge(other);
+    super.merge(other, force);
 
-    this.episode = this.episode < 0 ? other.getEpisode() : this.episode;
-    this.season = this.season < 0 ? other.getSeason() : this.season;
-    this.dvdSeason = this.dvdSeason < 0 ? other.getDvdSeason() : this.dvdSeason;
-    this.dvdEpisode = this.dvdEpisode < 0 ? other.getDvdEpisode() : this.dvdEpisode;
-    this.displaySeason = this.displaySeason < 0 ? other.getDisplaySeason() : this.displaySeason;
-    this.displayEpisode = this.displayEpisode < 0 ? other.getDisplayEpisode() : this.displayEpisode;
+    setEpisode(episode < 0 || force ? other.episode : episode);
+    setSeason(season < 0 || force ? other.season : season);
+    setDvdEpisode(dvdEpisode < 0 || force ? other.dvdEpisode : dvdEpisode);
+    setDvdSeason(dvdSeason < 0 || force ? other.dvdSeason : dvdSeason);
+    setDisplayEpisode(displayEpisode < 0 || force ? other.displayEpisode : displayEpisode);
+    setDisplaySeason(displaySeason < 0 || force ? other.displaySeason : displaySeason);
+    setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
+    setWatched(!watched || force ? other.watched : watched);
+    setMediaSource(mediaSource == MediaSource.UNKNOWN || force ? other.mediaSource : mediaSource);
 
-    this.firstAired = this.firstAired == null ? other.getFirstAired() : this.firstAired;
-    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : MediaSource.UNKNOWN;
+    if (force) {
+      tags.clear();
+      actors.clear();
+      directors.clear();
+      writers.clear();
+    }
 
-    for (String key : other.getTags()) {
-      if (!this.tags.contains(key)) {
-        this.tags.add(key);
-      }
-    }
-    for (Person actor : other.getActors()) {
-      if (!this.actors.contains(actor)) {
-        this.actors.add(actor);
-      }
-    }
-    for (Person director : other.getDirectors()) {
-      if (!this.directors.contains(director)) {
-        this.directors.add(director);
-      }
-    }
-    for (Person writer : other.getWriters()) {
-      if (!this.writers.contains(writer)) {
-        this.writers.add(writer);
-      }
-    }
+    setTags(other.tags);
+    setActors(other.actors);
+    setDirectors(other.directors);
+    setWriters(other.writers);
   }
 
   /**

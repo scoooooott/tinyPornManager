@@ -115,29 +115,52 @@ public abstract class MediaEntity extends AbstractModelObject {
    * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
    * 
    * @param other
+   *          the media entity to merge in
    */
   public void merge(MediaEntity other) {
+    merge(other, false);
+  }
+
+  /**
+   * Overwrites all elements with "other" value<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   *
+   * @param other
+   *          the media entity to merge in
+   */
+  public void forceMerge(MediaEntity other) {
+    merge(other, true);
+  }
+
+  protected void merge(MediaEntity other, boolean force) {
     if (other == null) {
       return;
     }
 
-    this.title = StringUtils.isEmpty(this.title) ? other.getTitle() : this.title;
-    this.originalTitle = StringUtils.isEmpty(this.originalTitle) ? other.getOriginalTitle() : this.originalTitle;
-    this.year = this.year == 0 ? other.getYear() : this.year;
-    this.plot = StringUtils.isEmpty(this.plot) ? other.getPlot() : this.plot;
-    this.productionCompany = StringUtils.isEmpty(this.productionCompany) ? other.getProductionCompany() : this.productionCompany;
+    setTitle(StringUtils.isEmpty(title) || force ? other.title : title);
+    setOriginalTitle(StringUtils.isEmpty(originalTitle) || force ? other.originalTitle : originalTitle);
+    setYear(year == 0 || force ? other.year : year);
+    setPlot(StringUtils.isEmpty(plot) || force ? other.plot : plot);
+    setProductionCompany(StringUtils.isEmpty(productionCompany) || force ? other.productionCompany : productionCompany);
 
-    this.votes = this.votes == 0 ? other.getVotes() : this.votes;
-    this.rating = Float.compare(this.rating, 0f) == 0 ? other.getRating() : this.rating;
+    setVotes(votes == 0 || force ? other.votes : votes);
+    setRating(Float.compare(rating, 0f) == 0 || force ? other.rating : rating);
+
+    // when force is set, clear the lists/maps and add all other values
+    if (force) {
+      ids.clear();
+
+      artworkUrlMap.clear();
+    }
 
     for (String key : other.getIds().keySet()) {
-      if (!this.ids.containsKey(key)) {
-        this.ids.put(key, other.getId(key));
+      if (!ids.containsKey(key)) {
+        ids.put(key, other.getId(key));
       }
     }
     for (MediaFileType key : other.getArtworkUrls().keySet()) {
-      if (!this.artworkUrlMap.containsKey(key)) {
-        this.artworkUrlMap.put(key, other.getArtworkUrl(key));
+      if (!artworkUrlMap.containsKey(key)) {
+        artworkUrlMap.put(key, other.getArtworkUrl(key));
       }
     }
   }

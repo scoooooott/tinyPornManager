@@ -380,6 +380,7 @@ public class MovieChooserModel extends AbstractModelObject {
       }
 
       movieToScrape.setTrailers(trailer);
+      movieToScrape.writeNFO();
     }
   }
 }

@@ -46,6 +46,8 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowReadEpisodeNfoAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowReadNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRemoveAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
@@ -304,7 +306,9 @@ public class TvShowUIModule implements ITmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowReadEpisodeNfoAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRenameAction.class));
     popupMenu.add(createAndRegisterAction(TvShowMediaInformationAction.class));
     popupMenu.add(createAndRegisterAction(TvShowExportAction.class));
@@ -363,7 +367,9 @@ public class TvShowUIModule implements ITmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowReadEpisodeNfoAction.class));
   }
 
   /**

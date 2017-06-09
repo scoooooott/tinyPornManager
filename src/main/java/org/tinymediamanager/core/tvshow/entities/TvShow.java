@@ -208,15 +208,64 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
    * For lists, check with 'contains' and add.<br>
    * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   *
+   * @param other
+   *          the other Tv show to merge in
    */
   public void merge(TvShow other) {
-    super.merge(other);
+    merge(other, false);
+  }
+
+  /**
+   * Overwrites all elements with "other" value<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   *
+   * @param other
+   *          the other TV show to merge in
+   */
+  public void forceMerge(TvShow other) {
+    merge(other, true);
+  }
+
+  void merge(TvShow other, boolean force) {
+    if (other == null) {
+      return;
+    }
+
+    super.merge(other, force);
+
+    setSortTitle(StringUtils.isEmpty(sortTitle) || force ? other.sortTitle : sortTitle);
+    setRuntime(runtime == 0 || force ? other.runtime : runtime);
+    setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
+    setStatus(StringUtils.isBlank(status) || force ? other.status : status);
+    setWatched(!watched || force ? other.watched : watched);
+    setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
+
+    // when force is set, clear the lists/maps and add all other values
+    if (force) {
+      genres.clear();
+      tags.clear();
+      actors.clear();
+
+      seasonPosterUrlMap.clear();
+    }
+
+    setGenres(other.genres);
+    setTags(other.tags);
+    setActors(other.actors);
+
+    for (Integer season : other.seasonPosterUrlMap.keySet()) {
+      if (!seasonPosterUrlMap.containsKey(season)) {
+        seasonPosterUrlMap.put(season, other.seasonPosterUrlMap.get(season));
+      }
+    }
 
     // get ours, and merge other values
     for (TvShowEpisode ep : episodes) {
       TvShowEpisode otherEP = other.getEpisode(ep.getSeason(), ep.getEpisode());
-      ep.merge(otherEP);
+      ep.merge(otherEP, force);
     }
+
     // get others, and simply add
     for (TvShowEpisode otherEp : other.getEpisodes()) {
       TvShowEpisode ourEP = getEpisode(otherEp.getSeason(), otherEp.getEpisode()); // do not do a contains check!
@@ -832,7 +881,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * Write nfo.
    */
   public void writeNFO() {
-    ITvShowConnector connector = null;
+    ITvShowConnector connector;
 
     switch (TvShowModuleManager.SETTINGS.getTvShowConnector()) {
       case KODI:
@@ -845,9 +894,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         break;
     }
 
-    if (connector != null) {
-      connector.write(Arrays.asList(TvShowNfoNaming.TV_SHOW));
-    }
+    connector.write(Arrays.asList(TvShowNfoNaming.TV_SHOW));
 
     firePropertyChange(HAS_NFO_FILE, false, true);
   }
@@ -981,14 +1028,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @param aired
    *          the new first aired
-   * @throws ParseException
-   *           if string cannot be parsed!
    */
   public void setFirstAired(String aired) {
     try {
       setFirstAired(StrgUtils.parseDate(aired));
     }
-    catch (ParseException e) {
+    catch (ParseException ignored) {
     }
   }
 

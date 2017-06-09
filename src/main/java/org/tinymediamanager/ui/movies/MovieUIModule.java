@@ -44,6 +44,7 @@ import org.tinymediamanager.ui.movies.actions.MovieDownloadMissingArtworkAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
+import org.tinymediamanager.ui.movies.actions.MovieReadNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
@@ -237,6 +238,7 @@ public class MovieUIModule implements ITmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
+    popupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieRenameAction.class));
     popupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
     popupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
@@ -290,6 +292,7 @@ public class MovieUIModule implements ITmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRenameAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
