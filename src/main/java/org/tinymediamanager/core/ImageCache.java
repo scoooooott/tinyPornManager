@@ -468,8 +468,10 @@ public class ImageCache {
 
     // is the image cache activated?
     if (!Globals.settings.isImageCache()) {
-      LOGGER.trace("ImageCache not activated - return original file 1:1");
-      return path;
+      LOGGER.trace("ImageCache not activated!");
+      // need to return null, else the caller couldn't distinguish between cached/original file
+      // return path;
+      return null;
     }
 
     try {
@@ -488,7 +490,9 @@ public class ImageCache {
     }
 
     // fallback
-    return path;
+    // need to return null, else the caller couldn't distinguish between cached/original file
+    // return path;
+    return null;
   }
 
   /**
@@ -522,7 +526,7 @@ public class ImageCache {
     for (MediaFile mediaFile : mediaFiles) {
       if (mediaFile.isGraphic()) {
         Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());
-        if (Files.exists(file)) {
+        if (file != null) {
           Utils.deleteFileSafely(file);
         }
       }

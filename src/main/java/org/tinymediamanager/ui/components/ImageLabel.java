@@ -421,11 +421,8 @@ public class ImageLabel extends JLabel {
 
     @Override
     protected BufferedImage doInBackground() throws Exception {
-      Path file = null;
-      if (useCache) {
-        file = ImageCache.getCachedFile(Paths.get(imagePath));
-      }
-      else {
+      Path file = ImageCache.getCachedFile(Paths.get(imagePath));
+      if (file == null) {
         file = Paths.get(imagePath);
       }
 
