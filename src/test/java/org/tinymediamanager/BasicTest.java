@@ -31,6 +31,8 @@ import ch.qos.logback.classic.LoggerContext;
 
 public class BasicTest {
 
+  private static final String LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel lacus libero. Ut vel lacus erat. Maecenas maximus vestibulum ante at efficitur. Sed id ex eget purus commodo feugiat. Suspendisse ultricies felis sed interdum luctus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc et scelerisque nibh. Donec maximus nunc nunc, non commodo nulla rhoncus id. Curabitur pharetra maximus tellus non porta. Ut vehicula elit nec ante elementum, ut semper ligula consectetur.";
+
   // own method to get some logging ;)
   public static void assertEqual(Object expected, Object actual) {
     try {
@@ -85,11 +87,9 @@ public class BasicTest {
     movie.setYear(1992);
     movie.setTop250(199);
     movie.setVotes(5987);
-    movie.setPlot("Princess Jasmine grows tired of being forced to remain in the...");
+    movie.setPlot(LOREM);
     movie.setTagline("Wish granted");
     movie.setRuntime(90);
-    movie.setArtworkUrl("http://poster", MediaFileType.POSTER);
-    movie.setArtworkUrl("http://fanart", MediaFileType.FANART);
     movie.setImdbId("tt0103639");
     movie.setTmdbId(812);
     movie.setId("trakt", 655);
@@ -183,8 +183,19 @@ public class BasicTest {
     tvShow.setTvdbId("77585");
     tvShow.setFirstAired("1987-04-12");
     tvShow.setProductionCompany("FOX (US)");
+    tvShow.setPlot(LOREM);
 
+    MediaFile mf = new MediaFile();
+    // show MF poster
+    mf = new MediaFile(Paths.get("target/test-classes/dummy-poster.jpg"));
+    tvShow.addToMediaFiles(mf);
+    // show MF fanart
+    mf = new MediaFile(Paths.get("target/test-classes/dummy-fanart.jpg"));
+    tvShow.addToMediaFiles(mf);
+
+    // ========= EPISODE start =========
     TvShowEpisode episode = new TvShowEpisode();
+    episode.setTvShow(tvShow);
     episode.setTitle(title + "-EP");
     episode.setSeason(1);
     episode.setEpisode(2);
@@ -194,8 +205,9 @@ public class BasicTest {
     episode.setYear(1987);
     episode.setFirstAired("1987-04-26");
     episode.setMediaSource(MediaSource.BLURAY);
+    episode.setPlot(LOREM);
 
-    MediaFile mf = new MediaFile();
+    mf = new MediaFile();
     mf.setType(MediaFileType.VIDEO);
     mf.setFilename(title + ".mkv");
     mf.setVideoCodec("h264");
@@ -215,7 +227,15 @@ public class BasicTest {
     sub.setLanguage("de");
     mf.addSubtitle(sub);
 
+    episode.addToMediaFiles(mf);
+
+    // EP MF poster
+    mf = new MediaFile(Paths.get("target/test-classes/dummy-poster.jpg"), MediaFileType.THUMB);
+    episode.addToMediaFiles(mf);
+
     tvShow.addEpisode(episode);
+    // ========= EPISODE end =========
+
     TvShowList.getInstance().addTvShow(tvShow);
     tvShow.saveToDb();
     System.out.println("Created show " + tvShow.getDbId());
