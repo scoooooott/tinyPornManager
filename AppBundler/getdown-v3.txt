@@ -51,13 +51,16 @@ resource = [windows-x86] native/windows-x86/mingwm10.dll
 
 # templates
 resource = templates/readme.txt
-uresource = templates/DetailExampleHtml.jar
+uresource = templates/DeadSix27HTMLGenerator.jar
+uresource = templates/DeadSix27HTMLGeneratorTV.jar
 uresource = templates/DetailExample2Html.jar
+uresource = templates/DetailExampleHtml.jar
 uresource = templates/ExcelXml.jar
+uresource = templates/jQueryliscious.jar
 uresource = templates/ListExampleCsv.jar
 uresource = templates/ListExampleHtml.jar
 uresource = templates/ListExampleXml.jar
-uresource = templates/jQueryliscious.jar
+uresource = templates/MobileMovieSearch.jar
 uresource = templates/SimpleConfluence.jar
 uresource = templates/TvShowDetailExampleXml.jar
 
