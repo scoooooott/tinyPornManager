@@ -23,9 +23,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,13 +41,14 @@ import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -57,10 +60,10 @@ import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
+
+import com.floreysoft.jmte.Engine;
 
 /**
  * The Class MovieRenamer.
@@ -68,9 +71,80 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-  private final static Logger       LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
-  private static final List<String> KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
-  private static final Pattern      ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
+  private final static Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final List<String>       KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
+  private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
+
+  public static final Map<String, String> TOKEN_MAP                   = createTokenMap();
+
+  /**
+   * initialize the token map for the renamer
+   *
+   * @return the token map
+   */
+  private static Map<String, String> createTokenMap() {
+    Map<String, String> tokenMap = new HashMap<>();
+    tokenMap.put("title", "movie.title");
+    tokenMap.put("originalTitle", "movie.originalTitle");
+    tokenMap.put("sorttitle", "movie.sortTitle");
+    tokenMap.put("year", "movie.year");
+    tokenMap.put("releaseDate", "movie.releaseDate;date(yyyy-MM-dd)");
+    tokenMap.put("titleSortable", "movie.titleSortable");
+    tokenMap.put("rating", "movie.rating");
+    tokenMap.put("movieset", "movie.movieSet");
+    tokenMap.put("imdb", "movie.imdbId");
+    tokenMap.put("certification", "movie.certification");
+    tokenMap.put("language", "movie.spokenLanguages");
+
+    tokenMap.put("genres", "movie.genres");
+    tokenMap.put("tags", "movie.tags");
+    tokenMap.put("actors", "movie.actors");
+    tokenMap.put("producers", "movie.producers");
+    tokenMap.put("directors", "movie.directors");
+    tokenMap.put("writers", "movie.writers");
+
+    tokenMap.put("videoCodec", "movie.mediaInfoVideoCodec");
+    tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
+    tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
+    tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
+    tokenMap.put("audioChannels", "movie.mediaInfoAudioChannels");
+    tokenMap.put("3Dformat", "movie.video3DFormat");
+
+    tokenMap.put("mediaSource", "movie.mediaSource");
+    tokenMap.put("edition", "movie.edition");
+
+    return tokenMap;
+  }
+
+  /**
+   * morph the given template to the JMTE template
+   *
+   * @param template
+   *          the given template
+   * @return the JMTE compatible template
+   */
+  public static String morphTemplate(String template) {
+    String morphedTemplate = template;
+    // replace normal template entries
+    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
+      Pattern pattern = Pattern.compile("\\$\\{" + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(morphedTemplate);
+      while (matcher.find()) {
+        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + entry.getValue() + matcher.group(1));
+      }
+    }
+
+    // replace conditional template entries
+    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
+      Pattern pattern = Pattern.compile("\\$\\{(.*?)," + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(morphedTemplate);
+      while (matcher.find()) {
+        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + matcher.group(1) + "," + entry.getValue() + matcher.group(2));
+      }
+    }
+
+    return morphedTemplate;
+  }
 
   private static void renameSubtitles(Movie m) {
     // build language lists
@@ -938,12 +1012,12 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFilename(String template, Movie movie) {
-    // replace optional group first
-    Pattern regex = Pattern.compile("\\{(.*?)\\}");
-    Matcher mat = regex.matcher(template);
-    while (mat.find()) {
-      template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, true));
-    }
+    // // replace optional group first
+    // Pattern regex = Pattern.compile("\\{(.*?)\\}");
+    // Matcher mat = regex.matcher(template);
+    // while (mat.find()) {
+    // template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, true));
+    // }
     return createDestination(template, movie, true);
   }
 
@@ -957,12 +1031,12 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFoldername(String template, Movie movie) {
-    // replace optional group first
-    Pattern regex = Pattern.compile("\\{(.*?)\\}");
-    Matcher mat = regex.matcher(template);
-    while (mat.find()) {
-      template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, false));
-    }
+    // // replace optional group first
+    // Pattern regex = Pattern.compile("\\{(.*?)\\}");
+    // Matcher mat = regex.matcher(template);
+    // while (mat.find()) {
+    // template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, false));
+    // }
     return createDestination(template, movie, false);
   }
 
@@ -1006,109 +1080,120 @@ public class MovieRenamer {
    * @return value or empty string
    */
   public static String getTokenValue(Movie movie, String token) {
-    String ret = "";
-    MediaFile mf = new MediaFile();
-    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-      mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
+    try {
+      Engine engine = Engine.createEngine();
+      engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.setModelAdaptor(new TmmModelAdaptor());
+      Map<String, Object> root = new HashMap<>();
+      root.put("movie", movie);
+      return engine.transform(morphTemplate(token), root);
     }
-
-    switch (token.toUpperCase(Locale.ROOT)) {
-      case "$T":
-        ret = movie.getTitle();
-        break;
-      case "$1":
-        ret = getFirstAlphaNum(movie.getTitle());
-        break;
-      case "$2":
-        ret = getFirstAlphaNum(movie.getTitleSortable());
-        break;
-      case "$Y":
-        ret = movie.getYear() == 0 ? "" : Integer.toString(movie.getYear());
-        break;
-      case "$O":
-        ret = movie.getOriginalTitle();
-        break;
-      case "$M":
-        if (movie.getMovieSet() != null
-            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
-          ret = movie.getMovieSet().getTitleSortable();
-        }
-        break;
-      case "$N":
-        if (movie.getMovieSet() != null
-            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
-          ret = movie.getMovieSet().getTitle();
-        }
-        break;
-      case "$I":
-        ret = movie.getImdbId();
-        break;
-      case "$E":
-        ret = movie.getTitleSortable();
-        break;
-      case "$L":
-        ret = movie.getSpokenLanguages();
-        break;
-      case "$C":
-        if (movie.getCertification() != Certification.NOT_RATED) {
-          ret = movie.getCertification().getName();
-        }
-        break;
-      case "$U":
-        if (movie.getEdition() != MovieEdition.NONE) {
-          ret = movie.getEditionAsString();
-        }
-        break;
-      case "$G":
-        if (!movie.getGenres().isEmpty()) {
-          MediaGenres genre = movie.getGenres().get(0);
-          ret = genre.getLocalizedName();
-        }
-        break;
-      case "$D":
-        if (!movie.getDirectors().isEmpty()) {
-          ret = movie.getDirectors().get(0).getName();
-        }
-        break;
-      case "$R":
-        ret = mf.getVideoResolution();
-        break;
-      case "$3":
-        if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
-          ret = mf.getVideo3DFormat();
-        }
-        else if (movie.isVideoIn3D()) { // no MI info, but flag set from user
-          ret = "3D";
-        }
-        break;
-      case "$A":
-        ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
-        break;
-      case "$V":
-        ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
-        break;
-      case "$F":
-        ret = mf.getVideoFormat();
-        break;
-      case "$S":
-        if (movie.getMediaSource() != MediaSource.UNKNOWN) {
-          ret = movie.getMediaSource().toString();
-        }
-        break;
-      case "$#":
-        if (movie.getRating() > 0) {
-          ret = String.valueOf(movie.getRating());
-        }
-        break;
-      case "$K":
-        if (!movie.getTags().isEmpty()) {
-          ret = movie.getTags().get(0);
-        }
-      default:
-        break;
+    catch (Exception e) {
+      LOGGER.warn("unable to process token: " + token);
+      return token;
     }
-
-    return ret;
+    // String ret = "";
+    // MediaFile mf = new MediaFile();
+    // if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+    // mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
+    // }
+    // switch (token.toUpperCase(Locale.ROOT)) {
+    // case "$T":
+    // ret = movie.getTitle();
+    // break;
+    // case "$1":
+    // ret = getFirstAlphaNum(movie.getTitle());
+    // break;
+    // case "$2":
+    // ret = getFirstAlphaNum(movie.getTitleSortable());
+    // break;
+    // case "$Y":
+    // ret = movie.getYear() == 0 ? "" : Integer.toString(movie.getYear());
+    // break;
+    // case "$O":
+    // ret = movie.getOriginalTitle();
+    // break;
+    // case "$M":
+    // if (movie.getMovieSet() != null
+    // && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
+    // ret = movie.getMovieSet().getTitleSortable();
+    // }
+    // break;
+    // case "$N":
+    // if (movie.getMovieSet() != null
+    // && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
+    // ret = movie.getMovieSet().getTitle();
+    // }
+    // break;
+    // case "$I":
+    // ret = movie.getImdbId();
+    // break;
+    // case "$E":
+    // ret = movie.getTitleSortable();
+    // break;
+    // case "$L":
+    // ret = movie.getSpokenLanguages();
+    // break;
+    // case "$C":
+    // if (movie.getCertification() != Certification.NOT_RATED) {
+    // ret = movie.getCertification().getName();
+    // }
+    // break;
+    // case "$U":
+    // if (movie.getEdition() != MovieEdition.NONE) {
+    // ret = movie.getEditionAsString();
+    // }
+    // break;
+    // case "$G":
+    // if (!movie.getGenres().isEmpty()) {
+    // MediaGenres genre = movie.getGenres().get(0);
+    // ret = genre.getLocalizedName();
+    // }
+    // break;
+    // case "$D":
+    // if (!movie.getDirectors().isEmpty()) {
+    // ret = movie.getDirectors().get(0).getName();
+    // }
+    // break;
+    // case "$R":
+    // ret = mf.getVideoResolution();
+    // break;
+    // case "$3":
+    // if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
+    // ret = mf.getVideo3DFormat();
+    // }
+    // else if (movie.isVideoIn3D()) { // no MI info, but flag set from user
+    // ret = "3D";
+    // }
+    // break;
+    // case "$A":
+    // ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
+    // break;
+    // case "$V":
+    // ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
+    // break;
+    // case "$F":
+    // ret = mf.getVideoFormat();
+    // break;
+    // case "$S":
+    // if (movie.getMediaSource() != MediaSource.UNKNOWN) {
+    // ret = movie.getMediaSource().toString();
+    // }
+    // break;
+    // case "$#":
+    // if (movie.getRating() > 0) {
+    // ret = String.valueOf(movie.getRating());
+    // }
+    // break;
+    // case "$K":
+    // if (!movie.getTags().isEmpty()) {
+    // ret = movie.getTags().get(0);
+    // }
+    // default:
+    // break;
+    // }
+    //
+    // return ret;
   }
 
   /**
@@ -1140,15 +1225,17 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestination(String template, Movie movie, boolean forFilename) {
-    String newDestination = template;
 
-    // replace all $x parameters
-    Pattern p = Pattern.compile("(\\$[\\w#])"); // # is for rating
-    Matcher m = p.matcher(template);
-    while (m.find()) {
-      String value = getTokenValue(movie, m.group(1));
-      newDestination = replaceToken(newDestination, m.group(1), value);
-    }
+    String newDestination = getTokenValue(movie, template);
+    // String newDestination = template;
+    //
+    // // replace all $x parameters
+    // Pattern p = Pattern.compile("(\\$[\\w#])"); // # is for rating
+    // Matcher m = p.matcher(template);
+    // while (m.find()) {
+    // String value = getTokenValue(movie, m.group(1));
+    // newDestination = replaceToken(newDestination, m.group(1), value);
+    // }
 
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
@@ -1308,7 +1395,8 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    if (((pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) && pattern.contains("$Y")) || pattern.contains("$I")) {
+    if (((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
+        && pattern.contains("${year}")) || pattern.contains("${imdb}")) {
       return true;
     }
     return false;
@@ -1316,15 +1404,15 @@ public class MovieRenamer {
 
   /**
    * Check if the FILE rename pattern is valid<br>
-   * What means, pattern has at least title set ($T|$E|$O)<br>
+   * What means, pattern has at least title set (${title}|${originalTitle}|${titleSortable})<br>
    * "empty" is considered as invalid - so not renaming files
    * 
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename().toUpperCase(Locale.ROOT).trim();
+    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
 
-    if (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) {
+    if (pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}")) {
       return true;
     }
     return false;

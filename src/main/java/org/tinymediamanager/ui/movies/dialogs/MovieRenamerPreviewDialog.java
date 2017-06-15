@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,7 +29,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -49,14 +47,9 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieComparator;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -66,51 +59,50 @@ import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
- * The class RenamerPreviewDialog. generate a preview which movies have to be renamed.
+ * The class MovieRenamerPreviewDialog. generate a preview which movies have to be renamed.
  * 
  * @author Manuel Laggner
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
-  private static final long                                    serialVersionUID = -8162631708278089277L;
+  private static final long                       serialVersionUID = -8162631708278089277L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private EventList<MovieRenamerPreviewContainer>              results;
-  private DefaultEventTableModel<MovieRenamerPreviewContainer> movieTableModel;
-  private ResultSelectionModel                                 resultSelectionModel;
-  private EventList<MediaFileContainer>                        oldMediaFileEventList;
-  private EventList<MediaFileContainer>                        newMediaFileEventList;
+  private EventList<MovieRenamerPreviewContainer> results;
+  private ResultSelectionModel                    resultSelectionModel;
+  private EventList<MediaFileContainer>           oldMediaFileEventList;
+  private EventList<MediaFileContainer>           newMediaFileEventList;
 
   /** UI components */
-  private JTable                                               tableMovies;
-  private JLabel                                               lblTitle;
-  private JLabel                                               lblDatasource;
-  private JLabel                                               lblFolderOld;
-  private JLabel                                               lblFolderNew;
-  private JTable                                               tableMediaFilesNew;
-  private JTable                                               tableMediaFilesOld;
+  private TmmTable                                tableMovies;
+  private JLabel                                  lblTitle;
+  private JLabel                                  lblDatasource;
+  private JLabel                                  lblFolderOld;
+  private JLabel                                  lblFolderNew;
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
     setBounds(5, 5, 950, 700);
+    oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
+    newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
 
     results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<MovieRenamerPreviewContainer>()));
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(
-          new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-              new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(new MigLayout("", "[800lp,grow]", "[400lp,grow]"));
       {
         JSplitPane splitPane = new JSplitPane();
         splitPane.setContinuousLayout(true);
-        splitPane.setResizeWeight(0.2);
-        panelContent.add(splitPane, "2, 2, fill, fill");
+        splitPane.setResizeWeight(0.4);
+        panelContent.add(splitPane, "cell 0 0,grow");
         {
-          movieTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results), new ResultTableFormat());
-          tableMovies = new ZebraJTable(movieTableModel);
+          DefaultEventTableModel<MovieRenamerPreviewContainer> movieTableModel = new DefaultEventTableModel<>(
+              GlazedListsSwing.swingThreadProxyList(results), new ResultTableFormat());
+          tableMovies = new TmmTable(movieTableModel);
 
           DefaultEventSelectionModel<MovieRenamerPreviewContainer> tableSelectionModel = new DefaultEventSelectionModel<>(results);
           resultSelectionModel = new ResultSelectionModel();
@@ -129,81 +121,74 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             }
           });
 
-          JScrollPane scrollPaneMovies = ZebraJTable.createStripedJScrollPane(tableMovies);
-          scrollPaneMovies.setViewportView(tableMovies);
+          JScrollPane scrollPaneMovies = new JScrollPane(tableMovies);
+          tableMovies.configureScrollPane(scrollPaneMovies);
           splitPane.setLeftComponent(scrollPaneMovies);
-          scrollPaneMovies.setMinimumSize(new Dimension(200, 200));
-
         }
         {
           JPanel panelDetails = new JPanel();
           splitPane.setRightComponent(panelDetails);
-          panelDetails.setLayout(new FormLayout(
-              new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-                  ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-              new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-                  FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-                  FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("6dlu"), RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+          panelDetails.setLayout(new MigLayout("", "[][][grow]", "[][][][][][][][grow]"));
           {
             lblTitle = new JLabel("");
             TmmFontHelper.changeFont(lblTitle, 1.33, Font.BOLD);
-            panelDetails.add(lblTitle, "2, 2, 3, 1");
+            panelDetails.add(lblTitle, "cell 0 0 3 1,growx");
           }
           {
             JLabel lblDatasourceT = new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
-            panelDetails.add(lblDatasourceT, "2, 4");
+            TmmFontHelper.changeFont(lblDatasourceT, Font.BOLD);
+            panelDetails.add(lblDatasourceT, "cell 0 2,alignx right");
+
             lblDatasource = new JLabel("");
-            panelDetails.add(lblDatasource, "4, 4");
+            panelDetails.add(lblDatasource, "cell 2 2,growx,aligny center");
           }
           {
             JLabel lblFolderOldT = new JLabel(BUNDLE.getString("renamer.oldfolder")); //$NON-NLS-1$
-            panelDetails.add(lblFolderOldT, "2, 6");
-          }
-          {
+            TmmFontHelper.changeFont(lblFolderOldT, Font.BOLD);
+            panelDetails.add(lblFolderOldT, "cell 0 4,alignx right");
+
             lblFolderOld = new JLabel("");
-            panelDetails.add(lblFolderOld, "4, 6");
+            panelDetails.add(lblFolderOld, "cell 2 4,growx,aligny center");
           }
           {
             JLabel lblFolderNewT = new JLabel(BUNDLE.getString("renamer.newfolder")); //$NON-NLS-1$
-            panelDetails.add(lblFolderNewT, "2, 8");
-          }
-          {
+            TmmFontHelper.changeFont(lblFolderNewT, Font.BOLD);
+            panelDetails.add(lblFolderNewT, "cell 0 5,alignx right");
+
             lblFolderNew = new JLabel("");
-            panelDetails.add(lblFolderNew, "4, 8");
+            panelDetails.add(lblFolderNew, "cell 2 5,growx,aligny center");
           }
           {
             JPanel panelMediaFiles = new JPanel();
-            panelDetails.add(panelMediaFiles, "2, 10, 3, 1, fill, fill");
-            panelMediaFiles.setLayout(new FormLayout(
-                new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-                new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+            panelDetails.add(panelMediaFiles, "cell 0 7 3 1,grow");
+            panelMediaFiles.setLayout(new MigLayout("", "[grow][grow]", "[15px][grow]"));
             {
-              JLabel lblOldfiles = new JLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
-              panelMediaFiles.add(lblOldfiles, "1, 1, default, default");
-              JLabel lblNewfiles = new JLabel(BUNDLE.getString("renamer.newfiles")); //$NON-NLS-1$
-              panelMediaFiles.add(lblNewfiles, "3, 1, default, default");
+              JLabel lblOldfilesT = new JLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
+              TmmFontHelper.changeFont(lblOldfilesT, Font.BOLD);
+              panelMediaFiles.add(lblOldfilesT, "cell 0 0,alignx center");
+
+              JLabel lblNewfilesT = new JLabel(BUNDLE.getString("renamer.newfiles")); //$NON-NLS-1$
+              TmmFontHelper.changeFont(lblNewfilesT, Font.BOLD);
+              panelMediaFiles.add(lblNewfilesT, "cell 1 0,alignx center");
             }
             {
-              oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
               DefaultEventTableModel<MediaFileContainer> oldMediaFileTableModel = new DefaultEventTableModel<>(
                   GlazedListsSwing.swingThreadProxyList(oldMediaFileEventList), new MediaFileTableFormat());
-              tableMediaFilesOld = new ZebraJTable(oldMediaFileTableModel);
-              JScrollPane scrollPaneMediaFilesOld = ZebraJTable.createStripedJScrollPane(tableMediaFilesOld);
-              panelMediaFiles.add(scrollPaneMediaFilesOld, "1, 3, fill, fill");
-              scrollPaneMediaFilesOld.setViewportView(tableMediaFilesOld);
-
-              tableMediaFilesOld.getColumnModel().getColumn(0).setMaxWidth(25);
+              TmmTable tableMediaFilesOld = new TmmTable(oldMediaFileTableModel);
+              JScrollPane scrollPaneMediaFilesOld = new JScrollPane(tableMediaFilesOld);
+              tableMediaFilesOld.configureScrollPane(scrollPaneMediaFilesOld);
+              panelMediaFiles.add(scrollPaneMediaFilesOld, "cell 0 1,grow");
+              tableMediaFilesOld.getColumnModel().getColumn(0).setMaxWidth(40);
             }
             {
-              newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
+
               DefaultEventTableModel<MediaFileContainer> newMediaFileTableModel = new DefaultEventTableModel<>(
                   GlazedListsSwing.swingThreadProxyList(newMediaFileEventList), new MediaFileTableFormat());
-              tableMediaFilesNew = new ZebraJTable(newMediaFileTableModel);
-              JScrollPane scrollPaneMediaFilesNew = ZebraJTable.createStripedJScrollPane(tableMediaFilesNew);
-              panelMediaFiles.add(scrollPaneMediaFilesNew, "3, 3, fill, fill");
-              scrollPaneMediaFilesNew.setViewportView(tableMediaFilesNew);
-
-              tableMediaFilesNew.getColumnModel().getColumn(0).setMaxWidth(25);
+              TmmTable tableMediaFilesNew = new TmmTable(newMediaFileTableModel);
+              JScrollPane scrollPaneMediaFilesNew = new JScrollPane(tableMediaFilesNew);
+              tableMediaFilesNew.configureScrollPane(scrollPaneMediaFilesNew);
+              panelMediaFiles.add(scrollPaneMediaFilesNew, "cell 1 1,grow");
+              tableMediaFilesNew.getColumnModel().getColumn(0).setMaxWidth(40);
             }
           }
         }
@@ -232,9 +217,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
           }
           else {
-            for (MovieRenamerPreviewContainer result : selectedResults) {
-              results.remove(result);
-            }
+            results.removeAll(selectedResults);
           }
         });
         panelButtons.add(btnRename);
@@ -402,7 +385,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           }
 
           if (!found) {
-            container.icon = IconManager.REMOVE_INV;
+            container.icon = IconManager.REMOVE;
           }
           oldMediaFileEventList.add(container);
         }
@@ -422,7 +405,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           }
 
           if (!found) {
-            container.icon = IconManager.ADD_INV;
+            container.icon = IconManager.ADD;
           }
           newMediaFileEventList.add(container);
         }

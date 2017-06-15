@@ -579,7 +579,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       chckbxClearlogo1 = new JCheckBox("<dynamic>-clearlogo.ext");
       panelExtraArtwork.add(chckbxClearlogo1, "cell 2 5");
 
-      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("mediafiletype.discart"));//$NON-NLS-1$
+      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("mediafiletype.disc"));//$NON-NLS-1$
       panelExtraArtwork.add(lblDiscartNamingT, "cell 0 6");
 
       chckbxDiscart2 = new JCheckBox("disc.ext");

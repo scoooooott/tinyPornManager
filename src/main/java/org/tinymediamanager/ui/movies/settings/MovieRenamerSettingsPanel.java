@@ -94,7 +94,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private ActionListener                 actionCreateRenamerExample = e -> createRenamerExample();
   private TmmTable                       tableExamples;
-  private JLabel                         lblMMDWarning;
+  private JTextPane                      tpMMDWarning;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -157,130 +157,129 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     chckbxSpaceSubstitution.addActionListener(actionCreateRenamerExample);
 
     // examples
-    exampleEventList.add(new MovieRenamerExample("$T"));
-    exampleEventList.add(new MovieRenamerExample("$O"));
-    exampleEventList.add(new MovieRenamerExample("$1"));
-    exampleEventList.add(new MovieRenamerExample("$E"));
-    exampleEventList.add(new MovieRenamerExample("$2"));
-    exampleEventList.add(new MovieRenamerExample("$Y"));
-    exampleEventList.add(new MovieRenamerExample("$M"));
-    exampleEventList.add(new MovieRenamerExample("$N"));
-    exampleEventList.add(new MovieRenamerExample("$I"));
-    exampleEventList.add(new MovieRenamerExample("$C"));
-    exampleEventList.add(new MovieRenamerExample("$D"));
-    exampleEventList.add(new MovieRenamerExample("$G"));
-    exampleEventList.add(new MovieRenamerExample("$L"));
-    exampleEventList.add(new MovieRenamerExample("$R"));
-    exampleEventList.add(new MovieRenamerExample("$A"));
-    exampleEventList.add(new MovieRenamerExample("$V"));
-    exampleEventList.add(new MovieRenamerExample("$F"));
-    exampleEventList.add(new MovieRenamerExample("$S"));
-    exampleEventList.add(new MovieRenamerExample("$#"));
-    exampleEventList.add(new MovieRenamerExample("$3"));
-    exampleEventList.add(new MovieRenamerExample("$U"));
-    exampleEventList.add(new MovieRenamerExample("$K"));
+    exampleEventList.add(new MovieRenamerExample("${title}"));
+    exampleEventList.add(new MovieRenamerExample("${originalTitle}"));
+    exampleEventList.add(new MovieRenamerExample("${title[0]}"));
+    exampleEventList.add(new MovieRenamerExample("${title[0,2]}"));
+    exampleEventList.add(new MovieRenamerExample("${titleSortable}"));
+    exampleEventList.add(new MovieRenamerExample("${year}"));
+    exampleEventList.add(new MovieRenamerExample("${movieSet.title}"));
+    exampleEventList.add(new MovieRenamerExample("${movieSet.titleSortable}"));
+    exampleEventList.add(new MovieRenamerExample("${imdb}"));
+    exampleEventList.add(new MovieRenamerExample("${certification}"));
+    exampleEventList.add(new MovieRenamerExample("${directors[0].name}"));
+    exampleEventList.add(new MovieRenamerExample("${genres[0].name}"));
+    exampleEventList.add(new MovieRenamerExample("${tags[0]}"));
+    exampleEventList.add(new MovieRenamerExample("${language}"));
+    exampleEventList.add(new MovieRenamerExample("${videoResolution}"));
+    exampleEventList.add(new MovieRenamerExample("${videoCodec}"));
+    exampleEventList.add(new MovieRenamerExample("${videoFormat}"));
+    exampleEventList.add(new MovieRenamerExample("${audioCodec}"));
+    exampleEventList.add(new MovieRenamerExample("${audioChannels}"));
+    exampleEventList.add(new MovieRenamerExample("${mediaSource}"));
+    exampleEventList.add(new MovieRenamerExample("${3Dformat}"));
+    exampleEventList.add(new MovieRenamerExample("${edition}"));
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][20lp][][200lp,grow]", "[][][][][][][][15lp][][][][][20lp][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][400lp:500lp:500lp][10lp:10lp,grow]", "[][][][][][][][15lp][][][][][][20lp][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.movie.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
-      add(lblPatternAndOptionsT, "cell 0 0 6 1");
+      add(lblPatternAndOptionsT, "cell 0 0 3 1");
     }
     {
       JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
       add(lblMoviePath, "flowx,cell 1 1,alignx right");
 
       tfMoviePath = new JTextField();
-      tfMoviePath.setColumns(20);
-      add(tfMoviePath, "cell 2 1");
+      add(tfMoviePath, "cell 2 1,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 2,alignx right,aligny top");
+      add(lblDefault, "flowx,cell 1 2,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFolderPattern = new JLabel(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(lblDefaultFolderPattern, "cell 2 2,aligny top");
-      TmmFontHelper.changeFont(lblDefaultFolderPattern, 0.833);
-    }
-    {
-      JTextPane tpChooseAFolder = new JTextPane();
-      add(tpChooseAFolder, "cell 4 1 2 2,aligny top");
-      tpChooseAFolder.setOpaque(false);
-      tpChooseAFolder.setEditable(false);
-      TmmFontHelper.changeFont(tpChooseAFolder, 0.833);
-      tpChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
+      JTextPane tpDefaultFolderPattern = new JTextPane();
+      tpDefaultFolderPattern.setText(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+      tpDefaultFolderPattern.setEditable(false);
+      tpDefaultFolderPattern.setOpaque(false);
+      add(tpDefaultFolderPattern, "cell 2 2");
+      TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
     }
     {
       JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
       add(lblMovieFilename, "cell 1 3,alignx right");
 
       tfMovieFilename = new JTextField();
-      tfMovieFilename.setColumns(20);
-      add(tfMovieFilename, "cell 2 3");
+      add(tfMovieFilename, "cell 2 3,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "cell 1 4,alignx right,aligny top");
+      add(lblDefault, "cell 1 4,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFilePattern = new JLabel(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(lblDefaultFilePattern, "cell 2 4,aligny top");
-      TmmFontHelper.changeFont(lblDefaultFilePattern, 0.833);
+      JTextPane tpDefaultFilePattern = new JTextPane();
+      tpDefaultFilePattern.setText(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
+      tpDefaultFilePattern.setEditable(false);
+      tpDefaultFilePattern.setOpaque(false);
+      add(tpDefaultFilePattern, "cell 2 4");
+      TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
     }
     {
-      JTextPane tpOptional = new JTextPane();
-      add(tpOptional, "cell 2 5 4 1,aligny top");
-      tpOptional.setOpaque(false);
-      tpOptional.setEditable(false);
-      TmmFontHelper.changeFont(tpOptional, 0.833);
-      tpOptional.setText(BUNDLE.getString("Settings.movie.renamer.optional")); //$NON-NLS-1$
+      JTextPane tpChooseAFolder = new JTextPane();
+      add(tpChooseAFolder, "cell 2 5");
+      tpChooseAFolder.setOpaque(false);
+      tpChooseAFolder.setEditable(false);
+      TmmFontHelper.changeFont(tpChooseAFolder, 0.833);
+      tpChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     }
     {
-      lblMMDWarning = new JLabel(BUNDLE.getString("Settings.renamer.folder.warning"));
-      add(lblMMDWarning, "cell 1 6 5 1,alignx left,aligny top");
+      tpMMDWarning = new JTextPane();
+      tpMMDWarning.setText(BUNDLE.getString("Settings.renamer.folder.warning"));
+      tpMMDWarning.setOpaque(false);
+      tpMMDWarning.setEditable(false);
+      add(tpMMDWarning, "cell 1 6 2 1,growx");
     }
     {
       chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
       add(chckbxSpaceSubstitution, "flowx,cell 1 8 2 1");
 
       cbSeparator = new JComboBox(separators.toArray());
-      add(cbSeparator, "cell 1 8 2 1");
+      add(cbSeparator, "cell 1 8 3 1");
     }
     {
       chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
-      add(chckbxAsciiReplacement, "flowx,cell 1 9 5 1");
-
-      JTextPane tpAsciiHint = new JTextPane();
-      add(tpAsciiHint, "cell 1 9 5 1,aligny top");
-      tpAsciiHint.setOpaque(false);
-      tpAsciiHint.setEditable(false);
-      tpAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(tpAsciiHint, 0.833);
+      add(chckbxAsciiReplacement, "flowx,cell 1 9 3 1");
     }
+
+    JTextPane tpAsciiHint = new JTextPane();
+    add(tpAsciiHint, "cell 2 10 2 1,aligny top");
+    tpAsciiHint.setOpaque(false);
+    tpAsciiHint.setEditable(false);
+    tpAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(tpAsciiHint, 0.833);
     {
       chckbxMoviesetSingleMovie = new JCheckBox(BUNDLE.getString("Settings.renamer.moviesetsinglemovie")); //$NON-NLS-1$
-      add(chckbxMoviesetSingleMovie, "cell 1 10 5 1");
+      add(chckbxMoviesetSingleMovie, "cell 1 11 3 1");
     }
     {
       chckbxRemoveOtherNfos = new JCheckBox(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
-      add(chckbxRemoveOtherNfos, "cell 1 11 5 1");
+      add(chckbxRemoveOtherNfos, "cell 1 12 2 1");
     }
 
     {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 13 6 1");
+      add(lblExampleT, "cell 0 14 3 1");
     }
     {
       JLabel lblExampleT = new JLabel(BUNDLE.getString("tmm.movie")); //$NON-NLS-1$
-      add(lblExampleT, "flowx,cell 1 14 5 1");
+      add(lblExampleT, "flowx,cell 1 15 3 1");
 
       cbMovieForPreview = new JComboBox();
-      add(cbMovieForPreview, "cell 1 14 5 1");
+      add(cbMovieForPreview, "cell 1 15 3 1");
 
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 15 5 1");
+      add(lblExample, "cell 1 16 3 1");
       TmmFontHelper.changeFont(lblExample, 0.916, Font.BOLD);
 
       DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
@@ -288,7 +287,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       tableExamples = new TmmTable(exampleTableModel);
       JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
       tableExamples.configureScrollPane(scrollPaneExamples);
-      add(scrollPaneExamples, "cell 1 16 5 1,grow");
+      add(scrollPaneExamples, "cell 1 17 3 1,grow");
     }
   }
 
@@ -308,11 +307,11 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
     // empty is valid (although not unique)
     if (!tfMoviePath.getText().isEmpty() && !MovieRenamer.isFolderPatternUnique(tfMoviePath.getText())) {
-      lblMMDWarning.setText(BUNDLE.getString("Settings.renamer.folder.warning")); //$NON-NLS-1$
-      lblMMDWarning.setForeground(Color.red);
+      tpMMDWarning.setText(BUNDLE.getString("Settings.renamer.folder.warning")); //$NON-NLS-1$
+      tpMMDWarning.setForeground(Color.red);
     }
     else {
-      lblMMDWarning.setText("");
+      tpMMDWarning.setText("");
     }
 
     if (cbMovieForPreview.getSelectedItem() instanceof MoviePreviewContainer) {
@@ -489,25 +488,25 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSettings, String> settingsBeanProperty_11 = BeanProperty.create("movieRenamerPathname");
+    BeanProperty<MovieSettings, String> settingsBeanProperty_11 = BeanProperty.create("renamerPathname");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
     AutoBinding<MovieSettings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, tfMoviePath, jTextFieldBeanProperty_3);
     autoBinding_10.bind();
     //
-    BeanProperty<MovieSettings, String> settingsBeanProperty_12 = BeanProperty.create("movieRenamerFilename");
+    BeanProperty<MovieSettings, String> settingsBeanProperty_12 = BeanProperty.create("renamerFilename");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
     AutoBinding<MovieSettings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
     //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("movieRenamerSpaceSubstitution");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("renamerSpaceSubstitution");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxSpaceSubstitution, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieRenamerNfoCleanup");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("renamerNfoCleanup");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
     autoBinding_1.bind();

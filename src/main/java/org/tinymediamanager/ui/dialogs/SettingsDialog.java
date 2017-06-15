@@ -121,7 +121,7 @@ public class SettingsDialog extends TmmDialog {
 
       JPanel panelLeft = new JPanel();
       splitPane.setLeftComponent(panelLeft);
-      panelLeft.setLayout(new MigLayout("", "[200lp,grow]", "[][600lp,grow]"));
+      panelLeft.setLayout(new MigLayout("", "[200lp:200lp,grow]", "[][600lp,grow]"));
       {
         tfFilter = new TmmTreeTextFilter<>();
         panelLeft.add(tfFilter, "cell 0 0,grow");
@@ -136,8 +136,9 @@ public class SettingsDialog extends TmmDialog {
 
       JPanel panelRight = new JPanel();
       splitPane.setRightComponent(panelRight);
-      panelRight.setLayout(new MigLayout("", "[800lp,grow]", "[500lp,grow]"));
+      panelRight.setLayout(new MigLayout("", "[700lp:800lp,grow]", "[500lp,grow]"));
       scrollPaneRight = new JScrollPane();
+      scrollPaneRight.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       panelRight.add(scrollPaneRight, "cell 0 0,grow");
     }
     {

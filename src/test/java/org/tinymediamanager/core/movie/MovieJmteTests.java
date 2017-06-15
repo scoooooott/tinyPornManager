@@ -17,13 +17,12 @@
 package org.tinymediamanager.core.movie;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.tinymediamanager.core.movie.MovieRenamer.morphTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
@@ -52,34 +51,7 @@ public class MovieJmteTests {
 
   @BeforeClass
   public static void init() {
-    TOKEN_MAP.put("title", "movie.title");
-    TOKEN_MAP.put("originalTitle", "movie.originalTitle");
-    TOKEN_MAP.put("sorttitle", "movie.sortTitle");
-    TOKEN_MAP.put("year", "movie.year");
-    TOKEN_MAP.put("releaseDate", "movie.releaseDate;date(yyyy-MM-dd)");
-    TOKEN_MAP.put("titleSortable", "movie.titleSortable");
-    TOKEN_MAP.put("rating", "movie.rating");
-    TOKEN_MAP.put("movieset", "movie.movieSet");
-    TOKEN_MAP.put("imdb", "movie.imdbId");
-    TOKEN_MAP.put("certification", "movie.certification");
-    TOKEN_MAP.put("language", "movie.spokenLanguages");
-
-    TOKEN_MAP.put("genres", "movie.genres");
-    TOKEN_MAP.put("tags", "movie.tags");
-    TOKEN_MAP.put("actors", "movie.actors");
-    TOKEN_MAP.put("producers", "movie.producers");
-    TOKEN_MAP.put("directors", "movie.directors");
-    TOKEN_MAP.put("writers", "movie.writers");
-
-    TOKEN_MAP.put("videoCodec", "movie.mediaInfoVideoCodec");
-    TOKEN_MAP.put("videoFormat", "movie.mediaInfoVideoFormat");
-    TOKEN_MAP.put("videoResolution", "movie.mediaInfoVideoResolution");
-    TOKEN_MAP.put("audioCodec", "movie.mediaInfoAudioCodec");
-    TOKEN_MAP.put("audioChannels", "movie.mediaInfoAudioChannels");
-    TOKEN_MAP.put("3Dformat", "movie.video3DFormat");
-
-    TOKEN_MAP.put("mediaSource", "movie.mediaSource");
-    TOKEN_MAP.put("edition", "movie.edition");
+    TOKEN_MAP.putAll(MovieRenamer.TOKEN_MAP);
   }
 
   @Test
@@ -142,6 +114,10 @@ public class MovieJmteTests {
 
       // test empty brackets
       compare("{ ${tags[100]} }", "{  }");
+
+      // test conditional output
+      compare("${- ,edition,}", "- Director's Cut");
+      // compare("${- ,edition[0,2],}", "- Di"); // does not work at the moment in JMTE
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -152,18 +128,6 @@ public class MovieJmteTests {
   private void compare(String template, String expectedValue) {
     String actualValue = engine.transform(morphTemplate(template), root);
     assertThat(actualValue).isEqualTo(expectedValue);
-  }
-
-  private String morphTemplate(String template) {
-    String morphedTemplate = template;
-    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
-      Pattern pattern = Pattern.compile("\\$\\{" + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
-      Matcher matcher = pattern.matcher(template);
-      while (matcher.find()) {
-        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + entry.getValue() + matcher.group(1));
-      }
-    }
-    return morphedTemplate;
   }
 
   private Movie createMovie() throws Exception {
