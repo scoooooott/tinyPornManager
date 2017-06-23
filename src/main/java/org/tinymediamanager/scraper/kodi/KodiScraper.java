@@ -277,6 +277,12 @@ public class KodiScraper implements IMediaProvider {
       if (logo.exists()) {
         providerInfo.setProviderLogo(logo.toURI().toURL());
       }
+      else { // new http://kodi.wiki/view/Add-on_structure#Kodi_v17_Krypton_and_up
+        logo = new File(scraperFolder, "resources/icon.png");
+        if (logo.exists()) {
+          providerInfo.setProviderLogo(logo.toURI().toURL());
+        }
+      }
     }
     catch (IOException e) {
       e.printStackTrace();
