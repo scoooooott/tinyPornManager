@@ -232,6 +232,7 @@ public class BasicTest {
     // EP MF poster
     mf = new MediaFile(Paths.get("target/test-classes/dummy-poster.jpg"), MediaFileType.THUMB);
     episode.addToMediaFiles(mf);
+    episode.saveToDb();
 
     tvShow.addEpisode(episode);
     // ========= EPISODE end =========

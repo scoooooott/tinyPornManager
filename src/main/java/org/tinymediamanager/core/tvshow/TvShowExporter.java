@@ -215,11 +215,63 @@ public class TvShowExporter extends MediaEntityExporter {
 
     @Override
     public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      if (pattern != null) {
+        parameters = parseParameters(pattern);
+      }
       if (o instanceof TvShow) {
         TvShow show = (TvShow) o;
-        return TvShowRenamer.getTvShowFoldername(show);
+        String filename = getFilename(show);
+        if (parameters.get("escape") == Boolean.TRUE) {
+          try {
+            filename = URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+          }
+          catch (Exception ignored) {
+          }
+        }
+        return filename;
       }
       return null;
+    }
+
+    /**
+     * parse the parameters out of the parameters string
+     *
+     * @param parameters
+     *          the parameters as string
+     * @return a map containing all parameters
+     */
+    private Map<String, Object> parseParameters(String parameters) {
+      Map<String, Object> parameterMap = new HashMap<>();
+
+      String[] details = parameters.split(",");
+      for (int x = 0; x < details.length; x++) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = details[x].split("=");
+          key = d[0].trim();
+          value = d[1].trim();
+        }
+        catch (Exception e) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase(Locale.ROOT)) {
+          case "escape":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return parameterMap;
+
     }
   }
 
