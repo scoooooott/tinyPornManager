@@ -1353,7 +1353,11 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             return CONTINUE; // BD folder has an additional parent video folder
                              // - ignore it here
           }
-          videofolders.add(file.getParent());
+          // check if file is a VIDEO type - only scan those folders (and not extras/trailer folders)!
+          MediaFile mf = new MediaFile(file);
+          if (mf.getType() == MediaFileType.VIDEO) {
+            videofolders.add(file.getParent());
+          }
         }
       }
       return CONTINUE;
@@ -1394,6 +1398,21 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
         if (update) {
           // this.videofolders.remove(dir);
+
+          // check if any existing movie has already the same (sub)dir
+          // IF we already have a movie a level deeper, we HAVE TO treat this folder as MMD!
+          // we always start to parse from deepest level down to root, so they should be all already populated
+          for (Path sub : this.videofolders) {
+            if (sub.equals(dir)) {
+              continue; // don't check ourself ;)
+            }
+            if (sub.startsWith(dir)) {
+              // ka-ching! parse this now as MMD and return
+              List<Path> rootFiles = listFilesOnly(dir); // get all files and dirs
+              submitTask(new parseMultiMovieDirTask(datasource.toAbsolutePath(), dir, rootFiles));
+              return CONTINUE;
+            }
+          }
           submitTask(new FindMovieTask(dir, datasource));
         }
       }
