@@ -123,7 +123,7 @@ public class MovieRenamer {
    *          the given template
    * @return the JMTE compatible template
    */
-  public static String morphTemplate(String template) {
+  static String morphTemplate(String template) {
     String morphedTemplate = template;
     // replace normal template entries
     for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {

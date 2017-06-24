@@ -35,6 +35,7 @@ import static org.tinymediamanager.core.Constants.SEASON_POSTER;
 import static org.tinymediamanager.core.Constants.TAG;
 import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TVDB;
 import static org.tinymediamanager.core.Constants.TV_SHOW;
 import static org.tinymediamanager.core.Constants.WATCHED;
@@ -144,6 +145,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private List<String>                       tags                  = new CopyOnWriteArrayList<>();
 
   private TvShow                             tvShow                = null;
+  private String                             titleSortable         = "";
   private Date                               lastWatched           = null;
   private boolean                            dummy                 = false;
 
@@ -290,6 +292,23 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     for (Person writer : source.getWriters()) {
       writers.add(new Person(writer));
     }
+  }
+
+  /**
+   * Returns the sortable variant of title<br>
+   * eg "The Luminous Fish Effect" -> "Luminous Fish Effect, The".
+   *
+   * @return the title in its sortable format
+   */
+  public String getTitleSortable() {
+    if (StringUtils.isBlank(titleSortable)) {
+      titleSortable = Utils.getSortableName(getTitle());
+    }
+    return titleSortable;
+  }
+
+  public void clearTitleSortable() {
+    titleSortable = "";
   }
 
   public Date getFirstAired() {
@@ -441,8 +460,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public void setTitle(String newValue) {
+    String oldValue = this.title;
     super.setTitle(newValue);
-    firePropertyChange(TITLE_FOR_UI, "", newValue);
+    firePropertyChange(TITLE_FOR_UI, oldValue, newValue);
+
+    oldValue = this.titleSortable;
+    titleSortable = "";
+    firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
   }
 
   public void setSeason(int newValue) {

@@ -725,6 +725,9 @@ public class TvShowList extends AbstractModelObject {
   public void invalidateTitleSortable() {
     for (TvShow tvShow : new ArrayList<>(tvShowList)) {
       tvShow.clearTitleSortable();
+      for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        episode.clearTitleSortable();
+      }
     }
   }
 

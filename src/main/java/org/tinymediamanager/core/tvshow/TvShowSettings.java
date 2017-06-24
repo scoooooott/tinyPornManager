@@ -59,9 +59,9 @@ public class TvShowSettings extends AbstractSettings {
   private static final Logger                  LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
 
   public final static String                   CONFIG_FILE                    = "tvShows.xml";
-  public final static String                   DEFAULT_RENAMER_FOLDER_PATTERN = "$N ($Y)";
-  public final static String                   DEFAULT_RENAMER_SEASON_PATTERN = "Season $1";
-  public final static String                   DEFAULT_RENAMER_FILE_PATTERN   = "$N - S$2E$E - $T";
+  public final static String                   DEFAULT_RENAMER_FOLDER_PATTERN = "${showTitle} (${showYear})";
+  public final static String                   DEFAULT_RENAMER_SEASON_PATTERN = "Season ${seasonNr}";
+  public final static String                   DEFAULT_RENAMER_FILE_PATTERN   = "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}";
 
   private static TvShowSettings                instance;
 

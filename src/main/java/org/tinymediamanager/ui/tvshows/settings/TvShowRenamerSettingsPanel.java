@@ -152,29 +152,37 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     }
 
     // examples
-    exampleEventList.add(new TvShowRenamerExample("$T"));
-    exampleEventList.add(new TvShowRenamerExample("$1"));
-    exampleEventList.add(new TvShowRenamerExample("$2"));
-    exampleEventList.add(new TvShowRenamerExample("$3"));
-    exampleEventList.add(new TvShowRenamerExample("$4"));
-    exampleEventList.add(new TvShowRenamerExample("$E"));
-    exampleEventList.add(new TvShowRenamerExample("$D"));
-    exampleEventList.add(new TvShowRenamerExample("$Y"));
-    exampleEventList.add(new TvShowRenamerExample("$N"));
-    exampleEventList.add(new TvShowRenamerExample("$M"));
-    exampleEventList.add(new TvShowRenamerExample("$R"));
-    exampleEventList.add(new TvShowRenamerExample("$A"));
-    exampleEventList.add(new TvShowRenamerExample("$V"));
-    exampleEventList.add(new TvShowRenamerExample("$F"));
-    exampleEventList.add(new TvShowRenamerExample("$S"));
+    exampleEventList.add(new TvShowRenamerExample("${title}"));
+    exampleEventList.add(new TvShowRenamerExample("${titleSortable}"));
+    exampleEventList.add(new TvShowRenamerExample("${seasonNr}"));
+    exampleEventList.add(new TvShowRenamerExample("${seasonNr2}"));
+    exampleEventList.add(new TvShowRenamerExample("${seasonNrDvd}"));
+    exampleEventList.add(new TvShowRenamerExample("${seasonNrDvd2}"));
+    exampleEventList.add(new TvShowRenamerExample("${episodeNr}"));
+    exampleEventList.add(new TvShowRenamerExample("${episodeNr2}"));
+    exampleEventList.add(new TvShowRenamerExample("${episodeNrDvd}"));
+    exampleEventList.add(new TvShowRenamerExample("${episodeNrDvd2}"));
+    exampleEventList.add(new TvShowRenamerExample("${airedDate}"));
+    exampleEventList.add(new TvShowRenamerExample("${year}"));
+    exampleEventList.add(new TvShowRenamerExample("${showYear}"));
+    exampleEventList.add(new TvShowRenamerExample("${showTitle}"));
+    exampleEventList.add(new TvShowRenamerExample("${showTitleSortable}"));
+    exampleEventList.add(new TvShowRenamerExample("${videoResolution}"));
+    exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
+    exampleEventList.add(new TvShowRenamerExample("${videoCodec}"));
+    exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioCodec}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioChannels}"));
+    exampleEventList.add(new TvShowRenamerExample("${mediaSource}"));
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][grow]", "[][][][][][][][20lp][][][][20lp][][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][400lp:500lp:500lp][10lp:10lp,grow]",
+        "[][][][][][][][20lp][][][][20lp][][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
-      add(lblPatternAndOptionsT, "cell 0 0 8 1");
+      add(lblPatternAndOptionsT, "cell 0 0 9 1");
     }
     {
       JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
@@ -182,14 +190,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       tfTvShowFolder = new JTextField();
       tfTvShowFolder.setColumns(20);
-      add(tfTvShowFolder, "cell 3 1");
+      add(tfTvShowFolder, "cell 3 1,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 2 2 1,alignx right,aligny top");
+      add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
       JLabel lblDefaultFolderPattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(lblDefaultFolderPattern, "cell 3 2,aligny top");
+      add(lblDefaultFolderPattern, "cell 3 2");
       TmmFontHelper.changeFont(lblDefaultFolderPattern, 0.833);
     }
     {
@@ -198,10 +206,10 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       tfSeasonFoldername = new JTextField();
       tfSeasonFoldername.setColumns(20);
-      add(tfSeasonFoldername, "cell 3 3");
+      add(tfSeasonFoldername, "cell 3 3,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 4 2 1,alignx right,aligny top");
+      add(lblDefault, "flowx,cell 1 4 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
       JLabel lblDefaultSeasonPattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
@@ -214,10 +222,10 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       tfEpisodeFilename = new JTextField();
       tfEpisodeFilename.setColumns(20);
-      add(tfEpisodeFilename, "cell 3 5");
+      add(tfEpisodeFilename, "cell 3 5,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 6 2 1,alignx right,aligny top");
+      add(lblDefault, "flowx,cell 1 6 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
       JLabel lblDefaultFilePattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
@@ -246,25 +254,19 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 12 5 1");
+      add(lblExampleT, "cell 0 12 6 1");
     }
     {
       JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-      add(lblExampleTvShowT, "cell 1 13 2 1");
-
-      cbTvShowForPreview = new JComboBox();
-      add(cbTvShowForPreview, "cell 3 13,growx");
+      add(lblExampleTvShowT, "flowx,cell 1 13 4 1");
     }
     {
       JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
-      add(lblExampleEpisodeT, "cell 1 14 2 1");
-
-      cbEpisodeForPreview = new JComboBox();
-      add(cbEpisodeForPreview, "cell 3 14,growx");
+      add(lblExampleEpisodeT, "flowx,cell 1 14 4 1");
     }
     {
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 15 3 1");
+      add(lblExample, "cell 1 15 4 1");
       TmmFontHelper.changeFont(lblExample, Font.BOLD);
     }
     {
@@ -274,9 +276,15 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       tableExamples = new TmmTable(exampleTableModel);
       JScrollPane scrollPane = new JScrollPane(tableExamples);
       tableExamples.configureScrollPane(scrollPane);
-      add(scrollPane, "cell 1 16 3 1,grow");
+      add(scrollPane, "cell 1 16 4 1,grow");
       scrollPane.setViewportView(tableExamples);
     }
+
+    cbTvShowForPreview = new JComboBox();
+    add(cbTvShowForPreview, "cell 1 13,growx");
+
+    cbEpisodeForPreview = new JComboBox();
+    add(cbEpisodeForPreview, "cell 1 14 2 1,growx");
   }
 
   @Override

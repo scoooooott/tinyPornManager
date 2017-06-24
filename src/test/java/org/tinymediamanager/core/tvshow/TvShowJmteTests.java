@@ -21,11 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.assertj.core.api.Assertions;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -43,37 +40,8 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import com.floreysoft.jmte.Engine;
 
 public class TvShowJmteTests {
-  private static Map<String, String> TOKEN_MAP = new HashMap<>();
   private Engine                     engine;
   private Map<String, Object>        root;
-
-  @BeforeClass
-  public static void init() {
-    // TV show tags
-    TOKEN_MAP.put("showTitle", "tvShow.title");
-    TOKEN_MAP.put("showTitleSortable", "tvShow.titleSortable");
-    TOKEN_MAP.put("showYear", "tvShow.year");
-
-    // episode tags
-    TOKEN_MAP.put("episodeNr", "episode.episode");
-    TOKEN_MAP.put("episodeNr2", "episode.episode;number(%02d)");
-    TOKEN_MAP.put("episodeNrDvd", "episode.dvdEpisode");
-    TOKEN_MAP.put("seasonNr", "episode.season");
-    TOKEN_MAP.put("seasonNr2", "episode.season;number(%02d)");
-    TOKEN_MAP.put("seasonNrDvd", "episode.dvdSeason");
-    TOKEN_MAP.put("title", "episode.title");
-    TOKEN_MAP.put("year", "episode.year");
-    TOKEN_MAP.put("airedDate", "episode.firstAired;date(yyyy-MM-dd)");
-
-    TOKEN_MAP.put("videoCodec", "episode.mediaInfoVideoCodec");
-    TOKEN_MAP.put("videoFormat", "episode.mediaInfoVideoFormat");
-    TOKEN_MAP.put("videoResolution", "episode.mediaInfoVideoResolution");
-    TOKEN_MAP.put("audioCodec", "episode.mediaInfoAudioCodec");
-    TOKEN_MAP.put("audioChannels", "episode.mediaInfoAudioChannels");
-    TOKEN_MAP.put("3Dformat", "episode.video3DFormat");
-
-    TOKEN_MAP.put("mediaSource", "episode.mediaSource");
-  }
 
   @Test
   public void testTvshowPatterns() {
@@ -161,20 +129,8 @@ public class TvShowJmteTests {
   }
 
   private void compare(String template, String expectedValue) {
-    String actualValue = engine.transform(morphTemplate(template), root);
+    String actualValue = engine.transform(TvShowRenamer.morphTemplate(template), root);
     assertThat(actualValue).isEqualTo(expectedValue);
-  }
-
-  private String morphTemplate(String template) {
-    String morphedTemplate = template;
-    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
-      Pattern pattern = Pattern.compile("\\$\\{" + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
-      Matcher matcher = pattern.matcher(template);
-      while (matcher.find()) {
-        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + entry.getValue() + matcher.group(1));
-      }
-    }
-    return morphedTemplate;
   }
 
   private TvShow createTvShow() throws Exception {

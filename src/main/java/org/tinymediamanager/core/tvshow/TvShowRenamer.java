@@ -23,9 +23,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,13 +40,15 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -53,23 +57,95 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
+import com.floreysoft.jmte.Engine;
+
 /**
- * The TvShow renamer Works on per MediaFile basis
+ * The TvShowRenamer Works on per MediaFile basis
  * 
  * @author Myron Boyle
  */
 public class TvShowRenamer {
-  private static final Logger         LOGGER         = LoggerFactory.getLogger(TvShowRenamer.class);
-  private static final TvShowSettings SETTINGS       = TvShowModuleManager.SETTINGS;
+  private static final Logger             LOGGER         = LoggerFactory.getLogger(TvShowRenamer.class);
+  private static final TvShowSettings     SETTINGS       = TvShowModuleManager.SETTINGS;
 
-  private static final String[]       seasonNumbers  = { "$1", "$2", "$3", "$4" };
-  private static final String[]       episodeNumbers = { "$E", "$D" };
-  private static final String[]       episodeTitles  = { "$T" };
-  private static final String[]       showTitles     = { "$N", "$M" };
+  private static final String[]           seasonNumbers  = { "${seasonNr}", "${seasonNr2}", "${seasonNrDvd}", "${seasonNrDvd2}" };
+  private static final String[]           episodeNumbers = { "${episodeNr}", "${episodeNr2}", "${episodeNrDvd}", "${episodeNrDvd2}" };
+  private static final String[]           episodeTitles  = { "${title}", "${titleSortable}" };
+  private static final String[]           showTitles     = { "${showTitle}", "${showTitleSortable}" };
 
-  private static final Pattern        epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)?\\$[ED]", Pattern.CASE_INSENSITIVE);
-  private static final Pattern        seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)?[\\$][1234]", Pattern.CASE_INSENSITIVE);
-  private static final Pattern        token          = Pattern.compile("(\\$[\\w#])");
+  private static final Pattern            epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)?\\$[ED]", Pattern.CASE_INSENSITIVE);
+  private static final Pattern            seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)?[\\$][1234]", Pattern.CASE_INSENSITIVE);
+  // private static final Pattern token = Pattern.compile("(\\$[\\w#])");
+
+  public static final Map<String, String> TOKEN_MAP      = createTokenMap();
+
+  /**
+   * initialize the token map for the renamer
+   *
+   * @return the token map
+   */
+  private static Map<String, String> createTokenMap() {
+    Map<String, String> tokenMap = new HashMap<>();
+    // TV show tags
+    tokenMap.put("showTitle", "tvShow.title");
+    tokenMap.put("showTitleSortable", "tvShow.titleSortable");
+    tokenMap.put("showYear", "tvShow.year");
+
+    // episode tags
+    tokenMap.put("episodeNr", "episode.episode");
+    tokenMap.put("episodeNr2", "episode.episode;number(%02d)");
+    tokenMap.put("episodeNrDvd", "episode.dvdEpisode");
+    tokenMap.put("episodeNrDvd2", "episode.dvdEpisode;number(%02d)");
+    tokenMap.put("seasonNr", "episode.season");
+    tokenMap.put("seasonNr2", "episode.season;number(%02d)");
+    tokenMap.put("seasonNrDvd", "episode.dvdSeason");
+    tokenMap.put("seasonNrDvd2", "episode.dvdSeason;number(%02d)");
+    tokenMap.put("title", "episode.title");
+    tokenMap.put("titleSortable", "episode.titleSortable");
+    tokenMap.put("year", "episode.year");
+    tokenMap.put("airedDate", "episode.firstAired;date(yyyy-MM-dd)");
+
+    tokenMap.put("videoCodec", "episode.mediaInfoVideoCodec");
+    tokenMap.put("videoFormat", "episode.mediaInfoVideoFormat");
+    tokenMap.put("videoResolution", "episode.mediaInfoVideoResolution");
+    tokenMap.put("audioCodec", "episode.mediaInfoAudioCodec");
+    tokenMap.put("audioChannels", "episode.mediaInfoAudioChannels");
+    tokenMap.put("3Dformat", "episode.video3DFormat");
+
+    tokenMap.put("mediaSource", "episode.mediaSource");
+
+    return tokenMap;
+  }
+
+  /**
+   * morph the given template to the JMTE template
+   *
+   * @param template
+   *          the given template
+   * @return the JMTE compatible template
+   */
+  static String morphTemplate(String template) {
+    String morphedTemplate = template;
+    // replace normal template entries
+    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
+      Pattern pattern = Pattern.compile("\\$\\{" + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(morphedTemplate);
+      while (matcher.find()) {
+        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + entry.getValue() + matcher.group(1));
+      }
+    }
+
+    // replace conditional template entries
+    for (Map.Entry<String, String> entry : TOKEN_MAP.entrySet()) {
+      Pattern pattern = Pattern.compile("\\$\\{(.*?)," + entry.getKey() + "([^a-zA-Z0-9])", Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(morphedTemplate);
+      while (matcher.find()) {
+        morphedTemplate = morphedTemplate.replace(matcher.group(), "${" + matcher.group(1) + "," + entry.getValue() + matcher.group(2));
+      }
+    }
+
+    return morphedTemplate;
+  }
 
   /**
    * add leadingZero if only 1 char
@@ -758,74 +834,88 @@ public class TvShowRenamer {
    * @return value or empty string
    */
   public static String getTokenValue(TvShow show, TvShowEpisode episode, String token) {
-    String ret = "";
-    if (show == null) {
-      show = new TvShow();
+    try {
+      Engine engine = Engine.createEngine();
+      engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.setModelAdaptor(new TmmModelAdaptor());
+      Map<String, Object> root = new HashMap<>();
+      root.put("episode", episode);
+      root.put("tvShow", show);
+      return engine.transform(morphTemplate(token), root);
     }
-    if (episode == null) {
-      episode = new TvShowEpisode();
+    catch (Exception e) {
+      LOGGER.warn("unable to process token: " + token);
+      return token;
     }
-    MediaFile mf = new MediaFile();
-    if (episode.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-      mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
-    }
-    switch (token.toUpperCase(Locale.ROOT)) {
-      // SHOW
-      case "$N":
-        ret = show.getTitle();
-        break;
-      case "$M":
-        ret = show.getTitleSortable();
-        break;
-      case "$Y":
-        ret = show.getYear() == 0 ? "" : Integer.toString(show.getYear());
-        break;
-
-      // EPISODE
-      case "$1":
-        ret = String.valueOf(episode.getSeason());
-        break;
-      case "$2":
-        ret = lz(episode.getSeason());
-        break;
-      case "$3":
-        ret = String.valueOf(episode.getDvdSeason());
-        break;
-      case "$4":
-        ret = lz(episode.getDvdSeason());
-        break;
-      case "$E":
-        ret = lz(episode.getEpisode());
-        break;
-      case "$D":
-        ret = lz(episode.getDvdEpisode());
-        break;
-      case "$T":
-        ret = episode.getTitle();
-        break;
-      case "$S":
-        if (episode.getMediaSource() != MediaSource.UNKNOWN) {
-          ret = episode.getMediaSource().toString();
-        }
-        break;
-
-      // MEDIAFILE
-      case "$R":
-        ret = mf.getVideoResolution();
-        break;
-      case "$A":
-        ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
-        break;
-      case "$V":
-        ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
-        break;
-      case "$F":
-        ret = mf.getVideoFormat();
-        break;
-      default:
-        break;
-    }
-    return ret;
+    // String ret = "";
+    // if (show == null) {
+    // show = new TvShow();
+    // }
+    // if (episode == null) {
+    // episode = new TvShowEpisode();
+    // }
+    // MediaFile mf = new MediaFile();
+    // if (episode.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+    // mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
+    // }
+    // switch (token.toUpperCase(Locale.ROOT)) {
+    // // SHOW
+    // case "$N":
+    // ret = show.getTitle();
+    // break;
+    // case "$M":
+    // ret = show.getTitleSortable();
+    // break;
+    // case "$Y":
+    // ret = show.getYear() == 0 ? "" : Integer.toString(show.getYear());
+    // break;
+    //
+    // // EPISODE
+    // case "$1":
+    // ret = String.valueOf(episode.getSeason());
+    // break;
+    // case "$2":
+    // ret = lz(episode.getSeason());
+    // break;
+    // case "$3":
+    // ret = String.valueOf(episode.getDvdSeason());
+    // break;
+    // case "$4":
+    // ret = lz(episode.getDvdSeason());
+    // break;
+    // case "$E":
+    // ret = lz(episode.getEpisode());
+    // break;
+    // case "$D":
+    // ret = lz(episode.getDvdEpisode());
+    // break;
+    // case "$T":
+    // ret = episode.getTitle();
+    // break;
+    // case "$S":
+    // if (episode.getMediaSource() != MediaSource.UNKNOWN) {
+    // ret = episode.getMediaSource().toString();
+    // }
+    // break;
+    //
+    // // MEDIAFILE
+    // case "$R":
+    // ret = mf.getVideoResolution();
+    // break;
+    // case "$A":
+    // ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
+    // break;
+    // case "$V":
+    // ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
+    // break;
+    // case "$F":
+    // ret = mf.getVideoFormat();
+    // break;
+    // default:
+    // break;
+    // }
+    // return ret;
   }
 
   /**
@@ -842,14 +932,15 @@ public class TvShowRenamer {
       return "";
     }
 
-    String newDestination = template;
-
-    // replace all $x parameters
-    Matcher m = token.matcher(template);
-    while (m.find()) {
-      String value = getTokenValue(show, null, m.group(1));
-      newDestination = replaceToken(newDestination, m.group(1), value);
-    }
+    String newDestination = getTokenValue(show, null, template);
+    // String newDestination = template;
+    //
+    // // replace all $x parameters
+    // Matcher m = token.matcher(template);
+    // while (m.find()) {
+    // String value = getTokenValue(show, null, m.group(1));
+    // newDestination = replaceToken(newDestination, m.group(1), value);
+    // }
 
     newDestination = cleanupDestination(newDestination);
     return newDestination;
@@ -869,18 +960,19 @@ public class TvShowRenamer {
       return "";
     }
 
-    String newDestination = template;
-
     // create a dummy episode to inject the season number
     TvShowEpisode episode = new TvShowEpisode();
     episode.setSeason(season.getSeason());
 
-    // replace all $x parameters
-    Matcher m = token.matcher(template);
-    while (m.find()) {
-      String value = getTokenValue(season.getTvShow(), episode, m.group(1));
-      newDestination = replaceToken(newDestination, m.group(1), value);
-    }
+    String newDestination = getTokenValue(season.getTvShow(), episode, template);
+    // String newDestination = template;
+    //
+    // // replace all $x parameters
+    // Matcher m = token.matcher(template);
+    // while (m.find()) {
+    // String value = getTokenValue(season.getTvShow(), episode, m.group(1));
+    // newDestination = replaceToken(newDestination, m.group(1), value);
+    // }
 
     newDestination = cleanupDestination(newDestination);
     return newDestination;
@@ -905,12 +997,14 @@ public class TvShowRenamer {
     if (episodes.size() == 1) {
       // single episode
       TvShowEpisode firstEp = episodes.get(0);
+
+      newDestination = getTokenValue(firstEp.getTvShow(), firstEp, template);
       // replace all $x parameters
-      Matcher m = token.matcher(template);
-      while (m.find()) {
-        String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
-        newDestination = replaceToken(newDestination, m.group(1), value);
-      }
+      // Matcher m = token.matcher(template);
+      // while (m.find()) {
+      // String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
+      // newDestination = replaceToken(newDestination, m.group(1), value);
+      // }
     }
     else {
       // multi episodes
@@ -944,13 +1038,14 @@ public class TvShowRenamer {
       // foreach episode, replace and append pattern:
       String episodeParts = "";
       for (TvShowEpisode episode : episodes) {
-        String episodePart = loopNumbers;
+        String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
+        // String episodePart = loopNumbers;
         // replace all $x parameters
-        Matcher m = token.matcher(episodePart);
-        while (m.find()) {
-          String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
-          episodePart = replaceToken(episodePart, m.group(1), value);
-        }
+        // Matcher m = token.matcher(episodePart);
+        // while (m.find()) {
+        // String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
+        // episodePart = replaceToken(episodePart, m.group(1), value);
+        // }
         episodeParts += " " + episodePart;
       }
 
@@ -972,14 +1067,15 @@ public class TvShowRenamer {
       // foreach episode, replace and append pattern:
       episodeParts = "";
       for (TvShowEpisode episode : episodes) {
-        String episodePart = loopTitles;
-
-        // replace all $x parameters
-        Matcher m = token.matcher(episodePart);
-        while (m.find()) {
-          String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
-          episodePart = replaceToken(episodePart, m.group(1), value);
-        }
+        String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
+        // String episodePart = loopTitles;
+        //
+        // // replace all $x parameters
+        // Matcher m = token.matcher(episodePart);
+        // while (m.find()) {
+        // String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
+        // episodePart = replaceToken(episodePart, m.group(1), value);
+        // }
 
         // separate multiple titles via -
         if (StringUtils.isNotBlank(episodeParts)) {
@@ -992,12 +1088,13 @@ public class TvShowRenamer {
         newDestination = newDestination.replace(loopTitles, episodeParts);
       }
 
-      // replace all other $x parameters
-      Matcher m = token.matcher(newDestination);
-      while (m.find()) {
-        String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
-        newDestination = replaceToken(newDestination, m.group(1), value);
-      }
+      newDestination = getTokenValue(firstEp.getTvShow(), firstEp, newDestination);
+      // // replace all other $x parameters
+      // Matcher m = token.matcher(newDestination);
+      // while (m.find()) {
+      // String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
+      // newDestination = replaceToken(newDestination, m.group(1), value);
+      // }
 
     } // end multi episodes
 
