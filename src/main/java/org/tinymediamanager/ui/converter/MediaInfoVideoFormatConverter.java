@@ -46,6 +46,12 @@ public class MediaInfoVideoFormatConverter extends Converter<String, Icon> {
     try {
       URL file = null;
 
+      // check UHD 4k
+      if (arg0.contains("4k")) {
+        // try to load 4k.png
+        file = MediaInfoVideoFormatConverter.class.getResource("../images/mediainfo/video/4k.png");
+      }
+
       // check 1080p
       if (arg0.contains("1080")) {
         // try to load 1080p.png
