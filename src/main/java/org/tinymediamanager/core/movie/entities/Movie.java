@@ -49,9 +49,10 @@ import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITERS;
 import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1546,17 +1547,42 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // actor image files
-    if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-      for (Person actor : actors) {
-        String actorImageFilename = actor.getNameForStorage();
-        if (StringUtils.isNotBlank(actorImageFilename)) {
-          Path imagePath = Paths.get(path, Person.ACTOR_DIR, actorImageFilename);
-          filesToCache.add(imagePath);
+    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
+    // for (Person actor : actors) {
+    // String actorImageFilename = actor.getNameForStorage();
+    // if (StringUtils.isNotBlank(actorImageFilename)) {
+    // Path imagePath = Paths.get(path, Person.ACTOR_DIR, actorImageFilename);
+    // filesToCache.add(imagePath);
+    // }
+    // }
+    // }
+
+    // getting all scraped actors (= possible to cache)
+    // and having never ever downloaded any pic is quite slow.
+    // (Many invalid cache requests and exists() checks)
+    // Better get a listing of existent actor images directly!
+    filesToCache.addAll(listActorFiles());
+    // check against actors and trigger a download? - NO, only via scrape/missingImagesTask
+
+    return filesToCache;
+  }
+
+  /**
+   * @return list of actor images on filesystem
+   */
+  private List<Path> listActorFiles() {
+    List<Path> fileNames = new ArrayList<>();
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(".actors"))) {
+      for (Path path : directoryStream) {
+        if (Utils.isRegularFile(path)) {
+          fileNames.add(path.toAbsolutePath());
         }
       }
     }
-
-    return filesToCache;
+    catch (IOException e) {
+      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(".actors"));
+    }
+    return fileNames;
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {
