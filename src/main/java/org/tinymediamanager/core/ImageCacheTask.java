@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -67,8 +68,11 @@ public class ImageCacheTask extends TmmTask {
       catch (EmptyFileException e) {
         LOGGER.warn("failed to cache file (file is empty): " + fileToCache);
       }
+      catch (FileNotFoundException e) {
+        LOGGER.warn("failed to cache file (file not found): " + fileToCache);
+      }
       catch (Exception e) {
-        LOGGER.warn("failed to cache file: " + fileToCache);
+        LOGGER.warn("failed to cache file: " + fileToCache, e);
       }
     }
   }

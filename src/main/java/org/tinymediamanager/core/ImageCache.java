@@ -362,10 +362,10 @@ public class ImageCache {
       output.flush();
       output.close();
       scaledImage = null;
-    }
 
-    if (!Files.exists(cachedFile)) {
-      throw new Exception("unable to cache file: " + originalFile);
+      if (!Files.exists(cachedFile)) {
+        throw new Exception("unable to cache file: " + originalFile);
+      }
     }
 
     return cachedFile;
