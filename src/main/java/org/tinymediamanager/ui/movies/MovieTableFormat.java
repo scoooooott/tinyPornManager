@@ -49,6 +49,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<ImageIcon> imageComparator = new ImageComparator();
     Comparator<Date> dateComparator = new DateComparator();
     Comparator<String> videoFormatComparator = new VideoFormatComparator();
+    Comparator<String> fileSizeComparator = new FileSizeComparator();
 
     /*
      * title
@@ -127,6 +128,27 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.format"), "videoFormat", Movie::getMediaInfoVideoFormat, String.class);
     col.setColumnComparator(videoFormatComparator);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
+     * main video file size (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.size"), "fileSize", movie -> {
+      long size = 0;
+      for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+        size += mf.getFilesize();
+      }
+
+      // looks better everything in M
+      // if (size > (2048L * 1024 * 1024)) {
+      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
+      // }
+
+      return (int) (size / (1024.0 * 1024.0)) + " M";
+    }, String.class);
+    col.setColumnComparator(fileSizeComparator);
+    col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     addColumn(col);
 

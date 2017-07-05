@@ -19,7 +19,9 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -67,6 +69,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.format"), "format", node -> getFormat(node), String.class);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
+     * main video file size
+     */
+    col = new Column(BUNDLE.getString("metatag.size"), "fileSize", node -> getFileSize(node), String.class);
+    col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     addColumn(col);
 
@@ -122,6 +132,24 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShowEpisode) {
       return ((TvShowEpisode) userObject).getMediaInfoVideoFormat();
+    }
+    return "";
+  }
+
+  private String getFileSize(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShowEpisode) {
+      long size = 0;
+      for (MediaFile mf : ((TvShowEpisode) userObject).getMediaFiles(MediaFileType.VIDEO)) {
+        size += mf.getFilesize();
+      }
+
+      // looks better everything in M
+      // if (size > (2048L * 1024 * 1024)) {
+      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
+      // }
+
+      return (int) (size / (1024.0 * 1024.0)) + " M";
     }
     return "";
   }

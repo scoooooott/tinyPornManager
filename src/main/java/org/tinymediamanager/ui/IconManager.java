@@ -110,6 +110,7 @@ public class IconManager {
   // Material icons - column headers
   public final static ImageIcon            DATE_ADDED             = createMaterialFontIcon('\uE02E', 18);
   public final static ImageIcon            EPISODES               = createFontIcon('E', 20);
+  public final static ImageIcon            FILE_SIZE              = createMaterialFontIcon('\uE161', 18);
   public final static ImageIcon            IMAGES                 = createMaterialFontIcon('\uE410', 18);
   public final static ImageIcon            MOVIE                  = createMaterialFontIcon('\uE54D', 18);
   public final static ImageIcon            NFO                    = createMaterialFontIcon('\uE873', 18);

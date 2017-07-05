@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.TableCellRenderer;
@@ -154,6 +156,43 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     @Override
     public int compare(String arg0, String arg1) {
       return Integer.compare(MediaFile.VIDEO_FORMATS.indexOf(arg0), MediaFile.VIDEO_FORMATS.indexOf(arg1));
+    }
+  }
+
+  public class FileSizeComparator implements Comparator<String> {
+    Pattern pattern = Pattern.compile("(.*) (.*?)");
+
+    @Override
+    public int compare(String arg0, String arg1) {
+      long size0 = parseSize(arg0);
+      long size1 = parseSize(arg1);
+
+      return Long.compare(size0, size1);
+    }
+
+    private long parseSize(String sizeAsString) {
+      long size = 0;
+
+      Matcher matcher = pattern.matcher(sizeAsString);
+      if (matcher.find()) {
+        try {
+          float value = Float.parseFloat(matcher.group(1));
+          String unit = matcher.group(2);
+          if ("G".equals(unit)) {
+            size = (long) (value * 1024 * 1024 * 1024);
+          }
+          else if ("M".equals(unit)) {
+            size = (long) (value * 1024 * 1024);
+          }
+          else {
+            size = (long) value;
+          }
+        }
+        catch (Exception ignored) {
+        }
+      }
+
+      return size;
     }
   }
 }
