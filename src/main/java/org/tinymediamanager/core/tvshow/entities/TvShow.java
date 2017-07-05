@@ -37,7 +37,6 @@ import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.TVDB;
-import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.awt.Dimension;
@@ -115,8 +114,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private Date                               firstAired            = null;
   @JsonProperty
   private String                             status                = "";
-  @JsonProperty
-  private boolean                            watched               = false;
   @JsonProperty
   private String                             sortTitle             = "";
   @JsonProperty
@@ -238,7 +235,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setRuntime(runtime == 0 || force ? other.runtime : runtime);
     setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
     setStatus(StringUtils.isBlank(status) || force ? other.status : status);
-    setWatched(!watched || force ? other.watched : watched);
     setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
 
     // when force is set, clear the lists/maps and add all other values
@@ -1248,24 +1244,21 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Checks if is watched.
+   * Checks if all episodes are watched.
    * 
-   * @return true, if is watched
+   * @return true, if all episodes are watched
    */
   public boolean isWatched() {
-    return watched;
-  }
+    boolean watched = true;
 
-  /**
-   * Sets the watched.
-   * 
-   * @param newValue
-   *          the new watched
-   */
-  public void setWatched(boolean newValue) {
-    boolean oldValue = this.watched;
-    this.watched = newValue;
-    firePropertyChange(WATCHED, oldValue, newValue);
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.isWatched()) {
+        watched = false;
+        break;
+      }
+    }
+
+    return watched;
   }
 
   public Date getLastWatched() {

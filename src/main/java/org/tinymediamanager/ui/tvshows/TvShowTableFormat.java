@@ -95,6 +95,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col.setHeaderIcon(IconManager.IMAGES);
     col.setColumnResizeable(false);
     addColumn(col);
+
+    /*
+     * watched
+     */
+    col = new Column(BUNDLE.getString("metatag.watched"), "watched", node -> isWatched(node), ImageIcon.class);
+    col.setHeaderIcon(IconManager.WATCHED);
+    col.setColumnResizeable(false);
+    addColumn(col);
   }
 
   private String getSeasons(TmmTreeNode node) {
@@ -169,6 +177,20 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     }
     if (userObject instanceof TvShowEpisode) {
       return getCheckIcon(((TvShowEpisode) userObject).getHasNfoFile());
+    }
+    return null;
+  }
+
+  private ImageIcon isWatched(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShow) {
+      return getCheckIcon(((TvShow) userObject).isWatched());
+    }
+    if (userObject instanceof TvShowSeason) {
+      return getCheckIcon(((TvShowSeason) userObject).isWatched());
+    }
+    if (userObject instanceof TvShowEpisode) {
+      return getCheckIcon(((TvShowEpisode) userObject).isWatched());
     }
     return null;
   }

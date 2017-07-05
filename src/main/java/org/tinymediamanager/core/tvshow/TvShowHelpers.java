@@ -84,6 +84,9 @@ public class TvShowHelpers {
       if (name.contains(":")) {
         String[] cs = name.split(":");
         cert = Certification.getCertification(TvShowModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
+        if (cert == Certification.NOT_RATED) {
+          cert = Certification.findCertification(cs[1].trim());
+        }
       }
       else {
         // no country? try to find only by name
