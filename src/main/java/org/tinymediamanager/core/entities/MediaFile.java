@@ -142,6 +142,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @JsonProperty
   private int                                        overallBitRate       = 0;
   @JsonProperty
+  private int                                        bitDepth             = 8;
+  @JsonProperty
   private int                                        durationInSecs       = 0;
   @JsonProperty
   private int                                        stacking             = 0;
@@ -175,6 +177,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.videoWidth = clone.videoWidth;
     this.aspectRatio = clone.aspectRatio;
     this.overallBitRate = clone.overallBitRate;
+    this.bitDepth = clone.bitDepth;
     this.durationInSecs = clone.durationInSecs;
     this.stacking = clone.stacking;
     this.stackingMarker = clone.stackingMarker;
@@ -1164,6 +1167,36 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * returns the overall bit depth for this file.
+   * 
+   * @return 8 / 10 bit
+   */
+  public int getBitDepth() {
+    return bitDepth;
+  }
+
+  /**
+   * sets the overall bit depth for this file (should be 8 or 10).
+   * 
+   * @param newValue
+   *          the new overall bit depth
+   */
+  public void setBitDepth(int newValue) {
+    int oldValue = this.bitDepth;
+    this.bitDepth = newValue;
+    firePropertyChange("bitDepth", oldValue, newValue);
+  }
+
+  /**
+   * Gets the bite depth as string
+   * 
+   * @return 8 bit / 10 bit
+   */
+  public String getBitDepthString() {
+    return this.bitDepth + " bit";
+  }
+
+  /**
    * returns the duration / runtime in seconds.
    * 
    * @return the duration
@@ -1579,6 +1612,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         // fix for Microsoft VC-1
         if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
           videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
+        }
+
+        try {
+          String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
+          setBitDepth(Integer.parseInt(bd));
+        }
+        catch (Exception ignored) {
         }
 
         // *****************
