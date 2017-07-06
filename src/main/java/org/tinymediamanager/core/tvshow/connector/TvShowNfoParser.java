@@ -944,11 +944,6 @@ public class TvShowNfoParser {
     show.setCertification(certification);
     show.setStatus(status);
 
-    show.setWatched(watched);
-    if (playcount > 0) {
-      show.setWatched(true);
-    }
-
     for (Person actor : actors) {
       org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(
           org.tinymediamanager.core.entities.Person.Type.ACTOR, actor.name, actor.role);

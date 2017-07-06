@@ -130,7 +130,6 @@ public class TvShowToNfoConnectorTest {
     assertThat(newTvShow.getIds().size()).isEqualTo(tvShow.getIds().size());
     assertThat(newTvShow.getId("trakt")).isEqualTo(tvShow.getId("trakt"));
     assertThat(newTvShow.getFirstAired()).isEqualTo(tvShow.getFirstAired());
-    assertThat(newTvShow.isWatched()).isEqualTo(tvShow.isWatched());
     assertThat(newTvShow.getStatus()).isEqualTo(tvShow.getStatus());
     assertThat(newTvShow.getGenres().size()).isEqualTo(tvShow.getGenres().size());
     assertThat(newTvShow.getGenres().get(0)).isEqualTo(tvShow.getGenres().get(0));

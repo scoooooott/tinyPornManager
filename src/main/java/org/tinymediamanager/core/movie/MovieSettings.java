@@ -289,7 +289,7 @@ public class MovieSettings extends AbstractSettings {
   @Override
   protected void writeDefaultSettings() {
     // hidden columns
-    setMovieTableHiddenColumns(Arrays.asList("filename", "path", "movieset"));
+    setMovieTableHiddenColumns(Arrays.asList("dateAdded", "filename", "path", "movieset", "fileSize"));
 
     nfoFilenames.clear();
     addNfoFilename(MovieNfoNaming.MOVIE_NFO);

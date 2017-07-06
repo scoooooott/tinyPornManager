@@ -19,7 +19,9 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -71,6 +73,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     addColumn(col);
 
     /*
+     * main video file size
+     */
+    col = new Column(BUNDLE.getString("metatag.size"), "fileSize", node -> getFileSize(node), String.class);
+    col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
      * NFO
      */
     col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", node -> hasNfo(node), ImageIcon.class);
@@ -83,6 +93,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("tmm.images"), "images", node -> hasImages(node), ImageIcon.class);
     col.setHeaderIcon(IconManager.IMAGES);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
+     * watched
+     */
+    col = new Column(BUNDLE.getString("metatag.watched"), "watched", node -> isWatched(node), ImageIcon.class);
+    col.setHeaderIcon(IconManager.WATCHED);
     col.setColumnResizeable(false);
     addColumn(col);
   }
@@ -126,6 +144,24 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     return "";
   }
 
+  private String getFileSize(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShowEpisode) {
+      long size = 0;
+      for (MediaFile mf : ((TvShowEpisode) userObject).getMediaFiles(MediaFileType.VIDEO)) {
+        size += mf.getFilesize();
+      }
+
+      // looks better everything in M
+      // if (size > (2048L * 1024 * 1024)) {
+      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
+      // }
+
+      return (int) (size / (1024.0 * 1024.0)) + " M";
+    }
+    return "";
+  }
+
   private ImageIcon hasNfo(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShowEpisode) {
@@ -141,6 +177,20 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     }
     if (userObject instanceof TvShowEpisode) {
       return getCheckIcon(((TvShowEpisode) userObject).getHasNfoFile());
+    }
+    return null;
+  }
+
+  private ImageIcon isWatched(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShow) {
+      return getCheckIcon(((TvShow) userObject).isWatched());
+    }
+    if (userObject instanceof TvShowSeason) {
+      return getCheckIcon(((TvShowSeason) userObject).isWatched());
+    }
+    if (userObject instanceof TvShowEpisode) {
+      return getCheckIcon(((TvShowEpisode) userObject).isWatched());
     }
     return null;
   }
