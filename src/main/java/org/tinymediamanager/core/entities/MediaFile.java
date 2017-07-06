@@ -142,7 +142,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @JsonProperty
   private int                                        overallBitRate       = 0;
   @JsonProperty
-  private int                                        bitDepth             = 8;
+  private int                                        bitDepth             = 0;
   @JsonProperty
   private int                                        durationInSecs       = 0;
   @JsonProperty
@@ -453,6 +453,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case EXTRAFANART:
       case EXTRATHUMB:
       case DISC:
+      case LANDSCAPE:
         return true;
 
       default:
@@ -1613,7 +1614,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
           videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
         }
-
         try {
           String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
           setBitDepth(Integer.parseInt(bd));
@@ -1776,6 +1776,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
         catch (Exception e) {
         }
+        try {
+          String bd = getMediaInfo(StreamKind.Audio, 0, "BitDepth");
+          setBitDepth(Integer.parseInt(bd));
+        }
+        catch (Exception ignored) {
+        }
         String language = getMediaInfo(StreamKind.Audio, 0, "Language/String", "Language");
         if (language.isEmpty()) {
           // try to parse from filename
@@ -1806,6 +1812,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         width = getMediaInfo(StreamKind.Image, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Image, 0, "CodecID/Hint", "Format");
         // System.out.println(height + "-" + width + "-" + videoCodec);
+        try {
+          String bd = getMediaInfo(StreamKind.Image, 0, "BitDepth");
+          setBitDepth(Integer.parseInt(bd));
+        }
+        catch (Exception ignored) {
+        }
         checkForAnimation();
         break;
 
