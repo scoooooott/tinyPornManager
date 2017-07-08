@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Manuel Laggner
  * @since 1.0
  */
-public class DynaEnum<E extends DynaEnum<E>> {
+public abstract class DynaEnum<E extends DynaEnum<E>> {
   private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>>   elements  = new LinkedHashMap<>();
   private static Map<Class<? extends DynaEnum<?>>, Set<DynaEnumEventListener>> listeners = new LinkedHashMap<>();
   private final String                                                         name;
@@ -54,7 +54,7 @@ public class DynaEnum<E extends DynaEnum<E>> {
   }
 
   /**
-   * Instantiates a new dyna enum.
+   * Instantiates a new dyna enum. do not forget to add this value to the list of values after the constructor has been finished
    * 
    * @param name
    *          the name
@@ -64,6 +64,12 @@ public class DynaEnum<E extends DynaEnum<E>> {
   protected DynaEnum(String name, int ordinal) {
     this.name = name;
     this.ordinal = ordinal;
+  }
+
+  /**
+   * add this element to the list of elements
+   */
+  protected void addElement() {
     Map<String, DynaEnum<?>> typeElements = elements.get(getClass());
     if (typeElements == null) {
       typeElements = new LinkedHashMap<>();

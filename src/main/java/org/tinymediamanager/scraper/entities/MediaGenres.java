@@ -103,6 +103,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     super(enumName, ordinal);
     this.name = name;
     this.alternateNames = loadAlternateNames(enumName);
+
+    addElement();
   }
 
   /**
@@ -121,6 +123,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     super(enumName, ordinal);
     this.name = name;
     this.alternateNames = ArrayUtils.addAll(loadAlternateNames(enumName), alternates);
+
+    addElement();
   }
 
   @Override
@@ -213,7 +217,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the genre
    */
   @JsonCreator
-  public static MediaGenres getGenre(String name) {
+  public synchronized static MediaGenres getGenre(String name) {
     String cleanedName = name.replaceAll("[._-]", " ");
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
