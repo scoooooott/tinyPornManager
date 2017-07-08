@@ -77,6 +77,8 @@ public class MediaSource extends DynaEnum<MediaSource> {
     else {
       this.pattern = null;
     }
+
+    addElement();
   }
 
   @Override

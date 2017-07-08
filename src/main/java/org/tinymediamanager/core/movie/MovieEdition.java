@@ -59,6 +59,8 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
     else {
       this.pattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
     }
+
+    addElement();
   }
 
   @Override
