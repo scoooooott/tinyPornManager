@@ -125,6 +125,19 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     }
   }
 
+  public class IntegerComparator implements Comparator<Integer> {
+    @Override
+    public int compare(Integer arg0, Integer arg1) {
+      if (arg0 == null) {
+        return -1;
+      }
+      if (arg1 == null) {
+        return 1;
+      }
+      return arg0-arg1;
+    }
+  }
+
   public class FloatComparator implements Comparator<Float> {
     @Override
     public int compare(Float arg0, Float arg1) {

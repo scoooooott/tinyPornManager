@@ -50,6 +50,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<Date> dateComparator = new DateComparator();
     Comparator<String> videoFormatComparator = new VideoFormatComparator();
     Comparator<String> fileSizeComparator = new FileSizeComparator();
+    Comparator<Integer> integerComparator = new IntegerComparator();
 
     /*
      * title
@@ -63,7 +64,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      * year
      */
     col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);
-    col.setColumnComparator(stringComparator);
+    col.setColumnComparator(integerComparator);
     col.setColumnResizeable(false);
     addColumn(col);
 
