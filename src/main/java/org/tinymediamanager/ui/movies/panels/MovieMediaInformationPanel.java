@@ -20,7 +20,10 @@ import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -33,6 +36,7 @@ import java.util.ResourceBundle;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -85,8 +89,7 @@ public class MovieMediaInformationPanel extends JPanel {
   private JLabel                      lblVideoBitDepth;
   private JPanel                      panelAudioStreamT;
   private JPanel                      panelAudioStreamDetails;
-  private JPanel                      panelSubtitleT;
-  private JPanel                      panelSubtitleDetails;
+  private JPanel                      panelSubtitle;
   private JLabel                      lblSource;
   private LinkLabel                   lblMoviePath;
   private JLabel                      lblDateAdded;
@@ -137,23 +140,23 @@ public class MovieMediaInformationPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][][][][][][grow]", "[][][][][][shrink 0][][][80lp,grow]"));
+    setLayout(new MigLayout("", "[][][][grow]", "[][][][][::100lp][shrink 0][][][80lp,grow]"));
     {
       JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
       add(lblRuntimeT, "cell 0 0");
 
       lblRuntime = new JLabel("");
-      add(lblRuntime, "cell 2 0");
+      add(lblRuntime, "cell 1 0");
     }
     {
       JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblWatchedT, Font.BOLD);
-      add(lblWatchedT, "cell 4 0");
+      add(lblWatchedT, "cell 2 0");
 
       chckbxWatched = new JCheckBox("");
       chckbxWatched.setEnabled(false);
-      add(chckbxWatched, "cell 6 0");
+      add(chckbxWatched, "cell 3 0");
     }
     {
       JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
@@ -161,7 +164,7 @@ public class MovieMediaInformationPanel extends JPanel {
       add(lblSourceT, "cell 0 1");
 
       lblSource = new JLabel("");
-      add(lblSource, "cell 2 1 3 1");
+      add(lblSource, "cell 1 1 2 1");
     }
     {
       JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
@@ -169,11 +172,11 @@ public class MovieMediaInformationPanel extends JPanel {
       add(lblVideoT, "cell 0 2");
 
       JLabel lblMovieT = new JLabel(BUNDLE.getString("metatag.movie")); //$NON-NLS-1$
-      add(lblMovieT, "cell 2 2");
+      add(lblMovieT, "cell 1 2");
 
       JPanel panelVideoStreamDetails = new JPanel();
       panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
-      add(panelVideoStreamDetails, "cell 4 2 3 1,growx");
+      add(panelVideoStreamDetails, "cell 2 2 2 1,growx");
 
       lblVideoCodec = new JLabel("");
       panelVideoStreamDetails.add(lblVideoCodec);
@@ -197,27 +200,27 @@ public class MovieMediaInformationPanel extends JPanel {
 
       panelAudioStreamT = new JPanel();
       panelAudioStreamT.setLayout(new GridLayout(0, 1));
-      add(panelAudioStreamT, "cell 2 3");
+      add(panelAudioStreamT, "cell 1 3");
 
       panelAudioStreamDetails = new JPanel();
       panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-      add(panelAudioStreamDetails, "cell 4 3 3 1,growx");
+      add(panelAudioStreamDetails, "cell 2 3 2 1,growx");
     }
     {
       JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
-      add(lblSubtitle, "cell 0 4");
+      add(lblSubtitle, "cell 0 4,aligny top");
 
-      panelSubtitleT = new JPanel();
-      panelSubtitleT.setLayout(new GridLayout(0, 1));
-      add(panelSubtitleT, "cell 2 4");
+      JScrollPane scrollPane = new JScrollPane();
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      add(scrollPane, "cell 1 4 3 1,growy");
 
-      panelSubtitleDetails = new JPanel();
-      panelSubtitleDetails.setLayout(new GridLayout(0, 1));
-      add(panelSubtitleDetails, "cell 4 4,growx");
+      panelSubtitle = new JPanel();
+      scrollPane.setViewportView(panelSubtitle);
+      panelSubtitle.setLayout(new GridBagLayout());
     }
     {
-      add(new JSeparator(), "cell 0 5 7 1,growx");
+      add(new JSeparator(), "cell 0 5 4 1,growx");
     }
     {
       JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
@@ -225,7 +228,7 @@ public class MovieMediaInformationPanel extends JPanel {
       add(lblDateAddedT, "cell 0 6");
 
       lblDateAdded = new JLabel("");
-      add(lblDateAdded, "cell 2 6 5 1");
+      add(lblDateAdded, "cell 1 6 3 1");
     }
     {
       JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
@@ -235,16 +238,18 @@ public class MovieMediaInformationPanel extends JPanel {
       lblMoviePath = new LinkLabel("");
       lblMoviePath.addActionListener(new LinkLabelListener());
       lblMoviePathT.setLabelFor(lblMoviePath);
-      add(lblMoviePath, "cell 2 7 5 1");
+      add(lblMoviePath, "cell 1 7 3 1");
     }
     {
       panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+        private static final long serialVersionUID = -8712860341504013403L;
+
         @Override
         public MediaEntity getMediaEntity() {
           return movieSelectionModel.getSelectedMovie();
         }
       };
-      add(panelMediaFiles, "cell 0 8 7 1,grow");
+      add(panelMediaFiles, "cell 0 8 4 1,grow");
     }
   }
 
@@ -306,24 +311,41 @@ public class MovieMediaInformationPanel extends JPanel {
   }
 
   private void buildSubtitleStreamDetails() {
-    panelSubtitleT.removeAll();
-    panelSubtitleDetails.removeAll();
+    panelSubtitle.removeAll();
 
     List<MediaFile> mediaFiles = movieSelectionModel.getSelectedMovie().getMediaFilesContainingSubtitles();
+    int row = 0;
+    GridBagConstraints constraints = new GridBagConstraints();
+    constraints.anchor = GridBagConstraints.LINE_START;
+
+    Insets defaultInsets = constraints.insets;
+    Insets rightInsets = new Insets(0, 50, 0, 50);
 
     for (MediaFile mediaFile : mediaFiles) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
+        constraints.gridy = row;
+        constraints.insets = defaultInsets;
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
+          constraints.gridx = 0;
+          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.internal")), constraints); //$NON-NLS-1$
+
+          constraints.gridx = 1;
+          constraints.insets = rightInsets;
           String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
-          panelSubtitleDetails.add(new JLabel(info));
+          panelSubtitle.add(new JLabel(info), constraints);
         }
         else {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
-          panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
+          constraints.gridx = 0;
+          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.external")), constraints); //$NON-NLS-1$
+
+          constraints.gridx = 1;
+          constraints.insets = rightInsets;
+          panelSubtitle.add(new JLabel(mediaFile.getFilename()), constraints);
         }
+
+        row++;
       }
     }
   }

@@ -20,9 +20,11 @@ import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.beans.PropertyChangeListener;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import org.tinymediamanager.core.MediaFileType;
@@ -70,8 +73,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   private JLabel                      lblVideoBitrate;
   private JPanel                      panelAudioStreamT;
   private JPanel                      panelAudioStreamDetails;
-  private JPanel                      panelSubtitleT;
-  private JPanel                      panelSubtitleDetails;
+  private JPanel                      panelSubtitle;
   private JLabel                      lblSourceT;
   private JLabel                      lblSource;
   private MediaFilesPanel             panelMediaFiles;
@@ -180,20 +182,22 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
       add(lblSubtitle, "cell 0 4");
 
-      panelSubtitleT = new JPanel();
-      panelSubtitleT.setLayout(new GridLayout(0, 1));
-      add(panelSubtitleT, "cell 2 4");
+      JScrollPane scrollPane = new JScrollPane();
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      add(scrollPane, "cell 2 4 3 1,growy");
 
-      panelSubtitleDetails = new JPanel();
-      panelSubtitleDetails.setLayout(new GridLayout(0, 1));
-      add(panelSubtitleDetails, "cell 4 4");
+      panelSubtitle = new JPanel();
+      scrollPane.setViewportView(panelSubtitle);
+      panelSubtitle.setLayout(new GridBagLayout());
     }
     {
       JSeparator separator = new JSeparator();
       add(separator, "cell 0 5 7 1,growx");
     }
     {
-      panelMediaFiles = new MediaFilesPanel(mediaFileEventList){
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+        private static final long serialVersionUID = 8834986141071361388L;
+
         @Override
         public MediaEntity getMediaEntity() {
           return selectionModel.getSelectedTvShowEpisode();
@@ -261,29 +265,42 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   }
 
   private void buildSubtitleStreamDetails() {
-    panelSubtitleT.removeAll();
-    panelSubtitleDetails.removeAll();
+    panelSubtitle.removeAll();
 
-    HashSet<MediaFileSubtitle> subs = new HashSet<MediaFileSubtitle>(); // no dupes
-    for (MediaFile mediaFile : selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingSubtitles()) {
+    List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingSubtitles();
+    int row = 0;
+    GridBagConstraints constraints = new GridBagConstraints();
+    constraints.anchor = GridBagConstraints.LINE_START;
+
+    Insets defaultInsets = constraints.insets;
+    Insets rightInsets = new Insets(0, 50, 0, 50);
+
+    for (MediaFile mediaFile : mediaFiles) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
-        if (mediaFile.getType() == MediaFileType.SUBTITLE) {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
-          panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
+        constraints.gridy = row;
+        constraints.insets = defaultInsets;
+
+        if (mediaFile.getType() == MediaFileType.VIDEO) {
+          constraints.gridx = 0;
+          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.internal")), constraints); //$NON-NLS-1$
+
+          constraints.gridx = 1;
+          constraints.insets = rightInsets;
+          String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
+          panelSubtitle.add(new JLabel(info), constraints);
         }
         else {
-          subs.add(subtitle);
+          constraints.gridx = 0;
+          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.external")), constraints); //$NON-NLS-1$
+
+          constraints.gridx = 1;
+          constraints.insets = rightInsets;
+          panelSubtitle.add(new JLabel(mediaFile.getFilename()), constraints);
         }
+
+        row++;
       }
     }
-    for (MediaFileSubtitle sub : subs) {
-      panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
-      String info = sub.getLanguage() + (sub.isForced() ? " forced" : "") + " (" + sub.getCodec() + ")";
-      panelSubtitleDetails.add(new JLabel(info));
-    }
-
-    panelSubtitleDetails.revalidate();
-    panelSubtitleT.revalidate();
   }
 }
