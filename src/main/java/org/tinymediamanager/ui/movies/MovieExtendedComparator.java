@@ -151,7 +151,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
         case YEAR:
           sortOrder = compareNullFirst(movie1.getYear(), movie2.getYear());
           if (sortOrder == 0) {
-            sortOrder = stringCollator.compare(movie1.getYear(), movie2.getYear());
+            sortOrder = Integer.compare(movie1.getYear(), movie2.getYear());
           }
           break;
 
