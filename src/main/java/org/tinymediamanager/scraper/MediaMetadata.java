@@ -32,6 +32,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -68,7 +69,6 @@ public class MediaMetadata {
   private String                  plot                 = "";
   private String                  tagline              = "";
   private int                     runtime              = 0;
-  private float                   rating               = 0.0f;
   private int                     voteCount            = 0;
 
   // movie
@@ -86,6 +86,7 @@ public class MediaMetadata {
   private String                  status               = "";
 
   // multi value
+  private List<MediaRating>       ratings              = new ArrayList<>();
   private List<MediaCastMember>   castMembers          = new ArrayList<>();
   private List<MediaArtwork>      artwork              = new ArrayList<>();
   private List<MediaGenres>       genres               = new ArrayList<>();
@@ -129,14 +130,12 @@ public class MediaMetadata {
 
     title = merge(title, md.getTitle());
     originalTitle = merge(originalTitle, md.getOriginalTitle());
-    originalLanguage = merge(originalLanguage,md.getOriginalLanguage());
+    originalLanguage = merge(originalLanguage, md.getOriginalLanguage());
     year = merge(year, md.getYear());
     releaseDate = merge(releaseDate, md.getReleaseDate());
     plot = merge(plot, md.getPlot());
     tagline = merge(tagline, md.getTagline());
     runtime = merge(runtime, md.getRuntime());
-    rating = merge(rating, md.getRating());
-    voteCount = merge(voteCount, md.getVoteCount());
     collectionName = merge(collectionName, md.getCollectionName());
     top250 = merge(top250, md.getTop250());
     episodeNumber = merge(episodeNumber, md.getEpisodeNumber());
@@ -146,8 +145,13 @@ public class MediaMetadata {
     absoluteNumber = merge(absoluteNumber, md.getAbsoluteNumber());
     status = merge(status, md.getStatus());
 
-    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which we have in other array
-    castMembers.addAll(md.getCastMembers()); // so no dupe on adding all ;)
+    // remove all local ones, which we have in other array
+    // so no dupe on adding all ;)
+    ratings.removeAll(md.getRatings());
+    ratings.addAll(md.getRatings());
+
+    castMembers.removeAll(md.getCastMembers());
+    castMembers.addAll(md.getCastMembers());
 
     artwork.removeAll(md.getFanart());
     artwork.addAll(md.getFanart());
@@ -652,7 +656,9 @@ public class MediaMetadata {
    * @param originalLanguage
    *          the origial title to be set
    */
-  public void setOriginalLanguage(String originalLanguage) { this.originalLanguage = StrgUtils.getNonNullString(originalLanguage); }
+  public void setOriginalLanguage(String originalLanguage) {
+    this.originalLanguage = StrgUtils.getNonNullString(originalLanguage);
+  }
 
   /**
    * Get the year
@@ -805,86 +811,35 @@ public class MediaMetadata {
   }
 
   /**
-   * Get the rating (0 ... 10.0)
+   * Get the ratings
    * 
-   * @return the rating
+   * @return the ratings
    */
-  public float getRating() {
-    return rating;
+  public List<MediaRating> getRatings() {
+    return ratings;
   }
 
   /**
-   * Set the rating. The values are valid from 0 to 10.0
+   * Set the ratings. The values are valid from 0 to 10.0
    * 
-   * @param rating
-   *          the rating to be set
+   * @param newRatings
+   *          the ratings to be set
    */
-  public void setRating(float rating) {
-    this.rating = rating;
-  }
-
-  /**
-   * Set the rating. The values are valid from 0 to 10.0 - nullsafe
-   *
-   * @param rating
-   *          the rating to be set
-   */
-  public void setRating(Float rating) {
-    if (rating != null) {
-      setRating(rating.floatValue());
+  public void setRatings(List<MediaRating> newRatings) {
+    for (MediaRating rating : newRatings) {
+      addRating(rating);
     }
   }
 
   /**
-   * Set the rating. The values are valid from 0 to 10.0
+   * Add a rating. The values are valid from 0 to 10.0
    *
    * @param rating
    *          the rating to be set
    */
-  public void setRating(double rating) {
-    setRating((float) rating);
-  }
-
-  /**
-   * Set the rating. The values are valid from 0 to 10.0 - nullsafe
-   *
-   * @param rating
-   *          the rating to be set
-   */
-  public void setRating(Double rating) {
-    if (rating != null) {
-      setRating(rating.floatValue());
-    }
-  }
-
-  /**
-   * Get the vote count
-   * 
-   * @return the vote count
-   */
-  public int getVoteCount() {
-    return voteCount;
-  }
-
-  /**
-   * Set the vote count
-   * 
-   * @param voteCount
-   *          the vote count to be set
-   */
-  public void setVoteCount(int voteCount) {
-    this.voteCount = voteCount;
-  }
-
-  /**
-   * Set the vote count - nullsafe
-   *
-   * @param voteCount
-   *          the vote count to be set
-   */
-  public void setVoteCount(Integer voteCount) {
-    if (voteCount != null) {
-      setVoteCount(voteCount.intValue());
+  public void addRating(MediaRating rating) {
+    if (rating != null && StringUtils.isNotBlank(rating.getId()) && rating.getRating() > 0 && rating.getMaxValue() > 0) {
+      ratings.add(rating);
     }
   }
 
