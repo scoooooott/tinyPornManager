@@ -154,7 +154,7 @@ public class TvShowInformationPanel extends JPanel {
 
       {
         lblTvShowName = new JLabel("");
-        panelRight.add(lblTvShowName, "cell 0 0");
+        panelRight.add(lblTvShowName, "cell 0 0, wmin 0");
         TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
       }
       {

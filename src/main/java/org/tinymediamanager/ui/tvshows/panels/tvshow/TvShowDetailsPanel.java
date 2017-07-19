@@ -174,7 +174,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblStudioT, "cell 0 2");
 
       lblStudio = new JLabel("");
-      add(lblStudio, "cell 1 2");
+      add(lblStudio, "cell 1 2, wmin 0");
     }
     {
       JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
@@ -206,7 +206,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblGenresT, "cell 0 4");
 
       lblGenres = new JLabel("");
-      add(lblGenres, "cell 1 4 3 1");
+      add(lblGenres, "cell 1 4 3 1, wmin 0");
     }
     {
       JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblTagsT, "cell 0 5");
 
       lblTags = new JLabel("");
-      add(lblTags, "cell 1 5 3 1");
+      add(lblTags, "cell 1 5 3 1, wmin 0");
     }
     {
       JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
@@ -222,7 +222,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblPathT, "cell 0 6");
 
       lblPath = new LinkLabel("");
-      add(lblPath, "cell 1 6 3 1,growx");
+      add(lblPath, "cell 1 6 3 1, growx, wmin 0");
     }
   }
 
@@ -272,8 +272,8 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_5, lblStatus, jLabelBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.year");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.year");
+    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_8, lblYear, jLabelBeanProperty);
     autoBinding_8.bind();
     //

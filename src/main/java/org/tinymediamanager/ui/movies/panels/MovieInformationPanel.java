@@ -189,7 +189,7 @@ public class MovieInformationPanel extends JPanel {
 
       {
         lblMovieName = new JLabel("");
-        panelTopRight.add(lblMovieName, "cell 0 0,grow");
+        panelTopRight.add(lblMovieName, "cell 0 0, grow, wmin 0");
         TmmFontHelper.changeFont(lblMovieName, 1.33, Font.BOLD);
       }
       {
@@ -294,7 +294,7 @@ public class MovieInformationPanel extends JPanel {
           panelTopDetails.add(lblGenresT, "cell 0 3");
 
           lblGenres = new JLabel("");
-          panelTopDetails.add(lblGenres, "cell 1 3 3 1,growx");
+          panelTopDetails.add(lblGenres, "cell 1 3 3 1, growx, wmin 0");
         }
       }
 
@@ -333,7 +333,7 @@ public class MovieInformationPanel extends JPanel {
         panelTopRight.add(lblTaglineT, "cell 0 8,alignx left,aligny top");
 
         lblTagline = new JLabel();
-        panelTopRight.add(lblTagline, "cell 0 9,growx,aligny top");
+        panelTopRight.add(lblTagline, "cell 0 9, growx, aligny top, wmin 0");
       }
 
       {
@@ -415,8 +415,8 @@ public class MovieInformationPanel extends JPanel {
     autoBinding_2.setConverter(new VoteCountConverter());
     autoBinding_2.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie.year");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie.year");
+    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_8, lblYear, jLabelBeanProperty);
     autoBinding_9.bind();
     //

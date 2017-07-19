@@ -144,7 +144,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       add(lblPathT, "cell 0 5");
 
       lblPath = new LinkLabel("");
-      add(lblPath, "cell 2 5,growx");
+      add(lblPath, "cell 2 5, growx, wmin 0");
     }
   }
 

@@ -146,7 +146,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
       {
         lblTvShowName = new JLabel("");
-        panelRight.add(lblTvShowName, "flowx,cell 0 0");
+        panelRight.add(lblTvShowName, "flowx, cell 0 0, wmin 0");
         TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
       }
       {
@@ -154,7 +154,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         panelRight.add(lblEpisodeTitle, "cell 0 1");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 2,growx");
+        panelRight.add(new JSeparator(), "cell 0 2, growx, wmin 0");
       }
       {
         panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);

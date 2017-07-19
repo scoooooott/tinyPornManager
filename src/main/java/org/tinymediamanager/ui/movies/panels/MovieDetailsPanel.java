@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -99,70 +98,70 @@ public class MovieDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
     JLabel lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblOriginalTitleT, Font.BOLD);
     add(lblOriginalTitleT, "cell 0 0");
 
     lblOriginalTitle = new JLabel("");
-    add(lblOriginalTitle, "cell 2 0,growx");
+    add(lblOriginalTitle, "cell 2 0, growx, wmin 0");
 
     JLabel lblReleaseDateT = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblReleaseDateT, Font.BOLD);
     add(lblReleaseDateT, "cell 0 1");
 
     lblReleaseDate = new JLabel("");
-    add(lblReleaseDate, "cell 2 1,growx");
+    add(lblReleaseDate, "cell 2 1, growx, wmin 0");
 
     JLabel lblProductionT = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblProductionT, Font.BOLD);
     add(lblProductionT, "cell 0 2");
 
     lblProduction = new JLabel();
-    add(lblProduction, "cell 2 2,growx");
+    add(lblProduction, "cell 2 2, growx, wmin 0");
 
     JLabel lblCountryT = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblCountryT, Font.BOLD);
     add(lblCountryT, "cell 0 3");
 
     lblCountry = new JLabel("");
-    add(lblCountry, "cell 2 3,growx");
+    add(lblCountry, "cell 2 3, growx, wmin 0");
 
     JLabel lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblSpokenLanguagesT, Font.BOLD);
     add(lblSpokenLanguagesT, "cell 0 4");
 
     lblSpokenLanguages = new JLabel("");
-    add(lblSpokenLanguages, "cell 2 4,growx");
+    add(lblSpokenLanguages, "cell 2 4, growx, wmin 0");
 
     JLabel lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblMoviesetT, Font.BOLD);
     add(lblMoviesetT, "cell 0 5");
 
     lblMovieSet = new JLabel("");
-    add(lblMovieSet, "cell 2 5,growx");
+    add(lblMovieSet, "cell 2 5, growx, wmin 0");
 
     JLabel lblEditionT = new JLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblEditionT, Font.BOLD);
     add(lblEditionT, "cell 0 6");
 
     lblEdition = new JLabel("");
-    add(lblEdition, "cell 2 6,growx");
+    add(lblEdition, "cell 2 6, growx, wmin 0");
 
     JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblTagsT, Font.BOLD);
     add(lblTagsT, "cell 0 7");
 
     lblTags = new JLabel("");
-    add(lblTags, "cell 2 7,growx");
+    add(lblTags, "cell 2 7, growx, wmin 0");
 
     JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
     add(lblMoviePathT, "cell 0 8");
 
     lblMoviePath = new LinkLabel("");
-    add(lblMoviePath, "cell 2 8,growx");
+    add(lblMoviePath, "cell 2 8, growx, wmin 0");
   }
 
   protected void initDataBindings() {
@@ -208,9 +207,9 @@ public class MovieDetailsPanel extends JPanel {
         movieSelectionModelBeanProperty_10, lblReleaseDate, jLabelBeanProperty);
     autoBinding_6.bind();
     //
-    BeanProperty<MovieSelectionModel, MovieEdition> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.edition.title");
-    AutoBinding<MovieSelectionModel, MovieEdition, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_9, lblEdition, jLabelBeanProperty);
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.edition.title");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_9, lblEdition, jLabelBeanProperty);
     autoBinding_8.bind();
   }
 }
