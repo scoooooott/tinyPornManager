@@ -55,7 +55,7 @@ public class MediaProviderConfigTest {
     assertEqual(3, mpi.getConfig().getValueIndex("languageInt"));
 
     mpi.getConfig().setValue("languageInt", "unknown"); // not possible
-    assertEqual("3", mpi.getConfig().getValue("languageInt")); // value not in rage, should stay at last known
+    assertEqual("5", mpi.getConfig().getValue("languageInt")); // value not in rage, should stay at last known
 
     assertEqual(null, mpi.getConfig().getValueAsBool("languageInt")); // not a bool value
     assertEqual(true, mpi.getConfig().getValueAsBool("useTmdb"));
