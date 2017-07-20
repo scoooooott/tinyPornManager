@@ -78,7 +78,8 @@ public class MediaSource extends DynaEnum<MediaSource> {
       this.pattern = null;
     }
 
-    addElement();
+    // FIXME readd after switch to v3
+    // addElement();
   }
 
   @Override
