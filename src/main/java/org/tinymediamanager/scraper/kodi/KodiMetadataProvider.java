@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.util.CacheMap;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
@@ -34,7 +36,9 @@ import net.xeoh.plugins.base.annotations.events.Init;
  */
 @PluginImplementation
 public class KodiMetadataProvider implements IKodiMetadataProvider {
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("kodi", "kodi.tv", "Generic Kodi type scraper");
+  private static MediaProviderInfo                       providerInfo = new MediaProviderInfo("kodi", "kodi.tv", "Generic Kodi type scraper");
+  // cache one hour
+  protected final static CacheMap<String, MediaMetadata> XML_CACHE    = new CacheMap<>(60 * 60, 60);
 
   public KodiMetadataProvider() {
     // empty constructor just for creating the factory

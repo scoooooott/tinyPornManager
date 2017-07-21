@@ -29,16 +29,10 @@ import org.slf4j.LoggerFactory;
 class KodiScraperProcessor {
   public static final String  FUNCTION_SETTINGS = "GetSettings";
   private static final Logger LOGGER            = LoggerFactory.getLogger(KodiScraperProcessor.class);
-  private boolean             truncateLogging   = true;
-
-  private KodiScraper         scraper           = null;
-
-  // 20 buffers in total; buffer 0 is always blank
-  private String              buffers[]         = new String[21];
-
   private static final int    PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
-
-  // private XbmcScraperConfiguration cfg = new XbmcScraperConfiguration();
+  private boolean             truncateLogging   = true;
+  private KodiScraper         scraper           = null;
+  private String              buffers[]         = new String[21];
 
   public KodiScraperProcessor(KodiScraper scraper) {
     if (scraper == null)
@@ -69,34 +63,19 @@ class KodiScraperProcessor {
 
     if (func != null) {
       func = scraper.getFunction(function).clone(); // get as clone, since we are changing regexps!!!
-      LOGGER.debug("** BEGIN Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
-
-      // Replacing our options in RegExps
-      RegExp[] res = func.getRegExps();
-      for (RegExp r : res) {
-        for (String key : scraper.getProviderInfo().getConfig().getConfigKeyValuePairs().keySet()) {
-          String rep = "$INFO[" + key + "]";
-          if (r.getInput().contains(rep) || r.getOutput().contains(rep)) {
-            String opt = scraper.getProviderInfo().getConfig().getValue(key);
-            LOGGER.debug("Replacing Option " + rep + " with " + opt);
-            r.setInput(r.getInput().replace(rep, opt));
-            r.setOutput(r.getOutput().replace(rep, opt));
-          }
-        }
-      }
+      LOGGER.info("** BEGIN Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
 
       if (func.isClearBuffers()) {
         clearBuffers();
       }
       setBuffers(input);
-
       executeRegexps(func.getRegExps());
 
-      LOGGER.debug("** END Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
+      LOGGER.info("** END Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
       return getBuffer(func.getDest());
     }
     else {
-      LOGGER.debug("** Could not locate Function: " + function + " in the scraper " + scraper.getProviderInfo().getId());
+      LOGGER.warn("** Could not locate Function: " + function + " in the scraper " + scraper.getProviderInfo().getId());
       return "";
     }
   }
@@ -105,7 +84,7 @@ class KodiScraperProcessor {
     int i = 0;
     for (RegExp r : regExps) {
       i++;
-      LOGGER.debug("Executing " + i + "/" + regExps.length + " - " + r.getExpression().getExpression());
+      LOGGER.trace("Executing " + i + "/" + regExps.length + " - " + r.getExpression().getExpression());
       executeRegexp(r);
     }
   }
@@ -120,10 +99,10 @@ class KodiScraperProcessor {
       // Boolean b = BooleanUtils.toBooleanObject(options.get(cond));
       Boolean b = scraper.getProviderInfo().getConfig().getValueAsBool(cond);
 
-      LOGGER.debug("Processing Conditional: " + regex.getConditional() + " > " + (not ? !b : b));
+      LOGGER.trace("Processing Conditional: " + regex.getConditional() + " > " + (not ? !b : b));
       boolean b2 = (b == null || b.booleanValue() == true);
       if (!(b2 || (not && !b2))) {
-        LOGGER.debug("Condition Not Met: " + regex.getConditional() + " > " + b2);
+        LOGGER.trace("Condition Not Met: " + regex.getConditional() + " > " + b2);
         return;
       }
     }
@@ -135,7 +114,7 @@ class KodiScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    LOGGER.debug(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(),
+    LOGGER.trace(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(),
         r.getInput(), r.getOutput()));
     Expression exp = r.getExpression();
 
@@ -145,32 +124,32 @@ class KodiScraperProcessor {
 
     String expr = exp.getExpression();
     if (expr == null || expr.trim().length() == 0) {
-      LOGGER.debug("Expression was empty.  Returning processed output buffer using input as replacement array.");
+      LOGGER.warn("Expression was empty.  Returning processed output buffer using input as replacement array.");
       setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[] { "", in }), r.isAppendBuffer());
       return;
     }
 
-    LOGGER.debug("Expression: " + expr);
+    LOGGER.trace("Expression: " + expr);
     expr = processOutputBuffersForInputBufferReferences(expr);
-    LOGGER.debug("Expression: " + expr);
-    LOGGER.debug("     Input: " + logBuffer(in));
+    LOGGER.trace("Expression: " + expr);
+    LOGGER.trace("     Input: " + logBuffer(in));
     Pattern p = Pattern.compile(expr, PATTERN_OPTIONS);
     Matcher m = p.matcher(in);
     if (m.find()) {
-      LOGGER.debug("Matched: Group Count: " + m.groupCount());
+      LOGGER.trace("Matched: Group Count: " + m.groupCount());
       setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), r.isAppendBuffer());
 
       if (exp.isRepeat()) {
         while (m.find()) {
-          LOGGER.debug("Repeat Matched.  Group Count: " + m.groupCount());
-          setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), r.isAppendBuffer());
+          LOGGER.trace("Repeat Matched. Group Count: " + m.groupCount());
+          setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), true); // repeat always append!
         }
       }
     }
     else {
-      LOGGER.debug(String.format("No Match! Expression: %s; Text: %s;", expr, logBuffer(in)));
+      LOGGER.trace(String.format("No Match! Expression: %s; Text: %s;", expr, logBuffer(in)));
       if (exp.isClear()) {
-        LOGGER.debug("Clearing Destination Buffer: " + r.getDest());
+        LOGGER.trace("Clearing Destination Buffer: " + r.getDest());
         setBuffer(r.getDest(), "", false);
       }
     }
@@ -206,14 +185,14 @@ class KodiScraperProcessor {
   private String cleanHtml(String group) {
     if (group == null)
       return "";
-    LOGGER.debug("Before Clean Html: " + group);
+    LOGGER.trace("Before Clean Html: " + group);
     String s = group.replaceAll("<[^>]+>", "");
-    LOGGER.debug("After Clean Html: " + s);
+    LOGGER.trace("After Clean Html: " + s);
     return s;
   }
 
   private String processOutputBuffers(String output, String groups[]) {
-    LOGGER.debug("Processing output buffer replacement.");
+    LOGGER.trace("Processing output buffer replacement.");
     Pattern p = Pattern.compile("\\\\([0-9])");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -224,7 +203,7 @@ class KodiScraperProcessor {
       lastStart = m.end();
       int g = Integer.parseInt(m.group(1));
       if (g > groups.length) {
-        LOGGER.debug("No Group Replacement for: " + g);
+        LOGGER.trace("No Group Replacement for: " + g);
         continue;
       }
 
@@ -245,7 +224,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForInputBufferReferences(String output) {
-    LOGGER.debug("Processing output buffers for input buffer references.");
+    LOGGER.trace("Processing output buffers for input buffer references.");
     Pattern p = Pattern.compile("\\$\\$([0-9]+)");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -263,7 +242,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForPropertyReferences(String output) {
-    LOGGER.debug("Processing output buffers for property references.");
+    LOGGER.trace("Processing output buffers for property references.");
     Pattern p = Pattern.compile("\\$INFO\\[([^\\]]+)\\]");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -310,7 +289,7 @@ class KodiScraperProcessor {
     }
     text = KodiUtil.fixXmlHeader(text); // fix possible XML header errors
 
-    LOGGER.debug("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
+    LOGGER.trace("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
     return text;
   }
 
@@ -320,7 +299,7 @@ class KodiScraperProcessor {
     }
     buffer = KodiUtil.fixXmlHeader(buffer); // fix possible XML header errors
 
-    LOGGER.debug(String.format("Get String Buffer: %s", buffer));
+    LOGGER.trace(String.format("Get String Buffer: %s", buffer));
     Pattern bufferPattern = Pattern.compile("\\$\\$([0-9]+)");
     Matcher m = bufferPattern.matcher(buffer);
     if (m.find()) {
@@ -332,7 +311,7 @@ class KodiScraperProcessor {
       return sb.toString();
     }
     else {
-      LOGGER.debug("getBuffer(): Using raw input: " + logBuffer(buffer));
+      LOGGER.trace("getBuffer(): Using raw input: " + logBuffer(buffer));
     }
     return buffer;
   }
@@ -342,12 +321,12 @@ class KodiScraperProcessor {
       text = "";
     }
 
-    LOGGER.debug(String.format("Set Buffer: %s; Append: %s; Text: %s", buffer, append, logBuffer(text)));
+    LOGGER.trace(String.format("Set Buffer: %s; Append: %s; Text: %s", buffer, append, logBuffer(text)));
 
     Pattern p = Pattern.compile("<url\\s+.*function=");
     Matcher m = p.matcher(text);
     if (m.find()) {
-      LOGGER.debug("Processing Sub Function: " + text);
+      LOGGER.debug("Processing Sub Function URL: " + text);
       try {
         KodiUrl url = new KodiUrl(text);
         ScraperFunction func = scraper.getFunction(url.getFunctionName());
@@ -357,9 +336,8 @@ class KodiScraperProcessor {
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
         // call the set buffer again with this result
-        // setBuffer(buffer, proc.executeFunction(url.getFunctionName(), new
-        // String[] {"", url.getTextContent()}), append);
         text = proc.executeFunction(url.getFunctionName(), new String[] { "", url.getTextContent() });
+        append = true; // always append sub functions!
       }
       catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
@@ -371,7 +349,7 @@ class KodiScraperProcessor {
     p = Pattern.compile("<chain function=\"(.*)\">(.*)</chain>");
     m = p.matcher(text);
     if (m.find()) {
-      LOGGER.debug("Processing Sub Function: " + text);
+      LOGGER.debug("Processing Sub Function CHAIN: " + text);
       try {
         ScraperFunction func = scraper.getFunction(m.group(1));
         if (func == null) {
@@ -380,9 +358,8 @@ class KodiScraperProcessor {
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
         // call the set buffer again with this result
-        // setBuffer(buffer, proc.executeFunction(url.getFunctionName(), new
-        // String[] {"", url.getTextContent()}), append);
         text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</" + m.group(1) + ">";
+        append = true; // always append sub functions!
       }
       catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
@@ -393,7 +370,7 @@ class KodiScraperProcessor {
     if (append) {
       String s = buffers[buffer];
       if (s != null) {
-        LOGGER.debug("Appending to buffer: " + buffer);
+        LOGGER.trace("Appending to buffer: " + buffer);
         text = s + text;
       }
     }
@@ -409,7 +386,7 @@ class KodiScraperProcessor {
   private void setBuffers(String[] input) {
     if (input == null)
       return;
-    LOGGER.debug("Set Buffers: # of input Buffers: " + input.length);
+    LOGGER.trace("Set Buffers: # of input Buffers: " + input.length);
     for (int i = 0; i < input.length; i++) {
       if (input[i] != null)
         setBuffer(i, input[i], false);

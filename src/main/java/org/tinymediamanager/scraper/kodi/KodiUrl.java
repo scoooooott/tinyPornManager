@@ -43,10 +43,10 @@ import org.w3c.dom.Element;
 class KodiUrl {
   private static final Logger LOGGER = LoggerFactory.getLogger(KodiUrl.class);
 
-  private String      urlString;
-  private Url         url;
-  private String      functionName;
-  private KodiScraper scraper;
+  private String              urlString;
+  private Url                 url;
+  private String              functionName;
+  private KodiScraper         scraper;
 
   public KodiUrl(Element url) {
     updateFromElement(url);
@@ -95,7 +95,7 @@ class KodiUrl {
     urlString = e.getTextContent();
     if (urlString != null)
       urlString = urlString.trim();
-    LOGGER.debug("KodiUrl using Url from Xml: " + urlString);
+    LOGGER.trace("KodiUrl using Url from Xml: " + urlString);
     functionName = e.getAttribute("function");
     // TODO: pull in post, spoof, etc.
   }
@@ -161,11 +161,16 @@ class KodiUrl {
   }
 
   public String getTextContent() throws Exception {
+    InputStream is = getInputStream();
+    if (is == null) {
+      LOGGER.error("InputStream was NULL!!!");
+      return "";
+    }
     return IOUtils.toString(getInputStream());
   }
 
   @Override
   public String toString() {
-    return "KodiUrl[" + url + "]";
+    return "KodiUrl[" + urlString + "]";
   }
 }

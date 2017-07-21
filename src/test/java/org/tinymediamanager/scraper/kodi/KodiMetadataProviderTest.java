@@ -18,6 +18,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 public class KodiMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -42,6 +43,48 @@ public class KodiMetadataProviderTest {
     }
     catch (Exception e) {
       fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testKodiTVScraper() {
+    try {
+      // LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+      // lc.getLogger("org.tinymediamanager.scraper").setLevel(Level.TRACE);
+
+      KodiMetadataProvider kodiMetadataProvider = new KodiMetadataProvider();
+      List<IMediaProvider> scraper = kodiMetadataProvider.getPluginsForType(MediaType.TV_SHOW);
+      assertThat(scraper).isNotNull().isNotEmpty();
+
+      ITvShowMetadataProvider show = null;
+      for (IMediaProvider mp : scraper) {
+        if (mp.getProviderInfo().getId().equals("metadata.tvshows.themoviedb.org")) {
+          show = (ITvShowMetadataProvider) mp;
+          break;
+        }
+      }
+      assertThat(show).isNotNull();
+
+      // search show
+      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.TV_SHOW, "21 Jump Street");
+      searchOptions.setYear(1987);
+      searchOptions.setLanguage(Locale.GERMAN);
+      List<MediaSearchResult> results = show.search(searchOptions);
+      for (MediaSearchResult mediaSearchResult : results) {
+        System.out.println(mediaSearchResult);
+      }
+
+      // scrape show details
+      MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.TV_SHOW);
+      scrapeOptions.setResult(results.get(0));
+      MediaMetadata md = show.getMetadata(scrapeOptions);
+
+      // get episode list
+      show.getEpisodeList(null);
+      // ToStringBuilder.reflectionToString(md, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+    catch (Exception e) {
+      fail(e.getMessage(), e);
     }
   }
 

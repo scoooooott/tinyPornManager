@@ -262,7 +262,7 @@ class KodiUtil {
             break;
 
           case TV_SHOW:
-            // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
+            metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
             break;
 
           default:
