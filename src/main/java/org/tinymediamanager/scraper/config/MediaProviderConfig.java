@@ -62,8 +62,7 @@ public class MediaProviderConfig {
   /**
    * convenient method for unit testing - should not be used otherwise
    */
-  @Deprecated
-  public void loadFromDir(String folder) {
+  void loadFromDir(String folder) {
     if (settings.isEmpty()) {
       return;
     }
@@ -91,8 +90,7 @@ public class MediaProviderConfig {
   /**
    * convenient method for unit testing - should not be used otherwise
    */
-  @Deprecated
-  public void saveToDir(String folder) {
+  void saveToDir(String folder) {
     if (settings.isEmpty()) {
       return;
     }
