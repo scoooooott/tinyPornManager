@@ -154,22 +154,29 @@ class KodiUtil {
                                                           // version
                                                           // comparison
 
-    // detect manually added addons
-    File addons = new File("kodi_scraper");
+    // check if we are in a unit test
+    File addons = new File("./target/test-classes/kodi_scraper");
     if (addons != null && addons.exists()) {
       foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
     }
+    else {
+      // detect manually added addons
+      addons = new File("kodi_scraper");
+      if (addons != null && addons.exists()) {
+        foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
+      }
 
-    // detect addons from Kodi user data folder
-    addons = new File(detectKodiUserFolder(), "addons");
-    if (addons != null && addons.exists()) {
-      foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
-    }
+      // detect addons from Kodi user data folder
+      addons = new File(detectKodiUserFolder(), "addons");
+      if (addons != null && addons.exists()) {
+        foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
+      }
 
-    // detect addons from Kodi install folder
-    addons = new File(detectKodiFolder(), "addons");
-    if (addons != null && addons.exists()) {
-      foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
+      // detect addons from Kodi install folder
+      addons = new File(detectKodiFolder(), "addons");
+      if (addons != null && addons.exists()) {
+        foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
+      }
     }
 
     for (File f : foundAddonFiles) {
