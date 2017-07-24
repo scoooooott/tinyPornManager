@@ -37,7 +37,7 @@ import okhttp3.Headers;
  * The class CachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)
  */
 public class CachedUrl extends Url {
-  private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<>(60, 5);
+  private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<>(600, 5);
 
   public CachedUrl(String url) throws MalformedURLException {
     this.url = url;

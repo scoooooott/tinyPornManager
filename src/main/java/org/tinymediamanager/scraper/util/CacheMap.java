@@ -161,7 +161,7 @@ public class CacheMap<K, T> {
       K key = entry.getKey();
       CacheObject c = entry.getValue();
 
-      if (c != null && ((now > (timeToLive + c.lastAccessed)) || force)) {
+      if (c != null && ((now > (timeToLive * 1000 + c.lastAccessed)) || force)) {
         deleteKey.add(key);
       }
     }
