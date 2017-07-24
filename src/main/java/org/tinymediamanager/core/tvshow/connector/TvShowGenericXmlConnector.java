@@ -89,13 +89,16 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
   @Override
   public void write(List<TvShowNfoNaming> nfoNames) {
-    // first of all, get the data from a previous written NFO file
-    for (MediaFile mf : tvShow.getMediaFiles(MediaFileType.NFO)) {
-      try {
-        parser = TvShowNfoParser.parseNfo(mf.getFileAsPath());
-        break;
-      }
-      catch (Exception ignored) {
+    // first of all, get the data from a previous written NFO file,
+    // if we do not want clean NFOs
+    if (!TvShowModuleManager.SETTINGS.isWriteCleanNfo()) {
+      for (MediaFile mf : tvShow.getMediaFiles(MediaFileType.NFO)) {
+        try {
+          parser = TvShowNfoParser.parseNfo(mf.getFileAsPath());
+          break;
+        }
+        catch (Exception ignored) {
+        }
       }
     }
 

@@ -93,6 +93,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JPanel                               panelScraperOptions;
   private JComboBox<TvShowConnectors>          cbNfoFormat;
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
+  private JCheckBox                            chckbxWriteCleanNfo;
 
   private ItemListener                         comboBoxListener;
 
@@ -182,7 +183,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][][][20lp][][][][20lp][][][20lp][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][][][20lp][][][][][20lp][][][20lp][][]"));
     {
       JLabel lblMetadataScraper = new JLabel(BUNDLE.getString("scraper.metadata")); // $NON-NLS-1$
       TmmFontHelper.changeFont(lblMetadataScraper, 1.16667, Font.BOLD);
@@ -236,31 +237,34 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       add(lblNfoFormatT, "flowx,cell 1 6 3 1");
 
       cbNfoFormat = new JComboBox(TvShowConnectors.values());
-      add(cbNfoFormat, "cell 1 6");
+      add(cbNfoFormat, "cell 1 6 3 1");
+
+      chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
+      add(chckbxWriteCleanNfo, "cell 1 7 3 1");
 
       JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationFormatT, "flowx,cell 1 7 3 1");
+      add(lblCertificationFormatT, "flowx,cell 1 8 3 1");
 
       cbCertificationStyle = new JComboBox();
-      add(cbCertificationStyle, "cell 1 7");
+      add(cbCertificationStyle, "cell 1 8 3 1");
     }
     {
       final JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperOptionsT, 1.16667, Font.BOLD);
-      add(lblScraperOptionsT, "cell 0 9 4 1");
+      add(lblScraperOptionsT, "cell 0 10 4 1");
     }
     {
       final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
-      add(scraperMetadataPanel, "cell 1 10 3 1,grow");
+      add(scraperMetadataPanel, "cell 1 11 3 1,grow");
     }
     {
       final JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblArtworkScrapeT, 1.16667, Font.BOLD);
-      add(lblArtworkScrapeT, "cell 0 12 3 1");
+      add(lblArtworkScrapeT, "cell 0 13 3 1");
     }
     {
       chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
-      add(chckbxAutomaticallyScrapeImages, "cell 1 13 3 1");
+      add(chckbxAutomaticallyScrapeImages, "cell 1 14 3 1");
     }
   }
 
@@ -421,5 +425,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<TvShowSettings, TvShowConnectors, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_1 = BeanProperty.create("writeCleanNfo");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_1, chckbxWriteCleanNfo, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

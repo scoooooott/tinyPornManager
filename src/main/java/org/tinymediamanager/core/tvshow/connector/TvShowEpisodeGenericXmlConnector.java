@@ -93,13 +93,16 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     TvShowEpisode firstEpisode = episodes.get(0);
     TvShowEpisodeNfoParser parser = null;
 
-    // first of all, get the data from a previous written NFO file
-    for (MediaFile mf : firstEpisode.getMediaFiles(MediaFileType.NFO)) {
-      try {
-        parser = TvShowEpisodeNfoParser.parseNfo(mf.getFileAsPath());
-        break;
-      }
-      catch (Exception ignored) {
+    // first of all, get the data from a previous written NFO file,
+    // if we do not want clean NFOs
+    if (!TvShowModuleManager.SETTINGS.isWriteCleanNfo()) {
+      for (MediaFile mf : firstEpisode.getMediaFiles(MediaFileType.NFO)) {
+        try {
+          parser = TvShowEpisodeNfoParser.parseNfo(mf.getFileAsPath());
+          break;
+        }
+        catch (Exception ignored) {
+        }
       }
     }
 

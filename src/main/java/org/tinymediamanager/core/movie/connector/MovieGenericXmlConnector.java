@@ -92,13 +92,16 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   @Override
   public void write(List<MovieNfoNaming> nfoNames) {
 
-    // first of all, get the data from a previous written NFO file
-    for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
-      try {
-        parser = MovieNfoParser.parseNfo(mf.getFileAsPath());
-        break;
-      }
-      catch (Exception ignored) {
+    // first of all, get the data from a previous written NFO file,
+    // if we do not want clean NFOs
+    if (!MovieModuleManager.SETTINGS.isWriteCleanNfo()) {
+      for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
+        try {
+          parser = MovieNfoParser.parseNfo(mf.getFileAsPath());
+          break;
+        }
+        catch (Exception ignored) {
+        }
       }
     }
 

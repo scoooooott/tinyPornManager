@@ -190,6 +190,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          buildImageCacheOnImport              = false;
   private MovieConnectors                  movieConnector                       = MovieConnectors.KODI;
   private CertificationStyle               certificationStyle                   = CertificationStyle.LARGE;
+  private boolean                          writeCleanNfo                        = false;
 
   // renamer
   private boolean                          renameAfterScrape                    = false;
@@ -1081,6 +1082,16 @@ public class MovieSettings extends AbstractSettings {
   public void setMovieScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
     this.movieScraperMetadataConfig = scraperMetadataConfig;
     this.movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
+  }
+
+  public boolean isWriteCleanNfo() {
+    return writeCleanNfo;
+  }
+
+  public void setWriteCleanNfo(boolean newValue) {
+    boolean oldValue = this.writeCleanNfo;
+    this.writeCleanNfo = newValue;
+    firePropertyChange("writeCleanNfo", oldValue, newValue);
   }
 
   /*****************************************************************

@@ -181,6 +181,7 @@ public class TvShowSettings extends AbstractSettings {
   private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
   private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
+  private boolean                              writeCleanNfo                  = false;
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -736,6 +737,16 @@ public class TvShowSettings extends AbstractSettings {
     TvShowConnectors oldValue = this.tvShowConnector;
     this.tvShowConnector = newValue;
     firePropertyChange(TV_SHOW_CONNECTOR, oldValue, newValue);
+  }
+
+  public boolean isWriteCleanNfo() {
+    return writeCleanNfo;
+  }
+
+  public void setWriteCleanNfo(boolean newValue) {
+    boolean oldValue = this.writeCleanNfo;
+    this.writeCleanNfo = newValue;
+    firePropertyChange("writeCleanNfo", oldValue, newValue);
   }
 
   /*****************************************************************
