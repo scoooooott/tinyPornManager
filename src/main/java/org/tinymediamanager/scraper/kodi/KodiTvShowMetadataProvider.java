@@ -15,10 +15,11 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,15 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -91,6 +96,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     Document xml = parseXmlString(xmlDetails);
     addMetadata(md, xml.getDocumentElement());
 
+    String showId = md.getId(scraper.getProviderInfo().getId()).toString();
     String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), EPISODEGUIDE);
     if (StringUtils.isEmpty(episodeUrl)) {
       LOGGER.error("No Episode Data!");
@@ -98,9 +104,10 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     else {
       md.addExtraData(EPISODEGUIDE, episodeUrl);
       result.setMetadata(md);
-      cacheEpisodeMetadata(episodeUrl); // since we already scrape the SHOW, we could already preload the episode metadata...
+      // since we already scrape the SHOW, we could already preload the episode metadata...
+      cacheEpisodeMetadata(showId, episodeUrl);
     }
-    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + result.getId(), md);// cache SHOW as provideId_12345
+    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), md);// cache SHOW as provideId_12345
   }
 
   /**
@@ -110,7 +117,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
    * @param episodeguideUrl
    * @throws Exception
    */
-  private void cacheEpisodeMetadata(String episodeguideUrl) throws Exception {
+  private void cacheEpisodeMetadata(String showId, String episodeguideUrl) throws Exception {
     // get-and-cache
     KodiUrl url = new KodiUrl(episodeguideUrl);
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
@@ -157,7 +164,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       md.setSeasonNumber(season);
 
       // cache EPISODE MetaData as provideId_S00_E00
-      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_S" + lz(season) + "_E" + lz(ep), md);
+      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), md);
     }
   }
 
@@ -183,10 +190,12 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     }
     LOGGER.debug("search for " + seasonNr + " " + episodeNr);
 
-    MediaMetadata md = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
+    String showId = options.getId(scraper.getProviderInfo().getId()).toString();
+    MediaMetadata md = KodiMetadataProvider.XML_CACHE
+        .get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
     if (md == null) {
       // ohm... not cached, we didn't search show first
-      LOGGER.error("Cannot get episode S" + lz(seasonNr) + "_E" + lz(episodeNr) + " - you need to scrape whole episode, sorry.");
+      LOGGER.error("Cannot get episode S" + lz(seasonNr) + "_E" + lz(episodeNr) + " - did you scrape the show yet?.");
     }
 
     return md;
@@ -194,37 +203,50 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
 
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-
     List<MediaEpisode> episodeList = new ArrayList<MediaEpisode>();
 
-    // get all cached episode metadata
-    // create MediaEpisodesList
-
-    // foreach
-    {
-      MediaEpisode me = new MediaEpisode(scraper.getProviderInfo().getId());
-      // me.episode = md.getEpisodeNumber();
-      // me.season = md.getSeasonNumber();
-      // me.title = md.getTitle();
-      // me.rating = md.getRating();
-      // if (md.getReleaseDate() != null) {
-      // Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-      // me.firstAired = formatter.format(md.getReleaseDate());
-      // }
-      // me.voteCount = md.getVoteCount();
-      // me.ids.put(scraper.providerInfo.getId(), DOMUtils.getElementValue(epXmlEl, "uniqueid"));
-      //
-      // for (MediaCastMember cast : ListUtils.nullSafe(md.getCastMembers())) {
-      // me.castMembers.add(cast);
-      // }
-      // for (MediaArtwork art : ListUtils.nullSafe(md.getMediaArt(MediaArtworkType.ALL))) {
-      // me.artwork.add(art);
-      // }
-      episodeList.add(me);
+    String showId = options.getId(scraper.getProviderInfo().getId());
+    if (showId == null) {
+      showId = options.getResult().getId();
+    }
+    if (showId == null) {
+      LOGGER.error("Coould not find showId!");
+      return episodeList;
     }
 
-    throw new NotImplementedException("not yet implemented");
-    // return episodeList;
+    if (!StringUtils.isEmpty(showId)) {
+      for (String key : KodiMetadataProvider.XML_CACHE.keySet()) {
+        if (key.startsWith((scraper.getProviderInfo().getId() + "_" + showId))) {
+          MediaMetadata md = KodiMetadataProvider.XML_CACHE.get(key);
+          if (md == null) {
+            LOGGER.warn("Could not find cached episode for " + key);
+            continue;
+          }
+
+          MediaEpisode me = new MediaEpisode(scraper.getProviderInfo().getId());
+          me.episode = md.getEpisodeNumber();
+          me.season = md.getSeasonNumber();
+          me.title = md.getTitle();
+          me.rating = md.getRating();
+          if (md.getReleaseDate() != null) {
+            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+            me.firstAired = formatter.format(md.getReleaseDate());
+          }
+          me.voteCount = md.getVoteCount();
+          for (MediaCastMember cast : ListUtils.nullSafe(md.getCastMembers())) {
+            me.castMembers.add(cast);
+          }
+          for (MediaArtwork art : ListUtils.nullSafe(md.getMediaArt(MediaArtworkType.ALL))) {
+            me.artwork.add(art);
+          }
+          episodeList.add(me);
+        }
+      }
+    }
+    if (episodeList.size() == 0) {
+      LOGGER.warn("Could not find cached episodes - did you scrape show recently?");
+    }
+    return episodeList;
   }
 
   @Override

@@ -15,6 +15,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -74,14 +75,25 @@ public class KodiMetadataProviderTest {
         System.out.println(mediaSearchResult);
       }
 
-      // scrape show details
+      // scrape show details (and cache episodes!)
       MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.TV_SHOW);
       scrapeOptions.setResult(results.get(0));
       MediaMetadata md = show.getMetadata(scrapeOptions);
 
-      // get episode list
-      show.getEpisodeList(null);
-      // ToStringBuilder.reflectionToString(md, ToStringStyle.SHORT_PREFIX_STYLE);
+      // get episode list (when cached)
+      List<MediaEpisode> epl = show.getEpisodeList(scrapeOptions);
+      for (MediaEpisode me : epl) {
+        System.out.println(me);
+      }
+
+      // get single episode (when cached)
+      scrapeOptions = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      scrapeOptions.setId("metadata.tvshows.themoviedb.org", "1486");
+      scrapeOptions.setId(MediaMetadata.SEASON_NR, "2");
+      scrapeOptions.setId(MediaMetadata.EPISODE_NR, "4");
+      MediaMetadata ep = show.getMetadata(scrapeOptions);
+      System.out.println(ep);
+
     }
     catch (Exception e) {
       fail(e.getMessage(), e);
