@@ -71,6 +71,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   private JLabel                      lblVideoCodec;
   private JLabel                      lblVideoResolution;
   private JLabel                      lblVideoBitrate;
+  private JLabel                      lblVideoBitDepth;
   private JPanel                      panelAudioStreamT;
   private JPanel                      panelAudioStreamDetails;
   private JPanel                      panelSubtitle;
@@ -161,8 +162,8 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       lblVideoBitrate = new JLabel("");
       panelVideoStreamDetails.add(lblVideoBitrate);
 
-      // to create the same spacing as in audio
-      panelVideoStreamDetails.add(new JLabel(""));
+      lblVideoBitDepth = new JLabel("");
+      panelVideoStreamDetails.add(lblVideoBitDepth);
     }
     {
       JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
@@ -233,6 +234,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       lblVideoCodec.setText(mediaFile.getVideoCodec());
       lblVideoResolution.setText(mediaFile.getVideoResolution());
       lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+      lblVideoBitDepth.setText(mediaFile.getBitDepthString());
     }
     lblSource.setText(selectionModel.getSelectedTvShowEpisode().getMediaSource().toString());
   }
