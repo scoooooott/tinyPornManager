@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -113,6 +114,10 @@ public class CacheMap<K, T> {
       c.lastAccessed = System.currentTimeMillis();
       return c.value;
     }
+  }
+
+  public Set<K> keySet() {
+    return cacheMap.keySet();
   }
 
   /**
