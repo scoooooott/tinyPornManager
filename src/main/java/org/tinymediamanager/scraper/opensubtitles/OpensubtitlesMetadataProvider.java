@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -121,7 +122,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
         Map<String, Object> mapQuery = new HashMap<>();
         mapQuery.put("moviebytesize", fileSize);
         mapQuery.put("moviehash", hash);
-        mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
+        mapQuery.put("sublanguageid", getLanguageCode(options.getLanguage()));
         try {
           Object[] arrayQuery = { mapQuery };
           Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
@@ -156,7 +157,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
       LOGGER.debug("searching subtitle for imdb id: " + options.getImdbId());
       // use IMDB Id without leading tt
       mapQuery.put("imdbid", options.getImdbId().replace("tt", ""));
-      mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
+      mapQuery.put("sublanguageid", getLanguageCode(options.getLanguage()));
 
       if (options.getEpisode() > -1) {
         mapQuery.put("episode", String.valueOf(options.getEpisode()));
@@ -195,7 +196,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
       LOGGER.debug("serching subtitle for query: " + options.getQuery());
 
       mapQuery.put("query", options.getQuery());
-      mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
+      mapQuery.put("sublanguageid", getLanguageCode(options.getLanguage()));
       try {
         Object[] arrayQuery = { mapQuery };
         Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
@@ -250,6 +251,26 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
       LOGGER.warn("Have no session - seems the startSession() did not work successfully");
     }
     return response;
+  }
+
+  /**
+   * opensubtitles need sometimes not ISO 639.2B - this method maps the exceptions
+   *
+   * @param locale
+   *          the language top be converted
+   * @return the string accepted by opensubtitles
+   */
+  private String getLanguageCode(Locale locale) {
+    // default ISO 639.2B
+    String languageCode = LanguageUtils.getISO3BLanguage(locale.getLanguage());
+
+    // and now the exceptions
+    // greek: gre -> ell
+    if ("gre".equals(languageCode)) {
+      languageCode = "ell";
+    }
+
+    return languageCode;
   }
 
   /**
