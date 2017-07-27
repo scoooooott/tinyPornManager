@@ -51,7 +51,14 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
 
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
-    return _search(options);
+    List<MediaSearchResult> results = _search(options);
+    if (results.isEmpty() && options.getYear() > 0) {
+      // nothing found, try w/o year
+      LOGGER.info("Search found nothing, try again without year...");
+      options.setYear(0);
+      results = _search(options);
+    }
+    return results;
   }
 
   @Override

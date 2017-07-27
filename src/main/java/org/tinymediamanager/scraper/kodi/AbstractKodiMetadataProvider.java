@@ -98,13 +98,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       year = options.getYear();
     }
 
-    String ye = String.valueOf(year);
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
-    if (scraper.getProviderInfo().getId().equals("metadata.tvdb.com")) {
-      // special handling for TVDB :| search does not work with dates!
-      ye = "";
-    }
-    KodiUrl url = processor.getSearchUrl(title, ye);
+    KodiUrl url = processor.getSearchUrl(title, year > 0 ? String.valueOf(year) : "");
     String xmlString = processor.getSearchResults(url);
 
     LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
@@ -302,7 +297,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     for (int i = 0; i < subDetails.getLength(); i++) {
       Element el = (Element) subDetails.item(i);
       Node n = el.getFirstChild();
-      if (!n.hasChildNodes() && el.getTextContent().startsWith("http")) {
+      if (n != null && !n.hasChildNodes() && el.getTextContent().startsWith("http")) {
         baseImageUrl = el.getTextContent();
       }
     }
