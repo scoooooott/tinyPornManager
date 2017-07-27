@@ -45,7 +45,10 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 /**
  * The abstract class for the main Kodi plugin parsing logic
@@ -53,11 +56,12 @@ import org.w3c.dom.NodeList;
  * @author Manuel Laggner
  */
 public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvider {
-  private static final Logger          LOGGER = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
+  private static final Logger          LOGGER       = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
 
   private final DocumentBuilderFactory factory;
 
   public KodiScraper                   scraper;
+  private String                       baseImageUrl = "";
 
   public AbstractKodiMetadataProvider(KodiScraper scraper) {
     KodiScraperParser parser = new KodiScraperParser();
@@ -289,6 +293,15 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       }
     }
 
+    // finds all <details> elements w/o subitems - this could be our image base url?!
+    for (int i = 0; i < subDetails.getLength(); i++) {
+      Element el = (Element) subDetails.item(i);
+      Node n = el.getFirstChild();
+      if (!n.hasChildNodes() && el.getTextContent().startsWith("http")) {
+        baseImageUrl = el.getTextContent();
+      }
+    }
+
     // fanarts
     NodeList nl = details.getElementsByTagName("fanart");
     for (int i = 0; i < nl.getLength(); i++) {
@@ -309,8 +322,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     nl = details.getElementsByTagName("thumb");
     for (int i = 0; i < nl.getLength(); i++) {
       Element poster = (Element) nl.item(i);
-      if (poster.getParentNode().getNodeName() == "details")
-        processMediaArt(md, MediaArtworkType.POSTER, "Poster", poster, null);
+      if (poster.getParentNode().getNodeName().equals("details"))
+        processMediaArt(md, MediaArtworkType.POSTER, "Poster", poster, baseImageUrl);
     }
 
     // actors
@@ -321,6 +334,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       cm.setType(MediaCastMember.CastType.ACTOR);
       cm.setName(DOMUtils.getElementValue(actor, "name"));
       cm.setCharacter(DOMUtils.getElementValue(actor, "role"));
+      String pic = DOMUtils.getElementValue(actor, "thumb");
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(baseImageUrl + pic);
+      }
       md.addCastMember(cm);
     }
 
@@ -333,6 +350,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       cm.setName(StringUtils.trim(el.getTextContent()));
       LOGGER.debug("Adding Director: " + cm.getName());
       cm.setPart("Director");
+      String pic = DOMUtils.getElementValue(el, "thumb");
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(baseImageUrl + pic);
+      }
       md.addCastMember(cm);
     }
 
@@ -344,6 +365,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       cm.setType(MediaCastMember.CastType.WRITER);
       cm.setName(StringUtils.trim(el.getTextContent()));
       cm.setPart("Writer");
+      String pic = DOMUtils.getElementValue(el, "thumb");
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(baseImageUrl + pic);
+      }
       md.addCastMember(cm);
     }
 
@@ -456,6 +481,25 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
    */
   protected String lz(int num) {
     return String.format("%02d", num);
+  }
+
+  /**
+   * converts an w3c dom Element to String
+   * 
+   * @param el
+   * @return String or NULL
+   */
+  protected String elementToString(Element el) {
+    try {
+      DOMImplementationLS lsImpl = (DOMImplementationLS) el.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+      LSSerializer serializer = lsImpl.createLSSerializer();
+      serializer.getDomConfig().setParameter("xml-declaration", false);
+      return serializer.writeToString(el);
+    }
+    catch (Exception e) {
+      LOGGER.error("Could not parse XML element!");
+    }
+    return null;
   }
 
   /**

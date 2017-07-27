@@ -35,8 +35,6 @@ import org.tinymediamanager.scraper.util.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
 
 /**
  * This is the real Kodi meta data provider for TV shows
@@ -274,25 +272,6 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       LOGGER.warn("Could not find episodes - did you scrape the show recently?");
     }
     return episodeList;
-  }
-
-  /**
-   * converts an w3c dom Element to String
-   * 
-   * @param el
-   * @return String or NULL
-   */
-  private String elementToString(Element el) {
-    try {
-      DOMImplementationLS lsImpl = (DOMImplementationLS) el.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
-      LSSerializer serializer = lsImpl.createLSSerializer();
-      serializer.getDomConfig().setParameter("xml-declaration", false);
-      return serializer.writeToString(el);
-    }
-    catch (Exception e) {
-      LOGGER.error("Could not parse XML element!");
-    }
-    return null;
   }
 
   @Override
