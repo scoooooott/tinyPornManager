@@ -335,8 +335,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       cm.setName(DOMUtils.getElementValue(actor, "name"));
       cm.setCharacter(DOMUtils.getElementValue(actor, "role"));
       String pic = DOMUtils.getElementValue(actor, "thumb");
-      if (pic != null && !pic.isEmpty() && !pic.startsWith("http")) {
-        cm.setImageUrl(baseImageUrl + pic);
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
@@ -351,8 +351,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       LOGGER.debug("Adding Director: " + cm.getName());
       cm.setPart("Director");
       String pic = DOMUtils.getElementValue(el, "thumb");
-      if (pic != null && !pic.isEmpty() && !pic.startsWith("http")) {
-        cm.setImageUrl(baseImageUrl + pic);
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
@@ -366,8 +366,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       cm.setName(StringUtils.trim(el.getTextContent()));
       cm.setPart("Writer");
       String pic = DOMUtils.getElementValue(el, "thumb");
-      if (pic != null && !pic.isEmpty() && !pic.startsWith("http")) {
-        cm.setImageUrl(baseImageUrl + pic);
+      if (pic != null && !pic.isEmpty()) {
+        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
