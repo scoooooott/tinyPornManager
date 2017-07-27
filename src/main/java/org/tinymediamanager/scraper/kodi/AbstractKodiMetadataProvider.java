@@ -98,8 +98,13 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       year = options.getYear();
     }
 
+    String ye = String.valueOf(year);
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
-    KodiUrl url = processor.getSearchUrl(title, String.valueOf(year));
+    if (scraper.getProviderInfo().getId().equals("metadata.tvdb.com")) {
+      // special handling for TVDB :| search does not work with dates!
+      ye = "";
+    }
+    KodiUrl url = processor.getSearchUrl(title, ye);
     String xmlString = processor.getSearchResults(url);
 
     LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
@@ -376,9 +381,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     nl = details.getElementsByTagName("genre");
     for (int i = 0; i < nl.getLength(); i++) {
       Element el = (Element) nl.item(i);
-      MediaGenres genre = MediaGenres.getGenre(StringUtils.trim(el.getTextContent()));
-      if (genre != null) {
-        md.addGenre(genre);
+      String g = StringUtils.trim(el.getTextContent());
+      if (g != null && !g.isEmpty()) {
+        MediaGenres genre = MediaGenres.getGenre(g);
+        if (genre != null) {
+          md.addGenre(genre);
+        }
       }
     }
   }

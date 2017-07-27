@@ -144,7 +144,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
         epXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
       }
       catch (Exception e) {
-        LOGGER.error("Could not fetch episodeslist!");
+        LOGGER.error("Could not fetch episodeslist!", e);
       }
     }
 

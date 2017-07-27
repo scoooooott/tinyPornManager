@@ -84,7 +84,7 @@ class KodiScraperProcessor {
     int i = 0;
     for (RegExp r : regExps) {
       i++;
-      LOGGER.trace("Executing " + i + "/" + regExps.length + " - " + r.getExpression().getExpression());
+      LOGGER.trace("Executing " + i + "/" + regExps.length + " - " + r.getExpression());
       executeRegexp(r);
     }
   }
@@ -114,13 +114,19 @@ class KodiScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    LOGGER.trace(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(),
-        r.getInput(), r.getOutput()));
+    LOGGER.trace(
+        String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression(), r.getDest(), r.getInput(), r.getOutput()));
     Expression exp = r.getExpression();
 
     String in = getBuffer(r.getInput());
     if (in == null)
       in = "";
+
+    if (exp == null) {
+      LOGGER.warn("Main Expression was empty.  Returning processed output buffer using input as replacement array.");
+      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[] { "", in }), r.isAppendBuffer());
+      return;
+    }
 
     String expr = exp.getExpression();
     if (expr == null || expr.trim().length() == 0) {
