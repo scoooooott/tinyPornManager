@@ -221,7 +221,7 @@ class KodiUtil {
   private static List<AbstractKodiMetadataProvider> getAllScrapers() {
     LOGGER.debug("searching for Kodi scrapers");
 
-    List<KodiScraper> scrapers = new ArrayList<>();
+    List<KodiScraper> localScrapers;
 
     IOFileFilter dirFilter = new IOFileFilter() {
       @Override
@@ -246,19 +246,19 @@ class KodiUtil {
       }
     };
 
-    scrapers = getKodiAddons(dirFilter, fileFilter);
+    localScrapers = getKodiAddons(dirFilter, fileFilter);
 
-    if (scrapers.size() == 0) {
+    if (localScrapers.isEmpty()) {
       LOGGER.debug("Meh - could not find any scrapers...");
     }
     else {
-      for (KodiScraper sc : scrapers) {
+      for (KodiScraper sc : localScrapers) {
         LOGGER.debug("Found scraper: " + sc.addonFolder + File.separator + sc.scraperXml);
       }
     }
 
     List<AbstractKodiMetadataProvider> metadataProviders = new ArrayList<>();
-    for (KodiScraper scraper : scrapers) {
+    for (KodiScraper scraper : localScrapers) {
       if (scraper.type == null) {
         continue;
       }

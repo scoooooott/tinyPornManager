@@ -72,6 +72,6 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
 
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
-    return getPluginsForType(type);
+    return null;
   }
 }

@@ -27,18 +27,16 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
-import org.tinymediamanager.scraper.util.ListUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 /**
  * This is the real Kodi meta data provider for TV shows
@@ -54,6 +52,11 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+    return _search(options);
+  }
+
+  @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("Kodi: getMetadata(): " + options);
     // if (options.getResult() == null || !scraper.getProviderInfo().getId().equals(options.getResult().getProviderId())) {
@@ -65,18 +68,12 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     }
     else if (options.getType().equals(MediaType.TV_EPISODE)) {
       // called for every single episode, S/E in options...
-      MediaMetadata md = getEpisode(options);
-      return md;
+      return getEpisodeMetadata(options);
     }
     else {
       LOGGER.error("Whoops, cannot get MetaData - wrong Type: " + options.getType());
       return null;
     }
-  }
-
-  @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
-    return _search(options);
   }
 
   /**
@@ -102,73 +99,14 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       LOGGER.error("No Episode Data!");
     }
     else {
+      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + "EPISODEGUIDE_URL", episodeUrl);
       md.addExtraData(EPISODEGUIDE, episodeUrl);
       result.setMetadata(md);
-      // since we already scrape the SHOW, we could already preload the episode metadata...
-      cacheEpisodeMetadata(showId, episodeUrl);
     }
-    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), md);// cache SHOW as provideId_12345
+    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), xmlDetails);
   }
 
-  /**
-   * Executes the Kodi plugin, to parse and cache all episode MetaData<br>
-   * will be cached in memory
-   * 
-   * @param episodeguideUrl
-   * @throws Exception
-   */
-  private void cacheEpisodeMetadata(String showId, String episodeguideUrl) throws Exception {
-    // get-and-cache
-    KodiUrl url = new KodiUrl(episodeguideUrl);
-    KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
-
-    String epListXml = processor.getEpisodeList(url);
-    LOGGER.debug("******** BEGIN EPISODE LIST XML ***********");
-    LOGGER.debug(epListXml);
-    LOGGER.debug("******** END EPISODE LIST XML ***********");
-
-    Document epListDoc = parseXmlString(epListXml);
-
-    // <episode>
-    // <title>Bender's Big Score</title>
-    // <aired>2008-03-23</aired>
-    // <epnum>1</epnum>
-    // <season>0</season>
-    // <url
-    // cache="tmdb-615-en-episode-s0e1.json">http://api.themoviedb.org/3/tv/615/season/0/episode/1?api_key=6889f6089877fd092454d00edb44a84d&amp;language=en&amp;append_to_response=credits,external_ids,images&amp;include_image_language=en,en,null</url>
-    // <id>615|0|1</id>
-    // </episode>
-
-    NodeList nl = epListDoc.getElementsByTagName("episode");
-    for (int i = 0; i < nl.getLength(); i++) {
-      Element el = (Element) nl.item(i);
-      int season = DOMUtils.getElementIntValue(el, "season");
-      int ep = DOMUtils.getElementIntValue(el, "epnum");
-      String id = DOMUtils.getElementValue(el, "id");
-      String title = DOMUtils.getElementValue(el, "title");
-      KodiUrl epUrl = new KodiUrl(DOMUtils.getElementValue(el, "url"));
-      LOGGER.info("Getting episode details S" + lz(season) + " E" + lz(ep) + " - " + title);
-      processor = new KodiAddonProcessor(scraper);
-      String xmlDetails = processor.getEpisodeDetails(epUrl, id);
-      LOGGER.debug("******** BEGIN EPISODE DETAILS XML ***********");
-      LOGGER.debug(xmlDetails);
-      LOGGER.debug("******** END EPISODE DETAILS XML ***********");
-
-      // update again, using the episode specific data
-      Document epXml = parseXmlString(xmlDetails);
-      Element epXmlEl = epXml.getDocumentElement();
-
-      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
-      addMetadata(md, epXmlEl);
-      md.setEpisodeNumber(ep);
-      md.setSeasonNumber(season);
-
-      // cache EPISODE MetaData as provideId_S00_E00
-      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), md);
-    }
-  }
-
-  private MediaMetadata getEpisode(MediaScrapeOptions options) {
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) {
 
     // get episode number and season number
     int seasonNr = -1;
@@ -188,17 +126,68 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     catch (Exception e) {
       LOGGER.warn("error parsing season/episode number");
     }
-    LOGGER.debug("search for " + seasonNr + " " + episodeNr);
+    LOGGER.debug("search for S{} E{}", lz(seasonNr), lz(episodeNr));
 
-    String showId = options.getId(scraper.getProviderInfo().getId()).toString();
-    MediaMetadata md = KodiMetadataProvider.XML_CACHE
-        .get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
-    if (md == null) {
-      // ohm... not cached, we didn't search show first
-      LOGGER.error("Cannot get episode S" + lz(seasonNr) + "_E" + lz(episodeNr) + " - did you scrape the show yet?.");
+    String showId = options.getId(scraper.getProviderInfo().getId());
+    if (showId == null) {
+      LOGGER.error("Could not find showId - please scrape show first!");
+      return null;
     }
 
-    return md;
+    // get XML - either from cache, or fetched
+    String epXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
+    if (epXml == null) {
+      // get episodes list with showId
+      MediaScrapeOptions mso = new MediaScrapeOptions(MediaType.TV_SHOW);
+      mso.setId(scraper.getProviderInfo().getId(), showId);
+      try {
+        getEpisodeList(mso);
+        // now it should be cached!
+        epXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
+      }
+      catch (Exception e) {
+        LOGGER.error("Could not fetch episodeslist!");
+      }
+    }
+
+    Document epListDoc;
+    try {
+      epListDoc = parseXmlString(epXml);
+      Element el = epListDoc.getDocumentElement();
+      int season = DOMUtils.getElementIntValue(el, "season");
+      int ep = DOMUtils.getElementIntValue(el, "epnum");
+      String id = DOMUtils.getElementValue(el, "id");
+      String title = DOMUtils.getElementValue(el, "title");
+      KodiUrl epUrl = new KodiUrl(DOMUtils.getElementValue(el, "url"));
+
+      LOGGER.info("Getting episode details S" + lz(season) + " E" + lz(ep) + " - " + title);
+      KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
+      processor = new KodiAddonProcessor(scraper);
+      String xmlDetails = processor.getEpisodeDetails(epUrl, id);
+      LOGGER.debug("******** BEGIN EPISODE DETAILS XML ***********");
+      LOGGER.debug(xmlDetails);
+      LOGGER.debug("******** END EPISODE DETAILS XML ***********");
+
+      // update again, using the episode specific data
+      Document epDetailXml = parseXmlString(xmlDetails);
+      Element epXmlEl = epDetailXml.getDocumentElement();
+
+      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
+      addMetadata(md, epXmlEl);
+      md.setEpisodeNumber(ep);
+      md.setSeasonNumber(season);
+
+      // cache EPISODE MetaData as provideId_S00_E00
+      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep) + "_DETAIL",
+          xmlDetails);
+
+      return md;
+    }
+    catch (Exception e) {
+      LOGGER.error("Could not get episode details!");
+    }
+
+    return null;
   }
 
   @Override
@@ -210,47 +199,104 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       showId = options.getResult().getId();
     }
     if (showId == null) {
-      LOGGER.error("Coould not find showId!");
+      LOGGER.error("Could not find showId - please scrape show first!");
       return episodeList;
     }
 
-    if (!StringUtils.isEmpty(showId)) {
-      for (String key : KodiMetadataProvider.XML_CACHE.keySet()) {
-        if (key.startsWith((scraper.getProviderInfo().getId() + "_" + showId))) {
-          MediaMetadata md = KodiMetadataProvider.XML_CACHE.get(key);
-          if (md == null) {
-            LOGGER.warn("Could not find cached episode for " + key);
-            continue;
-          }
-
-          MediaEpisode me = new MediaEpisode(scraper.getProviderInfo().getId());
-          me.episode = md.getEpisodeNumber();
-          me.season = md.getSeasonNumber();
-          me.title = md.getTitle();
-          me.rating = md.getRating();
-          if (md.getReleaseDate() != null) {
-            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-            me.firstAired = formatter.format(md.getReleaseDate());
-          }
-          me.voteCount = md.getVoteCount();
-          for (MediaCastMember cast : ListUtils.nullSafe(md.getCastMembers())) {
-            me.castMembers.add(cast);
-          }
-          for (MediaArtwork art : ListUtils.nullSafe(md.getMediaArt(MediaArtworkType.ALL))) {
-            me.artwork.add(art);
-          }
-          episodeList.add(me);
-        }
+    String episodeguide = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + "EPISODEGUIDE_URL");
+    if (episodeguide == null || episodeguide.isEmpty()) {
+      if (options.getMetadata() != null) {
+        episodeguide = options.getMetadata().getExtraData(EPISODEGUIDE).toString();
+      }
+      // if (episodeguide == null || episodeguide.isEmpty()) {
+      // no EP guide url? scrape show first!
+      // _getMetadata(options); // TODO: does not work yet; need to SEARCH for url first :|
+      // }
+      if (episodeguide == null || episodeguide.isEmpty()) {
+        LOGGER.error("Could not find episodenguid url - you wanna scrape the show first!");
+        return episodeList;
       }
     }
-    if (episodeList.size() == 0) {
-      LOGGER.warn("Could not find cached episodes - did you scrape show recently?");
+
+    // get XML - either from cache, or fetched
+    String epListXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE);
+    if (epListXml == null) {
+      KodiUrl url = new KodiUrl(episodeguide);
+      KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
+      epListXml = processor.getEpisodeList(url);
+      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE, epListXml);
+    }
+    LOGGER.debug("******** BEGIN EPISODE LIST XML ***********");
+    LOGGER.debug(epListXml);
+    LOGGER.debug("******** END EPISODE LIST XML ***********");
+    Document epListDoc = parseXmlString(epListXml);
+
+    // <episode>
+    // <title>Bender's Big Score</title>
+    // <aired>2008-03-23</aired>
+    // <epnum>1</epnum>
+    // <season>0</season>
+    // <url
+    // cache="tmdb-615-en-episode-s0e1.json">http://api.themoviedb.org/3/tv/615/season/0/episode/1?api_key=6889f6089877fd092454d00edb44a84d&amp;language=en&amp;append_to_response=credits,external_ids,images&amp;include_image_language=en,en,null</url>
+    // <id>615|0|1</id>
+    // </episode>
+
+    NodeList nl = epListDoc.getElementsByTagName("episode");
+    for (int i = 0; i < nl.getLength(); i++) {
+      Element el = (Element) nl.item(i);
+
+      int season = DOMUtils.getElementIntValue(el, "season");
+      int ep = DOMUtils.getElementIntValue(el, "epnum");
+
+      // cache episode XML for later details parsing
+      String epXml = elementToString(el);
+      if (epXml != null) {
+        KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), epXml);
+      }
+
+      MediaEpisode me = new MediaEpisode(scraper.getProviderInfo().getId());
+      me.episode = ep;
+      me.season = season;
+      me.title = DOMUtils.getElementValue(el, "title");
+      me.ids.put(scraper.getProviderInfo().getId(), DOMUtils.getElementValue(el, "id"));
+      // String epUrl = DOMUtils.getElementValue(el, "url"); // cannot save in ME!!!
+      try {
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        me.firstAired = formatter.format(DOMUtils.getElementValue(el, "aired"));
+      }
+      catch (Exception ign) {
+      }
+
+      episodeList.add(me);
+    }
+
+    if (episodeList.isEmpty()) {
+      LOGGER.warn("Could not find episodes - did you scrape the show recently?");
     }
     return episodeList;
   }
 
+  /**
+   * converts an w3c dom Element to String
+   * 
+   * @param el
+   * @return String or NULL
+   */
+  private String elementToString(Element el) {
+    try {
+      DOMImplementationLS lsImpl = (DOMImplementationLS) el.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+      LSSerializer serializer = lsImpl.createLSSerializer();
+      serializer.getDomConfig().setParameter("xml-declaration", false);
+      return serializer.writeToString(el);
+    }
+    catch (Exception e) {
+      LOGGER.error("Could not parse XML element!");
+    }
+    return null;
+  }
+
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
-    return getPluginsForType(type);
+    return null;
   }
 }

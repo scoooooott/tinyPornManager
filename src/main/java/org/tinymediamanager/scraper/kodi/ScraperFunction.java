@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * 
  * @author Manuel Laggner, Myron Boyle
  */
-class ScraperFunction implements RegExpContainer {
+class ScraperFunction implements RegExpContainer, Cloneable {
   private boolean      clearBuffers = true;
   private int          dest         = 0;
   private boolean      appendBuffer = false;

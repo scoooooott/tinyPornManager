@@ -27,7 +27,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * 
  * @author Manuel Laggner, Myron Boyle
  */
-class RegExp implements RegExpContainer {
+class RegExp implements RegExpContainer, Cloneable {
   private String       input, output;
   private int          dest;
   private String       conditional;
