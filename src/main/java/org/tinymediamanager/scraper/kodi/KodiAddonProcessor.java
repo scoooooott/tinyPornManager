@@ -180,10 +180,10 @@ class KodiAddonProcessor {
 
     if (StringUtils.isEmpty(movieId)) {
       try {
-        Pattern p = Pattern.compile("http://www.thetvdb.com/api/1A4971671264D790/series/([0-9]*)/all");
+        Pattern p = Pattern.compile("http://www.thetvdb.com/api/(.*?)/series/([0-9]*)/all");
         Matcher m = p.matcher(url);
         if (m.find()) {
-          movieId = m.group(1);
+          movieId = m.group(2);
           LOGGER.debug("Setting TVDB ID: " + movieId);
         }
       }
