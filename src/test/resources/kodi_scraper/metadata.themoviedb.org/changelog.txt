@@ -1,3 +1,24 @@
+[B]3.9.2[/B]
+- added: some new languages
+
+[B]3.9.1[/B]
+- added: premiered tag with full release date
+
+[B]3.9.0[/B]
+- Update
+
+[B]3.8.8[/B]
+- Update author name
+
+[B]3.8.7[/B]
+- fixed: caching
+
+[B]3.8.6[/B]
+- fixed: broken search results due to API changes
+
+[B]3.8.4[/B]
+- removed: option to scrape trailers from hd-trailers.net (it was broken)
+
 [B]3.8.3[/B]
 - fixed: further fixes to the broken search results due to API changes
 
