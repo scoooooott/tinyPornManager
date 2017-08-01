@@ -1806,6 +1806,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case CLEARLOGO:
       case CLEARART:
       case DISC:
+      case LANDSCAPE:
       case EXTRATHUMB:
         height = getMediaInfo(StreamKind.Image, 0, "Height");
         // scanType = getMediaInfo(StreamKind.Image, 0, "ScanType"); // no scantype on graphics
