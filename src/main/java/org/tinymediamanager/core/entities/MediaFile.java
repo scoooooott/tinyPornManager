@@ -1426,23 +1426,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               do {
                 // Reading data somewhere, do what you want for this.
                 From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
-                pos += From_Buffer_Size; // add bytes read to file position
+                if (From_Buffer_Size > 0) {
+                  pos += From_Buffer_Size; // add bytes read to file position
 
-                // Sending the buffer to MediaInfo
-                int Result = fileMI.openBufferContinue(From_Buffer, From_Buffer_Size);
-                if ((Result & 8) == 8) { // Status.Finalized
-                  break;
+                  // Sending the buffer to MediaInfo
+                  int Result = fileMI.openBufferContinue(From_Buffer, From_Buffer_Size);
+                  if ((Result & 8) == 8) { // Status.Finalized
+                    break;
+                  }
+
+                  // Testing if MediaInfo request to go elsewhere
+                  if (fileMI.openBufferContinueGoToGet() != -1) {
+                    pos = fileMI.openBufferContinueGoToGet();
+                    LOGGER.trace("ISO: Seek to " + pos);
+                    // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
+                    // pos = newPos + From_Buffer_Size; // add bytes read to file position
+                    fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
+                  }
                 }
-
-                // Testing if MediaInfo request to go elsewhere
-                if (fileMI.openBufferContinueGoToGet() != -1) {
-                  pos = fileMI.openBufferContinueGoToGet();
-                  LOGGER.trace("ISO: Seek to " + pos);
-                  // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
-                  // pos = newPos + From_Buffer_Size; // add bytes read to file position
-                  fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
-                }
-
               } while (From_Buffer_Size > 0);
 
               LOGGER.trace("ISO: finalize");
