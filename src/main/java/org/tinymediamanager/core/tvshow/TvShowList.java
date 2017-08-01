@@ -48,6 +48,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -456,8 +457,8 @@ public class TvShowList extends AbstractModelObject {
    *          the media scraper
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, MediaScraper mediaScraper) {
-    return searchTvShow(searchTerm, mediaScraper, TvShowModuleManager.SETTINGS.getScraperLanguage());
+  public List<MediaSearchResult> searchTvShow(String searchTerm, TvShow show, MediaScraper mediaScraper) {
+    return searchTvShow(searchTerm, show, mediaScraper, TvShowModuleManager.SETTINGS.getScraperLanguage());
   }
 
   /**
@@ -471,7 +472,7 @@ public class TvShowList extends AbstractModelObject {
    *          the language to search with
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, MediaScraper mediaScraper, MediaLanguages language) {
+  public List<MediaSearchResult> searchTvShow(String searchTerm, TvShow show, MediaScraper mediaScraper, MediaLanguages language) {
     // format searchstring
     // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
@@ -489,6 +490,19 @@ public class TvShowList extends AbstractModelObject {
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
       options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      if (show != null) {
+        if (Utils.isValidImdbId(show.getImdbId())) {
+          options.setImdbId(show.getImdbId());
+        }
+        options.setQuery(show.getTitle());
+        if (show.getYear() != 0) {
+          try {
+            options.setYear(show.getYear());
+          }
+          catch (Exception ignored) {
+          }
+        }
+      }
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());

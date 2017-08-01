@@ -119,7 +119,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
         // search for tv show
         MediaSearchResult result1 = null;
         if (doSearch) {
-          List<MediaSearchResult> results = tvShowList.searchTvShow(tvShow.getTitle(), mediaMetadataScraper);
+          List<MediaSearchResult> results = tvShowList.searchTvShow(tvShow.getTitle(), tvShow, mediaMetadataScraper);
           if (results != null && !results.isEmpty()) {
             result1 = results.get(0);
             // check if there is an other result with 100% score
