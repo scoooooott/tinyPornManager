@@ -31,7 +31,7 @@ public class YearSpinner extends JSpinner {
 
   public YearSpinner() {
     Calendar calendar = Calendar.getInstance();
-    setModel(new SpinnerNumberModel(calendar.get(Calendar.YEAR), calendar.getMinimum(Calendar.YEAR), calendar.getMaximum(Calendar.YEAR), 1));
+    setModel(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 0, calendar.getMaximum(Calendar.YEAR), 1));
     setEditor(new JSpinner.NumberEditor(this, "#"));
   }
 }
