@@ -82,14 +82,14 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, "Stein der Weisen");
+      options = new MediaSearchOptions(MediaType.MOVIE, "Die Piefke Saga");
       options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
 
       // result count
-      assertEquals("Result count", 1, results.size());
+      assertEquals("Result count", 4, results.size());
     }
     catch (Exception e) {
       fail(e.getMessage());
@@ -164,7 +164,7 @@ public class TmdbMetadataProviderTest {
       assertEquals(
           "In the year 2035, convict James Cole reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly, and patient Jeffrey Goines, the son of a famous virus expert, who may hold the key to the mysterious rogue group, the Army of the 12 Monkeys, thought to be responsible for unleashing the killer disease.",
           md.getPlot());
-      assertEquals("The future is history.", md.getTagline());
+      assertEquals("The future is history", md.getTagline());
 
       assertNotNull(md.getCastMembers(CastType.ACTOR));
       assertEquals(65, md.getCastMembers(CastType.ACTOR).size());
@@ -293,7 +293,7 @@ public class TmdbMetadataProviderTest {
       assertEquals("Result count", 2, results.size());
 
       assertEquals("1st result title", "101 Dalmatiner Filmreihe", results.get(0).getTitle());
-      assertEquals("2nd result title", "101 Dalmatiner (Animation) Filmreihe", results.get(1).getTitle());
+      assertEquals("2nd result title", "101 Dalmatiner (Animiert) Filmreihe", results.get(1).getTitle());
     }
     catch (Exception e) {
       fail(e.getMessage());

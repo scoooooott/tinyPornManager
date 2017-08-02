@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +26,14 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.entities.BaseCollection;
-import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import com.uwetrottmann.tmdb2.entities.Collection;
 import com.uwetrottmann.tmdb2.entities.CollectionResultsPage;
+import com.uwetrottmann.tmdb2.entities.Part;
 
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
@@ -45,7 +41,7 @@ import com.uwetrottmann.tmdb2.entities.CollectionResultsPage;
 class TmdbMovieSetMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieSetMetadataProvider.class);
 
-  private final Tmdb          api;
+  private Tmdb                api;
 
   public TmdbMovieSetMetadataProvider(Tmdb api) {
     this.api = api;
@@ -80,27 +76,30 @@ class TmdbMovieSetMetadataProvider {
       language += "-" + query.getLanguage().getCountry();
     }
 
+    CollectionResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
       try {
-        CollectionResultsPage resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
-        if (resultsPage != null) {
-          for (BaseCollection collection : ListUtils.nullSafe(resultsPage.results)) {
-            MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE_SET);
-            searchResult.setId(Integer.toString(collection.id));
-            searchResult.setTitle(collection.name);
-            searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
-            searchResult.setScore(MetadataUtil.calculateScore(searchString, collection.name));
-            movieSetsFound.add(searchResult);
-          }
-        }
+        resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
       }
       catch (Exception e) {
         LOGGER.debug("failed to search: " + e.getMessage());
       }
     }
 
-    LOGGER.info("found " + movieSetsFound.size() + " results");
+    if (resultsPage == null) {
+      return movieSetsFound;
+    }
+
+    for (Collection collection : ListUtils.nullSafe(resultsPage.results)) {
+      MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE_SET);
+      searchResult.setId(Integer.toString(collection.id));
+      searchResult.setTitle(collection.name);
+      searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
+      searchResult.setScore(MetadataUtil.calculateScore(searchString, collection.name));
+      movieSetsFound.add(searchResult);
+    }
+
     return movieSetsFound;
   }
 
@@ -147,30 +146,24 @@ class TmdbMovieSetMetadataProvider {
       TmdbConnectionCounter.trackConnections();
       try {
         collection = api.collectionService().summary(tmdbId, language, null).execute().body();
-        // if collection title/overview is not availbale, rescrape in the fallback language
-        if (collection != null && (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name))) {
-          String fallbackLang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
+
+        // if collection title/overview is not availbale, rescrape in en
+        if (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) {
           TmdbConnectionCounter.trackConnections();
-          Collection collectionInFallbackLanguage = api.collectionService().summary(tmdbId, fallbackLang, null).execute().body();
+          Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null).execute().body();
 
-          if (collectionInFallbackLanguage != null) {
-            if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInFallbackLanguage.name)) {
-              collection.name = collectionInFallbackLanguage.name;
-            }
+          if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInEn.name)) {
+            collection.name = collectionInEn.name;
+          }
 
-            if (StringUtils.isBlank(collection.overview) && StringUtils.isNotBlank(collectionInFallbackLanguage.overview)) {
-              collection.overview = collectionInFallbackLanguage.overview;
-            }
+          if (StringUtils.isBlank(collection.overview) && StringUtils.isNotBlank(collectionInEn.overview)) {
+            collection.overview = collectionInEn.overview;
           }
         }
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
       }
-    }
-
-    if (collection == null) {
-      return md;
     }
 
     md.setId(MediaMetadata.TMDB_SET, collection.id);
@@ -198,7 +191,7 @@ class TmdbMovieSetMetadataProvider {
     }
 
     // add all movies belonging to this movie set
-    for (BaseMovie part : ListUtils.nullSafe(collection.parts)) {
+    for (Part part : ListUtils.nullSafe(collection.parts)) {
       MediaMetadata mdSubItem = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
       mdSubItem.setId(TmdbMetadataProvider.providerInfo.getId(), part.id);
       mdSubItem.setTitle(part.title);

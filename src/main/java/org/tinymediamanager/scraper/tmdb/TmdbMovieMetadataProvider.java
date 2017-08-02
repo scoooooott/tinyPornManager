@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +31,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -41,17 +38,16 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.AppendToResponse;
-import com.uwetrottmann.tmdb2.entities.BaseCompany;
-import com.uwetrottmann.tmdb2.entities.BaseKeyword;
-import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import com.uwetrottmann.tmdb2.entities.CastMember;
-import com.uwetrottmann.tmdb2.entities.Country;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
-import com.uwetrottmann.tmdb2.entities.Keywords;
+import com.uwetrottmann.tmdb2.entities.Keyword;
 import com.uwetrottmann.tmdb2.entities.Movie;
+import com.uwetrottmann.tmdb2.entities.MovieKeywords;
 import com.uwetrottmann.tmdb2.entities.MovieResultsPage;
+import com.uwetrottmann.tmdb2.entities.ProductionCompany;
+import com.uwetrottmann.tmdb2.entities.ProductionCountry;
 import com.uwetrottmann.tmdb2.entities.ReleaseDate;
 import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
 import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
@@ -64,7 +60,7 @@ import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
-  private final Tmdb          api;
+  private Tmdb                api;
 
   public TmdbMovieMetadataProvider(Tmdb api) {
     this.api = api;
@@ -72,7 +68,7 @@ class TmdbMovieMetadataProvider {
 
   /**
    * searches a movie with the given query parameters
-   *
+   * 
    * @param query
    *          the query parameters
    * @return a list of found movies
@@ -105,7 +101,7 @@ class TmdbMovieMetadataProvider {
       return resultList;
     }
 
-    boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
+    boolean adult = TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("includeAdult");
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     String language = query.getLanguage().getLanguage();
@@ -126,12 +122,11 @@ class TmdbMovieMetadataProvider {
         try {
           // /movie/{id}
           Movie movie = api.moviesService().summary(tmdbId, language, null).execute().body();
-          verifyMovieTitleLanguage(query, movie);
           MediaSearchResult result = morphMovieToSearchResult(movie);
           resultList.add(result);
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with TMDB id");
       }
@@ -145,13 +140,14 @@ class TmdbMovieMetadataProvider {
           FindResults findResults = api.findService().find(imdbId, null, language).execute().body();
           if (findResults != null && findResults.movie_results != null) {
             for (Movie movie : findResults.movie_results) {
-              verifyMovieTitleLanguage(query, movie);
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          // moviesFound.add(tmdb.getMovieInfoImdb(imdbId,
+          // query.getLanguage().getLanguage()));
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with IMDB id");
       }
@@ -163,14 +159,16 @@ class TmdbMovieMetadataProvider {
           // /search/movie
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
-            for (BaseMovie movie : resultsPage.results) {
-              verifyMovieTitleLanguage(query, movie);
+            for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          // moviesFound = tmdb.searchMovie(searchString, year,
+          // query.getLanguage().getLanguage(),
+          // false, 0).getResults();
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with search string");
       }
@@ -183,14 +181,16 @@ class TmdbMovieMetadataProvider {
           // /search/movie
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
-            for (BaseMovie movie : resultsPage.results) {
-              verifyMovieTitleLanguage(query, movie);
+            for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          // moviesFound = tmdb.searchMovie(searchString, year,
+          // query.getLanguage().getLanguage(),
+          // false, 0).getResults();
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with search string without year");
       }
@@ -225,7 +225,7 @@ class TmdbMovieMetadataProvider {
 
   /**
    * Get the movie metadata for the given search options
-   *
+   * 
    * @param options
    *          the options for scraping
    * @return the metadata (never null)
@@ -235,7 +235,7 @@ class TmdbMovieMetadataProvider {
   MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
 
-    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+    MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
     int tmdbId = 0;
 
     // tmdbId from searchResult
@@ -246,7 +246,7 @@ class TmdbMovieMetadataProvider {
     // tmdbId from option - own id
     if (tmdbId == 0) {
       try {
-        tmdbId = Integer.parseInt(options.getId(providerInfo.getId()));
+        tmdbId = Integer.parseInt(options.getId(TmdbMetadataProvider.providerInfo.getId()));
       }
       catch (NumberFormatException ignored) {
       }
@@ -281,13 +281,14 @@ class TmdbMovieMetadataProvider {
             // and now get the full data
             TmdbConnectionCounter.trackConnections();
             movie = api.moviesService()
-                .summary(tempTmdbId, language,
-                    new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS))
-                .execute().body();
+                .summary(tempTmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute()
+                .body();
           }
+          // movie = tmdb.getMovieInfoImdb(imdbId,
+          // options.getLanguage().name());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
       }
       if (movie == null && tmdbId != 0) {
@@ -295,9 +296,10 @@ class TmdbMovieMetadataProvider {
           TmdbConnectionCounter.trackConnections();
           movie = api.moviesService()
               .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
+          // movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
       }
     }
@@ -312,8 +314,8 @@ class TmdbMovieMetadataProvider {
     // see http://forum.kodi.tv/showthread.php?tid=254004
     try {
       TmdbConnectionCounter.trackConnections();
-      Keywords mk = api.moviesService().keywords(tmdbId).execute().body();
-      for (BaseKeyword kw : ListUtils.nullSafe(mk.keywords)) {
+      MovieKeywords mk = api.moviesService().keywords(tmdbId).execute().body();
+      for (Keyword kw : mk.keywords) {
         switch (kw.name) {
           case "aftercreditsstinger":
           case "duringcreditsstinger":
@@ -329,29 +331,28 @@ class TmdbMovieMetadataProvider {
       LOGGER.warn("Error getting keywords");
     }
 
-    // check if we need to rescrape in the fallback language
-    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()) || StringUtils.isBlank(movie.overview)) {
-      // title in original language or plot was empty - scrape in fallback language
+    // check if there was translatable content
+    if (StringUtils.isBlank(movie.overview) && !"en".equalsIgnoreCase(options.getLanguage().getLanguage())) {
+      // plot was empty - scrape in english
       Locale oldLang = options.getLanguage();
       try {
-        String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name();
-        options.setLanguage(new Locale(lang));
-        MediaMetadata fallbackMd = getMetadata(options);
+        options.setLanguage(new Locale("en"));
+        MediaMetadata englishMd = getMetadata(options);
 
-        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(fallbackMd.getPlot())) {
-          md.setPlot(fallbackMd.getPlot());
+        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(englishMd.getPlot())) {
+          md.setPlot(englishMd.getPlot());
         }
-        if (movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()) && !StringUtils.isBlank(fallbackMd.getTitle())) {
-          md.setTitle(fallbackMd.getTitle());
+        if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getTitle())) {
+          md.setTitle(englishMd.getTitle());
         }
-        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(fallbackMd.getOriginalTitle())) {
-          md.setOriginalTitle(fallbackMd.getOriginalTitle());
+        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getOriginalTitle())) {
+          md.setOriginalTitle(englishMd.getOriginalTitle());
         }
-        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(fallbackMd.getTagline())) {
-          md.setTagline(fallbackMd.getTagline());
+        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getTagline())) {
+          md.setTagline(englishMd.getTagline());
         }
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
       }
       finally {
         options.setLanguage(oldLang);
@@ -362,40 +363,8 @@ class TmdbMovieMetadataProvider {
   }
 
   /**
-   * get the movie title in the alternative language
-   * 
-   * @param query
-   *          the query options
-   * @param movie
-   *          the already found movie
-   */
-  private void verifyMovieTitleLanguage(MediaSearchOptions query, BaseMovie movie) {
-    // tmdb provides title = originalTitle if no title in the requested language has been found,
-    // so get the title in a alternative language
-    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage())) {
-      try {
-        String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
-
-        TmdbConnectionCounter.trackConnections();
-        Movie fallbackMovie = api.moviesService().summary(movie.id, lang).execute().body();
-
-        if (fallbackMovie == null) {
-          return;
-        }
-
-        if (!StringUtils.isBlank(fallbackMovie.title)) {
-          movie.title = fallbackMovie.title;
-        }
-      }
-      catch (Exception ignored) {
-        return;
-      }
-    }
-  }
-
-  /**
    * get the tmdbId via the imdbId
-   *
+   * 
    * @param imdbId
    *          the imdbId
    * @return the tmdbId or 0 if nothing has been found
@@ -418,13 +387,12 @@ class TmdbMovieMetadataProvider {
     return 0;
   }
 
-  private MediaSearchResult morphMovieToSearchResult(BaseMovie movie) {
-    MediaSearchResult searchResult = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
+  private MediaSearchResult morphMovieToSearchResult(Movie movie) {
+    MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
     searchResult.setId(Integer.toString(movie.id));
+    searchResult.setIMDBId(movie.imdb_id);
     searchResult.setTitle(movie.title);
     searchResult.setOriginalTitle(movie.original_title);
-    searchResult.setOriginalLanguage(movie.original_language);
-
     searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
 
     // parse release date to year
@@ -438,9 +406,9 @@ class TmdbMovieMetadataProvider {
   }
 
   private MediaMetadata morphMovieToMediaMetadata(Movie movie, MediaScrapeOptions options) {
-    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+    MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
-    md.setId(providerInfo.getId(), movie.id);
+    md.setId(TmdbMetadataProvider.providerInfo.getId(), movie.id);
     md.setTitle(movie.title);
     md.setOriginalTitle(movie.original_title);
     md.setPlot(movie.overview);
@@ -451,7 +419,7 @@ class TmdbMovieMetadataProvider {
 
     // Poster
     if (StringUtils.isNotBlank(movie.poster_path)) {
-      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + movie.poster_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
       ma.setLanguage(options.getLanguage().getLanguage());
@@ -460,7 +428,7 @@ class TmdbMovieMetadataProvider {
     }
 
     for (SpokenLanguage lang : ListUtils.nullSafe(movie.spoken_languages)) {
-      if (providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+      if (TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
         md.addSpokenLanguage(LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), lang.name, lang.iso_639_1));
       }
       else {
@@ -468,8 +436,8 @@ class TmdbMovieMetadataProvider {
       }
     }
 
-    for (Country country : ListUtils.nullSafe(movie.production_countries)) {
-      if (providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+    for (ProductionCountry country : ListUtils.nullSafe(movie.production_countries)) {
+      if (TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
         md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage(), country.name, country.iso_3166_1));
       }
       else {
@@ -482,7 +450,7 @@ class TmdbMovieMetadataProvider {
     }
 
     // production companies
-    for (BaseCompany company : ListUtils.nullSafe(movie.production_companies)) {
+    for (ProductionCompany company : ListUtils.nullSafe(movie.production_companies)) {
       md.addProductionCompany(company.name.trim());
     }
 

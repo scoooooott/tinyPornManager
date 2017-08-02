@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
@@ -70,13 +68,6 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
     providerInfo.getConfig().addBoolean("includeAdult", false);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
-
-    ArrayList<String> fallbackLanguages = new ArrayList<>();
-    for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
-      fallbackLanguages.add(mediaLanguages.toString());
-    }
-
-    providerInfo.getConfig().addSelect("titleFallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
     providerInfo.getConfig().load();
     return providerInfo;
   }
@@ -144,7 +135,6 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
     switch (options.getType()) {
       case TV_SHOW:
-      case TV_EPISODE:
         return new TmdbTvShowMetadataProvider(api).getEpisodeList(options);
 
       default:
