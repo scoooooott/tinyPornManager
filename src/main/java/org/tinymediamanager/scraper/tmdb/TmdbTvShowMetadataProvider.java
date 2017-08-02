@@ -26,9 +26,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import com.uwetrottmann.tmdb2.entities.BaseCompany;
-import com.uwetrottmann.tmdb2.entities.BaseTvShow;
-import com.uwetrottmann.tmdb2.entities.TvShowResultsPage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,6 +137,7 @@ class TmdbTvShowMetadataProvider {
 
             // calculate score
             result.setScore(MetadataUtil.calculateScore(searchString, result.getTitle()));
+
             resultList.add(result);
           }
         }
