@@ -20,6 +20,8 @@ import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInf
 import java.util.ArrayList;
 import java.util.List;
 
+import com.uwetrottmann.tmdb2.entities.BaseCollection;
+import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

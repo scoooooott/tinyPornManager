@@ -47,6 +47,7 @@ import com.uwetrottmann.tmdb2.entities.Genre;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
 
+
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
  *
@@ -72,6 +73,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
 
     ArrayList<String> fallbackLanguages = new ArrayList<>();
+
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
       fallbackLanguages.add(mediaLanguages.toString());
     }

@@ -23,6 +23,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.uwetrottmann.tmdb2.entities.BaseCompany;
+import com.uwetrottmann.tmdb2.entities.BaseKeyword;
+import com.uwetrottmann.tmdb2.entities.BaseMovie;
+import com.uwetrottmann.tmdb2.entities.Country;
+import com.uwetrottmann.tmdb2.entities.Keywords;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +62,8 @@ import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
 import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
+
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 /**
  * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
@@ -357,8 +364,53 @@ class TmdbMovieMetadataProvider {
         options.setLanguage(oldLang);
       }
     }
+    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage())) {
+      Locale oldLang = options.getLanguage();
+      try {
+        String langTitle = providerInfo.getConfig().getValue("titleFallbackLanguage");
+        String lang = MediaLanguages.get(langTitle).name();
+        options.setLanguage(new Locale(lang.replace("_","-")));
+        MediaMetadata fallbackMd = getMetadata(options);
+
+        if (!StringUtils.isBlank(fallbackMd.getTitle())) {
+          md.setTitle(fallbackMd.getTitle());
+        }
+
+        if (!StringUtils.isBlank(fallbackMd.getTagline())) {
+          md.setTagline(fallbackMd.getTagline());
+        }
+      }
+      finally {
+        options.setLanguage(oldLang);
+      }
+    }
 
     return md;
+  }
+
+
+  private void verifyMovieTitleLanguage(MediaSearchOptions query, BaseMovie movie) {
+    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage())) {
+      try {
+        String langTitle = providerInfo.getConfig().getValue("titleFallbackLanguage");
+        String lang = MediaLanguages.get(langTitle).name();
+        Locale locale = new Locale(lang.replace("_","-"));
+
+        TmdbConnectionCounter.trackConnections();
+        Movie fallbackMovie = api.moviesService()
+                .summary(movie.id, locale.getLanguage()).execute().body();
+
+        if (fallbackMovie == null) {
+          return;
+        }
+
+        if (!StringUtils.isBlank(fallbackMovie.title)) {
+          movie.title = fallbackMovie.title;
+        }
+      } catch (Exception exc) {
+        return;
+      }
+    }
   }
 
   /**
