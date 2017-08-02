@@ -17,15 +17,12 @@ package org.tinymediamanager.scraper.tmdb;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.uwetrottmann.tmdb2.entities.BaseCompany;
-import com.uwetrottmann.tmdb2.entities.BaseKeyword;
-import com.uwetrottmann.tmdb2.entities.BaseMovie;
-import com.uwetrottmann.tmdb2.entities.Country;
-import com.uwetrottmann.tmdb2.entities.Keywords;
+import com.uwetrottmann.tmdb2.entities.MediaResultsPage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,17 +30,26 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.*;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.AppendToResponse;
+import com.uwetrottmann.tmdb2.entities.BaseCompany;
+import com.uwetrottmann.tmdb2.entities.BaseKeyword;
+import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import com.uwetrottmann.tmdb2.entities.CastMember;
+import com.uwetrottmann.tmdb2.entities.Country;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.entities.Keywords;
 import com.uwetrottmann.tmdb2.entities.Movie;
 import com.uwetrottmann.tmdb2.entities.MovieResultsPage;
 import com.uwetrottmann.tmdb2.entities.ReleaseDate;
@@ -60,7 +66,7 @@ import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInf
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
-  private Tmdb                api;
+  private final Tmdb          api;
 
   public TmdbMovieMetadataProvider(Tmdb api) {
     this.api = api;
@@ -121,13 +127,13 @@ class TmdbMovieMetadataProvider {
         tmdbId = query.getTmdbId();
         try {
           // /movie/{id}
-          Movie movie = api.moviesService().summary(tmdbId, language, null).execute().body();
-          verifyMovieTitleLanguage(query,movie);
+          Movie movie = api.moviesService().summary(tmdbId, language).execute().body();
+          verifyMovieTitleLanguage(query, movie);
           MediaSearchResult result = morphMovieToSearchResult(movie);
           resultList.add(result);
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with TMDB id");
       }
@@ -141,15 +147,15 @@ class TmdbMovieMetadataProvider {
           FindResults findResults = api.findService().find(imdbId, null, language).execute().body();
           if (findResults != null && findResults.movie_results != null) {
             for (Movie movie : findResults.movie_results) {
-              verifyMovieTitleLanguage(query,movie);
+              if (verifyMovieTitleLanguage(query, new ArrayList<BaseMovie>(findResults.movie_results), resultList, true)) {
+                break;
+              }
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound.add(tmdb.getMovieInfoImdb(imdbId,
-          // query.getLanguage().getLanguage()));
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
         }
         LOGGER.debug("found " + resultList.size() + " results with IMDB id");
       }
@@ -162,13 +168,12 @@ class TmdbMovieMetadataProvider {
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
-              verifyMovieTitleLanguage(query,movie);
+              if (verifyMovieTitleLanguage(query, resultsPage.results, resultList, false)) {
+                break;
+              }
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year,
-          // query.getLanguage().getLanguage(),
-          // false, 0).getResults();
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
@@ -185,13 +190,13 @@ class TmdbMovieMetadataProvider {
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
-              verifyMovieTitleLanguage(query,movie);
+              if (verifyMovieTitleLanguage(query, resultsPage.results, resultList, false)) {
+                break;
+              }
+
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year,
-          // query.getLanguage().getLanguage(),
-          // false, 0).getResults();
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
@@ -228,6 +233,116 @@ class TmdbMovieMetadataProvider {
   }
 
   /**
+   * Fallback Language Mechanism - For IMDB Id.
+   *
+   * @param query
+   *          the query options
+   * @param movie
+   *          the already found movie
+   */
+  private void verifyMovieTitleLanguage(MediaSearchOptions query, BaseMovie movie) {
+    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
+      Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+
+      // tmdb provides title = originalTitle if no title in the requested language has been found,
+      // so get the title in a alternative language
+      if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage())) && !query.getLanguage().equals(fallbackLanguage)) {
+        try {
+          String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
+
+          TmdbConnectionCounter.trackConnections();
+          Movie fallbackMovie = api.moviesService().summary(movie.id, lang).execute().body();
+
+          if (fallbackMovie == null) {
+            return;
+          }
+
+          if (!StringUtils.isBlank(fallbackMovie.title)) {
+            movie.title = fallbackMovie.title;
+          }
+        } catch (Exception ignored) {
+          return;
+        }
+      }
+    }
+  }
+
+
+
+  /**
+   * Fallback Language Mechanism - For Search.
+   *
+   * @param query
+   *          the query options
+   * @param original
+   *          the movie list retrieved with primary language.
+   * @param resultList
+   *          the list that results will be added.
+   * @param findService
+   *          is it called by findService?
+   */
+  private Boolean verifyMovieTitleLanguage(MediaSearchOptions query, List<BaseMovie> original, List<MediaSearchResult> resultList, Boolean findService) {
+    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
+      Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+
+      for (BaseMovie movie : original) {
+        // tmdb provides title = originalTitle if no title in the requested language has been found,
+        // so get the title in a alternative language
+        if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage())) && !query.getLanguage().equals(fallbackLanguage)) {
+
+          LOGGER.debug("Fallback: Title Inconsistency Found. Bypassing default functionality and Initiating Fallback Mechanism.");
+
+          try {
+            String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
+
+            List<BaseMovie> fallback;
+            if (findService) {
+              TmdbConnectionCounter.trackConnections();
+              FindResults findResults = api.findService().find(query.getImdbId(), null, lang).execute().body();
+
+              if (findResults == null || findResults.movie_results == null) {
+                return false;
+              }
+
+              fallback = new ArrayList<BaseMovie>(findResults.movie_results);
+            }
+            else {
+              TmdbConnectionCounter.trackConnections();
+              MovieResultsPage movieResultsPage = api.searchService().movie(query.getQuery(),1,lang, providerInfo.getConfig().getValueAsBool("includeAdult"), query.getYear()!=0?query.getYear():null, query.getYear()!=0?query.getYear():null, "phrase").execute().body();
+
+              if (movieResultsPage == null || movieResultsPage.results == null) {
+                return false;
+              }
+
+              fallback = movieResultsPage.results;
+            }
+
+            resultList.clear();
+
+            for (int i=0;i<original.size();i++) {
+              BaseMovie originalMovie = original.get(i);
+              BaseMovie fallbackMovie = fallback.get(i);
+
+              if (originalMovie.title.equals(originalMovie.original_title) && !originalMovie.title.equals(fallbackMovie.title) && !originalMovie.original_language.equals(query.getLanguage().getLanguage()) && !StringUtils.isBlank(fallbackMovie.title)) {
+                LOGGER.debug(String.format("Fallback: Movie Replaced          ([%-32.32s] -> [%-32.32s])",originalMovie.title,fallbackMovie.title));
+                resultList.add(morphMovieToSearchResult(fallbackMovie));
+              }
+              else {
+                LOGGER.debug(String.format("Fallback: Movie Remained the Same ([%-32.32s])",originalMovie.title));
+                resultList.add(morphMovieToSearchResult(originalMovie));
+              }
+            }
+            return true;
+          } catch (Exception exc) {
+            return false;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Get the movie metadata for the given search options
    *
    * @param options
@@ -237,7 +352,28 @@ class TmdbMovieMetadataProvider {
    *           any exception which can be thrown while scraping
    */
   MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+    return getMetadata(options,false,null);
+  }
+
+  /**
+   * Get the movie metadata for the given search options
+   *
+   * @param options
+   *          the options for scraping
+   * @param fallback
+   *          whether this method called from fallback.
+   * @param metadata
+   *          the original metadata from the original result before callback.
+   * @return the metadata (never null)
+   * @throws Exception
+   *           any exception which can be thrown while scraping
+   */
+  MediaMetadata getMetadata(MediaScrapeOptions options, boolean fallback, MediaMetadata metadata) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
+
+    Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
+
+    Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     int tmdbId = 0;
@@ -285,11 +421,10 @@ class TmdbMovieMetadataProvider {
             // and now get the full data
             TmdbConnectionCounter.trackConnections();
             movie = api.moviesService()
-                .summary(tempTmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS)).execute()
-                .body();
+                .summary(tempTmdbId, language,
+                    new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS))
+                .execute().body();
           }
-          // movie = tmdb.getMovieInfoImdb(imdbId,
-          // options.getLanguage().name());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
@@ -300,7 +435,6 @@ class TmdbMovieMetadataProvider {
           TmdbConnectionCounter.trackConnections();
           movie = api.moviesService()
               .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
-          // movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
@@ -319,7 +453,7 @@ class TmdbMovieMetadataProvider {
     try {
       TmdbConnectionCounter.trackConnections();
       Keywords mk = api.moviesService().keywords(tmdbId).execute().body();
-      for (BaseKeyword kw : mk.keywords) {
+      for (BaseKeyword kw : ListUtils.nullSafe(mk.keywords)) {
         switch (kw.name) {
           case "aftercreditsstinger":
           case "duringcreditsstinger":
@@ -334,81 +468,42 @@ class TmdbMovieMetadataProvider {
     catch (Exception e) {
       LOGGER.warn("Error getting keywords");
     }
+    // check if we need to rescrape in the fallback language
+    if (((movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()))
+        || StringUtils.isBlank(movie.overview)) && (!options.getLanguage().equals(fallbackLanguage) || fallback) && titleFallback) {
+      // title in original language or plot was empty - scrape in fallback language
+      if (fallback) {
+        LOGGER.debug("Movie data not found with fallback language. Returning original.");
+        return metadata;
+      }
 
-    // check if there was translatable content
-    if (StringUtils.isBlank(movie.overview) && !"en".equalsIgnoreCase(options.getLanguage().getLanguage())) {
-      // plot was empty - scrape in english
       Locale oldLang = options.getLanguage();
       try {
-        options.setLanguage(new Locale("en"));
-        MediaMetadata englishMd = getMetadata(options);
+        options.setLanguage(fallbackLanguage);
+        LOGGER.debug("Re-scraping using fallback language " + MediaLanguages.valueOf(options.getLanguage().getLanguage()));
 
-        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(englishMd.getPlot())) {
-          md.setPlot(englishMd.getPlot());
-        }
-        if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getTitle())) {
-          md.setTitle(englishMd.getTitle());
-        }
-        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getOriginalTitle())) {
-          md.setOriginalTitle(englishMd.getOriginalTitle());
-        }
-        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getTagline())) {
-          md.setTagline(englishMd.getTagline());
-        }
-      }
-      catch (Exception e) {
-      }
-      finally {
-        options.setLanguage(oldLang);
-      }
-    }
-    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage())) {
-      Locale oldLang = options.getLanguage();
-      try {
-        String langTitle = providerInfo.getConfig().getValue("titleFallbackLanguage");
-        String lang = MediaLanguages.get(langTitle).name();
-        options.setLanguage(new Locale(lang.replace("_","-")));
-        MediaMetadata fallbackMd = getMetadata(options);
+        MediaMetadata fallbackMd = getMetadata(options, true, md);
 
-        if (!StringUtils.isBlank(fallbackMd.getTitle())) {
+        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(fallbackMd.getPlot())) {
+          md.setPlot(fallbackMd.getPlot());
+        }
+        if (movie.title.equals(movie.original_title) && !movie.original_language.equals(oldLang.getLanguage())
+                && !StringUtils.isBlank(fallbackMd.getTitle())) {
           md.setTitle(fallbackMd.getTitle());
         }
-
-        if (!StringUtils.isBlank(fallbackMd.getTagline())) {
+        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(fallbackMd.getOriginalTitle())) {
+          md.setOriginalTitle(fallbackMd.getOriginalTitle());
+        }
+        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(fallbackMd.getTagline())) {
           md.setTagline(fallbackMd.getTagline());
         }
-      }
-      finally {
+      } catch (Exception ignored) {
+      } finally {
         options.setLanguage(oldLang);
       }
     }
 
     return md;
-  }
-
-
-  private void verifyMovieTitleLanguage(MediaSearchOptions query, BaseMovie movie) {
-    if (movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage())) {
-      try {
-        String langTitle = providerInfo.getConfig().getValue("titleFallbackLanguage");
-        String lang = MediaLanguages.get(langTitle).name();
-        Locale locale = new Locale(lang.replace("_","-"));
-
-        TmdbConnectionCounter.trackConnections();
-        Movie fallbackMovie = api.moviesService()
-                .summary(movie.id, locale.getLanguage()).execute().body();
-
-        if (fallbackMovie == null) {
-          return;
-        }
-
-        if (!StringUtils.isBlank(fallbackMovie.title)) {
-          movie.title = fallbackMovie.title;
-        }
-      } catch (Exception exc) {
-        return;
-      }
-    }
   }
 
   /**

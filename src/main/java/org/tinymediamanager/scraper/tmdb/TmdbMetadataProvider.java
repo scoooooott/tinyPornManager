@@ -56,9 +56,9 @@ import okhttp3.OkHttpClient;
 @PluginImplementation
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
     ITvShowArtworkProvider, IMovieTrailerProvider {
-  static Tmdb              api;
-  static MediaProviderInfo providerInfo = createMediaProviderInfo();
-  static Configuration     configuration;
+  static Tmdb                 api;
+  static MediaProviderInfo    providerInfo = createMediaProviderInfo();
+  static Configuration        configuration;
 
   public TmdbMetadataProvider() throws Exception {
   }
@@ -72,11 +72,12 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     providerInfo.getConfig().addBoolean("includeAdult", false);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
 
-    ArrayList<String> fallbackLanguages = new ArrayList<String>();
+    ArrayList<String> fallbackLanguages = new ArrayList<>();
+
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
       fallbackLanguages.add(mediaLanguages.toString());
     }
-
+    providerInfo.getConfig().addBoolean("titleFallback",false);
     providerInfo.getConfig().addSelect("titleFallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
     providerInfo.getConfig().load();
     return providerInfo;
@@ -145,6 +146,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
     switch (options.getType()) {
       case TV_SHOW:
+      case TV_EPISODE:
         return new TmdbTvShowMetadataProvider(api).getEpisodeList(options);
 
       default:
