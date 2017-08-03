@@ -287,6 +287,7 @@
 		<!-- package for MacOS X -->
 		<!-- ===================================================== -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
+		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
@@ -296,6 +297,7 @@
 		<!-- package for Windows -->
 		<!-- ===================================================== -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/win" />
+		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/win" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${dist.dir}/win" />
 		</zip>
@@ -304,6 +306,7 @@
 		<!-- package for Linux -->
 		<!-- ===================================================== -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/linux" />
+		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/linux" />
 		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_linux.tar.gz">
 			<tarfileset dir="${dist.dir}/linux" excludes="*.sh" />
 			<tarfileset filemode="755" dir="${dist.dir}/linux" includes="*.sh" />
