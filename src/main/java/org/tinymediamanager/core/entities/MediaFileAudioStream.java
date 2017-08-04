@@ -82,7 +82,7 @@ public class MediaFileAudioStream extends AbstractModelObject {
   }
 
   public String getBitrateInKbps() {
-    return bitrate>0?bitrate + " kbps":"";
+    return bitrate > 0 ? bitrate + " kbps" : "";
   }
 
   public String getLanguage() {

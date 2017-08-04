@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import com.jgoodies.common.base.Strings;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -1521,17 +1520,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     gatherMediaInformation(false);
   }
 
-
   private int parseToInt(String str) {
     try {
       return Integer.parseInt(str);
-    } catch (Exception ignored) {
+    }
+    catch (Exception ignored) {
       return 0;
     }
   }
 
   private void fetchAudioInformation() {
-    int streams = parseToInt(getMediaInfo(StreamKind.General,0,"AudioCount"))>0?parseToInt(getMediaInfo(StreamKind.General,0,"AudioCount")):parseToInt(getMediaInfo(StreamKind.Audio, 0, "StreamCount"));
+    int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount")) > 0 ? parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"))
+        : parseToInt(getMediaInfo(StreamKind.Audio, 0, "StreamCount"));
 
     audioStreams.clear();
 
@@ -1571,7 +1571,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original", "Channel(s)");
       stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels);
 
-      String br = getMediaInfo(StreamKind.Audio, i, "BitRate","BitRate_Maximum","BitRate_Minimum","BitRate_Nominal");
+      String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
 
       try {
         String[] brMode = getMediaInfo(StreamKind.Audio, i, "BitRate_Mode").split("/");
@@ -1582,10 +1582,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             brMult += parseToInt(brChunks[j].trim());
           }
           stream.setBitrate(brMult / 1000);
-        } else {
+        }
+        else {
           stream.setBitrate(Integer.parseInt(br) / 1000);
         }
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
       }
 
       String language = getMediaInfo(StreamKind.Audio, i, "Language/String", "Language");
@@ -1654,7 +1656,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private void fetchSubtitleInformation() {
-    int streams = parseToInt(getMediaInfo(StreamKind.General,0,"TextCount"))>0?parseToInt(getMediaInfo(StreamKind.General,0,"TextCount")):parseToInt(getMediaInfo(StreamKind.Text, 0, "StreamCount"));
+    int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "TextCount")) > 0 ? parseToInt(getMediaInfo(StreamKind.General, 0, "TextCount"))
+        : parseToInt(getMediaInfo(StreamKind.Text, 0, "StreamCount"));
 
     subtitles.clear();
     for (int i = 0; i < streams; i++) {
@@ -1818,7 +1821,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         LOGGER.warn("no mediainformation handling for MediaFile type " + getType() + " yet.");
         break;
     }
-
 
     // container format for all except subtitles (subtitle container format is handled another way)
     if (type == MediaFileType.SUBTITLE) {
