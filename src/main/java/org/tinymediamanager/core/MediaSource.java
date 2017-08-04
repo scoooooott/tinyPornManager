@@ -41,7 +41,7 @@ public class MediaSource extends DynaEnum<MediaSource> {
       "(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
   public final static MediaSource              DVD         = new MediaSource("DVD", 1, "DVD", "(dvd|video_ts|dvdrip|dvdr|r5)");
   public final static MediaSource              HDDVD       = new MediaSource("HDDVD", 3, "HDDVD", "(hddvd|hddvdrip)");
-  public final static MediaSource              TV          = new MediaSource("TV", 2, "TV", "(hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)");
+  public final static MediaSource              TV          = new MediaSource("TV", 2, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
   public final static MediaSource              VHS         = new MediaSource("VHS", 4, "VHS", "(vhs)");
 
   // other sources
@@ -58,8 +58,8 @@ public class MediaSource extends DynaEnum<MediaSource> {
   // and our fallback
   public final static MediaSource              UNKNOWN     = new MediaSource("UNKNOWN", 14, "Unknown");
 
-  private static final String                  START_TOKEN = "[ .\\-_/\\\\\\[\\(]";
-  private static final String                  END_TOKEN   = "([ .\\-_/\\\\\\]\\)]|$)";
+  private static final String                  START_TOKEN = "[ _\\,\\.\\(\\)\\[\\]\\-]";
+  private static final String                  END_TOKEN   = "([ _\\,\\.\\(\\)\\[\\]\\-]|$)";
 
   private final String                         title;
   private final Pattern                        pattern;
