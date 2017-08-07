@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -115,6 +116,10 @@ public class CacheMap<K, T> {
     }
   }
 
+  public Set<K> keySet() {
+    return cacheMap.keySet();
+  }
+
   /**
    * Removes the specified object from the map
    * 
@@ -161,7 +166,7 @@ public class CacheMap<K, T> {
       K key = entry.getKey();
       CacheObject c = entry.getValue();
 
-      if (c != null && ((now > (timeToLive + c.lastAccessed)) || force)) {
+      if (c != null && ((now > (timeToLive * 1000 + c.lastAccessed)) || force)) {
         deleteKey.add(key);
       }
     }
