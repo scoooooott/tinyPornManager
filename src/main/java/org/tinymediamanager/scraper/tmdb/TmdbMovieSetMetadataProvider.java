@@ -17,7 +17,6 @@ package org.tinymediamanager.scraper.tmdb;
 
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +92,7 @@ class TmdbMovieSetMetadataProvider {
             searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
             searchResult.setScore(MetadataUtil.calculateScore(searchString, collection.name));
             if (searchResult.getScore() < 0.5 && providerInfo.getConfig().getValueAsBool("titleFallback")) {
-              if (verifyMovieSetTitleLanguage(movieSetsFound,resultsPage, query)) {
+              if (verifyMovieSetTitleLanguage(movieSetsFound, resultsPage, query)) {
                 break;
               }
             }
@@ -120,7 +119,8 @@ class TmdbMovieSetMetadataProvider {
    * @param movieSetsFound
    *          the list that movie sets will be added.
    */
-  private boolean verifyMovieSetTitleLanguage(List<MediaSearchResult> movieSetsFound, CollectionResultsPage original, MediaSearchOptions query) throws Exception {
+  private boolean verifyMovieSetTitleLanguage(List<MediaSearchResult> movieSetsFound, CollectionResultsPage original, MediaSearchOptions query)
+      throws Exception {
 
     String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
     TmdbConnectionCounter.trackConnections();
@@ -130,7 +130,7 @@ class TmdbMovieSetMetadataProvider {
 
       movieSetsFound.clear();
 
-      for (int i=0;i<original.results.size();i++) {
+      for (int i = 0; i < original.results.size(); i++) {
         BaseCollection originalCollection = original.results.get(i);
         BaseCollection fallbackCollection = fallBackResultsPage.results.get(i);
 
@@ -138,7 +138,8 @@ class TmdbMovieSetMetadataProvider {
 
         searchResult.setId(Integer.toString(originalCollection.id));
 
-        if (MetadataUtil.calculateScore(query.getQuery(), originalCollection.name) >= MetadataUtil.calculateScore(query.getQuery(), fallbackCollection.name)) {
+        if (MetadataUtil.calculateScore(query.getQuery(), originalCollection.name) >= MetadataUtil.calculateScore(query.getQuery(),
+            fallbackCollection.name)) {
           searchResult.setTitle(originalCollection.name);
           searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + originalCollection.poster_path);
           searchResult.setScore(MetadataUtil.calculateScore(query.getQuery(), originalCollection.name));
@@ -201,7 +202,8 @@ class TmdbMovieSetMetadataProvider {
       try {
         collection = api.collectionService().summary(tmdbId, language).execute().body();
         // if collection title/overview is not availbale, rescrape in the fallback language
-        if (collection != null && (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) && providerInfo.getConfig().getValueAsBool("titleFallback")) {
+        if (collection != null && (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name))
+            && providerInfo.getConfig().getValueAsBool("titleFallback")) {
 
           String fallbackLang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
           TmdbConnectionCounter.trackConnections();
@@ -218,14 +220,16 @@ class TmdbMovieSetMetadataProvider {
             if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInFallbackLanguage.name)) {
               collection.name = collectionInFallbackLanguage.name;
             }
-            else if (StringUtils.isBlank(collection.name) && collectionInDefaultLanguage != null && StringUtils.isNotBlank(collectionInDefaultLanguage.name)) {
+            else if (StringUtils.isBlank(collection.name) && collectionInDefaultLanguage != null
+                && StringUtils.isNotBlank(collectionInDefaultLanguage.name)) {
               collection.name = collectionInDefaultLanguage.name;
             }
 
             if (StringUtils.isBlank(collection.overview) && StringUtils.isNotBlank(collectionInFallbackLanguage.overview)) {
               collection.overview = collectionInFallbackLanguage.overview;
             }
-            else if (StringUtils.isBlank(collection.overview) && collectionInDefaultLanguage != null && StringUtils.isNotBlank(collectionInDefaultLanguage.overview)) {
+            else if (StringUtils.isBlank(collection.overview) && collectionInDefaultLanguage != null
+                && StringUtils.isNotBlank(collectionInDefaultLanguage.overview)) {
               collection.overview = collectionInDefaultLanguage.overview;
             }
 
