@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.omdb.service;
 
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
 import org.tinymediamanager.scraper.omdb.entities.MovieSearch;
+import org.tinymediamanager.scraper.omdb.entities.SeasonSearch;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -25,9 +26,20 @@ import retrofit2.http.Query;
 
 public interface OmdbService {
 
-  @GET("/")
-  Call<MovieSearch> movieSearch(@Query("s") String user, @Query("type") String type, @Query("y") String year);
+	@GET("/")
+	Call<MovieSearch> movieSearch(@Query("apikey") String apikey, @Query("s") String user, @Query("type") String type,
+			@Query("y") String year);
 
-  @GET("/")
-  Call<MovieEntity> movieScrapeById(@Query("i") String id, @Query("type") String type, @Query("y") String year, @Query("plot") String plot);
+	@GET("/")
+	Call<MovieEntity> movieScrapeById(@Query("apikey") String apikey, @Query("i") String id, @Query("type") String type,
+			@Query("y") String year, @Query("plot") String plot);
+
+	@GET("/")
+	Call<SeasonSearch> seasonScrapeById(@Query("apikey") String apikey, @Query("i") String id,
+			@Query("type") String type, @Query("Season") int season);
+
+	@GET("/")
+	Call<MovieEntity> episodeScrapeById(@Query("apikey") String apikey, @Query("i") String id,
+			@Query("type") String type, @Query("Season") int season, @Query("Episode") int episode);
+
 }
