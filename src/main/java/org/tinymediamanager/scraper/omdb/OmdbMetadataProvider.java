@@ -35,251 +35,292 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
 import org.tinymediamanager.scraper.omdb.entities.MovieSearch;
-import org.tinymediamanager.scraper.omdb.entities.SeasonEntity;
-import org.tinymediamanager.scraper.omdb.entities.SeasonSearch;
 import org.tinymediamanager.scraper.omdb.service.Controller;
 import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * Central metadata provider class
  * 
  * @author Wolfgang Janes
  */
-public class OmdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
+@PluginImplementation
+public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvShowMetadataProvider {
+  private static final Logger            LOGGER       = LoggerFactory.getLogger(OmdbMetadataProvider.class);
+  private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OmdbMetadataProvider.class);
-	private boolean verbose = false;
-	private Controller controller;
-	private String apiKey;
-	private static final MediaProviderInfo providerinfo = createMediaProviderInfo();
+  private Controller                     controller;
 
-	OmdbMetadataProvider(String APIKey) {
-		this.controller = new Controller(verbose);
-		this.apiKey = APIKey;
-	}
+  public OmdbMetadataProvider() throws Exception {
+    this.controller = new Controller(false);
+  }
 
-	private static MediaProviderInfo createMediaProviderInfo() {
-		return new MediaProviderInfo("omdbapi", "omdbapi.com",
-				"<html><h3>Omdbapi.com</h3><br />An other Movie Database<br /><br />Available languages: DE</html>");
-	}
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo("omdbapi", "omdbapi.com",
+        "<html><h3>Omdbapi.com</h3><br />The OMDb API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.omdbapi.com/)<br /><br />Available languages: EN</html>",
+        OmdbMetadataProvider.class.getResource("/omdbapi.png"));
 
-	@Override
-	public MediaMetadata getMetadata(MediaScrapeOptions query) throws Exception {
+    providerInfo.setVersion(OmdbMetadataProvider.class);
 
-		LOGGER.debug("scrape()" + query.toString());
+    providerInfo.getConfig().addText("apiKey", "", true);
+    providerInfo.getConfig().load();
+    return providerInfo;
+  }
 
-		MediaMetadata metadata = new MediaMetadata(OmdbMetadataProvider.providerinfo.getId());
-		DateFormat format = new SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH);
-		LOGGER.info("========= BEGIN OMDB Scraping");
+  @Override
+  public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
+  }
 
-		MovieEntity result = null;
-		try {
-			result = controller.getScrapeDataById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()),
-					"movie", true);
-		} catch (Exception e) {
-			LOGGER.error("error searching: " + e.getMessage());
-		}
+  private String getApiKey() {
+    return providerInfo.getConfig().getValue("apiKey");
+  }
 
-		if (result == null) {
-			LOGGER.warn("no result found");
-			return metadata;
-		}
+  @Override
+  public MediaMetadata getMetadata(MediaScrapeOptions query) throws Exception {
+    LOGGER.debug("scrape()" + query.toString());
 
-		metadata.setTitle(result.title);
-		try {
-			metadata.setYear(Integer.parseInt(result.year));
-		} catch (NumberFormatException ignored) {
-		}
+    MediaMetadata metadata = new MediaMetadata(OmdbMetadataProvider.providerInfo.getId());
 
-		metadata.addCertification(Certification.findCertification(result.rated));
-		metadata.setReleaseDate(format.parse(result.released));
+    String apiKey = getApiKey();
+    if (StringUtils.isBlank(apiKey)) {
+      LOGGER.warn("no API key found");
+      return metadata;
+    }
 
-		Pattern p = Pattern.compile("\\d+");
-		Matcher m = p.matcher(result.runtime);
-		while (m.find()) {
-			try {
-				metadata.setRuntime(Integer.parseInt(m.group()));
-			} catch (NumberFormatException ignored) {
-			}
-		}
+    String imdbId = "";
 
-		String[] genres = result.genre.split(",");
-		for (String genre : genres) {
-			genre = genre.trim();
-			MediaGenres mediaGenres = MediaGenres.getGenre(genre);
-			metadata.addGenre(mediaGenres);
-		}
+    // id from a previous search
+    if (query.getResult() != null) {
+      imdbId = query.getResult().getIMDBId();
+    }
 
-		metadata.setPlot(result.plot);
+    // id directly from the options
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = query.getImdbId();
+    }
 
-		String[] directors = result.director.split(",");
-		for (String d : directors) {
-			MediaCastMember director = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-			director.setName(d.trim());
-			metadata.addCastMember(director);
-		}
+    // imdbid check
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      LOGGER.warn("no imdb id found");
+      return metadata;
+    }
 
-		String[] writers = result.writer.split(",");
-		for (String w : writers) {
-			MediaCastMember writer = new MediaCastMember(MediaCastMember.CastType.WRITER);
-			writer.setName(w.trim());
-			metadata.addCastMember(writer);
-		}
+    DateFormat format = new SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH);
+    LOGGER.info("========= BEGIN OMDB Scraping");
 
-		String[] actors = result.actors.split(",");
-		for (String a : actors) {
-			MediaCastMember actor = new MediaCastMember(MediaCastMember.CastType.ACTOR);
-			actor.setName(a.trim());
-			metadata.addCastMember(actor);
-		}
+    MovieEntity result = null;
+    try {
+      result = controller.getScrapeDataById(apiKey, imdbId, "movie", true);
+    }
+    catch (Exception e) {
+      LOGGER.error("error searching: " + e.getMessage());
+    }
 
-		metadata.setSpokenLanguages(getResult(result.language, ","));
-		metadata.setCountries(getResult(result.country, ","));
+    if (result == null) {
+      LOGGER.warn("no result found");
+      return metadata;
+    }
 
-		try {
-			metadata.setRating(Double.parseDouble(result.imdbRating));
-			metadata.setVoteCount(Integer.parseInt(result.imdbVotes));
-		} catch (NumberFormatException ignored) {
-		}
+    metadata.setTitle(result.title);
+    try {
+      metadata.setYear(Integer.parseInt(result.year));
+    }
+    catch (NumberFormatException ignored) {
+    }
 
-		if (StringUtils.isNotBlank(result.poster)) {
-			MediaArtwork artwork = new MediaArtwork(OmdbMetadataProvider.providerinfo.getId(),
-					MediaArtwork.MediaArtworkType.POSTER);
-			artwork.setDefaultUrl(result.poster);
-			metadata.addMediaArt(artwork);
-		}
+    metadata.addCertification(Certification.findCertification(result.rated));
+    metadata.setReleaseDate(format.parse(result.released));
 
-		return metadata;
+    Pattern p = Pattern.compile("\\d+");
+    Matcher m = p.matcher(result.runtime);
+    while (m.find()) {
+      try {
+        metadata.setRuntime(Integer.parseInt(m.group()));
+      }
+      catch (NumberFormatException ignored) {
+      }
+    }
 
-	}
+    String[] genres = result.genre.split(",");
+    for (String genre : genres) {
+      genre = genre.trim();
+      MediaGenres mediaGenres = MediaGenres.getGenre(genre);
+      metadata.addGenre(mediaGenres);
+    }
 
-	@Override
-	public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+    metadata.setPlot(result.plot);
 
-		LOGGER.debug("search() " + query.toString());
-		List<MediaSearchResult> mediaResult = new ArrayList<>();
+    String[] directors = result.director.split(",");
+    for (String d : directors) {
+      MediaCastMember director = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+      director.setName(d.trim());
+      metadata.addCastMember(director);
+    }
 
-		MovieSearch resultList;
-		try {
-			LOGGER.info("========= BEGIN OMDB Scraper Search for Movie: " + query.getQuery());
-			resultList = controller.getMovieSearchInfo(apiKey, query.getQuery(), "movie", null);
-		} catch (Exception e) {
-			LOGGER.error("error searching: " + e.getMessage());
-			return mediaResult;
-		}
+    String[] writers = result.writer.split(",");
+    for (String w : writers) {
+      MediaCastMember writer = new MediaCastMember(MediaCastMember.CastType.WRITER);
+      writer.setName(w.trim());
+      metadata.addCastMember(writer);
+    }
 
-		if (resultList == null) {
-			LOGGER.warn("no result from omdbapi");
-			return mediaResult;
-		}
+    String[] actors = result.actors.split(",");
+    for (String a : actors) {
+      MediaCastMember actor = new MediaCastMember(MediaCastMember.CastType.ACTOR);
+      actor.setName(a.trim());
+      metadata.addCastMember(actor);
+    }
 
-		for (MovieEntity entity : ListUtils.nullSafe(resultList.search)) {
-			MediaSearchResult result = new MediaSearchResult(OmdbMetadataProvider.providerinfo.getId(),
-					MediaType.MOVIE);
+    metadata.setSpokenLanguages(getResult(result.language, ","));
+    metadata.setCountries(getResult(result.country, ","));
 
-			result.setTitle(entity.title);
-			result.setIMDBId(entity.imdbID);
-			try {
-				result.setYear(Integer.parseInt(entity.year));
-			} catch (NumberFormatException ignored) {
-			}
-			result.setPosterUrl(entity.poster);
+    try {
+      metadata.setRating(Double.parseDouble(result.imdbRating));
+      metadata.setVoteCount(Integer.parseInt(result.imdbVotes));
+    }
+    catch (NumberFormatException ignored) {
+    }
 
-			mediaResult.add(result);
-		}
+    if (StringUtils.isNotBlank(result.poster)) {
+      MediaArtwork artwork = new MediaArtwork(OmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+      artwork.setDefaultUrl(result.poster);
+      metadata.addMediaArt(artwork);
+    }
 
-		return mediaResult;
+    return metadata;
 
-	}
+  }
 
-	@Override
-	public MediaProviderInfo getProviderInfo() {
-		return providerinfo;
-	}
+  @Override
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+    LOGGER.debug("search() " + query.toString());
+    List<MediaSearchResult> mediaResult = new ArrayList<>();
 
-	@Override
-	public List<MediaEpisode> getEpisodeList(MediaScrapeOptions query) throws Exception {
+    String apiKey = getApiKey();
+    if (StringUtils.isBlank(apiKey)) {
+      LOGGER.warn("no API key found");
+      return mediaResult;
+    }
 
-		LOGGER.debug("scrape() Episodes " + query.toString());
-		List<MediaEpisode> mediaEpisode = new ArrayList<>();
-		SeasonSearch season;
-		season = null;
-		MovieEntity result = null;
-		MovieEntity episodes;
+    MovieSearch resultList;
+    try {
+      LOGGER.info("========= BEGIN OMDB Scraper Search for Movie: " + query.getQuery());
+      resultList = controller.getMovieSearchInfo(apiKey, query.getQuery(), "movie", null);
+    }
+    catch (Exception e) {
+      LOGGER.error("error searching: " + e.getMessage());
+      return mediaResult;
+    }
 
-		// First scrape the id to get the total number of Seasons
-		try {
-			LOGGER.debug("Getting TotalSeasons From Scraping");
-			result = controller.getScrapeDataById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()),
-					"series", true);
-		} catch (Exception e) {
-			LOGGER.error("error scraping: " + e.getMessage());
-		}
+    if (resultList == null) {
+      LOGGER.warn("no result from omdbapi");
+      return mediaResult;
+    }
 
-		for (int i = 1; i <= Integer.parseInt(result.totalSeasons); i++) {
-			LOGGER.debug("Scrape Season " + i);
-			season = controller.getSeasonsById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", i);
-			
-			for (SeasonEntity episodeResult : ListUtils.nullSafe(season.episodes)) {
-				MediaEpisode mediaResult = new MediaEpisode(OmdbMetadataProvider.providerinfo.getId());
-				
-				episodes = controller.getEpisodesBySeasons(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", i, Integer.parseInt(episodeResult.episode));
-				
-				mediaResult.season = i;
-				mediaResult.plot = episodes.plot;
-				try {
-				mediaResult.episode = Integer.parseInt(episodeResult.episode);
-				mediaResult.rating = Integer.parseInt(episodes.imdbVotes);
-				} catch ( NumberFormatException ignored) {
-					
-				}
-				mediaResult.title = episodes.title;
-				
-				mediaEpisode.add(mediaResult);
-				
-			}
+    for (MovieEntity entity : ListUtils.nullSafe(resultList.search)) {
+      MediaSearchResult result = new MediaSearchResult(OmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
 
-		}
+      result.setTitle(entity.title);
+      result.setIMDBId(entity.imdbID);
+      try {
+        result.setYear(Integer.parseInt(entity.year));
+      }
+      catch (NumberFormatException ignored) {
+      }
+      result.setPosterUrl(entity.poster);
 
-		return mediaEpisode;
+      mediaResult.add(result);
+    }
 
-	}
+    return mediaResult;
+  }
 
-	/**
-	 *
-	 * return a list of results that were separated by a delimiter
-	 *
-	 * @param input
-	 *            result from API
-	 * @param delimiter
-	 *            used delimiter
-	 * @return List of results
-	 */
-	private List<String> getResult(String input, String delimiter) {
-		String[] result = input.split(delimiter);
-		List<String> output = new ArrayList<>();
+  // @Override
+  // public List<MediaEpisode> getEpisodeList(MediaScrapeOptions query) throws Exception {
+  //
+  // LOGGER.debug("scrape() Episodes " + query.toString());
+  // List<MediaEpisode> mediaEpisode = new ArrayList<>();
+  // SeasonSearch season;
+  // season = null;
+  // MovieEntity result = null;
+  // MovieEntity episodes;
+  //
+  // // First scrape the id to get the total number of Seasons
+  // try {
+  // LOGGER.debug("Getting TotalSeasons From Scraping");
+  // result = controller.getScrapeDataById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", true);
+  // }
+  // catch (Exception e) {
+  // LOGGER.error("error scraping: " + e.getMessage());
+  // }
+  //
+  // for (int i = 1; i <= Integer.parseInt(result.totalSeasons); i++) {
+  // LOGGER.debug("Scrape Season " + i);
+  // season = controller.getSeasonsById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", i);
+  //
+  // for (SeasonEntity episodeResult : ListUtils.nullSafe(season.episodes)) {
+  // MediaEpisode mediaResult = new MediaEpisode(OmdbMetadataProvider.providerinfo.getId());
+  //
+  // episodes = controller.getEpisodesBySeasons(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", i,
+  // Integer.parseInt(episodeResult.episode));
+  //
+  // mediaResult.season = i;
+  // mediaResult.plot = episodes.plot;
+  // try {
+  // mediaResult.episode = Integer.parseInt(episodeResult.episode);
+  // mediaResult.rating = Integer.parseInt(episodes.imdbVotes);
+  // }
+  // catch (NumberFormatException ignored) {
+  //
+  // }
+  // mediaResult.title = episodes.title;
+  //
+  // mediaEpisode.add(mediaResult);
+  //
+  // }
+  //
+  // }
+  //
+  // return mediaEpisode;
+  //
+  // }
 
-		for (String r : result) {
-			output.add(r.trim());
-		}
+  /**
+   *
+   * return a list of results that were separated by a delimiter
+   *
+   * @param input
+   *          result from API
+   * @param delimiter
+   *          used delimiter
+   * @return List of results
+   */
+  private List<String> getResult(String input, String delimiter) {
+    String[] result = input.split(delimiter);
+    List<String> output = new ArrayList<>();
 
-		return output;
-	}
+    for (String r : result) {
+      output.add(r.trim());
+    }
 
-	/**
-	 * set the Debugmode for JUnit Testing
-	 * 
-	 * @param verbose
-	 *            Boolean for debug mode
-	 */
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
+    return output;
+  }
+
+  /**
+   * set the Debugmode for JUnit Testing
+   *
+   * @param verbose
+   *          Boolean for debug mode
+   */
+  void setVerbose(boolean verbose) {
+    controller = new Controller(verbose);
+  }
 }
