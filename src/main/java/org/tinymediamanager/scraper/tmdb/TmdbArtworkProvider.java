@@ -73,7 +73,6 @@ class TmdbArtworkProvider {
 
     Images images = null;
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       // posters and fanart
       switch (options.getType()) {
         case MOVIE:

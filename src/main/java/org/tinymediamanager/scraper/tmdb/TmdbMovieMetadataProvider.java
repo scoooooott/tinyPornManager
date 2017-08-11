@@ -120,7 +120,6 @@ class TmdbMovieMetadataProvider {
     synchronized (api) {
       // 1. try with TMDBid
       if (query.getTmdbId() != 0) {
-        TmdbConnectionCounter.trackConnections();
         // if we have already an ID, get this result and do not search
         tmdbId = query.getTmdbId();
         try {
@@ -138,7 +137,6 @@ class TmdbMovieMetadataProvider {
 
       // 2. try with IMDBid
       if (resultList.size() == 0 && StringUtils.isNotEmpty(query.getImdbId())) {
-        TmdbConnectionCounter.trackConnections();
         imdbId = query.getImdbId();
         try {
           // /find/{id}
@@ -160,7 +158,6 @@ class TmdbMovieMetadataProvider {
 
       // 3. try with search string and year
       if (resultList.size() == 0) {
-        TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute().body();
@@ -182,7 +179,6 @@ class TmdbMovieMetadataProvider {
       // 4. if the last token in search string seems to be a year, try without :)
       if (resultList.size() == 0) {
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
-        TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
@@ -249,7 +245,6 @@ class TmdbMovieMetadataProvider {
         try {
           String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
 
-          TmdbConnectionCounter.trackConnections();
           Movie fallbackMovie = api.moviesService().summary(movie.id, lang).execute().body();
 
           if (fallbackMovie == null) {
@@ -297,7 +292,6 @@ class TmdbMovieMetadataProvider {
 
             List<BaseMovie> fallback;
             if (findService) {
-              TmdbConnectionCounter.trackConnections();
               FindResults findResults = api.findService().find(query.getImdbId(), null, lang).execute().body();
 
               if (findResults == null || findResults.movie_results == null) {
@@ -307,7 +301,6 @@ class TmdbMovieMetadataProvider {
               fallback = new ArrayList<BaseMovie>(findResults.movie_results);
             }
             else {
-              TmdbConnectionCounter.trackConnections();
               MovieResultsPage movieResultsPage = api.searchService()
                   .movie(query.getQuery(), 1, lang, providerInfo.getConfig().getValueAsBool("includeAdult"),
                       query.getYear() != 0 ? query.getYear() : null, query.getYear() != 0 ? query.getYear() : null, "phrase")
@@ -424,7 +417,6 @@ class TmdbMovieMetadataProvider {
           int tempTmdbId = getTmdbIdFromImdbId(imdbId);
           if (tempTmdbId > 0) {
             // and now get the full data
-            TmdbConnectionCounter.trackConnections();
             movie = api.moviesService()
                 .summary(tempTmdbId, language,
                     new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS))
@@ -437,7 +429,6 @@ class TmdbMovieMetadataProvider {
       }
       if (movie == null && tmdbId != 0) {
         try {
-          TmdbConnectionCounter.trackConnections();
           movie = api.moviesService()
               .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
         }
@@ -456,7 +447,6 @@ class TmdbMovieMetadataProvider {
     // add some special keywords as tags
     // see http://forum.kodi.tv/showthread.php?tid=254004
     try {
-      TmdbConnectionCounter.trackConnections();
       Keywords mk = api.moviesService().keywords(tmdbId).execute().body();
       for (BaseKeyword kw : ListUtils.nullSafe(mk.keywords)) {
         switch (kw.name) {
@@ -523,7 +513,6 @@ class TmdbMovieMetadataProvider {
    *           any exception which can be thrown while scraping
    */
   int getTmdbIdFromImdbId(String imdbId) throws Exception {
-    TmdbConnectionCounter.trackConnections();
     try {
       FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
       if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {

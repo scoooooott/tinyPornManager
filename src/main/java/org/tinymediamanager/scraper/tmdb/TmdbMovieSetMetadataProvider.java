@@ -81,7 +81,6 @@ class TmdbMovieSetMetadataProvider {
     }
 
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       try {
         CollectionResultsPage resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
         if (resultsPage != null) {
@@ -123,7 +122,6 @@ class TmdbMovieSetMetadataProvider {
       throws Exception {
 
     String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
-    TmdbConnectionCounter.trackConnections();
     CollectionResultsPage fallBackResultsPage = api.searchService().collection(query.getQuery(), 1, lang).execute().body();
 
     if (fallBackResultsPage != null && original.results != null && fallBackResultsPage.results != null) {
@@ -198,7 +196,6 @@ class TmdbMovieSetMetadataProvider {
 
     Collection collection = null;
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       try {
         collection = api.collectionService().summary(tmdbId, language).execute().body();
         // if collection title/overview is not availbale, rescrape in the fallback language
@@ -206,13 +203,11 @@ class TmdbMovieSetMetadataProvider {
             && providerInfo.getConfig().getValueAsBool("titleFallback")) {
 
           String fallbackLang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
-          TmdbConnectionCounter.trackConnections();
           Collection collectionInFallbackLanguage = api.collectionService().summary(tmdbId, fallbackLang).execute().body();
 
           if (collectionInFallbackLanguage != null) {
             Collection collectionInDefaultLanguage = null;
             if (StringUtils.isBlank(collectionInFallbackLanguage.name) || StringUtils.isBlank(collectionInFallbackLanguage.overview)) {
-              TmdbConnectionCounter.trackConnections();
               collectionInDefaultLanguage = api.collectionService().summary(tmdbId).execute().body();
 
             }

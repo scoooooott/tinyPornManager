@@ -77,10 +77,8 @@ class TmdbTrailerProvider {
     List<Video> videos = new ArrayList<>();
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
-      TmdbConnectionCounter.trackConnections();
       try {
         Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
-        TmdbConnectionCounter.trackConnections();
         Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "").execute().body();
 
         videos.addAll(tmdbVideos.results);
