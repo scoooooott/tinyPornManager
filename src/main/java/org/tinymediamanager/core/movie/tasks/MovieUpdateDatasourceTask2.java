@@ -239,10 +239,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
                 // check only movies matching datasource
                 continue;
               }
-              if (!movie.isMultiMovieDir()) {
-                // MMD movies should not save actors!
-                imageFiles.addAll(movie.getImagesToCache());
-              }
+              imageFiles.addAll(movie.getImagesToCache());
             }
           }
         } // END datasource loop

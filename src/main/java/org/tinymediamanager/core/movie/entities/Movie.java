@@ -1546,23 +1546,14 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    // actor image files
-    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-    // for (Person actor : actors) {
-    // String actorImageFilename = actor.getNameForStorage();
-    // if (StringUtils.isNotBlank(actorImageFilename)) {
-    // Path imagePath = Paths.get(path, Person.ACTOR_DIR, actorImageFilename);
-    // filesToCache.add(imagePath);
-    // }
-    // }
-    // }
-
     // getting all scraped actors (= possible to cache)
     // and having never ever downloaded any pic is quite slow.
     // (Many invalid cache requests and exists() checks)
     // Better get a listing of existent actor images directly!
-    filesToCache.addAll(listActorFiles());
-    // check against actors and trigger a download? - NO, only via scrape/missingImagesTask
+    if (!isMultiMovieDir()) {
+      // and only for normal movies - MMD should not have .actors folder!
+      filesToCache.addAll(listActorFiles());
+    } // check against actors and trigger a download? - NO, only via scrape/missingImagesTask
 
     return filesToCache;
   }
