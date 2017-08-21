@@ -79,6 +79,9 @@
 			<param name="lang" value="sk" />
 		</antcall>
 		<antcall target="downloadLocale">
+			<param name="lang" value="sr" />
+		</antcall>
+		<antcall target="downloadLocale">
 			<param name="lang" value="sv" />
 		</antcall>
 		<!--<antcall target="downloadLocale"><param name="lang" value="tk" /></antcall>-->
@@ -88,7 +91,9 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="vi" />
 		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="uk" /></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="uk" />
+		</antcall>
 		<antcall target="downloadLocale">
 			<param name="lang" value="zh" />
 		</antcall>
