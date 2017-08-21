@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -46,7 +48,8 @@ import com.uwetrottmann.tmdb2.entities.Genre;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
-
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -56,6 +59,7 @@ import okhttp3.OkHttpClient;
 @PluginImplementation
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
     ITvShowArtworkProvider, IMovieTrailerProvider {
+  private static final Logger LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
   static Tmdb                 api;
   static MediaProviderInfo    providerInfo = createMediaProviderInfo();
   static Configuration        configuration;
@@ -77,7 +81,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
       fallbackLanguages.add(mediaLanguages.toString());
     }
-    providerInfo.getConfig().addBoolean("titleFallback",false);
+    providerInfo.getConfig().addBoolean("titleFallback", false);
     providerInfo.getConfig().addSelect("titleFallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
     providerInfo.getConfig().load();
     return providerInfo;
@@ -93,6 +97,14 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         @Override
         protected synchronized OkHttpClient okHttpClient() {
           OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
+
+          // log http calls
+          if (LOGGER.isTraceEnabled()) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(Level.BASIC);
+            builder.addInterceptor(logging);
+          }
+
           builder.addInterceptor(new TmdbInterceptor(this));
           return builder.build();
         }
