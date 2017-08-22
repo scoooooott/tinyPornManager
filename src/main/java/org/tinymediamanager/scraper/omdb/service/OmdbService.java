@@ -26,20 +26,18 @@ import retrofit2.http.Query;
 
 public interface OmdbService {
 
-	@GET("/")
-	Call<MovieSearch> movieSearch(@Query("apikey") String apikey, @Query("s") String user, @Query("type") String type,
-			@Query("y") String year);
+  @GET("/")
+  Call<MovieSearch> movieSearch(@Query("apikey") String apikey, @Query("s") String user, @Query("type") String type, @Query("y") String year);
 
-	@GET("/")
-	Call<MovieEntity> movieScrapeById(@Query("apikey") String apikey, @Query("i") String id, @Query("type") String type,
-			@Query("y") String year, @Query("plot") String plot);
+  @GET("/")
+  Call<MovieEntity> movieScrapeById(@Query("apikey") String apikey, @Query("i") String id, @Query("type") String type, @Query("y") String year,
+      @Query("plot") String plot);
 
-	@GET("/")
-	Call<SeasonSearch> seasonScrapeById(@Query("apikey") String apikey, @Query("i") String id,
-			@Query("type") String type, @Query("Season") int season);
+  @GET("/")
+  Call<SeasonSearch> seasonScrapeById(@Query("apikey") String apikey, @Query("i") String id, @Query("type") String type, @Query("Season") int season);
 
-	@GET("/")
-	Call<MovieEntity> episodeScrapeById(@Query("apikey") String apikey, @Query("i") String id,
-			@Query("type") String type, @Query("Season") int season, @Query("Episode") int episode);
+  @GET("/")
+  Call<MovieEntity> episodeScrapeById(@Query("apikey") String apikey, @Query("i") String id, @Query("type") String type, @Query("Season") int season,
+      @Query("Episode") int episode);
 
 }
