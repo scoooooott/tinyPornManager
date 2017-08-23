@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
 import org.tinymediamanager.scraper.omdb.entities.MovieSearch;
 import org.tinymediamanager.scraper.omdb.service.Controller;
+import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -55,6 +56,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvShowMetadataProvider {
   private static final Logger            LOGGER       = LoggerFactory.getLogger(OmdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
+  private static final String            API_KEY      = ApiKey.decryptApikey("Isuaab2ym89iI1hOtF94nQ==");
 
   private Controller                     controller;
 
@@ -64,7 +66,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("omdbapi", "omdbapi.com",
-        "<html><h3>Omdbapi.com</h3><br />The OMDb API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.omdbapi.com/)<br /><br />Available languages: EN</html>",
+        "<html><h3>Omdbapi.com</h3><br />The OMDb API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.omdbapi.com/)<br /><br />TinyMediaManager offers a limited access to OMDb API (10 calls per 15 seconds)<br /><br />Available languages: EN</html>",
         OmdbMetadataProvider.class.getResource("/omdbapi.png"));
 
     providerInfo.setVersion(OmdbMetadataProvider.class);
@@ -80,7 +82,12 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   }
 
   private String getApiKey() {
-    return providerInfo.getConfig().getValue("apiKey");
+    String apiKey = providerInfo.getConfig().getValue("apiKey");
+    if (StringUtils.isNotBlank(apiKey)) {
+      return apiKey;
+    }
+
+    return API_KEY;
   }
 
   @Override
@@ -118,6 +125,9 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
 
     MovieEntity result = null;
     try {
+      if (apiKey == API_KEY) {
+        OmdbConnectionCounter.trackConnections();
+      }
       result = controller.getScrapeDataById(apiKey, imdbId, "movie", true);
     }
     catch (Exception e) {
@@ -137,7 +147,11 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
     }
 
     metadata.addCertification(Certification.findCertification(result.rated));
-    metadata.setReleaseDate(format.parse(result.released));
+    try {
+      metadata.setReleaseDate(format.parse(result.released));
+    }
+    catch (Exception ignored) {
+    }
 
     Pattern p = Pattern.compile("\\d+");
     Matcher m = p.matcher(result.runtime);
@@ -213,6 +227,9 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
     MovieSearch resultList;
     try {
       LOGGER.info("========= BEGIN OMDB Scraper Search for Movie: " + query.getQuery());
+      if (apiKey == API_KEY) {
+        OmdbConnectionCounter.trackConnections();
+      }
       resultList = controller.getMovieSearchInfo(apiKey, query.getQuery(), "movie", null);
     }
     catch (Exception e) {
@@ -255,6 +272,9 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   //
   // // First scrape the id to get the total number of Seasons
   // try {
+  // if(apiKey == API_KEY){
+  // OmdbConnectionCounter.trackConnections();
+  // }
   // LOGGER.debug("Getting TotalSeasons From Scraping");
   // result = controller.getScrapeDataById(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", true);
   // }
@@ -268,7 +288,6 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   //
   // for (SeasonEntity episodeResult : ListUtils.nullSafe(season.episodes)) {
   // MediaEpisode mediaResult = new MediaEpisode(OmdbMetadataProvider.providerinfo.getId());
-  //
   // episodes = controller.getEpisodesBySeasons(apiKey, query.getId(OmdbMetadataProvider.providerinfo.getId()), "series", i,
   // Integer.parseInt(episodeResult.episode));
   //
