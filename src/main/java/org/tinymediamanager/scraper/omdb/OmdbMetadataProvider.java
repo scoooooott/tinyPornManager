@@ -125,7 +125,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
 
     MovieEntity result = null;
     try {
-      if (apiKey == API_KEY) {
+      if (API_KEY.equals(apiKey)) {
         OmdbConnectionCounter.trackConnections();
       }
       result = controller.getScrapeDataById(apiKey, imdbId, "movie", true);
@@ -227,7 +227,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
     MovieSearch resultList;
     try {
       LOGGER.info("========= BEGIN OMDB Scraper Search for Movie: " + query.getQuery());
-      if (apiKey == API_KEY) {
+      if (API_KEY.equals(apiKey)) {
         OmdbConnectionCounter.trackConnections();
       }
       resultList = controller.getMovieSearchInfo(apiKey, query.getQuery(), "movie", null);
@@ -272,7 +272,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   //
   // // First scrape the id to get the total number of Seasons
   // try {
-  // if(apiKey == API_KEY){
+  // if(API_KEY.equals(apiKey)){
   // OmdbConnectionCounter.trackConnections();
   // }
   // LOGGER.debug("Getting TotalSeasons From Scraping");
