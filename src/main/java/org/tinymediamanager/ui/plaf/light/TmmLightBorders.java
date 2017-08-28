@@ -168,7 +168,13 @@ public class TmmLightBorders extends BaseBorders {
 
         Area corner = new Area(new Rectangle2D.Float(x, y, width, height));
         g2.setComposite(AlphaComposite.Src);
-        g2.setColor(parent.getBackground());
+        if (parent.isOpaque()) {
+          g2.setColor(parent.getBackground());
+        }
+        else if (parent.getParent() != null) {
+          // dirty but was not able to solve it via transparency
+          g2.setColor(parent.getParent().getBackground());
+        }
         corner.subtract(new Area(round));
         g2.fill(corner);
 
