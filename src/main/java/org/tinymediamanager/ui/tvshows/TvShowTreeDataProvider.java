@@ -35,14 +35,14 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * @author Manuel Laggner
  */
 public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
-  private TmmTreeNode                    root           = new TmmTreeNode(new Object(), this);
-  private RuleBasedCollator              stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+  private TmmTreeNode                  root           = new TmmTreeNode(new Object(), this);
+  private RuleBasedCollator            stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
-  private final PropertyChangeListener   tvShowListPropertyChangeListener;
-  private final PropertyChangeListener   tvShowPropertyChangeListener;
-  private final PropertyChangeListener   episodePropertyChangeListener;
+  private final PropertyChangeListener tvShowListPropertyChangeListener;
+  private final PropertyChangeListener tvShowPropertyChangeListener;
+  private final PropertyChangeListener episodePropertyChangeListener;
 
-  private final TvShowList               tvShowList     = TvShowList.getInstance();
+  private final TvShowList             tvShowList     = TvShowList.getInstance();
 
   public TvShowTreeDataProvider() {
     tvShowListPropertyChangeListener = evt -> {
@@ -60,6 +60,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           break;
 
         default:
+          nodeChanged(evt.getSource());
           break;
       }
     };
@@ -86,6 +87,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           break;
 
         default:
+          nodeChanged(evt.getSource());
           break;
       }
     };
@@ -103,11 +105,24 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           addTvShowEpisode(episode);
 
         default:
+          nodeChanged(evt.getSource());
           break;
       }
     };
 
     setTreeComparator(new TvShowComparator());
+  }
+
+  /**
+   * trigger a node changed event for all other events
+   * 
+   * @param source
+   */
+  private void nodeChanged(Object source) {
+    TmmTreeNode node = getNodeFromCache(source);
+    if (node != null) {
+      firePropertyChange(NODE_CHANGED, null, node);
+    }
   }
 
   @Override
