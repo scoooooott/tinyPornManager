@@ -46,6 +46,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
@@ -213,8 +214,19 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * add the rating in the form <rating>xxx</rating> (floating point with one decimal)
    */
   protected void addRating() {
+    // get main rating and calculate the rating value to a base of 10
+    Float rating10;
+    Rating mainRating = tvShow.getRating();
+
+    if (mainRating.getMaxValue() > 0) {
+      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    }
+    else {
+      rating10 = mainRating.getRating();
+    }
+
     Element rating = document.createElement("rating");
-    rating.setTextContent(String.format(Locale.US, "%.1f", tvShow.getRating()));
+    rating.setTextContent(String.format(Locale.US, "%.1f", rating10));
     root.appendChild(rating);
   }
 
@@ -223,7 +235,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addVotes() {
     Element votes = document.createElement("votes");
-    votes.setTextContent(Integer.toString(tvShow.getVotes()));
+    votes.setTextContent(Integer.toString(tvShow.getRating().getVotes()));
     root.appendChild(votes);
   }
 

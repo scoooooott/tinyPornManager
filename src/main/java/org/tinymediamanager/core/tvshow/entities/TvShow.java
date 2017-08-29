@@ -72,6 +72,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -87,6 +88,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MapUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -692,8 +694,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     if (config.isRating()) {
-      setRating(metadata.getRating());
-      setVotes(metadata.getVoteCount());
+      clearRatings();
+      for (MediaRating mediaRating : metadata.getRatings()) {
+        setRating(new Rating(mediaRating));
+      }
     }
 
     if (config.isAired()) {

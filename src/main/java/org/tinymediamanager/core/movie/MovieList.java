@@ -359,7 +359,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().persistMovie(movie);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist movie: " + movie.getTitle());
+      LOGGER.error("failed to persist movie: " + movie.getTitle() + " ; " + e.getMessage());
     }
   }
 

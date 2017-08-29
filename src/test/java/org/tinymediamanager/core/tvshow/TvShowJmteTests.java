@@ -29,6 +29,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
@@ -40,8 +41,8 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import com.floreysoft.jmte.Engine;
 
 public class TvShowJmteTests {
-  private Engine                     engine;
-  private Map<String, Object>        root;
+  private Engine              engine;
+  private Map<String, Object> root;
 
   @Test
   public void testTvshowPatterns() {
@@ -138,8 +139,7 @@ public class TvShowJmteTests {
     tvShow.setPath("/media/tvshows/21 Jump Street");
     tvShow.setTitle("The 4400");
     tvShow.setYear(1987);
-    tvShow.setRating(7.4f);
-    tvShow.setVotes(8);
+    tvShow.setRating(new Rating(Rating.NFO, 7.4f, 8));
     tvShow.setCertification(Certification.US_TVPG);
     tvShow.setGenres(Arrays.asList(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA));
     tvShow.setTvdbId("77585");

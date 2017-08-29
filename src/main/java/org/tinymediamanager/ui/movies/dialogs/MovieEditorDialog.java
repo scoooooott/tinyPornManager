@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
@@ -64,6 +66,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -86,6 +89,8 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.MediaRatingTable;
+import org.tinymediamanager.ui.components.MediaRatingTable.MediaRating;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
@@ -122,9 +127,11 @@ public class MovieEditorDialog extends TmmDialog {
   private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
   private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
   private EventList<MediaId>                 ids              = new BasicEventList<>();
+  private EventList<MediaRating>             ratings          = new BasicEventList<>();
   private List<MediaFile>                    mediaFiles       = new ArrayList<>();
   private List<String>                       extrathumbs      = new ArrayList<>();
   private List<String>                       extrafanarts     = new ArrayList<>();
+  private Rating                             userRating;
   private boolean                            continueQueue    = true;
   private boolean                            inQueue;
 
@@ -174,6 +181,7 @@ public class MovieEditorDialog extends TmmDialog {
   private ImageLabel                         lblDisc;
 
   private TmmTable                           tableIds;
+  private TmmTable                           tableRatings;
   private TmmTable                           tableTrailer;
   private TmmTable                           tableActors;
   private TmmTable                           tableProducers;
@@ -203,6 +211,9 @@ public class MovieEditorDialog extends TmmDialog {
     this.movieToEdit = movie;
     this.inQueue = inQueue;
     this.ids = MediaIdTable.convertIdMapToEventList(movieToEdit.getIds());
+    this.ratings = MediaRatingTable.convertRatingMapToEventList(movieToEdit.getRatings(), false);
+    this.userRating = movieToEdit.getRating(Rating.USER);
+
     for (MediaFile mf : movie.getMediaFiles()) {
       mediaFiles.add(new MediaFile(mf));
     }
@@ -243,6 +254,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
+      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
 
       for (Person origCast : movieToEdit.getActors()) {
         Person actor = new Person(Person.Type.ACTOR, origCast.getName(), origCast.getRole());
@@ -297,6 +309,8 @@ public class MovieEditorDialog extends TmmDialog {
     tableTrailer.getColumnModel().getColumn(0).setMaxWidth(55);
     tableTrailer.adjustColumnPreferredWidths(5);
 
+    tableRatings.adjustColumnPreferredWidths(5);
+
     // implement listener to simulate button group
     tableTrailer.getModel().addTableModelListener(arg0 -> {
       // click on the checkbox
@@ -339,8 +353,8 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
-      details1Panel.setLayout(
-          new MigLayout("", "[][][50lp:75lp][][50lp:50lp][75lp:n][50lp:75lp][25lp:n][200lp:250lp,grow]", "[][][][][75lp:150lp][][][][][][][]"));
+      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][50lp:50lp][75lp:n][50lp:75lp][25lp:n][200lp:250lp,grow]",
+          "[][][][][75lp:150lp][][][][][30lp:60lp][][][]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -428,14 +442,23 @@ public class MovieEditorDialog extends TmmDialog {
       details1Panel.add(cbCertification, "cell 1 7,growx");
       cbCertification.setSelectedItem(movieToEdit.getCertification());
       {
-        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
         details1Panel.add(lblRating, "cell 0 8,alignx right");
 
         spRating = new JSpinner();
-        spRating.setModel(new SpinnerNumberModel(movieToEdit.getRating(), 0.0, 10.0, 0.1));
         details1Panel.add(spRating, "cell 1 8,growx");
       }
+      {
+        JLabel lblRatingsT = new JLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
+        details1Panel.add(lblRatingsT, "cell 0 9,alignx right,aligny top");
 
+        JScrollPane scrollPaneRatings = new JScrollPane();
+        details1Panel.add(scrollPaneRatings, "cell 1 9 5 1,growx");
+
+        tableRatings = new MediaRatingTable(ratings);
+        tableRatings.configureScrollPane(scrollPaneRatings);
+        scrollPaneRatings.setViewportView(tableRatings);
+      }
       {
         JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
         details1Panel.add(lblTop, "cell 3 8,alignx right,aligny top");
@@ -455,30 +478,30 @@ public class MovieEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblFanart, "cell 8 8 1 4,grow");
+        details1Panel.add(lblFanart, "cell 8 8 1 5,grow");
       }
 
       {
         JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-        details1Panel.add(lblCompany, "cell 0 9,alignx right");
+        details1Panel.add(lblCompany, "cell 0 10,alignx right");
 
         tfProductionCompanies = new JTextField();
-        details1Panel.add(tfProductionCompanies, "cell 1 9 6 1,growx");
+        details1Panel.add(tfProductionCompanies, "cell 1 10 6 1,growx");
       }
       {
         JLabel lblSpokenLanguages = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
-        details1Panel.add(lblSpokenLanguages, "cell 0 10,alignx right");
+        details1Panel.add(lblSpokenLanguages, "cell 0 11,alignx right");
 
         tfSpokenLanguages = new JTextField();
-        details1Panel.add(tfSpokenLanguages, "cell 1 10 6 1,growx");
+        details1Panel.add(tfSpokenLanguages, "cell 1 11 6 1,growx");
       }
 
       {
         JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-        details1Panel.add(lblCountry, "cell 0 11,alignx right");
+        details1Panel.add(lblCountry, "cell 0 12,alignx right");
 
         tfCountry = new JTextField();
-        details1Panel.add(tfCountry, "cell 1 11 6 1,growx");
+        details1Panel.add(tfCountry, "cell 1 12 6 1,growx");
       }
     }
 
@@ -1111,12 +1134,22 @@ public class MovieEditorDialog extends TmmDialog {
         }
       }
 
-      double tempRating = (Double) spRating.getValue();
-      float rating = (float) tempRating;
-      if (movieToEdit.getRating() != rating) {
-        movieToEdit.setRating(rating);
-        movieToEdit.setVotes(1);
+      // user rating
+      Map<String, Rating> ratings = new HashMap<>();
+
+      if ((double) spRating.getValue() > 0) {
+        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
+        ratings.put(Rating.USER, userRating);
       }
+
+      // other ratings
+      for (MediaRating mediaRating : MovieEditorDialog.this.ratings) {
+        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
+          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
+          ratings.put(mediaRating.key, rating);
+        }
+      }
+      movieToEdit.setRatings(ratings);
 
       movieToEdit.writeNFO();
       movieToEdit.saveToDb();

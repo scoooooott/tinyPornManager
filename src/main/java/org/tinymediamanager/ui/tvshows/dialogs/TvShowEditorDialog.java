@@ -30,7 +30,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
@@ -62,6 +64,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -85,6 +88,8 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.MediaRatingTable;
+import org.tinymediamanager.ui.components.MediaRatingTable.MediaRating;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
@@ -123,8 +128,10 @@ public class TvShowEditorDialog extends TmmDialog {
   private EventList<Person>                 actors;
   private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
   private EventList<MediaId>                ids              = new BasicEventList<>();
+  private EventList<MediaRating>            ratings          = new BasicEventList<>();
   private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<String>());
   private EventList<EpisodeEditorContainer> episodes;
+  private Rating                            userRating;
   private boolean                           continueQueue    = true;
   private boolean                           inQueue;
 
@@ -160,6 +167,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private ImageLabel                        lblThumb;
 
   private TmmTable                          tableIds;
+  private TmmTable                          tableRatings;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -178,6 +186,8 @@ public class TvShowEditorDialog extends TmmDialog {
     this.tvShowToEdit = tvShow;
     this.inQueue = inQueue;
     ids = MediaIdTable.convertIdMapToEventList(tvShowToEdit.getIds());
+    ratings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), true);
+    userRating = tvShowToEdit.getRating(Rating.USER);
 
     // creation of lists
     actors = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -202,7 +212,7 @@ public class TvShowEditorDialog extends TmmDialog {
       int year = tvShow.getYear();
       spYear.setValue(year);
       spDateAdded.setValue(tvShow.getDateAdded());
-      spRating.setModel(new SpinnerNumberModel(tvShow.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
 
       cbCertification.setSelectedItem(tvShow.getCertification());
 
@@ -276,8 +286,8 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
-      details1Panel
-          .setLayout(new MigLayout("", "[][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][75lp:150lp,grow 200][][][][][][100lp:150lp,grow]"));
+      details1Panel.setLayout(
+          new MigLayout("", "[][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -298,7 +308,7 @@ public class TvShowEditorDialog extends TmmDialog {
           }
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        details1Panel.add(lblPoster, "cell 6 0 1 8,grow");
+        details1Panel.add(lblPoster, "cell 6 0 1 9,grow");
       }
       {
         JLabel lblSortTitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
@@ -356,18 +366,29 @@ public class TvShowEditorDialog extends TmmDialog {
         details1Panel.add(cbCertification, "cell 1 5,growx");
       }
       {
-        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
         details1Panel.add(lblRating, "cell 0 6,alignx right");
 
         spRating = new JSpinner();
         details1Panel.add(spRating, "cell 1 6,growx");
       }
       {
+        JLabel lblRatingsT = new JLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
+        details1Panel.add(lblRatingsT, "cell 0 7,alignx right,aligny top");
+
+        JScrollPane scrollPaneRatings = new JScrollPane();
+        details1Panel.add(scrollPaneRatings, "cell 1 7 4 1,growx");
+
+        tableRatings = new MediaRatingTable(ratings);
+        tableRatings.configureScrollPane(scrollPaneRatings);
+        scrollPaneRatings.setViewportView(tableRatings);
+      }
+      {
         JLabel lblStudio = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-        details1Panel.add(lblStudio, "cell 0 7,alignx right");
+        details1Panel.add(lblStudio, "cell 0 8,alignx right");
 
         tfStudio = new JTextField();
-        details1Panel.add(tfStudio, "cell 1 7 4 1,growx");
+        details1Panel.add(tfStudio, "cell 1 8 4 1,growx");
       }
       {
         // JLabel lblFanart = new JLabel("");
@@ -382,7 +403,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblFanart, "cell 6 8,grow");
+        details1Panel.add(lblFanart, "cell 6 9,grow");
       }
       {
         lblBanner = new ImageLabel();
@@ -396,7 +417,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblBanner, "cell 1 8 4 1,grow");
+        details1Panel.add(lblBanner, "cell 1 9 4 1,grow");
       }
     }
 
@@ -765,12 +786,22 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tvShowToEdit.setStatus(cbStatus.getSelectedItem().toString());
 
-      double tempRating = (Double) spRating.getValue();
-      float rating = (float) tempRating;
-      if (tvShowToEdit.getRating() != rating) {
-        tvShowToEdit.setRating(rating);
-        tvShowToEdit.setVotes(1);
+      // user rating
+      Map<String, Rating> ratings = new HashMap<>();
+
+      if ((double) spRating.getValue() > 0) {
+        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
+        ratings.put(Rating.USER, userRating);
       }
+
+      // other ratings
+      for (MediaRating mediaRating : TvShowEditorDialog.this.ratings) {
+        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
+          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
+          ratings.put(mediaRating.key, rating);
+        }
+      }
+      tvShowToEdit.setRatings(ratings);
 
       // adapt episodes according to the episode table (in a 2 way sync)
       // remove episodes

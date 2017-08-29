@@ -272,7 +272,7 @@ public class MovieNfoParser {
     Element element = getSingleElement(root, "rating");
     if (element != null) {
       Rating r = new Rating();
-      r.id = Rating.DEFAULT;
+      r.id = org.tinymediamanager.core.entities.Rating.NFO;
       try {
         r.rating = Float.parseFloat(element.ownText());
       }
@@ -297,7 +297,7 @@ public class MovieNfoParser {
     if (element != null) {
       try {
         Rating r = new Rating();
-        r.id = Rating.USER;
+        r.id = org.tinymediamanager.core.entities.Rating.USER;
         r.rating = Float.parseFloat(element.ownText());
         if (r.rating > 0) {
           ratings.put(r.id, r);
@@ -1245,12 +1245,11 @@ public class MovieNfoParser {
     movie.setTitle(title);
     movie.setOriginalTitle(originaltitle);
 
-    // legacy
-    Rating rating = ratings.get(Rating.DEFAULT);
-    if (rating != null) {
-      movie.setRating(rating.rating);
-      movie.setVotes(rating.votes);
+    for (Map.Entry<String, Rating> entry : ratings.entrySet()) {
+      Rating r = entry.getValue();
+      movie.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
     }
+
     movie.setYear(year);
     movie.setTop250(top250);
     movie.setReleaseDate(releaseDate);
@@ -1361,13 +1360,10 @@ public class MovieNfoParser {
   }
 
   public static class Rating {
-    public static final String DEFAULT  = "default";
-    public static final String USER     = "user";
-
-    public String              id       = "";
-    public float               rating   = 0;
-    public int                 votes    = 0;
-    public int                 maxValue = 10;
+    public String id       = "";
+    public float  rating   = 0;
+    public int    votes    = 0;
+    public int    maxValue = 10;
   }
 
   public static class Person {

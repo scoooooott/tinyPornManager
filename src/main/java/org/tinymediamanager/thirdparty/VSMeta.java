@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -55,9 +56,9 @@ public class VSMeta {
   /** yyyy-mm-dd **/
   private String                  date          = "";
   private Certification           certification = Certification.NOT_RATED;
-  private List<MediaArtwork>      artworks      = new ArrayList<MediaArtwork>(0);
-  private List<MediaGenres>       genres        = new ArrayList<MediaGenres>(0);
-  private List<MediaCastMember>   cast          = new ArrayList<MediaCastMember>(0);
+  private List<MediaArtwork>      artworks      = new ArrayList<>(0);
+  private List<MediaGenres>       genres        = new ArrayList<>(0);
+  private List<MediaCastMember>   cast          = new ArrayList<>(0);
 
   // global array & position
   private byte[]                  fileArray     = new byte[0];
@@ -380,7 +381,12 @@ public class VSMeta {
     catch (Exception e) {
       m.setYear(0);
     }
-    m.setRating(rating);
+
+    if (rating > 0) {
+      Rating r = new Rating(Rating.NFO, rating);
+      m.setRating(r);
+    }
+
     m.setCertification(certification);
 
     if (movieSet != null) {
@@ -431,7 +437,11 @@ public class VSMeta {
     catch (Exception e) {
       ep.setYear(0);
     }
-    ep.setRating(rating);
+
+    if (rating > 0) {
+      Rating r = new Rating(Rating.NFO, rating);
+      ep.setRating(r);
+    }
     // tv.setCertification(certification);
 
     for (MediaArtwork ma : artworks) {

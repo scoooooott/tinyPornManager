@@ -46,6 +46,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
@@ -234,8 +235,19 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add the rating in the form <rating>xxx</rating> (floating point with one decimal)
    */
   protected void addRating() {
+    // get main rating and calculate the rating value to a base of 10
+    Float rating10;
+    Rating mainRating = movie.getRating();
+
+    if (mainRating.getMaxValue() > 0) {
+      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    }
+    else {
+      rating10 = mainRating.getRating();
+    }
+
     Element rating = document.createElement("rating");
-    rating.setTextContent(String.format(Locale.US, "%.1f", movie.getRating()));
+    rating.setTextContent(String.format(Locale.US, "%.1f", rating10));
     root.appendChild(rating);
   }
 
@@ -244,7 +256,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addVotes() {
     Element votes = document.createElement("votes");
-    votes.setTextContent(Integer.toString(movie.getVotes()));
+    votes.setTextContent(Integer.toString(movie.getRating().getVotes()));
     root.appendChild(votes);
   }
 

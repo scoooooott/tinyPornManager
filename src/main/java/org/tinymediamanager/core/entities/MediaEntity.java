@@ -32,7 +32,6 @@ import static org.tinymediamanager.core.Constants.RATING;
 import static org.tinymediamanager.core.Constants.SCRAPED;
 import static org.tinymediamanager.core.Constants.THUMB;
 import static org.tinymediamanager.core.Constants.TITLE;
-import static org.tinymediamanager.core.Constants.VOTES;
 import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
@@ -52,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -74,7 +74,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>    ids               = new HashMap<>(0);
+  protected Map<String, Object>        ids               = new ConcurrentHashMap<>(0);
 
   @JsonProperty
   protected String                     title             = "";
@@ -85,10 +85,6 @@ public abstract class MediaEntity extends AbstractModelObject {
   @JsonProperty
   protected String                     plot              = "";
   @JsonProperty
-  protected float                      rating            = 0f;
-  @JsonProperty
-  protected int                        votes             = 0;
-  @JsonProperty
   protected String                     path              = "";
   @JsonProperty
   protected Date                       dateAdded         = new Date();
@@ -97,6 +93,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   @JsonProperty
   protected boolean                    scraped           = false;
 
+  @JsonProperty
+  protected Map<String, Rating>        ratings           = new ConcurrentHashMap<>(0);
   @JsonProperty
   private List<MediaFile>              mediaFiles        = new ArrayList<>();
   @JsonProperty
@@ -143,15 +141,15 @@ public abstract class MediaEntity extends AbstractModelObject {
     setPlot(StringUtils.isEmpty(plot) || force ? other.plot : plot);
     setProductionCompany(StringUtils.isEmpty(productionCompany) || force ? other.productionCompany : productionCompany);
 
-    setVotes(votes == 0 || force ? other.votes : votes);
-    setRating(Float.compare(rating, 0f) == 0 || force ? other.rating : rating);
-
     // when force is set, clear the lists/maps and add all other values
     if (force) {
       ids.clear();
+      ratings.clear();
 
       artworkUrlMap.clear();
     }
+
+    setRatings(other.ratings);
 
     for (String key : other.getIds().keySet()) {
       if (!ids.containsKey(key)) {
@@ -282,7 +280,47 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
-  public float getRating() {
+  public Map<String, Rating> getRatings() {
+    return ratings;
+  }
+
+  public Rating getRating(String id) {
+    return ratings.getOrDefault(id, new Rating());
+  }
+
+  /**
+   * get the "main" rating
+   * 
+   * @return the main (preferred) rating
+   */
+  public Rating getRating() {
+    Rating rating = null;
+    // first the specified one
+    // ToDo
+
+    // then the user rating
+    if (rating == null) {
+      rating = ratings.get(Rating.USER);
+    }
+
+    // then the default one
+    if (rating == null) {
+      rating = ratings.get(Rating.NFO);
+    }
+
+    // is there any rating?
+    if (rating == null && !ratings.isEmpty()) {
+      for (Rating r : ratings.values()) {
+        rating = r;
+        break;
+      }
+    }
+
+    // last but not least a non null value
+    if (rating == null) {
+      rating = new Rating();
+    }
+
     return rating;
   }
 
@@ -323,20 +361,30 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(PATH, oldValue, newValue);
   }
 
-  public void setRating(float newValue) {
-    float oldValue = rating;
-    rating = newValue;
-    firePropertyChange(RATING, oldValue, newValue);
+  public void removeRating(String id) {
+    Rating removedRating = ratings.remove(id);
+    if (removedRating != null) {
+      firePropertyChange(RATING, null, ratings);
+    }
   }
 
-  public int getVotes() {
-    return votes;
+  public void clearRatings() {
+    ratings.clear();
+    firePropertyChange(RATING, null, ratings);
   }
 
-  public void setVotes(int newValue) {
-    int oldValue = this.votes;
-    this.votes = newValue;
-    firePropertyChange(VOTES, oldValue, newValue);
+  public void setRatings(Map<String, Rating> newRatings) {
+    ratings.clear();
+    for (Entry<String, Rating> entry : newRatings.entrySet()) {
+      setRating(entry.getValue());
+    }
+  }
+
+  public void setRating(Rating rating) {
+    if (rating != null && StringUtils.isNotBlank(rating.getId())) {
+      ratings.put(rating.getId(), rating);
+      firePropertyChange(RATING, null, rating);
+    }
   }
 
   public void setYear(int newValue) {

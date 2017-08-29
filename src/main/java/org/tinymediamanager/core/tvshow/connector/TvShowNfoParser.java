@@ -900,12 +900,11 @@ public class TvShowNfoParser {
     show.setTitle(title);
     show.setOriginalTitle(showTitle);
 
-    // legacy
-    Rating rating = ratings.get(Rating.DEFAULT);
-    if (rating != null) {
-      show.setRating(rating.rating);
-      show.setVotes(rating.votes);
+    for (Map.Entry<String, TvShowNfoParser.Rating> entry : ratings.entrySet()) {
+      TvShowNfoParser.Rating r = entry.getValue();
+      show.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
     }
+
     show.setYear(year);
     show.setFirstAired(releaseDate);
     show.setPlot(plot);

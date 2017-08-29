@@ -39,6 +39,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
@@ -122,9 +123,9 @@ public class TvShowEpisodeToNfoConnectorTest {
   private void compareTvShows(TvShow tvShow, TvShow newTvShow) {
     assertThat(newTvShow.getTitle()).isEqualTo(tvShow.getTitle());
     assertThat(newTvShow.getSortTitle()).isEqualTo(tvShow.getSortTitle());
-    assertThat(newTvShow.getRating()).isEqualTo(tvShow.getRating());
+    assertThat(newTvShow.getRating().getRating()).isEqualTo(tvShow.getRating().getRating());
+    assertThat(newTvShow.getRating().getVotes()).isEqualTo(tvShow.getRating().getVotes());
     assertThat(newTvShow.getYear()).isEqualTo(tvShow.getYear());
-    assertThat(newTvShow.getVotes()).isEqualTo(tvShow.getVotes());
     assertThat(newTvShow.getPlot()).isEqualTo(tvShow.getPlot());
     assertThat(newTvShow.getRuntime()).isEqualTo(tvShow.getRuntime());
     assertThat(newTvShow.getArtworkUrl(MediaFileType.POSTER)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.POSTER));
@@ -154,9 +155,8 @@ public class TvShowEpisodeToNfoConnectorTest {
     TvShow tvShow = new TvShow();
     tvShow.setPath(path);
     tvShow.setTitle("21 Jump Street");
-    tvShow.setRating(9.0f);
+    tvShow.setRating(new Rating(Rating.NFO, 9.0f, 8));
     tvShow.setYear(1987);
-    tvShow.setVotes(8);
     tvShow.setPlot(
         "21 Jump Street was a FOX action/drama series that ran for five seasons (1987-1991). The show revolved around a group of young cops who would use their youthful appearance to go undercover and solve crimes involving teenagers and young adults. 21 Jump Street propelled Johnny Depp to stardom and was the basis for a 2012 comedy/action film of the same name.");
     tvShow.setRuntime(45);
@@ -200,8 +200,8 @@ public class TvShowEpisodeToNfoConnectorTest {
       assertThat(newEpisode.getDisplayEpisode()).isEqualTo(episode.getDisplayEpisode());
       assertThat(newEpisode.getIds()).isEqualTo(episode.getIds());
       assertThat(newEpisode.getPlot()).isEqualTo(episode.getPlot());
-      assertThat(newEpisode.getRating()).isEqualTo(episode.getRating());
-      assertThat(newEpisode.getVotes()).isEqualTo(episode.getVotes());
+      assertThat(newEpisode.getRating().getRating()).isEqualTo(episode.getRating().getRating());
+      assertThat(newEpisode.getRating().getVotes()).isEqualTo(episode.getRating().getVotes());
       assertThat(newEpisode.getArtworkUrl(MediaFileType.THUMB)).isEqualTo(episode.getArtworkUrl(MediaFileType.THUMB));
       assertThat(newEpisode.isWatched()).isEqualTo(episode.isWatched());
       assertThat(newEpisode.getFirstAired()).isEqualTo(episode.getFirstAired());
@@ -229,8 +229,7 @@ public class TvShowEpisodeToNfoConnectorTest {
     episode1.setId(MediaMetadata.TVDB, 1234);
     episode1.setPlot(
         "Hanson gets assigned to the Jump Street unit, a special division of the police force which uses young cops to go undercover and stop juvenile crime, when his youthful appearance causes him to be underestimated while on patrol. His first case involves catching drug dealers.");
-    episode1.setRating(9.0f);
-    episode1.setVotes(8);
+    episode1.setRating(new Rating(Rating.NFO, 9.0f, 8));
     episode1.setArtworkUrl("http://thumb1", MediaFileType.THUMB);
     episode1.setWatched(true);
 
@@ -279,8 +278,7 @@ public class TvShowEpisodeToNfoConnectorTest {
       episode2.setId(MediaMetadata.TVDB, 2345);
       episode2.setPlot(
           "Hanson gets assigned to the Jump Street unit, a special division of the police force which uses young cops to go undercover and stop juvenile crime, when his youthful appearance causes him to be underestimated while on patrol. His first case involves catching drug dealers.");
-      episode2.setRating(8.0f);
-      episode2.setVotes(10);
+      episode2.setRating(new Rating(Rating.NFO, 8.0f, 10));
       episode2.setArtworkUrl("http://thumb1", MediaFileType.THUMB);
       episode2.setWatched(false);
 

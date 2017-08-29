@@ -57,7 +57,7 @@ public class MediaIdTable extends TmmTable {
     this.idMap = ids;
     this.editable = false;
     this.idList = convertIdMapToEventList(idMap);
-    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat()));
+    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat(editable)));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
   }
@@ -66,7 +66,7 @@ public class MediaIdTable extends TmmTable {
     this.idMap = null;
     this.editable = true;
     this.idList = ids;
-    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat()));
+    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat(editable)));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
@@ -131,6 +131,12 @@ public class MediaIdTable extends TmmTable {
   }
 
   private class MediaIdTableFormat implements WritableTableFormat<MediaId> {
+    private boolean editable;
+
+    public MediaIdTableFormat(boolean editable) {
+      this.editable = editable;
+    }
+
     @Override
     public int getColumnCount() {
       return 2;

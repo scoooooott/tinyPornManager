@@ -174,7 +174,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
         case RATING:
           sortOrder = compareNullFirst(movie1.getRating(), movie2.getRating());
           if (sortOrder == 0) {
-            sortOrder = Float.compare(movie1.getRating(), movie2.getRating());
+            sortOrder = Float.compare(movie1.getRating().getRating(), movie2.getRating().getRating());
           }
           break;
 

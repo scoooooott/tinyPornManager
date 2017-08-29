@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -112,9 +113,9 @@ public class TvShowToNfoConnectorTest {
   private void compareTvShows(TvShow tvShow, TvShow newTvShow) {
     assertThat(newTvShow.getTitle()).isEqualTo(tvShow.getTitle());
     assertThat(newTvShow.getSortTitle()).isEqualTo(tvShow.getSortTitle());
-    assertThat(newTvShow.getRating()).isEqualTo(tvShow.getRating());
+    assertThat(newTvShow.getRating().getRating()).isEqualTo(tvShow.getRating().getRating());
+    assertThat(newTvShow.getRating().getVotes()).isEqualTo(tvShow.getRating().getVotes());
     assertThat(newTvShow.getYear()).isEqualTo(tvShow.getYear());
-    assertThat(newTvShow.getVotes()).isEqualTo(tvShow.getVotes());
     assertThat(newTvShow.getPlot()).isEqualTo(tvShow.getPlot());
     assertThat(newTvShow.getRuntime()).isEqualTo(tvShow.getRuntime());
     assertThat(newTvShow.getArtworkUrl(MediaFileType.POSTER)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.POSTER));
@@ -145,9 +146,8 @@ public class TvShowToNfoConnectorTest {
     TvShow tvShow = new TvShow();
     tvShow.setPath(path);
     tvShow.setTitle("21 Jump Street");
-    tvShow.setRating(9.0f);
+    tvShow.setRating(new Rating(Rating.NFO, 9.0f, 8));
     tvShow.setYear(1987);
-    tvShow.setVotes(8);
     tvShow.setPlot(
         "21 Jump Street was a FOX action/drama series that ran for five seasons (1987-1991). The show revolved around a group of young cops who would use their youthful appearance to go undercover and solve crimes involving teenagers and young adults. 21 Jump Street propelled Johnny Depp to stardom and was the basis for a 2012 comedy/action film of the same name.");
     tvShow.setRuntime(45);

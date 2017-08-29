@@ -107,7 +107,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * rating
      */
-    col = new Column(BUNDLE.getString("metatag.rating"), "rating", MediaEntity::getRating, Float.class);
+    col = new Column(BUNDLE.getString("metatag.rating"), "rating", movie -> movie.getRating().getRating(), Float.class);
     col.setColumnComparator(floatComparator);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);

@@ -30,6 +30,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.w3c.dom.Element;
@@ -158,23 +159,27 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
    */
   @Override
   protected void addRating() {
-    // FIXME change that when we changed the core to the new rating system
     Element ratings = document.createElement("ratings");
 
-    Element rating = document.createElement("rating");
-    rating.setAttribute("name", "default");
-    rating.setAttribute("max", "10");
-    rating.setAttribute("default", "true");
+    for (Rating r : movie.getRatings().values()) {
+      Element rating = document.createElement("rating");
+      rating.setAttribute("name", r.getId());
+      rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
-    Element value = document.createElement("value");
-    value.setTextContent(Float.toString(movie.getRating()));
-    rating.appendChild(value);
+      Rating mainRating = movie.getRating();
+      rating.setAttribute("default", r == mainRating ? "true" : "false");
 
-    Element votes = document.createElement("votes");
-    votes.setTextContent(Integer.toString(movie.getVotes()));
-    rating.appendChild(votes);
+      Element value = document.createElement("value");
+      value.setTextContent(Float.toString(r.getRating()));
+      rating.appendChild(value);
 
-    ratings.appendChild(rating);
+      Element votes = document.createElement("votes");
+      votes.setTextContent(Integer.toString(r.getVotes()));
+      rating.appendChild(votes);
+
+      ratings.appendChild(rating);
+    }
+
     root.appendChild(ratings);
   }
 

@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow.connector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.w3c.dom.Element;
 
@@ -45,23 +46,27 @@ public class TvShowToKodiConnector extends TvShowGenericXmlConnector {
    */
   @Override
   protected void addRating() {
-    // FIXME change that when we changed the core to the new rating system
     Element ratings = document.createElement("ratings");
 
-    Element rating = document.createElement("rating");
-    rating.setAttribute("name", "default");
-    rating.setAttribute("max", "10");
-    rating.setAttribute("default", "true");
+    for (Rating r : tvShow.getRatings().values()) {
+      Element rating = document.createElement("rating");
+      rating.setAttribute("name", r.getId());
+      rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
-    Element value = document.createElement("value");
-    value.setTextContent(Float.toString(tvShow.getRating()));
-    rating.appendChild(value);
+      Rating mainRating = tvShow.getRating();
+      rating.setAttribute("default", r == mainRating ? "true" : "false");
 
-    Element votes = document.createElement("votes");
-    votes.setTextContent(Integer.toString(tvShow.getVotes()));
-    rating.appendChild(votes);
+      Element value = document.createElement("value");
+      value.setTextContent(Float.toString(r.getRating()));
+      rating.appendChild(value);
 
-    ratings.appendChild(rating);
+      Element votes = document.createElement("votes");
+      votes.setTextContent(Integer.toString(r.getVotes()));
+      rating.appendChild(votes);
+
+      ratings.appendChild(rating);
+    }
+
     root.appendChild(ratings);
   }
 

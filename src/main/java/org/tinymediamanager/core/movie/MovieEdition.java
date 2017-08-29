@@ -60,8 +60,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
       this.pattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
     }
 
-    // FIXME readd after switch to v3
-    // addElement();
+    addElement();
   }
 
   @Override

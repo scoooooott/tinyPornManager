@@ -1133,12 +1133,11 @@ public class TvShowEpisodeNfoParser {
       episode.setDisplayEpisode(displayepisode);
       episode.setDisplaySeason(displayseason);
 
-      // legacy
-      Rating rating = ratings.get(Rating.DEFAULT);
-      if (rating != null) {
-        episode.setRating(rating.rating);
-        episode.setVotes(rating.votes);
+      for (Map.Entry<String, TvShowEpisodeNfoParser.Rating> entry : ratings.entrySet()) {
+        TvShowEpisodeNfoParser.Rating r = entry.getValue();
+        episode.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
       }
+
       episode.setYear(year);
       episode.setFirstAired(releaseDate);
       episode.setPlot(plot);

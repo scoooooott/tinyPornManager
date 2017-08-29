@@ -269,7 +269,7 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_1, tpOverview, jTextPaneBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating");
+    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating.rating");
     BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
     AutoBinding<TvShowSelectionModel, Float, StarRater, Float> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_2, panelRatingStars, starRaterBeanProperty);
@@ -279,7 +279,7 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.votes");
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.rating.votes");
     AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_3, lblVoteCount, jLabelBeanProperty);
     autoBinding_4.bind();

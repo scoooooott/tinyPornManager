@@ -398,7 +398,7 @@ public class MovieInformationPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.rating");
+    BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.rating.rating");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, Float, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_1, lblRating, jLabelBeanProperty);
@@ -409,7 +409,7 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_1, starRater, starRaterBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.rating.votes");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
     autoBinding_2.setConverter(new VoteCountConverter());

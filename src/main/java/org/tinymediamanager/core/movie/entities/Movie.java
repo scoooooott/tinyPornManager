@@ -62,7 +62,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -83,6 +82,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
@@ -110,6 +110,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -769,8 +770,10 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     if (config.isRating()) {
-      setRating(metadata.getRating());
-      setVotes(metadata.getVoteCount());
+      clearRatings();
+      for (MediaRating mediaRating : metadata.getRatings()) {
+        setRating(new Rating(mediaRating));
+      }
       setTop250(metadata.getTop250());
     }
 
@@ -997,31 +1000,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     saveToDb();
-  }
-
-  /**
-   * Gets the metadata.
-   * 
-   * @return the metadata
-   */
-  public MediaMetadata getMetadata() {
-    MediaMetadata md = new MediaMetadata("");
-
-    for (Entry<String, Object> entry : ids.entrySet()) {
-      md.setId(entry.getKey(), entry.getValue());
-    }
-
-    md.setTitle(title);
-    md.setOriginalTitle(originalTitle);
-    md.setTagline(tagline);
-    md.setPlot(plot);
-    md.setYear(year);
-    md.setRating(rating);
-    md.setVoteCount(votes);
-    md.setRuntime(runtime);
-    md.addCertification(certification);
-
-    return md;
   }
 
   /**
@@ -1334,7 +1312,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the checks for rating
    */
   public boolean getHasRating() {
-    if (rating > 0 || scraped) {
+    if (!ratings.isEmpty() || scraped) {
       return true;
     }
     return false;

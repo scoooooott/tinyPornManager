@@ -72,6 +72,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -86,6 +87,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -258,7 +260,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     originalTitle = source.originalTitle;
     year = source.year;
     plot = source.plot;
-    rating = source.rating;
 
     for (Entry<MediaFileType, String> entry : source.artworkUrlMap.entrySet()) {
       artworkUrlMap.put(entry.getKey(), entry.getValue());
@@ -280,7 +281,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     disc = source.disc;
     watched = source.watched;
-    votes = source.votes;
     subtitles = source.subtitles;
 
     for (Person actor : source.getActors()) {
@@ -291,6 +291,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
     for (Person writer : source.getWriters()) {
       writers.add(new Person(writer));
+    }
+    for (Rating rating : source.getRatings().values()) {
+      ratings.put(rating.getId(), new Rating(rating));
     }
   }
 
@@ -578,8 +581,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setFirstAired(metadata.getReleaseDate());
     setDisplaySeason(metadata.getDisplaySeasonNumber());
     setDisplayEpisode(metadata.getDisplayEpisodeNumber());
-    setRating(metadata.getRating());
-    setVotes(metadata.getVoteCount());
+
+    clearRatings();
+    for (MediaRating mediaRating : metadata.getRatings()) {
+      setRating(new Rating(mediaRating));
+    }
 
     List<Person> actors = new ArrayList<>();
     List<Person> directors = new ArrayList<>();
