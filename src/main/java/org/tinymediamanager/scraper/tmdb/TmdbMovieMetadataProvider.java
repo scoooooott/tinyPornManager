@@ -34,6 +34,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -555,8 +556,12 @@ class TmdbMovieMetadataProvider {
     md.setPlot(movie.overview);
     md.setTagline(movie.tagline);
     md.setRuntime(movie.runtime);
-    md.setRating(movie.vote_average);
-    md.setVoteCount(movie.vote_count);
+
+    MediaRating rating = new MediaRating("tmdb");
+    rating.setRating(movie.vote_average);
+    rating.setVoteCount(movie.vote_count);
+    rating.setMaxValue(10);
+    md.addRating(rating);
 
     // Poster
     if (StringUtils.isNotBlank(movie.poster_path)) {

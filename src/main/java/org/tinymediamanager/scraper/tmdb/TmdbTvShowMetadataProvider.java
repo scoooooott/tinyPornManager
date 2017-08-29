@@ -39,6 +39,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -267,8 +268,13 @@ class TmdbTvShowMetadataProvider {
     md.setId(TmdbMetadataProvider.providerInfo.getId(), tmdbId);
     md.setTitle(complete.name);
     md.setOriginalTitle(complete.original_name);
-    md.setRating(complete.vote_average);
-    md.setVoteCount(complete.vote_count);
+
+    MediaRating rating = new MediaRating("tmdb");
+    rating.setRating(complete.vote_average);
+    rating.setVoteCount(complete.vote_count);
+    rating.setMaxValue(10);
+    md.addRating(rating);
+
     md.setReleaseDate(complete.first_air_date);
     md.setPlot(complete.overview);
 
@@ -475,8 +481,13 @@ class TmdbTvShowMetadataProvider {
 
     md.setTitle(episode.name);
     md.setPlot(episode.overview);
-    md.setRating(episode.vote_average);
-    md.setVoteCount(episode.vote_count);
+
+    MediaRating rating = new MediaRating("tmdb");
+    rating.setRating(episode.vote_average);
+    rating.setVoteCount(episode.vote_count);
+    rating.setMaxValue(10);
+    md.addRating(rating);
+
     md.setReleaseDate(episode.air_date);
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
