@@ -42,6 +42,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * The class TinyMediaManagerWizard provides a wizard for easy first time setup of tinyMediaManager
  * 
@@ -64,13 +66,14 @@ public class TinyMediaManagerWizard extends TmmDialog {
 
   public TinyMediaManagerWizard() {
     super("tinyMediaManager Setup Wizard", "wizard");
-    setBounds(100, 100, 577, 71);
+    setBounds(5, 5, 800, 600);
 
     initComponents();
 
     // data init
     panels = new ArrayList<>();
     panels.add(new EntrancePanel());
+    panels.add(new DisclaimerPanel());
     panels.add(new MovieSourcePanel());
     panels.add(new MovieScraperPanel());
     panels.add(new TvShowSourcePanel());
@@ -86,12 +89,12 @@ public class TinyMediaManagerWizard extends TmmDialog {
 
   private void initComponents() {
     JPanel panelSizing = new JPanel();
-    panelSizing.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("450dlu:grow") }, new RowSpec[] { RowSpec.decode("300dlu:grow") }));
     getContentPane().add(panelSizing, BorderLayout.CENTER);
+    panelSizing.setLayout(new MigLayout("", "[800lp,grow]", "[400lp,grow]"));
 
     panelContent = new JPanel();
     panelContent.setLayout(new CardLayout());
-    panelSizing.add(panelContent, "1, 1, fill, fill");
+    panelSizing.add(panelContent, "cell 0 0,grow");
 
     final JPanel panelSouth = new JPanel();
     panelSouth
@@ -126,6 +129,11 @@ public class TinyMediaManagerWizard extends TmmDialog {
       TmmModuleManager.getInstance().saveSettings();
     }
     super.setVisible(visible);
+  }
+
+  @Override
+  public void pack() {
+    // do not pack - it would look weird
   }
 
   private class BackAction extends AbstractAction {

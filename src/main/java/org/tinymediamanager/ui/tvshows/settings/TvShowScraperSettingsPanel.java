@@ -172,6 +172,18 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
 
+    // implement selection listener to load settings
+    tableScraper.getSelectionModel().addListSelectionListener(e -> {
+      int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
+      if (index > -1) {
+        panelScraperOptions.removeAll();
+        if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+          panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
+        }
+        panelScraperOptions.revalidate();
+      }
+    });
+
     // implement checkBoxListener for preset events
     settings.addPropertyChangeListener(evt -> {
       if ("preset".equals(evt.getPropertyName())) {

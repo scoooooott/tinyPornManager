@@ -102,7 +102,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp][][][][][][][][]"));
+    setLayout(new MigLayout("", "[25lp][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp][][][][][][20lp][][]"));
     {
       final JLabel lblMediaPlayerT = new JLabel(BUNDLE.getString("Settings.mediaplayer")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMediaPlayerT, 1.16667, Font.BOLD);
@@ -131,27 +131,27 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       JLabel lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
       add(lblMemoryT, "flowx,cell 1 5 4 1,aligny top");
 
-    sliderMemory = new JSlider();
-    sliderMemory.setPaintLabels(true);
-    sliderMemory.setPaintTicks(true);
-    sliderMemory.setSnapToTicks(true);
-    sliderMemory.setMajorTickSpacing(512);
-    sliderMemory.setMinorTickSpacing(128);
-    sliderMemory.setMinimum(256);
-    if (Platform.is64Bit()) {
-      sliderMemory.setMaximum(2560);
-    }
-    else {
-      sliderMemory.setMaximum(1536);
-    }
-    sliderMemory.setValue(512);
-      add(sliderMemory, "cell 1 5 2 1,growx,aligny top");
+      sliderMemory = new JSlider();
+      sliderMemory.setPaintLabels(true);
+      sliderMemory.setPaintTicks(true);
+      sliderMemory.setSnapToTicks(true);
+      sliderMemory.setMajorTickSpacing(512);
+      sliderMemory.setMinorTickSpacing(128);
+      sliderMemory.setMinimum(256);
+      if (Platform.is64Bit()) {
+        sliderMemory.setMaximum(2560);
+      }
+      else {
+        sliderMemory.setMaximum(1536);
+      }
+      sliderMemory.setValue(512);
+      add(sliderMemory, "cell 1 5 4 1,growx,aligny top");
 
       lblMemory = new JLabel("512");
       add(lblMemory, "cell 1 5 4 1,aligny top");
 
       JLabel lblMb = new JLabel("MB");
-      add(lblMb, "cell 1 5 2 1,aligny top");
+      add(lblMb, "cell 1 5 4 1,aligny top");
 
       JTextPane tpMemoryHint = new JTextPane();
       add(tpMemoryHint, "cell 1 6 5 1,growx");
@@ -204,7 +204,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     }
     {
       chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
-      add(chckbxImageCache, "cell 1 13 2 1");
+      add(chckbxImageCache, "cell 1 13 4 1");
 
       JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
       add(lblImageCacheQuality, "flowx,cell 2 14");
@@ -213,16 +213,16 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       add(cbImageCacheQuality, "cell 2 14");
 
       chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
-      add(chckbxDeleteTrash, "cell 1 16 2 1");
-
-      chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));
-      add(chckbxAnalytics, "cell 1 18 2 1");
+      add(chckbxDeleteTrash, "cell 1 16 4 1");
 
       JTextPane tpAnalyticsDescription = new JTextPane();
-      add(tpAnalyticsDescription, "cell 1 19 5 1,growx");
+      add(tpAnalyticsDescription, "flowx,cell 1 18 5 1,growx");
       tpAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
       tpAnalyticsDescription.setOpaque(false);
     }
+
+    chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));
+    add(chckbxAnalytics, "cell 1 19 4 1");
   }
 
   private void initMemorySlider() {

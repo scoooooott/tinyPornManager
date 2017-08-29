@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.wizard;
 
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -25,9 +26,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -47,12 +48,11 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel.TvShowScraper;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class TvShowScraperPanel is used to maintain the TV show scraper in the wizard
@@ -75,6 +75,7 @@ class TvShowScraperPanel extends JPanel {
   private JComboBox<CountryCode>      cbCertificationCountry;
   private JTextPane                   tpScraperDescription;
   private JLabel                      lblTvShowScraper;
+  private JPanel                      panelScraperOptions;
 
   public TvShowScraperPanel() {
     // data init before UI init
@@ -123,6 +124,18 @@ class TvShowScraperPanel extends JPanel {
       }
     });
 
+    // implement selection listener to load settings
+    tableScraper.getSelectionModel().addListSelectionListener(e -> {
+      int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
+      if (index > -1) {
+        panelScraperOptions.removeAll();
+        if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+          panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
+        }
+        panelScraperOptions.revalidate();
+      }
+    });
+
     // select default movie scraper
     if (counter > 0) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
@@ -133,56 +146,55 @@ class TvShowScraperPanel extends JPanel {
    * init components
    */
   private void initComponents() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.LINE_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[grow]", "[][400lp,grow]"));
+
+    lblTvShowScraper = new JLabel(BUNDLE.getString("wizard.tvshow.scraper"));
+    add(lblTvShowScraper, "cell 0 0");
     JPanel panelTvShowScrapers = new JPanel();
 
-    add(panelTvShowScrapers, "2, 2, fill, fill");
-    panelTvShowScrapers.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("20dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("80dlu:grow"),
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(3)"), FormSpecs.LINE_GAP_ROWSPEC, }));
-
-    lblTvShowScraper = new JLabel(BUNDLE.getString("wizard.tvshow.scraper")); //$NON-NLS-1$
-    panelTvShowScrapers.add(lblTvShowScraper, "2, 2, 11, 1");
+    add(panelTvShowScrapers, "cell 0 1,grow");
+    panelTvShowScrapers.setLayout(new MigLayout("", "[][][500lp,grow]", "[150lp:300lp][][]"));
 
     JScrollPane scrollPaneScraper = new JScrollPane();
-    panelTvShowScrapers.add(scrollPaneScraper, "2, 4, 5, 1, fill, fill");
+    panelTvShowScrapers.add(scrollPaneScraper, "cell 0 0 2 1,grow");
 
     tableScraper = new JTable();
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 
-    JPanel panelScraperDetails = new JPanel();
-    panelTvShowScrapers.add(panelScraperDetails, "8, 4, 5, 1, fill, fill");
-    panelScraperDetails.setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+    {
+      JScrollPane scrollPaneScraperDetails = new JScrollPane();
+      panelTvShowScrapers.add(scrollPaneScraperDetails, "cell 2 0 1 2,grow");
+      scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPaneScraperDetails.setBorder(null);
 
-    tpScraperDescription = new JTextPane();
-    tpScraperDescription.setOpaque(false);
-    tpScraperDescription.setEditorKit(new HTMLEditorKit());
-    panelScraperDetails.add(tpScraperDescription, "2, 2, default, top");
+      JPanel panelScraperDetails = new ScrollablePanel();
+      scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+      panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
 
-    panelTvShowScrapers.add(new JSeparator(), "2, 6, 11, 1");
+      tpScraperDescription = new JTextPane();
+      tpScraperDescription.setOpaque(false);
+      tpScraperDescription.setEditorKit(new HTMLEditorKit());
+      panelScraperDetails.add(tpScraperDescription, "cell 0 0,growx,aligny top");
+
+      panelScraperOptions = new JPanel();
+      panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+      panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
+    }
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-    panelTvShowScrapers.add(lblScraperLanguage, "2, 7, right, default");
+    panelTvShowScrapers.add(lblScraperLanguage, "cell 0 1");
 
     cbScraperLanguage = new JComboBox<>();
     cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
-    panelTvShowScrapers.add(cbScraperLanguage, "4, 7");
+    panelTvShowScrapers.add(cbScraperLanguage, "cell 1 1");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
-    panelTvShowScrapers.add(lblCountry, "2, 9, right, default");
+    panelTvShowScrapers.add(lblCountry, "cell 0 2");
 
     cbCertificationCountry = new JComboBox<>();
     cbCertificationCountry.setModel(new DefaultComboBoxModel<>(CountryCode.values()));
-    panelTvShowScrapers.add(cbCertificationCountry, "4, 9, fill, default");
+    panelTvShowScrapers.add(cbCertificationCountry, "cell 1 2");
   }
 
   /*

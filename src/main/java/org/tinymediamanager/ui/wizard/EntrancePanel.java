@@ -25,10 +25,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.images.Logo;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class EntrancePanel is the first panel which is displayed in the wizard
@@ -50,28 +47,23 @@ class EntrancePanel extends JPanel {
    * init UI components
    */
   private void initComponents() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("50dlu"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu"),
-            RowSpec.decode("default:grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[50lp:50lp,grow][][10lp][][50lp:50lp,grow]", "[20lp:20lp,grow][][20lp:20lp][][50lp:50lp,grow]"));
 
     final JTextPane tpGreetingHeader = new JTextPane();
     tpGreetingHeader.setEditable(false);
     tpGreetingHeader.setOpaque(false);
     tpGreetingHeader.setEditorKit(new HTMLEditorKit());
     tpGreetingHeader.setText(BUNDLE.getString("wizard.greeting.header")); //$NON-NLS-1$
-    add(tpGreetingHeader, "2, 2, 7, 1, center, bottom");
+    add(tpGreetingHeader, "cell 0 1 5 1,alignx center");
 
     JLabel lblLogo = new JLabel("");
     lblLogo.setIcon(new Logo(96));
-    add(lblLogo, "4, 5, default, top");
+    add(lblLogo, "cell 1 3,alignx right,aligny top");
 
     JTextPane tpGreetingText = new JTextPane();
     tpGreetingText.setEditable(false);
     tpGreetingText.setText(BUNDLE.getString("wizard.greeting.text")); //$NON-NLS-1$
     tpGreetingText.setOpaque(false);
-    add(tpGreetingText, "6, 5, fill, fill");
+    add(tpGreetingText, "cell 3 3,grow");
   }
 }

@@ -129,7 +129,7 @@ public class Settings extends AbstractSettings {
   private boolean               storeWindowPreferences = true;
 
   private boolean               deleteTrashOnExit      = false;
-  private boolean               enableAnalytics        = true;
+  private boolean               enableAnalytics        = false;
 
   private boolean               upnpShareLibrary       = false;
   private boolean               upnpRemotePlay         = false;

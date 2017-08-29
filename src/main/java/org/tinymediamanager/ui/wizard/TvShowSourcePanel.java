@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.wizard;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,13 +44,11 @@ import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class TvShowSourcePanel is used to maintain the TV show data sources in the wizard
@@ -75,38 +74,32 @@ class TvShowSourcePanel extends JPanel {
    * init components
    */
   private void initComponents() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.LINE_GAP_ROWSPEC, }));
-    JPanel panelTvShowDataSources = new JPanel();
-    add(panelTvShowDataSources, "2, 2, fill, fill");
-    panelTvShowDataSources.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
-            RowSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow(3)"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[grow]", "[][grow]"));
 
-    JLabel lblDataSource = new JLabel(BUNDLE.getString("wizard.tvshow.datasources")); //$NON-NLS-1$
-    panelTvShowDataSources.add(lblDataSource, "2, 2, 7, 1");
+    JLabel lblDataSource = new JLabel(BUNDLE.getString("wizard.tvshow.datasources"));
+    TmmFontHelper.changeFont(lblDataSource, 1.3333, Font.BOLD);
+    add(lblDataSource, "cell 0 0");
+
+    JPanel panelTvShowDataSources = new JPanel();
+    add(panelTvShowDataSources, "cell 0 1,grow");
+    panelTvShowDataSources.setLayout(new MigLayout("", "[grow][]", "[][grow][]"));
 
     JTextPane tpDatasourceHint = new JTextPane();
     tpDatasourceHint.setText(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
     tpDatasourceHint.setOpaque(false);
-    panelTvShowDataSources.add(tpDatasourceHint, "2, 3, 7, 1, fill, fill");
+    panelTvShowDataSources.add(tpDatasourceHint, "cell 0 0 2 1,growx");
 
     JScrollPane scrollPaneDataSources = new JScrollPane();
-    panelTvShowDataSources.add(scrollPaneDataSources, "2, 5, 5, 1, fill, fill");
+    panelTvShowDataSources.add(scrollPaneDataSources, "cell 0 1,grow");
 
     listDataSources = new JList<>();
     scrollPaneDataSources.setViewportView(listDataSources);
 
-    JPanel panelTvShowSourcesButtons = new JPanel();
-    panelTvShowDataSources.add(panelTvShowSourcesButtons, "8, 5, fill, top");
-    panelTvShowSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+    cbDvdOrder = new JCheckBox(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
+    panelTvShowDataSources.add(cbDvdOrder, "flowx,cell 0 2");
 
     JButton btnAdd = new JButton(IconManager.ADD_INV);
+    panelTvShowDataSources.add(btnAdd, "flowy,cell 1 1,aligny top");
     btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(new ActionListener() {
@@ -120,9 +113,8 @@ class TvShowSourcePanel extends JPanel {
       }
     });
 
-    panelTvShowSourcesButtons.add(btnAdd, "1, 1, fill, top");
-
     JButton btnRemove = new JButton(IconManager.REMOVE_INV);
+    panelTvShowDataSources.add(btnRemove, "cell 1 1");
     btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemove.setMargin(new Insets(2, 2, 2, 2));
     btnRemove.addActionListener(new ActionListener() {
@@ -143,13 +135,6 @@ class TvShowSourcePanel extends JPanel {
         }
       }
     });
-    panelTvShowSourcesButtons.add(btnRemove, "1, 3, fill, top");
-
-    JLabel lblDvdOrder = new JLabel(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
-    panelTvShowDataSources.add(lblDvdOrder, "2, 7, right, default");
-
-    cbDvdOrder = new JCheckBox("");
-    panelTvShowDataSources.add(cbDvdOrder, "4, 7");
   }
 
   /*
