@@ -85,8 +85,8 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private List<TvShowScraper>                  scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
 
   /** UI components */
-  private JComboBox                            cbScraperLanguage;
-  private JComboBox                            cbCertificationCountry;
+  private JComboBox<MediaLanguages>            cbScraperLanguage;
+  private JComboBox<CountryCode>               cbCertificationCountry;
   private JCheckBox                            chckbxAutomaticallyScrapeImages;
   private TmmTable                             tableScraper;
   private JTextPane                            tpScraperDescription;
@@ -94,6 +94,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JComboBox<TvShowConnectors>          cbNfoFormat;
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
+  private JComboBox<MediaLanguages>            cbNfoLanguage;
 
   private ItemListener                         comboBoxListener;
 
@@ -195,11 +196,12 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][][][20lp][][][][][20lp][][][20lp][][]"));
+    setLayout(
+        new MigLayout("", "[25lp,shrink 0][20lp][][][500lp,grow]", "[][200lp][][][20lp,shrink 0][][][][][][][20lp,shrink 0][][][20lp,shrink 0][][]"));
     {
       JLabel lblMetadataScraper = new JLabel(BUNDLE.getString("scraper.metadata")); // $NON-NLS-1$
       TmmFontHelper.changeFont(lblMetadataScraper, 1.16667, Font.BOLD);
-      add(lblMetadataScraper, "cell 0 0 4 1");
+      add(lblMetadataScraper, "cell 0 0 5 1");
     }
     {
       tableScraper = new TmmTable();
@@ -207,11 +209,11 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
       JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
       tableScraper.configureScrollPane(scrollPaneScraper);
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
+      add(scrollPaneScraper, "cell 1 1 3 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 3 1,grow");
+      add(scrollPaneScraperDetails, "cell 4 1,grow");
       scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       scrollPaneScraperDetails.setBorder(null);
 
@@ -230,53 +232,62 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     }
     {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); // $NON-NLS-1$
-      add(lblScraperLanguage, "cell 1 2,growx");
+      add(lblScraperLanguage, "cell 1 2 2 1,growx");
 
       cbScraperLanguage = new JComboBox(MediaLanguages.values());
-      add(cbScraperLanguage, "cell 2 2");
+      add(cbScraperLanguage, "cell 3 2");
 
       JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); // $NON-NLS-1$
-      add(lblCountry, "cell 1 3");
+      add(lblCountry, "cell 1 3 2 1");
 
       cbCertificationCountry = new JComboBox(CountryCode.values());
-      add(cbCertificationCountry, "cell 2 3");
+      add(cbCertificationCountry, "cell 3 3");
     }
     {
       JLabel lblNfoSettingsT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
-      add(lblNfoSettingsT, "cell 0 5 3 1");
+      add(lblNfoSettingsT, "cell 0 5 4 1");
 
       JLabel lblNfoFormatT = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-      add(lblNfoFormatT, "flowx,cell 1 6 3 1");
+      add(lblNfoFormatT, "flowx,cell 1 6 4 1");
 
       cbNfoFormat = new JComboBox(TvShowConnectors.values());
-      add(cbNfoFormat, "cell 1 6 3 1");
+      add(cbNfoFormat, "cell 1 6 4 1");
 
       chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-      add(chckbxWriteCleanNfo, "cell 1 7 3 1");
+      add(chckbxWriteCleanNfo, "cell 1 7 4 1");
+
+      JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
+      add(lblNfoLanguage, "flowx,cell 1 8 4 1");
+
+      cbNfoLanguage = new JComboBox(MediaLanguages.values());
+      add(cbNfoLanguage, "cell 1 8");
+
+      JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
+      add(lblNfoLanguageDesc, "cell 2 9 3 1");
 
       JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationFormatT, "flowx,cell 1 8 3 1");
+      add(lblCertificationFormatT, "flowx,cell 1 10 4 1");
 
       cbCertificationStyle = new JComboBox();
-      add(cbCertificationStyle, "cell 1 8 3 1");
+      add(cbCertificationStyle, "cell 1 10 4 1");
     }
     {
       final JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperOptionsT, 1.16667, Font.BOLD);
-      add(lblScraperOptionsT, "cell 0 10 4 1");
+      add(lblScraperOptionsT, "cell 0 12 5 1");
     }
     {
       final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
-      add(scraperMetadataPanel, "cell 1 11 3 1,grow");
+      add(scraperMetadataPanel, "cell 1 13 4 1,grow");
     }
     {
       final JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblArtworkScrapeT, 1.16667, Font.BOLD);
-      add(lblArtworkScrapeT, "cell 0 13 3 1");
+      add(lblArtworkScrapeT, "cell 0 15 4 1");
     }
     {
       chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
-      add(chckbxAutomaticallyScrapeImages, "cell 1 14 3 1");
+      add(chckbxAutomaticallyScrapeImages, "cell 1 16 4 1");
     }
   }
 
@@ -442,5 +453,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_1, chckbxWriteCleanNfo, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<TvShowSettings, MediaLanguages> tvShowSettingsBeanProperty_2 = BeanProperty.create("nfoLanguage");
+    AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_2, cbNfoLanguage, jComboBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }

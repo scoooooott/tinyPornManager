@@ -182,6 +182,7 @@ public class TvShowSettings extends AbstractSettings {
   private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
   private boolean                              writeCleanNfo                  = false;
+  private MediaLanguages                       nfoLanguage                    = MediaLanguages.en;
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -747,6 +748,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.writeCleanNfo;
     this.writeCleanNfo = newValue;
     firePropertyChange("writeCleanNfo", oldValue, newValue);
+  }
+
+  public MediaLanguages getNfoLanguage() {
+    return nfoLanguage;
+  }
+
+  public void setNfoLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = nfoLanguage;
+    this.nfoLanguage = newValue;
+    firePropertyChange("nfoLanguage", oldValue, newValue);
   }
 
   /*****************************************************************

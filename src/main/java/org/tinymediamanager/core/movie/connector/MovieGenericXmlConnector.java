@@ -36,6 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
@@ -436,7 +437,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   protected void addGenres() {
     for (MediaGenres mediaGenre : movie.getGenres()) {
       Element genre = document.createElement("genre");
-      genre.setTextContent(mediaGenre.getName());
+      genre.setTextContent(mediaGenre.getLocalizedName(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getNfoLanguage().name())));
       root.appendChild(genre);
     }
   }

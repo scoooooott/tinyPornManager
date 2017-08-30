@@ -191,6 +191,7 @@ public class MovieSettings extends AbstractSettings {
   private MovieConnectors                  movieConnector                       = MovieConnectors.KODI;
   private CertificationStyle               certificationStyle                   = CertificationStyle.LARGE;
   private boolean                          writeCleanNfo                        = false;
+  private MediaLanguages                   nfoLanguage                          = MediaLanguages.en;
 
   // renamer
   private boolean                          renameAfterScrape                    = false;
@@ -1089,9 +1090,19 @@ public class MovieSettings extends AbstractSettings {
   }
 
   public void setWriteCleanNfo(boolean newValue) {
-    boolean oldValue = this.writeCleanNfo;
+    boolean oldValue = writeCleanNfo;
     this.writeCleanNfo = newValue;
     firePropertyChange("writeCleanNfo", oldValue, newValue);
+  }
+
+  public MediaLanguages getNfoLanguage() {
+    return nfoLanguage;
+  }
+
+  public void setNfoLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = nfoLanguage;
+    this.nfoLanguage = newValue;
+    firePropertyChange("nfoLanguage", oldValue, newValue);
   }
 
   /*****************************************************************

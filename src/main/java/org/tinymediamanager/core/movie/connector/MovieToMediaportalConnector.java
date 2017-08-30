@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +99,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
 
     for (MediaGenres mediaGenre : movie.getGenres()) {
       Element genre = document.createElement("genre");
-      genre.setTextContent(mediaGenre.getName());
+      genre.setTextContent(mediaGenre.getLocalizedName(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getNfoLanguage().name())));
       genres.appendChild(genre);
     }
 
