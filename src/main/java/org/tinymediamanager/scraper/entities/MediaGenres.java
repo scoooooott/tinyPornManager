@@ -264,7 +264,18 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the localized genre
    */
   public String getLocalizedName() {
-    String lang = Locale.getDefault().getLanguage() + "-";
+    return getLocalizedName(Locale.getDefault());
+  }
+
+  /**
+   * Gets the genre name with given Locale<br>
+   * or just name if not found<br>
+   * eg: Name = "de-Abenteuer"
+   *
+   * @return the localized genre
+   */
+  public String getLocalizedName(Locale locale) {
+    String lang = locale.getLanguage() + "-";
     for (String notation : alternateNames) {
       if (notation.startsWith(lang)) {
         return notation.substring(3);
