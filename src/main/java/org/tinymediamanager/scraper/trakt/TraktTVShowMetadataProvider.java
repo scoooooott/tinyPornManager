@@ -36,6 +36,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -179,7 +180,7 @@ class TraktTVShowMetadataProvider {
           if (episode.ids.tvdb != null && episode.ids.tvdb > 0) {
             ep.ids.put(TVDB, episode.ids.tvdb);
           }
-          if (episode.ids.tvdb != null && episode.ids.tmdb > 0) {
+          if (episode.ids.tmdb != null && episode.ids.tmdb > 0) {
             ep.ids.put(TMDB, episode.ids.tmdb);
           }
           if (episode.ids.tvrage != null && episode.ids.tvrage > 0) {
@@ -276,8 +277,13 @@ class TraktTVShowMetadataProvider {
     }
 
     md.setYear(show.year);
-    md.setRating(show.rating);
-    md.setVoteCount(show.votes);
+
+    MediaRating rating = new MediaRating("trakt");
+    rating.setRating(show.rating);
+    rating.setVoteCount(show.votes);
+    rating.setMaxValue(10);
+    md.addRating(rating);
+
     md.addCertification(Certification.findCertification(show.certification));
     md.addCountry(show.country);
     md.setReleaseDate(show.first_aired);
@@ -449,8 +455,13 @@ class TraktTVShowMetadataProvider {
 
     md.setTitle(episode.title);
     md.setPlot(episode.overview);
-    md.setRating(episode.rating);
-    md.setVoteCount(episode.votes);
+
+    MediaRating rating = new MediaRating("trakt");
+    rating.setRating(episode.rating);
+    rating.setVoteCount(episode.votes);
+    rating.setMaxValue(10);
+    md.addRating(rating);
+
     md.setReleaseDate(episode.first_aired);
 
     return md;

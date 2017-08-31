@@ -19,6 +19,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 public class TraktMetadataProviderTest {
@@ -76,8 +77,11 @@ public class TraktMetadataProviderTest {
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getYear()).isEqualTo(2001);
       assertThat(md.getReleaseDate()).isInSameDayAs("2001-11-16");
-      assertThat(md.getRating()).isGreaterThan(0);
-      assertThat(md.getVoteCount()).isGreaterThan(0);
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
       assertThat(md.getRuntime()).isGreaterThan(0);
       assertThat(md.getCertifications()).containsOnly(Certification.US_PG);
       assertThat(md.getGenres()).containsOnly(MediaGenres.ADVENTURE, MediaGenres.FANTASY, MediaGenres.FAMILY);
@@ -143,14 +147,17 @@ public class TraktMetadataProviderTest {
       assertThat(md.getTitle()).isEqualTo("Game of Thrones");
       assertThat(md.getYear()).isEqualTo(2011);
       assertThat(md.getPlot()).isNotEmpty();
-      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-17");
-      assertThat(md.getRuntime()).isEqualTo(55);
+      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-18");
+      assertThat(md.getRuntime()).isGreaterThanOrEqualTo(55);
       assertThat(md.getProductionCompanies()).containsOnly("HBO");
-      assertThat(md.getCertifications()).containsOnly(Certification.US_TVMA);
+      assertThat(md.getCertifications()).containsOnly(Certification.US_TVPG);
       assertThat(md.getCountries()).containsOnly("us");
       assertThat(md.getStatus()).isEqualTo("returning series");
-      assertThat(md.getRating()).isGreaterThan(0);
-      assertThat(md.getVoteCount()).isGreaterThan(0);
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
 
       assertThat(md.getGenres()).containsOnly(MediaGenres.DRAMA, MediaGenres.FANTASY, MediaGenres.SCIENCE_FICTION, MediaGenres.ACTION,
           MediaGenres.ADVENTURE);
@@ -190,8 +197,11 @@ public class TraktMetadataProviderTest {
       assertThat(md.getTitle()).isEqualTo("Winter Is Coming");
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-18");
-      assertThat(md.getRating()).isGreaterThan(0);
-      assertThat(md.getVoteCount()).isGreaterThan(0);
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
 
       // ids
       assertThat(md.getId(TraktMetadataProvider.providerInfo.getId())).isEqualTo(73640);

@@ -32,6 +32,7 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -189,8 +190,12 @@ class TraktMovieMetadataProvider {
     md.setRuntime(movie.runtime);
     md.addCertification(Certification.findCertification(movie.certification));
     md.setReleaseDate(movie.released.toDate());
-    md.setRating(movie.rating);
-    md.setVoteCount(movie.votes);
+
+    MediaRating rating = new MediaRating("trakt");
+    rating.setRating(movie.rating);
+    rating.setVoteCount(movie.votes);
+    rating.setMaxValue(10);
+    md.addRating(rating);
 
     // ids
     md.setId(TraktMetadataProvider.providerInfo.getId(), movie.ids.trakt);
