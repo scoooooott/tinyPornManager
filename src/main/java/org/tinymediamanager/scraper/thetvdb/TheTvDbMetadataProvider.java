@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -284,8 +285,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     ma.setLanguage(options.getLanguage().getLanguage());
     md.addMediaArt(ma);
 
-    md.setRating(NumberUtils.toFloat(show.getRating()));
-    md.setVoteCount(TvUtils.parseInt(show.getRatingCount()));
+    MediaRating rating = new MediaRating("tvdb");
+    rating.setRating(NumberUtils.toFloat(show.getRating()));
+    rating.setVoteCount(TvUtils.parseInt(show.getRatingCount()));
+    rating.setMaxValue(10);
+    md.addRating(rating);
 
     try {
       md.setReleaseDate(StrgUtils.parseDate(show.getFirstAired()));
@@ -440,8 +444,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     md.setTitle(episode.getEpisodeName());
     md.setPlot(episode.getOverview());
-    md.setRating(NumberUtils.toFloat(episode.getRating()));
-    md.setVoteCount(TvUtils.parseInt(episode.getRatingCount()));
+
+    MediaRating rating = new MediaRating("tvdb");
+    rating.setRating(NumberUtils.toFloat(episode.getRating()));
+    rating.setVoteCount(TvUtils.parseInt(episode.getRatingCount()));
+    rating.setMaxValue(10);
+    md.addRating(rating);
 
     try {
       md.setReleaseDate(StrgUtils.parseDate(episode.getFirstAired()));
