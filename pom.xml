@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-ofdb</artifactId>
-	<version>1.6-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
 
 	<name>OFDb.de scraper</name>
 	<description>A scraper for the german Online Filmdatenbank (OFDb)</description>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>api-scraper</artifactId>
-			<version>2.1</version>
+            <version>3.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

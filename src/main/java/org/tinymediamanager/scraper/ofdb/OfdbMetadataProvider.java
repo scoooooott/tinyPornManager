@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
@@ -203,21 +204,31 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
 
       // rating
-      // <div itemtype="http://schema.org/AggregateRating" itemscope
-      // itemprop="aggregateRating">Note: <span
-      // itemprop="ratingValue">6.73</span><meta
-      // itemprop="worstRating" content="1" />
-      el = doc.getElementsByAttributeValue("itemprop", "ratingValue");
-      if (!el.isEmpty()) {
-        String r = el.text();
-        if (!r.isEmpty()) {
-          try {
-            md.setRating(Float.parseFloat(r));
-          }
-          catch (Exception e) {
-            LOGGER.debug("could not parse rating");
+      // <div itemtype="http://schema.org/AggregateRating" itemscope="" itemprop="aggregateRating">
+      // Note: <span itemprop="ratingValue">8.74</span><meta itemprop="worstRating" content="1"><meta itemprop="bestRating" content="10">
+      // &nbsp;•&nbsp;&nbsp;Stimmen: <span itemprop="ratingCount">2187</span>
+      // &nbsp;•&nbsp;&nbsp;Platz: 19 &nbsp;•&nbsp;&nbsp;Ihre Note: --</div>
+      try {
+        MediaRating rating = new MediaRating("odfb");
+        el = doc.getElementsByAttributeValue("itemprop", "ratingValue");
+        if (!el.isEmpty()) {
+          String r = el.text();
+          if (!r.isEmpty()) {
+            rating.setRating(Float.parseFloat(r));
+            rating.setMaxValue(10);
           }
         }
+        el = doc.getElementsByAttributeValue("itemprop", "ratingCount");
+        if (!el.isEmpty()) {
+          String r = el.text();
+          if (!r.isEmpty()) {
+            rating.setVoteCount(Integer.parseInt(r));
+          }
+        }
+        md.addRating(rating);
+      }
+      catch (Exception e) {
+        LOGGER.debug("could not parse rating");
       }
 
       // get PlotLink; open url and parse
@@ -232,8 +243,8 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
           Document plot = Jsoup.parse(in, "UTF-8", "");
           in.close();
           Elements block = plot.getElementsByClass("Blocksatz"); // first
-                                                                 // Blocksatz
-                                                                 // is plot
+          // Blocksatz
+          // is plot
           String p = block.first().text(); // remove all html stuff
           p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
           md.setPlot(p);

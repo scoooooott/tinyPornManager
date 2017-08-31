@@ -17,7 +17,8 @@
 package org.tinymediamanager.scraper.ofdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
@@ -111,7 +113,12 @@ public class OfdbMetadataProviderTest {
       assertThat(md.getPlot()).startsWith(
           "Merida wächst als Erstgeborene von König Fergus an, der im schottischen Hochland sein Volk, bestehend aus vier Clans, anführt. Fergus hatte, als Merida noch ein Kleinkind war, einen Teil seines linken Beines im Kampf gegen einen riesigen, gefährlichen Bären verloren -");
       assertThat(md.getTagline()).isEmpty();
-      assertThat(md.getRating()).isBetween(6.5f, 7f);
+
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
 
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(11);
