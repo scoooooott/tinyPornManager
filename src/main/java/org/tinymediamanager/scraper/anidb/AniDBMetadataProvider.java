@@ -47,6 +47,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
@@ -212,8 +213,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     for (Element rating : e.children()) {
       if ("temporary".equalsIgnoreCase(rating.tagName())) {
         try {
-          md.setRating(Float.parseFloat(rating.text()));
-          md.setVoteCount(Integer.parseInt(rating.attr("count")));
+          MediaRating mediaRating = new MediaRating("anidb");
+          mediaRating.setRating(Float.parseFloat(rating.text()));
+          mediaRating.setVoteCount(Integer.parseInt(rating.attr("count")));
+          mediaRating.setMaxValue(10);
+          md.addRating(mediaRating);
           break;
         }
         catch (NumberFormatException ignored) {
@@ -334,7 +338,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
     md.setTitle(title);
     md.setPlot(episode.summary);
-    md.setRating(episode.rating);
+
+    MediaRating mediaRating = new MediaRating("anidb");
+    mediaRating.setRating(episode.rating);
+    mediaRating.setMaxValue(10);
+    md.addRating(mediaRating);
+
     try {
       md.setReleaseDate(StrgUtils.parseDate(episode.airdate));
     }
