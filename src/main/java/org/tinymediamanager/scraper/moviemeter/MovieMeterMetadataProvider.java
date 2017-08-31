@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
@@ -159,12 +160,17 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     md.setPlot(fd.plot);
     md.setTagline(fd.plot.length() > 150 ? fd.plot.substring(0, 150) : fd.plot);
     // md.setOriginalTitle(fd.getAlternative_titles());
+
     try {
-      md.setRating((float) fd.average);
+      MediaRating mediaRating = new MediaRating("moviemeter");
+      mediaRating.setRating(fd.average);
+      mediaRating.setMaxValue(5);
+      mediaRating.setVoteCount(fd.votes_count);
+      md.addRating(mediaRating);
     }
-    catch (Exception e) {
-      md.setRating(0);
+    catch (Exception ignored) {
     }
+
     md.setId(providerInfo.getId(), fd.id);
     try {
       md.setRuntime(fd.duration);
@@ -172,7 +178,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     catch (Exception e) {
       md.setRuntime(0);
     }
-    md.setVoteCount(fd.votes_count);
+
     for (String g : fd.genres) {
       md.addGenre(getTmmGenre(g));
     }

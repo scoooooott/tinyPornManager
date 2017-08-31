@@ -2,7 +2,6 @@ package org.tinymediamanager.scraper.moviemeter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
@@ -24,7 +24,7 @@ public class MoviemeterMetadataProviderTest {
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Avatar");
 
       List<MediaSearchResult> results = rt.search(options);
-      assertEquals(3, results.size());
+      assertThat(results.size()).isGreaterThanOrEqualTo(3);
       for (MediaSearchResult result : results) {
         assertThat(result.getTitle()).isNotNull().isNotEmpty();
         assertThat(result.getId()).isNotNull().isNotEmpty();
@@ -49,7 +49,13 @@ public class MoviemeterMetadataProviderTest {
 
       assertThat(md.getTitle()).isEqualTo("Avatar");
       assertThat(md.getYear()).isEqualTo(2009);
-      assertThat(md.getRating()).isGreaterThan(0);
+
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(5);
+
       assertThat(md.getPlot()).startsWith("Jake Sully (Sam Worthington) is een verlamde oorlogsveteraan in de toekomst, die met enkele");
       assertThat(md.getProductionCompanies()).isEmpty();
       assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0499549");
