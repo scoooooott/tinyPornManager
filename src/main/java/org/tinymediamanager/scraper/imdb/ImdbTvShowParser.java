@@ -39,6 +39,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
@@ -216,9 +217,13 @@ public class ImdbTvShowParser extends ImdbParser {
         md.setEpisodeNumber(wantedEpisode.episode);
         md.setSeasonNumber(wantedEpisode.season);
         md.setTitle(wantedEpisode.title);
-        md.setRating(wantedEpisode.rating);
-        md.setVoteCount(wantedEpisode.voteCount);
         md.setPlot("");
+
+        MediaRating rating = new MediaRating("imdb");
+        rating.setRating(wantedEpisode.rating);
+        rating.setMaxValue(10);
+        rating.setVoteCount(wantedEpisode.voteCount);
+        md.addRating(rating);
 
         // parse release date
         Element releaseDate = h4.nextElementSibling();

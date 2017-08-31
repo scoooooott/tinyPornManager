@@ -47,6 +47,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -475,6 +476,8 @@ public abstract class ImdbParser {
       if (elements.size() > 0) {
         Element div = elements.get(0);
 
+        MediaRating rating = new MediaRating("imdb");
+
         // rating comes in <b> tag
         Elements b = div.getElementsByTag("b");
         if (b.size() == 1) {
@@ -483,13 +486,12 @@ public abstract class ImdbParser {
           Matcher matcher = ratingPattern.matcher(ratingAsString);
           while (matcher.find()) {
             if (matcher.group(1) != null) {
-              float rating = 0;
               try {
-                rating = Float.valueOf(matcher.group(1));
+                rating.setRating(Float.valueOf(matcher.group(1)));
+                rating.setMaxValue(10);
               }
               catch (Exception ignored) {
               }
-              md.setRating(rating);
               break;
             }
           }
@@ -499,14 +501,14 @@ public abstract class ImdbParser {
         Elements a = div.getElementsByAttributeValue("href", "ratings");
         if (a.size() == 1) {
           String countAsString = a.text().replaceAll("[.,]|votes", "").trim();
-          int voteCount = 0;
           try {
-            voteCount = Integer.parseInt(countAsString);
+            rating.setVoteCount(Integer.parseInt(countAsString));
           }
           catch (Exception ignored) {
           }
-          md.setVoteCount(voteCount);
         }
+
+        md.addRating(rating);
       }
 
       // top250

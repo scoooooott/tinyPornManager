@@ -27,6 +27,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 public class ImdbMetadataProviderTest {
@@ -75,7 +76,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("Result", results);
 
       // result count
-      assertEquals("Result count", 5, results.size());
+      assertEquals("Result count", 6, results.size());
 
       // check first result (Inglourious Basterds - 2009 - tt0361748)
       MediaSearchResult result = results.get(0);
@@ -262,8 +263,12 @@ public class ImdbMetadataProviderTest {
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
       assertEquals(1, md.getCastMembers(CastType.DIRECTOR).size());
       assertEquals(1, md.getCastMembers(CastType.WRITER).size());
-      assertThat(md.getRating()).isGreaterThan(0);
-      assertThat(md.getVoteCount()).isGreaterThan(0);
+
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -286,8 +291,12 @@ public class ImdbMetadataProviderTest {
       assertEquals("Earth, Wind and... Wait for It", md.getTitle());
       assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.", md.getPlot());
       assertEquals("23 January 2009", sdf.format(md.getReleaseDate()));
-      assertThat(md.getRating()).isGreaterThan(0);
-      assertThat(md.getVoteCount()).isGreaterThan(0);
+
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -596,11 +605,13 @@ public class ImdbMetadataProviderTest {
     // original title
     assertEquals("originalTitle", originalTitle, md.getOriginalTitle());
     // rating
-    assertEquals("rating", rating, md.getRating(), 0.5);
-    // count (only check if parsed cout count is smaller than the given
-    // votecount)
-    if (voteCount > md.getVoteCount()) {
-      assertEquals("count", voteCount, (int) md.getVoteCount());
+    assertThat(md.getRatings().size()).isEqualTo(1);
+    MediaRating mediaRating = md.getRatings().get(0);
+
+    assertEquals("rating", rating, mediaRating.getRating(), 0.5);
+    // count (only check if parsed count count is smaller than the given votecount)
+    if (voteCount > mediaRating.getVoteCount()) {
+      assertEquals("count", voteCount, (int) mediaRating.getVoteCount());
     }
     // tagline
     assertEquals("tagline", tagline, md.getTagline());
