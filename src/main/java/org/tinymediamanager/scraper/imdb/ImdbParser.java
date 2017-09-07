@@ -822,18 +822,12 @@ public abstract class ImdbParser {
   protected MediaMetadata parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     // imdb.com has another site structure
     if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
-      Elements zebraList = doc.getElementsByClass("zebraList");
-      if (zebraList != null && !zebraList.isEmpty()) {
-        Elements odd = zebraList.get(0).getElementsByClass("odd");
-        if (odd.isEmpty()) {
-          odd = zebraList.get(0).getElementsByClass("even"); // sometimes imdb has even
-        }
-        if (odd.size() > 0) {
-          Elements p = odd.get(0).getElementsByTag("p");
-          if (p.size() > 0) {
-            String plot = cleanString(p.get(0).text());
-            md.setPlot(plot);
-          }
+      Element zebraList = doc.getElementById("plot-synopsis-content");
+      if (zebraList != null) {
+        Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
+        if (p.size() > 0) {
+          String plot = cleanString(p.get(0).text());
+          md.setPlot(plot);
         }
       }
     }
