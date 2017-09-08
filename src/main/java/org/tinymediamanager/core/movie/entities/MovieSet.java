@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -199,8 +200,9 @@ public class MovieSet extends MediaEntity {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
     }
 
-    firePropertyChange("addedMovie", null, movie);
+    firePropertyChange(Constants.ADDED_MOVIE, null, movie);
     firePropertyChange("movies", null, movies);
+    firePropertyChange(Constants.WATCHED, null, movies);
   }
 
   /**
@@ -238,8 +240,9 @@ public class MovieSet extends MediaEntity {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
     }
 
-    firePropertyChange("addedMovie", null, movie);
+    firePropertyChange(Constants.ADDED_MOVIE, null, movie);
     firePropertyChange("movies", null, movies);
+    firePropertyChange(Constants.WATCHED, null, movies);
   }
 
   /**
@@ -274,7 +277,8 @@ public class MovieSet extends MediaEntity {
     }
 
     firePropertyChange("movies", null, movies);
-    firePropertyChange("removedMovie", null, movie);
+    firePropertyChange(Constants.REMOVED_MOVIE, null, movie);
+    firePropertyChange(Constants.WATCHED, null, movies);
   }
 
   public List<Movie> getMovies() {
@@ -376,6 +380,15 @@ public class MovieSet extends MediaEntity {
     return false;
   }
 
+  public Boolean isWatched() {
+    for (Movie movie : movies) {
+      if (!movie.isWatched()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public List<Path> getImagesToCache() {
     // get files to cache
     List<Path> filesToCache = new ArrayList<>();
@@ -423,6 +436,20 @@ public class MovieSet extends MediaEntity {
     if (dirty) {
       saveToDb();
     }
+  }
+
+  /**
+   * check if one of the movies is newly added
+   *
+   * @return true/false
+   */
+  public boolean hasNewlyAddedMovies() {
+    for (Movie movie : movies) {
+      if (movie.isNewlyAdded()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /*******************************************************************************

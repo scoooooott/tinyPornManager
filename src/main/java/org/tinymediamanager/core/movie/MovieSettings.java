@@ -116,12 +116,14 @@ public class MovieSettings extends AbstractSettings {
   private final static String              ASCII_REPLACEMENT                    = "asciiReplacement";
   private final static String              SCRAPER_FALLBACK                     = "scraperFallback";
   private final static String              UI_FILTERS                           = "uiFilters";
+  private final static String              MOVIE_SET_UI_FILTERS                 = "movieSetUiFilters";
   private final static String              STORE_UI_FILTERS                     = "storeUiFilters";
   private final static String              STORE_UI_SORTING                     = "storeUiSorting";
   private final static String              SORT_COLUMN                          = "sortColumn";
   private final static String              SORT_ASCENDING                       = "sortAscending";
   private final static String              SKIP_FOLDERS                         = "skipFolders";
   private final static String              MOVIE_TABLE_HIDDEN_COLUMNS           = "movieTableHiddenColumns";
+  private final static String              MOVIE_SET_TABLE_HIDDEN_COLUMNS       = "movieSetTableHiddenColumns";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -185,6 +187,8 @@ public class MovieSettings extends AbstractSettings {
 
   private final List<UIFilters>            uiFilters                            = new ArrayList<>();
   private final List<String>               movieTableHiddenColumns              = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<UIFilters>            movieSetUiFilters                    = new ArrayList<>();
+  private final List<String>               movieSetTableHiddenColumns           = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
   private boolean                          buildImageCacheOnImport              = false;
@@ -795,6 +799,18 @@ public class MovieSettings extends AbstractSettings {
     return movieTableHiddenColumns;
   }
 
+  public void setMovieSetTableHiddenColumns(List<String> hiddenColumns) {
+    movieSetTableHiddenColumns.clear();
+    movieSetTableHiddenColumns.addAll(hiddenColumns);
+    firePropertyChange(MOVIE_SET_TABLE_HIDDEN_COLUMNS, null, movieSetTableHiddenColumns);
+  }
+
+  @XmlElementWrapper(name = MOVIE_SET_TABLE_HIDDEN_COLUMNS)
+  @XmlElement(name = ENTRY)
+  public List<String> getMovieSetTableHiddenColumns() {
+    return movieSetTableHiddenColumns;
+  }
+
   public void setUiFilters(List<UIFilters> filters) {
     uiFilters.clear();
     uiFilters.addAll(filters);
@@ -806,6 +822,21 @@ public class MovieSettings extends AbstractSettings {
   public List<UIFilters> getUiFilters() {
     if (storeUiFilters) {
       return uiFilters;
+    }
+    return new ArrayList<>();
+  }
+
+  public void setMovieSetUiFilters(List<UIFilters> filters) {
+    movieSetUiFilters.clear();
+    movieSetUiFilters.addAll(filters);
+    firePropertyChange(MOVIE_SET_UI_FILTERS, null, movieSetUiFilters);
+  }
+
+  @XmlElementWrapper(name = MOVIE_SET_UI_FILTERS)
+  @XmlElement(name = ENTRY)
+  public List<UIFilters> getMovieSetUiFilters() {
+    if (storeUiFilters) {
+      return movieSetUiFilters;
     }
     return new ArrayList<>();
   }

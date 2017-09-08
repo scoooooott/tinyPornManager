@@ -26,6 +26,8 @@ public final class Constants {
 
   public final static String ACTORS                 = "actors";
   public final static String ADDED_EPISODE          = "addedEpisode";
+  public final static String ADDED_MOVIE            = "addedMovie";
+  public final static String ADDED_MOVIE_SET        = "addedMovieSet";
   public final static String ADDED_SEASON           = "addedSeason";
   public final static String ADDED_TV_SHOW          = "addedTvShow";
   public final static String AIRED_EPISODE          = "airedEpisode";
@@ -78,6 +80,8 @@ public final class Constants {
   public final static String RELEASE_DATE           = "releaseDate";
   public final static String RELEASE_DATE_AS_STRING = "releaseDateAsString";
   public final static String REMOVED_EPISODE        = "removedEpisode";
+  public final static String REMOVED_MOVIE          = "removedMovie";
+  public final static String REMOVED_MOVIE_SET      = "removedMovieSet";
   public final static String REMOVED_TV_SHOW        = "removedTvShow";
   public final static String ROLE                   = "role";
   public final static String RUNTIME                = "runtime";

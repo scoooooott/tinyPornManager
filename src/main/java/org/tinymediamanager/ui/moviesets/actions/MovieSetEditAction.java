@@ -36,20 +36,13 @@ public class MovieSetEditAction extends AbstractAction {
   private static final long           serialVersionUID = 1848573591741154631L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieSetEditAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
-    }
+  public MovieSetEditAction() {
+    putValue(NAME, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
     List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();

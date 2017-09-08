@@ -16,14 +16,18 @@
 package org.tinymediamanager.ui.moviesets.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -48,10 +52,20 @@ public class MovieSetRenameAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    List<Movie> selectedMovies = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMoviesRecursive();
+    List<Object> selectedObjects = MovieSetUIModule.getInstance().getSelectionModel().getSelectedObjects();
+    Set<Movie> selectedMovies = new HashSet<>();
+
+    for (Object obj : selectedObjects) {
+      if (obj instanceof Movie) {
+        selectedMovies.add((Movie) obj);
+      }
+      else if (obj instanceof MovieSet) {
+        selectedMovies.addAll(((MovieSet) obj).getMovies());
+      }
+    }
 
     // rename
-    TmmThreadPool renameTask = new MovieRenameTask(selectedMovies);
+    TmmThreadPool renameTask = new MovieRenameTask(new ArrayList<>(selectedMovies));
     if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

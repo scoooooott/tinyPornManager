@@ -47,11 +47,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
 import org.tinymediamanager.ui.components.tree.TmmTreeModel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
-import org.tinymediamanager.ui.tvshows.TvShowTableFormat;
 import org.tinymediamanager.ui.tvshows.TvShowTreeCellRenderer;
 
 /**
@@ -70,9 +70,9 @@ public class TmmTreeTable extends TmmTable {
 
   private int[]                              lastEditPosition;
 
-  public TmmTreeTable(TmmTreeDataProvider<? extends TmmTreeNode> dataProvider) {
+  public TmmTreeTable(TmmTreeDataProvider<? extends TmmTreeNode> dataProvider, TmmTableFormat tableFormat) {
     treeFilters = new HashSet<>();
-    treeTableModel = new TmmTreeTableModel(new TmmTreeModel<>(dataProvider), new TvShowTableFormat());
+    treeTableModel = new TmmTreeTableModel(new TmmTreeModel<>(dataProvider), tableFormat);
     ((TmmTreeModel) treeTableModel.getTreeModel()).getDataProvider().setTreeFilters(treeFilters);
     filterChangeListener = evt -> updateFiltering();
     setModel(treeTableModel);

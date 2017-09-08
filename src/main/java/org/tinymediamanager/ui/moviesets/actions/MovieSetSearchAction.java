@@ -38,21 +38,13 @@ public class MovieSetSearchAction extends AbstractAction {
   /**
    * Instantiates a new search movie set action.
    */
-  public MovieSetSearchAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
-    }
-
+  public MovieSetSearchAction() {
+    putValue(NAME, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
     List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();

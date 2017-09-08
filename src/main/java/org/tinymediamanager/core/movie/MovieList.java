@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -96,7 +95,7 @@ public class MovieList extends AbstractModelObject {
    */
   private MovieList() {
     // create all lists
-    movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+    movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Movie.class));
     movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>()));
     tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
     videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
@@ -104,22 +103,19 @@ public class MovieList extends AbstractModelObject {
     certificationsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<Certification>());
 
     // the tag listener: its used to always have a full list of all tags used in tmm
-    tagListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        // listen to changes of tags
-        if ("tag".equals(evt.getPropertyName())) {
-          Movie movie = (Movie) evt.getSource();
-          updateTags(movie);
-        }
-        if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName())) {
-          Movie movie = (Movie) evt.getSource();
-          updateMediaInformationLists(movie);
-        }
-        if (CERTIFICATION.equals(evt.getPropertyName())) {
-          Movie movie = (Movie) evt.getSource();
-          updateCertifications(movie);
-        }
+    tagListener = evt -> {
+      // listen to changes of tags
+      if ("tag".equals(evt.getPropertyName())) {
+        Movie movie = (Movie) evt.getSource();
+        updateTags(movie);
+      }
+      if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName())) {
+        Movie movie = (Movie) evt.getSource();
+        updateMediaInformationLists(movie);
+      }
+      if (CERTIFICATION.equals(evt.getPropertyName())) {
+        Movie movie = (Movie) evt.getSource();
+        updateCertifications(movie);
       }
     };
 
@@ -958,7 +954,7 @@ public class MovieList extends AbstractModelObject {
   public void addMovieSet(MovieSet movieSet) {
     int oldValue = movieSetList.size();
     this.movieSetList.add(movieSet);
-    firePropertyChange("addedMovieSet", null, movieSet);
+    firePropertyChange(Constants.ADDED_MOVIE_SET, null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 
@@ -980,7 +976,7 @@ public class MovieList extends AbstractModelObject {
       LOGGER.error("Error removing movie set from DB: " + e.getMessage());
     }
 
-    firePropertyChange("removedMovieSet", null, movieSet);
+    firePropertyChange(Constants.REMOVED_MOVIE_SET, null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 
