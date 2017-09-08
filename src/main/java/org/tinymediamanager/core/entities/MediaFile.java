@@ -19,12 +19,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -94,6 +97,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
   private static Pattern                             clearartPattern      = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
+  public static final String                         VIDEO_FORMAT_96P     = "96p";
+  public static final String                         VIDEO_FORMAT_120P    = "120p";
+  public static final String                         VIDEO_FORMAT_144P    = "144p";
+  public static final String                         VIDEO_FORMAT_240P    = "240p";
+  public static final String                         VIDEO_FORMAT_288P    = "288p";
+  public static final String                         VIDEO_FORMAT_360P    = "360p";
   public static final String                         VIDEO_FORMAT_480P    = "480p";
   public static final String                         VIDEO_FORMAT_540P    = "540p";
   public static final String                         VIDEO_FORMAT_576P    = "576p";
@@ -105,6 +114,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_4K, VIDEO_FORMAT_8K);
 
   // meta formats
+  public static final String                         VIDEO_FORMAT_LD      = "LD";
   public static final String                         VIDEO_FORMAT_SD      = "SD";
   public static final String                         VIDEO_FORMAT_HD      = "HD";
 
@@ -921,6 +931,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * get a list of all available video formats
+   * 
+   * @return a listof all available video formats
+   */
+  public static List<String> getVideoFormats() {
+    List<String> videoFormats = new ArrayList<>();
+
+    Field[] declaredFields = MediaFile.class.getDeclaredFields();
+    for (Field field : declaredFields) {
+      if (Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("VIDEO_FORMAT_")) {
+        try {
+          videoFormats.add((String) field.get(null));
+        }
+        catch (Exception ignored) {
+        }
+      }
+    }
+    return videoFormats;
+  }
+
+  /**
    * gets the "common" video format.
    *
    * @return 1080p 720p 480p... or SD if too small
@@ -933,7 +964,48 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (w == 0 || h == 0) {
       return "";
     }
-    else if (w <= blur(720) && h <= blur(480)) {
+    // https://en.wikipedia.org/wiki/Low-definition_television
+    else if (w <= blur(128) && h <= blur(96)) { // MMS-Small 96p 128×96 4:3
+      return VIDEO_FORMAT_96P;
+    }
+    else if (w <= blur(160) && h <= blur(120)) { // QQVGA 120p 160×120 4:3
+      return VIDEO_FORMAT_120P;
+    }
+    else if (w <= blur(176) && h <= blur(144)) { // QCIF Webcam 144p 176×144 11:9
+      return VIDEO_FORMAT_144P;
+    }
+    else if (w <= blur(256) && h <= blur(144)) { // YouTube 144p 144p 256×144 16:9
+      return VIDEO_FORMAT_144P;
+    }
+    else if (w <= blur(320) && h <= blur(240)) { // NTSC square pixel 240p 320×240 4:3
+      return VIDEO_FORMAT_240P;
+    }
+    else if (w <= blur(352) && h <= blur(240)) { // SIF (525) 240p 352×240 4:3
+      return VIDEO_FORMAT_240P;
+    }
+    else if (w <= blur(426) && h <= blur(240)) { // NTSC widescreen 240p 426×240 16:9
+      return VIDEO_FORMAT_240P;
+    }
+    else if (w <= blur(480) && h <= blur(272)) { // PSP 288p 480×272 30:17
+      return VIDEO_FORMAT_288P;
+    }
+    else if (w <= blur(480) && h <= blur(360)) { // 360p 360p 480×360 4:3
+      return VIDEO_FORMAT_360P;
+    }
+    else if (w <= blur(640) && h <= blur(360)) { // Wide 360p 360p 640×360 16:9
+      return VIDEO_FORMAT_360P;
+    }
+    // https://en.wikipedia.org/wiki/480p
+    else if (w <= blur(640) && h <= blur(480)) { // 480p 640×480 4:3
+      return VIDEO_FORMAT_480P;
+    }
+    else if (w <= blur(720) && h <= blur(480)) { // Rec. 601 720×480 3:2
+      return VIDEO_FORMAT_480P;
+    }
+    else if (w <= blur(800) && h <= blur(480)) { // Rec. 601 plus a quarter 800×480 5:3
+      return VIDEO_FORMAT_480P;
+    }
+    else if (w <= blur(853) && h <= blur(480)) { // Wide 480p 853.33×480 16:9 (unscaled)
       return VIDEO_FORMAT_480P;
     }
     // else if (w <= 768 && h <= 576) {
@@ -945,13 +1017,37 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // 960x540 (sometimes 544 which is multiple of 16)
       return VIDEO_FORMAT_540P;
     }
-    else if (w <= blur(1280) && h <= blur(720)) {
+    else if (w <= blur(1280) && h <= blur(720)) { // 720p Widescreen 16:9
       return VIDEO_FORMAT_720P;
     }
-    else if (w <= blur(1920) && h <= blur(1080)) {
+    else if (w <= blur(960) && h <= blur(720)) { // 720p Widescreen 4:3
+      return VIDEO_FORMAT_720P;
+    }
+    else if (w <= blur(1080) && h <= blur(720)) { // 720p Rec. 601 3:2
+      return VIDEO_FORMAT_720P;
+    }
+    else if (w <= blur(1920) && h <= blur(1080)) { // 1080p HD Widescreen 16:9
       return VIDEO_FORMAT_1080P;
     }
-    else if (w <= blur(3840) && h <= blur(2160)) {
+    else if (w <= blur(1440) && h <= blur(1080)) { // 1080p SD 4:3
+      return VIDEO_FORMAT_1080P;
+    }
+    else if (w <= blur(1620) && h <= blur(1080)) { // 1080p Rec. 601 3:2
+      return VIDEO_FORMAT_1080P;
+    }
+    else if (w <= blur(3840) && h <= blur(2160)) { // 4K Ultra-high-definition television
+      return VIDEO_FORMAT_4K;
+    }
+    else if (w <= blur(3840) && h <= blur(1600)) { // 4K Ultra-wide-television
+      return VIDEO_FORMAT_4K;
+    }
+    else if (w <= blur(4096) && h <= blur(2160)) { // DCI 4K (native resolution)
+      return VIDEO_FORMAT_4K;
+    }
+    else if (w <= blur(4096) && h <= blur(1716)) { // DCI 4K (CinemaScope cropped)
+      return VIDEO_FORMAT_4K;
+    }
+    else if (w <= blur(3996) && h <= blur(2160)) { // DCI 4K (flat cropped)
       return VIDEO_FORMAT_4K;
     }
 
@@ -1125,15 +1221,55 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * SD (less than 720 lines) or HD (more than 720 lines).
+   * LD (<=360 lines), SD (>360 and <720 lines) or HD (720+ lines).
    *
-   * @return SD or HD
+   * @return LD, SD or HD
    */
   public String getVideoDefinitionCategory() {
+    if (!isVideo()) {
+      return "";
+    }
+
     if (this.videoWidth == 0 || this.videoHeight == 0) {
       return "";
     }
-    return this.videoWidth >= 1280 || this.videoHeight >= 720 ? "HD" : "SD";
+
+    if (this.videoWidth <= 640 && this.videoHeight <= 360) { // 360p and below os LD
+      return VIDEO_FORMAT_LD;
+    }
+
+    else if (this.videoWidth < 1280 && this.videoHeight < 720) { // below 720p is SD
+      return VIDEO_FORMAT_SD;
+    }
+
+    return VIDEO_FORMAT_HD; // anything above 720p is considered HD
+  }
+
+  /**
+   * is that file a video in format LD?
+   * 
+   * @return true/false
+   */
+  public boolean isVideoDefinitionLD() {
+    return getVideoDefinitionCategory() == VIDEO_FORMAT_LD;
+  }
+
+  /**
+   * is that file a video in format SD?
+   * 
+   * @return true/false
+   */
+  public boolean isVideoDefinitionSD() {
+    return getVideoDefinitionCategory() == VIDEO_FORMAT_SD;
+  }
+
+  /**
+   * is that file a video in format HD?
+   * 
+   * @return true/false
+   */
+  public boolean isVideoDefinitionHD() {
+    return getVideoDefinitionCategory() == VIDEO_FORMAT_HD;
   }
 
   /**

@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
+import java.util.List;
+
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -54,21 +56,25 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     String videoFormat = (String) comboBox.getSelectedItem();
-    if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {
-      if (videoFormat == MediaFile.VIDEO_FORMAT_HD && isVideoHD(movie.getMediaInfoVideoFormat())) {
-        return true;
-      }
-      if (videoFormat == MediaFile.VIDEO_FORMAT_SD && !isVideoHD(movie.getMediaInfoVideoFormat())) {
-        return true;
-      }
-    }
-    else {
-      if (videoFormat == movie.getMediaInfoVideoFormat()) {
-        return false;
-      }
+    MediaFile mf = movie.getFirstVideoFile();
+    if (mf == null) {
+      return false;
     }
 
-    return true;
+    if (videoFormat == MediaFile.VIDEO_FORMAT_HD && mf.isVideoDefinitionHD()) {
+      return true;
+    }
+    else if (videoFormat == MediaFile.VIDEO_FORMAT_SD && mf.isVideoDefinitionSD()) {
+      return true;
+    }
+    else if (videoFormat == MediaFile.VIDEO_FORMAT_LD && mf.isVideoDefinitionLD()) {
+      return true;
+    }
+    else if (videoFormat == movie.getMediaInfoVideoFormat()) {
+      return true;
+    }
+
+    return false;
   }
 
   @Override
@@ -83,23 +89,7 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   }
 
   private String[] getVideoFormats() {
-    return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P, MediaFile.VIDEO_FORMAT_720P,
-        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD }; // MediaFile.VIDEO_FORMAT_8K,
-  }
-
-  private boolean isVideoHD(final String videoFormat) {
-    if (MediaFile.VIDEO_FORMAT_720P.equals(videoFormat)) {
-      return true;
-    }
-    if (MediaFile.VIDEO_FORMAT_1080P.equals(videoFormat)) {
-      return true;
-    }
-    if (MediaFile.VIDEO_FORMAT_4K.equals(videoFormat)) {
-      return true;
-    }
-    if (MediaFile.VIDEO_FORMAT_8K.equals(videoFormat)) {
-      return true;
-    }
-    return false;
+    List<String> videoFormats = MediaFile.getVideoFormats();
+    return videoFormats.toArray(new String[videoFormats.size()]);
   }
 }
