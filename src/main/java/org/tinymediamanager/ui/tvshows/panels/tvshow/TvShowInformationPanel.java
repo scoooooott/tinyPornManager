@@ -150,7 +150,7 @@ public class TvShowInformationPanel extends JPanel {
     {
       JPanel panelRight = new JPanel();
       add(panelRight, "cell 1 0,grow");
-      panelRight.setLayout(new MigLayout("", "[479px]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("", "[450lp,grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
 
       {
         lblTvShowName = new JLabel("");

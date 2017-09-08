@@ -154,11 +154,6 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
         size += mf.getFilesize();
       }
 
-      // looks better everything in M
-      // if (size > (2048L * 1024 * 1024)) {
-      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
-      // }
-
       return (int) (size / (1024.0 * 1024.0)) + " M";
     }
     return "";
@@ -175,10 +170,10 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
   private ImageIcon hasImages(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow) {
-      return getCheckIcon(((TvShow) userObject).getHasNfoFile());
+      return getCheckIcon(((TvShow) userObject).getHasImages());
     }
     if (userObject instanceof TvShowEpisode) {
-      return getCheckIcon(((TvShowEpisode) userObject).getHasNfoFile());
+      return getCheckIcon(((TvShowEpisode) userObject).getHasImages());
     }
     return null;
   }

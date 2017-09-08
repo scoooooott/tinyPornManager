@@ -49,6 +49,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
+import org.tinymediamanager.ui.tvshows.TvShowTableFormat;
 import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
@@ -89,7 +90,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterMenuVisible(btnFilter.isSelected()));
     add(btnFilter, "4, 1, default, bottom");
 
-    tree = new TmmTreeTable(new TvShowTreeDataProvider()) {
+    tree = new TmmTreeTable(new TvShowTreeDataProvider(), new TvShowTableFormat()) {
       @Override
       public void storeFilters() {
         if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
