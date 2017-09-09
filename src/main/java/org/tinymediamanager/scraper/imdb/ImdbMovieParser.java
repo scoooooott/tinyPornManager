@@ -185,23 +185,33 @@ public class ImdbMovieParser extends ImdbParser {
 
     // get data from tmdb?
     if (futureTmdb != null && (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
-        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
+            || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
-        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getPlot())) {
+        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null) {
           // tmdbid
           md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
           // title
-          md.setTitle(tmdbMd.getTitle());
+          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+            md.setTitle(tmdbMd.getTitle());
+          }
           // original title
-          md.setOriginalTitle(tmdbMd.getOriginalTitle());
+          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+            md.setOriginalTitle(tmdbMd.getOriginalTitle());
+          }
           // tagline
-          md.setTagline(tmdbMd.getTagline());
+          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+            md.setTagline(tmdbMd.getTagline());
+          }
           // plot
-          md.setPlot(tmdbMd.getPlot());
+          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+            md.setPlot(tmdbMd.getPlot());
+          }
           // collection info
-          md.setCollectionName(tmdbMd.getCollectionName());
-          md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
+          if (StringUtils.isNotBlank(tmdbMd.getCollectionName())) {
+            md.setCollectionName(tmdbMd.getCollectionName());
+            md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
+          }
         }
         if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo") && tmdbMd != null) {
           md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
