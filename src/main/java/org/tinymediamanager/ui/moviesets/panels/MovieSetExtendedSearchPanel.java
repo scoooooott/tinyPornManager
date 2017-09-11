@@ -29,7 +29,9 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.moviesets.IMovieSetUIFilter;
+import org.tinymediamanager.ui.moviesets.filters.MovieSetDatasourceFilter;
 import org.tinymediamanager.ui.moviesets.filters.MovieSetNewMoviesFilter;
+import org.tinymediamanager.ui.moviesets.filters.MovieSetWithMoreThanOneMovieFilter;
 import org.tinymediamanager.ui.panels.RoundedPanel;
 
 import net.miginfocom.swing.MigLayout;
@@ -75,6 +77,8 @@ public class MovieSetExtendedSearchPanel extends RoundedPanel {
     panelFilter.setLayout(gbl_panelFilter);
 
     addFilter(new MovieSetNewMoviesFilter());
+    addFilter(new MovieSetWithMoreThanOneMovieFilter());
+    addFilter(new MovieSetDatasourceFilter());
   }
 
   /**
