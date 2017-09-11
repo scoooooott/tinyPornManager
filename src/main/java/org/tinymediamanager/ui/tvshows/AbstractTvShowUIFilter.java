@@ -41,22 +41,34 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
       return true;
     }
 
-    // modifier for negation of the accept value
-    boolean active = getFilterState() == FilterState.ACTIVE;
-
     Object userObject = node.getUserObject();
 
     if (userObject instanceof TvShow) {
       TvShow tvShow = (TvShow) userObject;
-      return active && accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+      if (getFilterState() == FilterState.ACTIVE) {
+        return accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+      }
+      else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
+        return !accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+      }
     }
     else if (userObject instanceof TvShowSeason) {
       TvShowSeason season = (TvShowSeason) userObject;
-      return active && accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+      if (getFilterState() == FilterState.ACTIVE) {
+        return accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+      }
+      else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
+        return !accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+      }
     }
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) userObject;
-      return active && accept(episode.getTvShow(), Arrays.asList(episode));
+      if (getFilterState() == FilterState.ACTIVE) {
+        return accept(episode.getTvShow(), Arrays.asList(episode));
+      }
+      else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
+        return !accept(episode.getTvShow(), Arrays.asList(episode));
+      }
     }
 
     return true;

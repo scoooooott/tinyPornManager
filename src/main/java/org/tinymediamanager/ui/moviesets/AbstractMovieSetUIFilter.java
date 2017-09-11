@@ -40,18 +40,25 @@ public abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTr
       return true;
     }
 
-    // modifier for negation of the accept value
-    boolean active = getFilterState() == FilterState.ACTIVE;
-
     Object userObject = node.getUserObject();
 
     if (userObject instanceof MovieSet) {
       MovieSet movieSet = (MovieSet) userObject;
-      return active && accept(movieSet, new ArrayList<>(movieSet.getMovies()));
+      if (getFilterState() == FilterState.ACTIVE) {
+        return accept(movieSet, new ArrayList<>(movieSet.getMovies()));
+      }
+      else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
+        return !accept(movieSet, new ArrayList<>(movieSet.getMovies()));
+      }
     }
     else if (userObject instanceof Movie) {
       Movie movie = (Movie) userObject;
-      return active && accept(movie.getMovieSet(), Arrays.asList(movie));
+      if (getFilterState() == FilterState.ACTIVE) {
+        return accept(movie.getMovieSet(), Arrays.asList(movie));
+      }
+      else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
+        return !accept(movie.getMovieSet(), Arrays.asList(movie));
+      }
     }
 
     return true;
