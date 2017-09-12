@@ -824,29 +824,28 @@ public abstract class ImdbParser {
     if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
 
       // first check synopsis content
-      Element zebraList = doc.getElementById("plot-synopsis-content");
+      // Element zebraList = doc.getElementById("plot-synopsis-content");
+      // if (zebraList != null) {
+      // Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
+      // if (!p.isEmpty()) {
+      // Element em = p.get(0);
+      // if (!"no-synopsis-content".equals(em.id())) {
+      // String plot = cleanString(em.text());
+      // md.setPlot(plot);
+      // }
+      // }
+      // }
+      // NOPE: synopsis contains spoilers
+
+      // just take first summary
+      Element zebraList = doc.getElementById("plot-summaries-content");
       if (zebraList != null) {
         Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
         if (!p.isEmpty()) {
           Element em = p.get(0);
-          if (!"no-synopsis-content".equals(em.id())) {
+          if (!"no-summary-content".equals(em.id())) {
             String plot = cleanString(em.text());
             md.setPlot(plot);
-          }
-        }
-      }
-
-      // still empty? take first summary
-      if (md.getPlot().isEmpty()) {
-        zebraList = doc.getElementById("plot-summaries-content");
-        if (zebraList != null) {
-          Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
-          if (!p.isEmpty()) {
-            Element em = p.get(0);
-            if (!"no-summary-content".equals(em.id())) {
-              String plot = cleanString(em.text());
-              md.setPlot(plot);
-            }
           }
         }
       }
