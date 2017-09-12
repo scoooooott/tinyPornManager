@@ -33,6 +33,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -674,6 +675,10 @@ class TmdbMovieMetadataProvider {
     // Genres
     for (Genre genre : ListUtils.nullSafe(movie.genres)) {
       md.addGenre(TmdbMetadataProvider.getTmmGenre(genre));
+    }
+    // "adult" on TMDB is always some pr0n stuff, and not just rated 18+ content
+    if (movie.adult) {
+      md.addGenre(MediaGenres.EROTIC);
     }
 
     if (movie.belongs_to_collection != null) {
