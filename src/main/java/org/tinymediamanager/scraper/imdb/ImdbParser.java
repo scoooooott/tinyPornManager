@@ -822,14 +822,35 @@ public abstract class ImdbParser {
   protected MediaMetadata parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     // imdb.com has another site structure
     if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
+
+      // first check synopsis content
       Element zebraList = doc.getElementById("plot-synopsis-content");
       if (zebraList != null) {
         Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
-        if (p.size() > 0) {
-          String plot = cleanString(p.get(0).text());
-          md.setPlot(plot);
+        if (!p.isEmpty()) {
+          Element em = p.get(0);
+          if (!"no-synopsis-content".equals(em.id())) {
+            String plot = cleanString(em.text());
+            md.setPlot(plot);
+          }
         }
       }
+
+      // still empty? take first summary
+      if (md.getPlot().isEmpty()) {
+        zebraList = doc.getElementById("plot-summaries-content");
+        if (zebraList != null) {
+          Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
+          if (!p.isEmpty()) {
+            Element em = p.get(0);
+            if (!"no-summary-content".equals(em.id())) {
+              String plot = cleanString(em.text());
+              md.setPlot(plot);
+            }
+          }
+        }
+      }
+
     }
     else {
       Element wiki = doc.getElementById("swiki.2.1");
