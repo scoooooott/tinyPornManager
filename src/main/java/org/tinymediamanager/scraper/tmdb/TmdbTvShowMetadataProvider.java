@@ -303,7 +303,7 @@ class TmdbTvShowMetadataProvider {
       for (CastMember castMember : ListUtils.nullSafe(complete.credits.cast)) {
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
         cm.setName(castMember.name);
-        cm.setName(castMember.character);
+        cm.setCharacter(castMember.character);
         md.addCastMember(cm);
       }
     }
@@ -493,7 +493,7 @@ class TmdbTvShowMetadataProvider {
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
       MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
       cm.setName(castMember.name);
-      cm.setName(castMember.character);
+      cm.setCharacter(castMember.character);
       md.addCastMember(cm);
     }
 
