@@ -1307,6 +1307,46 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * get the "main" rating
+   *
+   * @return the main (preferred) rating
+   */
+  @Override
+  public Rating getRating() {
+    Rating rating = null;
+
+    // the user rating
+    if (MovieModuleManager.SETTINGS.getPreferPersonalRating()) {
+      rating = ratings.get(Rating.USER);
+    }
+
+    // the default rating
+    if (rating == null) {
+      rating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
+    }
+
+    // the NFO rating
+    if (rating == null) {
+      rating = ratings.get(Rating.NFO);
+    }
+
+    // is there any rating?
+    if (rating == null && !ratings.isEmpty()) {
+      for (Rating r : ratings.values()) {
+        rating = r;
+        break;
+      }
+    }
+
+    // last but not least a non null value
+    if (rating == null) {
+      rating = new Rating();
+    }
+
+    return rating;
+  }
+
+  /**
    * Gets the checks for rating.
    * 
    * @return the checks for rating

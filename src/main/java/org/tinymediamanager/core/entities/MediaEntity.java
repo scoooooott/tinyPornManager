@@ -295,13 +295,9 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public Rating getRating() {
     Rating rating = null;
-    // first the specified one
-    // ToDo
 
-    // then the user rating
-    if (rating == null) {
-      rating = ratings.get(Rating.USER);
-    }
+    // the user rating
+    rating = ratings.get(Rating.USER);
 
     // then the default one
     if (rating == null) {

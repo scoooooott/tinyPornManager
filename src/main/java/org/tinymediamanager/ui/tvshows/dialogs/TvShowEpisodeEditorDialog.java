@@ -98,6 +98,7 @@ import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
+import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
@@ -374,6 +375,14 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
+
+        JButton btnAddRating = new JButton(new AddRatingAction());
+        btnAddRating.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnAddRating, "flowy,cell 5 9,alignx left,aligny top");
+
+        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+        btnRemoveRating.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnRemoveRating, "cell 5 9,alignx left,aligny top");
       }
       {
         JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -836,6 +845,48 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   @Override
   public void pack() {
     // do not let it pack - it looks weird
+  }
+
+  private class AddRatingAction extends AbstractAction {
+    private static final long serialVersionUID = 2903255414533349267L;
+
+    public AddRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.ADD_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MediaRatingTable.MediaRating mediaRating = new MediaRatingTable.MediaRating("");
+      // default values
+      mediaRating.maxValue = 10;
+      mediaRating.votes = 1;
+
+      RatingEditorDialog dialog = new RatingEditorDialog(SwingUtilities.getWindowAncestor(tableRatings), BUNDLE.getString("rating.add"), mediaRating);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
+        ratings.add(mediaRating);
+      }
+    }
+  }
+
+  private class RemoveRatingAction extends AbstractAction {
+    private static final long serialVersionUID = -7079821950827356996L;
+
+    public RemoveRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.REMOVE_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableRatings.getSelectedRow();
+      if (row > -1) {
+        row = tableRatings.convertRowIndexToModel(row);
+        ratings.remove(row);
+      }
+    }
   }
 
   private class AddTagAction extends AbstractAction {

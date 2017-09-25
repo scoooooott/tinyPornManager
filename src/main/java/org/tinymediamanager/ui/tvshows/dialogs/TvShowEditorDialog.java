@@ -97,9 +97,11 @@ import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
+import org.tinymediamanager.ui.dialogs.IdEditorDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
+import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -186,7 +188,7 @@ public class TvShowEditorDialog extends TmmDialog {
     this.tvShowToEdit = tvShow;
     this.inQueue = inQueue;
     ids = MediaIdTable.convertIdMapToEventList(tvShowToEdit.getIds());
-    ratings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), true);
+    ratings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), false);
     userRating = tvShowToEdit.getRating(Rating.USER);
 
     // creation of lists
@@ -287,14 +289,14 @@ public class TvShowEditorDialog extends TmmDialog {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
       details1Panel.setLayout(
-          new MigLayout("", "[][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
+          new MigLayout("", "[][][50lp:75lp][][][][25lp:n][200lp:250lp,grow]", "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
         details1Panel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
-        details1Panel.add(tfTitle, "cell 1 0 4 1,growx");
+        details1Panel.add(tfTitle, "cell 1 0 5 1,growx");
       }
       {
         lblPoster = new ImageLabel();
@@ -308,21 +310,21 @@ public class TvShowEditorDialog extends TmmDialog {
           }
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        details1Panel.add(lblPoster, "cell 6 0 1 9,grow");
+        details1Panel.add(lblPoster, "cell 7 0 1 9,grow");
       }
       {
         JLabel lblSortTitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
         details1Panel.add(lblSortTitle, "cell 0 1,alignx right");
 
         tfSorttitle = new JTextField();
-        details1Panel.add(tfSorttitle, "cell 1 1 4 1,growx");
+        details1Panel.add(tfSorttitle, "cell 1 1 5 1,growx");
       }
       {
         JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         details1Panel.add(lblPlot, "cell 0 2,alignx right,aligny top");
 
         JScrollPane scrollPanePlot = new JScrollPane();
-        details1Panel.add(scrollPanePlot, "cell 1 2 4 1,grow");
+        details1Panel.add(scrollPanePlot, "cell 1 2 5 1,grow");
 
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
@@ -382,16 +384,24 @@ public class TvShowEditorDialog extends TmmDialog {
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
+
+        JButton btnAddRating = new JButton(new AddRatingAction());
+        btnAddRating.setMargin(BUTTON_MARGIN);
+        details1Panel.add(btnAddRating, "flowy,cell 5 7,alignx left,aligny top");
+
+        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+        btnRemoveRating.setMargin(BUTTON_MARGIN);
+        details1Panel.add(btnRemoveRating, "cell 5 7,alignx left,aligny top");
       }
+
       {
         JLabel lblStudio = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
         details1Panel.add(lblStudio, "cell 0 8,alignx right");
 
         tfStudio = new JTextField();
-        details1Panel.add(tfStudio, "cell 1 8 4 1,growx");
+        details1Panel.add(tfStudio, "cell 1 8 5 1,growx");
       }
       {
-        // JLabel lblFanart = new JLabel("");
         lblFanart = new ImageLabel();
         lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblFanart.addMouseListener(new MouseAdapter() {
@@ -403,7 +413,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblFanart, "cell 6 9,grow");
+        details1Panel.add(lblFanart, "cell 7 9,grow");
       }
       {
         lblBanner = new ImageLabel();
@@ -417,7 +427,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblBanner, "cell 1 9 4 1,grow");
+        details1Panel.add(lblBanner, "cell 1 9 5 1,grow");
       }
     }
 
@@ -897,6 +907,48 @@ public class TvShowEditorDialog extends TmmDialog {
     }
   }
 
+  private class AddRatingAction extends AbstractAction {
+    private static final long serialVersionUID = 2903255414533349267L;
+
+    public AddRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.ADD_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MediaRating mediaRating = new MediaRating("");
+      // default values
+      mediaRating.maxValue = 10;
+      mediaRating.votes = 1;
+
+      RatingEditorDialog dialog = new RatingEditorDialog(SwingUtilities.getWindowAncestor(tableActors), BUNDLE.getString("rating.add"), mediaRating);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
+        ratings.add(mediaRating);
+      }
+    }
+  }
+
+  private class RemoveRatingAction extends AbstractAction {
+    private static final long serialVersionUID = -7079821950827356996L;
+
+    public RemoveRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.REMOVE_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableRatings.getSelectedRow();
+      if (row > -1) {
+        row = tableRatings.convertRowIndexToModel(row);
+        ratings.remove(row);
+      }
+    }
+  }
+
   private class AddActorAction extends AbstractAction {
     private static final long serialVersionUID = -5879601617842300526L;
 
@@ -1146,8 +1198,13 @@ public class TvShowEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaId Id = new MediaId(); // $NON-NLS-1$
-      ids.add(Id);
+      MediaId mediaId = new MediaId();
+      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNoneBlank(mediaId.key, mediaId.value)) {
+        ids.add(mediaId);
+      }
     }
   }
 

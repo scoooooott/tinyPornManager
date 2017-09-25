@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Font;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -35,6 +36,7 @@ import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
@@ -45,21 +47,23 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowSettingsPanel extends ScrollablePanel {
-  private static final long           serialVersionUID = -675729644848101096L;
+  private static final long            serialVersionUID = -675729644848101096L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
-  private JCheckBox                   chckbxImageCache;
-  private JCheckBox                   chckbxTraktTv;
-  private JButton                     btnClearTraktTvShows;
-  private JCheckBox                   chckbxPersistUiFilters;
-  private JCheckBox                   chckbxShowMissingEpisodes;
-  private JButton                     btnPresetKodi;
-  private JButton                     btnPresetXbmc;
-  private JButton                     btnPresetMediaPortal1;
-  private JButton                     btnPresetMediaPortal2;
-  private JButton                     btnPresetPlex;
+  private TvShowSettings               settings         = TvShowModuleManager.SETTINGS;
+  private JCheckBox                    chckbxImageCache;
+  private JCheckBox                    chckbxTraktTv;
+  private JButton                      btnClearTraktTvShows;
+  private JCheckBox                    chckbxPersistUiFilters;
+  private JCheckBox                    chckbxShowMissingEpisodes;
+  private JButton                      btnPresetKodi;
+  private JButton                      btnPresetXbmc;
+  private JButton                      btnPresetMediaPortal1;
+  private JButton                      btnPresetMediaPortal2;
+  private JButton                      btnPresetPlex;
+  private JCheckBox                    chckbxPersonalRatingFirst;
+  private AutocompleteComboBox<String> cbRating;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -87,72 +91,85 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][]", "[][][][20lp][][][20lp][][][20lp][][][][][][]"));
+    setLayout(new MigLayout("", "[25lp][20lp][][][]", "[][][][][][20lp][][][20lp][][][20lp][][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
-      add(lblUiT, "cell 0 0 4 1");
+      add(lblUiT, "cell 0 0 5 1");
     }
     {
       chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
-      add(chckbxPersistUiFilters, "cell 1 1 3 1");
+      add(chckbxPersistUiFilters, "cell 1 1 4 1");
     }
     {
       chckbxShowMissingEpisodes = new JCheckBox(BUNDLE.getString("Settings.tvshow.missingepisodes")); //$NON-NLS-1$
-      add(chckbxShowMissingEpisodes, "cell 1 2 3 1");
+      add(chckbxShowMissingEpisodes, "cell 1 2 4 1");
+    }
+    {
+      JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
+      add(lblRating, "flowx,cell 1 3 4 1");
+
+      cbRating = new AutocompleteComboBox(Arrays.asList("tvdb", "tmdb"));
+      add(cbRating, "cell 1 3");
+    }
+    {
+      chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
+      add(chckbxPersonalRatingFirst, "cell 2 4");
     }
     {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 4 4 1");
+      add(lblAutomaticTasksT, "cell 0 6 5 1");
     }
 
     {
       chckbxTraktTv = new JCheckBox(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-      add(chckbxTraktTv, "flowx,cell 1 5 3 1");
+      add(chckbxTraktTv, "flowx,cell 1 7 4 1");
+
       btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
-      add(btnClearTraktTvShows, "cell 1 5 3 1");
+      add(btnClearTraktTvShows, "cell 1 7");
     }
 
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 7 4 1");
+      add(lblMiscT, "cell 0 9 5 1");
     }
     {
       chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxImageCache, "flowx,cell 1 8 3 1");
-
-      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
-      lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 8 2 1");
+      add(chckbxImageCache, "flowx,cell 1 10 4 1");
     }
     {
       JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 10 4 1");
+      add(lblPresetT, "cell 0 12 5 1");
     }
     {
       JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 11 3 1");
+      add(lblPresetHintT, "cell 1 13 4 1");
     }
     {
       btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 1 12,growx");
+      add(btnPresetKodi, "flowx,cell 2 14,growx");
 
       btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 2 12,growx");
+      add(btnPresetXbmc, "cell 3 14,growx");
     }
     {
       btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 1 13,growx");
+      add(btnPresetMediaPortal1, "flowx,cell 2 15,growx");
 
       btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 2 13,growx");
+      add(btnPresetMediaPortal2, "cell 3 15,growx");
     }
     {
       btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 1 14,growx");
+      add(btnPresetPlex, "cell 2 16,growx");
+    }
+    {
+      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
+      lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+      add(lblBuildImageCacheHint, "cell 1 10");
     }
   }
 
@@ -177,5 +194,16 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_2, chckbxShowMissingEpisodes, jCheckBoxBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_3 = BeanProperty.create("preferredRating");
+    BeanProperty<AutocompleteComboBox, Object> autocompleteComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<TvShowSettings, String, AutocompleteComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_3, cbRating, autocompleteComboBoxBeanProperty);
+    autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_4 = BeanProperty.create("preferPersonalRating");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_4, chckbxPersonalRatingFirst, jCheckBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }

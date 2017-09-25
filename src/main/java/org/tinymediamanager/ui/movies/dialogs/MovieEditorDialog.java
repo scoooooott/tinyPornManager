@@ -96,9 +96,11 @@ import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.dialogs.IdEditorDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
+import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
@@ -458,6 +460,14 @@ public class MovieEditorDialog extends TmmDialog {
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
+
+        JButton btnAddRating = new JButton(new AddRatingAction());
+        btnAddRating.setMargin(BUTTON_MARGIN);
+        details1Panel.add(btnAddRating, "flowy,cell 6 9,alignx left,aligny top");
+
+        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+        btnRemoveRating.setMargin(BUTTON_MARGIN);
+        details1Panel.add(btnRemoveRating, "cell 6 9,alignx left,aligny top");
       }
       {
         JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
@@ -1180,6 +1190,48 @@ public class MovieEditorDialog extends TmmDialog {
     }
   }
 
+  private class AddRatingAction extends AbstractAction {
+    private static final long serialVersionUID = 2903255414533349267L;
+
+    public AddRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.ADD_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MediaRating mediaRating = new MediaRating("");
+      // default values
+      mediaRating.maxValue = 10;
+      mediaRating.votes = 1;
+
+      RatingEditorDialog dialog = new RatingEditorDialog(SwingUtilities.getWindowAncestor(tableRatings), BUNDLE.getString("rating.add"), mediaRating);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
+        ratings.add(mediaRating);
+      }
+    }
+  }
+
+  private class RemoveRatingAction extends AbstractAction {
+    private static final long serialVersionUID = -7079821950827356996L;
+
+    public RemoveRatingAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.REMOVE_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableRatings.getSelectedRow();
+      if (row > -1) {
+        row = tableRatings.convertRowIndexToModel(row);
+        ratings.remove(row);
+      }
+    }
+  }
+
   private class AddIdAction extends AbstractAction {
     private static final long serialVersionUID = 2903255414553349267L;
 
@@ -1190,8 +1242,13 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaId Id = new MediaId(); // $NON-NLS-1$
-      ids.add(Id);
+      MediaId mediaId = new MediaId();
+      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNoneBlank(mediaId.key, mediaId.value)) {
+        ids.add(mediaId);
+      }
     }
   }
 

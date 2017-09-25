@@ -244,6 +244,8 @@ public class MovieSettings extends AbstractSettings {
   // misc
   private boolean                          runtimeFromMediaInfo                 = false;
   private boolean                          syncTrakt                            = false;
+  private boolean                          preferPersonalRating                 = true;
+  private String                           preferredRating                      = "imdb";
 
   private boolean                          storeUiFilters                       = false;
   private boolean                          storeUiSorting                       = false;
@@ -1075,6 +1077,26 @@ public class MovieSettings extends AbstractSettings {
 
   public boolean getSyncTrakt() {
     return syncTrakt;
+  }
+
+  public boolean getPreferPersonalRating() {
+    return preferPersonalRating;
+  }
+
+  public void setPreferPersonalRating(boolean newValue) {
+    boolean oldValue = this.preferPersonalRating;
+    this.preferPersonalRating = newValue;
+    firePropertyChange("preferPersonalRating", oldValue, newValue);
+  }
+
+  public String getPreferredRating() {
+    return preferredRating;
+  }
+
+  public void setPreferredRating(String newValue) {
+    String oldValue = this.preferredRating;
+    this.preferredRating = newValue;
+    firePropertyChange("preferredRating", oldValue, newValue);
   }
 
   public boolean isImageLanguagePriority() {

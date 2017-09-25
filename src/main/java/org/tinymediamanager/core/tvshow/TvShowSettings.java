@@ -183,6 +183,8 @@ public class TvShowSettings extends AbstractSettings {
   private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
   private boolean                              writeCleanNfo                  = false;
   private MediaLanguages                       nfoLanguage                    = MediaLanguages.en;
+  private boolean                              preferPersonalRating           = true;
+  private String                               preferredRating                = "tvdb";
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -758,6 +760,26 @@ public class TvShowSettings extends AbstractSettings {
     MediaLanguages oldValue = nfoLanguage;
     this.nfoLanguage = newValue;
     firePropertyChange("nfoLanguage", oldValue, newValue);
+  }
+
+  public boolean getPreferPersonalRating() {
+    return preferPersonalRating;
+  }
+
+  public void setPreferPersonalRating(boolean newValue) {
+    boolean oldValue = this.preferPersonalRating;
+    this.preferPersonalRating = newValue;
+    firePropertyChange("preferPersonalRating", oldValue, newValue);
+  }
+
+  public String getPreferredRating() {
+    return preferredRating;
+  }
+
+  public void setPreferredRating(String newValue) {
+    String oldValue = this.preferredRating;
+    this.preferredRating = newValue;
+    firePropertyChange("preferredRating", oldValue, newValue);
   }
 
   /*****************************************************************

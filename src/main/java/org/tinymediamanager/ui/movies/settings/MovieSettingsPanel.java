@@ -16,6 +16,8 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Font;
+import java.awt.Insets;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -35,7 +37,9 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -45,25 +49,28 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieSettingsPanel extends JPanel {
-  private static final long           serialVersionUID = -4173835431245178069L;
+  private static final long            serialVersionUID = -4173835431245178069L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Insets          BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
-  private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
+  private final MovieSettings          settings         = MovieModuleManager.SETTINGS;
 
-  private JButton                     btnClearTraktData;
-  private JCheckBox                   chckbxTraktSync;
-  private JCheckBox                   chckbxRenameAfterScrape;
-  private JCheckBox                   chckbxPersistUiFilters;
-  private JCheckBox                   chckbxBuildImageCache;
-  private JCheckBox                   chckbxRuntimeFromMi;
-  private JCheckBox                   chckbxPersistUiSorting;
-  private JButton                     btnPresetKodi;
-  private JButton                     btnPresetXbmc;
-  private JButton                     btnPresetMediaPortal1;
-  private JButton                     btnPresetMediaPortal2;
-  private JButton                     btnPresetPlex;
-  private JCheckBox                   chckbxDisplayOriginalTitle;
+  private JButton                      btnClearTraktData;
+  private JCheckBox                    chckbxTraktSync;
+  private JCheckBox                    chckbxRenameAfterScrape;
+  private JCheckBox                    chckbxPersistUiFilters;
+  private JCheckBox                    chckbxBuildImageCache;
+  private JCheckBox                    chckbxRuntimeFromMi;
+  private JCheckBox                    chckbxPersistUiSorting;
+  private JButton                      btnPresetKodi;
+  private JButton                      btnPresetXbmc;
+  private JButton                      btnPresetMediaPortal1;
+  private JButton                      btnPresetMediaPortal2;
+  private JButton                      btnPresetPlex;
+  private JCheckBox                    chckbxDisplayOriginalTitle;
+  private JCheckBox                    chckbxPersonalRatingFirst;
+  private AutocompleteComboBox<String> cbRating;
 
   public MovieSettingsPanel() {
     // UI initializations
@@ -88,90 +95,101 @@ public class MovieSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][][][]", "[][][][][20lp][][][][20lp][][][][20lp][][][][][]"));
+    setLayout(new MigLayout("", "[25lp:n][20lp][50lp][][]", "[][][][][][][20lp][][][][20lp][][][][20lp][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
-      add(lblUiT, "cell 0 0 4 1");
+      add(lblUiT, "cell 0 0 5 1");
     }
     {
       chckbxDisplayOriginalTitle = new JCheckBox(BUNDLE.getString("Settings.movie.displayoriginaltitle")); //$NON-NLS-1$
-      add(chckbxDisplayOriginalTitle, "cell 1 1 3 1");
+      add(chckbxDisplayOriginalTitle, "cell 1 1 4 1");
     }
     {
       chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
-      add(chckbxPersistUiFilters, "cell 1 2 3 1");
+      add(chckbxPersistUiFilters, "cell 1 2 4 1");
     }
     {
       chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
-      add(chckbxPersistUiSorting, "cell 1 3 3 1");
+      add(chckbxPersistUiSorting, "cell 1 3 4 1");
+    }
+    {
+      JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
+      add(lblRating, "flowx,cell 1 4 4 1");
+
+      cbRating = new AutocompleteComboBox(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
+      add(cbRating, "cell 1 4");
+    }
+    {
+      chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
+      add(chckbxPersonalRatingFirst, "cell 2 5 3 1");
     }
     {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 5 4 1");
-    }
-    {
-      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
-      add(chckbxRenameAfterScrape, "flowx,cell 1 6 3 1");
-    }
-    {
-      JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
-      lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
-      add(lblAutomaticRenameHint, "cell 1 6 3 1");
+      add(lblAutomaticTasksT, "cell 0 7 5 1");
     }
     {
       chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
-      add(chckbxTraktSync, "flowx,cell 1 7 3 1");
-    }
-    {
-      btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
-      add(btnClearTraktData, "cell 1 7 3 1");
+      add(chckbxTraktSync, "flowx,cell 1 9 4 1");
     }
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 9 4 1");
+      add(lblMiscT, "cell 0 11 5 1");
     }
     {
       chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxBuildImageCache, "flowx,cell 1 10 3 1");
-    }
-    {
-      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
-      lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 10 3 1");
+      add(chckbxBuildImageCache, "flowx,cell 1 12 4 1");
     }
     {
       chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
-      add(chckbxRuntimeFromMi, "cell 1 11 3 1");
+      add(chckbxRuntimeFromMi, "cell 1 13 4 1");
     }
     {
       JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 13 4 1");
+      add(lblPresetT, "cell 0 15 5 1");
     }
     {
       JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 14 3 1");
+      add(lblPresetHintT, "cell 1 16 4 1");
     }
     {
       btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 1 15,growx");
+      add(btnPresetKodi, "flowx,cell 2 17,growx");
 
       btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 2 15,growx");
+      add(btnPresetXbmc, "cell 3 17,growx");
     }
     {
       btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 1 16,growx");
+      add(btnPresetMediaPortal1, "flowx,cell 2 18,growx");
 
       btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 2 16,growx");
+      add(btnPresetMediaPortal2, "cell 3 18,growx");
     }
     {
       btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 1 17,growx");
+      add(btnPresetPlex, "cell 2 19,growx");
+    }
+    {
+      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
+      add(chckbxRenameAfterScrape, "flowx,cell 1 8 4 1");
+    }
+    {
+      JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
+      lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
+      add(lblAutomaticRenameHint, "cell 1 8 4 1");
+    }
+    {
+      btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
+      add(btnClearTraktData, "cell 1 9 4 1");
+    }
+    {
+      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
+      lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+      add(lblBuildImageCacheHint, "cell 1 12 4 1");
     }
   }
 
@@ -211,5 +229,16 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_6, chckbxDisplayOriginalTitle, jCheckBoxBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_7 = BeanProperty.create("preferPersonalRating");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_7, chckbxPersonalRatingFirst, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<MovieSettings, String> movieSettingsBeanProperty_8 = BeanProperty.create("preferredRating");
+    BeanProperty<AutocompleteComboBox, Object> autocompleteComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, String, AutocompleteComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_8, cbRating, autocompleteComboBoxBeanProperty);
+    autoBinding_8.bind();
   }
 }
