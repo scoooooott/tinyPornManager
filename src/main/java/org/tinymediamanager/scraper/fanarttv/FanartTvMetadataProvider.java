@@ -46,22 +46,33 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @PluginImplementation
 public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
-  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
+  private static final String      TMM_API_KEY  = ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3");
 
-  private FanartTv                 api          = null;
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
+  private static FanartTv          api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
         "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
         FanartTvMetadataProvider.class.getResource("/fanart_tv.png"));
     providerInfo.setVersion(FanartTvMetadataProvider.class);
+
+    // configure/load settings
+    providerInfo.getConfig().addText("apiKey", "", true);
+    providerInfo.getConfig().addText("clientKey", "", true);
+    providerInfo.getConfig().load();
+
     return providerInfo;
   }
 
   public FanartTvMetadataProvider() throws Exception {
+  }
+
+  // thread safe initialization of the API
+  private static synchronized void initAPI() throws Exception {
     if (api == null) {
       try {
-        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
+        api = new FanartTv();
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
@@ -69,12 +80,22 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       }
     }
 
-    // configure/load settings
-    providerInfo.getConfig().addText("clientKey", "", true);
-    providerInfo.getConfig().load();
+    String userApiKey = providerInfo.getConfig().getValue("apiKey");
 
-    if (StringUtils.isNotBlank(providerInfo.getConfig().getValue("clientKey"))) {
-      api.setClientKey(providerInfo.getConfig().getValue("clientKey"));
+    // check if the API should change from current key to user key
+    if (StringUtils.isNotBlank(userApiKey) && !userApiKey.equals(api.getApiKey())) {
+      api.setApiKey(userApiKey);
+    }
+
+    // check if the API should change from current key to tmm key
+    if (StringUtils.isBlank(userApiKey) && !TMM_API_KEY.equals(api.getApiKey())) {
+      api.setApiKey(TMM_API_KEY);
+    }
+
+    // check if we should set a client key
+    String clientKey = providerInfo.getConfig().getValue("clientKey");
+    if (clientKey.equals(api.getClientKey())) {
+      api.setClientKey(clientKey);
     }
   }
 
@@ -85,6 +106,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     LOGGER.debug("getArtwork() " + options.toString());
 
     List<MediaArtwork> artwork;

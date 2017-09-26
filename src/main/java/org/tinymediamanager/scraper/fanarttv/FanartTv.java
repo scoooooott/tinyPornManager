@@ -52,14 +52,30 @@ public class FanartTv {
   private String             clientKey;
 
   /**
-   * Creates a new instace of the API with only the API key
+   * Creates a new instance of the API
+   */
+  public FanartTv() {
+    this.apiKey = "";
+    this.clientKey = "";
+  }
+
+  /**
+   * set an API key
    * 
    * @param apiKey
-   *          the API key
+   *          the API key to be set
    */
-  public FanartTv(String apiKey) {
+  public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
-    this.clientKey = "";
+  }
+
+  /**
+   * get the current API key
+   *
+   * @return the current API key
+   */
+  public String getApiKey() {
+    return this.apiKey;
   }
 
   /**
@@ -70,6 +86,15 @@ public class FanartTv {
    */
   public void setClientKey(String clientKey) {
     this.clientKey = clientKey;
+  }
+
+  /**
+   * get the current client key
+   * 
+   * @return the current client key
+   */
+  public String getClientKey() {
+    return this.clientKey;
   }
 
   /**

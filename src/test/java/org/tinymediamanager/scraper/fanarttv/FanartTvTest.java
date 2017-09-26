@@ -16,7 +16,8 @@
 
 package org.tinymediamanager.scraper.fanarttv;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
@@ -26,7 +27,8 @@ public class FanartTvTest {
 
   @Test
   public void testMovieService() {
-    FanartTv api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
+    FanartTv api = new FanartTv();
+    api.setApiKey(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
 
     // Avatar; tmdb_id 19995
     try {
@@ -89,7 +91,8 @@ public class FanartTvTest {
 
   @Test
   public void testTvShowService() {
-    FanartTv api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
+    FanartTv api = new FanartTv();
+    api.setApiKey(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
 
     // Breaking Bad; tvdb_id 81189
     try {
