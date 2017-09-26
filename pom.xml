@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-moviemeter</artifactId>
-    <version>2.0-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 
 	<name>MovieMeter.nl scraper</name>
 	<description>A MovieMeter.nl scraper for tinyMediaManager</description>
