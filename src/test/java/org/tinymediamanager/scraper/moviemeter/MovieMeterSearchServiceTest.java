@@ -29,7 +29,8 @@ public class MovieMeterSearchServiceTest {
 
   @Test
   public void testSearchService() {
-    MovieMeter movieMeter = new MovieMeter(ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM"));
+    MovieMeter movieMeter = new MovieMeter();
+    movieMeter.setApiKey(ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM"));
 
     try {
       SearchService searchService = movieMeter.getSearchService();

@@ -51,6 +51,7 @@ import retrofit.RetrofitError;
 @PluginImplementation
 public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(MovieMeterMetadataProvider.class);
+  private static final String      TMM_API_KEY  = ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM");
 
   private static MovieMeter        api;
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -64,22 +65,37 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
         MovieMeterMetadataProvider.class.getResource("/moviemeter_nl.png"));
     providerInfo.setVersion(MovieMeterMetadataProvider.class);
 
+    // configure/load settings
+    providerInfo.getConfig().addText("apiKey", "", true);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
     providerInfo.getConfig().load();
 
     return providerInfo;
   }
 
+  // thread safe initialization of the API
   private static synchronized void initAPI() throws Exception {
     if (api == null) {
       try {
-        api = new MovieMeter(ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM"));
+        api = new MovieMeter();
         // api.setIsDebug(true);
       }
       catch (Exception e) {
         LOGGER.error("MoviemeterMetadataProvider", e);
         throw e;
       }
+    }
+
+    String userApiKey = providerInfo.getConfig().getValue("apiKey");
+
+    // check if the API should change from current key to user key
+    if (StringUtils.isNotBlank(userApiKey) && !userApiKey.equals(api.getApiKey())) {
+      api.setApiKey(userApiKey);
+    }
+
+    // check if the API should change from current key to tmm key
+    if (StringUtils.isBlank(userApiKey) && !TMM_API_KEY.equals(api.getApiKey())) {
+      api.setApiKey(TMM_API_KEY);
     }
   }
 
