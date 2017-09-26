@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -60,6 +61,8 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
     ITvShowArtworkProvider, IMovieTrailerProvider {
   private static final Logger LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
+  private static final String TMM_API_KEY  = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
+
   static Tmdb                 api;
   static MediaProviderInfo    providerInfo = createMediaProviderInfo();
   static Configuration        configuration;
@@ -73,6 +76,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
     providerInfo.setVersion(TmdbMetadataProvider.class);
 
+    providerInfo.getConfig().addText("apiKey", "", true);
     providerInfo.getConfig().addBoolean("includeAdult", false);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
 
@@ -89,9 +93,24 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
   // thread safe initialization of the API
   private static synchronized void initAPI() throws Exception {
+    String apiKey = TMM_API_KEY;
+    String userApiKey = providerInfo.getConfig().getValue("apiKey");
+
+    // check if the API should change from current key to user key
+    if (StringUtils.isNotBlank(userApiKey) && api != null && !userApiKey.equals(api.apiKey())) {
+      api = null;
+      apiKey = userApiKey;
+    }
+
+    // check if the API should change from current key to tmm key
+    if (StringUtils.isBlank(userApiKey) && api != null && !TMM_API_KEY.equals(api.apiKey())) {
+      api = null;
+      apiKey = TMM_API_KEY;
+    }
+
     // create a new instance of the tmdb api
     if (api == null) {
-      api = new Tmdb(ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO")) {
+      api = new Tmdb(apiKey) {
         // tell the tmdb api to use our OkHttp client
 
         @Override
