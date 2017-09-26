@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-fanarttv</artifactId>
-    <version>2.0-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 
 	<name>Fanart.tv scraper</name>
 	<description>A Fanart.tv scraper for tinyMediaManager</description>
