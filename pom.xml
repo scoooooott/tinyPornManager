@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-tvdb</artifactId>
-    <version>2.0-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 
 	<name>TheTVDb scraper</name>
 	<description>A TheTVDb scraper for tinyMediaManager</description>
