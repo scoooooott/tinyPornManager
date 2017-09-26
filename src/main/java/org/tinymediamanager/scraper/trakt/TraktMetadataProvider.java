@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.trakt;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -51,14 +52,32 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
             + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
         TraktMetadataProvider.class.getResource("/trakt_tv.png"));
     providerInfo.setVersion(TraktMetadataProvider.class);
+
+    providerInfo.getConfig().addText("apiKey", "", true);
+
     return providerInfo;
   }
 
   // thread safe initialization of the API
   private static synchronized void initAPI() throws Exception {
+    String apiKey = CLIENT_ID;
+    String userApiKey = providerInfo.getConfig().getValue("apiKey");
+
+    // check if the API should change from current key to user key
+    if (StringUtils.isNotBlank(userApiKey) && api != null && !userApiKey.equals(api.apiKey())) {
+      api = null;
+      apiKey = userApiKey;
+    }
+
+    // check if the API should change from current key to tmm key
+    if (StringUtils.isBlank(userApiKey) && api != null && !CLIENT_ID.equals(api.apiKey())) {
+      api = null;
+      apiKey = CLIENT_ID;
+    }
+
     // create a new instance of the tmdb api
     if (api == null) {
-      api = new TraktV2(CLIENT_ID) {
+      api = new TraktV2(apiKey) {
         // tell the trakt api to use our OkHttp client
 
         @Override

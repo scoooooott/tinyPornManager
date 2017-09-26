@@ -147,10 +147,10 @@ public class TraktMetadataProviderTest {
       assertThat(md.getTitle()).isEqualTo("Game of Thrones");
       assertThat(md.getYear()).isEqualTo(2011);
       assertThat(md.getPlot()).isNotEmpty();
-      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-18");
+      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-17");
       assertThat(md.getRuntime()).isGreaterThanOrEqualTo(55);
       assertThat(md.getProductionCompanies()).containsOnly("HBO");
-      assertThat(md.getCertifications()).containsOnly(Certification.US_TVPG);
+      assertThat(md.getCertifications()).containsOnly(Certification.US_TVMA);
       assertThat(md.getCountries()).containsOnly("us");
       assertThat(md.getStatus()).isEqualTo("returning series");
       assertThat(md.getRatings().size()).isEqualTo(1);
