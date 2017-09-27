@@ -15,19 +15,35 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseButtonUI;
-import com.jtattoo.plaf.ColorHelper;
-import com.jtattoo.plaf.JTattooUtilities;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JComponent;
+import javax.swing.JMenuBar;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
-import java.awt.*;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseButtonUI;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * @author Manuel Laggner
@@ -75,7 +91,7 @@ public class TmmLightButtonUI extends BaseButtonUI {
 
     int width = b.getWidth();
     int height = b.getHeight();
-    int borderRadius = b.getHeight() - 2 * focusWidth;
+    int borderRadius = (int) (b.getHeight() * 0.9 - 2 * focusWidth);
 
     int x = focusWidth;
     int y = focusWidth;

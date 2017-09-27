@@ -76,7 +76,7 @@ public class TmmLightToggleButtonUI extends BaseToggleButtonUI {
 
     int width = b.getWidth();
     int height = b.getHeight();
-    int borderRadius = b.getHeight() - 2 * focusWidth;
+    int borderRadius = (int) (b.getHeight() * 0.9 - 2 * focusWidth);
 
     int x = focusWidth;
     int y = focusWidth;
