@@ -27,7 +27,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import org.tinymediamanager.ui.components.RoundScrollPane;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 
 import com.jtattoo.plaf.AbstractLookAndFeel;
 
