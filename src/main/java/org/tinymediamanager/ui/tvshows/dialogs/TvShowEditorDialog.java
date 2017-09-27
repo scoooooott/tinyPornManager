@@ -288,15 +288,15 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
-      details1Panel.setLayout(
-          new MigLayout("", "[][][50lp:75lp][][][][25lp:n][200lp:250lp,grow]", "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
+      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]",
+          "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
         details1Panel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
-        details1Panel.add(tfTitle, "cell 1 0 5 1,growx");
+        details1Panel.add(tfTitle, "cell 1 0 6 1,growx");
       }
       {
         lblPoster = new ImageLabel();
@@ -310,21 +310,21 @@ public class TvShowEditorDialog extends TmmDialog {
           }
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        details1Panel.add(lblPoster, "cell 7 0 1 9,grow");
+        details1Panel.add(lblPoster, "cell 8 0 1 9,grow");
       }
       {
         JLabel lblSortTitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
         details1Panel.add(lblSortTitle, "cell 0 1,alignx right");
 
         tfSorttitle = new JTextField();
-        details1Panel.add(tfSorttitle, "cell 1 1 5 1,growx");
+        details1Panel.add(tfSorttitle, "cell 1 1 6 1,growx");
       }
       {
         JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         details1Panel.add(lblPlot, "cell 0 2,alignx right,aligny top");
 
         JScrollPane scrollPanePlot = new JScrollPane();
-        details1Panel.add(scrollPanePlot, "cell 1 2 5 1,grow");
+        details1Panel.add(scrollPanePlot, "cell 1 2 6 1,grow");
 
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
@@ -341,7 +341,7 @@ public class TvShowEditorDialog extends TmmDialog {
         details1Panel.add(lblpremiered, "cell 3 3,alignx right");
 
         dpPremiered = new DatePicker(tvShowToEdit.getFirstAired());
-        details1Panel.add(dpPremiered, "cell 4 3,growx");
+        details1Panel.add(dpPremiered, "cell 4 3 2 1,growx");
       }
       {
         JLabel lblRuntime = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
@@ -388,10 +388,6 @@ public class TvShowEditorDialog extends TmmDialog {
         JButton btnAddRating = new JButton(new AddRatingAction());
         btnAddRating.setMargin(BUTTON_MARGIN);
         details1Panel.add(btnAddRating, "flowy,cell 5 7,alignx left,aligny top");
-
-        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
-        btnRemoveRating.setMargin(BUTTON_MARGIN);
-        details1Panel.add(btnRemoveRating, "cell 5 7,alignx left,aligny top");
       }
 
       {
@@ -399,7 +395,7 @@ public class TvShowEditorDialog extends TmmDialog {
         details1Panel.add(lblStudio, "cell 0 8,alignx right");
 
         tfStudio = new JTextField();
-        details1Panel.add(tfStudio, "cell 1 8 5 1,growx");
+        details1Panel.add(tfStudio, "cell 1 8 6 1,growx");
       }
       {
         lblFanart = new ImageLabel();
@@ -413,7 +409,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblFanart, "cell 7 9,grow");
+        details1Panel.add(lblFanart, "cell 8 9,grow");
       }
       {
         lblBanner = new ImageLabel();
@@ -427,8 +423,12 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblBanner, "cell 1 9 5 1,grow");
+        details1Panel.add(lblBanner, "cell 1 9 6 1,grow");
       }
+
+      JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+      btnRemoveRating.setMargin(BUTTON_MARGIN);
+      details1Panel.add(btnRemoveRating, "cell 5 7,alignx left,aligny top");
     }
 
     /**********************************************************************************

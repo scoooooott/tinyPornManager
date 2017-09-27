@@ -355,7 +355,7 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
-      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][50lp:50lp][75lp:n][50lp:75lp][25lp:n][200lp:250lp,grow]",
+      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][50lp:75lp][25lp:n][200lp:250lp,grow]",
           "[][][][][75lp:150lp][][][][][30lp:60lp][][][]"));
 
       {
@@ -529,7 +529,7 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(lblDateAdded, "cell 0 0,aligny top");
 
         spDateAdded = new JSpinner(new SpinnerDateModel());
-        details2Panel.add(spDateAdded, "cell 1 0");
+        details2Panel.add(spDateAdded, "cell 1 0,growx");
       }
       {
         JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$

@@ -62,7 +62,6 @@ public class IconManager {
   public final static ImageIcon            CLAPBOARD                   = loadImage("clapboard.png");
   public final static ImageIcon            COPY                        = loadImage("copy.png");
   public final static ImageIcon            CROSS                       = loadImage("cross.png");
-  public final static ImageIcon            DATE_PICKER                 = loadImage("datepicker.png");
   public final static ImageIcon            DELETE                      = loadImage("delete.png");
   public final static ImageIcon            DOT_AVAILABLE               = loadImage("dot_available.png");
   public final static ImageIcon            DOT_UNAVAILABLE             = loadImage("dot_unavailable.png");
@@ -96,9 +95,11 @@ public class IconManager {
   public final static ImageIcon            ARROW_UP_INV                = createMaterialFontIcon('\uE5D8', 16, true);
   public final static ImageIcon            ARROW_DOWN_INV              = createMaterialFontIcon('\uE5DB', 16, true);
   public final static ImageIcon            APPLY_INV                   = createMaterialFontIcon('\uE876', 16, true);
+  public final static ImageIcon            DATE_PICKER                 = createMaterialFontIcon('\uE916', 16, true);
   public final static ImageIcon            IMAGE_INV                   = createMaterialFontIcon('\uE3F4', 16, true);
   public final static ImageIcon            CANCEL_INV                  = createMaterialFontIcon('\uE14C', 16, true);
   public final static ImageIcon            REMOVE_INV                  = createMaterialFontIcon('\uE15B', 16, true);
+
 
   // Material icons normal
   public final static ImageIcon            ADD                         = createMaterialFontIcon('\uE145', 16);

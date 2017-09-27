@@ -17,8 +17,6 @@ package org.tinymediamanager.ui.components.datepicker;
 
 import java.awt.BorderLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
@@ -92,21 +90,18 @@ public class DatePicker extends JPanel implements PropertyChangeListener {
     calendarButton = new JButton(IconManager.DATE_PICKER);
     calendarButton.setFocusable(false);
     calendarButton.setMargin(new Insets(0, 0, 0, 0));
-    calendarButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int x = -dateEditor.getWidth();
-        int y = calendarButton.getHeight();
+    calendarButton.addActionListener(e -> {
+      int x = -dateEditor.getWidth();
+      int y = calendarButton.getHeight();
 
-        Calendar calendar = Calendar.getInstance();
-        Date date = dateEditor.getDate();
-        if (date != null) {
-          calendar.setTime(date);
-        }
-        calendarPanel.setCalendar(calendar);
-        popup.show(calendarButton, x, y);
-        dateSelected = false;
+      Calendar calendar = Calendar.getInstance();
+      Date date1 = dateEditor.getDate();
+      if (date1 != null) {
+        calendar.setTime(date1);
       }
+      calendarPanel.setCalendar(calendar);
+      popup.show(calendarButton, x, y);
+      dateSelected = false;
     });
 
     add(calendarButton, BorderLayout.EAST);

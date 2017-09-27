@@ -247,7 +247,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       JPanel detailsPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), detailsPanel);
       detailsPanel.setLayout(
-          new MigLayout("", "[][][50lp:75lp][][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][][][][75lp:150lp,grow][][][][50lp,grow][]"));
+          new MigLayout("", "[][][75lp:100lp][][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][][][][75lp:150lp,grow][][][][50lp,grow][]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
