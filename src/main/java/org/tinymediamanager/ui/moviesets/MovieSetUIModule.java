@@ -16,24 +16,19 @@
 package org.tinymediamanager.ui.moviesets;
 
 import java.awt.CardLayout;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import javax.swing.Icon;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.ui.ITmmUIModule;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.AbstractTmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
@@ -54,8 +49,7 @@ import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MovieSetUIModule implements ITmmUIModule {
-  private final static ResourceBundle       BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class MovieSetUIModule extends AbstractTmmUIModule {
   private final static String               ID       = "movieSets";
 
   private static MovieSetUIModule           instance = null;
@@ -63,24 +57,18 @@ public class MovieSetUIModule implements ITmmUIModule {
   private final MovieSetSelectionModel      selectionModel;
   private final MovieSelectionModel         movieSelectionModel;
 
-  private Map<Class, Action>                actionMap;
-
-  private final MovieSetTreePanel           listPanel;
-  private final JPanel                      detailPanel;
+  private final MovieSetTreePanel           treePanel;
   private final JPanel                      dataPanel;
   private final MovieSetExtendedSearchPanel filterPanel;
 
   private JPopupMenu                        popupMenu;
-  private Action                            searchAction;
-  private Action                            editAction;
 
   private MovieSetUIModule() {
-    actionMap = new HashMap<>();
-
     selectionModel = new MovieSetSelectionModel();
     movieSelectionModel = new MovieSelectionModel();
 
-    listPanel = new MovieSetTreePanel(selectionModel);
+    treePanel = new MovieSetTreePanel(selectionModel);
+    listPanel = treePanel;
 
     detailPanel = new JPanel();
     detailPanel.setLayout(new CardLayout());
@@ -112,7 +100,7 @@ public class MovieSetUIModule implements ITmmUIModule {
     layeredPane.setLayer(dataPanel, 0);
 
     // glass pane for searching/filtering
-    filterPanel = new MovieSetExtendedSearchPanel(listPanel.getTreeTable());
+    filterPanel = new MovieSetExtendedSearchPanel(treePanel.getTreeTable());
     filterPanel.setVisible(false);
     layeredPane.add(filterPanel, "pos 0 0");
     layeredPane.setLayer(filterPanel, 1);
@@ -136,7 +124,7 @@ public class MovieSetUIModule implements ITmmUIModule {
   private void init() {
     // re-set filters
     if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
-      SwingUtilities.invokeLater(() -> listPanel.getTreeTable().setFilterValues(MovieModuleManager.SETTINGS.getMovieSetUiFilters()));
+      SwingUtilities.invokeLater(() -> treePanel.getTreeTable().setFilterValues(MovieModuleManager.SETTINGS.getMovieSetUiFilters()));
     }
   }
 
@@ -145,6 +133,7 @@ public class MovieSetUIModule implements ITmmUIModule {
   }
 
   private void createActions() {
+    updateAction = createAndRegisterAction(MovieSetAddAction.class);
     searchAction = createAndRegisterAction(MovieSetSearchAction.class);
     editAction = createAndRegisterAction(MovieSetEditAction.class);
   }
@@ -166,45 +155,9 @@ public class MovieSetUIModule implements ITmmUIModule {
     // actions for both of them
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieSetRenameAction.class));
-  }
 
-  /**
-   * this factory creates the action and registers the hotkeys for accelerator management
-   *
-   * @param actionClass
-   *          the class of the action
-   * @return the constructed action
-   */
-  private Action createAndRegisterAction(Class<? extends Action> actionClass) {
-    Action action = actionMap.get(actionClass);
-    if (action == null) {
-      try {
-        action = (Action) actionClass.newInstance();
-        actionMap.put(actionClass, action);
-        // KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-      }
-      catch (Exception ignored) {
-      }
-    }
-    return action;
-  }
-
-  /**
-   * register accelerators
-   */
-  private void registerAccelerators() {
-    for (Map.Entry<Class, Action> entry : actionMap.entrySet()) {
-      try {
-        KeyStroke keyStroke = (KeyStroke) entry.getValue().getValue(Action.ACCELERATOR_KEY);
-        if (keyStroke != null) {
-          String actionMapKey = "action" + entry.getKey().getName();
-          listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
-          listPanel.getActionMap().put(actionMapKey, entry.getValue());
-        }
-      }
-      catch (Exception ignored) {
-      }
-    }
+    // dummy popupmenu to infer the text
+    updatePopupMenu = new JPopupMenu(BUNDLE.getString("movieset.add"));
   }
 
   @Override
@@ -213,63 +166,18 @@ public class MovieSetUIModule implements ITmmUIModule {
   }
 
   @Override
-  public JPanel getTabPanel() {
-    return listPanel;
-  }
-
-  @Override
   public String getTabTitle() {
     return BUNDLE.getString("tmm.moviesets"); //$NON-NLS-1$
   }
 
   @Override
-  public JPanel getDetailPanel() {
-    return detailPanel;
+  public Icon getSearchButtonIcon() {
+    return IconManager.TOOLBAR_ADD_MOVIE_SET;
   }
 
   @Override
-  public Action getSearchAction() {
-    return searchAction;
-  }
-
-  @Override
-  public JPopupMenu getSearchMenu() {
-    return null;
-  }
-
-  @Override
-  public Action getEditAction() {
-    return editAction;
-  }
-
-  @Override
-  public JPopupMenu getEditMenu() {
-    return null;
-  }
-
-  @Override
-  public Action getUpdateAction() {
-    return null;
-  }
-
-  @Override
-  public JPopupMenu getUpdateMenu() {
-    return null;
-  }
-
-  @Override
-  public Action getRenameAction() {
-    return null;
-  }
-
-  @Override
-  public JPopupMenu getRenameMenu() {
-    return null;
-  }
-
-  @Override
-  public Action getExportAction() {
-    return null;
+  public Icon getSearchButtonHoverIcon() {
+    return IconManager.TOOLBAR_ADD_MOVIE_SET_HOVER;
   }
 
   public MovieSetSelectionModel getSelectionModel() {

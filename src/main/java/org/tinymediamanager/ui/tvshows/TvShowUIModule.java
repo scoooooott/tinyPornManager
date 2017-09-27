@@ -16,17 +16,11 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -35,8 +29,7 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.ui.ITmmUIModule;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
@@ -84,9 +77,9 @@ import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class TvShowUIModule implements ITmmUIModule {
-  private final static ResourceBundle     BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class TvShowUIModule extends AbstractTmmUIModule {
   private final static String             ID       = "tvShows";
+
   private static TvShowUIModule           instance = null;
 
   final TvShowSelectionModel              tvShowSelectionModel;
@@ -94,34 +87,19 @@ public class TvShowUIModule implements ITmmUIModule {
   final TvShowEpisodeSelectionModel       tvShowEpisodeSelectionModel;
 
   private final TvShowTreePanel           listPanel;
-  private final JPanel                    detailPanel;
   private final JPanel                    dataPanel;
   private final TvShowExtendedSearchPanel filterPanel;
-
-  private Map<Class, Action>              actionMap;
-
-  private Action                          searchAction;
-  private Action                          editAction;
-  private Action                          updateAction;
-  private Action                          exportAction;
-  private Action                          renameAction;
-
-  private JPopupMenu                      popupMenu;
-  private JPopupMenu                      updatePopupMenu;
-  private JPopupMenu                      scrapePopupMenu;
-  private JPopupMenu                      editPopupMenu;
-  private JPopupMenu                      renamePopupMenu;
 
   private TmmSettingsNode                 settingsNode;
 
   private TvShowUIModule() {
-    actionMap = new HashMap<>();
 
     tvShowSelectionModel = new TvShowSelectionModel();
     tvShowSeasonSelectionModel = new TvShowSeasonSelectionModel();
     tvShowEpisodeSelectionModel = new TvShowEpisodeSelectionModel();
 
     listPanel = new TvShowTreePanel(tvShowSelectionModel);
+    super.listPanel = listPanel;
 
     detailPanel = new JPanel();
     detailPanel.setOpaque(false);
@@ -218,56 +196,6 @@ public class TvShowUIModule implements ITmmUIModule {
     return BUNDLE.getString("tmm.tvshows"); //$NON-NLS-1$
   }
 
-  @Override
-  public JPanel getDetailPanel() {
-    return detailPanel;
-  }
-
-  @Override
-  public Action getSearchAction() {
-    return searchAction;
-  }
-
-  @Override
-  public JPopupMenu getSearchMenu() {
-    return scrapePopupMenu;
-  }
-
-  @Override
-  public Action getEditAction() {
-    return editAction;
-  }
-
-  @Override
-  public JPopupMenu getEditMenu() {
-    return editPopupMenu;
-  }
-
-  @Override
-  public Action getUpdateAction() {
-    return updateAction;
-  }
-
-  @Override
-  public JPopupMenu getUpdateMenu() {
-    return updatePopupMenu;
-  }
-
-  @Override
-  public Action getExportAction() {
-    return exportAction;
-  }
-
-  @Override
-  public Action getRenameAction() {
-    return renameAction;
-  }
-
-  @Override
-  public JPopupMenu getRenameMenu() {
-    return null;
-  }
-
   public TvShowSelectionModel getSelectionModel() {
     return tvShowSelectionModel;
   }
@@ -352,13 +280,13 @@ public class TvShowUIModule implements ITmmUIModule {
     });
 
     // scrape popup menu
-    scrapePopupMenu = new JPopupMenu();
-    scrapePopupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
-    scrapePopupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
-    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
-    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
-    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
-    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
+    searchPopupMenu = new JPopupMenu();
+    searchPopupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
+    searchPopupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
+    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
+    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
+    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
+    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
 
     // edit popupmenu
     editPopupMenu = new JPopupMenu();
@@ -370,45 +298,6 @@ public class TvShowUIModule implements ITmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowReadEpisodeNfoAction.class));
-  }
-
-  /**
-   * this factory creates the action and registers the hotkeys for accelerator management
-   *
-   * @param actionClass
-   *          the class of the action
-   * @return the constructed action
-   */
-  private Action createAndRegisterAction(Class<? extends Action> actionClass) {
-    Action action = actionMap.get(actionClass);
-    if (action == null) {
-      try {
-        action = (Action) actionClass.newInstance();
-        actionMap.put(actionClass, action);
-        // KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-      }
-      catch (Exception ignored) {
-      }
-    }
-    return action;
-  }
-
-  /**
-   * register accelerators
-   */
-  private void registerAccelerators() {
-    for (Map.Entry<Class, Action> entry : actionMap.entrySet()) {
-      try {
-        KeyStroke keyStroke = (KeyStroke) entry.getValue().getValue(Action.ACCELERATOR_KEY);
-        if (keyStroke != null) {
-          String actionMapKey = "action" + entry.getKey().getName();
-          listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
-          listPanel.getActionMap().put(actionMapKey, entry.getValue());
-        }
-      }
-      catch (Exception ignored) {
-      }
-    }
   }
 
   /**

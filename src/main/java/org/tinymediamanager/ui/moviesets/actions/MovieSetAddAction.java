@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -38,10 +39,8 @@ public class MovieSetAddAction extends AbstractAction {
   /**
    * Instantiates a new adds the movie set action.
    */
-  public MovieSetAddAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
-    }
+  public MovieSetAddAction() {
+    putValue(NAME, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.ADD);
     putValue(SMALL_ICON, IconManager.ADD);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
@@ -49,7 +48,7 @@ public class MovieSetAddAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
+    String name = JOptionPane.showInputDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movieset.title"), "", JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
     if (StringUtils.isNotEmpty(name)) {
       MovieSet movieSet = new MovieSet(name);
       movieSet.saveToDb();

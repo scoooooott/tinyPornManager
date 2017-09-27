@@ -16,25 +16,19 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.CardLayout;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.ui.ITmmUIModule;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
@@ -84,38 +78,24 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Manuel Laggner
  */
-public class MovieUIModule implements ITmmUIModule {
-  private final static ResourceBundle    BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class MovieUIModule extends AbstractTmmUIModule {
   private final static String            ID       = "movies";
+
   private static MovieUIModule           instance = null;
 
-  private MovieListPanel                 listPanel;
-  private JPanel                         detailPanel;
+  private final MovieListPanel           listPanel;
   private final MovieExtendedSearchPanel filterPanel;
 
   private final MovieSelectionModel      selectionModel;
 
-  private Map<Class, Action>             actionMap;
-
-  private Action                         searchAction;
-  private Action                         editAction;
-  private Action                         updateAction;
-  private Action                         exportAction;
-  private Action                         renameAction;
-
-  private JPopupMenu                     popupMenu;
-  private JPopupMenu                     updatePopupMenu;
-  private JPopupMenu                     searchPopupMenu;
-  private JPopupMenu                     editPopupMenu;
-  private JPopupMenu                     renamePopupMenu;
-
   private TmmSettingsNode                settingsNode;
 
   private MovieUIModule() {
-    actionMap = new HashMap<>();
 
     listPanel = new MovieListPanel();
     selectionModel = listPanel.getSelectionModel();
+
+    super.listPanel = listPanel;
 
     detailPanel = new JPanel();
     detailPanel.setOpaque(false);
@@ -204,27 +184,6 @@ public class MovieUIModule implements ITmmUIModule {
     renameAction = createAndRegisterAction(MovieRenameAction.class);
   }
 
-  /**
-   * this factory creates the action and registers the hotkeys for accelerator management
-   *
-   * @param actionClass
-   *          the class of the action
-   * @return the constructed action
-   */
-  private Action createAndRegisterAction(Class<? extends Action> actionClass) {
-    Action action = actionMap.get(actionClass);
-    if (action == null) {
-      try {
-        action = (Action) actionClass.newInstance();
-        actionMap.put(actionClass, action);
-        // KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-      }
-      catch (Exception ignored) {
-      }
-    }
-    return action;
-  }
-
   private void createPopupMenu() {
     popupMenu = new JPopupMenu();
     popupMenu.add(createAndRegisterAction(MovieSingleScrapeAction.class));
@@ -258,6 +217,7 @@ public class MovieUIModule implements ITmmUIModule {
 
     // update popup menu
     updatePopupMenu = new JPopupMenu();
+    updatePopupMenu.add(createAndRegisterAction(MovieUpdateDatasourceAction.class));
     updatePopupMenu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -304,24 +264,6 @@ public class MovieUIModule implements ITmmUIModule {
     renamePopupMenu = new JPopupMenu();
     renamePopupMenu.add(createAndRegisterAction(MovieRenameAction.class));
     renamePopupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
-  }
-
-  /**
-   * register accelerators
-   */
-  private void registerAccelerators() {
-    for (Map.Entry<Class, Action> entry : actionMap.entrySet()) {
-      try {
-        KeyStroke keyStroke = (KeyStroke) entry.getValue().getValue(Action.ACCELERATOR_KEY);
-        if (keyStroke != null) {
-          String actionMapKey = "action" + entry.getKey().getName();
-          listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
-          listPanel.getActionMap().put(actionMapKey, entry.getValue());
-        }
-      }
-      catch (Exception ignored) {
-      }
-    }
   }
 
   public void setFilterMenuVisible(boolean visible) {

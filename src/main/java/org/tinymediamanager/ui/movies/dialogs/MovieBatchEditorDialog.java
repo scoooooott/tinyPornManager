@@ -246,7 +246,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnNewMovieset = new JButton("");
       btnNewMovieset.setMargin(new Insets(2, 2, 2, 2));
-      btnNewMovieset.setAction(new MovieSetAddAction(false));
+      btnNewMovieset.setAction(new MovieSetAddAction());
       panelContent.add(btnNewMovieset, "9, 8");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$

@@ -80,13 +80,13 @@ import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
+import org.tinymediamanager.ui.components.toolbar.ToolbarPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.images.LogoCircle;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
-import org.tinymediamanager.ui.panels.ToolbarPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 import com.jgoodies.forms.layout.ColumnSpec;

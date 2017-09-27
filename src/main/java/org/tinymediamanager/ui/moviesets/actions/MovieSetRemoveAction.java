@@ -38,10 +38,8 @@ public class MovieSetRemoveAction extends AbstractAction {
   /**
    * Instantiates a new removes the movie set action.
    */
-  public MovieSetRemoveAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
-    }
+  public MovieSetRemoveAction() {
+    putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.REMOVE);
     putValue(SMALL_ICON, IconManager.REMOVE);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$

@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -62,6 +63,20 @@ public interface ITmmUIModule {
    * @return the search action
    */
   Action getSearchAction();
+
+  /**
+   * get the icon to be used with the update button
+   * 
+   * @return the icon
+   */
+  Icon getSearchButtonIcon();
+
+  /**
+   * get the hover icon to be used with the update button
+   * 
+   * @return the hover icon
+   */
+  Icon getSearchButtonHoverIcon();
 
   /**
    * get the search popup menu (which will be shown when clicking on the search text)
