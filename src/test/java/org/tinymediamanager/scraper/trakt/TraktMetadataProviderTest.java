@@ -16,7 +16,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
@@ -112,8 +111,8 @@ public class TraktMetadataProviderTest {
 
     // Game of Thrones
     options.setId(mp.getProviderInfo().getId(), "1390");
-    List<MediaEpisode> episodeList;
-    MediaEpisode episode;
+    List<MediaMetadata> episodeList;
+    MediaMetadata episode;
 
     try {
       episodeList = mp.getEpisodeList(options);
@@ -122,9 +121,9 @@ public class TraktMetadataProviderTest {
       assertThat(episodeList.get(0)).isNotNull();
 
       episode = episodeList.get(0);
-      assertThat(episode.title).isNotEmpty();
-      assertThat(episode.plot).isNotNull(); // can be empty for some eps
-      assertThat(episode.ids).isNotEmpty();
+      assertThat(episode.getTitle()).isNotEmpty();
+      assertThat(episode.getPlot()).isNotNull(); // can be empty for some eps
+      assertThat(episode.getIds()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();

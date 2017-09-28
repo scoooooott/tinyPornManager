@@ -34,7 +34,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -135,14 +134,14 @@ class TraktTVShowMetadataProvider {
   }
 
   // Episode List
-  List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getEpisodeList() " + options.toString());
-    List<MediaEpisode> episodes = new ArrayList<>();
+    List<MediaMetadata> episodes = new ArrayList<>();
 
-    String id = options.getId(TraktMetadataProvider.providerInfo.getId());
+    String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
     if (StringUtils.isBlank(id)) {
       // alternatively we can take the imdbid
-      id = options.getId(IMDB);
+      id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
       return episodes;
@@ -162,32 +161,36 @@ class TraktTVShowMetadataProvider {
 
     for (Season season : ListUtils.nullSafe(seasons)) {
       for (Episode episode : season.episodes) {
-        MediaEpisode ep = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
-        ep.episode = TvUtils.getEpisodeNumber(episode.number);
-        ep.season = TvUtils.getSeasonNumber(episode.season);
-        ep.title = episode.title;
+        MediaMetadata ep = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
+        ep.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.number));
+        ep.setSeasonNumber(TvUtils.getSeasonNumber(episode.season));
+        ep.setTitle(episode.title);
+
         if (episode.rating != null) {
-          ep.rating = episode.rating.floatValue();
+          MediaRating rating = new MediaRating(TraktMetadataProvider.providerInfo.getId());
+          rating.setRating(episode.rating);
+          rating.setVoteCount(episode.votes);
+          rating.setMaxValue(10);
+          ep.addRating(rating);
         }
-        ep.voteCount = TvUtils.parseInt(episode.votes);
+
         if (episode.first_aired != null) {
-          Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-          ep.firstAired = formatter.format(episode.first_aired.toDate());
+          ep.setReleaseDate(episode.first_aired);
         }
 
         if (episode.ids != null) {
-          ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
+          ep.setId(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
           if (episode.ids.tvdb != null && episode.ids.tvdb > 0) {
-            ep.ids.put(TVDB, episode.ids.tvdb);
+            ep.setId(TVDB, episode.ids.tvdb);
           }
           if (episode.ids.tmdb != null && episode.ids.tmdb > 0) {
-            ep.ids.put(TMDB, episode.ids.tmdb);
+            ep.setId(TMDB, episode.ids.tmdb);
           }
           if (episode.ids.tvrage != null && episode.ids.tvrage > 0) {
-            ep.ids.put("tvrage", episode.ids.tvrage);
+            ep.setId("tvrage", episode.ids.tvrage);
           }
           if (StringUtils.isNotBlank(episode.ids.imdb)) {
-            ep.ids.put(IMDB, episode.ids.imdb);
+            ep.setId(IMDB, episode.ids.imdb);
           }
         }
 
@@ -215,14 +218,14 @@ class TraktTVShowMetadataProvider {
     LOGGER.debug("getTvShowMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
-    String id = options.getId(TraktMetadataProvider.providerInfo.getId());
+    String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
     if (StringUtils.isBlank(id) && options.getResult() != null) {
       // take the id from the search result
       id = options.getResult().getId();
     }
     if (StringUtils.isBlank(id)) {
       // alternatively we can take the imdbid
-      id = options.getId(IMDB);
+      id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
       return md;
@@ -364,26 +367,18 @@ class TraktTVShowMetadataProvider {
     LOGGER.debug("getEpisodeMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
-    String id = options.getId(TraktMetadataProvider.providerInfo.getId());
+    String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
     if (StringUtils.isBlank(id)) {
       // alternatively we can take the imdbid
-      id = options.getId(IMDB);
+      id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
       return md;
     }
 
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
-
-    try {
-      seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-      episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-    }
-    catch (Exception e) {
-      LOGGER.warn("error parsing season/episode number");
-    }
+    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
     // parsed valid episode number/season number?
     String aired = "";
@@ -391,7 +386,7 @@ class TraktTVShowMetadataProvider {
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
     }
-    if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
+    if (aired.isEmpty() && (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1)) {
       return md; // not even date set? return
     }
 

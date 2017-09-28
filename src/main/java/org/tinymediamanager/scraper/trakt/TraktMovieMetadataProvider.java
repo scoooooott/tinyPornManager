@@ -134,14 +134,14 @@ class TraktMovieMetadataProvider {
       throw new UnsupportedMediaTypeException(options.getType());
     }
 
-    String id = options.getId(TraktMetadataProvider.providerInfo.getId());
+    String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
     if (StringUtils.isBlank(id) && options.getResult() != null) {
       // take the id from the search result
       id = options.getResult().getId();
     }
     if (StringUtils.isBlank(id)) {
       // alternatively we can take the imdbid
-      id = options.getId(IMDB);
+      id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
       return md;

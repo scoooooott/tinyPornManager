@@ -24,7 +24,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -136,7 +135,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions mediaScrapeOptions) throws Exception {
     // lazy initialization of the api
     initAPI();
 
