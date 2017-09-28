@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +25,11 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -112,28 +110,33 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) {
+    MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
 
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
+    Integer seasonNr = null;
+    Integer episodeNr = null;
 
     try {
-      String option = options.getId(MediaMetadata.SEASON_NR);
-      if (option != null) {
-        seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-        episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-      }
-      else {
-        seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR_DVD));
-        episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR_DVD));
+      seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+      episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+
+      if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+        seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR_DVD);
+        episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR_DVD);
       }
     }
     catch (Exception e) {
       LOGGER.warn("error parsing season/episode number");
     }
+
+    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+      LOGGER.warn("no aired date/season number/episode number found");
+      return md; // not even date set? return
+    }
+
     LOGGER.debug("search for S{} E{}", lz(seasonNr), lz(episodeNr));
 
-    String showId = options.getId(scraper.getProviderInfo().getId());
+    String showId = options.getIdAsString(scraper.getProviderInfo().getId());
     if (showId == null) {
       LOGGER.error("Could not find showId - please scrape show first!");
       return null;
@@ -177,7 +180,6 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       Document epDetailXml = parseXmlString(xmlDetails);
       Element epXmlEl = epDetailXml.getDocumentElement();
 
-      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
       addMetadata(md, epXmlEl);
       md.setEpisodeNumber(ep);
       md.setSeasonNumber(season);
@@ -186,20 +188,19 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep) + "_DETAIL",
           xmlDetails);
 
-      return md;
     }
     catch (Exception e) {
       LOGGER.error("Could not get episode details!");
     }
 
-    return null;
+    return md;
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    List<MediaEpisode> episodeList = new ArrayList<MediaEpisode>();
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    List<MediaMetadata> episodeList = new ArrayList<>();
 
-    String showId = options.getId(scraper.getProviderInfo().getId());
+    String showId = options.getIdAsString(scraper.getProviderInfo().getId());
     if (showId == null) {
       showId = options.getResult().getId();
     }
@@ -259,20 +260,19 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
         KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), epXml);
       }
 
-      MediaEpisode me = new MediaEpisode(scraper.getProviderInfo().getId());
-      me.episode = ep;
-      me.season = season;
-      me.title = DOMUtils.getElementValue(el, "title");
-      me.ids.put(scraper.getProviderInfo().getId(), DOMUtils.getElementValue(el, "id"));
+      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
+      md.setEpisodeNumber(ep);
+      md.setSeasonNumber(season);
+      md.setTitle(DOMUtils.getElementValue(el, "title"));
+      md.setId(scraper.getProviderInfo().getId(), DOMUtils.getElementValue(el, "id"));
       // String epUrl = DOMUtils.getElementValue(el, "url"); // cannot save in ME!!!
       try {
-        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-        me.firstAired = formatter.format(DOMUtils.getElementValue(el, "aired"));
+        md.setReleaseDate(StrgUtils.parseDate(DOMUtils.getElementValue(el, "aired")));
       }
-      catch (Exception ign) {
+      catch (Exception ignored) {
       }
 
-      episodeList.add(me);
+      episodeList.add(md);
     }
 
     if (episodeList.isEmpty()) {

@@ -15,7 +15,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -81,8 +80,8 @@ public class KodiMetadataProviderTest {
       MediaMetadata md = show.getMetadata(scrapeOptions);
 
       // get episode list (when cached)
-      List<MediaEpisode> epl = show.getEpisodeList(scrapeOptions);
-      for (MediaEpisode me : epl) {
+      List<MediaMetadata> epl = show.getEpisodeList(scrapeOptions);
+      for (MediaMetadata me : epl) {
         System.out.println(me);
       }
 
