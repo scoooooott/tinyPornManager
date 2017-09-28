@@ -45,7 +45,6 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -114,7 +113,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -263,94 +262,24 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
-    String id = "";
-    String langu = options.getLanguage().getLanguage();
-
-    // id from result
-    if (options.getResult() != null) {
-      id = options.getResult().getId();
-    }
-
-    // do we have an id from the options?
-    if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
-    }
-
-    if (StringUtils.isEmpty(id)) {
-      return md;
-    }
-
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
+    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
-    try {
-      seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-      episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-    }
-    catch (Exception e) {
-      LOGGER.warn("error parsing season/episode number");
-    }
-
-    if (seasonNr == -1 || episodeNr == -1) {
+    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
       return md;
     }
 
-    Document doc = null;
-    try {
-      CachedUrl url = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-      if (!url.isCached()) {
-        trackConnections();
-      }
-      doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
-    }
-    catch (Exception e) {
-      LOGGER.error("failed to get episode metadata: " + e.getMessage());
-    }
+    // get full episode listing
+    List<MediaMetadata> episodes = getEpisodeList(options);
 
-    if (doc == null || doc.children().size() == 0) {
-      return md;
-    }
-
-    md.setId(providerInfo.getId(), id);
-
-    List<Episode> episodes = parseEpisodes(doc);
-    Episode episode = null;
-
-    // filter out the episode
-    for (Episode ep : episodes) {
-      if (ep.season == seasonNr && ep.episode == episodeNr) {
-        episode = ep;
+    // filter out the wanted episode
+    for (MediaMetadata episode : episodes) {
+      if (episode.getEpisodeNumber() == episodeNr && episode.getSeasonNumber() == seasonNr) {
+        md = episode;
         break;
       }
     }
-
-    if (episode == null) {
-      return md;
-    }
-
-    String title = episode.titles.get(langu);
-    if (StringUtils.isBlank(title)) {
-      title = episode.titles.get("en");
-    }
-    if (StringUtils.isBlank(title)) {
-      title = episode.titles.get("x-jat");
-    }
-    md.setTitle(title);
-    md.setPlot(episode.summary);
-
-    MediaRating mediaRating = new MediaRating("anidb");
-    mediaRating.setRating(episode.rating);
-    mediaRating.setMaxValue(10);
-    md.addRating(mediaRating);
-
-    try {
-      md.setReleaseDate(StrgUtils.parseDate(episode.airdate));
-    }
-    catch (ParseException ignored) {
-    }
-    md.setRuntime(episode.runtime);
-    md.setId(providerInfo.getId(), episode.id);
 
     return md;
   }
@@ -412,13 +341,18 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
           }
 
           if ("airdate".equalsIgnoreCase(episodeInfo.tagName())) {
-            episode.airdate = episodeInfo.text();
+            try {
+              episode.airdate = StrgUtils.parseDate(episodeInfo.text());
+            }
+            catch (Exception ignored) {
+            }
             continue;
           }
 
           if ("rating".equalsIgnoreCase(episodeInfo.tagName())) {
             try {
               episode.rating = Float.parseFloat(episodeInfo.text());
+              episode.votes = Integer.parseInt(episodeInfo.attr("votes"));
             }
             catch (NumberFormatException ignored) {
             }
@@ -500,8 +434,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    List<MediaEpisode> episodes = new ArrayList<>();
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    List<MediaMetadata> episodes = new ArrayList<>();
 
     String id = "";
     String langu = options.getLanguage().getLanguage();
@@ -513,7 +447,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -538,21 +472,31 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // filter out the episode
     for (Episode ep : parseEpisodes(doc)) {
-      MediaEpisode episode = new MediaEpisode(getProviderInfo().getId());
-      episode.title = ep.titles.get(langu);
-      episode.season = ep.season;
-      episode.episode = ep.episode;
-      if (StringUtils.isBlank(episode.title)) {
-        episode.title = ep.titles.get("en");
+      MediaMetadata md = new MediaMetadata(getProviderInfo().getId());
+      md.setTitle(ep.titles.get(langu));
+      md.setSeasonNumber(ep.season);
+      md.setEpisodeNumber(ep.episode);
+
+      if (StringUtils.isBlank(md.getTitle())) {
+        md.setTitle(ep.titles.get("en"));
       }
-      if (StringUtils.isBlank(episode.title)) {
-        episode.title = ep.titles.get("x-jat");
+      if (StringUtils.isBlank(md.getTitle())) {
+        md.setTitle(ep.titles.get("x-jat"));
       }
 
-      episode.plot = ep.summary;
-      episode.rating = ep.rating;
-      episode.firstAired = ep.airdate;
-      episode.ids.put(providerInfo.getId(), ep.id);
+      md.setPlot(ep.summary);
+
+      if (ep.rating > 0) {
+        MediaRating rating = new MediaRating(getProviderInfo().getId());
+        rating.setRating(ep.rating);
+        rating.setVoteCount(ep.votes);
+        rating.setMaxValue(10);
+        md.addRating(rating);
+      }
+      md.setRuntime(ep.runtime);
+      md.setReleaseDate(ep.airdate);
+      md.setId(providerInfo.getId(), ep.id);
+      episodes.add(md);
     }
 
     return episodes;
@@ -647,7 +591,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // get the id from the options
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -694,8 +638,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     int                     episode = -1;
     int                     season  = -1;
     int                     runtime = 0;
-    String                  airdate = "";
+    Date                    airdate = null;
     float                   rating  = 0;
+    int                     votes   = 0;
     String                  summary = "";
     HashMap<String, String> titles  = new HashMap<>();
   }
