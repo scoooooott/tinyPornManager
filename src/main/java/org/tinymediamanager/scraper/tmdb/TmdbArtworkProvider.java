@@ -88,22 +88,14 @@ class TmdbArtworkProvider {
           break;
 
         case TV_EPISODE:
-          int seasonNr = -1;
-          int episodeNr = -1;
+          Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+          Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
-          try {
-            seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-            episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-            if (seasonNr > -1 && episodeNr > -1) {
-              images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
-            }
-          }
-          catch (Exception e) {
-            LOGGER.warn("error parsing season/episode number");
+          if (seasonNr != null && seasonNr > -1 && episodeNr != null && episodeNr > -1) {
+            images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
           }
           break;
       }
-      // movieImages = tmdb.getMovieImages(tmdbId, "").getResults();
     }
 
     if (images == null) {

@@ -29,7 +29,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
@@ -171,7 +170,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
     // lazy initialization of the api
     initAPI();
 

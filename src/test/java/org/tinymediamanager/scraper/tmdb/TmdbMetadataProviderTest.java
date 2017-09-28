@@ -18,7 +18,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -363,7 +362,7 @@ public class TmdbMetadataProviderTest {
   @Test
   public void testEpisodeListing() {
     ITvShowMetadataProvider mp = null;
-    List<MediaEpisode> episodes = null;
+    List<MediaMetadata> episodes = null;
 
     /*
      * Psych (1447)

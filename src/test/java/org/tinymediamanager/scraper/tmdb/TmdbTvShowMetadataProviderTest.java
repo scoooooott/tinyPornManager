@@ -1,19 +1,18 @@
 package org.tinymediamanager.scraper.tmdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
+
+import java.util.List;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 /**
  * @author Nikolas Mavropoylos
@@ -122,16 +121,17 @@ public class TmdbTvShowMetadataProviderTest extends TmdbMetadataProviderBaseTest
     scrapeOptions.setCountry(CountryCode.US);
     scrapeOptions.setId(tvShowMetadataProvider.getProviderInfo().getId(), "456");
 
-    List<MediaEpisode> episodes = tvShowMetadataProvider.getEpisodeList(scrapeOptions);
+    List<MediaMetadata> episodes = tvShowMetadataProvider.getEpisodeList(scrapeOptions);
 
     assertThat(episodes).isNotNull();
     assertThat(episodes.size()).isGreaterThanOrEqualTo(679);
 
 
-    for (MediaEpisode episode : episodes) {
-      if (episode.episode == 12 && episode.season == 2) {
-        assertThat(episode.title).isEqualTo("Επεισόδιο 12");
-        assertThat(episode.plot).isEqualTo("Η φτηνή τηλεόραση των Σίμσονς χαλάει κι ο Χόμερ με την Μαρτζ διηγούνται στα παιδιά τους πώς γνωρίστηκαν.");
+    for (MediaMetadata episode : episodes) {
+      if (episode.getEpisodeNumber() == 12 && episode.getSeasonNumber() == 2) {
+        assertThat(episode.getTitle()).isEqualTo("Επεισόδιο 12");
+        assertThat(episode.getPlot())
+            .isEqualTo("Η φτηνή τηλεόραση των Σίμσονς χαλάει κι ο Χόμερ με την Μαρτζ διηγούνται στα παιδιά τους πώς γνωρίστηκαν.");
       }
     }
 
@@ -147,15 +147,16 @@ public class TmdbTvShowMetadataProviderTest extends TmdbMetadataProviderBaseTest
     scrapeOptions.setCountry(CountryCode.US);
     scrapeOptions.setId(tvShowMetadataProvider.getProviderInfo().getId(), "456");
 
-    List<MediaEpisode> episodes = tvShowMetadataProvider.getEpisodeList(scrapeOptions);
+    List<MediaMetadata> episodes = tvShowMetadataProvider.getEpisodeList(scrapeOptions);
 
     assertThat(episodes).isNotNull();
     assertThat(episodes.size()).isGreaterThanOrEqualTo(679);
 
-    for (MediaEpisode episode : episodes) {
-      if (episode.episode == 12 && episode.season == 2) {
-        assertThat(episode.title).isEqualTo("The Way We Was");
-        assertThat(episode.plot).isEqualTo("Η φτηνή τηλεόραση των Σίμσονς χαλάει κι ο Χόμερ με την Μαρτζ διηγούνται στα παιδιά τους πώς γνωρίστηκαν.");
+    for (MediaMetadata episode : episodes) {
+      if (episode.getEpisodeNumber() == 12 && episode.getSeasonNumber() == 2) {
+        assertThat(episode.getTitle()).isEqualTo("The Way We Was");
+        assertThat(episode.getPlot())
+            .isEqualTo("Η φτηνή τηλεόραση των Σίμσονς χαλάει κι ο Χόμερ με την Μαρτζ διηγούνται στα παιδιά τους πώς γνωρίστηκαν.");
       }
     }
 

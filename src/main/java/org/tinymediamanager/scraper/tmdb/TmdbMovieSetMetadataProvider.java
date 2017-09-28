@@ -170,19 +170,8 @@ class TmdbMovieSetMetadataProvider {
 
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
-    int tmdbId = 0;
-
-    // tmdbId from option - own id
-    try {
-      tmdbId = Integer.parseInt(options.getId(TmdbMetadataProvider.providerInfo.getId()));
-    }
-    catch (NumberFormatException ignored) {
-    }
-
-    // tmdbId from option - legacy id
-    if (tmdbId == 0) {
-      tmdbId = options.getTmdbId();
-    }
+    // tmdbId from option
+    int tmdbId = options.getTmdbId();
 
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");

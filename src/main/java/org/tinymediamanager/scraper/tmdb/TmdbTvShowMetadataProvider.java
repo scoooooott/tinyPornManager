@@ -37,7 +37,6 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -135,9 +134,9 @@ class TmdbTvShowMetadataProvider {
    * @throws Exception
    *           any exception which can be thrown while searching
    */
-  List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getEpisodeList() " + options.toString());
-    List<MediaEpisode> episodes = new ArrayList<>();
+    List<MediaMetadata> episodes = new ArrayList<>();
 
     int tmdbId = 0;
     // tmdbId from searchResult
@@ -167,7 +166,7 @@ class TmdbTvShowMetadataProvider {
         TvShow complete = api.tvService().tv(tmdbId, language).execute().body();
         if (complete != null) {
           for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
-            List<MediaEpisode> seasonEpisodes = new ArrayList<>();
+            List<MediaMetadata> seasonEpisodes = new ArrayList<>();
             TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, season.season_number, language).execute().body();
             if (fullSeason != null) {
               for (TvEpisode episode : ListUtils.nullSafe(fullSeason.episodes)) {
@@ -176,8 +175,7 @@ class TmdbTvShowMetadataProvider {
                   break;
                 }
 
-                MediaEpisode ep = morphhTvEpisodeToMediaEpisode(episode);
-                seasonEpisodes.add(ep);
+                seasonEpisodes.add(morphTvEpisodeToMediaMetadata(episode));
               }
             }
             episodes.addAll(seasonEpisodes);
@@ -395,16 +393,8 @@ class TmdbTvShowMetadataProvider {
     }
 
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
-
-    try {
-      seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-      episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-    }
-    catch (Exception e) {
-      LOGGER.warn("error parsing season/episode number");
-    }
+    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
     // parsed valid episode number/season number?
     String aired = "";
@@ -414,7 +404,8 @@ class TmdbTvShowMetadataProvider {
     }
     // does not work - we cannot scrape w/o season
     // if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
-    if (seasonNr == -1 || episodeNr == -1) {
+    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+      LOGGER.warn("season number/episode number found");
       return md; // not even date set? return
     }
 
@@ -586,7 +577,7 @@ class TmdbTvShowMetadataProvider {
    * @param season
    *          the season tv episodes belong to.
    */
-  private boolean verifyTvEpisodeTitleLanguage(MediaScrapeOptions query, TvSeason season, List<TvEpisode> original, List<MediaEpisode> episodeList) {
+  private boolean verifyTvEpisodeTitleLanguage(MediaScrapeOptions query, TvSeason season, List<TvEpisode> original, List<MediaMetadata> episodeList) {
 
     if (original != null && providerInfo.getConfig().getValueAsBool("titleFallback")) {
 
@@ -613,7 +604,7 @@ class TmdbTvShowMetadataProvider {
             for (TvEpisode originalEpisode : original) {
               if (!StringUtils.isAnyBlank(originalEpisode.name, originalEpisode.overview)
                   && !isEpisodesNameDefault(originalEpisode, originalEpisode.episode_number)) {
-                episodeList.add(morphhTvEpisodeToMediaEpisode(originalEpisode));
+                episodeList.add(morphTvEpisodeToMediaMetadata(originalEpisode));
                 continue;
               }
               for (TvEpisode fallbackEpisode : fallback) {
@@ -628,7 +619,7 @@ class TmdbTvShowMetadataProvider {
                     originalEpisode.overview = fallbackEpisode.overview;
                   }
 
-                  episodeList.add(morphhTvEpisodeToMediaEpisode(originalEpisode));
+                  episodeList.add(morphTvEpisodeToMediaMetadata(originalEpisode));
 
                   break;
                 }
@@ -654,13 +645,8 @@ class TmdbTvShowMetadataProvider {
    *          the original tv episode
    */
   private void verifyTvEpisodeTitleLanguage(BaseTvEpisode episode, MediaScrapeOptions query) {
-    int seasonNr = -1, episodeNr = -1;
-    try {
-      seasonNr = Integer.parseInt(query.getId(MediaMetadata.SEASON_NR));
-      episodeNr = Integer.parseInt(query.getId(MediaMetadata.EPISODE_NR));
-    }
-    catch (Exception ignored) {
-    }
+    Integer seasonNr = query.getIdAsInteger(MediaMetadata.SEASON_NR);
+    Integer episodeNr = query.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
     if (episode != null && (StringUtils.isAnyBlank(episode.name, episode.overview) || isEpisodesNameDefault(episode, episodeNr))
         && providerInfo.getConfig().getValueAsBool("titleFallback")) {
@@ -705,22 +691,24 @@ class TmdbTvShowMetadataProvider {
         && (potentialEpisodeNumber.equals(episode.episode_number) || potentialEpisodeNumber.equals(episodeNr));
   }
 
-  private MediaEpisode morphhTvEpisodeToMediaEpisode(BaseTvEpisode episode) {
-    MediaEpisode ep = new MediaEpisode(TmdbMetadataProvider.providerInfo.getId());
-    ep.episode = episode.episode_number;
-    ep.season = episode.season_number;
-    ep.title = episode.name;
-    ep.plot = episode.overview;
+  private MediaMetadata morphTvEpisodeToMediaMetadata(BaseTvEpisode episode) {
+    MediaMetadata ep = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
+    ep.setId(providerInfo.getId(), episode.id);
+    ep.setEpisodeNumber(episode.episode_number);
+    ep.setSeasonNumber(episode.season_number);
+    ep.setTitle(episode.name);
+    ep.setPlot(episode.overview);
 
-    if (episode.vote_average != null) {
-      ep.rating = episode.vote_average.floatValue();
+    if (episode.vote_average != null && episode.vote_count != null) {
+      MediaRating rating = new MediaRating(providerInfo.getId());
+      rating.setRating(episode.vote_average);
+      rating.setVoteCount(episode.vote_count);
+      rating.setMaxValue(10);
+      ep.addRating(rating);
     }
     if (episode.air_date != null) {
-      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-      ep.firstAired = formatter.format(episode.air_date);
+      ep.setReleaseDate(episode.air_date);
     }
-    ep.voteCount = episode.vote_count;
-    ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
 
     return ep;
   }

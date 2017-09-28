@@ -383,16 +383,7 @@ class TmdbMovieMetadataProvider {
       tmdbId = Integer.parseInt(options.getResult().getId());
     }
 
-    // tmdbId from option - own id
-    if (tmdbId == 0) {
-      try {
-        tmdbId = Integer.parseInt(options.getId(providerInfo.getId()));
-      }
-      catch (NumberFormatException ignored) {
-      }
-    }
-
-    // tmdbId from option - legacy id
+    // tmdbId from option
     if (tmdbId == 0) {
       tmdbId = options.getTmdbId();
     }
