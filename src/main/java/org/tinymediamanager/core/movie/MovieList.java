@@ -49,7 +49,6 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -488,14 +487,7 @@ public class MovieList extends AbstractModelObject {
       options.setLanguage(LocaleUtils.toLocale(langu.name()));
       options.setCountry(movieSettings.getCertificationCountry());
       if (movie != null) {
-        if (Utils.isValidImdbId(movie.getImdbId())) {
-          options.setImdbId(movie.getImdbId());
-          idFound = true;
-        }
-        if (movie.getTmdbId() != 0) {
-          options.setTmdbId(movie.getTmdbId());
-          idFound = true;
-        }
+        options.setIds(movie.getIds());
         options.setQuery(movie.getTitle());
         options.setYear(movie.getYear());
 

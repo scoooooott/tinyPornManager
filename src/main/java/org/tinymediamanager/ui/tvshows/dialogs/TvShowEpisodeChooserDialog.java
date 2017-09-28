@@ -40,9 +40,9 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -83,7 +83,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
   private TvShowEpisode                                    episode;
   private MediaScraper                                     mediaScraper;
-  private MediaEpisode                                     metadata;
+  private MediaMetadata                                    metadata;
   private ObservableElementList<TvShowEpisodeChooserModel> episodeEventList;
   private final List<TvShowEpisodeChooserModel>            selectedEpisodes;
   private final SortedList<TvShowEpisodeChooserModel>      sortedEpisodes;
@@ -98,7 +98,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
     this.episode = ep;
     this.mediaScraper = mediaScraper;
-    this.metadata = new MediaEpisode(mediaScraper.getId());
+    this.metadata = new MediaMetadata(mediaScraper.getId());
     episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()),
         GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
     sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
@@ -221,7 +221,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       if (!selectedEpisodes.isEmpty()) {
         TvShowEpisodeChooserModel episode = selectedEpisodes.get(0);
         if (episode != TvShowEpisodeChooserModel.emptyResult) {
-          metadata = episode.getMediaEpisode();
+          metadata = episode.getMediaMetadata();
         }
 
         setVisible(false);
@@ -234,7 +234,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     }
   }
 
-  public MediaEpisode getMetadata() {
+  public MediaMetadata getMetadata() {
     return metadata;
   }
 
@@ -249,7 +249,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       }
 
       try {
-        for (MediaEpisode episode : ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options)) {
+        for (MediaMetadata episode : ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options)) {
           episodeEventList.add(new TvShowEpisodeChooserModel(mediaScraper, episode));
         }
       }

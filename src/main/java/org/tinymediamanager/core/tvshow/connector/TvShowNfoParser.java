@@ -43,7 +43,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -244,7 +243,7 @@ public class TvShowNfoParser {
       element = getSingleElement(root, "votes");
       if (element != null) {
         try {
-          r.votes = ParserUtils.parseInt(element.ownText()); // replace thousands separator
+          r.votes = MetadataUtil.parseInt(element.ownText()); // replace thousands separator
         }
         catch (Exception ignored) {
         }
@@ -284,7 +283,7 @@ public class TvShowNfoParser {
 
         // maxvalue
         try {
-          r.maxValue = ParserUtils.parseInt(ratingChild.attr("max"));
+          r.maxValue = MetadataUtil.parseInt(ratingChild.attr("max"));
         }
         catch (NumberFormatException ignored) {
         }
@@ -302,7 +301,7 @@ public class TvShowNfoParser {
 
             case "votes":
               try {
-                r.votes = ParserUtils.parseInt(child.ownText());
+                r.votes = MetadataUtil.parseInt(child.ownText());
               }
               catch (Exception ignored) {
               }
@@ -326,7 +325,7 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "year");
     if (element != null) {
       try {
-        year = ParserUtils.parseInt(element.ownText());
+        year = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
       }
@@ -342,7 +341,7 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "top250");
     if (element != null) {
       try {
-        top250 = ParserUtils.parseInt(element.ownText());
+        top250 = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
       }
@@ -394,7 +393,7 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "runtime");
     if (element != null) {
       try {
-        runtime = ParserUtils.parseInt(element.ownText());
+        runtime = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
       }
@@ -553,7 +552,7 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "id");
     if (element != null) {
       try {
-        ids.put(MediaMetadata.TVDB, ParserUtils.parseInt(element.ownText()));
+        ids.put(MediaMetadata.TVDB, MetadataUtil.parseInt(element.ownText()));
       }
       catch (NumberFormatException ignored) {
       }
@@ -562,7 +561,7 @@ public class TvShowNfoParser {
     element = getSingleElement(root, "uniqueid");
     if (element != null) {
       try {
-        ids.put(MediaMetadata.TVDB, ParserUtils.parseInt(element.ownText()));
+        ids.put(MediaMetadata.TVDB, MetadataUtil.parseInt(element.ownText()));
       }
       catch (NumberFormatException ignored) {
       }
@@ -578,7 +577,7 @@ public class TvShowNfoParser {
     element = getSingleElement(root, "tmdbId");
     if (element != null) {
       try {
-        ids.put(MediaMetadata.TMDB, ParserUtils.parseInt(element.ownText()));
+        ids.put(MediaMetadata.TMDB, MetadataUtil.parseInt(element.ownText()));
       }
       catch (NumberFormatException ignored) {
       }
@@ -593,7 +592,7 @@ public class TvShowNfoParser {
         if (StringUtils.isNoneBlank(key.ownText(), value.ownText())) {
           // check whether the id is an integer
           try {
-            ids.put(key.ownText(), ParserUtils.parseInt(value.ownText()));
+            ids.put(key.ownText(), MetadataUtil.parseInt(value.ownText()));
           }
           catch (Exception e) {
             // store as string
@@ -610,7 +609,7 @@ public class TvShowNfoParser {
         if (StringUtils.isNoneBlank(entry.tagName(), entry.ownText())) {
           // check whether the id is an integer
           try {
-            ids.put(entry.tagName(), ParserUtils.parseInt(entry.ownText()));
+            ids.put(entry.tagName(), MetadataUtil.parseInt(entry.ownText()));
           }
           catch (Exception e) {
             // store as string
@@ -669,7 +668,7 @@ public class TvShowNfoParser {
       try {
         watched = Boolean.parseBoolean(element.ownText());
         element = getSingleElement(root, "playcount");
-        playcount = ParserUtils.parseInt(element.ownText());
+        playcount = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
       }

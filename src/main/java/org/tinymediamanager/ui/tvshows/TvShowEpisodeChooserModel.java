@@ -18,8 +18,8 @@ package org.tinymediamanager.ui.tvshows;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -32,20 +32,20 @@ public class TvShowEpisodeChooserModel extends AbstractModelObject {
   public static final TvShowEpisodeChooserModel emptyResult = new TvShowEpisodeChooserModel();
 
   private MediaScraper                          mediaScraper;
-  private MediaEpisode                          mediaEpisode;
+  private MediaMetadata                         mediaMetadata;
   private String                                title       = "";
   private String                                overview    = "";
   private int                                   season      = -1;
   private int                                   episode     = -1;
 
-  public TvShowEpisodeChooserModel(MediaScraper mediaScraper, MediaEpisode episode) {
+  public TvShowEpisodeChooserModel(MediaScraper mediaScraper, MediaMetadata episode) {
     this.mediaScraper = mediaScraper;
-    this.mediaEpisode = episode;
+    this.mediaMetadata = episode;
 
-    setTitle(episode.title);
-    setOverview(mediaEpisode.plot);
-    setSeason(mediaEpisode.season);
-    setEpisode(mediaEpisode.episode);
+    setTitle(episode.getTitle());
+    setOverview(mediaMetadata.getPlot());
+    setSeason(mediaMetadata.getSeasonNumber());
+    setEpisode(mediaMetadata.getEpisodeNumber());
   }
 
   private TvShowEpisodeChooserModel() {
@@ -92,7 +92,7 @@ public class TvShowEpisodeChooserModel extends AbstractModelObject {
     return episode;
   }
 
-  public MediaEpisode getMediaEpisode() {
-    return mediaEpisode;
+  public MediaMetadata getMediaMetadata() {
+    return mediaMetadata;
   }
 }

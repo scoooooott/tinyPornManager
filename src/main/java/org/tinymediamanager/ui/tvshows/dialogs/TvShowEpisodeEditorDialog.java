@@ -81,7 +81,6 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -608,17 +607,47 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, scraper);
       dialog.setLocationRelativeTo(TvShowEpisodeEditorDialog.this);
       dialog.setVisible(true);
-      MediaEpisode metadata = dialog.getMetadata();
-      if (metadata != null && StringUtils.isNotBlank(metadata.title)) {
-        tfTitle.setText(metadata.title);
-        taPlot.setText(metadata.plot);
-        spEpisode.setValue(metadata.episode);
-        spSeason.setValue(metadata.season);
-        for (MediaArtwork ma : metadata.artwork) {
-          if (ma.getType() == MediaArtworkType.THUMB) {
-            lblThumb.setImageUrl(ma.getDefaultUrl());
-            break;
+      MediaMetadata metadata = dialog.getMetadata();
+      if (metadata != null && metadata.getSeasonNumber() > 0 && metadata.getEpisodeNumber() > 0) {
+        tfTitle.setText(metadata.getTitle());
+        taPlot.setText(metadata.getPlot());
+        spEpisode.setValue(metadata.getEpisodeNumber());
+        spSeason.setValue(metadata.getSeasonNumber());
+        spDvdEpisode.setValue(metadata.getDvdEpisodeNumber());
+        spDvdSeason.setValue(metadata.getDvdSeasonNumber());
+
+        guests.clear();
+        writers.clear();
+        directors.clear();
+
+        for (MediaCastMember member : metadata.getCastMembers()) {
+          switch (member.getType()) {
+            case ACTOR:
+              Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
+              actor.setThumbUrl(member.getImageUrl());
+              guests.add(actor);
+              break;
+
+            case DIRECTOR:
+              Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
+              director.setThumbUrl(member.getImageUrl());
+              directors.add(director);
+              break;
+
+            case WRITER:
+              Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
+              writer.setThumbUrl(member.getImageUrl());
+              writers.add(writer);
+              break;
+
+            default:
+              break;
           }
+        }
+
+        for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+          lblThumb.setImageUrl(ma.getDefaultUrl());
+          break;
         }
       }
     }

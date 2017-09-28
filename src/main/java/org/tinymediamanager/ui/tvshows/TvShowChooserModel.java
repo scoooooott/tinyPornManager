@@ -40,7 +40,6 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
@@ -202,16 +201,20 @@ public class TvShowChooserModel extends AbstractModelObject {
     }
 
     try {
-      List<MediaEpisode> mediaEpisodes = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options);
-      for (MediaEpisode me : mediaEpisodes) {
+      List<MediaMetadata> mediaEpisodes = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options);
+      for (MediaMetadata me : mediaEpisodes) {
         TvShowEpisode ep = new TvShowEpisode();
-        ep.setEpisode(me.episode);
-        ep.setSeason(me.season);
-        ep.setTitle(me.title);
+        ep.setEpisode(me.getEpisodeNumber());
+        ep.setSeason(me.getSeasonNumber());
+        ep.setDvdEpisode(me.getDvdEpisodeNumber());
+        ep.setDvdSeason(me.getDvdSeasonNumber());
+        ep.setTitle(me.getTitle());
+        ep.setOriginalTitle(me.getOriginalTitle());
+        ep.setPlot(me.getPlot());
         episodes.add(ep);
       }
     }
-    catch (Exception e) {
+    catch (Exception ignored) {
     }
     return episodes;
   }
