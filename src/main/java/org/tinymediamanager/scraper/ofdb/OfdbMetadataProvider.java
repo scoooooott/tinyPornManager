@@ -101,21 +101,22 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
 
     String detailUrl = "";
 
-    // case a) and c)
-    if (StringUtils.isNotBlank(options.getId(getProviderInfo().getId())) || options.getResult() != null) {
-
-      if (StringUtils.isNotBlank(options.getId(getProviderInfo().getId()))) {
-        detailUrl = "http://www.ofdb.de/view.php?page=film&fid=" + options.getId(getProviderInfo().getId());
-      }
-      else {
-        detailUrl = options.getResult().getUrl();
-      }
+    // case a)
+    String id = "";
+    if (options.getResult() != null) {
+      id = options.getResult().getId();
+    }
+    if (StringUtils.isBlank(id)) {
+      id = options.getIdAsString(getProviderInfo().getId());
+    }
+    if (StringUtils.isNotBlank(id)) {
+      detailUrl = "http://www.ofdb.de/view.php?page=film&fid=" + id;
     }
 
     // case b)
-    if (options.getResult() == null && StringUtils.isNotBlank(options.getId(MediaMetadata.IMDB))) {
+    if (options.getResult() == null && StringUtils.isNotBlank(options.getIdAsString(MediaMetadata.IMDB))) {
       MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE);
-      searchOptions.setImdbId(options.getId(MediaMetadata.IMDB));
+      searchOptions.setImdbId(options.getIdAsString(MediaMetadata.IMDB));
       try {
         List<MediaSearchResult> results = search(searchOptions);
         if (results != null && !results.isEmpty()) {
@@ -126,6 +127,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       catch (Exception e) {
         LOGGER.warn("failed IMDB search: " + e.getMessage());
       }
+    }
+
+    // case c)
+    if (options.getResult() != null) {
+      detailUrl = options.getResult().getUrl();
     }
 
     // we can only work further if we got a search result on ofdb.de
