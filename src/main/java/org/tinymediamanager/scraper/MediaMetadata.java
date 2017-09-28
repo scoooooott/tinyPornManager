@@ -44,61 +44,60 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class MediaMetadata {
   // some well known ids
-  public static final String      IMDB                 = "imdb";
-  public static final String      TMDB                 = "tmdb";
-  public static final String      TVDB                 = "tvdb";
-  public static final String      TMDB_SET             = "tmdbSet";
+  public static final String            IMDB                 = "imdb";
+  public static final String            TMDB                 = "tmdb";
+  public static final String            TVDB                 = "tvdb";
+  public static final String            TMDB_SET             = "tmdbSet";
 
   // some meta ids for TV show scraping
-  public static final String      EPISODE_NR           = "episodeNr";
-  public static final String      SEASON_NR            = "seasonNr";
-  public static final String      EPISODE_NR_DVD       = "dvdEpisodeNr";
-  public static final String      SEASON_NR_DVD        = "dvdSeasonNr";
+  public static final String            EPISODE_NR           = "episodeNr";
+  public static final String            SEASON_NR            = "seasonNr";
+  public static final String            EPISODE_NR_DVD       = "dvdEpisodeNr";
+  public static final String            SEASON_NR_DVD        = "dvdSeasonNr";
 
-  private final String            providerId;
+  private final String                  providerId;
 
   // this map contains all set ids
-  private HashMap<String, Object> ids                  = new HashMap<>();
+  private final HashMap<String, Object> ids                  = new HashMap<>();
 
   // general media entity
-  private String                  title                = "";
-  private String                  originalTitle        = "";
-  private String                  originalLanguage     = "";
-  private int                     year                 = 0;
-  private Date                    releaseDate          = null;
-  private String                  plot                 = "";
-  private String                  tagline              = "";
-  private int                     runtime              = 0;
-  private int                     voteCount            = 0;
+  private String                        title                = "";
+  private String                        originalTitle        = "";
+  private String                        originalLanguage     = "";
+  private int                           year                 = 0;
+  private Date                          releaseDate          = null;
+  private String                        plot                 = "";
+  private String                        tagline              = "";
+  private int                           runtime              = 0;
 
   // movie
-  private String                  collectionName       = "";
-  private int                     top250               = 0;
+  private String                        collectionName       = "";
+  private int                           top250               = 0;
 
   // tv show
-  private int                     episodeNumber        = -1;
-  private int                     seasonNumber         = -1;
-  private int                     dvdEpisodeNumber     = -1;
-  private int                     dvdSeasonNumber      = -1;
-  private int                     displayEpisodeNumber = -1;
-  private int                     displaySeasonNumber  = -1;
-  private int                     absoluteNumber       = -1;
-  private String                  status               = "";
+  private int                           episodeNumber        = -1;
+  private int                           seasonNumber         = -1;
+  private int                           dvdEpisodeNumber     = -1;
+  private int                           dvdSeasonNumber      = -1;
+  private int                           displayEpisodeNumber = -1;
+  private int                           displaySeasonNumber  = -1;
+  private int                           absoluteNumber       = -1;
+  private String                        status               = "";
 
   // multi value
-  private List<MediaRating>       ratings              = new ArrayList<>();
-  private List<MediaCastMember>   castMembers          = new ArrayList<>();
-  private List<MediaArtwork>      artwork              = new ArrayList<>();
-  private List<MediaGenres>       genres               = new ArrayList<>();
-  private List<Certification>     certifications       = new ArrayList<>();
-  private List<String>            productionCompanies  = new ArrayList<>();
-  private List<String>            spokenLanguages      = new ArrayList<>();
-  private List<String>            countries            = new ArrayList<>();
-  private List<MediaTrailer>      trailers             = new ArrayList<>();
-  private List<MediaMetadata>     subItems             = new ArrayList<>();
-  private List<String>            tags                 = new ArrayList<>();
+  private final List<MediaRating>       ratings              = new ArrayList<>();
+  private final List<MediaCastMember>   castMembers          = new ArrayList<>();
+  private final List<MediaArtwork>      artwork              = new ArrayList<>();
+  private final List<MediaGenres>       genres               = new ArrayList<>();
+  private final List<Certification>     certifications       = new ArrayList<>();
+  private final List<String>            productionCompanies  = new ArrayList<>();
+  private final List<String>            spokenLanguages      = new ArrayList<>();
+  private final List<String>            countries            = new ArrayList<>();
+  private final List<MediaTrailer>      trailers             = new ArrayList<>();
+  private final List<MediaMetadata>     subItems             = new ArrayList<>();
+  private final List<String>            tags                 = new ArrayList<>();
 
-  private HashMap<String, Object> extraData            = new HashMap<>();
+  private HashMap<String, Object>       extraData            = new HashMap<>();
 
   /**
    * Instantiates a new media metadata for the given provider.
@@ -367,12 +366,10 @@ public class MediaMetadata {
    */
   private boolean containsCastMember(MediaCastMember cm) {
     boolean found = false;
-    if (castMembers != null) {
-      for (MediaCastMember m : castMembers) {
-        if (m.getType() == cm.getType() && (m.getName() != null && m.getName().equals(cm.getName()))) {
-          found = true;
-          break;
-        }
+    for (MediaCastMember m : castMembers) {
+      if (m.getType() == cm.getType() && (m.getName() != null && m.getName().equals(cm.getName()))) {
+        found = true;
+        break;
       }
     }
 

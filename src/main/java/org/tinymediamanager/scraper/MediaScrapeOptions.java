@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -35,17 +36,15 @@ import org.tinymediamanager.scraper.entities.MediaType;
  * 
  */
 public class MediaScrapeOptions {
-  private MediaSearchResult       result;
-  private MediaMetadata           metadata;
-  private HashMap<String, String> ids         = new HashMap<>();
-  private MediaType               type;
-  private MediaArtworkType        artworkType = MediaArtworkType.ALL;
-  private Locale                  language    = Locale.getDefault();
-  private CountryCode             country     = CountryCode.US;
-  private FanartSizes             fanartSize  = FanartSizes.MEDIUM;  // default; will be overwritten by tmm
-                                                                     // settings
-  private PosterSizes             posterSize  = PosterSizes.MEDIUM;  // default; will be overwritten by tmm
-                                                                     // settings
+  private MediaSearchResult   result;
+  private MediaMetadata       metadata;
+  private Map<String, Object> ids         = new HashMap<>();
+  private MediaType           type;
+  private MediaArtworkType    artworkType = MediaArtworkType.ALL;
+  private Locale              language    = Locale.getDefault();
+  private CountryCode         country     = CountryCode.getDefault();
+  private FanartSizes         fanartSize  = FanartSizes.MEDIUM;      // default; will be overwritten by tmm settings
+  private PosterSizes         posterSize  = PosterSizes.MEDIUM;      // default; will be overwritten by tmm settings
 
   public MediaScrapeOptions(MediaType type) {
     this.type = type;
@@ -71,14 +70,43 @@ public class MediaScrapeOptions {
   }
 
   /**
-   * Get the id for the given provider id
+   * Get the id for the given provider id as String
    * 
    * @param providerId
    *          the provider Id
-   * @return the id or null
+   * @return the id as String or null
    */
-  public String getId(String providerId) {
-    return ids.get(providerId);
+  public String getIdAsString(String providerId) {
+    Object id = ids.get(providerId);
+    if (id != null) {
+      return String.valueOf(id);
+    }
+
+    return null;
+  }
+
+  /**
+   * Get the id for the given provider id as Integer
+   *
+   * @param providerId
+   *          the provider Id
+   * @return the id as Integer or null
+   */
+  public Integer getIdAsInteger(String providerId) {
+    Object id = ids.get(providerId);
+    if (id != null) {
+      if (id instanceof Integer) {
+        return (Integer) id;
+      }
+      if (id instanceof String)
+        try {
+          return Integer.parseInt((String) id);
+        }
+        catch (Exception ignored) {
+        }
+    }
+
+    return null;
   }
 
   /**
@@ -112,25 +140,18 @@ public class MediaScrapeOptions {
 
   /**
    * Get the tmdb id - just a convenience method to get the Id for the provider tmdb
-   * 
+   *
    * @return the tmdbid or 0
    */
   public int getTmdbId() {
-    int id = 0;
-    try {
-      id = Integer.parseInt(ids.get(MediaMetadata.TMDB));
+    Integer id = getIdAsInteger(MediaMetadata.TMDB);
+    if (id == null || id == 0) {
+      id = getIdAsInteger("tmdbId");
     }
-    catch (Exception ignored) {
+    if (id != null) {
+      return id;
     }
-    if (id == 0) {
-      try {
-        // legacy
-        id = Integer.parseInt(ids.get("tmdbId"));
-      }
-      catch (Exception ignored) {
-      }
-    }
-    return id;
+    return 0;
   }
 
   /**
@@ -150,7 +171,7 @@ public class MediaScrapeOptions {
    *          the tmdb id
    */
   public void setTmdbId(int tmdbId) {
-    ids.put(MediaMetadata.TMDB, String.valueOf(tmdbId));
+    ids.put(MediaMetadata.TMDB, tmdbId);
   }
 
   /**

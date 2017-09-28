@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -29,14 +31,13 @@ import org.tinymediamanager.scraper.entities.MediaType;
  * @since 2.0
  */
 public class MediaSearchOptions {
-  protected MediaType   type;
+  protected MediaType             type;
 
-  protected String      query    = "";
-  protected int         year     = 0;
-  protected String      imdbId   = "";
-  protected int         tmdbId   = 0;
-  protected Locale      language = Locale.getDefault();
-  protected CountryCode country  = CountryCode.getDefault();
+  private String                  query    = "";
+  private int                     year     = 0;
+  private HashMap<String, Object> ids      = new HashMap<>();
+  private Locale                  language = Locale.getDefault();
+  private CountryCode             country  = CountryCode.getDefault();
 
   public MediaSearchOptions(MediaType type) {
     this.type = type;
@@ -95,41 +96,116 @@ public class MediaSearchOptions {
   }
 
   /**
-   * Get the IMDB Id
+   * Get the id for the given provider id as String
    *
-   * @return the IMDB Id
+   * @param providerId
+   *          the provider Id
+   * @return the id as String or null
+   */
+  public String getIdAsString(String providerId) {
+    Object id = ids.get(providerId);
+    if (id != null) {
+      return String.valueOf(id);
+    }
+
+    return null;
+  }
+
+  /**
+   * Get the id for the given provider id as Integer
+   *
+   * @param providerId
+   *          the provider Id
+   * @return the id as Integer or null
+   */
+  public Integer getIdAsInteger(String providerId) {
+    Object id = ids.get(providerId);
+    if (id != null) {
+      if (id instanceof Integer) {
+        return (Integer) id;
+      }
+      if (id instanceof String)
+        try {
+          return Integer.parseInt((String) id);
+        }
+        catch (Exception ignored) {
+        }
+    }
+
+    return null;
+  }
+
+  /**
+   * Set an media id for a provider id
+   *
+   * @param providerId
+   *          the provider id
+   * @param id
+   *          the media id
+   */
+  public void setId(String providerId, String id) {
+    ids.put(providerId, id);
+  }
+
+  /**
+   * set die provider ids for the search
+   */
+  public void setIds(Map<String, Object> newIds) {
+    ids.clear();
+    ids.putAll(newIds);
+  }
+
+  /**
+   * Get the imdb id - just a convenience method to get the Id for the provider imdb
+   *
+   * @return the imdbid or an empty string
    */
   public String getImdbId() {
-    return imdbId;
+    Object obj = ids.get(MediaMetadata.IMDB);
+    if (obj == null) {
+      // legacy
+      obj = ids.get("imdbId");
+      if (obj == null) {
+        return "";
+      }
+    }
+    return obj.toString();
   }
 
   /**
-   * Set the IMDB Id
+   * Get the tmdb id - just a convenience method to get the Id for the provider tmdb
    *
-   * @param imdbId
-   *          the IMDB Id
-   */
-  public void setImdbId(String imdbId) {
-    this.imdbId = imdbId;
-  }
-
-  /**
-   * Get the TMDB Id
-   *
-   * @return the TMDB Id
+   * @return the tmdbid or 0
    */
   public int getTmdbId() {
-    return tmdbId;
+    Integer id = getIdAsInteger(MediaMetadata.TMDB);
+    if (id == null || id == 0) {
+      id = getIdAsInteger("tmdbId");
+    }
+    if (id != null) {
+      return id;
+    }
+    return 0;
   }
 
   /**
-   * Set the TMDB Id
+   * Set the imdb id - just a convenience method to set the Id for the provider imdb
+   *
+   * @param imdbId
+   *          the imdb id
+   */
+  public void setImdbId(String imdbId) {
+    ids.put(MediaMetadata.IMDB, imdbId);
+  }
+
+  /**
+   * Set the itdb id - just a convenience method to set the Id for the provider tmdb
    *
    * @param tmdbId
-   *          the TMDB Id
+   *          the tmdb id
    */
   public void setTmdbId(int tmdbId) {
-    this.tmdbId = tmdbId;
+    ids.put(MediaMetadata.TMDB, tmdbId);
   }
 
   /**

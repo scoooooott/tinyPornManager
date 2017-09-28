@@ -21,7 +21,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 
 /**
  * The interface ITvShowMetadataProvider. To provide metadata for TV shows/episodes
@@ -62,5 +61,5 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * @return a list of episodes
    * @throws Exception
    */
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception;
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception;
 }
