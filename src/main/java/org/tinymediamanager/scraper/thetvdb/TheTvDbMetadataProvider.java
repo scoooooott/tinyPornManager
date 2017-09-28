@@ -44,7 +44,6 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -244,12 +243,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     // do we have the id in the alternate form?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId("tvdb");
+      id = options.getIdAsString("tvdb");
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -353,12 +352,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     // still no ID? try the old one
     if (StringUtils.isEmpty(id)) {
-      id = options.getId("tvdb");
+      id = options.getIdAsString("tvdb");
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -366,34 +365,36 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
+    Integer seasonNr = null;
+    Integer episodeNr = null;
 
     try {
-      String option = options.getId(MediaMetadata.SEASON_NR);
-      if (option != null) {
-        seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-        episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-      }
-      else {
-        seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR_DVD));
-        episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR_DVD));
+      seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+      episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+
+      if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+        seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR_DVD);
+        episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR_DVD);
         useDvdOrder = true;
       }
     }
-    catch (Exception e) {
+    catch (
+
+    Exception e) {
       LOGGER.warn("error parsing season/episode number");
     }
-    System.out.println("search for " + seasonNr + " " + episodeNr);
 
     String aired = "";
     if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
     }
-    if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
+    if (aired.isEmpty() && (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1)) {
+      LOGGER.warn("no aired date/season number/episode number found");
       return md; // not even date set? return
     }
+
+    System.out.println("search for " + seasonNr + " " + episodeNr);
 
     List<Episode> episodes = new ArrayList<>();
     synchronized (tvdb) {
@@ -503,12 +504,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // get the id from the options
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     // do we have the id in the alternate form?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId("tvdb");
+      id = options.getIdAsString("tvdb");
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -620,9 +621,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getting episode list: " + options);
-    List<MediaEpisode> episodes = new ArrayList<>();
+    List<MediaMetadata> episodes = new ArrayList<>();
     String id = "";
 
     // id from result
@@ -632,12 +633,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId(providerInfo.getId());
+      id = options.getIdAsString(providerInfo.getId());
     }
 
     // do we have the id in the alternate form?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId("tvdb");
+      id = options.getIdAsString("tvdb");
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -652,44 +653,56 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     for (Episode ep : eps) {
-      MediaEpisode episode = new MediaEpisode(providerInfo.getId());
-      episode.season = TvUtils.getSeasonNumber(ep.getSeasonNumber());
-      episode.episode = TvUtils.getEpisodeNumber(ep.getEpisodeNumber());
-      episode.dvdSeason = TvUtils.getSeasonNumber(ep.getDvdSeason());
-      episode.dvdEpisode = TvUtils.getEpisodeNumber(ep.getDvdEpisodeNumber());
+      MediaMetadata episode = new MediaMetadata(providerInfo.getId());
 
-      episode.title = ep.getEpisodeName();
-      episode.plot = ep.getOverview();
-      episode.rating = NumberUtils.toFloat(ep.getRating());
-      episode.voteCount = TvUtils.parseInt(ep.getRatingCount());
-      episode.firstAired = ep.getFirstAired();
-      episode.ids.put(providerInfo.getId(), ep.getId());
+      episode.setId(providerInfo.getId(), ep.getId());
+      episode.setSeasonNumber(TvUtils.getSeasonNumber(ep.getSeasonNumber()));
+      episode.setEpisodeNumber(TvUtils.getEpisodeNumber(ep.getEpisodeNumber()));
+      episode.setDvdSeasonNumber(TvUtils.getSeasonNumber(ep.getDvdSeason()));
+      episode.setDvdEpisodeNumber(TvUtils.getEpisodeNumber(ep.getDvdEpisodeNumber()));
+
+      episode.setTitle(ep.getEpisodeName());
+      episode.setPlot(ep.getOverview());
+
+      if (ep.getRating() != null) {
+        MediaRating rating = new MediaRating(providerInfo.getId());
+        rating.setRating(NumberUtils.toFloat(ep.getRating()));
+        rating.setVoteCount(TvUtils.parseInt(ep.getRatingCount()));
+        rating.setMaxValue(10);
+        episode.addRating(rating);
+      }
+
+      try {
+        episode.setReleaseDate(StrgUtils.parseDate(ep.getFirstAired()));
+      }
+      catch (Exception ignored) {
+      }
 
       // directors
       for (String director : ep.getDirectors()) {
         MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
         cm.setName(director);
-        episode.castMembers.add(cm);
+        episode.addCastMember(cm);
       }
 
       // writers
       for (String writer : ep.getWriters()) {
         MediaCastMember cm = new MediaCastMember(CastType.WRITER);
         cm.setName(writer);
-        episode.castMembers.add(cm);
+        episode.addCastMember(cm);
       }
 
       // actors (guests?)
       for (String guest : ep.getGuestStars()) {
         MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
         cm.setName(guest);
-        episode.castMembers.add(cm);
+        episode.addCastMember(cm);
       }
 
       // Thumb
       MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
       ma.setDefaultUrl(ep.getFilename());
-      episode.artwork.add(ma);
+      episode.addMediaArt(ma);
 
       episodes.add(episode);
     }
