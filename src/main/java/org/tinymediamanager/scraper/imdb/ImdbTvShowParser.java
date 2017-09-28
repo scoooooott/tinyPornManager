@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
@@ -164,28 +163,20 @@ public class ImdbTvShowParser extends ImdbParser {
     }
 
     // get episode number and season number
-    int seasonNr = -1;
-    int episodeNr = -1;
+    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
+    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
 
-    try {
-      seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
-      episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
-    }
-    catch (Exception e) {
-      LOGGER.warn("error parsing season/episode number");
-    }
-
-    if (seasonNr == -1 || episodeNr == -1) {
+    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
       return md;
     }
 
     // first get the base episode metadata which can be gathered via
     // getEpisodeList()
-    List<MediaEpisode> episodes = getEpisodeList(options);
+    List<MediaMetadata> episodes = getEpisodeList(options);
 
-    MediaEpisode wantedEpisode = null;
-    for (MediaEpisode episode : episodes) {
-      if (episode.season == seasonNr && episode.episode == episodeNr) {
+    MediaMetadata wantedEpisode = null;
+    for (MediaMetadata episode : episodes) {
+      if (episode.getSeasonNumber() == seasonNr && episode.getEpisodeNumber() == episodeNr) {
         wantedEpisode = episode;
         break;
       }
@@ -212,18 +203,14 @@ public class ImdbTvShowParser extends ImdbParser {
       }
 
       // now we match the corresponding result from the episode parsing list
-      if (anchors.get(0).attr("href").endsWith(wantedEpisode.ids.get(providerInfo.getId()) + "/")) {
-        md.setId(providerInfo.getId(), wantedEpisode.ids.get(providerInfo.getId()));
-        md.setEpisodeNumber(wantedEpisode.episode);
-        md.setSeasonNumber(wantedEpisode.season);
-        md.setTitle(wantedEpisode.title);
+      if (anchors.get(0).attr("href").endsWith(wantedEpisode.getId(providerInfo.getId()) + "/")) {
+        md.setId(providerInfo.getId(), wantedEpisode.getId(providerInfo.getId()));
+        md.setEpisodeNumber(wantedEpisode.getEpisodeNumber());
+        md.setSeasonNumber(wantedEpisode.getSeasonNumber());
+        md.setTitle(wantedEpisode.getTitle());
         md.setPlot("");
 
-        MediaRating rating = new MediaRating("imdb");
-        rating.setRating(wantedEpisode.rating);
-        rating.setMaxValue(10);
-        rating.setVoteCount(wantedEpisode.voteCount);
-        md.addRating(rating);
+        md.setRatings(wantedEpisode.getRatings());
 
         // parse release date
         Element releaseDate = h4.nextElementSibling();
@@ -274,9 +261,8 @@ public class ImdbTvShowParser extends ImdbParser {
     }
 
     // last but not least get the directors/writers
-    if (wantedEpisode.ids.get(providerInfo.getId()) instanceof String
-        && StringUtils.isNotBlank((String) wantedEpisode.ids.get(providerInfo.getId()))) {
-      String epId = (String) wantedEpisode.ids.get(providerInfo.getId());
+    if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
+      String epId = (String) wantedEpisode.getId(providerInfo.getId());
       url = new Url(imdbSite.getSite() + "/title/" + epId);
       url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
@@ -316,9 +302,10 @@ public class ImdbTvShowParser extends ImdbParser {
    *          the scrape options
    * @return the episode list
    * @throws Exception
+   *           any exception which has not been catched
    */
-  List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    List<MediaEpisode> episodes = new ArrayList<>();
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    List<MediaMetadata> episodes = new ArrayList<>();
 
     // parse the episodes from the ratings overview page (e.g.
     // http://www.imdb.com/title/tt0491738/epdate )
@@ -341,15 +328,15 @@ public class ImdbTvShowParser extends ImdbParser {
         if (matcher.find() && matcher.groupCount() >= 2) {
           try {
             // we found a row containing episode data
-            MediaEpisode ep = new MediaEpisode(providerInfo.getId());
+            MediaMetadata ep = new MediaMetadata(providerInfo.getId());
 
             // parse season and ep number
-            ep.season = Integer.parseInt(matcher.group(1));
-            ep.episode = Integer.parseInt(matcher.group(2));
+            ep.setSeasonNumber(Integer.parseInt(matcher.group(1)));
+            ep.setEpisodeNumber(Integer.parseInt(matcher.group(2)));
 
             // get ep title and id
             Elements anchors = row.getElementsByAttributeValueStarting("href", "/title/tt");
-            ep.title = anchors.get(0).text();
+            ep.setTitle(anchors.get(0).text());
 
             String id = "";
             Matcher idMatcher = IMDB_ID_PATTERN.matcher(anchors.get(0).attr("href"));
@@ -360,18 +347,18 @@ public class ImdbTvShowParser extends ImdbParser {
             }
 
             if (StringUtils.isNotBlank(id)) {
-              ep.ids.put(providerInfo.getId(), id);
+              ep.setId(providerInfo.getId(), id);
             }
 
             Elements cols = row.getElementsByTag("td");
             if (cols != null && cols.size() >= 4) {
               try {
+                MediaRating rating = new MediaRating(providerInfo.getId());
                 // rating is the third column
-                ep.rating = Float.parseFloat(cols.get(2).ownText());
+                rating.setRating(Float.parseFloat(cols.get(2).ownText()));
                 // vote count is the fourth column
-                // cleanup notation
-                String voteCount = cols.get(3).ownText().replace(".", "").replace(",", "");
-                ep.voteCount = Integer.parseInt(voteCount);
+                rating.setVoteCount(MetadataUtil.parseInt(cols.get(3).ownText()));
+                ep.addRating(rating);
               }
               catch (Exception ignored) {
               }

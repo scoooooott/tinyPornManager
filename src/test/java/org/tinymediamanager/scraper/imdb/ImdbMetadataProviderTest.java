@@ -24,7 +24,6 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
@@ -156,7 +155,7 @@ public class ImdbMetadataProviderTest {
   @Test
   public void testEpisodeListing() {
     ImdbMetadataProvider mp = null;
-    List<MediaEpisode> episodes = null;
+    List<MediaMetadata> episodes = null;
 
     /*
      * test on akas.imdb.com - Psych (tt0491738)

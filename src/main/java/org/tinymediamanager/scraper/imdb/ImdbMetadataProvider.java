@@ -30,7 +30,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -121,7 +120,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getEpisodeList() " + options.toString());
     return new ImdbTvShowParser(imdbSite).getEpisodeList(options);
   }
