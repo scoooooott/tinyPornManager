@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.components.table;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,12 +77,9 @@ public class TmmTableColumnSelectionPopup {
       // checkBox.setEnabled(etc.isHidingAllowed());
 
       final JCheckBoxMenuItem checkBoxMenuItem = checkBox;
-      checkBox.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          tmmTableColumnModel.setColumnHidden(etc, !checkBoxMenuItem.isSelected());
-          // table.updateColumnSelectionMouseListener();
-        }
+      checkBox.addActionListener(evt -> {
+        tmmTableColumnModel.setColumnHidden(etc, !checkBoxMenuItem.isSelected());
+        // table.updateColumnSelectionMouseListener();
       });
 
       if (!displayNames.contains(columnName)) {

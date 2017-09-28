@@ -98,6 +98,7 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
   private final static String                  TV_SHOW_CONNECTOR              = "tvShowConnector";
+  private final static String                  TV_SHOW_TABLE_HIDDEN_COLUMNS   = "tvShowTableHiddenColumns";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -160,6 +161,7 @@ public class TvShowSettings extends AbstractSettings {
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
+  private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<String>());
 
   private String                               scraper                        = Constants.TVDB;
   private boolean                              scrapeBestImage                = true;
@@ -522,6 +524,18 @@ public class TvShowSettings extends AbstractSettings {
     LanguageStyle oldValue = this.subtitleLanguageStyle;
     this.subtitleLanguageStyle = newValue;
     firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
+  }
+
+  public void setTvShowTableHiddenColumns(List<String> hiddenColumns) {
+    tvShowTableHiddenColumns.clear();
+    tvShowTableHiddenColumns.addAll(hiddenColumns);
+    firePropertyChange(TV_SHOW_TABLE_HIDDEN_COLUMNS, null, tvShowTableHiddenColumns);
+  }
+
+  @XmlElementWrapper(name = TV_SHOW_TABLE_HIDDEN_COLUMNS)
+  @XmlElement(name = ENTRY)
+  public List<String> getTvShowTableHiddenColumns() {
+    return tvShowTableHiddenColumns;
   }
 
   public void setUiFilters(List<UIFilters> filters) {

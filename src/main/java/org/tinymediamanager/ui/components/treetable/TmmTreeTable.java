@@ -369,7 +369,6 @@ public class TmmTreeTable extends TmmTable {
           }
           int chStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth()) + handleWidth;
           int chEnd = chStart + chWidth;
-          // TODO: Translate x/y to position of column if non-0
 
           chBoxPosition = (me.getX() > ins.left && me.getX() >= chStart && me.getX() <= chEnd);
         }

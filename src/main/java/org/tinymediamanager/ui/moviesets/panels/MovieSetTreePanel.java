@@ -16,6 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tinymediamanager.core.AbstractSettings;
@@ -84,6 +88,42 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
         }
       }
     };
+
+    // restore hidden columns
+    tree.readHiddenColumns(MovieModuleManager.SETTINGS.getMovieSetTableHiddenColumns());
+    tree.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
+      @Override
+      public void columnAdded(TableColumnModelEvent e) {
+        writeSettings();
+      }
+
+      @Override
+      public void columnRemoved(TableColumnModelEvent e) {
+        writeSettings();
+      }
+
+      @Override
+      public void columnMoved(TableColumnModelEvent e) {
+      }
+
+      @Override
+      public void columnMarginChanged(ChangeEvent e) {
+
+      }
+
+      @Override
+      public void columnSelectionChanged(ListSelectionEvent e) {
+      }
+
+      private void writeSettings() {
+        tree.writeHiddenColumns(cols -> {
+          MovieModuleManager.SETTINGS.setMovieSetTableHiddenColumns(cols);
+          MovieModuleManager.SETTINGS.saveSettings();
+        });
+      }
+    });
+    tree.adjustColumnPreferredWidths(3);
+
     tree.addFilter(searchField);
     JScrollPane scrollPane = new JScrollPane(tree);
     tree.configureScrollPane(scrollPane, new int[] { 0 });

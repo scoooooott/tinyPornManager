@@ -40,6 +40,10 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -107,6 +111,30 @@ public class TmmTable extends JTable {
     setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint grid lines over the entire viewport.
     setShowGrid(false);
+
+    getColumnModel().addColumnModelListener(new TableColumnModelListener() {
+      @Override
+      public void columnAdded(TableColumnModelEvent e) {
+        adjustColumnPreferredWidths(3);
+      }
+
+      @Override
+      public void columnRemoved(TableColumnModelEvent e) {
+        adjustColumnPreferredWidths(3);
+      }
+
+      @Override
+      public void columnMoved(TableColumnModelEvent e) {
+      }
+
+      @Override
+      public void columnMarginChanged(ChangeEvent e) {
+      }
+
+      @Override
+      public void columnSelectionChanged(ListSelectionEvent e) {
+      }
+    });
   }
 
   public void writeHiddenColumns(Consumer<List<String>> setting) {
