@@ -123,12 +123,16 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
 
     // mmId from searchResult
     if (options.getResult() != null) {
-      mmId = Integer.parseInt(options.getResult().getId());// Constants.MOVIEMETERID));
+      try {
+        mmId = Integer.parseInt(options.getResult().getId());// Constants.MOVIEMETERID));
+      }
+      catch (Exception ignored) {
+      }
     }
 
     // mmId from options
     if (mmId == 0) {
-      mmId = options.getIdAsInteger(providerInfo.getId());
+      mmId = options.getIdAsInt(providerInfo.getId());
     }
 
     // imdbid
