@@ -192,11 +192,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
     Images images = null;
-    int tvdbId = options.getIdAsInteger(MediaMetadata.TVDB);
+    int tvdbId = options.getIdAsInt(MediaMetadata.TVDB);
 
     // no ID found? try the old one
     if (tvdbId == 0) {
-      tvdbId = options.getIdAsInteger("tvdb");
+      tvdbId = options.getIdAsInt("tvdb");
     }
 
     if (tvdbId > 0) {
