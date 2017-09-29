@@ -263,10 +263,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     // get episode number and season number
-    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
-    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
-    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+    if (seasonNr == -1 || episodeNr == -1) {
       return md;
     }
 
