@@ -377,8 +377,8 @@ class TraktTVShowMetadataProvider {
     }
 
     // get episode number and season number
-    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
-    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
     // parsed valid episode number/season number?
     String aired = "";
@@ -386,7 +386,7 @@ class TraktTVShowMetadataProvider {
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
     }
-    if (aired.isEmpty() && (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1)) {
+    if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
       return md; // not even date set? return
     }
 
