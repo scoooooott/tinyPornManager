@@ -136,6 +136,36 @@ public class MediaSearchOptions {
   }
 
   /**
+   * Get the id for the given provider id as int
+   *
+   * @param providerId
+   *          the provider Id
+   * @return the id as int or 0
+   */
+  public int getIdAsInt(String providerId) {
+    Integer id = getIdAsInteger(providerId);
+    if (id == null) {
+      return 0;
+    }
+    return id.intValue();
+  }
+
+  /**
+   * Get the id for the given provider id as int or the chosen default value
+   *
+   * @param providerId
+   *          the provider Id
+   * @return the id as int or the default value
+   */
+  public int getIdAsIntOrDefault(String providerId, int defaultValue) {
+    Integer id = getIdAsInteger(providerId);
+    if (id == null) {
+      return defaultValue;
+    }
+    return id.intValue();
+  }
+
+  /**
    * Set an media id for a provider id
    *
    * @param providerId
