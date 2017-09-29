@@ -113,23 +113,15 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
 
     // get episode number and season number
-    Integer seasonNr = null;
-    Integer episodeNr = null;
+    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
-    try {
-      seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
-      episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
-
-      if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
-        seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR_DVD);
-        episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR_DVD);
-      }
-    }
-    catch (Exception e) {
-      LOGGER.warn("error parsing season/episode number");
+    if (seasonNr == -1 || episodeNr == -1) {
+      seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR_DVD, -1);
+      episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR_DVD, -1);
     }
 
-    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+    if (seasonNr == -1 || episodeNr == -1) {
       LOGGER.warn("no aired date/season number/episode number found");
       return md; // not even date set? return
     }
