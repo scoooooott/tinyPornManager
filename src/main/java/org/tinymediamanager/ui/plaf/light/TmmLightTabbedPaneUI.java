@@ -153,4 +153,5 @@ public class TmmLightTabbedPaneUI extends BaseTabbedPaneUI {
   protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect,
       boolean isSelected) {
   }
+
 }

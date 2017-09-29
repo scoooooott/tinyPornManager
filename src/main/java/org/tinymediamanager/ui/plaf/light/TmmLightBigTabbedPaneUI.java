@@ -71,6 +71,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   @Override
   public void installDefaults() {
     super.installDefaults();
+    tabAreaBackground = new Color(41, 41, 41);
     tabInsets = new Insets(5, 20, 5, 20);
     tabAreaInsets = new Insets(0, leftBorder ? 20 : 0, 15, rightBorder ? 20 : 0);
     contentBorderInsets = new Insets(0, leftBorder ? 20 : 0, bottomBorder ? 20 + BORDER_RADIUS : BORDER_RADIUS, rightBorder ? 20 : 0);
@@ -195,7 +196,16 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   protected void paintTabArea(Graphics g, int tabPlacement, int selectedIndex) {
     g.setColor(new Color(41, 41, 41));
     Rectangle clipRect = g.getClipBounds();
-    g.fillRect(clipRect.x, clipRect.y, clipRect.width, maxTabHeight);
+    g.fillRect(clipRect.x, clipRect.y, tabPane.getWidth(), maxTabHeight);
     super.paintTabArea(g, tabPlacement, selectedIndex);
+  }
+
+  @Override
+  public void paint(Graphics g, JComponent c) {
+    super.paint(g, c);
+
+    g.setColor(new Color(41, 41, 41));
+    Rectangle clipRect = g.getClipBounds();
+    g.fillRect(clipRect.x, clipRect.y, tabPane.getWidth(), maxTabHeight);
   }
 }
