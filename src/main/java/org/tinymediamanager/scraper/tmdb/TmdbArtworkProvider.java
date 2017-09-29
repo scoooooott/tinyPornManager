@@ -88,10 +88,10 @@ class TmdbArtworkProvider {
           break;
 
         case TV_EPISODE:
-          Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
-          Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+          int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+          int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
-          if (seasonNr != null && seasonNr > -1 && episodeNr != null && episodeNr > -1) {
+          if (seasonNr > -1 && episodeNr > -1) {
             images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
           }
           break;

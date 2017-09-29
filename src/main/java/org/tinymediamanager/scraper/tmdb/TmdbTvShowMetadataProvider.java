@@ -393,8 +393,8 @@ class TmdbTvShowMetadataProvider {
     }
 
     // get episode number and season number
-    Integer seasonNr = options.getIdAsInteger(MediaMetadata.SEASON_NR);
-    Integer episodeNr = options.getIdAsInteger(MediaMetadata.EPISODE_NR);
+    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
     // parsed valid episode number/season number?
     String aired = "";
@@ -404,7 +404,7 @@ class TmdbTvShowMetadataProvider {
     }
     // does not work - we cannot scrape w/o season
     // if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
-    if (seasonNr == null || seasonNr == -1 || episodeNr == null || episodeNr == -1) {
+    if (seasonNr == -1 || episodeNr == -1) {
       LOGGER.warn("season number/episode number found");
       return md; // not even date set? return
     }
@@ -645,8 +645,8 @@ class TmdbTvShowMetadataProvider {
    *          the original tv episode
    */
   private void verifyTvEpisodeTitleLanguage(BaseTvEpisode episode, MediaScrapeOptions query) {
-    Integer seasonNr = query.getIdAsInteger(MediaMetadata.SEASON_NR);
-    Integer episodeNr = query.getIdAsInteger(MediaMetadata.EPISODE_NR);
+    int seasonNr = query.getIdAsInt(MediaMetadata.SEASON_NR);
+    int episodeNr = query.getIdAsInt(MediaMetadata.EPISODE_NR);
 
     if (episode != null && (StringUtils.isAnyBlank(episode.name, episode.overview) || isEpisodesNameDefault(episode, episodeNr))
         && providerInfo.getConfig().getValueAsBool("titleFallback")) {
