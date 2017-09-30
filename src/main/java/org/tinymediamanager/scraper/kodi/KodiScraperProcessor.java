@@ -138,6 +138,7 @@ class KodiScraperProcessor {
     LOGGER.trace("Expression: " + expr);
     expr = processOutputBuffersForInputBufferReferences(expr);
     LOGGER.trace("Expression: " + expr);
+    in = processOutputBuffersForPropertyReferences(in); // replace $INFO vars
     LOGGER.trace("     Input: " + logBuffer(in));
     Pattern p = Pattern.compile(expr, PATTERN_OPTIONS);
     Matcher m = p.matcher(in);
@@ -230,7 +231,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForInputBufferReferences(String output) {
-    LOGGER.trace("Processing output buffers for input buffer references.");
+    LOGGER.trace("Processing buffer for input buffer references.");
     Pattern p = Pattern.compile("\\$\\$([0-9]+)");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -248,7 +249,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForPropertyReferences(String output) {
-    LOGGER.trace("Processing output buffers for property references.");
+    LOGGER.trace("Processing buffer for property references.");
     Pattern p = Pattern.compile("\\$INFO\\[([^\\]]+)\\]");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();

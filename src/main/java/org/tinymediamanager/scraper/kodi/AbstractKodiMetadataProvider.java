@@ -100,6 +100,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
 
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     KodiUrl url = processor.getSearchUrl(title, year > 0 ? String.valueOf(year) : "");
+    if (url == null) {
+      return l; // error processing XML, nothing found
+    }
     String xmlString = processor.getSearchResults(url);
 
     LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
