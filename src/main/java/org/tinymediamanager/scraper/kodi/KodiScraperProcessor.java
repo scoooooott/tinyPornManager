@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.kodi;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,8 +194,9 @@ class KodiScraperProcessor {
     if (group == null)
       return "";
     LOGGER.trace("Before Clean Html: " + group);
-    String s = group.replaceAll("<[^>]+>", "");
-    LOGGER.trace("After Clean Html: " + s);
+    // String s = group.replaceAll("<[^>]+>", "");
+    String s = Jsoup.parse(group).text();
+    LOGGER.trace("After  Clean Html: " + s);
     return s;
   }
 
