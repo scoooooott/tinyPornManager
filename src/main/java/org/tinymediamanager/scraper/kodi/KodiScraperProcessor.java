@@ -139,7 +139,6 @@ class KodiScraperProcessor {
     LOGGER.trace("Expression: " + expr);
     expr = processOutputBuffersForInputBufferReferences(expr);
     LOGGER.trace("Expression: " + expr);
-    in = processOutputBuffersForPropertyReferences(in); // replace $INFO vars
     LOGGER.trace("     Input: " + logBuffer(in));
     Pattern p = Pattern.compile(expr, PATTERN_OPTIONS);
     Matcher m = p.matcher(in);
@@ -297,6 +296,7 @@ class KodiScraperProcessor {
       text = "";
     }
     text = KodiUtil.fixXmlHeader(text); // fix possible XML header errors
+    text = processOutputBuffersForPropertyReferences(text); // replace $INFO vars
 
     LOGGER.trace("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
     return text;
@@ -307,6 +307,7 @@ class KodiScraperProcessor {
       buffer = "";
     }
     buffer = KodiUtil.fixXmlHeader(buffer); // fix possible XML header errors
+    buffer = processOutputBuffersForPropertyReferences(buffer); // replace $INFO vars
 
     LOGGER.trace(String.format("Get String Buffer: %s", buffer));
     Pattern bufferPattern = Pattern.compile("\\$\\$([0-9]+)");
