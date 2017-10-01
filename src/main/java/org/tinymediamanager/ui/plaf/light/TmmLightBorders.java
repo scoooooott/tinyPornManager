@@ -32,6 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComboBox;
 import javax.swing.JMenuBar;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
@@ -187,12 +188,17 @@ public class TmmLightBorders extends BaseBorders {
         }
 
         boolean focus = c.hasFocus();
+        if (c instanceof JComboBox) {
+          focus |= ((JComboBox) c).getEditor().getEditorComponent().hasFocus();
+        }
+
         if (c instanceof JSpinner) {
           Component[] comps = ((JSpinner) c).getEditor().getComponents();
           for (Component component : comps) {
             focus |= component.hasFocus();
           }
         }
+
         // do not draw a focus indicator to non editable text components
         if (focus && !(c instanceof JTextComponent && !((JTextComponent) c).isEditable())) {
           x = focusWidth;
@@ -206,6 +212,7 @@ public class TmmLightBorders extends BaseBorders {
             g2.fillRoundRect(x - i, y - i, w + 2 * i, h + 2 * i, r, r);
           }
         }
+
         g2.dispose();
         g.drawImage(img, 0, 0, null);
       }

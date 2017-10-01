@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.components.combobox;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Collection;
 
 import javax.swing.JComboBox;
@@ -51,6 +53,21 @@ public class AutocompleteComboBox<E> extends JComboBox<E> {// implements JComboB
   private void init() {
     setEditable(true);
     this.autoCompleteSupport = AutoCompleteSupport.install(this, items);
+
+    // fix: add a focus listener for the editor component to request the focus
+    // AutoCompleteSupport removed that for some reason
+    getEditor().getEditorComponent().addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        repaint();
+      }
+
+      @Override
+      public void focusLost(FocusEvent e) {
+
+      }
+    });
+
   }
 
   public AutoCompleteSupport<E> getAutoCompleteSupport() {
