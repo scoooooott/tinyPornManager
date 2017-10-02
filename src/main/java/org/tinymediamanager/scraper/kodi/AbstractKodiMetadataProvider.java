@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.kodi;
 import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -267,6 +268,14 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       catch (ParseException ignored) {
       }
     }
+    String premiered = getInfoFromScraperFunctionOrBase("premiered", details, subDetails);
+    if (StringUtils.isNotBlank(premiered)) {
+      try {
+        md.setReleaseDate(StrgUtils.parseDate(premiered));
+      }
+      catch (ParseException ignored) {
+      }
+    }
 
     String year = getInfoFromScraperFunctionOrBase("year", details, subDetails);
     if (StringUtils.isNotBlank(year)) {
@@ -282,15 +291,44 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       md.setTagline(tagline);
     }
 
+    String rating = getInfoFromScraperFunctionOrBase("rating", details, subDetails);
+    if (StringUtils.isNotBlank(rating)) {
+      try {
+        md.setRating(Double.parseDouble(rating));
+      }
+      catch (NumberFormatException e) {
+        LOGGER.warn("unparsable rating: " + rating);
+      }
+    }
+
     String set = getInfoFromScraperFunctionOrBase("set", details, subDetails);
     if (StringUtils.isNotBlank(set)) {
       md.setCollectionName(set);
+    }
+
+    String country = getInfoFromScraperFunctionOrBase("country", details, subDetails);
+    if (StringUtils.isNotBlank(country)) {
+      md.setCountries(Arrays.asList(country)); // just add first
+    }
+
+    String studio = getInfoFromScraperFunctionOrBase("studio", details, subDetails);
+    if (StringUtils.isNotBlank(studio)) {
+      md.setProductionCompanies(Arrays.asList(studio)); // just add first
     }
 
     String runtime = getInfoFromScraperFunctionOrBase("runtime", details, subDetails);
     if (StringUtils.isNotBlank(runtime)) {
       try {
         md.setRuntime(Integer.parseInt(runtime));
+      }
+      catch (NumberFormatException ignored) {
+      }
+    }
+
+    String votes = getInfoFromScraperFunctionOrBase("votes", details, subDetails);
+    if (StringUtils.isNotBlank(votes)) {
+      try {
+        md.setVoteCount(Integer.parseInt(votes));
       }
       catch (NumberFormatException ignored) {
       }
