@@ -179,7 +179,7 @@ class KodiScraperParser {
         Element docEl = xml.getDocumentElement();
 
         // only process xml files with scraperfunctions
-        if (docEl.getNodeName() == "scraperfunctions") {
+        if ("scraperfunctions".equals(docEl.getNodeName())) {
           NodeList nl = docEl.getChildNodes();
 
           // extract all scraperfunctions

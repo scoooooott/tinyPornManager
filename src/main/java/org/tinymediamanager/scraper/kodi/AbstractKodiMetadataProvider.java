@@ -150,7 +150,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         }
         sr.setScore(score);
 
-        l.add(sr);
+        if (!l.contains(sr)) {
+          l.add(sr);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Error process an xml node!  Ignoring it from the search results.");

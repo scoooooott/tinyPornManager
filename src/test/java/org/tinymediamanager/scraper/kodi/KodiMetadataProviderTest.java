@@ -10,16 +10,19 @@ import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 public class KodiMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -50,8 +53,8 @@ public class KodiMetadataProviderTest {
   @Test
   public void testKodiTVScraper() {
     try {
-      // LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-      // lc.getLogger("org.tinymediamanager.scraper").setLevel(Level.TRACE);
+      LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+      lc.getLogger("org.tinymediamanager.scraper").setLevel(Level.TRACE);
 
       KodiMetadataProvider kodiMetadataProvider = new KodiMetadataProvider();
       List<IMediaProvider> scraper = kodiMetadataProvider.getPluginsForType(MediaType.TV_SHOW);
@@ -59,7 +62,7 @@ public class KodiMetadataProviderTest {
 
       ITvShowMetadataProvider show = null;
       for (IMediaProvider mp : scraper) {
-        if (mp.getProviderInfo().getId().equals("metadata.tvshows.themoviedb.org")) {
+        if (mp.getProviderInfo().getId().equals("metadata.tvdb.com")) {
           show = (ITvShowMetadataProvider) mp;
           break;
         }
@@ -79,18 +82,20 @@ public class KodiMetadataProviderTest {
       MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.TV_SHOW);
       scrapeOptions.setResult(results.get(0));
       MediaMetadata md = show.getMetadata(scrapeOptions);
+      scrapeOptions.setMetadata(md);
 
       // get episode list (when cached)
-      List<MediaEpisode> epl = show.getEpisodeList(scrapeOptions);
-      for (MediaEpisode me : epl) {
-        System.out.println(me);
-      }
+      // List<MediaEpisode> epl = show.getEpisodeList(scrapeOptions);
+      // for (MediaEpisode me : epl) {
+      // System.out.println(me);
+      // }
 
       // get single episode (when cached)
       scrapeOptions = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      scrapeOptions.setId("metadata.tvshows.themoviedb.org", "1486");
+      scrapeOptions.setId("metadata.tvdb.com", "77585");
       scrapeOptions.setId(MediaMetadata.SEASON_NR, "2");
       scrapeOptions.setId(MediaMetadata.EPISODE_NR, "4");
+      scrapeOptions.setMetadata(md);
       MediaMetadata ep = show.getMetadata(scrapeOptions);
       System.out.println(ep);
 
@@ -133,7 +138,7 @@ public class KodiMetadataProviderTest {
 
       assertEquals("Harry Potter and the Philosopher's Stone", md.getTitle());
       assertEquals("Harry Potter and the Philosopher's Stone", md.getOriginalTitle());
-      assertEquals("2001", md.getYear());
+      assertEquals(2001, md.getYear());
       assertEquals(
           "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard -- with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths -- and about the villain who's to blame.",
           md.getPlot());
