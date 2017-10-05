@@ -1,136 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.tinymediamanager</groupId>
-		<artifactId>tmm-parent</artifactId>
-		<version>1.0</version>
-	</parent>
+    <parent>
+        <groupId>org.tinymediamanager</groupId>
+        <artifactId>tmm-parent</artifactId>
+        <version>1.0</version>
+    </parent>
 
-	<artifactId>api-scraper</artifactId>
-	<version>3.0-SNAPSHOT</version>
+    <artifactId>api-scraper</artifactId>
+    <version>3.0-SNAPSHOT</version>
 
-	<name>tinyMediaManager scraper API</name>
-	<description>API for tinyMediaManager scrapers</description>
-	<url>http://www.tinyMediaManager.org</url>
+    <name>tinyMediaManager scraper API</name>
+    <description>API for tinyMediaManager scrapers</description>
+    <url>http://www.tinyMediaManager.org</url>
 
-	<scm>
-		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
-		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
+    <scm>
+        <url>https://github.com/tinyMediaManager/${project.artifactId}</url>
+        <connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
-	<properties>
-		<okhttp.version>3.4.1</okhttp.version>
-	</properties>
+    <properties>
+        <okhttp.version>3.9.0</okhttp.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.1.7</version>
-		</dependency>
-		<dependency>
-			<!-- transitive of logback - but used one has memory leak -->
-			<artifactId>slf4j-api</artifactId>
-			<groupId>org.slf4j</groupId>
-			<version>1.7.21</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>net.xeoh.jspf</groupId>
-			<artifactId>jspf-core</artifactId>
-			<version>1.0.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.8.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.retrofit2</groupId>
-			<artifactId>converter-gson</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp-urlconnection</artifactId>
-			<version>${okhttp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>logging-interceptor</artifactId>
-			<version>${okhttp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.5</version>
-		</dependency>
-		<!-- load after retrofit2 to avoid problems with gson versions -->
-		<dependency>
-			<groupId>com.jakewharton.retrofit</groupId>
-			<artifactId>retrofit1-okhttp3-client</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<!-- for score testing -->
-		<dependency>
-			<groupId>info.debatty</groupId>
-			<artifactId>java-string-similarity</artifactId>
-			<version>0.14</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <!-- String methods of ex commons lang -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>net.xeoh.jspf</groupId>
+            <artifactId>jspf-core</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-gson</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-urlconnection</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+        <!-- load after retrofit2 to avoid problems with gson versions -->
+        <dependency>
+            <groupId>com.jakewharton.retrofit</groupId>
+            <artifactId>retrofit1-okhttp3-client</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <!-- for score testing -->
+        <dependency>
+            <groupId>info.debatty</groupId>
+            <artifactId>java-string-similarity</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<!-- checks for any compatibility issues to previous version -->
-				<groupId>com.googlecode.japi-checker</groupId>
-				<artifactId>japi-checker-maven-plugin</artifactId>
-				<version>0.2.0</version>
-				<configuration>
-					<reference>
-						<groupId>org.tinymediamanager</groupId>
-						<artifactId>api-scraper</artifactId>
-						<version>3.0-SNAPSHOT</version>
-					</reference>
-					<rules>
-						<rule>com.googlecode.japi.checker.rules.AllRules</rule>
-					</rules>
-				</configuration>
-				<executions>
-					<execution>
-						<id>check-bc</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- checks for any compatibility issues to previous version -->
+                <groupId>com.googlecode.japi-checker</groupId>
+                <artifactId>japi-checker-maven-plugin</artifactId>
+                <version>0.2.0</version>
+                <configuration>
+                    <reference>
+                        <groupId>org.tinymediamanager</groupId>
+                        <artifactId>api-scraper</artifactId>
+                        <version>3.0-SNAPSHOT</version>
+                    </reference>
+                    <rules>
+                        <rule>com.googlecode.japi.checker.rules.AllRules</rule>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-bc</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
