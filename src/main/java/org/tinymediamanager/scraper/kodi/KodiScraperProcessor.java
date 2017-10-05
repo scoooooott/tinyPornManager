@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.kodi;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,8 +193,9 @@ class KodiScraperProcessor {
     if (group == null)
       return "";
     LOGGER.trace("Before Clean Html: " + group);
-    String s = group.replaceAll("<[^>]+>", "");
-    LOGGER.trace("After Clean Html: " + s);
+    // String s = group.replaceAll("<[^>]+>", "");
+    String s = Jsoup.parse(group).text();
+    LOGGER.trace("After  Clean Html: " + s);
     return s;
   }
 
@@ -230,7 +232,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForInputBufferReferences(String output) {
-    LOGGER.trace("Processing output buffers for input buffer references.");
+    LOGGER.trace("Processing buffer for input buffer references.");
     Pattern p = Pattern.compile("\\$\\$([0-9]+)");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -248,7 +250,7 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForPropertyReferences(String output) {
-    LOGGER.trace("Processing output buffers for property references.");
+    LOGGER.trace("Processing buffer for property references.");
     Pattern p = Pattern.compile("\\$INFO\\[([^\\]]+)\\]");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -294,6 +296,7 @@ class KodiScraperProcessor {
       text = "";
     }
     text = KodiUtil.fixXmlHeader(text); // fix possible XML header errors
+    text = processOutputBuffersForPropertyReferences(text); // replace $INFO vars
 
     LOGGER.trace("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
     return text;
@@ -304,6 +307,7 @@ class KodiScraperProcessor {
       buffer = "";
     }
     buffer = KodiUtil.fixXmlHeader(buffer); // fix possible XML header errors
+    buffer = processOutputBuffersForPropertyReferences(buffer); // replace $INFO vars
 
     LOGGER.trace(String.format("Get String Buffer: %s", buffer));
     Pattern bufferPattern = Pattern.compile("\\$\\$([0-9]+)");
