@@ -185,7 +185,7 @@ public class ImdbMovieParser extends ImdbParser {
 
     // get data from tmdb?
     if (futureTmdb != null && (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
-        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
+            || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
         if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null) {

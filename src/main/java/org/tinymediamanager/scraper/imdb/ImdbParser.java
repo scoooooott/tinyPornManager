@@ -824,20 +824,47 @@ public abstract class ImdbParser {
   protected MediaMetadata parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     // imdb.com has another site structure
     if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
-      Elements zebraList = doc.getElementsByClass("zebraList");
-      if (zebraList != null && !zebraList.isEmpty()) {
-        Elements odd = zebraList.get(0).getElementsByClass("odd");
-        if (odd.isEmpty()) {
-          odd = zebraList.get(0).getElementsByClass("even"); // sometimes imdb has even
-        }
-        if (odd.size() > 0) {
-          Elements p = odd.get(0).getElementsByTag("p");
-          if (p.size() > 0) {
-            String plot = cleanString(p.get(0).text());
+
+      // first check synopsis content
+      // Element zebraList = doc.getElementById("plot-synopsis-content");
+      // if (zebraList != null) {
+      // Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
+      // if (!p.isEmpty()) {
+      // Element em = p.get(0);
+      // if (!"no-synopsis-content".equals(em.id())) {
+      // String plot = cleanString(em.text());
+      // md.setPlot(plot);
+      // }
+      // }
+      // }
+      // NOPE: synopsis contains spoilers
+
+      // just take first summary
+      // <li class="ipl-zebra-list__item" id="summary-ps21700000">
+      // <p>text text text text </p>
+      // <div class="author-container">
+      // <em>&mdash;<a href="/search/title?plot_author=author">Author Name</a></em>
+      // </div>
+      // </li>
+      Element zebraList = doc.getElementById("plot-summaries-content");
+      if (zebraList != null) {
+        Elements p = zebraList.getElementsByClass("ipl-zebra-list__item");
+        if (!p.isEmpty()) {
+          Element em = p.get(0);
+
+          // remove author
+          Elements authors = em.getElementsByClass("author-container");
+          if (!authors.isEmpty()) {
+            authors.get(0).remove();
+          }
+
+          if (!"no-summary-content".equals(em.id())) {
+            String plot = cleanString(em.text());
             md.setPlot(plot);
           }
         }
       }
+
     }
     else {
       Element wiki = doc.getElementById("swiki.2.1");
