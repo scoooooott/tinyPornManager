@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-kodi</artifactId>
-	<version>1.8</version>
+	<version>1.9-SNAPSHOT</version>
 
 	<name>Kodi-Scraper plugin</name>
 	<description>A Kodi-Scraper plugin</description>
@@ -20,7 +20,7 @@
 		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
 		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-	  <tag>scraper-kodi-1.8</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
