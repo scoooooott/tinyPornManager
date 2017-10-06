@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,10 +28,12 @@ import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.ExportTemplate;
+import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -39,6 +43,7 @@ import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
@@ -65,10 +70,14 @@ public class TinyMediaManagerCMD {
   private static boolean          rename          = false;
   private static boolean          dryRun          = false;
   private static boolean          checkFiles      = false;
+  private static boolean          export          = false;
 
   // datasource IDs
   private static HashSet<Integer> updateMovieDs   = new HashSet<>();
   private static HashSet<Integer> updateTvDs      = new HashSet<>();
+
+  private static Path             exportTemplate  = null;
+  private static Path             exportDir       = null;
 
   /**
    * parse command line params
@@ -121,24 +130,47 @@ public class TinyMediaManagerCMD {
       else if (cmd.equalsIgnoreCase("-rename") || cmd.equalsIgnoreCase("-renameNew")) { // "new" deprecated
         rename = true;
       }
-//      else if (cmd.equalsIgnoreCase("-config")) {
-//        i++;
-//        if (i == args.length) { // config is last parameter
-//          System.out.println("ERROR: config not specified!");
-//          printSyntax();
-//          System.exit(0);
-//        }
-//        String file = args[i];
-//        if (Files.exists(Paths.get("data", file))) { // only check in default data path?
-//          // load custom settings
-//          Settings.getInstance("data", file);
-//        }
-//        else {
-//          System.out.println("ERROR: config file not found! " + file);
-//          printSyntax();
-//          System.exit(0);
-//        }
-//      }
+      // else if (cmd.equalsIgnoreCase("-config")) {
+      // i++;
+      // if (i == args.length) { // config is last parameter
+      // System.out.println("ERROR: config not specified!");
+      // printSyntax();
+      // System.exit(0);
+      // }
+      // String file = args[i];
+      // if (Files.exists(Paths.get("data", file))) { // only check in default data path?
+      // // load custom settings
+      // Settings.getInstance("data", file);
+      // }
+      // else {
+      // System.out.println("ERROR: config file not found! " + file);
+      // printSyntax();
+      // System.exit(0);
+      // }
+      // }
+      // ************
+      // ** EXPORT **
+      // ************
+      else if (cmd.equalsIgnoreCase("-export")) {
+        try {
+          i++;
+          if (i == args.length || i == args.length - 1) { // export needs 2 parameters
+            throw new Exception("missing parameters");
+          }
+          exportTemplate = Paths.get("templates", args[i]);
+          if (!Files.isDirectory(exportTemplate)) {
+            throw new IOException("template folder not found/accessible");
+          }
+          i++;
+          exportDir = Paths.get(args[i]);
+          export = true;
+        }
+        catch (Exception e) {
+          System.out.println("ERROR: export failed because of: " + e.getMessage());
+          printSyntax();
+          System.exit(0);
+        }
+      }
       else if (cmd.toLowerCase(Locale.ROOT).contains("help")) { // -help, --help, help ...
         printSyntax();
         System.exit(0);
@@ -183,6 +215,7 @@ public class TinyMediaManagerCMD {
         "\n" +
         "    -rename              rename & cleanup all the movies/TvShows/episodes from former scrape command\n" +
         "    -config file.xml     specify an alternative configuration xml file\n" +
+        "    -export template dir  exports your complete movie/tv library with specified template to dir\n" +
         "    -checkFiles          does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
         "\n" +
         "\n" +
@@ -190,6 +223,8 @@ public class TinyMediaManagerCMD {
         "\n" +
         "    tinyMediaManagerCMD.exe -updateMovies -updateTv3 -scrapeNew -rename\n" +
         "    tinyMediaManagerCMD.exe -scrapeUnscraped -rename\n" +
+        "    tinyMediaManagerCMD.exe -export ExcelXml /user/export/movies\n" +
+        "    tinyMediaManagerCMD.exe -export TvShowDetailExampleXml /user/export/tv" +
         "\n");
     // @formatter:on
   }
@@ -312,6 +347,26 @@ public class TinyMediaManagerCMD {
           else {
             task = new MovieRenameTask(moviesToScrape);
             task.run(); // blocking}
+          }
+        }
+      }
+
+      // *****************
+      // EXPORT
+      // *****************
+      if (export) {
+        for (ExportTemplate t : MovieExporter.findTemplates(TemplateType.MOVIE)) {
+          if (t.getPath().equals(exportTemplate.toAbsolutePath().toString())) {
+            // ok, our template has been found under movies
+            LOGGER.info("Commandline - exporting movies...");
+            if (dryRun) {
+              LOGGER.info("DRYRUN: would have exported ALL movies to " + exportDir.toAbsolutePath());
+            }
+            else {
+              MovieExporter ex = new MovieExporter(Paths.get(t.getPath()));
+              ex.export(MovieList.getInstance().getMovies(), exportDir);
+            }
+            break;
           }
         }
       }
@@ -467,6 +522,25 @@ public class TinyMediaManagerCMD {
           else {
             task = new TvShowRenameTask(null, episodeToScrape, true); // just rename new EPs AND root folder
             task.run(); // blocking
+          }
+        }
+      }
+      // *****************
+      // EXPORT
+      // *****************
+      if (export) {
+        for (ExportTemplate t : TvShowExporter.findTemplates(TemplateType.TV_SHOW)) {
+          if (t.getPath().equals(exportTemplate.toAbsolutePath().toString())) {
+            // ok, our template has been found under movies
+            LOGGER.info("Commandline - exporting tv shows...");
+            if (dryRun) {
+              LOGGER.info("DRYRUN: would have exported ALL TV shows to " + exportDir.toAbsolutePath());
+            }
+            else {
+              TvShowExporter ex = new TvShowExporter(Paths.get(t.getPath()));
+              ex.export(TvShowList.getInstance().getTvShows(), exportDir);
+            }
+            break;
           }
         }
       }
