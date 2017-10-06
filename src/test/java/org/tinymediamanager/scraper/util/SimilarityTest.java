@@ -118,7 +118,7 @@ public class SimilarityTest {
     if (s == null || t == null)
       return 0;
     // Quick check to catch identical objects:
-    if (s == t)
+    if (s.equals(t))
       return 1;
     // avoid exception for single character searches
     if (s.length() < 2 || t.length() < 2)
