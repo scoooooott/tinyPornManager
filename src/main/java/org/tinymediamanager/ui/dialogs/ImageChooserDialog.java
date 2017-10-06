@@ -863,7 +863,7 @@ public class ImageChooserDialog extends TmmDialog {
             catch (InterruptedException ingored) {
             }
             catch (Exception e) {
-              LOGGER.error("DownloadTask displaying", e);
+              LOGGER.error("DownloadTask displaying", e.getMessage());
             }
 
           }
