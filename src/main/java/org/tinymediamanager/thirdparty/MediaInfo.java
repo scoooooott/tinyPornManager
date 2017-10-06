@@ -145,7 +145,7 @@ public class MediaInfo implements Closeable {
    */
   public String inform() {
     if (isLoaded()) {
-      return MediaInfoLibrary.INSTANCE.Inform(handle).toString();
+      return MediaInfoLibrary.INSTANCE.Inform(handle, 0).toString();
     }
     else {
       return "";
@@ -493,7 +493,8 @@ public class MediaInfo implements Closeable {
     Other,
     Image,
     Menu,
-    @Deprecated Chapters; // replaced by 'other'
+    @Deprecated
+    Chapters; // replaced by 'other'
     ;
   }
 

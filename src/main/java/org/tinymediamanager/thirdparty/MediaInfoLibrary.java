@@ -95,7 +95,7 @@ interface MediaInfoLibrary extends Library {
    *          the handle
    * @return All details about a file in one string
    */
-  WString Inform(Pointer handle);
+  WString Inform(Pointer Handle, int Reserved);
 
   /**
    * Get a piece of information about a file (parameter is a string).
