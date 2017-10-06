@@ -8,10 +8,17 @@ public class MovieMediaSourceTest extends BasicTest {
 
   @Test
   public void performTest() {
+    // uhd blu rays
+    assertEqual(MediaSource.UHD_BLURAY, MediaSource.parseMediaSource("Godzilla.German.AC3.Dubbed.720p.UHD.BluRay.x264"));
+    assertEqual(MediaSource.UHD_BLURAY, MediaSource.parseMediaSource("Godzilla.German.AC3.Dubbed.720p.UHDBluRay.x264"));
+    assertEqual(MediaSource.UHD_BLURAY, MediaSource.parseMediaSource("/media/jets/movies/Planes 2160p 4K UltraHD BluRay.x265"));
+    assertEqual(MediaSource.UHD_BLURAY, MediaSource.parseMediaSource("Arsenal 2017 UHD-Blu-ray.avi"));
+
     // bluray from different releases
     assertEqual(MediaSource.BLURAY, MediaSource.parseMediaSource("Godzilla.German.AC3.Dubbed.720p.BluRay.x264"));
     assertEqual(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.BDRip.x264"));
     assertEqual(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.BRRip.x264"));
+    assertEqual(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.UHD.1991.German.Subbed.BRRip.x264")); // should not be uhd blu ray!
     assertEqual(MediaSource.BLURAY, MediaSource.parseMediaSource("/media/movies/Night.on.Earth.1991.German.Subbed.BDRip.x264"));
 
     // hdrip

@@ -37,6 +37,8 @@ public class MediaSource extends DynaEnum<MediaSource> {
 
   // the well known and XBMC/Kodi compatible sources
   // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
+  public final static MediaSource              UHD_BLURAY  = new MediaSource("UHD_BLURAY", 0, "Bluray",
+      "(uhd|ultrahd)[ .\\-]?(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
   public final static MediaSource              BLURAY      = new MediaSource("BLURAY", 0, "Bluray",
       "(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
   public final static MediaSource              DVD         = new MediaSource("DVD", 1, "DVD", "(dvd|video_ts|dvdrip|dvdr)");
