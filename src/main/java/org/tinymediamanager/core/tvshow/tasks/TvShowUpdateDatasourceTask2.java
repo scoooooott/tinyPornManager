@@ -205,7 +205,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             }
             else {
               // File in root folder - not possible for TV datasource (at least, for videos ;)
-              String ext = FilenameUtils.getExtension(path.getFileName().toString());
+              String ext = FilenameUtils.getExtension(path.getFileName().toString().toLowerCase(Locale.ROOT));
               if (Globals.settings.getVideoFileType().contains("." + ext)) {
                 MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot",
                     new String[] { path.getFileName().toString() }));

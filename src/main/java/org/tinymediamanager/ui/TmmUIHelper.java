@@ -23,6 +23,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -187,7 +188,7 @@ public class TmmUIHelper {
   }
 
   public static void openFile(Path file) throws Exception {
-    String fileType = "." + FilenameUtils.getExtension(file.getFileName().toString());
+    String fileType = "." + FilenameUtils.getExtension(file.getFileName().toString().toLowerCase(Locale.ROOT));
     String abs = file.toAbsolutePath().toString();
 
     if (StringUtils.isNotBlank(Globals.settings.getMediaPlayer()) && Globals.settings.getAllSupportedFileTypes().contains(fileType)) {
