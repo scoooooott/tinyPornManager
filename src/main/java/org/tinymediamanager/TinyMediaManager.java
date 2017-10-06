@@ -349,6 +349,8 @@ public class TinyMediaManager {
               wizard.setVisible(true);
             }
 
+            TmmTaskManager.getInstance().addUnnamedTask(new PreloadTask());
+
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
               // special case nightly/git: if same snapshot version, do not display changelog
