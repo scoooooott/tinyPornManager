@@ -123,12 +123,12 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @return single instance of TvShowList
    */
-  public static TvShowList getInstance() {
-    if (instance == null) {
-      instance = new TvShowList();
+  public synchronized static TvShowList getInstance() {
+    if (TvShowList.instance == null) {
+      TvShowList.instance = new TvShowList();
     }
 
-    return instance;
+    return TvShowList.instance;
   }
 
   /**

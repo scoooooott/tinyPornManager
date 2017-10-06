@@ -73,7 +73,7 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
         }
       }
       else {
-        if (videoFormat == episode.getMediaInfoVideoFormat()) {
+        if (videoFormat.equals(episode.getMediaInfoVideoFormat())) {
           return true;
         }
       }

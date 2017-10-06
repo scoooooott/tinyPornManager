@@ -186,7 +186,8 @@ class CalendarPanel extends JPanel implements PropertyChangeListener {
    */
   private void setCalendar(Calendar newCalendar, boolean update) {
     if (newCalendar == null) {
-      setDate(null);
+      // setDate(null); // WILL throw NPE
+      return;
     }
     Calendar oldCalendar = calendar;
     calendar = newCalendar;

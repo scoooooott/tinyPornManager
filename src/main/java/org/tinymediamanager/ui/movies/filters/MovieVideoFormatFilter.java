@@ -70,7 +70,7 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
     else if (videoFormat == MediaFile.VIDEO_FORMAT_LD && mf.isVideoDefinitionLD()) {
       return true;
     }
-    else if (videoFormat == movie.getMediaInfoVideoFormat()) {
+    else if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {
       return true;
     }
 
