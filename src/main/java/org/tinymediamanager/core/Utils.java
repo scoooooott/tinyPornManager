@@ -640,7 +640,7 @@ public class Utils {
       if (!Files.exists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
         try {
-          Files.createDirectories(destDir);
+          Files.createDirectories(destDir.getParent());
         }
         catch (Exception e) {
           LOGGER.error("could not create directory structure " + destDir.getParent());
@@ -863,6 +863,7 @@ public class Utils {
           rename = true;// no exception
         }
         catch (IOException e) {
+          LOGGER.warn("copy did not work" + e.getMessage());
         }
 
         if (rename) {

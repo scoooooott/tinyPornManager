@@ -493,7 +493,7 @@ public class MovieList extends AbstractModelObject {
 
       }
       if (!searchTerm.isEmpty()) {
-        if (idFound) {
+        if (idFound) { // FIXME: check
           // id found, so search for it
           // except when searchTerm differs from movie title (we entered something to search for)
           if (!searchTerm.equals(movie.getTitle())) {

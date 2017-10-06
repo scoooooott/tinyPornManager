@@ -112,12 +112,12 @@ public class DownloadTask extends TmmTask {
       }
 
       // if file extension is empty, detect from url, or content type
-      String ext = FilenameUtils.getExtension(file.getFileName().toString().toLowerCase(Locale.ROOT));
+      String ext = FilenameUtils.getExtension(file.getFileName().toString()).toLowerCase(Locale.ROOT);
       if (ext != null && ext.length() > 4 || !Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
         ext = ""; // no extension when longer than 4 chars!
       }
       if (ext == null || ext.isEmpty()) {
-        ext = UrlUtil.getExtension(url);
+        ext = UrlUtil.getExtension(url).toLowerCase(Locale.ROOT);
         if (!ext.isEmpty()) {
           if (Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
             file = file.getParent().resolve(file.getFileName() + "." + ext);
