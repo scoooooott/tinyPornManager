@@ -46,7 +46,7 @@ public class BugReportAction extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
     JDialog dialog = new BugReportDialog();
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-    dialog.setVisible(true);
     dialog.pack();
+    dialog.setVisible(true);
   }
 }

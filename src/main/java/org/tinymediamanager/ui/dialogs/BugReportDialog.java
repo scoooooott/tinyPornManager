@@ -16,14 +16,11 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -47,17 +44,14 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class BugReportDialog, to send bug reports directly from inside tmm.
@@ -81,12 +75,7 @@ public class BugReportDialog extends TmmDialog {
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, }));
+    panelContent.setLayout(new MigLayout("", "[][][450lp,grow]", "[][20lp][][][20lp][][][]"));
 
     final JTextArea taDescription = new JTextArea();
     taDescription.setOpaque(false);
@@ -94,81 +83,79 @@ public class BugReportDialog extends TmmDialog {
     taDescription.setLineWrap(true);
     taDescription.setEditable(false);
     taDescription.setText(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
-    panelContent.add(taDescription, "2, 2, 6, 1, fill, fill");
-
-    final JButton btnSaveLogs = new JButton(BUNDLE.getString("BugReport.createlogs")); //$NON-NLS-1$
-    btnSaveLogs.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // open the log download window
-        try {
-          String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
-          Path file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), path, "tmm_logs.zip", //$NON-NLS-1$
-              new FileNameExtensionFilter("Zip files", ".zip"));
-          if (Files.exists(file)) {
-            writeLogsFile(file.toFile());
-            TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
-          }
-        }
-        catch (Exception ex) {
-          LOGGER.error("Could not write logs.zip: " + ex.getMessage());
-        }
-      }
-    });
+    panelContent.add(taDescription, "cell 0 0 3 1,growx");
 
     final JLabel lblStep1 = new JLabel(BUNDLE.getString("BugReport.step1")); //$NON-NLS-1$
-    panelContent.add(lblStep1, "2, 4, default, top");
+    panelContent.add(lblStep1, "cell 0 2");
 
     final JTextArea taStep1 = new JTextArea();
+    taStep1.setWrapStyleWord(true);
+    taStep1.setLineWrap(true);
     taStep1.setText(BUNDLE.getString("BugReport.step1.description")); //$NON-NLS-1$
     taStep1.setOpaque(false);
     taStep1.setEditable(false);
-    panelContent.add(taStep1, "5, 4, fill, fill");
-    panelContent.add(btnSaveLogs, "7, 4");
+    panelContent.add(taStep1, "cell 2 2,growx");
 
-    final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue")); //$NON-NLS-1$
-    btnCreateIssue.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // create the url for github
-        String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?body=";
-        String params = "Version: " + ReleaseInfo.getRealVersion();
-        params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
-        params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
-        params += "\nJDK: " + System.getProperty("java.version") + " " + System.getProperty("os.arch") + " " + System.getProperty("java.vendor");
-        params += "\n\n__What is the actual behaviour?__\n\n";
-        params += "\n\n__What is the expected behaviour?__\n\n";
-        params += "\n\n__Steps to reproduce:__\n\n";
-        params += "\n\n__Additional__\nHave you attached the logfile from the day it happened?";
-
-        String url = "";
-        try {
-          url = baseUrl + URLEncoder.encode(params, "UTF-8");
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e1) {
-          LOGGER.error("FAQ", e1);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+    final JButton btnSaveLogs = new JButton(BUNDLE.getString("BugReport.createlogs")); //$NON-NLS-1$
+    btnSaveLogs.addActionListener(e -> {
+      // open the log download window
+      try {
+        String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+        Path file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), path, "tmm_logs.zip", //$NON-NLS-1$
+            new FileNameExtensionFilter("Zip files", ".zip"));
+        if (file != null) {
+          writeLogsFile(file.toFile());
+          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
         }
       }
+      catch (Exception ex) {
+        LOGGER.error("Could not write logs.zip: " + ex.getMessage());
+      }
     });
+    panelContent.add(btnSaveLogs, "cell 2 3");
 
     final JLabel lblStep2 = new JLabel(BUNDLE.getString("BugReport.step2")); //$NON-NLS-1$
-    panelContent.add(lblStep2, "2, 6, default, top");
+    panelContent.add(lblStep2, "cell 0 5,alignx left,aligny top");
 
     final JTextArea taStep2 = new JTextArea();
+    taStep2.setLineWrap(true);
+    taStep2.setWrapStyleWord(true);
     taStep2.setOpaque(false);
     taStep2.setEditable(false);
     taStep2.setText(BUNDLE.getString("BugReport.step2.description")); //$NON-NLS-1$
-    panelContent.add(taStep2, "5, 6, fill, fill");
-    panelContent.add(btnCreateIssue, "7, 6");
+    panelContent.add(taStep2, "cell 2 5,growx");
+
+    final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue")); //$NON-NLS-1$
+    btnCreateIssue.addActionListener(e -> {
+      // create the url for github
+      String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?body=";
+      String params = "Version: " + ReleaseInfo.getRealVersion();
+      params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
+      params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
+      params += "\nJDK: " + System.getProperty("java.version") + " " + System.getProperty("os.arch") + " " + System.getProperty("java.vendor");
+      params += "\n\n__What is the actual behaviour?__\n\n";
+      params += "\n\n__What is the expected behaviour?__\n\n";
+      params += "\n\n__Steps to reproduce:__\n\n";
+      params += "\n\n__Additional__\nHave you attached the logfile from the day it happened?";
+
+      String url = "";
+      try {
+        url = baseUrl + URLEncoder.encode(params, "UTF-8");
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e1) {
+        LOGGER.error("FAQ", e1);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+      }
+    });
+    panelContent.add(btnCreateIssue, "cell 2 6,alignx left,aligny center");
 
     final JLabel lblHintIcon = new JLabel(IconManager.HINT);
-    panelContent.add(lblHintIcon, "3, 8");
+    panelContent.add(lblHintIcon, "cell 1 7,alignx left,aligny center");
 
     final JLabel lblHint = new JLabel(BUNDLE.getString("BugReport.languagehint")); //$NON-NLS-1$
-    panelContent.add(lblHint, "5, 8");
+    panelContent.add(lblHint, "cell 2 7,growx,aligny top");
 
     JPanel panelButtons = new JPanel();
 
@@ -176,16 +163,9 @@ public class BugReportDialog extends TmmDialog {
 
     JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
     btnClose.setIcon(IconManager.CANCEL_INV);
-    btnClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
-    });
-    panelButtons
-        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
-    panelButtons.add(btnClose, "2, 2");
+    btnClose.addActionListener(e -> setVisible(false));
+    panelButtons.setLayout(new MigLayout("", "[grow][]", "[]"));
+    panelButtons.add(btnClose, "cell 1 0");
   }
 
   private void writeLogsFile(File file) throws Exception {
