@@ -57,6 +57,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -196,9 +197,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFolderPattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(lblDefaultFolderPattern, "cell 3 2");
-      TmmFontHelper.changeFont(lblDefaultFolderPattern, 0.833);
+      JTextPane tpDefaultFolderPattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+      add(tpDefaultFolderPattern, "cell 3 2");
+      TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
     }
     {
       JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
@@ -212,9 +213,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 4 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultSeasonPattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
-      add(lblDefaultSeasonPattern, "cell 3 4,aligny top");
-      TmmFontHelper.changeFont(lblDefaultSeasonPattern, 0.833);
+      JTextPane tpDefaultSeasonPattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
+      add(tpDefaultSeasonPattern, "cell 3 4,aligny top");
+      TmmFontHelper.changeFont(tpDefaultSeasonPattern, 0.833);
     }
     {
       JLabel lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));
@@ -228,9 +229,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 6 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFilePattern = new JLabel(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(lblDefaultFilePattern, "cell 3 6,aligny top");
-      TmmFontHelper.changeFont(lblDefaultFilePattern, 0.833);
+      JTextPane tpDefaultFilePattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
+      add(tpDefaultFilePattern, "cell 3 6,aligny top");
+      TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
     }
     {
       chckbxSpaceReplacement = new JHintCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
@@ -245,11 +246,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
       add(chckbxAsciiReplacement, "cell 1 9 3 1");
 
-      JTextPane txtpntAsciiHint = new JTextPane();
-      add(txtpntAsciiHint, "cell 2 10 2 1");
-      txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
-      txtpntAsciiHint.setOpaque(false);
+      JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblAsciiHint, 0.833);
+      add(lblAsciiHint, "cell 2 10 2 1");
     }
     {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$

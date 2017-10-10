@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -40,7 +41,6 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -49,7 +49,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class ExternalDevicesSettingsPanel extends ScrollablePanel {
+public class ExternalDevicesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 8176824801347872222L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$

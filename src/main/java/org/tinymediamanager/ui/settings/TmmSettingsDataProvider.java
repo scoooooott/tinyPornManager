@@ -45,6 +45,7 @@ public class TmmSettingsDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.sorting"), new SortTitleSettingsPanel())); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externaldevices"), new ExternalDevicesSettingsPanel())); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externalservices"), new ExternalServicesSettingsPanel())); //$NON-NLS-1$
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.system"), new SystemSettingsPanel())); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.misc"), new GeneralSettingsPanel())); //$NON-NLS-1$
     rootSettingsNode.addChild(generalSettingsNode);
 

@@ -31,6 +31,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -70,7 +71,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
+public class TvShowSubtitleSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -1607146878528487625L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$
@@ -143,6 +144,12 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
         + color.getGreen() + "," + color.getBlue() + "); }";
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
+
+    cbScraperLanguage = new JComboBox(MediaLanguages.values());
+    add(cbScraperLanguage, "cell 1 4");
+
+    cbLanguageStyle = new JComboBox(LanguageStyle.values());
+    add(cbLanguageStyle, "cell 1 5,growx");
     ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
 
     // select default tv show subtitle scraper
@@ -155,11 +162,11 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][grow][500lp,grow]", "[][200lp][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][grow]", "[][200lp][grow][20lp,shrink 0][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.subtitle"));// $NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
-      add(lblScraperT, "cell 0 0 4 1");
+      add(lblScraperT, "cell 0 0 3 1");
     }
     {
       tableScraper = new TmmTable();
@@ -171,7 +178,7 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 3 1,grow");
+      add(scrollPaneScraperDetails, "cell 1 2 2 1,grow");
       scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       scrollPaneScraperDetails.setBorder(null);
 
@@ -187,18 +194,16 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
       panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
     }
     {
+      JSeparator separator = new JSeparator();
+      add(separator, "cell 1 3 2 1,growx");
+    }
+    {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-      add(lblScraperLanguage, "cell 1 2,alignx right,aligny center");
-
-      cbScraperLanguage = new JComboBox(MediaLanguages.values());
-      add(cbScraperLanguage, "cell 2 2");
+      add(lblScraperLanguage, "flowx,cell 1 4,aligny center");
     }
     {
       JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
-      add(lblLanguageStyle, "cell 1 3,alignx trailing");
-
-      cbLanguageStyle = new JComboBox(LanguageStyle.values());
-      add(cbLanguageStyle, "cell 2 3,growx");
+      add(lblLanguageStyle, "flowx,cell 1 5");
     }
   }
 

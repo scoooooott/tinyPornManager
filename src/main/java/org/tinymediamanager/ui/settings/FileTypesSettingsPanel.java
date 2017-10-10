@@ -22,12 +22,13 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -35,11 +36,10 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class FileTypesSettingsPanel extends ScrollablePanel {
+public class FileTypesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 9136097757447080369L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$

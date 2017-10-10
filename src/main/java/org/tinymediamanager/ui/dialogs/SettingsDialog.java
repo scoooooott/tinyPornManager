@@ -27,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -62,7 +63,7 @@ public class SettingsDialog extends TmmDialog {
   private static JDialog                 instance;
 
   private TmmTree<TmmTreeNode>           tree;
-  private JScrollPane                    scrollPaneRight;
+  private JSplitPane                     splitPane;
   private TmmTreeTextFilter<TmmTreeNode> tfFilter;
 
   /**
@@ -91,11 +92,13 @@ public class SettingsDialog extends TmmDialog {
     tree.addTreeSelectionListener(e -> {
       DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
       if (node != null) {
-        // click on a tv show
+        // click on a settings node
         if (node.getUserObject() instanceof TmmSettingsNode) {
           TmmSettingsNode tmmSettingsNode = (TmmSettingsNode) node.getUserObject();
-          scrollPaneRight.setViewportView(tmmSettingsNode.getComponent());
-          revalidate();
+          if (tmmSettingsNode.getComponent() != null) {
+            splitPane.setRightComponent(tmmSettingsNode.getComponent());
+            revalidate();
+          }
         }
       }
     });
@@ -116,12 +119,12 @@ public class SettingsDialog extends TmmDialog {
 
   private void initComponents() {
     {
-      JSplitPane splitPane = new JSplitPane();
+      splitPane = new JSplitPane();
       getContentPane().add(splitPane, BorderLayout.CENTER);
 
       JPanel panelLeft = new JPanel();
       splitPane.setLeftComponent(panelLeft);
-      panelLeft.setLayout(new MigLayout("", "[200lp:200lp,grow]", "[][600lp,grow]"));
+      panelLeft.setLayout(new MigLayout("", "[300lp:300lp,grow]", "[][600lp,grow]"));
       {
         tfFilter = new TmmTreeTextFilter<>();
         panelLeft.add(tfFilter, "cell 0 0,grow");
@@ -133,21 +136,23 @@ public class SettingsDialog extends TmmDialog {
 
       tree = new TmmTree<>(new TmmSettingsDataProvider());
       scrollPaneLeft.setViewportView(tree);
-
-      JPanel panelRight = new JPanel();
-      splitPane.setRightComponent(panelRight);
-      panelRight.setLayout(new MigLayout("", "[700lp:800lp,grow]", "[500lp,grow]"));
-      scrollPaneRight = new JScrollPane();
-      scrollPaneRight.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      panelRight.add(scrollPaneRight, "cell 0 0,grow");
+      scrollPaneLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     }
     {
+      JPanel southPanel = new JPanel();
+      getContentPane().add(southPanel, BorderLayout.SOUTH);
+      southPanel.setLayout(new MigLayout("insets n 0 0 0, gap rel 0", "[grow][]", "[shrink 0][]"));
+      {
+        JSeparator separator = new JSeparator();
+        southPanel.add(separator, "cell 0 0 2 1,growx");
+      }
+
       JPanel panelButtons = new JPanel();
       EqualsLayout layout = new EqualsLayout(5);
       layout.setMinWidth(100);
       panelButtons.setLayout(layout);
       panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
-      getContentPane().add(panelButtons, BorderLayout.SOUTH);
+      southPanel.add(panelButtons, "cell 1 1,alignx left,aligny top");
 
       JButton okButton = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       panelButtons.add(okButton, "2, 1, fill, top");

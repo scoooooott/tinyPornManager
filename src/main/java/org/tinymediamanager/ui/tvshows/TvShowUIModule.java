@@ -70,7 +70,10 @@ import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowDatasourceSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowImageSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowImageTypeSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowRenamerSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowScraperNfoSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowScraperOptionsSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
@@ -152,8 +155,16 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     // build settings node
     settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.tvshow"), new TvShowSettingsPanel());//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new TvShowDatasourceSettingsPanel()));//$NON-NLS-1$
-    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel()));//$NON-NLS-1$
-    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel()));//$NON-NLS-1$
+
+    TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel());//$NON-NLS-1$
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new TvShowScraperOptionsSettingsPanel()));//$NON-NLS-1$
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.nfo"), new TvShowScraperNfoSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(scraperSettingsNode);
+
+    TmmSettingsNode imageSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel());//$NON-NLS-1$
+    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.artwork.naming"), new TvShowImageTypeSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(imageSettingsNode);
+
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));//$NON-NLS-1$
 

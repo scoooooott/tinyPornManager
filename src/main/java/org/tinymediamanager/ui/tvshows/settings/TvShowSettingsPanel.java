@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -37,7 +38,6 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -46,7 +46,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSettingsPanel extends ScrollablePanel {
+public class TvShowSettingsPanel extends JPanel {
   private static final long            serialVersionUID = -675729644848101096L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$

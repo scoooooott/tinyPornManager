@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
@@ -30,7 +31,6 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -39,7 +39,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class ExternalServicesSettingsPanel extends ScrollablePanel {
+public class ExternalServicesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 7266564870819511988L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$

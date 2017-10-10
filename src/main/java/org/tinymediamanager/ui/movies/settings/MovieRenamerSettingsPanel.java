@@ -55,6 +55,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -94,7 +95,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private ActionListener                 actionCreateRenamerExample = e -> createRenamerExample();
   private TmmTable                       tableExamples;
-  private JTextPane                      tpMMDWarning;
+  private JLabel                         lblMMDWarning;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -200,9 +201,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFolderPattern = new JLabel(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(lblDefaultFolderPattern, "cell 3 2");
-      TmmFontHelper.changeFont(lblDefaultFolderPattern, 0.833);
+      JTextPane tpDefaultFolderPattern = new ReadOnlyTextPane(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+      add(tpDefaultFolderPattern, "cell 3 2");
+      TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
     }
     {
       JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
@@ -215,25 +216,19 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(lblDefault, "cell 1 4 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JLabel lblDefaultFilePattern = new JLabel(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(lblDefaultFilePattern, "cell 3 4");
-      TmmFontHelper.changeFont(lblDefaultFilePattern, 0.833);
+      JTextPane tpDefaultFilePattern = new ReadOnlyTextPane(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
+      add(tpDefaultFilePattern, "cell 3 4");
+      TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
     }
     {
-      JTextPane tpChooseAFolder = new JTextPane();
+      JTextPane tpChooseAFolder = new ReadOnlyTextPane(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
       add(tpChooseAFolder, "cell 2 5 2 1");
-      tpChooseAFolder.setOpaque(false);
-      tpChooseAFolder.setEditable(false);
       TmmFontHelper.changeFont(tpChooseAFolder, 0.833);
-      tpChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     }
     {
-      tpMMDWarning = new JTextPane();
-      tpMMDWarning.setText(BUNDLE.getString("Settings.renamer.folder.warning"));
-      tpMMDWarning.setForeground(Color.red);
-      tpMMDWarning.setOpaque(false);
-      tpMMDWarning.setEditable(false);
-      add(tpMMDWarning, "cell 1 6 3 1,growx");
+      lblMMDWarning = new JLabel(BUNDLE.getString("Settings.renamer.folder.warning"));
+      lblMMDWarning.setForeground(Color.red);
+      add(lblMMDWarning, "cell 1 6 3 1,growx");
     }
     {
       chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
@@ -247,12 +242,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(chckbxAsciiReplacement, "flowx,cell 1 9 4 1");
     }
 
-    JTextPane tpAsciiHint = new JTextPane();
-    add(tpAsciiHint, "cell 2 10 3 1,aligny top");
-    tpAsciiHint.setOpaque(false);
-    tpAsciiHint.setEditable(false);
-    tpAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(tpAsciiHint, 0.833);
+    JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+    add(lblAsciiHint, "cell 2 10 3 1,aligny top");
+    TmmFontHelper.changeFont(lblAsciiHint, 0.833);
     {
       chckbxMoviesetSingleMovie = new JCheckBox(BUNDLE.getString("Settings.renamer.moviesetsinglemovie")); //$NON-NLS-1$
       add(chckbxMoviesetSingleMovie, "cell 1 11 4 1");
@@ -303,10 +295,10 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
     // empty is valid (although not unique)
     if (!tfMoviePath.getText().isEmpty() && !MovieRenamer.isFolderPatternUnique(tfMoviePath.getText())) {
-      tpMMDWarning.setVisible(true);
+      lblMMDWarning.setVisible(true);
     }
     else {
-      tpMMDWarning.setVisible(false);
+      lblMMDWarning.setVisible(false);
     }
 
     if (cbMovieForPreview.getSelectedItem() instanceof MoviePreviewContainer) {
