@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 
 import org.tinymediamanager.ui.IconManager;
@@ -30,7 +29,7 @@ import org.tinymediamanager.ui.dialogs.SettingsDialog;
  * 
  * @author Manuel Laggner
  */
-public class SettingsAction extends AbstractAction {
+public class SettingsAction extends TmmAction {
   private static final long           serialVersionUID = 8930602755330446751L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -41,7 +40,7 @@ public class SettingsAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     JDialog settingsDialog = SettingsDialog.getInstance();
     settingsDialog.setVisible(true);
   }

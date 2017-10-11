@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
@@ -26,13 +25,14 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
  * MovieUpdateSingleDatasourceAction - update all movies from a single data source
  * 
  * @author Manuel Laggner
  */
-public class MovieUpdateSingleDatasourceAction extends AbstractAction {
+public class MovieUpdateSingleDatasourceAction extends TmmAction {
   private static final long           serialVersionUID = 6885253964781733478L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -47,7 +47,7 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     TmmThreadPool task = new MovieUpdateDatasourceTask2(datasource);
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$

@@ -20,7 +20,8 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -31,6 +32,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
 
 /**
@@ -38,7 +40,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
  * 
  * @author Manuel Laggner
  */
-public class MovieUnscrapedScrapeAction extends AbstractAction {
+public class MovieUnscrapedScrapeAction extends TmmAction {
   private static final long           serialVersionUID = -5330113139288186736L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -51,7 +53,7 @@ public class MovieUnscrapedScrapeAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
     if (unscrapedMovies.size() > 0) {
       MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$

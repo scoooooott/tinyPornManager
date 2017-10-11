@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.connector.MovieNfoParser;
@@ -30,6 +28,7 @@ import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
@@ -37,7 +36,7 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  * 
  * @author Manuel Laggner
  */
-public class MovieReadNfoAction extends AbstractAction {
+public class MovieReadNfoAction extends TmmAction {
   private static final long           serialVersionUID = 2866581962767395824L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -47,7 +46,7 @@ public class MovieReadNfoAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rewrite selected NFOs

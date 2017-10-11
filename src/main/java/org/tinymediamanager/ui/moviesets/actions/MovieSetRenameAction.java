@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -32,13 +31,14 @@ import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
 /**
  * @author Manuel Laggner
  * 
  */
-public class MovieSetRenameAction extends AbstractAction {
+public class MovieSetRenameAction extends TmmAction {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final long           serialVersionUID = 1677285197819210130L;
 
@@ -51,7 +51,7 @@ public class MovieSetRenameAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = MovieSetUIModule.getInstance().getSelectionModel().getSelectedObjects();
     Set<Movie> selectedMovies = new HashSet<>();
 

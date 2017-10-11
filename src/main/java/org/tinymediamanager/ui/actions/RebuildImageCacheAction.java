@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.Globals;
@@ -39,7 +38,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class RebuildImageCacheAction extends AbstractAction {
+public class RebuildImageCacheAction extends TmmAction {
   private static final long           serialVersionUID = -9178351750617647813L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -48,13 +47,8 @@ public class RebuildImageCacheAction extends AbstractAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent e) {
     if (!Globals.settings.isImageCache()) {
       JOptionPane.showMessageDialog(null, "Image cache is not activated!");
       return;

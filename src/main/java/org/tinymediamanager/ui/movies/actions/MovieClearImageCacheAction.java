@@ -21,12 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
@@ -34,7 +33,7 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  * 
  * @author Manuel Laggner
  */
-public class MovieClearImageCacheAction extends AbstractAction {
+public class MovieClearImageCacheAction extends TmmAction {
   private static final long           serialVersionUID = -5089957097690621345L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -44,7 +43,7 @@ public class MovieClearImageCacheAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // get data of all files within all selected movies

@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -31,12 +29,13 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowMissingArtworkDownloadTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
  * the class TvShowDownloadMissingArtworkAction is used to search/download missing artwork
  */
-public class TvShowDownloadMissingArtworkAction extends AbstractAction {
+public class TvShowDownloadMissingArtworkAction extends TmmAction {
   private static final long           serialVersionUID = 6102632119900792735L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -47,7 +46,7 @@ public class TvShowDownloadMissingArtworkAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
     Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 

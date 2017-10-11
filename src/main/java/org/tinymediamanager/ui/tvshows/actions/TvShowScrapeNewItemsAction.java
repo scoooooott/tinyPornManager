@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -31,6 +30,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 
 /**
@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
  * 
  * @author Manuel Laggner
  */
-public class TvShowScrapeNewItemsAction extends AbstractAction {
+public class TvShowScrapeNewItemsAction extends TmmAction {
   private static final long           serialVersionUID = -3365542777082781952L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -50,7 +50,7 @@ public class TvShowScrapeNewItemsAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<TvShow> newTvShows = new ArrayList<>();
     List<TvShowEpisode> newEpisodes = new ArrayList<>();
 

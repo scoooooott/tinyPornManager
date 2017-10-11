@@ -18,10 +18,10 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieRenamerPreviewDialog;
 
@@ -30,7 +30,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieRenamerPreviewDialog;
  * 
  * @author Manuel Laggner
  */
-public class MovieRenamePreviewAction extends AbstractAction {
+public class MovieRenamePreviewAction extends TmmAction {
   private static final long           serialVersionUID = 5158514686702295145L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -42,7 +42,7 @@ public class MovieRenamePreviewAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     MovieRenamerPreviewDialog dialog = new MovieRenamerPreviewDialog(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
     dialog.setVisible(true);
   }

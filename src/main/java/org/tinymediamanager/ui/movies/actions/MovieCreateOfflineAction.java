@@ -18,10 +18,9 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.dialogs.MovieCreateOfflineDialog;
 
 /**
@@ -29,7 +28,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieCreateOfflineDialog;
  * 
  * @author Manuel Laggner
  */
-public class MovieCreateOfflineAction extends AbstractAction {
+public class MovieCreateOfflineAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963094L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -43,8 +42,9 @@ public class MovieCreateOfflineAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     MovieCreateOfflineDialog dialog = new MovieCreateOfflineDialog();
+    dialog.pack();
     dialog.setVisible(true);
   }
 }

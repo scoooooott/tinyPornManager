@@ -20,12 +20,12 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 
@@ -34,19 +34,9 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSingleScrapeAction extends AbstractAction {
+public class TvShowSingleScrapeAction extends TmmAction {
   private static final long           serialVersionUID = 641704453374845709L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public TvShowSingleScrapeAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-    putValue(SMALL_ICON, IconManager.SEARCH);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-  }
 
   public TvShowSingleScrapeAction() {
     putValue(NAME, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
@@ -57,7 +47,7 @@ public class TvShowSingleScrapeAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
     for (TvShow tvShow : selectedTvShows) {

@@ -19,32 +19,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
  * MovieUpdateDatasourceAction - update all movies from all datasources
  * 
  * @author Manuel Laggner
  */
-public class MovieUpdateDatasourceAction extends AbstractAction {
+public class MovieUpdateDatasourceAction extends TmmAction {
   private static final long           serialVersionUID = 6885253964781733478L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public MovieUpdateDatasourceAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-    }
-    putValue(SMALL_ICON, IconManager.REFRESH);
-    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-  }
 
   public MovieUpdateDatasourceAction() {
     putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
@@ -55,7 +47,7 @@ public class MovieUpdateDatasourceAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     TmmThreadPool task = new MovieUpdateDatasourceTask2();
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$

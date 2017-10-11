@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +31,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
@@ -44,19 +44,9 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
  * 
  * @author Manuel Laggner
  */
-public class TvShowEditAction extends AbstractAction {
+public class TvShowEditAction extends TmmAction {
   private static final long           serialVersionUID = -3911290901017607679L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public TvShowEditAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, IconManager.EDIT);
-    putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-  }
 
   public TvShowEditAction() {
     putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
@@ -67,7 +57,7 @@ public class TvShowEditAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
     for (Object obj : selectedObjects) {

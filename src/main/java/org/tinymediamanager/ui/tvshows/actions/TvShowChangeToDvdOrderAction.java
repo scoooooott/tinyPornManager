@@ -21,13 +21,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
@@ -35,7 +34,7 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  * 
  * @author Manuel Laggner
  */
-public class TvShowChangeToDvdOrderAction extends AbstractAction {
+public class TvShowChangeToDvdOrderAction extends TmmAction {
   private static final long           serialVersionUID = 8457297935386064655L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -47,7 +46,7 @@ public class TvShowChangeToDvdOrderAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
     Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 

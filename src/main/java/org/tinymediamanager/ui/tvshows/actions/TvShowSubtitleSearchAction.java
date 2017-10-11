@@ -19,13 +19,12 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowSubtitleChooserDialog;
 
@@ -34,7 +33,7 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowSubtitleChooserDialog;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSubtitleSearchAction extends AbstractAction {
+public class TvShowSubtitleSearchAction extends TmmAction {
   private static final long           serialVersionUID = -6006932119900795735L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -46,7 +45,7 @@ public class TvShowSubtitleSearchAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     for (TvShowEpisode episode : episodes) {

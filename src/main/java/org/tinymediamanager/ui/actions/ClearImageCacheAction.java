@@ -20,8 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
@@ -33,7 +31,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class ClearImageCacheAction extends AbstractAction {
+public class ClearImageCacheAction extends TmmAction {
   private static final long           serialVersionUID = -4615019451671427233L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(ClearImageCacheAction.class);
@@ -44,7 +42,7 @@ public class ClearImageCacheAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent arg0) {
     Path cache = ImageCache.getCacheDir();
     if (Files.exists(cache)) {
       try {

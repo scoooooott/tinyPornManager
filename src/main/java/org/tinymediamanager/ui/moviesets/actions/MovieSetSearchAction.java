@@ -19,11 +19,10 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
 
@@ -31,7 +30,7 @@ import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
  * @author Manuel Laggner
  * 
  */
-public class MovieSetSearchAction extends AbstractAction {
+public class MovieSetSearchAction extends TmmAction {
   private static final long           serialVersionUID = -2260581786599155278L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -46,7 +45,7 @@ public class MovieSetSearchAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();
 
     for (MovieSet movieSet : selectedMovieSets) {

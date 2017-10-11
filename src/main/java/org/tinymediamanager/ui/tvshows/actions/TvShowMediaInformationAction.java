@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -32,6 +31,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
@@ -39,19 +39,9 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  * 
  * @author Manuel Laggner
  */
-public class TvShowMediaInformationAction extends AbstractAction {
+public class TvShowMediaInformationAction extends TmmAction {
   private static final long           serialVersionUID = -1274423130095036944L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public TvShowMediaInformationAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
-  }
 
   public TvShowMediaInformationAction() {
     putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
@@ -62,7 +52,7 @@ public class TvShowMediaInformationAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
     List<TvShowEpisode> selectedEpisodes = new ArrayList<>();
 

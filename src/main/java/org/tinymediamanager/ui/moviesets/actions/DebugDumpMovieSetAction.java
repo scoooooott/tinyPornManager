@@ -20,31 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
-public class DebugDumpMovieSet extends AbstractAction {
+public class DebugDumpMovieSetAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public DebugDumpMovieSet() {
+  public DebugDumpMovieSetAction() {
     putValue(NAME, BUNDLE.getString("debug.entity.dump")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("debug.entity.dump.desc")); //$NON-NLS-1$
-    // putValue(LARGE_ICON_KEY, Debug.EDIT);
-    // putValue(SMALL_ICON, Debug.EDIT);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<MovieSet> selectedMovieSets = new ArrayList<>(MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets());
     for (MovieSet ms : selectedMovieSets) {
       MovieModuleManager.getInstance().dump(ms);

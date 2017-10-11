@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 
 import org.tinymediamanager.ui.IconManager;
@@ -31,7 +30,7 @@ import org.tinymediamanager.ui.dialogs.BugReportDialog;
  * 
  * @author Manuel Laggner
  */
-public class BugReportAction extends AbstractAction {
+public class BugReportAction extends TmmAction {
   private static final long           serialVersionUID = 2468561945547768259L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -43,7 +42,7 @@ public class BugReportAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     JDialog dialog = new BugReportDialog();
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.pack();

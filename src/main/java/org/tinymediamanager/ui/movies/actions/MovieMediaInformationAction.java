@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieReloadMediaInformationTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
@@ -35,19 +38,9 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  * 
  * @author Manuel Laggner
  */
-public class MovieMediaInformationAction extends AbstractAction {
+public class MovieMediaInformationAction extends TmmAction {
   private static final long           serialVersionUID = 4927466975489852998L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public MovieMediaInformationAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-  }
 
   public MovieMediaInformationAction() {
     putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
@@ -58,7 +51,7 @@ public class MovieMediaInformationAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // get data of all files within all selected movies

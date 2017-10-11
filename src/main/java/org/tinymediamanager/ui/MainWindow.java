@@ -29,7 +29,6 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -37,18 +36,12 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -58,31 +51,20 @@ import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
-import org.tinymediamanager.ui.actions.ClearDatabaseAction;
-import org.tinymediamanager.ui.actions.ClearImageCacheAction;
-import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.toolbar.ToolbarPanel;
-import org.tinymediamanager.ui.dialogs.LogDialog;
-import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.images.LogoCircle;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -94,9 +76,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.sun.jna.Platform;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 
 /**
  * The Class MainWindow.
@@ -130,134 +109,6 @@ public class MainWindow extends JFrame {
     instance = this;
 
     initialize();
-
-    // tools menu
-    JMenu tools = new JMenu(BUNDLE.getString("tmm.tools")); //$NON-NLS-1$
-    tools.setMnemonic(KeyEvent.VK_O);
-    tools.add(new ClearDatabaseAction());
-
-    JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
-    cache.setMnemonic(KeyEvent.VK_C);
-    tools.add(cache);
-    JMenuItem clearImageCache = new JMenuItem(new ClearImageCacheAction());
-    clearImageCache.setMnemonic(KeyEvent.VK_I);
-    cache.add(clearImageCache);
-
-    JMenuItem rebuildImageCache = new JMenuItem(new RebuildImageCacheAction());
-    rebuildImageCache.setMnemonic(KeyEvent.VK_R);
-    cache.add(rebuildImageCache);
-
-    JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
-    tmmFolder.setMnemonic(KeyEvent.VK_I);
-    tools.add(tmmFolder);
-    tmmFolder.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        Path path = Paths.get(System.getProperty("user.dir"));
-        try {
-          // check whether this location exists
-          if (Files.exists(path)) {
-            TmmUIHelper.openFile(path);
-          }
-        }
-        catch (Exception ex) {
-          LOGGER.error("open filemanager", ex);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-        }
-      }
-    });
-
-    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
-    tmmLogs.setMnemonic(KeyEvent.VK_L);
-    tools.add(tmmLogs);
-    tmmLogs.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        JDialog logDialog = new LogDialog();
-        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        logDialog.setVisible(true);
-      }
-    });
-
-    JMenuItem tmmMessages = new JMenuItem(BUNDLE.getString("tmm.messages")); //$NON-NLS-1$
-    tmmMessages.setMnemonic(KeyEvent.VK_L);
-    tools.add(tmmMessages);
-    tmmMessages.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        JDialog messageDialog = MessageHistoryDialog.getInstance();
-        messageDialog.setVisible(true);
-      }
-    });
-
-    tools.addSeparator();
-    final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
-    menuWakeOnLan.setMnemonic(KeyEvent.VK_W);
-    menuWakeOnLan.addMenuListener(new MenuListener() {
-      @Override
-      public void menuCanceled(MenuEvent arg0) {
-      }
-
-      @Override
-      public void menuDeselected(MenuEvent arg0) {
-      }
-
-      @Override
-      public void menuSelected(MenuEvent arg0) {
-        menuWakeOnLan.removeAll();
-        for (final WolDevice device : Globals.settings.getWolDevices()) {
-          JMenuItem item = new JMenuItem(device.getName());
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-              Utils.sendWakeOnLanPacket(device.getMacAddress());
-            }
-          });
-          menuWakeOnLan.add(item);
-        }
-      }
-    });
-    tools.add(menuWakeOnLan);
-
-    // activate/deactivate WakeOnLan menu item
-    tools.addMenuListener(new MenuListener() {
-      @Override
-      public void menuSelected(MenuEvent e) {
-        if (Globals.settings.getWolDevices().size() > 0) {
-          menuWakeOnLan.setEnabled(true);
-        }
-        else {
-          menuWakeOnLan.setEnabled(false);
-        }
-      }
-
-      @Override
-      public void menuDeselected(MenuEvent e) {
-      }
-
-      @Override
-      public void menuCanceled(MenuEvent e) {
-      }
-    });
-
-    if (Globals.isDebug()) {
-      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
-
-      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
-      trace.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-          lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
-          MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
-          LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
-        }
-      });
-
-      debugMenu.add(trace);
-      tools.add(debugMenu);
-    }
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it

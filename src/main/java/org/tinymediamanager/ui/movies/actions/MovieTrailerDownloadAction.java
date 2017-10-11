@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.MediaFileType;
@@ -30,6 +29,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
@@ -37,7 +37,7 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  * 
  * @author Manuel Laggner
  */
-public class MovieTrailerDownloadAction extends AbstractAction {
+public class MovieTrailerDownloadAction extends TmmAction {
   private static final long           serialVersionUID = -8668265401054434251L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -49,7 +49,7 @@ public class MovieTrailerDownloadAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // first check if there is at least one movie containing a trailer mf

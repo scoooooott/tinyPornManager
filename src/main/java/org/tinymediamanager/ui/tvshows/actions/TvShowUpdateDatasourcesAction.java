@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -28,24 +27,16 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
  * The Class TvShowUpdateDatasourcesAction. Update all data sources
  * 
  * @author Manuel Laggner
  */
-public class TvShowUpdateDatasourcesAction extends AbstractAction {
+public class TvShowUpdateDatasourcesAction extends TmmAction {
   private static final long           serialVersionUID = 5704371143505653741L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public TvShowUpdateDatasourcesAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
-    putValue(SMALL_ICON, IconManager.REFRESH);
-  }
 
   public TvShowUpdateDatasourcesAction() {
     putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
@@ -55,7 +46,7 @@ public class TvShowUpdateDatasourcesAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     TmmThreadPool task = new TvShowUpdateDatasourceTask2();
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$

@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -29,6 +27,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
@@ -39,19 +38,9 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  * 
  * @author Manuel Laggner
  */
-public class TvShowChangeSeasonPosterAction extends AbstractAction {
+public class TvShowChangeSeasonPosterAction extends TmmAction {
   private static final long           serialVersionUID = 8356413227405772558L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  @Deprecated
-  public TvShowChangeSeasonPosterAction(boolean withTitle) {
-    if (withTitle) {
-      putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-    }
-    putValue(LARGE_ICON_KEY, IconManager.EDIT);
-    putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-  }
 
   public TvShowChangeSeasonPosterAction() {
     putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
@@ -61,7 +50,7 @@ public class TvShowChangeSeasonPosterAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
     for (Object obj : selectedObjects) {

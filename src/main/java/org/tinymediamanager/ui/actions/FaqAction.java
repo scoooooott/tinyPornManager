@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class FaqAction extends AbstractAction {
+public class FaqAction extends TmmAction {
   private static final long           serialVersionUID = 1668251251156765161L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(FaqAction.class);
@@ -44,7 +42,7 @@ public class FaqAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     String url = StringEscapeUtils.unescapeHtml4("https://github.com/tinyMediaManager/tinyMediaManager/wiki/FAQ");
     try {
       TmmUIHelper.browseUrl(url);

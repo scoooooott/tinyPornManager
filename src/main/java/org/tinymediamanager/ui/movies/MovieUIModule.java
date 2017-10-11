@@ -33,10 +33,12 @@ import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
+import org.tinymediamanager.ui.movies.actions.MovieCreateOfflineAction;
 import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
 import org.tinymediamanager.ui.movies.actions.MovieDownloadMissingArtworkAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
+import org.tinymediamanager.ui.movies.actions.MovieFindMissingAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
 import org.tinymediamanager.ui.movies.actions.MovieReadNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
@@ -49,10 +51,12 @@ import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
+import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
@@ -240,6 +244,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
         for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
           updatePopupMenu.add(new MovieUpdateSingleDatasourceAction(ds));
         }
+        updatePopupMenu.addSeparator();
+        updatePopupMenu.add(createAndRegisterAction(MovieUpdateAction.class));
         updatePopupMenu.pack();
       }
 
@@ -251,6 +257,9 @@ public class MovieUIModule extends AbstractTmmUIModule {
       public void popupMenuCanceled(PopupMenuEvent e) {
       }
     });
+    updatePopupMenu.addSeparator();
+    updatePopupMenu.add(createAndRegisterAction(MovieFindMissingAction.class));
+    updatePopupMenu.add(createAndRegisterAction(MovieCreateOfflineAction.class));
 
     // search popup menu
     searchPopupMenu = new JPopupMenu();
@@ -271,6 +280,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
     editPopupMenu.addSeparator();
     editPopupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieSyncSelectedTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
 
     // rename popup menu

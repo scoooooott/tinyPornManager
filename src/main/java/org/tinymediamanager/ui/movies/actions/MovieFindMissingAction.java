@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +26,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
  * The class MovieFindMissingAction. To find missing movies on the datasources
@@ -34,7 +34,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  * 
  */
-public class MovieFindMissingAction extends AbstractAction {
+public class MovieFindMissingAction extends TmmAction {
   private static final long           serialVersionUID = 7873846965534352231L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -70,7 +70,7 @@ public class MovieFindMissingAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent e) {
     TmmThreadPool task = null;
     if (StringUtils.isNotBlank(datasource)) {
       task = new MovieFindMissingTask(datasource);

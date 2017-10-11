@@ -20,31 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
-public class DebugDumpMovie extends AbstractAction {
+public class DebugDumpMovieAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public DebugDumpMovie() {
+  public DebugDumpMovieAction() {
     putValue(NAME, BUNDLE.getString("debug.entity.dump")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("debug.entity.dump.desc")); //$NON-NLS-1$
-    // putValue(LARGE_ICON_KEY, Debug.EDIT);
-    // putValue(SMALL_ICON, Debug.EDIT);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
     for (Movie movie : selectedMovies) {
       MovieModuleManager.getInstance().dump(movie);

@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 
@@ -34,7 +35,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
  * 
  * @author Manuel Laggner
  */
-public class MovieEditAction extends AbstractAction {
+public class MovieEditAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -57,7 +58,7 @@ public class MovieEditAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     for (Movie movie : selectedMovies) {

@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.components.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.nio.file.Files;
@@ -37,12 +38,19 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -53,23 +61,29 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
-import org.tinymediamanager.ui.actions.ClearDatabaseAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.ForumAction;
 import org.tinymediamanager.ui.actions.HomepageAction;
+import org.tinymediamanager.ui.actions.LaunchUpdaterAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TaskListPopup;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
+import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.images.LoadingSpinner;
+import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
+import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
+import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -284,14 +298,23 @@ public class ToolbarPanel extends JPanel {
 
     menu.addSeparator();
 
-    // debug menu
-    JMenu debug = new JMenu(BUNDLE.getString("tmm.debug")); //$NON-NLS-1$
-    JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("tmm.cleardatabase")); //$NON-NLS-1$
-    debug.add(clearDatabase);
-    clearDatabase.setAction(new ClearDatabaseAction());
+    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
+    menu.add(tmmLogs);
+    tmmLogs.addActionListener(arg0 -> {
+      JDialog logDialog = new LogDialog();
+      logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      logDialog.setVisible(true);
+    });
 
+    JMenuItem tmmMessages = new JMenuItem(BUNDLE.getString("tmm.messages")); //$NON-NLS-1$
+    tmmMessages.setMnemonic(KeyEvent.VK_L);
+    menu.add(tmmMessages);
+    tmmMessages.addActionListener(arg0 -> {
+      JDialog messageDialog = MessageHistoryDialog.getInstance();
+      messageDialog.setVisible(true);
+    });
     JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
-    debug.add(tmmFolder);
+    menu.add(tmmFolder);
     tmmFolder.addActionListener(arg0 -> {
       Path path = Paths.get(System.getProperty("user.dir"));
       try {
@@ -307,15 +330,75 @@ public class ToolbarPanel extends JPanel {
       }
     });
 
-    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
-    debug.add(tmmLogs);
-    tmmLogs.addActionListener(arg0 -> {
-      JDialog logDialog = new LogDialog();
-      logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      logDialog.setVisible(true);
+    menu.addSeparator();
+
+    final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
+    menuWakeOnLan.setMnemonic(KeyEvent.VK_W);
+    menuWakeOnLan.addMenuListener(new MenuListener() {
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        menuWakeOnLan.removeAll();
+        for (final WolDevice device : Globals.settings.getWolDevices()) {
+          JMenuItem item = new JMenuItem(device.getName());
+          item.addActionListener(arg01 -> Utils.sendWakeOnLanPacket(device.getMacAddress()));
+          menuWakeOnLan.add(item);
+        }
+      }
+    });
+    menu.add(menuWakeOnLan);
+
+    // activate/deactivate WakeOnLan menu item
+    menu.addPopupMenuListener(new PopupMenuListener() {
+      @Override
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        if (Globals.settings.getWolDevices().size() > 0) {
+          menuWakeOnLan.setEnabled(true);
+        }
+        else {
+          menuWakeOnLan.setEnabled(false);
+        }
+      }
+
+      @Override
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+      }
+
+      @Override
+      public void popupMenuCanceled(PopupMenuEvent e) {
+      }
     });
 
-    menu.add(debug);
+    menu.addSeparator();
+    menu.add(new LaunchUpdaterAction());
+
+    // debug menu
+    if (Globals.isDebug()) {
+      menu.addSeparator();
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      menu.add(debugMenu);
+
+      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
+      trace.addActionListener(arg0 -> {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+        MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
+        LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
+      });
+
+      debugMenu.add(trace);
+
+      debugMenu.add(new DebugDumpMovieAction());
+      debugMenu.add(new DebugDumpMovieSetAction());
+      debugMenu.add(new DebugDumpShowAction());
+    }
 
     return menu;
   }

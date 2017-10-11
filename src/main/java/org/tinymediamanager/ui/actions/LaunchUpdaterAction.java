@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
@@ -29,7 +27,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class LaunchUpdaterAction extends AbstractAction {
+public class LaunchUpdaterAction extends TmmAction {
   private static final long           serialVersionUID = 3046686017542572465L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -39,7 +37,7 @@ public class LaunchUpdaterAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     MainWindow.getActiveInstance().closeTmmAndStart(Utils.getPBforTMMupdate());
   }
 }

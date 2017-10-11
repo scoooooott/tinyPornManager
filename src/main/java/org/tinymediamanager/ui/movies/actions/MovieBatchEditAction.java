@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
 
@@ -35,7 +36,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
  * 
  * @author Manuel Laggner
  */
-public class MovieBatchEditAction extends AbstractAction {
+public class MovieBatchEditAction extends TmmAction {
   private static final long           serialVersionUID = -3974602352019088416L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -48,7 +49,7 @@ public class MovieBatchEditAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // get data of all files within all selected movies

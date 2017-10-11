@@ -20,33 +20,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
-public class DebugDumpShow extends AbstractAction {
+public class DebugDumpShowAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public DebugDumpShow() {
+  public DebugDumpShowAction() {
     putValue(NAME, BUNDLE.getString("debug.entity.dump")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("debug.entity.dump.desc")); //$NON-NLS-1$
-    // putValue(LARGE_ICON_KEY, Debug.EDIT);
-    // putValue(SMALL_ICON, Debug.EDIT);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
     HashSet<TvShow> shows = new HashSet<>(); // no dupes

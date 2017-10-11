@@ -18,20 +18,19 @@ package org.tinymediamanager.ui.tvshows.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
  * The class TvShowSyncWatchedTraktTvAction. To synchronize the watched state of your TV show library with trakt.tv
  * 
  * @author Manuel Laggner
  */
-public class TvShowSyncWatchedTraktTvAction extends AbstractAction {
+public class TvShowSyncWatchedTraktTvAction extends TmmAction {
   private static final long           serialVersionUID = 6640292090443882545L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -43,7 +42,7 @@ public class TvShowSyncWatchedTraktTvAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void processAction(ActionEvent e) {
     TmmTask task = new SyncTraktTvTask(false, false, false, true);
     TmmTaskManager.getInstance().addUnnamedTask(task);
   }

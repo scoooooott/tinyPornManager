@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class ClearDatabaseAction extends AbstractAction {
+public class ClearDatabaseAction extends TmmAction {
   private static final long           serialVersionUID = 5840749350843921771L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(ClearDatabaseAction.class);
@@ -51,7 +50,7 @@ public class ClearDatabaseAction extends AbstractAction {
   }
 
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  protected void processAction(ActionEvent arg0) {
     // display warning popup
     int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.cleardatabase.hint"),
         BUNDLE.getString("tmm.cleardatabase"), JOptionPane.YES_NO_OPTION);

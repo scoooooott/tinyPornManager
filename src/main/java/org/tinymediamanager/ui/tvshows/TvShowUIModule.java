@@ -34,8 +34,11 @@ import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowDownloadMissingArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
@@ -52,6 +55,9 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleDownloadAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleSearchAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
@@ -255,8 +261,15 @@ public class TvShowUIModule extends AbstractTmmUIModule {
 
     popupMenu.addSeparator();
 
+    popupMenu.add(createAndRegisterAction(TvShowDownloadMissingArtworkAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSubtitleDownloadAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSubtitleSearchAction.class));
+
+    popupMenu.addSeparator();
+
     popupMenu.add(createAndRegisterAction(TvShowSyncTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSyncWatchedTraktTvAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSyncSelectedTraktTvAction.class));
 
     popupMenu.addSeparator();
 
@@ -309,6 +322,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowReadEpisodeNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeToDvdOrderAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeToAiredOrderAction.class));
   }
 
   /**
