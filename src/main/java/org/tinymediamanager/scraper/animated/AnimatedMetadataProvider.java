@@ -111,7 +111,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
     MediaArtworkType artworkType = options.getArtworkType();
-    if (artworkType != MediaArtworkType.POSTER && artworkType != MediaArtworkType.BACKGROUND) {
+    if (artworkType != MediaArtworkType.POSTER && artworkType != MediaArtworkType.BACKGROUND && artworkType != MediaArtworkType.ALL) {
       // we only have these two
       return returnArtwork;
     }
