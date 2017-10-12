@@ -344,14 +344,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     }
     else if (getScore() == arg0.getScore()) {
       // same score - rank on year
-      int y1 = getYear();
-      int y2 = arg0.getYear();
-      if (y1 > y2) {
-        return 1;
-      }
-      else {
-        return -1;
-      }
+      return Integer.compare(getYear(),arg0.getYear());
     }
     else {
       return 1;
