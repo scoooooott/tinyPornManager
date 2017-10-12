@@ -29,10 +29,9 @@
 
     <dependencies>
         <dependency>
-            <!-- String methods of ex commons lang -->
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.1</version>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
