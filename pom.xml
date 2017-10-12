@@ -24,6 +24,11 @@
     </scm>
 
     <properties>
+        <!-- try to stay on 1.7 (for now) -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <signature>java17</signature>
+
         <okhttp.version>3.9.0</okhttp.version>
     </properties>
 
@@ -100,6 +105,18 @@
 
     <build>
         <plugins>
+            <plugin><!-- override from parent -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>${signature}</artifactId>
+                        <version>1.0</version>
+                    </signature>
+                    <!-- ignoreDependencies>false</ignoreDependencies -->
+                </configuration>
+            </plugin>
             <plugin>
                 <!-- checks for any compatibility issues to previous version -->
                 <groupId>com.googlecode.japi-checker</groupId>
