@@ -142,28 +142,32 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
 
   private List<MediaArtwork> prepareArtwork(Movie m, MediaArtworkType artworkType) {
     List<MediaArtwork> artworks = new ArrayList<>();
-    List<Entry> pics = new ArrayList<>();
 
     switch (artworkType) {
       case POSTER:
-        pics.addAll(m.getPosters());
+        artworks.addAll(genMA(m.getPosters(), artworkType));
         break;
       case BACKGROUND:
-        pics.addAll(m.getBackgrounds());
+        artworks.addAll(genMA(m.getBackgrounds(), artworkType));
         break;
       case ALL:
-        pics.addAll(m.getPosters());
-        pics.addAll(m.getBackgrounds());
+        artworks.addAll(genMA(m.getPosters(), MediaArtworkType.POSTER));
+        artworks.addAll(genMA(m.getBackgrounds(), MediaArtworkType.BACKGROUND));
         break;
       default:
         break;
     }
-    for (Entry image : ListUtils.nullSafe(pics)) {
-      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), artworkType);
+    return artworks;
+  }
+
+  private List<MediaArtwork> genMA(List<Entry> entries, MediaArtworkType type) {
+    List<MediaArtwork> artworks = new ArrayList<>();
+    for (Entry image : ListUtils.nullSafe(entries)) {
+      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type);
       ma.setDefaultUrl(BASE_URL + image.getOriginal());
       ma.setPreviewUrl(BASE_URL + image.getImage());
       ma.setAnimated(true);
-      ma.setImdbId(m.getImdbid());
+      // ma.setImdbId(m.getImdbid());
       ma.setLanguage(image.getLanguage().toLowerCase(Locale.ROOT));
       artworks.add(ma);
     }
