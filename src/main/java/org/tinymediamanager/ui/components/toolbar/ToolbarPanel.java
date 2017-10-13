@@ -54,6 +54,7 @@ import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -78,6 +79,7 @@ import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.images.LoadingSpinner;
 import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
 import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
+import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
@@ -355,7 +357,34 @@ public class ToolbarPanel extends JPanel {
     });
     menu.add(menuWakeOnLan);
 
-    // activate/deactivate WakeOnLan menu item
+    menu.addSeparator();
+    menu.add(new LaunchUpdaterAction());
+
+    // debug menu
+    if (Globals.isDebug()) {
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+
+      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
+      trace.addActionListener(arg0 -> {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+        MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
+        LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
+      });
+
+      debugMenu.add(trace);
+      debugMenu.add(new DebugDumpMovieAction());
+      debugMenu.add(new DebugDumpMovieSetAction());
+      debugMenu.add(new DebugDumpShowAction());
+
+      menu.addSeparator();
+      menu.add(debugMenu);
+    }
+
+    final JMenu kodiRPCMenu = KodiRPCMenu.KodiMenu();
+    menu.add(kodiRPCMenu);
+
+    // activate/deactivate menu items based on som estatus
     menu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -364,6 +393,14 @@ public class ToolbarPanel extends JPanel {
         }
         else {
           menuWakeOnLan.setEnabled(false);
+        }
+
+        kodiRPCMenu.setText(KodiRPC.getInstance().getVersion());
+        if (KodiRPC.getInstance().isConnected()) {
+          kodiRPCMenu.setEnabled(true);
+        }
+        else {
+          kodiRPCMenu.setEnabled(false);
         }
       }
 
@@ -375,30 +412,6 @@ public class ToolbarPanel extends JPanel {
       public void popupMenuCanceled(PopupMenuEvent e) {
       }
     });
-
-    menu.addSeparator();
-    menu.add(new LaunchUpdaterAction());
-
-    // debug menu
-    if (Globals.isDebug()) {
-      menu.addSeparator();
-      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
-      menu.add(debugMenu);
-
-      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
-      trace.addActionListener(arg0 -> {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
-        MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
-        LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
-      });
-
-      debugMenu.add(trace);
-
-      debugMenu.add(new DebugDumpMovieAction());
-      debugMenu.add(new DebugDumpMovieSetAction());
-      debugMenu.add(new DebugDumpShowAction());
-    }
 
     return menu;
   }

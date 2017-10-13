@@ -48,11 +48,6 @@
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.tinymediamanager</groupId>
-            <artifactId>resources</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
             <!-- own patched artifacts -->
             <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
                 -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
@@ -111,14 +106,15 @@
             <version>3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- REMOVED
-            RottenTomatoes removed free access to the API
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-rottentomatoes</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <artifactId>scraper-animated</artifactId>
+            <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency> -->
+        </dependency>
+        <!-- REMOVED RottenTomatoes removed free access to the API <dependency> 
+            <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-rottentomatoes</artifactId> 
+            <version>2.0-SNAPSHOT</version> <scope>provided</scope> </dependency> -->
         <!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> 
             <version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
         <dependency>
@@ -145,8 +141,11 @@
             <version>3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> 
-            <version>1.0-SNAPSHOT</version> </dependency> -->
+        <dependency>
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>kodi-json-rpc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.uwetrottmann.trakt5</groupId>
             <artifactId>trakt-java</artifactId>

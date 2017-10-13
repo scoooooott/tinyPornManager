@@ -57,7 +57,9 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.jsonrpc.io.ApiException;
 import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
 import org.tinymediamanager.thirdparty.upnp.Upnp;
 import org.tinymediamanager.ui.IconManager;
@@ -311,6 +313,12 @@ public class TinyMediaManager {
             u.createUpnpService();
             u.sendPlayerSearchRequest();
             u.startWebServer();
+          }
+          try {
+            KodiRPC.getInstance().connect();
+          }
+          catch (ApiException e) {
+            LOGGER.error(e.getMessage());
           }
 
           // do upgrade tasks after database loading

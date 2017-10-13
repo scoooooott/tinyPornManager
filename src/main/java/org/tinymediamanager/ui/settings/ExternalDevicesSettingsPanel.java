@@ -16,6 +16,8 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,9 +36,14 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.WolDevice;
+import org.tinymediamanager.jsonrpc.config.HostConfig;
+import org.tinymediamanager.jsonrpc.io.ApiException;
+import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -51,15 +58,19 @@ import net.miginfocom.swing.MigLayout;
  */
 public class ExternalDevicesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 8176824801347872222L;
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ExternalDevicesSettingsPanel.class);
+
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
 
   private JTable                      tableWolDevices;
-  private JTextField                  tfXbmcHost;
-  private JTextField                  tfXbmcUsername;
-  private JPasswordField              tfXbmcPassword;
+  private JTextField                  tfKodiHost;
+  private JTextField                  tfKodiTcpPort;
+  private JTextField                  tfKodiHttpPort;
+  private JTextField                  tfKodiUsername;
+  private JPasswordField              tfKodiPassword;
   private JButton                     btnRemoveWolDevice;
   private JButton                     btnAddWolDevice;
   private JButton                     btnEditWolDevice;
@@ -137,38 +148,75 @@ public class ExternalDevicesSettingsPanel extends JPanel {
       add(lblKodiT, "cell 0 3 2 1");
     }
     {
-      JLabel lblXbmcHostT = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
-      add(lblXbmcHostT, "cell 1 4");
+      JLabel lblKodiHostT = new JLabel(BUNDLE.getString("Settings.kodi.host")); //$NON-NLS-1$
+      add(lblKodiHostT, "cell 1 4");
 
-      tfXbmcHost = new JTextField();
-      add(tfXbmcHost, "cell 2 4");
-      tfXbmcHost.setColumns(20);
+      tfKodiHost = new JTextField();
+      add(tfKodiHost, "cell 2 4");
+      tfKodiHost.setColumns(20);
 
-      JLabel lblXbmcUsernameT = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
-      add(lblXbmcUsernameT, "cell 1 5");
+      JButton btnKodiConnect = new JButton(BUNDLE.getString("Settings.kodi.connect")); //$NON-NLS-1$
+      btnKodiConnect.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          HostConfig c = new HostConfig(tfKodiHost.getText(), tfKodiHttpPort.getText(), tfKodiTcpPort.getText(), tfKodiUsername.getText(),
+              new String(tfKodiPassword.getPassword()));
+          try {
+            KodiRPC.getInstance().connect(c);
+          }
+          catch (ApiException cex) {
+            LOGGER.error("Error connecting to Kodi instance!", e);
+          }
+        }
+      });
+      add(btnKodiConnect, "cell 3 4,growx");
 
-      tfXbmcUsername = new JTextField();
-      add(tfXbmcUsername, "cell 2 5");
-      tfXbmcUsername.setColumns(20);
+      JLabel lblKodiHttpPortT = new JLabel(BUNDLE.getString("Settings.kodi.httpport")); //$NON-NLS-1$
+      add(lblKodiHttpPortT, "cell 1 5");
 
-      JLabel lblXbmcPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-      add(lblXbmcPasswordT, "cell 1 6");
+      tfKodiHttpPort = new JTextField();
+      add(tfKodiHttpPort, "cell 2 5");
+      tfKodiHttpPort.setColumns(20);
 
-      tfXbmcPassword = new JPasswordField();
-      add(tfXbmcPassword, "cell 2 6");
-      tfXbmcPassword.setColumns(20);
+      JButton btnKodiDisconnect = new JButton(BUNDLE.getString("Settings.kodi.disconnect")); //$NON-NLS-1$
+      btnKodiDisconnect.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          KodiRPC.getInstance().disconnect();
+        }
+      });
+      add(btnKodiDisconnect, "cell 3 5,growx");
+
+      JLabel lblKodiTcpPortT = new JLabel(BUNDLE.getString("Settings.kodi.tcpport")); //$NON-NLS-1$
+      add(lblKodiTcpPortT, "cell 1 6");
+
+      tfKodiTcpPort = new JTextField();
+      add(tfKodiTcpPort, "cell 2 6");
+      tfKodiTcpPort.setColumns(20);
+
+      JLabel lblKodiUsernameT = new JLabel(BUNDLE.getString("Settings.kodi.user")); //$NON-NLS-1$
+      add(lblKodiUsernameT, "cell 1 7");
+
+      tfKodiUsername = new JTextField();
+      add(tfKodiUsername, "cell 2 7");
+      tfKodiUsername.setColumns(20);
+
+      JLabel lblKodiPasswordT = new JLabel(BUNDLE.getString("Settings.kodi.pass")); //$NON-NLS-1$
+      add(lblKodiPasswordT, "cell 1 8");
+
+      tfKodiPassword = new JPasswordField();
+      add(tfKodiPassword, "cell 2 8");
+      tfKodiPassword.setColumns(20);
     }
     {
       final JLabel lblUpnpT = new JLabel("UPnP");
       TmmFontHelper.changeFont(lblUpnpT, 1.16667, Font.BOLD);
-      add(lblUpnpT, "cell 0 8 3 1");
+      add(lblUpnpT, "cell 0 10 3 1");
     }
     {
       chckbxUpnpShareLibrary = new JCheckBox(BUNDLE.getString("Settings.upnp.share")); //$NON-NLS-1$
-      add(chckbxUpnpShareLibrary, "cell 1 9 2 1");
+      add(chckbxUpnpShareLibrary, "cell 1 11 2 1");
 
       chckbxUpnpRemotePlay = new JCheckBox(BUNDLE.getString("Settings.upnp.play")); //$NON-NLS-1$
-      add(chckbxUpnpRemotePlay, "cell 1 10 2 1");
+      add(chckbxUpnpRemotePlay, "cell 1 12 2 1");
     }
   }
 
@@ -186,22 +234,16 @@ public class ExternalDevicesSettingsPanel extends JPanel {
     jTableBinding.setEditable(false);
     jTableBinding.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("xbmcHost");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, tfXbmcHost, jTextFieldBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<Settings, String> settingsBeanProperty_2 = BeanProperty.create("xbmcUsername");
+    BeanProperty<Settings, String> settingsBeanProperty_2 = BeanProperty.create("kodiUsername");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, tfXbmcUsername, jTextFieldBeanProperty_1);
+        settingsBeanProperty_2, tfKodiUsername, jTextFieldBeanProperty_1);
     autoBinding_1.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("xbmcPassword");
+    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("kodiPassword");
     BeanProperty<JPasswordField, String> jPasswordFieldBeanProperty = BeanProperty.create("text");
     AutoBinding<Settings, String, JPasswordField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, tfXbmcPassword, jPasswordFieldBeanProperty);
+        settingsBeanProperty_3, tfKodiPassword, jPasswordFieldBeanProperty);
     autoBinding_2.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("upnpRemotePlay");
@@ -214,5 +256,23 @@ public class ExternalDevicesSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxUpnpShareLibrary, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("kodiHost");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, tfKodiHost, jTextFieldBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_6 = BeanProperty.create("kodiHttpPort");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
+    AutoBinding<Settings, Integer, JTextField, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_6, tfKodiHttpPort, jTextFieldBeanProperty_2);
+    autoBinding_5.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_7 = BeanProperty.create("kodiTcpPort");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
+    AutoBinding<Settings, Integer, JTextField, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, tfKodiTcpPort, jTextFieldBeanProperty_3);
+    autoBinding_6.bind();
   }
 }

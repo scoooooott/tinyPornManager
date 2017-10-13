@@ -112,27 +112,35 @@ public class Settings extends AbstractSettings {
   private String                traktAccessToken       = "";
   private String                traktRefreshToken      = "";
 
-  private String                xbmcHost               = "";
-  private String                xbmcUsername           = "";
-  private String                xbmcPassword           = "";
+  private static int            DEFAULT_KODI_HTTP_PORT = 8080;
+  static {
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+      DEFAULT_KODI_HTTP_PORT = 80;
+    }
+  }
+  private String    kodiHost               = "";
+  private int       kodiHttpPort           = DEFAULT_KODI_HTTP_PORT;
+  private int       kodiTcpPort            = 9090;
+  private String    kodiUsername           = "";
+  private String    kodiPassword           = "";
 
-  private boolean               imageCache             = true;
-  private CacheType             imageCacheType         = CacheType.SMOOTH;
+  private boolean   imageCache             = true;
+  private CacheType imageCacheType         = CacheType.SMOOTH;
 
   // language 2 char - saved to config
-  private String                language;
-  private String                mediaPlayer            = "";
+  private String    language;
+  private String    mediaPlayer            = "";
 
-  private int                   fontSize               = 12;
-  private String                fontFamily             = "Dialog";
+  private int       fontSize               = 12;
+  private String    fontFamily             = "Dialog";
 
-  private boolean               storeWindowPreferences = true;
+  private boolean   storeWindowPreferences = true;
 
-  private boolean               deleteTrashOnExit      = false;
-  private boolean               enableAnalytics        = false;
+  private boolean   deleteTrashOnExit      = false;
+  private boolean   enableAnalytics        = false;
 
-  private boolean               upnpShareLibrary       = false;
-  private boolean               upnpRemotePlay         = false;
+  private boolean   upnpShareLibrary       = false;
+  private boolean   upnpRemotePlay         = false;
 
   /**
    * Instantiates a new settings.
@@ -861,35 +869,65 @@ public class Settings extends AbstractSettings {
     firePropertyChange("traktRefreshToken", oldValue, newValue);
   }
 
-  public String getXbmcHost() {
-    return xbmcHost;
+  public String getKodiHost() {
+    return kodiHost;
   }
 
-  public void setXbmcHost(String newValue) {
-    String oldValue = this.xbmcHost;
-    this.xbmcHost = newValue;
-    firePropertyChange("xbmcHost", oldValue, newValue);
+  public void setKodiHost(String newValue) {
+    String oldValue = this.kodiHost;
+    this.kodiHost = newValue;
+    firePropertyChange("kodiHost", oldValue, newValue);
   }
 
-  public String getXbmcUsername() {
-    return xbmcUsername;
+  /**
+   * gets saved Kodi HTTP port, or default
+   * 
+   * @return
+   */
+  public int getKodiHttpPort() {
+    return kodiHttpPort == 0 ? DEFAULT_KODI_HTTP_PORT : kodiHttpPort;
   }
 
-  public void setXbmcUsername(String newValue) {
-    String oldValue = this.xbmcUsername;
-    this.xbmcUsername = newValue;
-    firePropertyChange("xbmcUsername", oldValue, newValue);
+  public void setKodiHttpPort(int kodiHttpPort) {
+    int oldValue = this.kodiHttpPort;
+    this.kodiHttpPort = kodiHttpPort;
+    firePropertyChange("kodiHttpPort", oldValue, kodiHttpPort);
+  }
+
+  /**
+   * gets saved Kodi TCP port, or default
+   * 
+   * @return
+   */
+  public int getKodiTcpPort() {
+    return kodiTcpPort == 0 ? 9090 : kodiTcpPort;
+  }
+
+  public void setKodiTcpPort(int kodiTcpPort) {
+    int oldValue = this.kodiHttpPort;
+    this.kodiTcpPort = kodiTcpPort;
+    firePropertyChange("kodiTcpPort", oldValue, kodiTcpPort);
+  }
+
+  public String getKodiUsername() {
+    return kodiUsername;
+  }
+
+  public void setKodiUsername(String newValue) {
+    String oldValue = this.kodiUsername;
+    this.kodiUsername = newValue;
+    firePropertyChange("kodiUsername", oldValue, newValue);
   }
 
   @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
-  public String getXbmcPassword() {
-    return xbmcPassword;
+  public String getKodiPassword() {
+    return kodiPassword;
   }
 
-  public void setXbmcPassword(String newValue) {
-    String oldValue = this.xbmcPassword;
-    this.xbmcPassword = newValue;
-    firePropertyChange("xbmcPassword", oldValue, newValue);
+  public void setKodiPassword(String newValue) {
+    String oldValue = this.kodiPassword;
+    this.kodiPassword = newValue;
+    firePropertyChange("kodiPassword", oldValue, newValue);
   }
 
   public void setMediaPlayer(String newValue) {
