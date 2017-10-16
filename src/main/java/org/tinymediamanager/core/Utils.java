@@ -663,9 +663,11 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
+            LOGGER.warn("rename problem: " + e.getMessage());
           }
         }
         catch (IOException e) {
+          LOGGER.warn("rename problem: " + e.getMessage());
         }
         if (rename) {
           break; // ok it worked, step out
