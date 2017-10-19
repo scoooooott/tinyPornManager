@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tinymediamanager.thirdparty.KodiRPC;
+import org.tinymediamanager.thirdparty.KodiRPC.SplitDataSource;
 
 public class KodiRPCMenu {
 
@@ -20,6 +21,7 @@ public class KodiRPCMenu {
     JMenu m = new JMenu(version);
     m.add(Application());
     m.add(System());
+    m.add(Datasources());
     return m;
   }
 
@@ -45,6 +47,30 @@ public class KodiRPCMenu {
     m.add(i);
 
     m.add(Volume());
+
+    return m;
+  }
+
+  private static JMenu Datasources() {
+    JMenu m = new JMenu("Video Library");
+
+    JMenu m2 = new JMenu("Scan");
+    JMenuItem i = new JMenuItem("Scan all Datasources");
+    i.addActionListener(new DatasourceScanListener(null));
+    m2.add(i);
+
+    for (SplitDataSource ds : KodiRPC.getInstance().getVideoDataSources()) {
+      i = new JMenuItem("Scan " + ds.label + "  (" + ds.type + ")");
+      if ("UPNP".equals(ds.type)) {
+        // cannot "scan" UPNP - always directly fetched and not in library
+        i.setEnabled(false);
+      }
+      else {
+        i.addActionListener(new DatasourceScanListener(ds.file));
+      }
+      m2.add(i);
+    }
+    m.add(m2);
 
     return m;
   }
@@ -95,6 +121,18 @@ public class KodiRPCMenu {
 
     public void actionPerformed(ActionEvent e) {
       KodiRPC.getInstance().ApplicationVolume(vol);
+    }
+  }
+
+  private static class DatasourceScanListener implements ActionListener {
+    private String datasource;
+
+    public DatasourceScanListener(String datasource) {
+      this.datasource = datasource;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      KodiRPC.getInstance().LibraryVideoScan(datasource);
     }
   }
 

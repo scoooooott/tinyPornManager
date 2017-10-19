@@ -8,8 +8,12 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Locale;
 
+import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.types.UDN;
+import org.fourthline.cling.registry.Registry;
 import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +43,14 @@ import org.tinymediamanager.jsonrpc.io.ConnectionListener;
 import org.tinymediamanager.jsonrpc.io.JavaConnectionManager;
 import org.tinymediamanager.jsonrpc.io.JsonApiRequest;
 import org.tinymediamanager.jsonrpc.notification.AbstractEvent;
+import org.tinymediamanager.thirdparty.upnp.Upnp;
 
 public class KodiRPC {
   private static final Logger          LOGGER      = LoggerFactory.getLogger(KodiRPC.class);
   private static KodiRPC               instance;
   private static JavaConnectionManager cm          = new JavaConnectionManager();
   private String                       kodiVersion = "";
+  private ArrayList<SplitDataSource>   datasources = new ArrayList<SplitDataSource>();
 
   private KodiRPC() {
     cm.registerConnectionListener(new ConnectionListener() {
@@ -96,14 +102,38 @@ public class KodiRPC {
     return (kodiVersion.isEmpty() || kodiVersion.contains("nknown")) ? "Kodi (Unknown)" : kodiVersion;
   }
 
-  private String getAndSetKodiVersion() {
+  private void getAndSetKodiVersion() {
     final JSONRPC.Version call = new JSONRPC.Version();
     send(call);
     if (call.getResult() != null) {
       kodiVersion = call.getResult().getKodiVersion();
-      return kodiVersion;
     }
-    return "";
+  }
+
+  // -----------------------------------------------------------------------------------
+
+  public void LibraryVideoScan() {
+    final VideoLibrary.Scan call = new VideoLibrary.Scan(null, true);
+    send(call);
+  }
+
+  public void LibraryVideoScan(String dir) {
+    final VideoLibrary.Scan call = new VideoLibrary.Scan(dir, true);
+    send(call);
+  }
+
+  // -----------------------------------------------------------------------------------
+  public ArrayList<SplitDataSource> getVideoDataSources() {
+    return this.datasources;
+  }
+
+  private void getAndSetVideoDataSources() {
+    final Files.GetSources call = new Files.GetSources(FilesModel.Media.VIDEO); // movies + tv !!!
+    this.datasources = new ArrayList<SplitDataSource>();
+    send(call);
+    for (ListModel.SourceItem res : call.getResults()) {
+      this.datasources.add(splitDataSource(res.file, res.label));
+    }
   }
 
   // -----------------------------------------------------------------------------------
@@ -201,7 +231,9 @@ public class KodiRPC {
     }
     LOGGER.info("Connecting...");
     cm.connect(config);
+
     getAndSetKodiVersion();
+    getAndSetVideoDataSources();
   }
 
   public void connect() throws ApiException {
@@ -228,19 +260,19 @@ public class KodiRPC {
 
         LOGGER.info("--- KODI DATASOURCES ---");
         for (ListModel.SourceItem res : call.getResults()) {
-          LOGGER.debug(res.file + " - " + Arrays.toString(getIpAndPath(res.file)));
+          LOGGER.debug(res.file + " - " + splitDataSource(res.file, res.label));
         }
 
         LOGGER.info("--- TMM DATASOURCES ---");
         for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
-          LOGGER.info(ds + " - " + Arrays.toString(getIpAndPath(ds)));
+          LOGGER.info(ds + " - " + splitDataSource(ds, ds));
         }
         for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
-          LOGGER.info(ds + " - " + Arrays.toString(getIpAndPath(ds)));
+          LOGGER.info(ds + " - " + splitDataSource(ds, ds));
         }
 
         String ds = "//server/asdf";
-        LOGGER.info(ds + " - " + Arrays.toString(getIpAndPath(ds)));
+        LOGGER.info(ds + " - " + splitDataSource(ds, ds));
 
       }
 
@@ -332,8 +364,9 @@ public class KodiRPC {
    *          TMM/Kodi datasource
    * @return IP:path, or LOCAL:path
    */
-  private String[] getIpAndPath(String ds) {
-    String[] ret = { "", "" };
+  private SplitDataSource splitDataSource(String ds, String label) {
+    SplitDataSource ret = new SplitDataSource();
+    ret.label = label;
     URI u = null;
     try {
       u = new URI(ds);
@@ -348,23 +381,44 @@ public class KodiRPC {
       }
     }
     if (u != null && !StringUtil.isBlank(u.getHost())) {
-      ret[1] = u.getPath();
+      ret.file = u.getPath();
       if (ds.startsWith("upnp")) {
-        ret[0] = getMacFromUpnpUUID(u.getHost());
+        ret.type = "UPNP";
+        ret.hostname = getMacFromUpnpUUID(u.getHost());
+
+        UpnpService us = Upnp.getInstance().getUpnpService();
+        if (us != null) {
+          Registry registry = us.getRegistry();
+          if (registry != null) {
+            Device foundDevice = registry.getDevice(UDN.valueOf(u.getHost()), true);
+            if (foundDevice != null) {
+              ret.ip = foundDevice.getDetails().getPresentationURI().getHost();
+            }
+          }
+        }
       }
       else {
         try {
+          ret.type = u.getScheme().toUpperCase(Locale.ROOT);
+          ret.hostname = u.getHost();
           InetAddress i = InetAddress.getByName(u.getHost());
-          ret[0] = i.getHostAddress();
+          ret.ip = i.getHostAddress();
         }
         catch (UnknownHostException e) {
-          ret[0] = u.getHost();
+          ret.hostname = u.getHost();
         }
       }
     }
     else {
-      ret[0] = "LOCAL";
-      ret[1] = u.getPath();
+      ret.type = "LOCAL";
+      ret.ip = "127.0.0.1";
+      ret.file = ds;
+      try {
+        ret.hostname = InetAddress.getLocalHost().getHostName();
+      }
+      catch (UnknownHostException e) {
+        ret.hostname = "localhost";
+      }
     }
     return ret;
   }
@@ -381,8 +435,33 @@ public class KodiRPC {
     StringBuilder result = new StringBuilder();
     for (int i = s.length() - 2; i >= 0; i = i - 2) {
       result.append(new StringBuilder(s.substring(i, i + 2)));
+      result.append(i > 1 ? ":" : ""); // skip last
     }
     return result.toString().toUpperCase();
   }
 
+  /**
+   * Splits a Kodi datasource in it's parameters<br>
+   * <br>
+   * <b>Type:</b><br>
+   * LOCAL for local datasources<br>
+   * UPNP for UPNP ones<br>
+   * SMB/NFS/... Url schema for other remotes
+   * 
+   * @author Myron Boyle
+   *
+   */
+  public class SplitDataSource {
+    public String label    = "";
+    public String type     = "";
+    public String ip       = "";
+    public String hostname = "";
+    public String file     = "";
+
+    @Override
+    public String toString() {
+      return "SplitDataSource [label=" + label + ", type=" + type + ", ip=" + ip + ", hostname=" + hostname + ", file=" + file + "]";
+    }
+
+  }
 }

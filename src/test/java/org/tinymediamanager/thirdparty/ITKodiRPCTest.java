@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiException;
+import org.tinymediamanager.thirdparty.KodiRPC.SplitDataSource;
 
 public class ITKodiRPCTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(ITKodiRPCTest.class);
@@ -66,7 +67,9 @@ public class ITKodiRPCTest {
 
   @Test
   public void getDataSources() {
-    KodiRPC.getInstance().getDataSources();
+    for (SplitDataSource ds : KodiRPC.getInstance().getVideoDataSources()) {
+      System.out.println(ds);
+    }
   }
 
   @Test
@@ -76,6 +79,8 @@ public class ITKodiRPCTest {
 
   @BeforeClass
   public static void setUp() {
+    // Upnp.getInstance().createUpnpService();
+    // Upnp.getInstance().sendPlayerSearchRequest();
     try {
       HostConfig config = new HostConfig("127.0.0.1");
       KodiRPC.getInstance().connect(config);
@@ -87,7 +92,7 @@ public class ITKodiRPCTest {
 
   @AfterClass
   public static void tearDown() throws InterruptedException {
-    Thread.sleep(2000); // wait a bit - async
+    Thread.sleep(10000); // wait a bit - async
     KodiRPC.getInstance().disconnect();
     Thread.sleep(200); // wait a bit - async
   }
