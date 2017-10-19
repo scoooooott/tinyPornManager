@@ -60,7 +60,7 @@ public class UiSettingsPanel extends JPanel {
 
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
+  private static final Logger         LOGGER             = LoggerFactory.getLogger(UiSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 
   private Settings                    settings           = Settings.getInstance();
