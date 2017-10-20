@@ -71,6 +71,7 @@ import org.tinymediamanager.ui.actions.HomepageAction;
 import org.tinymediamanager.ui.actions.LaunchUpdaterAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.actions.ShowChangelogAction;
 import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TaskListPopup;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
@@ -422,6 +423,7 @@ public class ToolbarPanel extends JPanel {
     menu.add(new FaqAction());
     menu.add(new WikiAction());
     menu.add(new ForumAction());
+    menu.add(new ShowChangelogAction());
     menu.addSeparator();
 
     menu.add(new BugReportAction());

@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -36,15 +35,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -74,12 +72,11 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
@@ -87,11 +84,7 @@ import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowChooserDialog.
@@ -100,8 +93,6 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID      = 2371518113606870230L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
   private TvShowList                  tvShowList            = TvShowList.getInstance();
@@ -112,13 +103,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private List<MediaScraper>          artworkScrapers;
   private boolean                     continueQueue         = true;
 
-  /** UI components */
-  private final JPanel                contentPanel          = new JPanel();
   private JTextField                  textFieldSearchString;
   private MediaScraperComboBox        cbScraper;
   private JComboBox<MediaLanguages>   cbLanguage;
   private JTable                      table;
-  private JTextArea                   lblTvShowName;
+  private JLabel                      lblTvShowName;
   private JTextPane                   tpTvShowOverview;
   private ImageLabel                  lblTvShowPoster;
   private JLabel                      lblProgressAction;
@@ -136,7 +125,6 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
    */
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     super(BUNDLE.getString("tvshowchooser.search"), "tvShowChooser"); //$NON-NLS-1$
-    setBounds(5, 5, 985, 586);
 
     // copy the values
     TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
@@ -156,76 +144,79 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     scraperMetadataConfig.setGenres(settings.isGenres());
     scraperMetadataConfig.setArtwork(settings.isArtwork());
 
-    getContentPane().setLayout(new BorderLayout());
-    contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
-      lblPath = new JLabel("");
-      contentPanel.add(lblPath, "2, 2");
+      final JPanel panelPath = new JPanel();
+      panelPath.setLayout(new MigLayout("", "[grow]", "[]"));
+      {
+        lblPath = new JLabel("");
+        TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
+        panelPath.add(lblPath, "cell 0 0");
+      }
+
+      setTopIformationPanel(panelPath);
     }
+
+    /* UI components */
+    JPanel contentPanel = new JPanel();
+    getContentPane().add(contentPanel, BorderLayout.CENTER);
+    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:300lp,grow][shrink 0][][]"));
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "2, 4, fill, fill");
-      panelSearchField.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("right:default"), },
-          new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      contentPanel.add(panelSearchField, "cell 0 0,grow");
+      panelSearchField.setLayout(new MigLayout("", "[][][grow][]", "[23px][]"));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-        panelSearchField.add(lblScraper, "2, 1, right, default");
+        panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
         cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
         MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
-        panelSearchField.add(cbScraper, "4, 1, fill, default");
+        panelSearchField.add(cbScraper, "cell 1 0,growx");
       }
       {
         textFieldSearchString = new JTextField();
-        panelSearchField.add(textFieldSearchString, "6, 1, fill, default");
+        panelSearchField.add(textFieldSearchString, "cell 2 0,growx");
         textFieldSearchString.setColumns(10);
       }
 
       {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         btnSearch.setIcon(IconManager.SEARCH);
-        panelSearchField.add(btnSearch, "8, 1");
+        panelSearchField.add(btnSearch, "cell 3 0");
         btnSearch.addActionListener(arg0 -> searchTvShow(textFieldSearchString.getText(), null));
         getRootPane().setDefaultButton(btnSearch);
       }
       {
         JLabel lblLanguage = new JLabel("Language");
-        panelSearchField.add(lblLanguage, "2, 3, right, default");
+        panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
       }
       {
         cbLanguage = new JComboBox<>();
         cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
         cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getScraperLanguage());
         cbLanguage.addActionListener(e -> searchTvShow(textFieldSearchString.getText(), null));
-        panelSearchField.add(cbLanguage, "4, 3, fill, default");
+        panelSearchField.add(cbLanguage, "cell 1 1,growx");
       }
+    }
+    {
+      JSeparator separator = new JSeparator();
+      contentPanel.add(separator, "cell 0 1,growx");
     }
     {
       JSplitPane splitPane = new JSplitPane();
       splitPane.setResizeWeight(0.5);
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "2, 6, fill, fill");
+      contentPanel.add(splitPane, "cell 0 2,grow");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
-        panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:150px:grow"), }));
+        panelSearchResults.setLayout(new MigLayout("", "[200lp:300lp,grow]", "[150lp:300lp,grow]"));
         {
           {
             JScrollPane scrollPane = new JScrollPane();
-            panelSearchResults.add(scrollPane, "2, 2, fill, fill");
+            panelSearchResults.add(scrollPane, "cell 0 0,grow");
             table = new JTable();
             scrollPane.setViewportView(table);
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -266,88 +257,70 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(
-            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"), FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-                RowSpec.decode("240px:grow"), }));
+        panelSearchDetail.setLayout(new MigLayout("", "[150lp:n,grow][300lp:500lp,grow]", "[][150lp:200lp,grow]"));
         {
-          lblTvShowName = new JTextArea("");
-          lblTvShowName.setLineWrap(true);
-          lblTvShowName.setOpaque(false);
-          lblTvShowName.setWrapStyleWord(true);
+          lblTvShowName = new JLabel("");
           TmmFontHelper.changeFont(lblTvShowName, 1.166, Font.BOLD);
-          panelSearchDetail.add(lblTvShowName, "2, 1, 3, 1, fill, top");
+          panelSearchDetail.add(lblTvShowName, "cell 0 0 2 1,growx,aligny top");
         }
         {
           lblTvShowPoster = new ImageLabel(false);
-          panelSearchDetail.add(lblTvShowPoster, "2, 4, fill, fill");
+          panelSearchDetail.add(lblTvShowPoster, "cell 0 1,grow");
         }
         {
           JScrollPane scrollPane = new JScrollPane();
           scrollPane.setBorder(null);
-          panelSearchDetail.add(scrollPane, "4, 4, fill, fill");
-          {
-            tpTvShowOverview = new JTextPane();
-            tpTvShowOverview.setOpaque(false);
-            scrollPane.setViewportView(tpTvShowOverview);
-          }
+          panelSearchDetail.add(scrollPane, "cell 1 1,grow");
+
+          tpTvShowOverview = new ReadOnlyTextPane();
+          scrollPane.setViewportView(tpTvShowOverview);
         }
       }
+    }
+    {
+      JSeparator separator = new JSeparator();
+      contentPanel.add(separator, "cell 0 3,growx");
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "2, 8");
+      contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx,aligny top");
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "2, 9, default, fill");
+      contentPanel.add(panelScraperMetadataSetting, "cell 0 5,grow");
     }
 
     {
-      JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "2, 11");
-      {
-        bottomPane.setLayout(new FormLayout(
-            new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("50dlu:grow"), FormSpecs.DEFAULT_COLSPEC, },
-            new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
-        {
-          progressBar = new JProgressBar();
-          bottomPane.add(progressBar, "2, 2");
-        }
-        {
-          lblProgressAction = new JLabel("");
-          bottomPane.add(lblProgressAction, "4, 2, left, default");
-        }
-        {
-          JPanel buttonPane = new JPanel();
-          bottomPane.add(buttonPane, "5, 2, fill, fill");
-          EqualsLayout layout = new EqualsLayout(5);
-          layout.setMinWidth(100);
-          buttonPane.setLayout(layout);
-          okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          buttonPane.add(okButton);
-          okButton.setActionCommand("OK");
-          okButton.setIcon(IconManager.APPLY_INV);
-          okButton.addActionListener(this);
-          getRootPane().setDefaultButton(okButton);
+      JPanel infoPanel = new JPanel();
+      infoPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
 
-          JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          buttonPane.add(cancelButton);
-          cancelButton.setActionCommand("Cancel");
-          cancelButton.setIcon(IconManager.CANCEL_INV);
-          cancelButton.addActionListener(this);
+      progressBar = new JProgressBar();
+      infoPanel.add(progressBar, "cell 0 0");
 
-          if (inQueue) {
-            JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            buttonPane.add(abortButton);
-            abortButton.setActionCommand("Abort");
-            abortButton.addActionListener(this);
-            abortButton.setIcon(IconManager.PROCESS_STOP);
-          }
-        }
+      lblProgressAction = new JLabel("");
+      infoPanel.add(lblProgressAction, "cell 1 0");
+
+      setBottomInformationPanel(infoPanel);
+    }
+    {
+      if (inQueue) {
+        JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+        abortButton.setActionCommand("Abort");
+        abortButton.addActionListener(this);
+        abortButton.setIcon(IconManager.PROCESS_STOP);
+        addButton(abortButton);
       }
+      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      cancelButton.setActionCommand("Cancel");
+      cancelButton.setIcon(IconManager.CANCEL_INV);
+      cancelButton.addActionListener(this);
+      addButton(cancelButton);
+
+      okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      okButton.setActionCommand("OK");
+      okButton.setIcon(IconManager.APPLY_INV);
+      okButton.addActionListener(this);
+      addDefaultButton(okButton);
     }
 
     {
@@ -591,9 +564,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
-        lblTvShowName, jTextAreaBeanProperty_1);
+    BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
+        lblTvShowName, jLabelBeanProperty_1);
     bindings.add(autoBinding_3);
     autoBinding_3.bind();
   }

@@ -19,29 +19,23 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieDownloadSubtitleDialog. Download subtitles via file hash
@@ -49,73 +43,56 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieDownloadSubtitleDialog extends TmmDialog {
-  private static final long           serialVersionUID = 3826984454317879241L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long         serialVersionUID = 3826984454317879241L;
 
-  private MediaScraperCheckComboBox   cbSubtitleScraper;
-  private JComboBox<MediaLanguages>   cbLanguage;
-  private boolean                     startDownload    = false;
+  private MediaScraperCheckComboBox cbSubtitleScraper;
+  private JComboBox<MediaLanguages> cbLanguage;
+  private boolean                   startDownload    = false;
 
   public MovieDownloadSubtitleDialog(String title) {
     super(title, "downloadSubtitle");
     setMinimumSize(new Dimension(getWidth(), getHeight()));
+    {
 
-    JPanel panelCenter = new JPanel();
-    getContentPane().add(panelCenter, BorderLayout.CENTER);
-    panelCenter.setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("75dlu"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+      JPanel panelScraper = new JPanel();
+      getContentPane().add(panelScraper, BorderLayout.CENTER);
+      panelScraper.setLayout(new MigLayout("", "[][300lp]", "[][][20lp:n][]"));
 
-    JPanel panelScraper = new JPanel();
-    panelCenter.add(panelScraper, "2, 2, default, fill");
-    panelScraper.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+      JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+      panelScraper.add(lblScraper, "cell 0 0,alignx right");
 
-    JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-    panelScraper.add(lblScraper, "2, 2, right, default");
+      cbSubtitleScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableSubtitleScrapers());
+      panelScraper.add(cbSubtitleScraper, "cell 1 0,growx");
 
-    cbSubtitleScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableSubtitleScrapers());
-    panelScraper.add(cbSubtitleScraper, "4, 2");
+      JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      panelScraper.add(lblLanguage, "cell 0 1,alignx right");
 
-    JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-    panelScraper.add(lblLanguage, "2, 4, right, default");
+      cbLanguage = new JComboBox(MediaLanguages.values());
+      panelScraper.add(cbLanguage, "cell 1 1,growx");
 
-    cbLanguage = new JComboBox(MediaLanguages.values());
-    panelScraper.add(cbLanguage, "4, 4");
+      JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("movie.download.subtitles.hint")); //$NON-NLS-1$
+      taHint.setOpaque(false);
+      panelScraper.add(taHint, "cell 0 3 2 1,grow");
+    }
 
-    JTextArea taHint = new JTextArea();
-    taHint.setLineWrap(true);
-    taHint.setWrapStyleWord(true);
-    taHint.setText(BUNDLE.getString("movie.download.subtitles.hint")); //$NON-NLS-1$
-    taHint.setOpaque(false);
-    panelScraper.add(taHint, "2, 6, 3, 1, fill, fill");
+    {
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setIcon(IconManager.CANCEL);
+      btnCancel.addActionListener(e -> {
+        startDownload = false;
+        setVisible(false);
+      });
 
-    JPanel panelButtons = new JPanel();
-    panelButtons.setLayout(new EqualsLayout(5));
-    panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
-    getContentPane().add(panelButtons, BorderLayout.SOUTH);
+      addButton(btnCancel);
 
-    JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
-    btnStart.setIcon(IconManager.APPLY_INV);
-    btnStart.addActionListener(e -> {
-      startDownload = true;
-      setVisible(false);
-    });
-    panelButtons.add(btnStart);
-    getRootPane().setDefaultButton(btnStart);
-
-    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL);
-    btnCancel.addActionListener(e -> {
-      startDownload = false;
-      setVisible(false);
-    });
-    panelButtons.add(btnCancel);
-
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      btnStart.setIcon(IconManager.APPLY_INV);
+      btnStart.addActionListener(e -> {
+        startDownload = true;
+        setVisible(false);
+      });
+      addDefaultButton(btnStart);
+    }
     // set data
 
     // scraper
@@ -141,9 +118,7 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
     List<MediaScraper> scrapers = new ArrayList<>();
 
     // scrapers
-    for (MediaScraper scraper : cbSubtitleScraper.getSelectedItems()) {
-      scrapers.add(scraper);
-    }
+    scrapers.addAll(cbSubtitleScraper.getSelectedItems());
 
     return scrapers;
   }

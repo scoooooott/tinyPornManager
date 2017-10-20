@@ -56,6 +56,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
   private String                           name        = "";
   private String                           posterUrl   = "";
   private String                           fanartUrl   = "";
+  private String                           overview    = "";
   private int                              tmdbId      = 0;
   private MediaSearchResult                result      = null;
   private MediaMetadata                    metadata    = null;
@@ -96,6 +97,11 @@ public class MovieSetChooserModel extends AbstractModelObject {
   public void setName(String name) {
     this.name = name;
     firePropertyChange("name", "", name);
+  }
+
+  public void setOverview(String overview) {
+    this.overview = overview;
+    firePropertyChange("overview", "", overview);
   }
 
   public int getTmdbId() {
@@ -189,17 +195,16 @@ public class MovieSetChooserModel extends AbstractModelObject {
         options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
         MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
-        // if (info != null && StringUtils.isNotBlank(info.getTitle())) {
-        // movieSet.setTitle(info.getTitle());
-        // movieSet.setPlot(info.getPlot());
-        // movieSet.setArtworkUrl(info.getPosterUrl(), MediaFileType.POSTER);
-        // movieSet.setArtworkUrl(info.getFanartUrl(), MediaFileType.FANART);
-        // }
+
         if (info != null) {
           this.metadata = info;
           if (!info.getMediaArt(MediaArtworkType.BACKGROUND).isEmpty()) {
             setFanartUrl(info.getMediaArt(MediaArtworkType.BACKGROUND).get(0).getDefaultUrl());
           }
+
+          setName(info.getTitle());
+          setOverview(info.getPlot());
+
           for (MediaMetadata item : info.getSubItems()) {
             MovieInSet movie = new MovieInSet(item.getTitle());
             try {
@@ -230,7 +235,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
   public String getOverview() {
     if (metadata == null) {
-      return null;
+      return "";
     }
     return metadata.getPlot();
   }

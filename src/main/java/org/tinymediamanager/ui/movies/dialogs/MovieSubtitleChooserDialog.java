@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -59,20 +59,12 @@ import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -81,6 +73,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * This dialog is used to show a chooser for subtitles found with the subtitle scrapers
@@ -89,8 +82,6 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  */
 public class MovieSubtitleChooserDialog extends TmmDialog {
   private static final long                                 serialVersionUID   = -3104541519073924724L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                       BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final MovieList                                   movieList          = MovieList.getInstance();
   private final Movie                                       movieToScrape;
@@ -113,7 +104,6 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
   public MovieSubtitleChooserDialog(Movie movie, MediaFile mediaFile, boolean inQueue) {
     super(BUNDLE.getString("moviesubtitlechooser.search"), "movieSubtitleChooser"); //$NON-NLS-1$
-    setBounds(5, 5, 712, 429);
 
     this.movieToScrape = movie;
     this.fileToScrape = mediaFile;
@@ -155,106 +145,102 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout());
-
-    final JPanel panelContent = new JPanel();
-    getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("45dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("60dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("120dlu:grow"),
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    final JLabel lblMovieTitle = new JLabel(movieToScrape.getTitle());
-    TmmFontHelper.changeFont(lblMovieTitle, 1.33, Font.BOLD);
-    panelContent.add(lblMovieTitle, "2, 2, 9, 1");
-
-    final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
-    panelContent.add(lblMediaFileNameT, "2, 4, right, default");
-
-    final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
-    panelContent.add(lblMediaFileName, "4, 4, 7, 1");
-
-    final JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    panelContent.add(lblRuntimeT, "2, 6, right, default");
-
-    final JLabel lblRuntime = new JLabel(fileToScrape.getDurationHHMMSS());
-    panelContent.add(lblRuntime, "4, 6");
-
-    final JLabel lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-    panelContent.add(lblImdbIdT, "6, 6, right, default");
-
-    final JLabel lblImdbId = new JLabel(movieToScrape.getImdbId());
-    panelContent.add(lblImdbId, "8, 6");
-
-    final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-    panelContent.add(lblScraperT, "2, 8, right, default");
-
-    cbScraper = new MediaScraperCheckComboBox(movieList.getAvailableSubtitleScrapers());
-    panelContent.add(cbScraper, "4, 8, fill, default");
-
-    tfSearchQuery = new JTextField(movieToScrape.getTitle());
-    panelContent.add(tfSearchQuery, "6, 8, 3, 1, fill, default");
-    tfSearchQuery.setColumns(10);
-
-    final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-    btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
-    panelContent.add(btnSearch, "10, 8");
-
-    final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-    panelContent.add(lblLanguageT, "2, 10, right, default");
-
-    cbLanguage = new JComboBox<>();
-    cbLanguage.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
-    panelContent.add(cbLanguage, "4, 10, fill, default");
-
-    final JScrollPane scrollPaneSubs = new JScrollPane();
-    panelContent.add(scrollPaneSubs, "2, 12, 9, 1, fill, fill");
-
-    tableSubs = new JTable(subtitleTableModel);
-    tableSubs.setDefaultRenderer(ImageIcon.class, new Renderer());
-    scrollPaneSubs.setViewportView(tableSubs);
-
     {
-      JPanel panelBottom = new JPanel();
-      getContentPane().add(panelBottom, BorderLayout.SOUTH);
-      panelBottom.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
+      final JPanel panelTitle = new JPanel();
+      panelTitle.setLayout(new MigLayout("", "[grow]", "[]"));
+
+      final JLabel lblMovieTitle = new JLabel(movieToScrape.getTitle());
+      TmmFontHelper.changeFont(lblMovieTitle, 1.33, Font.BOLD);
+      panelTitle.add(lblMovieTitle, "cell 0 0 5 1,growx");
+
+      setTopIformationPanel(panelTitle);
+    }
+    {
+      final JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[][250lp][][150lp][]", "[][][][][shrink 0][200lp,grow]"));
+
+      final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblMediaFileNameT, Font.BOLD);
+      panelContent.add(lblMediaFileNameT, "cell 0 0,alignx right");
+
+      final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
+      panelContent.add(lblMediaFileName, "cell 1 0 4 1,growx");
+
+      final JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
+      panelContent.add(lblRuntimeT, "cell 0 1,alignx right");
+
+      final JLabel lblRuntime = new JLabel(fileToScrape.getDurationHHMMSS());
+      panelContent.add(lblRuntime, "cell 1 1");
+
+      final JLabel lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblImdbIdT, Font.BOLD);
+      panelContent.add(lblImdbIdT, "cell 2 1");
+
+      final JLabel lblImdbId = new JLabel(movieToScrape.getImdbId());
+      panelContent.add(lblImdbId, "cell 3 1");
+
+      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblScraperT, Font.BOLD);
+      panelContent.add(lblScraperT, "cell 0 2,alignx right");
+
+      cbScraper = new MediaScraperCheckComboBox(movieList.getAvailableSubtitleScrapers());
+      panelContent.add(cbScraper, "cell 1 2,growx");
+
+      tfSearchQuery = new JTextField(movieToScrape.getTitle());
+      panelContent.add(tfSearchQuery, "cell 2 2 2 1,growx,aligny center");
+      tfSearchQuery.setColumns(10);
+
+      final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
+      btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
+      panelContent.add(btnSearch, "cell 4 2,alignx left,aligny top");
+
+      final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblLanguageT, Font.BOLD);
+      panelContent.add(lblLanguageT, "cell 0 3,alignx right");
+
+      cbLanguage = new JComboBox<>();
+      cbLanguage.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
+      panelContent.add(cbLanguage, "cell 1 3,growx");
+
+      JSeparator separator = new JSeparator();
+      panelContent.add(separator, "cell 0 4 5 1,growx");
+
+      final JScrollPane scrollPaneSubs = new JScrollPane();
+      panelContent.add(scrollPaneSubs, "cell 0 5 5 1,grow");
+
+      tableSubs = new JTable(subtitleTableModel);
+      tableSubs.setDefaultRenderer(ImageIcon.class, new Renderer());
+      scrollPaneSubs.setViewportView(tableSubs);
+    }
+    {
+      JPanel infoPanel = new JPanel();
+      infoPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
 
       progressBar = new JProgressBar();
-      panelBottom.add(progressBar, "2, 2");
+      infoPanel.add(progressBar, "cell 0 0");
 
       lblProgressAction = new JLabel("");
-      panelBottom.add(lblProgressAction, "4, 2");
+      infoPanel.add(lblProgressAction, "cell 1 0");
 
-      {
-        final JPanel panelButtons = new JPanel();
-        EqualsLayout layout = new EqualsLayout(5);
-        layout.setMinWidth(100);
-        panelButtons.setLayout(layout);
-        panelBottom.add(panelButtons, "5, 2, fill, fill");
-
-        JButton btnDone = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-        btnDone.setIcon(IconManager.APPLY_INV);
-        btnDone.addActionListener(e -> setVisible(false));
-        panelButtons.add(btnDone);
-        getRootPane().setDefaultButton(btnDone);
-
-        if (inQueue) {
-          JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-          btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
-          btnAbortQueue.addActionListener(e -> {
-            continueQueue = false;
-            setVisible(false);
-          });
-          panelButtons.add(btnAbortQueue);
-        }
+      setBottomInformationPanel(infoPanel);
+    }
+    {
+      if (inQueue) {
+        JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+        btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
+        btnAbortQueue.addActionListener(e -> {
+          continueQueue = false;
+          setVisible(false);
+        });
+        addButton(btnAbortQueue);
       }
+
+      JButton btnDone = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      btnDone.setIcon(IconManager.APPLY_INV);
+      btnDone.addActionListener(e -> setVisible(false));
+      addDefaultButton(btnDone);
     }
   }
 
@@ -265,9 +251,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
     // scrapers
     List<MediaScraper> scrapers = new ArrayList<>();
-    for (MediaScraper scraper : cbScraper.getSelectedItems()) {
-      scrapers.add(scraper);
-    }
+    scrapers.addAll(cbScraper.getSelectedItems());
 
     activeSearchTask = new SearchTask(file, imdbId, searchTerm, scrapers);
     activeSearchTask.execute();

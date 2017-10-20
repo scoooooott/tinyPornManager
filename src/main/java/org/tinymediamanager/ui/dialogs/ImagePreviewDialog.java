@@ -17,10 +17,10 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
-import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
@@ -30,7 +30,6 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 
 import hu.kazocsaba.imageviewer.ImageViewer;
 
@@ -41,8 +40,6 @@ import hu.kazocsaba.imageviewer.ImageViewer;
  */
 public class ImagePreviewDialog extends TmmDialog {
   private static final long                serialVersionUID = -7479476493187235867L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger              LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 
   private String                           imageUrl;
@@ -55,12 +52,12 @@ public class ImagePreviewDialog extends TmmDialog {
     super("", "imagePreview");
     this.imageUrl = urlToImage;
 
-    getContentPane().setLayout(new BorderLayout());
     lblLoadingInfo = new JLabel(BUNDLE.getString("image.download")); //$NON-NLS-1$
     lblLoadingInfo.setBorder(new EmptyBorder(10, 10, 10, 10));
     TmmFontHelper.changeFont(lblLoadingInfo, 1.5f);
-
     getContentPane().add(lblLoadingInfo, BorderLayout.CENTER);
+
+    setBottomPanel(new JPanel());
 
     worker = new ImageFetcher();
     worker.execute();

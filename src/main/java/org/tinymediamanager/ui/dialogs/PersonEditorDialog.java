@@ -16,11 +16,9 @@
 
 package org.tinymediamanager.ui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -29,9 +27,7 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -41,14 +37,12 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class PersonEditorDialog extends TmmDialog {
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long serialVersionUID = 535326891112742179L;
+  private final Person      personToEdit;
 
-  private final Person                personToEdit;
-
-  private JTextField                  tfName;
-  private JTextField                  tfRole;
-  private JTextField                  tfImageUrl;
+  private JTextField        tfName;
+  private JTextField        tfRole;
+  private JTextField        tfImageUrl;
 
   public PersonEditorDialog(Window owner, String title, Person person) {
     super(owner, title, "personEditor");
@@ -62,7 +56,6 @@ public class PersonEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout(0, 0));
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent);
@@ -110,28 +103,18 @@ public class PersonEditorDialog extends TmmDialog {
       }
     }
     {
-      JPanel panelButtons = new JPanel();
-      getContentPane().add(panelButtons, BorderLayout.SOUTH);
-      panelButtons.setLayout(new MigLayout("", "[grow]", "[]"));
-      {
-        JPanel panel = new JPanel();
-        panel.setLayout(new EqualsLayout(5));
-        panelButtons.add(panel, "cell 0 0,alignx right");
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
+      btnCancel.addActionListener(e -> setVisible(false));
+      addButton(btnCancel);
 
-        JButton btnOk = new JButton(BUNDLE.getString("Button.save"));
-        btnOk.addActionListener(e -> {
-          personToEdit.setName(tfName.getText());
-          personToEdit.setRole(tfRole.getText());
-          personToEdit.setThumbUrl(tfImageUrl.getText());
-          setVisible(false);
-        });
-        panel.add(btnOk);
-        getRootPane().setDefaultButton(btnOk);
-
-        JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
-        btnCancel.addActionListener(e -> setVisible(false));
-        panel.add(btnCancel);
-      }
+      JButton btnOk = new JButton(BUNDLE.getString("Button.save"));
+      btnOk.addActionListener(e -> {
+        personToEdit.setName(tfName.getText());
+        personToEdit.setRole(tfRole.getText());
+        personToEdit.setThumbUrl(tfImageUrl.getText());
+        setVisible(false);
+      });
+      addDefaultButton(btnOk);
     }
   }
 }

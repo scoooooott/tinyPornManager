@@ -18,14 +18,12 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -34,7 +32,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -46,15 +43,10 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowBatchEditorDialog.
@@ -62,22 +54,20 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowBatchEditorDialog extends TmmDialog {
-  private static final long           serialVersionUID = 3527478264068979388L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long      serialVersionUID = 3527478264068979388L;
 
-  private TvShowList                  tvShowList       = TvShowList.getInstance();
-  private List<TvShow>                tvShowsToEdit;
-  private List<TvShowEpisode>         tvShowEpisodesToEdit;
-  private boolean                     episodesChanged  = false;
-  private boolean                     tvShowsChanged   = false;
+  private TvShowList             tvShowList       = TvShowList.getInstance();
+  private List<TvShow>           tvShowsToEdit;
+  private List<TvShowEpisode>    tvShowEpisodesToEdit;
+  private boolean                episodesChanged  = false;
+  private boolean                tvShowsChanged   = false;
 
   /** UI components */
-  private JComboBox<MediaGenres>      cbGenres;
-  private JComboBox<String>           cbTags;
-  private JComboBox<String>           cbTagsEpisode;
-  private JCheckBox                   chckbxWatched;
-  private JSpinner                    spSeason;
+  private JComboBox<MediaGenres> cbGenres;
+  private JComboBox<String>      cbTags;
+  private JComboBox<String>      cbTagsEpisode;
+  private JCheckBox              chckbxWatched;
+  private JSpinner               spSeason;
 
   /**
    * Instantiates a new movie batch editor.
@@ -89,83 +79,32 @@ public class TvShowBatchEditorDialog extends TmmDialog {
    */
   public TvShowBatchEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
     super(BUNDLE.getString("tvshow.bulkedit"), "movieBatchEditor"); //$NON-NLS-1$
-    setBounds(5, 5, 687, 554);
-
-    getContentPane().setLayout(new BorderLayout(0, 0));
 
     tvShowsToEdit = tvShows;
     tvShowEpisodesToEdit = episodes;
 
-    JPanel panelTvShows = new JPanel();
-    panelTvShows.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.tvshow"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    getContentPane().add(panelTvShows, BorderLayout.NORTH);
-    panelTvShows.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    initComponents();
 
-    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre"));//$NON-NLS-1$
-    panelTvShows.add(lblGenres, "2, 2, right, default");
+  }
 
-    cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
-    panelTvShows.add(cbGenres, "4, 2");
+  private void initComponents() {
+    JPanel panelContent = new JPanel();
+    getContentPane().add(panelContent, BorderLayout.CENTER);
+    panelContent.setLayout(new MigLayout("", "[20lp:n][][][]", "[][][][20lp:n][][][][][][]"));
+
+    JLabel lblTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
+    panelContent.add(lblTvShowT, "cell 0 0 2 1");
+
+    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    panelContent.add(lblGenres, "cell 1 1,alignx right");
+
+    cbGenres = new AutocompleteComboBox(MediaGenres.values());
+    panelContent.add(cbGenres, "cell 2 1,growx");
     cbGenres.setEditable(true);
-
     JButton btnAddGenre = new JButton("");
-    panelTvShows.add(btnAddGenre, "6, 2");
+    panelContent.add(btnAddGenre, "flowx,cell 3 1");
     btnAddGenre.setIcon(IconManager.ADD_INV);
     btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
-
-    JButton btnRemoveGenre = new JButton("");
-    panelTvShows.add(btnRemoveGenre, "8, 2");
-    btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
-    btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-
-    JLabel lblTags = new JLabel("Tag");
-    panelTvShows.add(lblTags, "2, 4, right, default");
-
-    cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInTvShows());
-    panelTvShows.add(cbTags, "4, 4");
-    cbTags.setEditable(true);
-
-    JButton btnAddTag = new JButton("");
-    panelTvShows.add(btnAddTag, "6, 4");
-    btnAddTag.setIcon(IconManager.ADD_INV);
-    btnAddTag.setMargin(new Insets(2, 2, 2, 2));
-
-    JButton btnRemoveTag = new JButton("");
-    panelTvShows.add(btnRemoveTag, "8, 4");
-    btnRemoveTag.setIcon(IconManager.REMOVE_INV);
-    btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-    btnRemoveTag.addActionListener(e -> {
-      tvShowsChanged = true;
-      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      String tag = (String) cbTags.getSelectedItem();
-      for (TvShow tvShow : tvShowsToEdit) {
-        tvShow.removeFromTags(tag);
-      }
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    });
-    btnAddTag.addActionListener(e -> {
-      tvShowsChanged = true;
-      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      String tag = (String) cbTags.getSelectedItem();
-      for (TvShow tvShow : tvShowsToEdit) {
-        tvShow.addToTags(tag);
-      }
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    });
-    btnRemoveGenre.addActionListener(e -> {
-      tvShowsChanged = true;
-      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
-      for (TvShow tvShow : tvShowsToEdit) {
-        tvShow.removeGenre(genre);
-      }
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    });
     btnAddGenre.addActionListener(e -> {
       tvShowsChanged = true;
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -190,144 +129,178 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
+    JLabel lblTags = new JLabel("Tag");
+    panelContent.add(lblTags, "cell 1 2,alignx right");
+
+    cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInTvShows());
+    panelContent.add(cbTags, "cell 2 2,growx");
+    cbTags.setEditable(true);
+
+    JButton btnAddTag = new JButton("");
+    panelContent.add(btnAddTag, "flowx,cell 3 2");
+    btnAddTag.setIcon(IconManager.ADD_INV);
+    btnAddTag.setMargin(new Insets(2, 2, 2, 2));
+    btnAddTag.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTags.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.addToTags(tag);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
+    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+    panelContent.add(lblEpisodeT, "cell 0 4 2 1");
+
+    JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    panelContent.add(lblWatched, "cell 1 5,alignx right");
+
+    chckbxWatched = new JCheckBox("");
+    panelContent.add(chckbxWatched, "cell 2 5");
+
+    JButton btnWatched = new JButton("");
+    panelContent.add(btnWatched, "cell 3 5");
+    btnWatched.setMargin(new Insets(2, 2, 2, 2));
+    btnWatched.setIcon(IconManager.APPLY_INV);
+    btnWatched.addActionListener(e -> {
+      episodesChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+        episode.setWatched(chckbxWatched.isSelected());
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
+    JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+    panelContent.add(lblSeason, "cell 1 6,alignx right");
+
+    spSeason = new JSpinner();
+    panelContent.add(spSeason, "cell 2 6");
+    spSeason.setPreferredSize(new Dimension(40, 20));
+    spSeason.setMinimumSize(new Dimension(40, 20));
+
+    JButton btnSeason = new JButton("");
+    panelContent.add(btnSeason, "cell 3 6");
+    btnSeason.setIcon(IconManager.APPLY_INV);
+    btnSeason.setMargin(new Insets(2, 2, 2, 2));
+    btnSeason.addActionListener(arg0 -> {
+      episodesChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+        Integer season = (Integer) spSeason.getValue();
+        episode.setSeason(season);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
+    JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
+    panelContent.add(lblDvdOrder, "cell 1 7,alignx right");
+
+    final JCheckBox cbDvdOrder = new JCheckBox("");
+    panelContent.add(cbDvdOrder, "cell 2 7");
+
+    JButton btnDvdOrder = new JButton("");
+    panelContent.add(btnDvdOrder, "cell 3 7");
+    btnDvdOrder.setIcon(IconManager.APPLY_INV);
+    btnDvdOrder.setMargin(new Insets(2, 2, 2, 2));
+    btnDvdOrder.addActionListener(arg0 -> {
+      episodesChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+        episode.setDvdOrder(cbDvdOrder.isSelected());
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
+    JLabel lblTagsEpisode = new JLabel("Tag");
+    panelContent.add(lblTagsEpisode, "cell 1 8,alignx right");
+
+    cbTagsEpisode = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
+    panelContent.add(cbTagsEpisode, "cell 2 8,growx");
+    cbTagsEpisode.setEditable(true);
+
+    JButton btnAddTagEpisode = new JButton("");
+    panelContent.add(btnAddTagEpisode, "flowx,cell 3 8");
+    btnAddTagEpisode.setIcon(IconManager.ADD_INV);
+    btnAddTagEpisode.setMargin(new Insets(2, 2, 2, 2));
+    btnAddTagEpisode.addActionListener(e -> {
+      episodesChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTagsEpisode.getSelectedItem();
+      for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+        episode.addToTags(tag);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
+    JLabel lblMediasourceEpisode = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    panelContent.add(lblMediasourceEpisode, "cell 1 9,alignx right");
+
+    final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox(MediaSource.values());
+    panelContent.add(cbMediaSourceEpisode, "cell 2 9,growx");
+
+    JButton btnMediaSourceEpisode = new JButton("");
+    panelContent.add(btnMediaSourceEpisode, "cell 3 9");
+    btnMediaSourceEpisode.setMargin(new Insets(2, 2, 2, 2));
+    btnMediaSourceEpisode.setIcon(IconManager.APPLY_INV);
+    btnMediaSourceEpisode.addActionListener(e -> {
+      episodesChanged = true;
+      Object obj = cbMediaSourceEpisode.getSelectedItem();
+      if (obj instanceof MediaSource) {
+        MediaSource mediaSource = (MediaSource) obj;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          episode.setMediaSource(mediaSource);
+        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+
+    JButton btnRemoveGenre = new JButton("");
+    panelContent.add(btnRemoveGenre, "cell 3 1");
+    btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
+    btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
+
+    JButton btnRemoveTag = new JButton("");
+    panelContent.add(btnRemoveTag, "cell 3 2");
+    btnRemoveTag.setIcon(IconManager.REMOVE_INV);
+    btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
+
+    JButton btnRemoveTagEpisode = new JButton("");
+    panelContent.add(btnRemoveTagEpisode, "cell 3 8");
+    btnRemoveTagEpisode.setIcon(IconManager.REMOVE_INV);
+    btnRemoveTagEpisode.setMargin(new Insets(2, 2, 2, 2));
+
+    btnRemoveTagEpisode.addActionListener(e -> {
+      episodesChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTagsEpisode.getSelectedItem();
+      for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+        episode.removeFromTags(tag);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+    btnRemoveTag.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTags.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.removeFromTags(tag);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+    btnRemoveGenre.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.removeGenre(genre);
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
+
     {
-      JPanel panelTvShowEpisodes = new JPanel();
-      panelTvShowEpisodes.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.episode"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-      getContentPane().add(panelTvShowEpisodes, BorderLayout.CENTER);
-      panelTvShowEpisodes.setLayout(new FormLayout(
-          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      panelTvShowEpisodes.add(lblWatched, "2, 2, right, default");
-
-      chckbxWatched = new JCheckBox("");
-      panelTvShowEpisodes.add(chckbxWatched, "4, 2");
-
-      JButton btnWatched = new JButton("");
-      btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(IconManager.APPLY_INV);
-      btnWatched.addActionListener(e -> {
-        episodesChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-          episode.setWatched(chckbxWatched.isSelected());
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-      panelTvShowEpisodes.add(btnWatched, "6, 2");
-
-      JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season"));//$NON-NLS-1$
-      panelTvShowEpisodes.add(lblSeason, "2, 4, right, default");
-
-      spSeason = new JSpinner();
-      spSeason.setPreferredSize(new Dimension(40, 20));
-      spSeason.setMinimumSize(new Dimension(40, 20));
-      panelTvShowEpisodes.add(spSeason, "4, 4, left, default");
-
-      JButton btnSeason = new JButton("");
-      btnSeason.setIcon(IconManager.APPLY_INV);
-      btnSeason.setMargin(new Insets(2, 2, 2, 2));
-      btnSeason.addActionListener(arg0 -> {
-        episodesChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-          Integer season = (Integer) spSeason.getValue();
-          episode.setSeason(season);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-      panelTvShowEpisodes.add(btnSeason, "6, 4");
-
-      JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder"));//$NON-NLS-1$
-      panelTvShowEpisodes.add(lblDvdOrder, "2, 6, right, default");
-
-      final JCheckBox cbDvdOrder = new JCheckBox("");
-      panelTvShowEpisodes.add(cbDvdOrder, "4, 6");
-
-      JButton btnDvdOrder = new JButton("");
-      btnDvdOrder.setIcon(IconManager.APPLY_INV);
-      btnDvdOrder.setMargin(new Insets(2, 2, 2, 2));
-      btnDvdOrder.addActionListener(arg0 -> {
-        episodesChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-          episode.setDvdOrder(cbDvdOrder.isSelected());
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-      panelTvShowEpisodes.add(btnDvdOrder, "6, 6");
-
-      JLabel lblTagsEpisode = new JLabel("Tag");
-      panelTvShowEpisodes.add(lblTagsEpisode, "2, 8, right, default");
-
-      cbTagsEpisode = new AutocompleteComboBox<>(tvShowList.getTagsInEpisodes());
-      panelTvShowEpisodes.add(cbTagsEpisode, "4, 8");
-      cbTagsEpisode.setEditable(true);
-
-      JButton btnAddTagEpisode = new JButton("");
-      panelTvShowEpisodes.add(btnAddTagEpisode, "6, 8");
-      btnAddTagEpisode.setIcon(IconManager.ADD_INV);
-      btnAddTagEpisode.setMargin(new Insets(2, 2, 2, 2));
-
-      JButton btnRemoveTagEpisode = new JButton("");
-      panelTvShowEpisodes.add(btnRemoveTagEpisode, "8, 8");
-      btnRemoveTagEpisode.setIcon(IconManager.REMOVE_INV);
-      btnRemoveTagEpisode.setMargin(new Insets(2, 2, 2, 2));
-
-      btnRemoveTagEpisode.addActionListener(e -> {
-        episodesChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String tag = (String) cbTagsEpisode.getSelectedItem();
-        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-          episode.removeFromTags(tag);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-      btnAddTagEpisode.addActionListener(e -> {
-        episodesChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String tag = (String) cbTagsEpisode.getSelectedItem();
-        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-          episode.addToTags(tag);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-
-      JLabel lblMediasourceEpisode = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      panelTvShowEpisodes.add(lblMediasourceEpisode, "2, 10, right, default");
-
-      final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox<>(MediaSource.values());
-      panelTvShowEpisodes.add(cbMediaSourceEpisode, "4, 10, fill, default");
-
-      JButton btnMediaSourceEpisode = new JButton("");
-      btnMediaSourceEpisode.setMargin(new Insets(2, 2, 2, 2));
-      btnMediaSourceEpisode.setIcon(IconManager.APPLY_INV);
-      btnMediaSourceEpisode.addActionListener(e -> {
-        episodesChanged = true;
-        Object obj = cbMediaSourceEpisode.getSelectedItem();
-        if (obj instanceof MediaSource) {
-          MediaSource mediaSource = (MediaSource) obj;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            episode.setMediaSource(mediaSource);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-      });
-      panelTvShowEpisodes.add(btnMediaSourceEpisode, "6, 10");
-    }
-
-    {
-      JPanel panelButtons = new JPanel();
-      FlowLayout flowLayout = (FlowLayout) panelButtons.getLayout();
-      flowLayout.setAlignment(FlowLayout.RIGHT);
-      getContentPane().add(panelButtons, BorderLayout.SOUTH);
-
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.setIcon(IconManager.APPLY_INV);
       btnClose.addActionListener(arg0 -> {
@@ -363,8 +336,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
         setVisible(false);
       });
-      panelButtons.add(btnClose);
-      getRootPane().setDefaultButton(btnClose);
+      addDefaultButton(btnClose);
 
       // add window listener to write changes (if the window close button "X" is pressed)
       addWindowListener(new WindowAdapter() {

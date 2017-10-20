@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -46,7 +44,6 @@ import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -76,13 +73,12 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -106,44 +102,42 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long              serialVersionUID      = -3104541519073924724L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE                = ResourceBundle.getBundle("messages",                                     //$NON-NLS-1$
-      new UTF8Control());
-  private static final Logger            LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final long          serialVersionUID      = -3104541519073924724L;
 
-  private MovieList                      movieList             = MovieList.getInstance();
-  private Movie                          movieToScrape;
-  private List<MovieChooserModel>        moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig     scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private MediaScraper                   mediaScraper;
-  private List<MediaScraper>             artworkScrapers;
-  private List<MediaScraper>             trailerScrapers;
-  private boolean                        continueQueue         = true;
+  private static final Logger        LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private EventList<Person>              castMemberEventList   = null;
-  private MovieChooserModel              selectedResult        = null;
+  private MovieList                  movieList             = MovieList.getInstance();
+  private Movie                      movieToScrape;
+  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper               mediaScraper;
+  private List<MediaScraper>         artworkScrapers;
+  private List<MediaScraper>         trailerScrapers;
+  private boolean                    continueQueue         = true;
 
-  private SearchTask                     activeSearchTask;
+  private EventList<Person>          castMemberEventList   = null;
+  private MovieChooserModel          selectedResult        = null;
+
+  private SearchTask                 activeSearchTask;
 
   /**
    * UI components
    */
-  private final JPanel                   contentPanel          = new JPanel();
-  private JTextField                     textFieldSearchString;
-  private MediaScraperComboBox           cbScraper;
-  private JTable                         tableSearchResults;
-  private JLabel                         lblTitle;
-  private JTextPane                      tpMovieDescription;
-  private ImageLabel                     lblMoviePoster;
-  private JLabel                         lblProgressAction;
-  private JProgressBar                   progressBar;
-  private JLabel                         lblTagline;
-  private JButton                        okButton;
-  private JLabel                         lblPath;
-  private JComboBox                      cbLanguage;
-  private JLabel                         lblOriginalTitle;
-  private TmmTable                       tableCastMembers;
+  private final JPanel               contentPanel          = new JPanel();
+  private JTextField                 textFieldSearchString;
+  private MediaScraperComboBox       cbScraper;
+  private JTable                     tableSearchResults;
+  private JLabel                     lblTitle;
+  private JTextPane                  tpMovieDescription;
+  private ImageLabel                 lblMoviePoster;
+  private JLabel                     lblProgressAction;
+  private JProgressBar               progressBar;
+  private JLabel                     lblTagline;
+  private JButton                    okButton;
+  private JLabel                     lblPath;
+  private JComboBox                  cbLanguage;
+  private JLabel                     lblOriginalTitle;
+  private TmmTable                   tableCastMembers;
 
   /**
    * Create the dialog.
@@ -182,17 +176,16 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     DefaultEventTableModel<Person> castMemberTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(castMemberEventList),
         new CastMemberTableFormat());
 
-    getContentPane().setLayout(new BorderLayout());
-    contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[]2lp[][][250lp:350lp,grow][][][][]"));
+    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:350lp,grow][shrink 0][][]"));
     {
       final JPanel panelPath = new JPanel();
-      contentPanel.add(panelPath, "cell 0 0");
-      panelPath.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+      // contentPanel.add(panelPath, "cell 0 0");
+      panelPath.setLayout(new MigLayout("", "[grow][]", "[]"));
       {
         lblPath = new JLabel("");
-        panelPath.add(lblPath);
+        TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
+        panelPath.add(lblPath, "cell 0 0");
       }
 
       {
@@ -209,12 +202,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
                 .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
           }
         });
-        panelPath.add(btnPlay);
+        panelPath.add(btnPlay, "cell 1 0");
       }
+      setTopIformationPanel(panelPath);
     }
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "cell 0 1,grow");
+      contentPanel.add(panelSearchField, "cell 0 0,grow");
       panelSearchField.setLayout(new MigLayout("insets 0", "[][][grow][]", "[]2lp[]"));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
@@ -251,13 +245,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
     }
     {
-      contentPanel.add(new JSeparator(), "cell 0 2,growx");
+      contentPanel.add(new JSeparator(), "cell 0 1,growx");
     }
     {
       JSplitPane splitPane = new JSplitPane();
       splitPane.setResizeWeight(0.5);
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "cell 0 3,grow");
+      contentPanel.add(splitPane, "cell 0 2,grow");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
@@ -329,9 +323,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           panelSearchDetail.add(scrollPane, "cell 1 3,growx");
           scrollPane.setBorder(null);
           {
-            tpMovieDescription = new JTextPane();
+            tpMovieDescription = new ReadOnlyTextPane();
             tpMovieDescription.setOpaque(false);
-            tpMovieDescription.setEditable(false);
             scrollPane.setViewportView(tpMovieDescription);
           }
         }
@@ -348,64 +341,56 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     }
     {
       JSeparator separator = new JSeparator();
-      contentPanel.add(separator, "cell 0 4,growx");
+      contentPanel.add(separator, "cell 0 3,growx");
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "cell 0 5,growx,aligny top");
+      contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx,aligny top");
     }
     {
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "cell 0 6,grow");
+      contentPanel.add(panelScraperMetadataSetting, "cell 0 5,grow");
     }
 
     {
-      JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "cell 0 7,growx");
-      bottomPane.setLayout(new MigLayout("insets 0", "[][grow][]", "[]"));
       {
-        {
-          progressBar = new JProgressBar();
-          bottomPane.add(progressBar, "cell 0 0");
-        }
-        {
-          lblProgressAction = new JLabel("");
-          bottomPane.add(lblProgressAction, "cell 1 0");
-        }
-        {
-          JPanel buttonPane = new JPanel();
-          bottomPane.add(buttonPane, "cell 2 0");
-          EqualsLayout layout = new EqualsLayout(5);
-          layout.setMinWidth(100);
-          buttonPane.setLayout(layout);
-          okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          okButton.setIcon(IconManager.APPLY_INV);
-          buttonPane.add(okButton);
-          okButton.setActionCommand("OK");
-          okButton.addActionListener(this);
-          getRootPane().setDefaultButton(okButton);
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
 
-          JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          cancelButton.setIcon(IconManager.CANCEL_INV);
-          buttonPane.add(cancelButton);
-          cancelButton.setActionCommand("Cancel");
-          cancelButton.addActionListener(this);
+        progressBar = new JProgressBar();
+        infoPanel.add(progressBar, "cell 0 0");
 
-          if (inQueue) {
-            JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            abortButton.setIcon(IconManager.PROCESS_STOP);
-            buttonPane.add(abortButton);
-            abortButton.setActionCommand("Abort");
-            abortButton.addActionListener(this);
-          }
+        lblProgressAction = new JLabel("");
+        infoPanel.add(lblProgressAction, "cell 1 0");
+
+        setBottomInformationPanel(infoPanel);
+      }
+      {
+        if (inQueue) {
+          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+          abortButton.setIcon(IconManager.PROCESS_STOP);
+          abortButton.setActionCommand("Abort");
+          abortButton.addActionListener(this);
+          addButton(abortButton);
         }
+
+        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+        cancelButton.setIcon(IconManager.CANCEL_INV);
+        cancelButton.setActionCommand("Cancel");
+        cancelButton.addActionListener(this);
+        addButton(cancelButton);
+
+        okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+        okButton.setIcon(IconManager.APPLY_INV);
+        okButton.setActionCommand("OK");
+        okButton.addActionListener(this);
+        addDefaultButton(okButton);
       }
     }
 
     initDataBindings();
 
     // add a change listener for the cast members
-
     PropertyChangeListener listener = evt -> {
       String property = evt.getPropertyName();
       if ("castMembers".equals(property)) {

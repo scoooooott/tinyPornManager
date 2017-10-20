@@ -155,7 +155,7 @@ public class SettingsDialog extends TmmDialog {
       southPanel.add(panelButtons, "cell 1 1,alignx left,aligny top");
 
       JButton okButton = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      panelButtons.add(okButton, "2, 1, fill, top");
+      panelButtons.add(okButton);
       okButton.setAction(new CloseAction());
       getRootPane().setDefaultButton(okButton);
     }

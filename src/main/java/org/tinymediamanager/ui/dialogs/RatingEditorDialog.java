@@ -16,9 +16,7 @@
 
 package org.tinymediamanager.ui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Window;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -29,8 +27,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.ui.EqualsLayout;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MediaRatingTable;
 
 import net.miginfocom.swing.MigLayout;
@@ -41,9 +37,7 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class RatingEditorDialog extends TmmDialog {
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle        BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
+  private static final long                  serialVersionUID = 535315882962742572L;
   private final MediaRatingTable.MediaRating ratingToEdit;
 
   private JTextField                         tfProviderId;
@@ -64,8 +58,6 @@ public class RatingEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout(0, 0));
-
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent);
     panelContent.setLayout(new MigLayout("", "[][50lp][20lp:n][][50lp]", "[][][]"));
@@ -99,42 +91,32 @@ public class RatingEditorDialog extends TmmDialog {
       panelContent.add(spVotes, "cell 1 2,growx");
     }
     {
-      JPanel panelButtons = new JPanel();
-      getContentPane().add(panelButtons, BorderLayout.SOUTH);
-      panelButtons.setLayout(new MigLayout("", "[grow]", "[]"));
-      {
-        JPanel panel = new JPanel();
-        panel.setLayout(new EqualsLayout(5));
-        panelButtons.add(panel, "cell 0 0,alignx right");
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
+      btnCancel.addActionListener(e -> setVisible(false));
+      addButton(btnCancel);
 
-        JButton btnOk = new JButton(BUNDLE.getString("Button.save"));
-        btnOk.addActionListener(e -> {
-          float rating = ((Double) spRating.getValue()).floatValue();
-          int maxValue = (int) spMaxValue.getValue();
+      JButton btnOk = new JButton(BUNDLE.getString("Button.save"));
+      btnOk.addActionListener(e -> {
+        float rating = ((Double) spRating.getValue()).floatValue();
+        int maxValue = (int) spMaxValue.getValue();
 
-          if (StringUtils.isBlank(tfProviderId.getText())) {
-            JOptionPane.showMessageDialog(RatingEditorDialog.this, BUNDLE.getString("id.empty"));
-            return;
-          }
+        if (StringUtils.isBlank(tfProviderId.getText())) {
+          JOptionPane.showMessageDialog(RatingEditorDialog.this, BUNDLE.getString("id.empty"));
+          return;
+        }
 
-          if (rating > maxValue) {
-            JOptionPane.showMessageDialog(RatingEditorDialog.this, BUNDLE.getString("rating.rating.higher.maxvalue"));
-            return;
-          }
+        if (rating > maxValue) {
+          JOptionPane.showMessageDialog(RatingEditorDialog.this, BUNDLE.getString("rating.rating.higher.maxvalue"));
+          return;
+        }
 
-          ratingToEdit.key = tfProviderId.getText();
-          ratingToEdit.value = rating;
-          ratingToEdit.maxValue = maxValue;
-          ratingToEdit.votes = (int) spVotes.getValue();
-          setVisible(false);
-        });
-        panel.add(btnOk);
-        getRootPane().setDefaultButton(btnOk);
-
-        JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
-        btnCancel.addActionListener(e -> setVisible(false));
-        panel.add(btnCancel);
-      }
+        ratingToEdit.key = tfProviderId.getText();
+        ratingToEdit.value = rating;
+        ratingToEdit.maxValue = maxValue;
+        ratingToEdit.votes = (int) spVotes.getValue();
+        setVisible(false);
+      });
+      addDefaultButton(btnOk);
     }
   }
 }

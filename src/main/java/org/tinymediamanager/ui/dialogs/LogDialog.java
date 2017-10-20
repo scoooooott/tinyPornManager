@@ -15,11 +15,12 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
@@ -30,24 +31,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.TmmUILogAppender.LogOutput;
 import org.tinymediamanager.ui.TmmUILogCollector;
-import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 public class LogDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = -5054005564554148578L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(LogDialog.class);
-  private static final int            REFRESH_PERIOD   = 1000;
+  private static final long   serialVersionUID = -5054005564554148578L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(LogDialog.class);
+  private static final int    REFRESH_PERIOD   = 1000;
 
-  private JTextArea                   taLogs;
+  private JTextArea           taLogs;
 
-  private int                         logByteCount     = 0;
-  private final Timer                 timerRefresh;
+  private int                 logByteCount     = 0;
+  private final Timer         timerRefresh;
 
   public LogDialog() {
     super(BUNDLE.getString("logwindow.title"), "log"); //$NON-NLS-1$
@@ -56,13 +51,12 @@ public class LogDialog extends TmmDialog implements ActionListener {
     timerRefresh = new Timer(REFRESH_PERIOD, this);
     timerRefresh.setInitialDelay(0);
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    JPanel panelContent = new JPanel();
+    getContentPane().add(panelContent, BorderLayout.CENTER);
+    panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[400lp,grow]"));
 
     JScrollPane scrollPane = new JScrollPane();
-    getContentPane().add(scrollPane, "2, 2, fill, fill");
+    panelContent.add(scrollPane, "cell 0 0,grow");
 
     taLogs = new JTextArea();
     scrollPane.setViewportView(taLogs);
@@ -74,8 +68,7 @@ public class LogDialog extends TmmDialog implements ActionListener {
     {
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.addActionListener(arg0 -> setVisible(false));
-      getContentPane().add(btnClose, "2, 4, right, default");
-      getRootPane().setDefaultButton(btnClose);
+      addDefaultButton(btnClose);
     }
     timerRefresh.start();
   }

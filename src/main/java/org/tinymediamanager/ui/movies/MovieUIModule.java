@@ -246,6 +246,9 @@ public class MovieUIModule extends AbstractTmmUIModule {
         }
         updatePopupMenu.addSeparator();
         updatePopupMenu.add(createAndRegisterAction(MovieUpdateAction.class));
+        updatePopupMenu.addSeparator();
+        updatePopupMenu.add(createAndRegisterAction(MovieFindMissingAction.class));
+        updatePopupMenu.add(createAndRegisterAction(MovieCreateOfflineAction.class));
         updatePopupMenu.pack();
       }
 
@@ -257,9 +260,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
       public void popupMenuCanceled(PopupMenuEvent e) {
       }
     });
-    updatePopupMenu.addSeparator();
-    updatePopupMenu.add(createAndRegisterAction(MovieFindMissingAction.class));
-    updatePopupMenu.add(createAndRegisterAction(MovieCreateOfflineAction.class));
 
     // search popup menu
     searchPopupMenu = new JPopupMenu();

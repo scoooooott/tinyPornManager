@@ -17,8 +17,10 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
-import java.util.ResourceBundle;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,17 +31,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class WhatsNewDialog. Used to show the user a list of changelogs after each upgrade
@@ -47,17 +47,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class WhatsNewDialog extends TmmDialog {
-  private static final long           serialVersionUID = -4071143363981892283L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
+  private static final long   serialVersionUID = -4071143363981892283L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 
   public WhatsNewDialog(String changelog) {
     super(BUNDLE.getString("whatsnew.title"), "whatsnew"); //$NON-NLS-1$
-    setSize(500, 250);
     {
+      JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[400lp,grow][]"));
+
       JScrollPane scrollPane = new JScrollPane();
-      getContentPane().add(scrollPane, BorderLayout.CENTER);
+      panelContent.add(scrollPane, "cell 0 0,grow");
+
       JTextPane textPane = new JTextPane();
       textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, Globals.settings.getFontSize() + 1));
       scrollPane.setViewportView(textPane);
@@ -76,18 +78,9 @@ public class WhatsNewDialog extends TmmDialog {
           }
         }
       });
-    }
-    {
-      JPanel panel = new JPanel();
-      getContentPane().add(panel, BorderLayout.SOUTH);
-      panel.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint")); //$NON-NLS-1$
-      panel.add(lblHint, "2, 2");
+      panelContent.add(lblHint, "flowx,cell 0 1");
 
       LinkLabel lblLink = new LinkLabel("http://www.tinymediamanager.org");
       lblLink.addActionListener(arg0 -> {
@@ -97,12 +90,12 @@ public class WhatsNewDialog extends TmmDialog {
         catch (Exception ignored) {
         }
       });
-      panel.add(lblLink, "4, 2");
-
+      panelContent.add(lblLink, "cell 0 1");
+    }
+    {
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.addActionListener(arg0 -> setVisible(false));
-      panel.add(btnClose, "8, 2");
-      getRootPane().setDefaultButton(btnClose);
+      addDefaultButton(btnClose);
     }
   }
 
@@ -121,5 +114,21 @@ public class WhatsNewDialog extends TmmDialog {
     }
 
     return "<html><pre>" + originalText + "</pre><html>";
+  }
+
+  public static void showChangelog() {
+    try {
+      final String changelog = Utils.readFileToString(Paths.get("changelog.txt"));
+      if (StringUtils.isNotBlank(changelog)) {
+        EventQueue.invokeLater(() -> {
+          WhatsNewDialog dialog = new WhatsNewDialog(changelog);
+          dialog.setVisible(true);
+        });
+      }
+    }
+    catch (IOException e) {
+      // no file found
+      LOGGER.warn(e.getMessage());
+    }
   }
 }

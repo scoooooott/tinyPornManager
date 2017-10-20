@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,7 +25,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +35,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.images.Logo;
 
@@ -49,24 +46,21 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class AboutDialog extends TmmDialog {
-  private static final long           serialVersionUID = 2298570526828925319L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                                     //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
-  private static final String         TRANSLATORS      = "Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, Andrey Gorodnov, julienbloch, nerve, carlosmarchi, "
+  private static final long   serialVersionUID = 2298570526828925319L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
+  private static final String TRANSLATORS      = "Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, Andrey Gorodnov, julienbloch, nerve, carlosmarchi, "
       + "espiman, beonex, otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh, SeNmaN, Translador, Deleuze23, "
       + "ShevAbam, abrupt_neurosis, lynxstrike, Spegni, carfesh, vekheoqf, keleniki, htrex, namuit, stickell, Voltinus, Zwanzig, vipkoza"
       + "Amarante.pt_BR, TaniaC, maopequena, leandrofuscaldi, dukobpa3, bleuge";
 
-  private final JPanel                contentPanel     = new JPanel();
-  private final Action                action           = new SwingAction();
+  private final JPanel        contentPanel     = new JPanel();
+  private final Action        action           = new SwingAction();
 
   public AboutDialog() {
     super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
-    getContentPane().setLayout(new BorderLayout());
-    contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new MigLayout("", "[][pref!][][pref!][grow]", "[][6px][][pref!][][6px][][][][][][][][]"));
+    contentPanel.setLayout(new MigLayout("", "[][20lp:n][300lp,grow]", "[][10lp:n][][20lp:n][][10lp:n][][][][][][][][]"));
     {
       JLabel lblLogo = new JLabel("");
       lblLogo.setIcon(new Logo(96));
@@ -75,11 +69,11 @@ public class AboutDialog extends TmmDialog {
     {
       JLabel lblTinymediamanager = new JLabel("tinyMediaManager"); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblTinymediamanager, 1.5, Font.BOLD);
-      contentPanel.add(lblTinymediamanager, "cell 2 0 3 1,alignx center");
+      contentPanel.add(lblTinymediamanager, "cell 2 0,alignx center");
     }
     {
       JLabel lblByManuel = new JLabel("\u00A9 2012 - 2015 by Manuel Laggner"); //$NON-NLS-1$
-      contentPanel.add(lblByManuel, "cell 2 2 3 1,alignx center");
+      contentPanel.add(lblByManuel, "cell 2 2,alignx center");
     }
     {
       JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$
@@ -105,7 +99,7 @@ public class AboutDialog extends TmmDialog {
               new Message(MessageLevel.ERROR, lblHomepage.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
         }
       });
-      contentPanel.add(lblHomepage, "cell 2 7 3 1");
+      contentPanel.add(lblHomepage, "cell 2 7");
     }
     {
       JLabel lblThanksTo = new JLabel(BUNDLE.getString("tmm.thanksto")); //$NON-NLS-1$
@@ -113,19 +107,19 @@ public class AboutDialog extends TmmDialog {
     }
     {
       JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, everything..."); //$NON-NLS-1$
-      contentPanel.add(lblMyronForHelping, "cell 2 8 3 1");
+      contentPanel.add(lblMyronForHelping, "cell 2 8");
     }
     {
       JLabel lblXysm = new JLabel("xysm for excessive testing and lots of feedback"); //$NON-NLS-1$
-      contentPanel.add(lblXysm, "cell 2 9 3 1");
+      contentPanel.add(lblXysm, "cell 2 9");
     }
     {
       JLabel lblMatthewSandersFor = new JLabel("Matthew Sanders for the cool export templates"); //$NON-NLS-1$
-      contentPanel.add(lblMatthewSandersFor, "cell 2 10 3 1");
+      contentPanel.add(lblMatthewSandersFor, "cell 2 10");
     }
     {
       JPanel panelTranslators = new JPanel();
-      contentPanel.add(panelTranslators, "cell 2 11 3 1,grow");
+      contentPanel.add(panelTranslators, "cell 2 11,grow");
       panelTranslators.setLayout(new MigLayout("insets 0", "[][300px:300px,grow]", "[]"));
       {
         JLabel lblTranslatorsT = new JLabel(BUNDLE.getString("tmm.translators")); //$NON-NLS-1$
@@ -141,23 +135,18 @@ public class AboutDialog extends TmmDialog {
       }
     }
     {
-      JLabel lblLibs = new JLabel("The creators of all libs I've used"); //$NON-NLS-1$
-      contentPanel.add(lblLibs, "cell 2 12 3 1");
+      JLabel lblLibs = new JLabel("The creators of all libs we've used"); //$NON-NLS-1$
+      contentPanel.add(lblLibs, "cell 2 12");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback"); //$NON-NLS-1$
-      contentPanel.add(lblTester, "cell 2 13 3 1");
+      contentPanel.add(lblTester, "cell 2 13");
     }
     {
-      JPanel buttonPane = new JPanel();
-      getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new MigLayout("", "[grow][]", "[]"));
-      {
-        JButton okButton = new JButton();
-        okButton.setAction(action);
-        buttonPane.add(okButton, "cell 1 0,growx");
-        getRootPane().setDefaultButton(okButton);
-      }
+      JButton okButton = new JButton();
+      okButton.setAction(action);
+      addDefaultButton(okButton);
+
     }
   }
 

@@ -20,81 +20,61 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class MessageDialog. To display messages nicely
  * 
  * @author Manuel Laggner
  */
-public class MessageDialog extends JDialog {
-  private static final long           serialVersionUID = -9035402766767310658L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class MessageDialog extends TmmDialog {
+  private static final long serialVersionUID = -9035402766767310658L;
 
-  private JLabel                      lblImage;
-  private JLabel                      lblText;
-  private JLabel                      lblDescription;
-  private JScrollPane                 scrollPane;
-  private JTextPane                   textPane;
+  private JLabel            lblImage;
+  private JTextPane         tpText;
+  private JTextPane         tpDescription;
+  private JScrollPane       scrollPane;
+  private JTextPane         textPane;
 
   public MessageDialog(Window owner, String title) {
-    super(owner, title);
-    if (owner != null) {
-      setIconImages(owner.getIconImages());
-    }
-    setMinimumSize(new Dimension(300, 100));
-    setResizable(false);
-    setModal(true);
-    getContentPane().setLayout(new BorderLayout(0, 0));
+    super(owner, title, "nessageDialog");
+
     {
       JPanel panelContent = new JPanel();
+      panelContent.setLayout(new MigLayout("hidemode 1", "[][500lp,grow]", "[][][300lp,grow]"));
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-              RowSpec.decode("max(10dlu;default)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-              FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         lblImage = new JLabel("");
         lblImage.setVisible(false);
-        panelContent.add(lblImage, "2, 2, 1, 3, fill, fill");
+        panelContent.add(lblImage, "cell 0 0 1 2,grow");
       }
       {
-        lblText = new JLabel("");
-        lblText.setVisible(false);
-        panelContent.add(lblText, "4, 2, fill, fill");
+        tpText = new ReadOnlyTextPane("");
+        tpText.setVisible(false);
+        panelContent.add(tpText, "cell 1 0,growx");
       }
       {
-        lblDescription = new JLabel("");
-        lblDescription.setVisible(false);
-        panelContent.add(lblDescription, "4, 4, fill, fill");
+        tpDescription = new ReadOnlyTextPane("");
+        tpDescription.setVisible(false);
+        panelContent.add(tpDescription, "cell 1 1,growx");
       }
       {
         scrollPane = new JScrollPane();
         scrollPane.setVisible(false);
         scrollPane.setPreferredSize(new Dimension(600, 200));
-        panelContent.add(scrollPane, "2, 6, 3, 1, fill, fill");
+        panelContent.add(scrollPane, "cell 0 2 2 1,grow");
         {
           textPane = new JTextPane();
           textPane.setVisible(false);
@@ -104,25 +84,9 @@ public class MessageDialog extends JDialog {
       }
     }
     {
-      JPanel panelBottom = new JPanel();
-      getContentPane().add(panelBottom, BorderLayout.SOUTH);
-      panelBottom.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
-      {
-        JPanel panelButtons = new JPanel();
-        EqualsLayout layout = new EqualsLayout(5);
-        layout.setMinWidth(100);
-        panelButtons.setLayout(layout);
-        panelBottom.add(panelButtons, "4, 2, right, fill");
-        {
-          JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-          btnClose.addActionListener(arg0 -> setVisible(false));
-          panelButtons.add(btnClose);
-          getRootPane().setDefaultButton(btnClose);
-        }
-      }
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      btnClose.addActionListener(arg0 -> setVisible(false));
+      addDefaultButton(btnClose);
     }
   }
 
@@ -132,13 +96,13 @@ public class MessageDialog extends JDialog {
   }
 
   public void setText(String text) {
-    lblText.setText(toHTML(text));
-    lblText.setVisible(true);
+    tpText.setText(text);
+    tpText.setVisible(true);
   }
 
   public void setDescription(String description) {
-    lblDescription.setText(toHTML(description));
-    lblDescription.setVisible(true);
+    tpDescription.setText(description);
+    tpDescription.setVisible(true);
   }
 
   public void setDetails(String details) {
@@ -157,9 +121,6 @@ public class MessageDialog extends JDialog {
     dialog.setDescription(BUNDLE.getString("tmm.uicrash")); //$NON-NLS-1$
     dialog.setDetails(stackStraceAsString(ex));
 
-    dialog.setResizable(true);
-    dialog.pack();
-    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.setVisible(true);
   }
 
@@ -167,18 +128,5 @@ public class MessageDialog extends JDialog {
     StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));
     return sw.toString();
-  }
-
-  public static final String toHTML(String s) {
-    s = s == null ? "" : s.replaceAll("\n", "<br>");
-    String tmp = s.trim().toLowerCase(Locale.ROOT);
-
-    StringBuilder sb = new StringBuilder(s);
-    if (!tmp.startsWith("<html>"))
-      sb.insert(0, "<html>");
-    if (!tmp.endsWith("</html>")) {
-      sb.append("</html>");
-    }
-    return sb.toString();
   }
 }

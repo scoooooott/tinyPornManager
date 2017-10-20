@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,10 +41,8 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieComparator;
@@ -68,8 +64,6 @@ import net.miginfocom.swing.MigLayout;
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
   private static final long                       serialVersionUID = -8162631708278089277L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer> results;
   private ResultSelectionModel                    resultSelectionModel;
@@ -85,7 +79,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
-    setBounds(5, 5, 950, 700);
+
     oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
     newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
 
@@ -93,7 +87,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[800lp,grow]", "[400lp,grow]"));
+      panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[600lp,grow]"));
       {
         JSplitPane splitPane = new JSplitPane();
         splitPane.setContinuousLayout(true);
@@ -195,40 +189,29 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       }
     }
     {
-      JPanel panelButtons = new JPanel();
-      EqualsLayout layout = new EqualsLayout(5);
-      layout.setMinWidth(100);
-      panelButtons.setLayout(layout);
-      panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
-      getContentPane().add(panelButtons, BorderLayout.SOUTH);
-      {
-        JButton btnRename = new JButton(BUNDLE.getString("Button.rename")); //$NON-NLS-1$
-        btnRename.setToolTipText(BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-        btnRename.addActionListener(arg0 -> {
-          List<Movie> selectedMovies1 = new ArrayList<>();
-          List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
-          for (MovieRenamerPreviewContainer result : selectedResults) {
-            selectedMovies1.add(result.getMovie());
-          }
+      JButton btnRename = new JButton(BUNDLE.getString("Button.rename")); //$NON-NLS-1$
+      btnRename.setToolTipText(BUNDLE.getString("movie.rename")); //$NON-NLS-1$
+      btnRename.addActionListener(arg0 -> {
+        List<Movie> selectedMovies1 = new ArrayList<>();
+        List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
+        for (MovieRenamerPreviewContainer result : selectedResults) {
+          selectedMovies1.add(result.getMovie());
+        }
 
-          // rename
-          TmmThreadPool renameTask = new MovieRenameTask(selectedMovies1);
-          if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-          }
-          else {
-            results.removeAll(selectedResults);
-          }
-        });
-        panelButtons.add(btnRename);
-      }
-      {
-        JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-        btnClose.setIcon(IconManager.APPLY_INV);
-        btnClose.addActionListener(arg0 -> setVisible(false));
-        panelButtons.add(btnClose);
-        getRootPane().setDefaultButton(btnClose);
-      }
+        // rename
+        TmmThreadPool renameTask = new MovieRenameTask(selectedMovies1);
+        if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+        }
+        else {
+          results.removeAll(selectedResults);
+        }
+      });
+      addButton(btnRename);
+
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      btnClose.addActionListener(arg0 -> setVisible(false));
+      addDefaultButton(btnClose);
     }
 
     // start calculation of the preview

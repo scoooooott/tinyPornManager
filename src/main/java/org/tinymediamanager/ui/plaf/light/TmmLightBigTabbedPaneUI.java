@@ -43,6 +43,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   private boolean      rightBorder   = true;
   private boolean      leftBorder    = true;
   private boolean      bottomBorder  = true;
+  private boolean      roundEdge     = true;
 
   public static ComponentUI createUI(JComponent c) {
     Object prop = c.getClientProperty("class");
@@ -65,6 +66,10 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
 
     if (Boolean.FALSE.equals(c.getClientProperty("bottomBorder"))) {
       bottomBorder = false;
+    }
+
+    if (Boolean.FALSE.equals(c.getClientProperty("roundEdge"))) {
+      roundEdge = false;
     }
   }
 
@@ -129,7 +134,13 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     int ht = h - contentBorderInsets.bottom + BORDER_RADIUS;
 
     g2D.setColor(AbstractLookAndFeel.getBackgroundColor());
-    g2D.fillRoundRect(xt, yt, wt, ht, BORDER_RADIUS, BORDER_RADIUS);
+
+    if (roundEdge) {
+      g2D.fillRoundRect(xt, yt, wt, ht, BORDER_RADIUS, BORDER_RADIUS);
+    }
+    else {
+      g2D.fillRect(xt, yt, wt, ht);
+    }
   }
 
   @Override

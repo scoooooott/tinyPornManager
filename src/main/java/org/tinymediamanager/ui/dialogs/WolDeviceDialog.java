@@ -15,8 +15,8 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,18 +24,15 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class WolDeviceDialog - to add/edit wol devices
@@ -43,51 +40,47 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class WolDeviceDialog extends TmmDialog {
-  private static final long           serialVersionUID = -8293021735704401080L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long serialVersionUID = -8293021735704401080L;
 
-  private WolDevice                   device           = null;
+  private WolDevice         device           = null;
 
-  private JTextField                  tfName;
-  private JTextField                  tfMacAddress;
+  private JTextField        tfName;
+  private JTextField        tfMacAddress;
 
   /**
    * constructor for creating a device
    */
   public WolDeviceDialog() {
     super(BUNDLE.getString("tmm.wakeonlandevice"), "wolDialog"); //$NON-NLS-1$
-    setResizable(false);
 
-    getContentPane().setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    {
+      JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[][]", "[][]"));
 
-    JLabel lblDeviceName = new JLabel(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
-    getContentPane().add(lblDeviceName, "2, 2, right, default");
+      JLabel lblDeviceName = new JLabel(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
+      panelContent.add(lblDeviceName, "cell 0 0,alignx right");
 
-    tfName = new JTextField();
-    getContentPane().add(tfName, "4, 2, 5, 1, fill, default");
-    tfName.setColumns(10);
+      tfName = new JTextField();
+      tfName.setColumns(20);
+      panelContent.add(tfName, "cell 1 0");
 
-    JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.macaddress")); //$NON-NLS-1$
-    getContentPane().add(lblMacAddress, "2, 4, right, default");
+      JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.macaddress")); //$NON-NLS-1$
+      panelContent.add(lblMacAddress, "cell 0 1,alignx right");
 
-    tfMacAddress = new JTextField();
-    getContentPane().add(tfMacAddress, "4, 4, 5, 1, fill, default");
-    tfMacAddress.setColumns(10);
+      tfMacAddress = new JTextField();
+      tfMacAddress.setColumns(20);
+      panelContent.add(tfMacAddress, "cell 1 1");
+    }
+    {
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setAction(new CancelAction());
+      addButton(btnCancel);
 
-    JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
-    btnSave.setAction(new SaveAction());
-    getContentPane().add(btnSave, "6, 6");
-    getRootPane().setDefaultButton(btnSave);
-
-    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setAction(new CancelAction());
-    getContentPane().add(btnCancel, "8, 6");
+      JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
+      btnSave.setAction(new SaveAction());
+      addDefaultButton(btnSave);
+    }
   }
 
   public void setDevice(WolDevice device) {

@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -49,7 +48,6 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -59,19 +57,16 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class BugReportDialog extends TmmDialog {
-  private static final long           serialVersionUID = 1992385114573899815L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
+  private static final long   serialVersionUID = 1992385114573899815L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
-  private static final String         DIALOG_ID        = "bugReportdialog";
+  private static final String DIALOG_ID        = "bugReportdialog";
 
   /**
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
     super(BUNDLE.getString("BugReport"), DIALOG_ID);
-    getContentPane().setLayout(new BorderLayout(0, 0));
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
@@ -157,15 +152,10 @@ public class BugReportDialog extends TmmDialog {
     final JLabel lblHint = new JLabel(BUNDLE.getString("BugReport.languagehint")); //$NON-NLS-1$
     panelContent.add(lblHint, "cell 2 7,growx,aligny top");
 
-    JPanel panelButtons = new JPanel();
-
-    getContentPane().add(panelButtons, BorderLayout.SOUTH);
-
     JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
     btnClose.setIcon(IconManager.CANCEL_INV);
     btnClose.addActionListener(e -> setVisible(false));
-    panelButtons.setLayout(new MigLayout("", "[grow][]", "[]"));
-    panelButtons.add(btnClose, "cell 1 0");
+    addDefaultButton(btnClose);
   }
 
   private void writeLogsFile(File file) throws Exception {

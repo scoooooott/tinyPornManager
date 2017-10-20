@@ -17,8 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -123,10 +121,9 @@ public class MovieScraperMetadataPanel extends JPanel {
 
     chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
     add(chckbxTrailer, "cell 2 2");
+
     chckbxCollection = new JCheckBox(BUNDLE.getString("metatag.movieset"));
     add(chckbxCollection, "flowx,cell 3 2");
-
-    initDataBindings();
 
     lblMovieSetHint = new JLabel(IconManager.HINT);
     add(lblMovieSetHint, "cell 3 2");
@@ -135,22 +132,14 @@ public class MovieScraperMetadataPanel extends JPanel {
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
     add(btnSelectAll, "flowx,cell 0 3 2 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
-    btnSelectAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setCheckBoxState(true);
-      }
-    });
+    btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
     add(btnDeSelectAll, "cell 0 3");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
-    btnDeSelectAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setCheckBoxState(false);
-      }
-    });
+    btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
+
+    initDataBindings();
   }
 
   private void setCheckBoxState(boolean state) {

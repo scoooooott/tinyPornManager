@@ -15,10 +15,10 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,21 +26,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIMessageCollector;
-import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.panels.MessagePanel;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class MessageHistoryDialog is used to display a history of all messages in a window
@@ -49,43 +42,35 @@ import ca.odell.glazedlists.event.ListEventListener;
  */
 public class MessageHistoryDialog extends TmmDialog implements ListEventListener<Message> {
   private static final long           serialVersionUID = -5054005564554148578L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   private static MessageHistoryDialog instance;
   private Map<Message, JPanel>        messageMap;
   private JPanel                      messagesPanel;
 
   private MessageHistoryDialog() {
     super(MainWindow.getActiveInstance(), BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
+
     setModal(false);
     setModalityType(ModalityType.MODELESS);
 
     messageMap = new HashMap<>();
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    JScrollPane scrollPane = new JScrollPane();
-    getContentPane().add(scrollPane, "2, 2, fill, fill");
+    JPanel panelContent = new JPanel();
+    getContentPane().add(panelContent, BorderLayout.CENTER);
 
     messagesPanel = new JPanel();
     messagesPanel.setBackground(Color.WHITE);
     messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.PAGE_AXIS));
+
+    JScrollPane scrollPane = new JScrollPane();
     scrollPane.setViewportView(messagesPanel);
     scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
-    final JPanel panelButtons = new JPanel();
-    EqualsLayout layout = new EqualsLayout(5);
-    layout.setMinWidth(100);
-    panelButtons.setLayout(layout);
-    getContentPane().add(panelButtons, "2, 4, fill, fill");
+    panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[400lp,grow]"));
+    panelContent.add(scrollPane, "cell 0 0,grow");
 
     JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-    panelButtons.add(btnClose);
     btnClose.addActionListener(arg0 -> setVisible(false));
-    getRootPane().setDefaultButton(btnClose);
+    addDefaultButton(btnClose);
 
     TmmUIMessageCollector.instance.getMessages().addListEventListener(this);
     updatePanel();
@@ -101,15 +86,7 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
   @Override
   public void setVisible(boolean visible) {
     TmmUIMessageCollector.instance.resetNewMessageCount();
-    if (visible) {
-      TmmWindowSaver.getInstance().loadSettings(this);
-      pack();
-      setLocationRelativeTo(MainWindow.getActiveInstance());
-      super.setVisible(true);
-    }
-    else {
-      super.setVisible(false);
-    }
+    super.setVisible(visible);
   }
 
   @Override

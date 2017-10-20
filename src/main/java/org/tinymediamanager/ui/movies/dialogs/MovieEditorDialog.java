@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
@@ -80,11 +79,9 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UIConstants;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
@@ -118,8 +115,6 @@ import net.miginfocom.swing.MigLayout;
  */
 public class MovieEditorDialog extends TmmDialog {
   private static final long                  serialVersionUID = -286251957529920347L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
   private static final Insets                BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private Movie                              movieToEdit;
@@ -332,12 +327,6 @@ public class MovieEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout());
-    JPanel rootPanel = new JPanel();
-    rootPanel.setLayout(new BorderLayout());
-    rootPanel.putClientProperty("class", "rootPanel");
-    getContentPane().add(rootPanel, BorderLayout.CENTER);
-
     JTabbedPane tabbedPane = new MainTabbedPane() {
       private static final long serialVersionUID = 71548865608767532L;
 
@@ -347,7 +336,7 @@ public class MovieEditorDialog extends TmmDialog {
         super.updateUI();
       }
     };
-    rootPanel.add(tabbedPane, BorderLayout.CENTER);
+    getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     /**********************************************************************************
      * DetailsPanel 1
@@ -356,7 +345,7 @@ public class MovieEditorDialog extends TmmDialog {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
       details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][50lp:75lp][25lp:n][200lp:250lp,grow]",
-          "[][][][][75lp:150lp][][][][][30lp:60lp][][][]"));
+          "[][][][][50lp:125lp][][][][][50lp:75lp][][][]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -940,32 +929,28 @@ public class MovieEditorDialog extends TmmDialog {
      * ButtonPanel
      **********************************************************************************/
     {
-      JPanel bottomPane = new JPanel();
-      bottomPane.setOpaque(false);
-      rootPanel.add(bottomPane, BorderLayout.SOUTH);
-      bottomPane.setLayout(new MigLayout("", "[grow]", "[]"));
-
-      JPanel buttonPane = new JPanel();
-      buttonPane.setOpaque(false);
-      bottomPane.add(buttonPane, "cell 0 0,alignx right");
-      EqualsLayout layout = new EqualsLayout(5);
-      layout.setMinWidth(100);
-      buttonPane.setLayout(layout);
-
-      JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      buttonPane.add(okButton, "2, 1, fill, top");
-      okButton.setAction(new ChangeMovieAction());
-      getRootPane().setDefaultButton(okButton);
-
-      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      buttonPane.add(cancelButton, "4, 1, fill, top");
-      cancelButton.setAction(new DiscardAction());
+      // JPanel bottomPane = new JPanel();
+      // bottomPane.setOpaque(false);
+      // rootPanel.add(bottomPane, BorderLayout.SOUTH);
+      // bottomPane.setLayout(new MigLayout("", "[grow]", "[]"));
+      //
+      // JPanel buttonPane = new JPanel();
+      // buttonPane.setOpaque(false);
+      // bottomPane.add(buttonPane, "cell 0 0,alignx right");
+      // EqualsLayout layout = new EqualsLayout(5);
+      // layout.setMinWidth(100);
+      // buttonPane.setLayout(layout);
 
       if (inQueue) {
-        JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-        btnAbort.setAction(new AbortQueueAction());
-        buttonPane.add(btnAbort, "6, 1, fill, top");
+        JButton btnAbort = new JButton(new AbortQueueAction());
+        addButton(btnAbort);
       }
+
+      JButton cancelButton = new JButton(new DiscardAction());
+      addButton(cancelButton);
+
+      JButton okButton = new JButton(new ChangeMovieAction());
+      addDefaultButton(okButton);
     }
   }
 

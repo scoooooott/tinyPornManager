@@ -13,36 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.actions;
+package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.actions.TmmAction;
-import org.tinymediamanager.ui.movies.dialogs.MovieCreateOfflineDialog;
+import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
 /**
- * MovieCreateOfflineAction - create a new offline movie
+ * The ShowChangelogAction to display the changelog
  * 
  * @author Manuel Laggner
  */
-public class MovieCreateOfflineAction extends TmmAction {
-  private static final long           serialVersionUID = -8473181347332963094L;
+public class ShowChangelogAction extends TmmAction {
+  private static final long           serialVersionUID = -6578562721885387890L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieCreateOfflineAction() {
-    putValue(NAME, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
-    putValue(LARGE_ICON_KEY, IconManager.ADD_INV);
-    putValue(SMALL_ICON, IconManager.ADD_INV);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
+  public ShowChangelogAction() {
+    putValue(NAME, BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
   }
 
   @Override
   protected void processAction(ActionEvent e) {
-    MovieCreateOfflineDialog dialog = new MovieCreateOfflineDialog();
-    dialog.pack();
-    dialog.setVisible(true);
+    WhatsNewDialog.showChangelog();
   }
 }

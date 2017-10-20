@@ -22,10 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -36,10 +34,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -61,19 +59,16 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieSetChooserPanel.
@@ -81,25 +76,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = -1023959850452480592L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
+  private static final long          serialVersionUID = -1023959850452480592L;
+  private static final Logger        LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
-  private MovieSet                    movieSetToScrape;
-  private List<MovieSetChooserModel>  movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
-  private final Action                actionSearch     = new SearchAction();
-  private boolean                     continueQueue    = true;
+  private MovieSet                   movieSetToScrape;
+  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private boolean                    continueQueue    = true;
 
-  private JLabel                      lblProgressAction;
-  private JProgressBar                progressBar;
-  private JTextField                  tfMovieSetName;
-  private JTable                      tableMovieSets;
-  private JTextArea                   lblMovieSetName;
-  private ImageLabel                  lblMovieSetPoster;
-  private JTable                      tableMovies;
-  private JCheckBox                   cbAssignMovies;
-  private JButton                     btnOk;
+  private JLabel                     lblProgressAction;
+  private JProgressBar               progressBar;
+  private JTextField                 tfMovieSetName;
+  private JTable                     tableMovieSets;
+  private JTextArea                  lblMovieSetName;
+  private ImageLabel                 lblMovieSetPoster;
+  private JTable                     tableMovies;
+  private JCheckBox                  cbAssignMovies;
+  private JButton                    btnOk;
+  private JTextPane                  tpPlot;
 
   /**
    * Instantiates a new movie set chooser panel.
@@ -109,39 +102,36 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
    */
   public MovieSetChooserDialog(MovieSet movieSet, boolean inQueue) {
     super(BUNDLE.getString("movieset.search"), "movieSetChooser"); //$NON-NLS-1$
-    setBounds(5, 5, 865, 578);
 
     movieSetToScrape = movieSet;
 
-    getContentPane().setLayout(new BorderLayout(0, 0));
+    {
+      JPanel panelHeader = new JPanel();
+      panelHeader.setLayout(new MigLayout("", "[grow][]", "[]"));
 
-    JPanel panelHeader = new JPanel();
-    getContentPane().add(panelHeader, BorderLayout.NORTH);
-    panelHeader.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("114px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
-    {
       tfMovieSetName = new JTextField();
-      panelHeader.add(tfMovieSetName, "2, 2, fill, fill");
+      panelHeader.add(tfMovieSetName, "cell 0 0,growx");
       tfMovieSetName.setColumns(10);
+
+      JButton btnSearch = new JButton(new SearchAction());
+      panelHeader.add(btnSearch, "cell 1 0");
+
+      setTopIformationPanel(panelHeader);
     }
     {
-      JButton btnSearch = new JButton("");
-      btnSearch.setAction(actionSearch);
-      panelHeader.add(btnSearch, "4, 2, fill, top");
-    }
-    {
+      JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[500,grow]"));
+
       JSplitPane splitPane = new JSplitPane();
       splitPane.setContinuousLayout(true);
       splitPane.setResizeWeight(0.5);
-      getContentPane().add(splitPane, BorderLayout.CENTER);
+      panelContent.add(splitPane, "cell 0 0,grow");
       {
         JPanel panelResults = new JPanel();
-        panelResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), }));
+        panelResults.setLayout(new MigLayout("", "[200lp:300lp,grow]", "[300lp,grow]"));
         JScrollPane panelSearchResults = new JScrollPane();
-        panelResults.add(panelSearchResults, "2, 2, fill, fill");
+        panelResults.add(panelSearchResults, "cell 0 0,grow");
         splitPane.setLeftComponent(panelResults);
         {
           tableMovieSets = new JTable();
@@ -176,98 +166,76 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(
-            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"), FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
-                RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC }));
+        panelSearchDetail.setLayout(new MigLayout("", "[150lp,grow 60][450lp,grow]", "[][250lp,grow][150lp][]"));
         {
-          lblMovieSetName = new JTextArea("");
-          lblMovieSetName.setLineWrap(true);
+          lblMovieSetName = new ReadOnlyTextArea("");
           lblMovieSetName.setOpaque(false);
-          lblMovieSetName.setWrapStyleWord(true);
           TmmFontHelper.changeFont(lblMovieSetName, 1.166, Font.BOLD);
-          panelSearchDetail.add(lblMovieSetName, "2, 1, 3, 1, fill, top");
+          panelSearchDetail.add(lblMovieSetName, "cell 0 0 2 1,growx");
         }
         {
           lblMovieSetPoster = new ImageLabel();
-          panelSearchDetail.add(lblMovieSetPoster, "2, 3, fill, fill");
+          panelSearchDetail.add(lblMovieSetPoster, "cell 0 1,grow");
         }
         {
-          JPanel panel = new JPanel();
-          panelSearchDetail.add(panel, "4, 3, fill, fill");
-          panel.setLayout(
-              new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-                  ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-        }
-        {
-
           JScrollPane scrollPane = new JScrollPane();
-          panelSearchDetail.add(scrollPane, "2, 5, 3, 1, fill, fill");
-          {
-            tableMovies = new JTable();
-            scrollPane.setViewportView(tableMovies);
-          }
+          panelSearchDetail.add(scrollPane, "cell 1 1,grow");
 
+          tpPlot = new ReadOnlyTextPane();
+          scrollPane.setViewportView(tpPlot);
+        }
+        {
+          JScrollPane scrollPane = new JScrollPane();
+          panelSearchDetail.add(scrollPane, "cell 0 2 2 1,grow");
+
+          tableMovies = new JTable();
+          scrollPane.setViewportView(tableMovies);
         }
         {
           cbAssignMovies = new JCheckBox(BUNDLE.getString("movieset.movie.assign")); //$NON-NLS-1$
           cbAssignMovies.setSelected(true);
-          panelSearchDetail.add(cbAssignMovies, "2, 7, 3, 1");
+          panelSearchDetail.add(cbAssignMovies, "cell 0 3 2 1,growx,aligny top");
         }
       }
     }
 
     {
-      JPanel bottomPane = new JPanel();
-      getContentPane().add(bottomPane, BorderLayout.SOUTH);
-      {
-        bottomPane.setLayout(new FormLayout(
-            new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"),
-                FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("2dlu"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
-        {
-          progressBar = new JProgressBar();
-          bottomPane.add(progressBar, "2, 2, fill, center");
-        }
-        {
-          lblProgressAction = new JLabel("");
-          bottomPane.add(lblProgressAction, "4, 2, fill, center");
-        }
-        {
-          JPanel buttonPane = new JPanel();
-          bottomPane.add(buttonPane, "6, 2, fill, fill");
-          EqualsLayout layout = new EqualsLayout(5);
-          buttonPane.setBorder(new EmptyBorder(4, 4, 4, 4));
-          layout.setMinWidth(100);
-          buttonPane.setLayout(layout);
+      JPanel infoPanel = new JPanel();
+      infoPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
 
-          btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          btnOk.setActionCommand("Save");
-          btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          btnOk.setIcon(IconManager.APPLY_INV);
-          btnOk.addActionListener(this);
-          buttonPane.add(btnOk);
-          getRootPane().setDefaultButton(btnOk);
+      progressBar = new JProgressBar();
+      infoPanel.add(progressBar, "cell 0 0");
 
-          JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          btnCancel.setActionCommand("Cancel");
-          btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          btnCancel.setIcon(IconManager.CANCEL_INV);
-          btnCancel.addActionListener(this);
-          buttonPane.add(btnCancel);
+      lblProgressAction = new JLabel("");
+      infoPanel.add(lblProgressAction, "cell 1 0");
 
-          if (inQueue) {
-            JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            btnAbort.setActionCommand("Abort");
-            btnAbort.setToolTipText(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            btnAbort.setIcon(IconManager.PROCESS_STOP);
-            btnAbort.addActionListener(this);
-            buttonPane.add(btnAbort, "6, 1, fill, top");
-          }
-        }
-      }
+      setBottomInformationPanel(infoPanel);
     }
+    {
+      if (inQueue) {
+        JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+        btnAbort.setActionCommand("Abort");
+        btnAbort.setToolTipText(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+        btnAbort.setIcon(IconManager.PROCESS_STOP);
+        btnAbort.addActionListener(this);
+        addButton(btnAbort);
+      }
+
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setActionCommand("Cancel");
+      btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setIcon(IconManager.CANCEL_INV);
+      btnCancel.addActionListener(this);
+      addButton(btnCancel);
+
+      btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      btnOk.setActionCommand("Save");
+      btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      btnOk.setIcon(IconManager.APPLY_INV);
+      btnOk.addActionListener(this);
+      addDefaultButton(btnOk);
+    }
+
     initDataBindings();
 
     // adjust table columns
@@ -450,47 +418,6 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   }
 
   /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
-    JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        movieSetsFound, tableMovieSets);
-    //
-    BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false); // $NON-NLS-1$
-    //
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, List<MovieInSet>> jTableBeanProperty = BeanProperty.create("selectedElement.movies");
-    JTableBinding<MovieInSet, JTable, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, tableMovieSets,
-        jTableBeanProperty, tableMovies);
-    //
-    BeanProperty<MovieInSet, String> movieInSetBeanProperty = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(movieInSetBeanProperty).setColumnName(BUNDLE.getString("tmm.movie")).setEditable(false); //$NON-NLS-1$
-    //
-    BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.title");
-    jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName(BUNDLE.getString("movieset.movie.matched")).setEditable(false); //$NON-NLS-1$
-    //
-    bindings.add(jTableBinding_1);
-    jTableBinding_1.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
-        lblMovieSetName, jTextAreaBeanProperty);
-    bindings.add(autoBinding);
-    autoBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
-        jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
-    bindings.add(autoBinding_1);
-    autoBinding_1.bind();
-  }
-
-  /**
    * Shows the dialog and returns whether the work on the queue should be continued.
    * 
    * @return true, if successful
@@ -500,8 +427,43 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     return continueQueue;
   }
 
-  @Override
-  public void pack() {
-    // do not let it pack - it looks weird
+  protected void initDataBindings() {
+    JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        movieSetsFound, tableMovieSets);
+    //
+    BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false);
+    //
+    jTableBinding.bind();
+    //
+    BeanProperty<JTable, List<MovieInSet>> jTableBeanProperty = BeanProperty.create("selectedElement.movies");
+    JTableBinding<MovieInSet, JTable, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, tableMovieSets,
+        jTableBeanProperty, tableMovies);
+    //
+    BeanProperty<MovieInSet, String> movieInSetBeanProperty = BeanProperty.create("name");
+    jTableBinding_1.addColumnBinding(movieInSetBeanProperty).setColumnName("Movie").setEditable(false);
+    //
+    BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.title");
+    jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName("matched movie").setEditable(false);
+    //
+    jTableBinding_1.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
+    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
+        lblMovieSetName, jTextAreaBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
+        jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.overview");
+    BeanProperty<JTextPane, String> readOnlyTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
+        jTableBeanProperty_3, tpPlot, readOnlyTextPaneBeanProperty);
+    autoBinding_2.bind();
   }
 }

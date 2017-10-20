@@ -19,7 +19,6 @@ package org.tinymediamanager;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -29,7 +28,6 @@ import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
@@ -48,7 +46,6 @@ import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -552,25 +549,7 @@ public class TinyMediaManager {
 
       private void showChangelog() {
         // read the changelog
-        try {
-          final String changelog = Utils.readFileToString(Paths.get("changelog.txt"));
-          if (StringUtils.isNotBlank(changelog)) {
-            EventQueue.invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                WhatsNewDialog dialog = new WhatsNewDialog(changelog);
-                dialog.pack();
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-                dialog.setVisible(true);
-              }
-            });
-          }
-        }
-        catch (IOException e) {
-          // no file found
-          LOGGER.warn(e.getMessage());
-        }
+        WhatsNewDialog.showChangelog();
       }
     });
   }
