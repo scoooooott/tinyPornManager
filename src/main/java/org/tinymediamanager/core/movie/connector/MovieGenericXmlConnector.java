@@ -60,14 +60,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
-
 /**
  * this class is a general XML connector which suits as a base class for most xml based connectors
  *
  * @author Manuel Laggner
  */
 public abstract class MovieGenericXmlConnector implements IMovieConnector {
+  protected final String   ORACLE_IS_STANDALONE = "http://www.oracle.com/xml/is-standalone";
 
   protected final Movie    movie;
   protected MovieNfoParser parser = null;
@@ -634,7 +633,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
     transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
-    transformer.setOutputProperty(OutputPropertiesFactory.ORACLE_IS_STANDALONE, "yes");
+    transformer.setOutputProperty(ORACLE_IS_STANDALONE, "yes");
     transformer.setOutputProperty(OutputKeys.METHOD, "xml");
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
