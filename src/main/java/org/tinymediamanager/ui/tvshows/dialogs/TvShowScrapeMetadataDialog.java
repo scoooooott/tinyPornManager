@@ -16,16 +16,12 @@
 package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -33,19 +29,13 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 ;
 
@@ -56,8 +46,6 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowScrapeMetadataDialog extends TmmDialog {
   private static final long            serialVersionUID            = 6120530120703772160L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();
   private boolean                      startScrape                 = true;
@@ -68,7 +56,6 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
   public TvShowScrapeMetadataDialog(String title) {
     super(title, "updateMetadata");
-    setBounds(5, 5, 533, 280);
 
     // copy the values
     TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
@@ -90,64 +77,45 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
     tvShowSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
 
-    JPanel panelContent = new JPanel();
-    getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new BorderLayout(0, 0));
-
-    JPanel panelScraper = new JPanel();
-    panelContent.add(panelScraper, BorderLayout.NORTH);
-    panelScraper.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
-
-    JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
-    panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
-
-    cbMetadataScraper = new MediaScraperComboBox(TvShowList.getInstance().getAvailableMediaScrapers());
-    panelScraper.add(cbMetadataScraper, "4, 2");
-
-    JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
-    panelScraper.add(lblArtworkScraper, "2, 4, right, default");
-
-    cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
-    panelScraper.add(cbArtworkScraper, "4, 4");
-
     {
-      JPanel panelCenter = new JPanel();
-      panelContent.add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][][]"));
+
+      JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata"));
+      panelContent.add(lblMetadataScraperT, "cell 0 0,alignx right");
+
+      cbMetadataScraper = new MediaScraperComboBox(TvShowList.getInstance().getAvailableMediaScrapers());
+      panelContent.add(cbMetadataScraper, "cell 1 0,growx");
+
+      JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork"));
+      panelContent.add(lblArtworkScraper, "cell 0 1,alignx right");
+
+      cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
+      panelContent.add(cbArtworkScraper, "cell 1 1,growx");
 
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(this.tvShowSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
-          TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$,
-      panelCenter.add(panelScraperMetadataSetting, "2, 2, fill, default");
+      panelContent.add(panelScraperMetadataSetting, "cell 0 2 2 1,grow");
+      panelScraperMetadataSetting
+          .setBorder(new TitledBorder(null, BUNDLE.getString("scraper.metadata.select"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
     }
+    {
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setIcon(IconManager.CANCEL_INV);
+      btnCancel.addActionListener(e -> {
+        startScrape = false;
+        setVisible(false);
+      });
+      addButton(btnCancel);
 
-    JPanel panelButtons = new JPanel();
-    panelButtons.setLayout(new EqualsLayout(5));
-    panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
-    panelContent.add(panelButtons, BorderLayout.SOUTH);
-
-    JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
-    btnStart.setIcon(IconManager.APPLY_INV);
-    btnStart.addActionListener(e -> {
-      startScrape = true;
-      setVisible(false);
-    });
-    panelButtons.add(btnStart);
-    getRootPane().setDefaultButton(btnStart);
-
-    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL_INV);
-    btnCancel.addActionListener(e -> {
-      startScrape = false;
-      setVisible(false);
-    });
-    panelButtons.add(btnCancel);
-
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      btnStart.setIcon(IconManager.APPLY_INV);
+      btnStart.addActionListener(e -> {
+        startScrape = true;
+        setVisible(false);
+      });
+      addDefaultButton(btnStart);
+    }
     // set data
 
     // metadataprovider

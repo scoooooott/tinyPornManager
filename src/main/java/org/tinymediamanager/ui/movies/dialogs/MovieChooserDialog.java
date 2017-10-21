@@ -123,7 +123,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   /**
    * UI components
    */
-  private final JPanel               contentPanel          = new JPanel();
   private JTextField                 textFieldSearchString;
   private MediaScraperComboBox       cbScraper;
   private JTable                     tableSearchResults;
@@ -176,8 +175,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     DefaultEventTableModel<Person> castMemberTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(castMemberEventList),
         new CastMemberTableFormat());
 
-    getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:350lp,grow][shrink 0][][]"));
     {
       final JPanel panelPath = new JPanel();
       // contentPanel.add(panelPath, "cell 0 0");
@@ -206,6 +203,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
       setTopIformationPanel(panelPath);
     }
+
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:350lp,grow][shrink 0][][]"));
+    getContentPane().add(contentPanel, BorderLayout.CENTER);
+
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "cell 0 0,grow");

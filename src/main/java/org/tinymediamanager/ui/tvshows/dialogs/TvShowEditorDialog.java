@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -76,14 +75,12 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.LeftDotTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
 import org.tinymediamanager.ui.UIConstants;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
@@ -121,8 +118,6 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TvShowEditorDialog extends TmmDialog {
   private static final long                 serialVersionUID = 3270218410302989845L;
-  /** @wbp.nls.resourceBundle messages */
-  private final static ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
   private static final Insets               BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private TvShow                            tvShowToEdit;
@@ -265,10 +260,8 @@ public class TvShowEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout());
     JPanel rootPanel = new JPanel();
     rootPanel.setLayout(new BorderLayout());
-    rootPanel.putClientProperty("class", "rootPanel");
     getContentPane().add(rootPanel, BorderLayout.CENTER);
 
     JTabbedPane tabbedPane = new MainTabbedPane() {
@@ -289,7 +282,7 @@ public class TvShowEditorDialog extends TmmDialog {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
       details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]",
-          "[][][75lp:150lp,grow 200][][][][][30lp:60lp][][100lp:150lp,grow]"));
+          "[][][75lp:150lp,grow 150][][][][][50lp:85lp][][75lp:125lp,grow]"));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -668,32 +661,16 @@ public class TvShowEditorDialog extends TmmDialog {
      * button pane
      **********************************************************************************/
     {
-      JPanel bottomPane = new JPanel();
-      bottomPane.setOpaque(false);
-      rootPanel.add(bottomPane, BorderLayout.SOUTH);
-      bottomPane.setLayout(new MigLayout("", "[grow]", "[]"));
-
-      JPanel buttonPane = new JPanel();
-      buttonPane.setOpaque(false);
-      bottomPane.add(buttonPane, "cell 0 0,alignx right");
-      EqualsLayout layout = new EqualsLayout(5);
-      layout.setMinWidth(100);
-      buttonPane.setLayout(layout);
-
-      JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      buttonPane.add(okButton);
-      okButton.setAction(new OKAction());
-      getRootPane().setDefaultButton(okButton);
-
-      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      buttonPane.add(cancelButton);
-      cancelButton.setAction(new CancelAction());
-
       if (inQueue) {
-        JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-        btnAbort.setAction(new AbortAction());
-        buttonPane.add(btnAbort);
+        JButton btnAbort = new JButton(new AbortAction());
+        addButton(btnAbort);
       }
+
+      JButton cancelButton = new JButton(new CancelAction());
+      addButton(cancelButton);
+
+      JButton okButton = new JButton(new OKAction());
+      addDefaultButton(okButton);
     }
   }
 

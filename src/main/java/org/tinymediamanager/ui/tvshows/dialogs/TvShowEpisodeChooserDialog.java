@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,9 +26,9 @@ import java.awt.event.MouseEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -37,6 +39,7 @@ import javax.swing.JViewport;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -45,18 +48,12 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.EnhancedTextField;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
@@ -70,6 +67,7 @@ import ca.odell.glazedlists.swing.AdvancedTableModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The TvShowEpisodeChooserDialog is used for searching a special episode
@@ -78,8 +76,6 @@ import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
   private static final long                                serialVersionUID = 3317576458848699068L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisode                                    episode;
   private MediaScraper                                     mediaScraper;
@@ -88,13 +84,13 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private final List<TvShowEpisodeChooserModel>            selectedEpisodes;
   private final SortedList<TvShowEpisodeChooserModel>      sortedEpisodes;
 
+  private JLabel                                           lblPath;
   private JTable                                           table;
   private JTextArea                                        taPlot;
   private JTextField                                       textField;
 
   public TvShowEpisodeChooserDialog(TvShowEpisode ep, MediaScraper mediaScraper) {
     super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser"); //$NON-NLS-1$
-    setBounds(5, 5, 600, 400);
 
     this.episode = ep;
     this.mediaScraper = mediaScraper;
@@ -103,27 +99,35 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
         GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
     sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
 
-    getContentPane()
-        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:37px"),
-                FormSpecs.RELATED_GAP_ROWSPEC, }));
+    {
+      final JPanel panelPath = new JPanel();
+      panelPath.setLayout(new MigLayout("", "[grow]", "[]"));
+      {
+        lblPath = new JLabel("");
+        TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
+        panelPath.add(lblPath, "cell 0 0");
+      }
+
+      setTopIformationPanel(panelPath);
+    }
+
+    JPanel contentPanel = new JPanel();
+    getContentPane().add(contentPanel, BorderLayout.CENTER);
+    contentPanel.setLayout(new MigLayout("", "[700lp,grow]", "[500lp,grow]"));
+
     {
       JSplitPane splitPane = new JSplitPane();
-      getContentPane().add(splitPane, "2, 2, fill, fill");
+      contentPanel.add(splitPane, "cell 0 0,grow");
 
       JPanel panelLeft = new JPanel();
-      panelLeft.setLayout(
-          new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-                  FormSpecs.RELATED_GAP_ROWSPEC, }));
+      panelLeft.setLayout(new MigLayout("", "[300lp,grow]", "[][400lp,grow]"));
 
       textField = EnhancedTextField.createSearchTextField();
-      panelLeft.add(textField, "2, 2, fill, default");
+      panelLeft.add(textField, "cell 0 0, growx");
       textField.setColumns(10);
 
       JScrollPane scrollPane = new JScrollPane();
-      scrollPane.setMinimumSize(new Dimension(200, 23));
-      panelLeft.add(scrollPane, "2, 4, fill, fill");
+      panelLeft.add(scrollPane, "cell 0 1,grow");
       splitPane.setLeftComponent(panelLeft);
 
       MatcherEditor<TvShowEpisodeChooserModel> textMatcherEditor = new TextComponentMatcherEditor<>(textField,
@@ -154,48 +158,41 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       scrollPane.setViewportView(table);
 
       JPanel panelRight = new JPanel();
-      panelRight.setLayout(
-          new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+      panelRight.setLayout(new MigLayout("", "[400lp,grow]", "[400lp,grow]"));
+
       JScrollPane scrollPane_1 = new JScrollPane();
-      panelRight.add(scrollPane_1, "2, 2, fill, fill");
+      panelRight.add(scrollPane_1, "cell 0 0,grow");
       splitPane.setRightComponent(panelRight);
 
-      taPlot = new JTextArea();
-      taPlot.setEditable(false);
-      taPlot.setWrapStyleWord(true);
-      taPlot.setLineWrap(true);
+      taPlot = new ReadOnlyTextArea();
       scrollPane_1.setViewportView(taPlot);
       splitPane.setDividerLocation(300);
-
     }
-    JPanel bottomPanel = new JPanel();
-    getContentPane().add(bottomPanel, "2, 4, fill, top");
+    {
 
-    bottomPanel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
+      cancelButton.setIcon(IconManager.CANCEL_INV);
+      cancelButton.setActionCommand("Cancel");
+      cancelButton.addActionListener(this);
+      addButton(cancelButton);
 
-    JPanel buttonPane = new JPanel();
-    bottomPanel.add(buttonPane, "5, 2, fill, fill");
-    EqualsLayout layout = new EqualsLayout(5);
-    layout.setMinWidth(100);
-    buttonPane.setLayout(layout);
-    final JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-    okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
-    okButton.setIcon(IconManager.APPLY_INV);
-    buttonPane.add(okButton);
-    okButton.setActionCommand("OK");
-    okButton.addActionListener(this);
-    getRootPane().setDefaultButton(okButton);
+      final JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
+      okButton.setIcon(IconManager.APPLY_INV);
+      okButton.setActionCommand("OK");
+      okButton.addActionListener(this);
+      addDefaultButton(okButton);
 
-    JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
-    cancelButton.setIcon(IconManager.CANCEL_INV);
-    buttonPane.add(cancelButton);
-    cancelButton.setActionCommand("Cancel");
-    cancelButton.addActionListener(this);
+      table.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+            actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
+          }
+        }
+      });
+    }
 
     // column widths
     table.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -204,14 +201,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     SearchTask task = new SearchTask();
     task.execute();
 
-    table.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
-          actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
-        }
-      }
-    });
+    lblPath.setText(episode.getPathNIO().resolve(episode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()).toString());
   }
 
   @Override

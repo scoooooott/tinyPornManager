@@ -250,8 +250,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     }
 
     // scrapers
-    List<MediaScraper> scrapers = new ArrayList<>();
-    scrapers.addAll(cbScraper.getSelectedItems());
+    List<MediaScraper> scrapers = new ArrayList<>(cbScraper.getSelectedItems());
 
     activeSearchTask = new SearchTask(file, imdbId, searchTerm, scrapers);
     activeSearchTask.execute();

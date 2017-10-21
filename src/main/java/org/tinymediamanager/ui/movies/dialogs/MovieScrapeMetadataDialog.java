@@ -104,7 +104,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     {
       JPanel panelCenter = new JPanel();
       getContentPane().add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new MigLayout("", "[][grow]", "[][][][20lp:n][]"));
+      panelCenter.setLayout(new MigLayout("", "[][300lp,grow]", "[][][][20lp:n][]"));
 
       JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata"));
       panelCenter.add(lblMetadataScraperT, "cell 0 0,alignx right");
@@ -128,7 +128,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
       panelScraperMetadataSetting
           .setBorder(new TitledBorder(null, BUNDLE.getString("scraper.metadata.select"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$,
-      panelCenter.add(panelScraperMetadataSetting, "cell 0 4 2 1");
+      panelCenter.add(panelScraperMetadataSetting, "cell 0 4 2 1,grow");
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$

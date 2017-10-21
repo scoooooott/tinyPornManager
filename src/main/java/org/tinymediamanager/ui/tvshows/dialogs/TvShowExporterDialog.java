@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,16 +47,11 @@ import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowExporter.
@@ -65,22 +59,20 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowExporterDialog extends TmmDialog {
-  private static final long           serialVersionUID = -2197076428245222349L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
+  private static final long    serialVersionUID = -2197076428245222349L;
+  private static final Logger  LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
 
-  private static final String         DIALOG_ID        = "tvShowExporter";
+  private static final String  DIALOG_ID        = "tvShowExporter";
 
-  private List<TvShow>                tvShows;
-  private List<ExportTemplate>        templatesFound;
+  private List<TvShow>         tvShows;
+  private List<ExportTemplate> templatesFound;
 
-  private JTextField                  tfExportDir;
-  private JList                       list;
-  private JLabel                      lblTemplateName;
-  private JLabel                      lblUrl;
-  private JTextPane                   tpDescription;
-  private JCheckBox                   chckbxTemplateWithDetail;
+  private JTextField           tfExportDir;
+  private JList                list;
+  private JLabel               lblTemplateName;
+  private JLabel               lblUrl;
+  private JTextPane            tpDescription;
+  private JCheckBox            chckbxTemplateWithDetail;
 
   /**
    * Create the dialog.
@@ -90,134 +82,124 @@ public class TvShowExporterDialog extends TmmDialog {
    */
   public TvShowExporterDialog(List<TvShow> tvShowsToExport) {
     super(BUNDLE.getString("tvshow.export"), DIALOG_ID); //$NON-NLS-1$
-    setBounds(5, 5, 600, 300);
+    {
+      JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent);
+      panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[300lp,grow][]"));
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("100dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
+      JSplitPane splitPane = new JSplitPane();
+      splitPane.setResizeWeight(0.7);
+      panelContent.add(splitPane, "cell 0 0,grow");
 
-    JSplitPane splitPane = new JSplitPane();
-    splitPane.setResizeWeight(0.7);
-    getContentPane().add(splitPane, "2, 2, fill, fill");
+      JScrollPane scrollPane = new JScrollPane();
+      splitPane.setLeftComponent(scrollPane);
 
-    JScrollPane scrollPane = new JScrollPane();
-    splitPane.setLeftComponent(scrollPane);
+      list = new JList();
+      scrollPane.setViewportView(list);
 
-    list = new JList();
-    scrollPane.setViewportView(list);
+      JPanel panelExporterDetails = new JPanel();
+      splitPane.setRightComponent(panelExporterDetails);
+      panelExporterDetails.setLayout(new MigLayout("", "[100lp,grow]", "[][][][200lp,grow]"));
 
-    JPanel panelExporterDetails = new JPanel();
-    splitPane.setRightComponent(panelExporterDetails);
-    panelExporterDetails.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), }));
+      lblTemplateName = new JLabel("");
+      panelExporterDetails.add(lblTemplateName, "cell 0 0,growx");
 
-    lblTemplateName = new JLabel("");
-    panelExporterDetails.add(lblTemplateName, "2, 2, 3, 1");
+      lblUrl = new JLabel("");
+      panelExporterDetails.add(lblUrl, "cell 0 1,growx");
 
-    lblUrl = new JLabel("");
-    panelExporterDetails.add(lblUrl, "2, 4, 3, 1");
+      chckbxTemplateWithDetail = new JCheckBox("");
+      chckbxTemplateWithDetail.setEnabled(false);
+      panelExporterDetails.add(chckbxTemplateWithDetail, "flowx,cell 0 2");
 
-    chckbxTemplateWithDetail = new JCheckBox("");
-    chckbxTemplateWithDetail.setEnabled(false);
-    panelExporterDetails.add(chckbxTemplateWithDetail, "2, 6");
+      JLabel lblDetails = new JLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
+      panelExporterDetails.add(lblDetails, "cell 0 2,growx,aligny center");
 
-    JLabel lblDetails = new JLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
-    panelExporterDetails.add(lblDetails, "4, 6");
+      JScrollPane scrollPaneDescription = new JScrollPane();
+      panelExporterDetails.add(scrollPaneDescription, "cell 0 3,grow");
 
-    JScrollPane scrollPaneDescription = new JScrollPane();
-    panelExporterDetails.add(scrollPaneDescription, "2, 8, 3, 1, fill, fill");
+      tpDescription = new JTextPane();
+      scrollPaneDescription.setViewportView(tpDescription);
+      splitPane.setDividerLocation(300);
 
-    tpDescription = new JTextPane();
-    scrollPaneDescription.setViewportView(tpDescription);
-    splitPane.setDividerLocation(300);
+      tfExportDir = new JTextField();
+      panelContent.add(tfExportDir, "flowx,cell 0 1,growx");
+      tfExportDir.setColumns(10);
 
-    JPanel panel = new JPanel();
-    getContentPane().add(panel, "2, 4, fill, fill");
-    panel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
+      JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination")); //$NON-NLS-1$
+      panelContent.add(btnSetDestination, "cell 0 1");
+      btnSetDestination.addActionListener(e -> {
+        String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), path); //$NON-NLS-1$
+        if (file != null) {
+          tfExportDir.setText(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
+        }
+      });
+    }
+    {
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      btnCancel.setIcon(IconManager.CANCEL_INV);
+      btnCancel.addActionListener(arg0 -> setVisible(false));
+      addButton(btnCancel);
 
-    tfExportDir = new JTextField();
-    panel.add(tfExportDir, "1, 1, fill, default");
-    tfExportDir.setColumns(10);
-
-    JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination")); //$NON-NLS-1$
-    panel.add(btnSetDestination, "3, 1");
-    btnSetDestination.addActionListener(e -> {
-      String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), path); //$NON-NLS-1$
-      if (file != null) {
-        tfExportDir.setText(file.toAbsolutePath().toString());
-        TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
-      }
-    });
-
-    JPanel panelButtons = new JPanel();
-    panelButtons.setLayout(new EqualsLayout(5));
-    getContentPane().add(panelButtons, "2, 6, fill, fill");
-
-    JButton btnExport = new JButton("Export");
-    btnExport.setIcon(IconManager.EXPORT);
-    btnExport.addActionListener(arg0 -> {
-      if (StringUtils.isBlank(tfExportDir.getText())) {
-        return;
-      }
-      // check selected template
-      int index = list.getSelectedIndex();
-      if (index < 0) {
-        return;
-      }
-
-      ExportTemplate selectedTemplate = templatesFound.get(index);
-      if (selectedTemplate != null) {
-        // check whether the chosen export path exists/is empty or not
-        Path exportPath = Paths.get(tfExportDir.getText());
-        if (!Files.exists(exportPath)) {
-          // export dir does not exist
-          JOptionPane.showMessageDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
+      JButton btnExport = new JButton("Export");
+      btnExport.setIcon(IconManager.EXPORT);
+      btnExport.addActionListener(arg0 -> {
+        if (StringUtils.isBlank(tfExportDir.getText())) {
+          return;
+        }
+        // check selected template
+        int index = list.getSelectedIndex();
+        if (index < 0) {
           return;
         }
 
-        try {
-          if (!Utils.isFolderEmpty(exportPath)) {
-            String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-            int decision = JOptionPane.showConfirmDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
-                JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
-            if (decision == JOptionPane.NO_OPTION) {
-              return;
+        ExportTemplate selectedTemplate = templatesFound.get(index);
+        if (selectedTemplate != null) {
+          // check whether the chosen export path exists/is empty or not
+          Path exportPath = Paths.get(tfExportDir.getText());
+          if (!Files.exists(exportPath)) {
+            // export dir does not exist
+            JOptionPane.showMessageDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
+            return;
+          }
+
+          try {
+            if (!Utils.isFolderEmpty(exportPath)) {
+              int decision = JOptionPane.showConfirmDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
+                  JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
+              if (decision == JOptionPane.NO_OPTION) {
+                return;
+              }
             }
           }
-        }
-        catch (IOException e) {
-          LOGGER.warn("could not open folder: " + e.getMessage());
-          return;
-        }
+          catch (IOException e) {
+            LOGGER.warn("could not open folder: " + e.getMessage());
+            return;
+          }
 
-        try {
-          TvShowExporter exporter = new TvShowExporter(Paths.get(selectedTemplate.getPath()));
-          exporter.export(tvShows, exportPath);
+          try {
+            TvShowExporter exporter = new TvShowExporter(Paths.get(selectedTemplate.getPath()));
+            exporter.export(tvShows, exportPath);
+          }
+          catch (Exception e) {
+            LOGGER.error("Error exporting tv shows: ", e);
+          }
+          setVisible(false);
         }
-        catch (Exception e) {
-          LOGGER.error("Error exporting tv shows: ", e);
-        }
-        setVisible(false);
-      }
-    });
-    panelButtons.add(btnExport);
-    getRootPane().setDefaultButton(btnExport);
-
-    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL_INV);
-    btnCancel.addActionListener(arg0 -> setVisible(false));
-    panelButtons.add(btnCancel);
+      });
+      addDefaultButton(btnExport);
+    }
 
     tvShows = tvShowsToExport;
     templatesFound = TvShowExporter.findTemplates(TemplateType.TV_SHOW);
     initDataBindings();
+
+    // set the last used template as default
+    String lastTemplateName = TmmProperties.getInstance().getProperty(DIALOG_ID + ".template"); //$NON-NLS-1$
+    if (StringUtils.isNotBlank(lastTemplateName)) {
+      list.setSelectedValue(lastTemplateName, true);
+    }
   }
 
   /**

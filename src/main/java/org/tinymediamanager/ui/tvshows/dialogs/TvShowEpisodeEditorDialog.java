@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
@@ -83,11 +82,9 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UIConstants;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaRatingTable;
@@ -115,8 +112,6 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog {
   private static final long                       serialVersionUID = 7702248909791283043L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
   private static final Logger                     LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Insets                     BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
@@ -215,17 +210,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         guests.add(actor);
       }
 
-      for (String tag : episodeToEdit.getTags()) {
-        tags.add(tag);
-      }
+      tags.addAll(episodeToEdit.getTags());
     }
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout());
     JPanel rootPanel = new JPanel();
     rootPanel.setLayout(new BorderLayout());
-    rootPanel.putClientProperty("class", "rootPanel");
     getContentPane().add(rootPanel, BorderLayout.CENTER);
 
     JTabbedPane tabbedPane = new MainTabbedPane() {
@@ -530,41 +521,34 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
      * bottom panel
      *********************************************************************************/
     {
-      JPanel bottomPanel = new JPanel();
-      rootPanel.add(bottomPanel, BorderLayout.SOUTH);
-      bottomPanel.setOpaque(false);
+      JPanel scrapePanel = new JPanel();
+      scrapePanel.setOpaque(false);
 
       cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
       MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
-      bottomPanel.setLayout(new MigLayout("", "[][][][grow][]", "[]"));
+      scrapePanel.setLayout(new MigLayout("", "[][][][grow]", "[]"));
       cbScraper.setSelectedItem(defaultScraper);
-      bottomPanel.add(cbScraper, "cell 0 0");
+      scrapePanel.add(cbScraper, "cell 0 0");
 
       JButton btnScrape = new JButton(new ScrapeAction());
-      bottomPanel.add(btnScrape, "cell 1 0");
+      scrapePanel.add(btnScrape, "cell 1 0");
 
       JButton btnSearch = new JButton(new SearchAction());
-      bottomPanel.add(btnSearch, "cell 2 0");
-      {
-        JPanel buttonPane = new JPanel();
-        buttonPane.setOpaque(false);
-        bottomPanel.add(buttonPane, "cell 4 0");
-        EqualsLayout layout = new EqualsLayout(5);
-        layout.setMinWidth(100);
-        buttonPane.setLayout(layout);
+      scrapePanel.add(btnSearch, "cell 2 0");
 
-        JButton okButton = new JButton(new ChangeEpisodeAction());
-        buttonPane.add(okButton);
-        getRootPane().setDefaultButton(okButton);
-
-        JButton cancelButton = new JButton(new DiscardAction());
-        buttonPane.add(cancelButton);
-
-        if (inQueue) {
-          JButton abortButton = new JButton(new AbortQueueAction());
-          buttonPane.add(abortButton);
-        }
+      setBottomInformationPanel(scrapePanel);
+    }
+    {
+      if (inQueue) {
+        JButton abortButton = new JButton(new AbortQueueAction());
+        addButton(abortButton);
       }
+
+      JButton cancelButton = new JButton(new DiscardAction());
+      addButton(cancelButton);
+
+      JButton okButton = new JButton(new ChangeEpisodeAction());
+      addDefaultButton(okButton);
     }
   }
 
@@ -879,7 +863,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private class AddRatingAction extends AbstractAction {
     private static final long serialVersionUID = 2903255414533349267L;
 
-    public AddRatingAction() {
+    AddRatingAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
@@ -903,7 +887,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private class RemoveRatingAction extends AbstractAction {
     private static final long serialVersionUID = -7079821950827356996L;
 
-    public RemoveRatingAction() {
+    RemoveRatingAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }

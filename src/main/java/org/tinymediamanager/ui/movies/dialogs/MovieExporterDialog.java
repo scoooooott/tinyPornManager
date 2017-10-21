@@ -102,10 +102,10 @@ public class MovieExporterDialog extends TmmDialog {
       panelExporterDetails.setLayout(new MigLayout("", "[100lp,grow]", "[][][][200lp,grow]"));
 
       lblTemplateName = new JLabel("");
-      panelExporterDetails.add(lblTemplateName, "cell 0 0,growx,aligny top");
+      panelExporterDetails.add(lblTemplateName, "cell 0 0,growx");
 
       lblUrl = new JLabel("");
-      panelExporterDetails.add(lblUrl, "cell 0 1,growx,aligny top");
+      panelExporterDetails.add(lblUrl, "cell 0 1,growx");
 
       chckbxTemplateWithDetail = new JCheckBox("");
       chckbxTemplateWithDetail.setEnabled(false);

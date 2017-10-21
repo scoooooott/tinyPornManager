@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -55,20 +55,12 @@ import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowSubtitleChooserModel;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -77,6 +69,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * This dialog is used to show a chooser for subtitles found with the subtitle scrapers
@@ -85,8 +78,6 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  */
 public class TvShowSubtitleChooserDialog extends TmmDialog {
   private static final long                                  serialVersionUID   = -3104541519073924724L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                        BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowList                                   tvShowList         = TvShowList.getInstance();
   private final TvShowEpisode                                episodeToScrape;
@@ -108,14 +99,13 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
   public TvShowSubtitleChooserDialog(TvShowEpisode episode, MediaFile mediaFile, boolean inQueue) {
     super(BUNDLE.getString("tvshowepisodesubtitlechooser.search"), "episodeSubtitleChooser"); //$NON-NLS-1$
-    setBounds(5, 5, 712, 429);
 
     this.episodeToScrape = episode;
     this.fileToScrape = mediaFile;
     this.inQueue = inQueue;
 
-    subtitleEventList = GlazedLists.threadSafeList(
-        new ObservableElementList<>(new BasicEventList<TvShowSubtitleChooserModel>(), GlazedLists.beanConnector(TvShowSubtitleChooserModel.class)));
+    subtitleEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(TvShowSubtitleChooserModel.class)));
     subtitleTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(subtitleEventList), new SubtitleTableFormat());
 
     initComponents();
@@ -151,91 +141,81 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    getContentPane().setLayout(new BorderLayout());
+    {
+      final JPanel panelTitle = new JPanel();
+      panelTitle.setLayout(new MigLayout("", "[grow]", "[]"));
 
-    final JPanel panelContent = new JPanel();
-    getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("120dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+      final JLabel lblEpisodeTitle = new JLabel(episodeToScrape.getTitle());
+      TmmFontHelper.changeFont(lblEpisodeTitle, 1.33, Font.BOLD);
+      panelTitle.add(lblEpisodeTitle, "cell 0 0 5 1,growx");
 
-    final JLabel lblEpisodeTitle = new JLabel(episodeToScrape.getTitle());
-    TmmFontHelper.changeFont(lblEpisodeTitle, 1.33, Font.BOLD);
-    panelContent.add(lblEpisodeTitle, "2, 2, 9, 1");
+      setTopIformationPanel(panelTitle);
+    }
+    {
+      final JPanel panelContent = new JPanel();
+      getContentPane().add(panelContent, BorderLayout.CENTER);
+      panelContent.setLayout(new MigLayout("", "[74px][][300lp,grow]", "[][][][][][shrink 0][200lp,grow]"));
 
-    JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-    panelContent.add(lblSeasonT, "2, 4, right, default");
+      JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+      panelContent.add(lblSeasonT, "cell 0 0,alignx right,aligny top");
 
-    JLabel lblSeason = new JLabel(String.valueOf(episodeToScrape.getSeason()));
-    panelContent.add(lblSeason, "4, 4");
+      JLabel lblSeason = new JLabel(String.valueOf(episodeToScrape.getSeason()));
+      panelContent.add(lblSeason, "cell 1 0");
 
-    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-    panelContent.add(lblEpisodeT, "2, 6, right, default");
+      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      panelContent.add(lblEpisodeT, "cell 0 1,alignx right,aligny top");
 
-    JLabel lblEpisode = new JLabel(String.valueOf(episodeToScrape.getEpisode()));
-    panelContent.add(lblEpisode, "4, 6");
+      JLabel lblEpisode = new JLabel(String.valueOf(episodeToScrape.getEpisode()));
+      panelContent.add(lblEpisode, "cell 1 1");
 
-    final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
-    panelContent.add(lblMediaFileNameT, "2, 8, right, default");
+      final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
+      panelContent.add(lblMediaFileNameT, "cell 0 2,alignx right,aligny top");
 
-    final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
-    panelContent.add(lblMediaFileName, "4, 8, 7, 1");
+      final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
+      panelContent.add(lblMediaFileName, "cell 1 2 2 1,growx");
 
-    final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-    panelContent.add(lblScraperT, "2, 10, right, default");
+      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+      panelContent.add(lblScraperT, "cell 0 3,alignx right,aligny center");
 
-    cbScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
-    panelContent.add(cbScraper, "4, 10, fill, default");
+      cbScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
+      panelContent.add(cbScraper, "cell 1 3,growx");
 
-    final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-    panelContent.add(lblLanguageT, "2, 12, right, default");
+      final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
+      btnSearch.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
+          episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
+      panelContent.add(btnSearch, "cell 2 3,alignx left");
 
-    cbLanguage = new JComboBox<>();
-    panelContent.add(cbLanguage, "4, 12, fill, default");
+      final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      panelContent.add(lblLanguageT, "cell 0 4,alignx right,aligny center");
 
-    final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-    btnSearch.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
-        episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
-    panelContent.add(btnSearch, "8, 12");
+      cbLanguage = new JComboBox<>();
+      panelContent.add(cbLanguage, "cell 1 4,growx");
 
-    final JScrollPane scrollPaneSubs = new JScrollPane();
-    panelContent.add(scrollPaneSubs, "2, 14, 9, 1, fill, fill");
+      JSeparator separator = new JSeparator();
+      panelContent.add(separator, "cell 0 5 3 1,growx");
 
-    tableSubs = new JTable(subtitleTableModel);
-    scrollPaneSubs.setViewportView(tableSubs);
+      final JScrollPane scrollPaneSubs = new JScrollPane();
+      panelContent.add(scrollPaneSubs, "cell 0 6 3 1,grow");
+
+      tableSubs = new JTable(subtitleTableModel);
+      scrollPaneSubs.setViewportView(tableSubs);
+    }
 
     {
-      JPanel panelBottom = new JPanel();
-      getContentPane().add(panelBottom, BorderLayout.SOUTH);
-      panelBottom.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
+      {
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
 
-      progressBar = new JProgressBar();
-      panelBottom.add(progressBar, "2, 2");
+        progressBar = new JProgressBar();
+        infoPanel.add(progressBar, "cell 0 0");
 
-      lblProgressAction = new JLabel("");
-      panelBottom.add(lblProgressAction, "4, 2");
+        lblProgressAction = new JLabel("");
+        infoPanel.add(lblProgressAction, "cell 1 0");
+
+        setBottomInformationPanel(infoPanel);
+      }
 
       {
-        final JPanel panelButtons = new JPanel();
-        EqualsLayout layout = new EqualsLayout(5);
-        layout.setMinWidth(100);
-        panelButtons.setLayout(layout);
-        panelBottom.add(panelButtons, "5, 2, fill, fill");
-
-        JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
-        btnDone.setIcon(IconManager.APPLY_INV);
-        btnDone.addActionListener(e -> setVisible(false));
-        panelButtons.add(btnDone);
-        getRootPane().setDefaultButton(btnDone);
-
         if (inQueue) {
           JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
@@ -243,8 +223,13 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
             continueQueue = false;
             setVisible(false);
           });
-          panelButtons.add(btnAbortQueue);
+          addButton(btnAbortQueue);
         }
+
+        JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
+        btnDone.setIcon(IconManager.APPLY_INV);
+        btnDone.addActionListener(e -> setVisible(false));
+        addDefaultButton(btnDone);
       }
     }
   }
@@ -255,10 +240,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     }
 
     // scrapers
-    List<MediaScraper> scrapers = new ArrayList<>();
-    for (MediaScraper scraper : cbScraper.getSelectedItems()) {
-      scrapers.add(scraper);
-    }
+    List<MediaScraper> scrapers = new ArrayList<>(cbScraper.getSelectedItems());
 
     activeSearchTask = new SearchTask(file, imdbId, season, episode, scrapers);
     activeSearchTask.execute();
