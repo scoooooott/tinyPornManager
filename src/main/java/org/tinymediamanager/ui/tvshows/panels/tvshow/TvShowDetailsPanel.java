@@ -206,7 +206,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblGenresT, "cell 0 4");
 
       lblGenres = new JLabel("");
-      add(lblGenres, "cell 1 4 3 1, wmin 0");
+      add(lblGenres, "cell 1 4 3 1,growx,wmin 0");
     }
     {
       JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblTagsT, "cell 0 5");
 
       lblTags = new JLabel("");
-      add(lblTags, "cell 1 5 3 1, wmin 0");
+      add(lblTags, "cell 1 5 3 1,growx,wmin 0");
     }
     {
       JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$

@@ -126,20 +126,20 @@ public class MovieCastPanel extends JPanel {
     {
       JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
-      add(lblDirectorT, "cell 0 0,alignx right,aligny top");
+      add(lblDirectorT, "cell 0 0,alignx right");
 
       lblDirector = new JLabel("");
       lblDirectorT.setLabelFor(lblDirector);
-      add(lblDirector, "cell 1 0 2 1");
+      add(lblDirector, "cell 1 0 2 1,growx,wmin 0");
     }
     {
       JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
-      add(lblWriterT, "cell 0 1,alignx right,aligny top");
+      add(lblWriterT, "cell 0 1,alignx right");
 
       lblWriter = new JLabel("");
       lblWriterT.setLabelFor(lblWriter);
-      add(lblWriter, "cell 1 1 2 1,wmin 0");
+      add(lblWriter, "cell 1 1 2 1,growx,wmin 0");
     }
     {
       JLabel lblProducersT = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$

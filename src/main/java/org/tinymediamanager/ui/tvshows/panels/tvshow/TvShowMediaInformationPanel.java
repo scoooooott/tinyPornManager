@@ -120,7 +120,7 @@ public class TvShowMediaInformationPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][80lp:n][43px][grow]", "[21px][14px][80lp,grow]"));
+    setLayout(new MigLayout("", "[][80lp:n][43px][150lp,grow]", "[21px][14px][80lp,grow]"));
     {
       JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
       add(lblDateAddedT, "cell 0 0");
@@ -141,10 +141,10 @@ public class TvShowMediaInformationPanel extends JPanel {
       add(lblTvShowPathT, "cell 0 1");
 
       lblTvShowPath = new LinkLabel("");
-      add(lblTvShowPath, "cell 1 1 3 1");
+      add(lblTvShowPath, "cell 1 1 3 1,growx, wmin 0");
     }
     {
-      panelMediaFiles = new MediaFilesPanel(mediaFileEventList){
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
         @Override
         public MediaEntity getMediaEntity() {
           return selectionModel.getSelectedTvShow();

@@ -118,7 +118,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
       add(lblDirectorT, "cell 0 0,alignx right");
 
       lblDirector = new JLabel("");
-      add(lblDirector, "cell 1 0 2 1");
+      add(lblDirector, "cell 1 0 2 1,growx,wmin 0");
     }
     {
       JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
       add(lblWriterT, "cell 0 1,alignx right");
 
       lblWriter = new JLabel("");
-      add(lblWriter, "cell 1 1 2 1");
+      add(lblWriter, "cell 1 1 2 1,growx,wmin 0");
     }
     {
       JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$

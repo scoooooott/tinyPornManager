@@ -238,7 +238,7 @@ public class MovieMediaInformationPanel extends JPanel {
       lblMoviePath = new LinkLabel("");
       lblMoviePath.addActionListener(new LinkLabelListener());
       lblMoviePathT.setLabelFor(lblMoviePath);
-      add(lblMoviePath, "cell 1 7 3 1");
+      add(lblMoviePath, "cell 1 7 3 1,growx,wmin 0");
     }
     {
       panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
