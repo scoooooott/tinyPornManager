@@ -58,6 +58,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowSubtitleChooserModel;
@@ -154,28 +155,28 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     {
       final JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[74px][][300lp,grow]", "[][][][][][shrink 0][200lp,grow]"));
+      panelContent.setLayout(new MigLayout("", "[][][300lp,grow]", "[][][][][][shrink 0][200lp,grow]"));
 
-      JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-      panelContent.add(lblSeasonT, "cell 0 0,alignx right,aligny top");
+      JLabel lblSeasonT = new TmmLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+      panelContent.add(lblSeasonT, "cell 0 0,alignx right");
 
       JLabel lblSeason = new JLabel(String.valueOf(episodeToScrape.getSeason()));
       panelContent.add(lblSeason, "cell 1 0");
 
-      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-      panelContent.add(lblEpisodeT, "cell 0 1,alignx right,aligny top");
+      JLabel lblEpisodeT = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      panelContent.add(lblEpisodeT, "cell 0 1,alignx right");
 
       JLabel lblEpisode = new JLabel(String.valueOf(episodeToScrape.getEpisode()));
       panelContent.add(lblEpisode, "cell 1 1");
 
-      final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
-      panelContent.add(lblMediaFileNameT, "cell 0 2,alignx right,aligny top");
+      final JLabel lblMediaFileNameT = new TmmLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
+      panelContent.add(lblMediaFileNameT, "cell 0 2,alignx right");
 
       final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
       panelContent.add(lblMediaFileName, "cell 1 2 2 1,growx");
 
-      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-      panelContent.add(lblScraperT, "cell 0 3,alignx right,aligny center");
+      final JLabel lblScraperT = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+      panelContent.add(lblScraperT, "cell 0 3,alignx right");
 
       cbScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
       panelContent.add(cbScraper, "cell 1 3,growx");
@@ -185,8 +186,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
           episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
       panelContent.add(btnSearch, "cell 2 3,alignx left");
 
-      final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-      panelContent.add(lblLanguageT, "cell 0 4,alignx right,aligny center");
+      final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      panelContent.add(lblLanguageT, "cell 0 4,alignx right");
 
       cbLanguage = new JComboBox<>();
       panelContent.add(cbLanguage, "cell 1 4,growx");

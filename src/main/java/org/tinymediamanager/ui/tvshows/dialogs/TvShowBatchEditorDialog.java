@@ -43,6 +43,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
@@ -92,10 +93,10 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     getContentPane().add(panelContent, BorderLayout.CENTER);
     panelContent.setLayout(new MigLayout("", "[20lp:n][][][]", "[][][][20lp:n][][][][][][]"));
 
-    JLabel lblTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
+    JLabel lblTvShowT = new TmmLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
     panelContent.add(lblTvShowT, "cell 0 0 2 1");
 
-    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     panelContent.add(lblGenres, "cell 1 1,alignx right");
 
     cbGenres = new AutocompleteComboBox(MediaGenres.values());
@@ -129,7 +130,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblTags = new JLabel("Tag");
+    JLabel lblTags = new TmmLabel("Tag");
     panelContent.add(lblTags, "cell 1 2,alignx right");
 
     cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInTvShows());
@@ -150,10 +151,10 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+    JLabel lblEpisodeT = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     panelContent.add(lblEpisodeT, "cell 0 4 2 1");
 
-    JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    JLabel lblWatched = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
     panelContent.add(lblWatched, "cell 1 5,alignx right");
 
     chckbxWatched = new JCheckBox("");
@@ -172,7 +173,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+    JLabel lblSeason = new TmmLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     panelContent.add(lblSeason, "cell 1 6,alignx right");
 
     spSeason = new JSpinner();
@@ -194,7 +195,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
+    JLabel lblDvdOrder = new TmmLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
     panelContent.add(lblDvdOrder, "cell 1 7,alignx right");
 
     final JCheckBox cbDvdOrder = new JCheckBox("");
@@ -213,7 +214,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblTagsEpisode = new JLabel("Tag");
+    JLabel lblTagsEpisode = new TmmLabel("Tag");
     panelContent.add(lblTagsEpisode, "cell 1 8,alignx right");
 
     cbTagsEpisode = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
@@ -234,7 +235,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    JLabel lblMediasourceEpisode = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    JLabel lblMediasourceEpisode = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     panelContent.add(lblMediasourceEpisode, "cell 1 9,alignx right");
 
     final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox(MediaSource.values());

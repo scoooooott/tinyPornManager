@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies.panels;
 import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.PRODUCERS;
 
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
@@ -33,10 +32,10 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.BorderTableCellRenderer;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 
@@ -124,27 +123,24 @@ public class MovieCastPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][150lp,grow][200lp,grow]"));
     {
-      JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
-      add(lblDirectorT, "cell 0 0,alignx right");
+      JLabel lblDirectorT = new TmmLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      add(lblDirectorT, "cell 0 0");
 
       lblDirector = new JLabel("");
       lblDirectorT.setLabelFor(lblDirector);
       add(lblDirector, "cell 1 0 2 1,growx,wmin 0");
     }
     {
-      JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
-      add(lblWriterT, "cell 0 1,alignx right");
+      JLabel lblWriterT = new TmmLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+      add(lblWriterT, "cell 0 1");
 
       lblWriter = new JLabel("");
       lblWriterT.setLabelFor(lblWriter);
       add(lblWriter, "cell 1 1 2 1,growx,wmin 0");
     }
     {
-      JLabel lblProducersT = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblProducersT, Font.BOLD);
-      add(lblProducersT, "cell 0 2,alignx right,aligny top");
+      JLabel lblProducersT = new TmmLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
+      add(lblProducersT, "cell 0 2,aligny top");
 
       tableProducer = new PersonTable(producerEventList);
       JScrollPane scrollPanePerson = new JScrollPane(tableProducer);
@@ -152,9 +148,8 @@ public class MovieCastPanel extends JPanel {
       add(scrollPanePerson, "cell 1 2,grow");
     }
     {
-      JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
-      add(lblActorsT, "cell 0 3,alignx right,aligny top");
+      JLabel lblActorsT = new TmmLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      add(lblActorsT, "cell 0 3,aligny top");
 
       tableActors = new PersonTable(actorEventList);
       JScrollPane scrollPanePersons = new JScrollPane(tableActors);

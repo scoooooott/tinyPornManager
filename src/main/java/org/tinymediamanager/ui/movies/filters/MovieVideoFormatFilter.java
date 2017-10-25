@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -79,7 +80,7 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
   }
 
   @Override

@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -28,6 +29,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -49,14 +51,14 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     getContentPane().add(panelContent, BorderLayout.CENTER);
     panelContent.setLayout(new MigLayout("", "[][][]", "[][][]"));
 
-    JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+    JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     panelContent.add(lblTitle, "cell 0 0,alignx right");
 
     final JTextField tfMovieName = new JTextField();
     panelContent.add(tfMovieName, "cell 1 0,growx");
     tfMovieName.setColumns(10);
 
-    JLabel lblMediaSource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    JLabel lblMediaSource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     panelContent.add(lblMediaSource, "cell 0 1,alignx right");
 
     final JComboBox<MediaSource> cbMediaSource = new JComboBox();
@@ -67,7 +69,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     cbMediaSource.addItem(MediaSource.VHS);
     panelContent.add(cbMediaSource, "cell 1 1,growx");
 
-    JLabel lblDatasource = new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    JLabel lblDatasource = new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
     panelContent.add(lblDatasource, "cell 0 2,alignx right");
 
     final JComboBox<String> cbDatasource = new JComboBox();
@@ -80,6 +82,9 @@ public class MovieCreateOfflineDialog extends TmmDialog {
       MediaSource mediaSource = (MediaSource) cbMediaSource.getSelectedItem();
       if (StringUtils.isNoneBlank(title, datasource)) {
         movieList.addOfflineMovie(title, datasource, mediaSource);
+        // message
+        String text = BUNDLE.getString("movie.createoffline.created").replaceAll("\\{\\}", title);
+        JOptionPane.showMessageDialog(MovieCreateOfflineDialog.this, text); // $NON-NLS-1$
       }
     });
     panelContent.add(btnAdd, "cell 2 0");
@@ -87,7 +92,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     {
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.addActionListener(e -> setVisible(false));
-      addDefaultButton(btnClose);
+      addButton(btnClose);
     }
 
     {

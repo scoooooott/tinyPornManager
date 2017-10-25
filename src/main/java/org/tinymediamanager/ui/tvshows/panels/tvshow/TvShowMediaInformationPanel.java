@@ -42,6 +42,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -122,14 +123,14 @@ public class TvShowMediaInformationPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[][80lp:n][43px][150lp,grow]", "[21px][14px][80lp,grow]"));
     {
-      JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
       add(lblDateAddedT, "cell 0 0");
 
       lblDateAdded = new JLabel("");
       add(lblDateAdded, "cell 1 0");
     }
     {
-      JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       add(lblWatchedT, "cell 2 0");
 
       cbWatched = new JCheckBox("");
@@ -137,7 +138,7 @@ public class TvShowMediaInformationPanel extends JPanel {
       add(cbWatched, "cell 3 0");
     }
     {
-      JLabel lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      JLabel lblTvShowPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       add(lblTvShowPathT, "cell 0 1");
 
       lblTvShowPath = new LinkLabel("");

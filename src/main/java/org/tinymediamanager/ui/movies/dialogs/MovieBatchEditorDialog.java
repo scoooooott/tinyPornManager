@@ -44,6 +44,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
@@ -84,7 +85,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[][100lp][][]", "[][][][][][][][][][]"));
 
-      JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+      JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "cell 0 0,alignx right");
 
       // cbGenres = new JComboBox(MediaGenres2.values());
@@ -134,7 +135,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnRemoveGenre, "cell 3 0");
 
-      JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
       panelContent.add(lblTags, "cell 0 1,alignx right");
 
       cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
@@ -173,7 +174,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnRemoveTag, "cell 3 1");
 
-      JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+      JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
       panelContent.add(lblCertification, "cell 0 2,alignx right");
 
       final JComboBox cbCertification = new JComboBox();
@@ -197,7 +198,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnCertification, "cell 2 2");
 
-      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
+      JLabel lblMovieSet = new TmmLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
       panelContent.add(lblMovieSet, "cell 0 3,alignx right");
 
       cbMovieSet = new JComboBox();
@@ -234,7 +235,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       btnNewMovieset.setAction(new MovieSetAddAction());
       panelContent.add(btnNewMovieset, "cell 3 3,growx");
 
-      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      JLabel lblWatched = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       panelContent.add(lblWatched, "cell 0 4,alignx right");
 
       chckbxWatched = new JCheckBox("");
@@ -253,7 +254,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnWatched, "cell 2 4");
 
-      JLabel lblVideo3D = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+      JLabel lblVideo3D = new TmmLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
       panelContent.add(lblVideo3D, "cell 0 5,alignx right");
 
       final JCheckBox chckbxVideo3D = new JCheckBox("");
@@ -272,7 +273,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnVideo3D, "cell 2 5");
 
-      JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      JLabel lblMediasource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
       panelContent.add(lblMediasource, "cell 0 6,alignx right");
 
       final JComboBox cbMediaSource = new JComboBox(MediaSource.values());
@@ -295,7 +296,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnMediaSource, "cell 2 6");
 
-      JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
       panelContent.add(lblLanguage, "cell 0 7,alignx right");
 
       tfLanguage = new JTextField();
@@ -316,7 +317,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(btnLanguage, "cell 2 7");
       {
 
-        JLabel lblSorttitleT = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
+        JLabel lblSorttitleT = new TmmLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
         panelContent.add(lblSorttitleT, "flowx,cell 0 8,alignx right");
 
         JButton btnSetSorttitle = new JButton(BUNDLE.getString("edit.setsorttitle")); //$NON-NLS-1$

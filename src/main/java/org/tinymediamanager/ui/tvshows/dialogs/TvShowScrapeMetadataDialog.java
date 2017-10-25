@@ -22,7 +22,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
+import javax.swing.JSeparator;
 
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -30,6 +30,7 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -80,24 +81,28 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][][]"));
+      panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][][20lp:n][][][]"));
 
-      JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata"));
+      JLabel lblMetadataScraperT = new TmmLabel(BUNDLE.getString("scraper.metadata"));
       panelContent.add(lblMetadataScraperT, "cell 0 0,alignx right");
 
       cbMetadataScraper = new MediaScraperComboBox(TvShowList.getInstance().getAvailableMediaScrapers());
       panelContent.add(cbMetadataScraper, "cell 1 0,growx");
 
-      JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork"));
+      JLabel lblArtworkScraper = new TmmLabel(BUNDLE.getString("scraper.artwork"));
       panelContent.add(lblArtworkScraper, "cell 0 1,alignx right");
 
       cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
       panelContent.add(cbArtworkScraper, "cell 1 1,growx");
 
+      JSeparator separator = new JSeparator();
+      panelContent.add(separator, "cell 0 3 2 1,growx");
+
+      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
+      panelContent.add(lblScrapeFollowingItems, "cell 0 4 2 1,growx");
+
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(this.tvShowSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelContent.add(panelScraperMetadataSetting, "cell 0 2 2 1,grow");
-      panelScraperMetadataSetting
-          .setBorder(new TitledBorder(null, BUNDLE.getString("scraper.metadata.select"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+      panelContent.add(panelScraperMetadataSetting, "cell 0 5 2 1,grow");
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$

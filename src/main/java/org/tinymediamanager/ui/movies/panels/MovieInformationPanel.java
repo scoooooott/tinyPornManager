@@ -5,7 +5,6 @@ import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
@@ -29,12 +28,12 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ColumnLayout;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.StarRater;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
@@ -188,9 +187,8 @@ public class MovieInformationPanel extends JPanel {
       panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
 
       {
-        lblMovieName = new JLabel("");
+        lblMovieName = new TmmLabel("", 1.33);
         panelTopRight.add(lblMovieName, "cell 0 0, grow, wmin 0");
-        TmmFontHelper.changeFont(lblMovieName, 1.33, Font.BOLD);
       }
       {
         panelTopRight.add(new JSeparator(), "cell 0 1,growx");
@@ -202,8 +200,7 @@ public class MovieInformationPanel extends JPanel {
         panelTopDetails.setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]"));
 
         {
-          JLabel lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblYearT, Font.BOLD);
+          JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
           panelTopDetails.add(lblYearT, "cell 0 0");
 
           lblYear = new JLabel("");
@@ -211,8 +208,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblImdbIdT, Font.BOLD);
+          JLabel lblImdbIdT = new TmmLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
           panelTopDetails.add(lblImdbIdT, "cell 2 0");
 
           lblImdbid = new LinkLabel("");
@@ -231,8 +227,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblCertificationT, Font.BOLD);
+          JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
           panelTopDetails.add(lblCertificationT, "cell 0 1");
 
           lblCertification = new JLabel("");
@@ -240,8 +235,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblTmdbIdT = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblTmdbIdT, Font.BOLD);
+          JLabel lblTmdbIdT = new TmmLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
           panelTopDetails.add(lblTmdbIdT, "cell 2 1");
 
           lblTmdbid = new LinkLabel("");
@@ -260,8 +254,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblRunningTimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblRunningTimeT, Font.BOLD);
+          JLabel lblRunningTimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
           panelTopDetails.add(lblRunningTimeT, "cell 0 2");
 
           lblRunningTime = new JLabel("");
@@ -269,8 +262,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblTraktIdT = new JLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblTraktIdT, Font.BOLD);
+          JLabel lblTraktIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
           panelTopDetails.add(lblTraktIdT, "cell 2 2");
 
           lblTraktId = new LinkLabel("");
@@ -289,8 +281,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-          TmmFontHelper.changeFont(lblGenresT, Font.BOLD);
+          JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
           panelTopDetails.add(lblGenresT, "cell 0 3");
 
           lblGenres = new JLabel("");
@@ -328,8 +319,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        JLabel lblTaglineT = new JLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-        TmmFontHelper.changeFont(lblTaglineT, Font.BOLD);
+        JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
         panelTopRight.add(lblTaglineT, "cell 0 8,alignx left,aligny top");
 
         lblTagline = new JLabel();
@@ -337,8 +327,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        JLabel lblPlotT = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        TmmFontHelper.changeFont(lblPlotT, Font.BOLD);
+        JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         panelTopRight.add(lblPlotT, "cell 0 10,alignx left,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();

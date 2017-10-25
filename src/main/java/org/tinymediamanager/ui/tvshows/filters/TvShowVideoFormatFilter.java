@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
@@ -83,7 +84,7 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
   }
 
   @Override

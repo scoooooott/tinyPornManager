@@ -22,10 +22,13 @@ import java.awt.event.MouseAdapter;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.panels.RoundedPanel;
@@ -55,6 +58,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private static final long           serialVersionUID = 5003714573168481816L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final float          FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
 
   private TmmTreeTable                treeTable;
   private JPanel                      panelFilter;
@@ -71,7 +75,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     });
     setLayout(new MigLayout("", "[]", "[][][20lp]"));
 
-    JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
+    JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
+    setComponentFont(lblFilterBy);
     add(lblFilterBy, "cell 0 0,growx,aligny top");
 
     createFilterPanel();
@@ -134,5 +139,9 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     }
 
     treeTable.addFilter(filter);
+  }
+
+  private void setComponentFont(JComponent comp) {
+    comp.setFont(comp.getFont().deriveFont(FONT_SIZE));
   }
 }

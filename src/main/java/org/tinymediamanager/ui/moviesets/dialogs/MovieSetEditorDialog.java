@@ -61,6 +61,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -138,7 +139,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), panelContent); //$NON-NLS-1$
       panelContent.setLayout(new MigLayout("", "[][400lp,grow 200][150lp:200lp,grow 50]", "[][][150lp:200lp,grow][20lp:n][100lp:150lp,grow]"));
 
-      JLabel lblName = new JLabel(BUNDLE.getString("movieset.title")); //$NON-NLS-1$
+      JLabel lblName = new TmmLabel(BUNDLE.getString("movieset.title")); //$NON-NLS-1$
       panelContent.add(lblName, "cell 0 0,alignx right");
 
       tfName = new JTextField();
@@ -165,14 +166,14 @@ public class MovieSetEditorDialog extends TmmDialog {
       });
       panelContent.add(lblPoster, "cell 2 0 1 3,grow");
 
-      JLabel lblTmdbid = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
+      JLabel lblTmdbid = new TmmLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
       panelContent.add(lblTmdbid, "cell 0 1,alignx right");
 
       tfTmdbId = new JTextField();
       panelContent.add(tfTmdbId, "flowx,cell 1 1,aligny center");
       tfTmdbId.setColumns(10);
 
-      JLabel lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+      JLabel lblOverview = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
       panelContent.add(lblOverview, "cell 0 2,alignx right,aligny top");
 
       JScrollPane scrollPaneOverview = new JScrollPane();
@@ -181,7 +182,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       tpOverview = new JTextPane();
       scrollPaneOverview.setViewportView(tpOverview);
 
-      JLabel lblMovies = new JLabel(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
+      JLabel lblMovies = new TmmLabel(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
       panelContent.add(lblMovies, "flowy,cell 0 4,alignx right,aligny top");
 
       JScrollPane scrollPaneMovies = new JScrollPane();
@@ -226,7 +227,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         artworkPanel.setLayout(new MigLayout("", "[200lp:300lp,grow][200lp:300lp,grow]",
             "[][100lp:125lp,grow][20lp:n][][100lp:125lp,grow][20lp:n][][100lp:150lp,grow]"));
         {
-          JLabel lblLogoT = new JLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+          JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
           artworkPanel.add(lblLogoT, "cell 0 0");
         }
         {
@@ -241,7 +242,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             }
           });
           {
-            final JLabel lblClearlogoT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+            final JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
             artworkPanel.add(lblClearlogoT, "cell 1 0");
           }
           lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -262,7 +263,7 @@ public class MovieSetEditorDialog extends TmmDialog {
           artworkPanel.add(lblClearlogo, "cell 1 1,grow");
         }
         {
-          JLabel lblBannerT = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+          JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
           artworkPanel.add(lblBannerT, "cell 0 3,growx,aligny top");
         }
         {
@@ -284,7 +285,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         lblBanner.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.BANNER));
 
         {
-          JLabel lblClearartT = new JLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+          JLabel lblClearartT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
           artworkPanel.add(lblClearartT, "cell 0 6,growx,aligny top");
         }
         {

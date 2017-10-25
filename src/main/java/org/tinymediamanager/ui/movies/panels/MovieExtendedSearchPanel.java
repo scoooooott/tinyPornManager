@@ -35,6 +35,7 @@ import javax.swing.ScrollPaneConstants;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.IMovieUIFilter;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
@@ -103,7 +104,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     });
     setLayout(new MigLayout("", "[][10lp][]", "[][][][][][20lp]"));
 
-    JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
+    JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
     add(lblFilterBy, "cell 0 0,growx,aligny top");
 
@@ -144,7 +145,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     JSeparator separator = new JSeparator();
     add(separator, "cell 0 2 3 1,growx,aligny top");
 
-    JLabel lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
+    JLabel lblSortBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
     add(lblSortBy, "cell 0 3,growx,aligny top");
 

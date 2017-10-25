@@ -27,6 +27,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
@@ -85,7 +86,7 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
   }
 
   @Override

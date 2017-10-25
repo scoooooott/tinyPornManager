@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
-import java.awt.Font;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,10 +33,10 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
@@ -100,64 +99,55 @@ public class MovieDetailsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
-    JLabel lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblOriginalTitleT, Font.BOLD);
+    JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(lblOriginalTitleT, "cell 0 0");
 
     lblOriginalTitle = new JLabel("");
     add(lblOriginalTitle, "cell 2 0, growx, wmin 0");
 
-    JLabel lblReleaseDateT = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblReleaseDateT, Font.BOLD);
+    JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
     add(lblReleaseDateT, "cell 0 1");
 
     lblReleaseDate = new JLabel("");
     add(lblReleaseDate, "cell 2 1, growx, wmin 0");
 
-    JLabel lblProductionT = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblProductionT, Font.BOLD);
+    JLabel lblProductionT = new TmmLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
     add(lblProductionT, "cell 0 2");
 
     lblProduction = new JLabel();
     add(lblProduction, "cell 2 2, growx, wmin 0");
 
-    JLabel lblCountryT = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblCountryT, Font.BOLD);
+    JLabel lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
     add(lblCountryT, "cell 0 3");
 
     lblCountry = new JLabel("");
     add(lblCountry, "cell 2 3, growx, wmin 0");
 
-    JLabel lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblSpokenLanguagesT, Font.BOLD);
+    JLabel lblSpokenLanguagesT = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
     add(lblSpokenLanguagesT, "cell 0 4");
 
     lblSpokenLanguages = new JLabel("");
     add(lblSpokenLanguages, "cell 2 4, growx, wmin 0");
 
-    JLabel lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblMoviesetT, Font.BOLD);
+    JLabel lblMoviesetT = new TmmLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
     add(lblMoviesetT, "cell 0 5");
 
     lblMovieSet = new JLabel("");
     add(lblMovieSet, "cell 2 5, growx, wmin 0");
 
-    JLabel lblEditionT = new JLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblEditionT, Font.BOLD);
+    JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
     add(lblEditionT, "cell 0 6");
 
     lblEdition = new JLabel("");
     add(lblEdition, "cell 2 6, growx, wmin 0");
 
-    JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblTagsT, Font.BOLD);
+    JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     add(lblTagsT, "cell 0 7");
 
     lblTags = new JLabel("");
     add(lblTags, "cell 2 7, growx, wmin 0");
 
-    JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
+    JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     add(lblMoviePathT, "cell 0 8");
 
     lblMoviePath = new LinkLabel("");

@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -78,7 +79,7 @@ public class MovieVideoCodecFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
   }
 
   @Override

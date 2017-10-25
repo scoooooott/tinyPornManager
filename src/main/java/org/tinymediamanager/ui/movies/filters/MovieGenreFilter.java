@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
@@ -92,7 +93,7 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.genre")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.genre")); //$NON-NLS-1$
   }
 
   @Override

@@ -19,6 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -53,7 +54,7 @@ public class MovieMissingSubtitlesFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
   }
 
   @Override

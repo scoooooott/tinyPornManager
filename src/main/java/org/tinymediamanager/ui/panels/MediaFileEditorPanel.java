@@ -22,6 +22,7 @@ import static org.tinymediamanager.core.MediaFileType.VIDEO;
 import static org.tinymediamanager.core.MediaFileType.VIDEO_EXTRA;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -62,7 +63,9 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import net.miginfocom.swing.MigLayout;
@@ -139,10 +142,11 @@ public class MediaFileEditorPanel extends JPanel {
         panelDetails.setLayout(new MigLayout("", "[][50lp:50lp][20lp:n][][50lp:50lp][20lp:n][][][grow]", "[][][][][100lp:150lp][100lp:150lp]"));
         {
           lblFilename = new JLabel("");
+          TmmFontHelper.changeFont(lblFilename, 1.167, Font.BOLD);
           panelDetails.add(lblFilename, "cell 0 0 5 1,growx");
         }
         {
-          JLabel lblCodec = new JLabel(BUNDLE.getString("metatag.codec"));
+          JLabel lblCodec = new TmmLabel(BUNDLE.getString("metatag.codec"));
           panelDetails.add(lblCodec, "cell 0 1,alignx right");
 
           tfCodec = new JTextField();
@@ -150,7 +154,7 @@ public class MediaFileEditorPanel extends JPanel {
           tfCodec.setColumns(10);
         }
         {
-          JLabel lblContainerFormat = new JLabel(BUNDLE.getString("metatag.container"));
+          JLabel lblContainerFormat = new TmmLabel(BUNDLE.getString("metatag.container"));
           panelDetails.add(lblContainerFormat, "cell 3 1,alignx right");
 
           tfContainerFormat = new JTextField();
@@ -158,7 +162,7 @@ public class MediaFileEditorPanel extends JPanel {
           tfContainerFormat.setColumns(10);
         }
         {
-          JLabel lblWidth = new JLabel(BUNDLE.getString("metatag.width"));
+          JLabel lblWidth = new TmmLabel(BUNDLE.getString("metatag.width"));
           panelDetails.add(lblWidth, "cell 0 2,alignx right");
 
           tfWidth = new JTextField();
@@ -166,7 +170,7 @@ public class MediaFileEditorPanel extends JPanel {
           tfWidth.setColumns(10);
         }
         {
-          JLabel lblHeight = new JLabel(BUNDLE.getString("metatag.height"));
+          JLabel lblHeight = new TmmLabel(BUNDLE.getString("metatag.height"));
           panelDetails.add(lblHeight, "cell 3 2,alignx right");
 
           tfHeight = new JTextField();
@@ -174,8 +178,8 @@ public class MediaFileEditorPanel extends JPanel {
           tfHeight.setColumns(10);
         }
         {
-          JLabel lblAspectT = new JLabel(BUNDLE.getString("metatag.aspect"));
-          panelDetails.add(lblAspectT, "cell 6 2,alignx trailing");
+          JLabel lblAspectT = new TmmLabel(BUNDLE.getString("metatag.aspect"));
+          panelDetails.add(lblAspectT, "cell 6 2,alignx right");
 
           cbAspectRatio = new JComboBox(aspectRatios);
           cbAspectRatio.setEditable(true);
@@ -192,14 +196,14 @@ public class MediaFileEditorPanel extends JPanel {
           panelDetails.add(cbAspectRatio, "cell 7 2,growx");
         }
         {
-          JLabel lbld = new JLabel("3D Format");
+          JLabel lbld = new TmmLabel("3D Format");
           panelDetails.add(lbld, "cell 0 3,alignx right");
 
           cb3dFormat = new JComboBox<>(threeDFormats);
           panelDetails.add(cb3dFormat, "cell 1 3,growx,aligny top");
         }
         {
-          JLabel lblAudiostreams = new JLabel("AudioStreams");
+          JLabel lblAudiostreams = new TmmLabel("AudioStreams");
           panelDetails.add(lblAudiostreams, "flowy,cell 0 4,alignx right,aligny top");
 
           JScrollPane scrollPane = new JScrollPane();
@@ -210,7 +214,7 @@ public class MediaFileEditorPanel extends JPanel {
           scrollPane.setViewportView(tableAudioStreams);
         }
         {
-          JLabel lblSubtitles = new JLabel("Subtitles");
+          JLabel lblSubtitles = new TmmLabel("Subtitles");
           panelDetails.add(lblSubtitles, "flowy,cell 0 5,alignx right,aligny top");
 
           JScrollPane scrollPane = new JScrollPane();

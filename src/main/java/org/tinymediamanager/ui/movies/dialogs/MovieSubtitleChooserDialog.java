@@ -62,6 +62,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
@@ -160,29 +161,25 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[][250lp][][150lp][]", "[][][][][shrink 0][200lp,grow]"));
 
-      final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMediaFileNameT, Font.BOLD);
+      final JLabel lblMediaFileNameT = new TmmLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
       panelContent.add(lblMediaFileNameT, "cell 0 0,alignx right");
 
       final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
       panelContent.add(lblMediaFileName, "cell 1 0 4 1,growx");
 
-      final JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
+      final JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
       panelContent.add(lblRuntimeT, "cell 0 1,alignx right");
 
       final JLabel lblRuntime = new JLabel(fileToScrape.getDurationHHMMSS());
       panelContent.add(lblRuntime, "cell 1 1");
 
-      final JLabel lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblImdbIdT, Font.BOLD);
+      final JLabel lblImdbIdT = new TmmLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
       panelContent.add(lblImdbIdT, "cell 2 1");
 
       final JLabel lblImdbId = new JLabel(movieToScrape.getImdbId());
       panelContent.add(lblImdbId, "cell 3 1");
 
-      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblScraperT, Font.BOLD);
+      final JLabel lblScraperT = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
       panelContent.add(lblScraperT, "cell 0 2,alignx right");
 
       cbScraper = new MediaScraperCheckComboBox(movieList.getAvailableSubtitleScrapers());
@@ -196,8 +193,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
       panelContent.add(btnSearch, "cell 4 2,alignx left,aligny top");
 
-      final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblLanguageT, Font.BOLD);
+      final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
       panelContent.add(lblLanguageT, "cell 0 3,alignx right");
 
       cbLanguage = new JComboBox<>();

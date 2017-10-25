@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
@@ -84,7 +85,7 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
   }
 
   @Override

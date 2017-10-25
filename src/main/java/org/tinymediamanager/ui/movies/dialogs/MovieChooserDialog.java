@@ -79,6 +79,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -213,7 +214,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "cell 0 0,grow");
       panelSearchField.setLayout(new MigLayout("insets 0", "[][][grow][]", "[]2lp[]"));
       {
-        JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
@@ -239,7 +240,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         btnSearch.addActionListener(searchAction);
       }
       {
-        JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+        JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
         panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
         cbLanguage = new JComboBox(MediaLanguages.values());
         cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
@@ -347,10 +348,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(separator, "cell 0 3,growx");
     }
     {
-      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx,aligny top");
-    }
-    {
+      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
+      contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx");
+
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
       contentPanel.add(panelScraperMetadataSetting, "cell 0 5,grow");
     }

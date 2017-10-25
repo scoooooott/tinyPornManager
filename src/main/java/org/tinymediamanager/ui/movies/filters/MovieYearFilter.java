@@ -23,6 +23,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -84,7 +85,7 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
   }
 
   @Override

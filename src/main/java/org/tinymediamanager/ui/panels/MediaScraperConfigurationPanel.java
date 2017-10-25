@@ -19,11 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -45,8 +42,8 @@ import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.config.MediaProviderConfigObject;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
  * The class MediaScraperConfigurationPanel is used to display configurable scraper options
@@ -55,9 +52,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class MediaScraperConfigurationPanel extends JPanel {
   private static final long           serialVersionUID = -4120483383064864579L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private IMediaProvider              mediaProvider;
@@ -73,8 +68,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
     JPanel panelHead = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
     add(panelHead, BorderLayout.NORTH);
 
-    JLabel lblScraperOptions = new JLabel(BUNDLE.getString("Settings.scraper.options")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblScraperOptions, 1.2f, Font.BOLD);
+    JLabel lblScraperOptions = new TmmLabel(BUNDLE.getString("Settings.scraper.options"), 1.2); //$NON-NLS-1$
     panelHead.add(lblScraperOptions);
 
     configPanel = createConfigPanel();
@@ -133,12 +127,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
           // display as checkbox
           JCheckBox checkbox = new JCheckBox();
           checkbox.setSelected(entry.getValue().getValueAsBool());
-          checkbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              dirty = true;
-            }
-          });
+          checkbox.addActionListener(e -> dirty = true);
           comp = checkbox;
           break;
 
@@ -147,12 +136,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
           // display as combobox
           JComboBox<String> combobox = new JComboBox<>(entry.getValue().getPossibleValues().toArray(new String[0]));
           combobox.setSelectedItem(entry.getValue().getValueAsString());
-          combobox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              dirty = true;
-            }
-          });
+          combobox.addActionListener(e -> dirty = true);
           comp = combobox;
           break;
 

@@ -42,6 +42,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.StarRater;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -189,7 +190,7 @@ public class TvShowInformationPanel extends JPanel {
         panelRight.add(new JSeparator(), "cell 0 7,growx");
       }
       {
-        JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot"));
+        JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot"));
         panelRight.add(lblPlot, "cell 0 8");
         TmmFontHelper.changeFont(lblPlot, Font.BOLD);
 

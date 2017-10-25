@@ -37,6 +37,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -137,7 +138,7 @@ public class TvShowDetailsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
-      JLabel lblPremieredT = new JLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
+      JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
       setBoldLabel(lblPremieredT);
       add(lblPremieredT, "cell 0 0");
 
@@ -145,7 +146,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblPremiered, "cell 1 0");
     }
     {
-      JLabel lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+      JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
       setBoldLabel(lblYearT);
       add(lblYearT, "cell 2 0");
 
@@ -153,7 +154,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblYear, "cell 3 0");
     }
     {
-      JLabel lblStatusT = new JLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
+      JLabel lblStatusT = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
       setBoldLabel(lblStatusT);
       add(lblStatusT, "cell 0 1");
 
@@ -161,7 +162,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblStatus, "cell 1 1");
     }
     {
-      JLabel lblImdbIdT = new JLabel("IMDB Id");
+      JLabel lblImdbIdT = new TmmLabel("IMDB Id");
       setBoldLabel(lblImdbIdT);
       add(lblImdbIdT, "cell 2 1");
 
@@ -169,7 +170,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblImdbId, "cell 3 1");
     }
     {
-      JLabel lblStudioT = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+      JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
       setBoldLabel(lblStudioT);
       add(lblStudioT, "cell 0 2");
 
@@ -177,7 +178,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblStudio, "cell 1 2, wmin 0");
     }
     {
-      JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
+      JLabel lblThetvdbIdT = new TmmLabel("TheTVDB Id");
       setBoldLabel(lblThetvdbIdT);
       add(lblThetvdbIdT, "cell 2 2");
 
@@ -185,7 +186,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblThetvdbId, "cell 3 2");
     }
     {
-      JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+      JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
       setBoldLabel(lblCertificationT);
       add(lblCertificationT, "cell 0 3");
 
@@ -193,7 +194,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblCertification, "cell 1 3");
     }
     {
-      JLabel lblTrakttvIdT = new JLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
+      JLabel lblTrakttvIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
       setBoldLabel(lblTrakttvIdT);
       add(lblTrakttvIdT, "cell 2 3");
 
@@ -201,7 +202,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblTraktTvId, "cell 3 3");
     }
     {
-      JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+      JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       setBoldLabel(lblGenresT);
       add(lblGenresT, "cell 0 4");
 
@@ -209,7 +210,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblGenres, "cell 1 4 3 1,growx,wmin 0");
     }
     {
-      JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
       setBoldLabel(lblTagsT);
       add(lblTagsT, "cell 0 5");
 
@@ -217,7 +218,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblTags, "cell 1 5 3 1,growx,wmin 0");
     }
     {
-      JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       setBoldLabel(lblPathT);
       add(lblPathT, "cell 0 6");
 

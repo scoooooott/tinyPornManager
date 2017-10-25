@@ -20,7 +20,6 @@ import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
@@ -43,6 +42,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.StarRater;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -88,25 +88,23 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     initDataBindings();
 
     // manual coded binding
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a movie
-        if (source instanceof TvShowEpisodeSelectionModel) {
-          TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
-          setSeasonPoster(model.getSelectedTvShowEpisode());
-          setEpisodeThumb(model.getSelectedTvShowEpisode());
-          panelLogos.setMediaInformationSource(model.getSelectedTvShowEpisode());
-        }
-        if ((source.getClass() == TvShowEpisode.class && THUMB.equals(property))) {
-          TvShowEpisode episode = (TvShowEpisode) source;
-          setEpisodeThumb(episode);
-        }
-        if ((source.getClass() == TvShowEpisode.class && SEASON_POSTER.equals(property))) {
-          TvShowEpisode episode = (TvShowEpisode) source;
-          setSeasonPoster(episode);
-        }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a movie
+      if (source instanceof TvShowEpisodeSelectionModel) {
+        TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
+        setSeasonPoster(model.getSelectedTvShowEpisode());
+        setEpisodeThumb(model.getSelectedTvShowEpisode());
+        panelLogos.setMediaInformationSource(model.getSelectedTvShowEpisode());
+      }
+      if ((source.getClass() == TvShowEpisode.class && THUMB.equals(property))) {
+        TvShowEpisode episode = (TvShowEpisode) source;
+        setEpisodeThumb(episode);
+      }
+      if ((source.getClass() == TvShowEpisode.class && SEASON_POSTER.equals(property))) {
+        TvShowEpisode episode = (TvShowEpisode) source;
+        setSeasonPoster(episode);
       }
     };
 
@@ -185,8 +183,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         panelRight.add(new JSeparator(), "cell 0 8,growx");
       }
       {
-        lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        lblPlot.setFont(lblPlot.getFont().deriveFont(Font.BOLD));
+        lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         panelRight.add(lblPlot, "cell 0 9");
 
         JScrollPane scrollPanePlot = new JScrollPane();

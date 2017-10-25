@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.moviesets.AbstractMovieSetUIFilter;
 
 /**
@@ -52,7 +53,7 @@ public class MovieSetNewMoviesFilter extends AbstractMovieSetUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
   }
 
   @Override

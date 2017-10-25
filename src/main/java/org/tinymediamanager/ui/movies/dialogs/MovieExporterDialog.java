@@ -49,6 +49,7 @@ import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -117,7 +118,7 @@ public class MovieExporterDialog extends TmmDialog {
       tpDescription = new JTextPane();
       scrollPaneDescription.setViewportView(tpDescription);
 
-      JLabel lblDetails = new JLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
+      JLabel lblDetails = new TmmLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
       panelExporterDetails.add(lblDetails, "cell 0 2,growx,aligny center");
       splitPane.setDividerLocation(300);
 

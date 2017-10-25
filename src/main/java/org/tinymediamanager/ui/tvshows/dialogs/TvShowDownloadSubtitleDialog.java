@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
@@ -58,13 +59,13 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
       getContentPane().add(panelCenter, BorderLayout.CENTER);
       panelCenter.setLayout(new MigLayout("", "[][300lp]", "[][][20lp:n][]"));
 
-      JLabel lblScraper = new JLabel(BUNDLE.getString("scraper"));
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper"));
       panelCenter.add(lblScraper, "cell 0 0");
 
       cbSubtitleScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
       panelCenter.add(cbSubtitleScraper, "cell 1 0,growx");
 
-      JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language"));
+      JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language"));
       panelCenter.add(lblLanguage, "cell 0 1");
 
       cbLanguage = new JComboBox(MediaLanguages.values());

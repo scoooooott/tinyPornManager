@@ -77,6 +77,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
@@ -165,7 +166,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "cell 0 0,grow");
       panelSearchField.setLayout(new MigLayout("", "[][][grow][]", "[23px][]"));
       {
-        JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
@@ -191,7 +192,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         getRootPane().setDefaultButton(btnSearch);
       }
       {
-        JLabel lblLanguage = new JLabel("Language");
+        JLabel lblLanguage = new TmmLabel("Language");
         panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
       }
       {
@@ -284,7 +285,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(separator, "cell 0 3,growx");
     }
     {
-      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
+      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx,aligny top");
     }
     {

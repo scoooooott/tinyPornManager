@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
@@ -62,7 +63,7 @@ public class TvShowMissingArtworkFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
   }
 
   @Override

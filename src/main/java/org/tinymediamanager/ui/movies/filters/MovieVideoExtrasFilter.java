@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -54,7 +55,7 @@ public class MovieVideoExtrasFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.extras")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.extras")); //$NON-NLS-1$
   }
 
   @Override

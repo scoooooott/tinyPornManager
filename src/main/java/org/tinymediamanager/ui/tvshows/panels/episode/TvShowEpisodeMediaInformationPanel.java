@@ -19,7 +19,6 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -41,8 +40,8 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -116,42 +115,35 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][][][][][][grow]", "[][][][][][shrink 0][80lp,grow]"));
+    setLayout(new MigLayout("", "[][][][grow]", "[][][][][][shrink 0][80lp,grow]"));
     {
-      JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
+      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
       add(lblRuntimeT, "cell 0 0");
 
       lblRuntime = new JLabel("");
-      add(lblRuntime, "cell 2 0");
+      add(lblRuntime, "cell 1 0");
     }
     {
-      JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblWatchedT, Font.BOLD);
-      add(lblWatchedT, "cell 4 0");
-
-      chckbxWatched = new JCheckBox("");
-      add(chckbxWatched, "cell 6 0");
+      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      add(lblWatchedT, "flowx,cell 3 0");
     }
     {
-      lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblSourceT, Font.BOLD);
+      lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
       add(lblSourceT, "cell 0 1");
 
       lblSource = new JLabel("");
-      add(lblSource, "cell 2 1 3 1");
+      add(lblSource, "cell 1 1 2 1");
     }
     {
-      JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblVideoT, Font.BOLD);
+      JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
       add(lblVideoT, "cell 0 2");
 
-      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-      add(lblEpisodeT, "cell 2 2");
+      JLabel lblEpisodeT = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      add(lblEpisodeT, "cell 1 2");
 
       panelVideoStreamDetails = new JPanel();
       panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
-      add(panelVideoStreamDetails, "cell 4 2 3 1,growx");
+      add(panelVideoStreamDetails, "cell 3 2,growx");
 
       lblVideoCodec = new JLabel("");
       panelVideoStreamDetails.add(lblVideoCodec);
@@ -166,26 +158,24 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       panelVideoStreamDetails.add(lblVideoBitDepth);
     }
     {
-      JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblAudioT, Font.BOLD);
+      JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
       add(lblAudioT, "cell 0 3");
 
       panelAudioStreamT = new JPanel();
       panelAudioStreamT.setLayout(new GridLayout(0, 1));
-      add(panelAudioStreamT, "cell 2 3");
+      add(panelAudioStreamT, "cell 1 3");
 
       panelAudioStreamDetails = new JPanel();
       panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-      add(panelAudioStreamDetails, "cell 4 3 3 1");
+      add(panelAudioStreamDetails, "cell 3 3");
     }
     {
-      JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
+      JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
       add(lblSubtitle, "cell 0 4");
 
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      add(scrollPane, "cell 2 4 3 1,growy");
+      add(scrollPane, "cell 1 4 2 1,growy");
 
       panelSubtitle = new JPanel();
       scrollPane.setViewportView(panelSubtitle);
@@ -193,7 +183,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     }
     {
       JSeparator separator = new JSeparator();
-      add(separator, "cell 0 5 7 1,growx");
+      add(separator, "cell 0 5 4 1,growx");
     }
     {
       panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
@@ -204,8 +194,11 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
           return selectionModel.getSelectedTvShowEpisode();
         }
       };
-      add(panelMediaFiles, "cell 0 6 7 1,grow");
+      add(panelMediaFiles, "cell 0 6 4 1,grow");
     }
+
+    chckbxWatched = new JCheckBox("");
+    add(chckbxWatched, "cell 3 0");
   }
 
   private void fillVideoStreamDetails() {

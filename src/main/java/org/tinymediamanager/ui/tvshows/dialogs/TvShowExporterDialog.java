@@ -49,6 +49,7 @@ import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -111,7 +112,7 @@ public class TvShowExporterDialog extends TmmDialog {
       chckbxTemplateWithDetail.setEnabled(false);
       panelExporterDetails.add(chckbxTemplateWithDetail, "flowx,cell 0 2");
 
-      JLabel lblDetails = new JLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
+      JLabel lblDetails = new TmmLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
       panelExporterDetails.add(lblDetails, "cell 0 2,growx,aligny center");
 
       JScrollPane scrollPaneDescription = new JScrollPane();

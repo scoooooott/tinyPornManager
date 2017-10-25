@@ -89,6 +89,7 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaRatingTable;
 import org.tinymediamanager.ui.components.PersonTable;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
@@ -240,65 +241,65 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           new MigLayout("", "[][][75lp:100lp][][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][][][][75lp:150lp,grow][][][][50lp,grow][]"));
 
       {
-        JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+        JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
         detailsPanel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
         detailsPanel.add(tfTitle, "cell 1 0 9 1,growx");
       }
       {
-        JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+        JLabel lblSeason = new TmmLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
         detailsPanel.add(lblSeason, "cell 0 1,alignx right");
 
         spSeason = new JSpinner();
         detailsPanel.add(spSeason, "cell 1 1,growx");
 
-        JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+        JLabel lblEpisode = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
         detailsPanel.add(lblEpisode, "cell 3 1,alignx right");
 
         spEpisode = new JSpinner();
         detailsPanel.add(spEpisode, "cell 4 1,growx");
       }
       {
-        JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
+        JLabel lblFirstAired = new TmmLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
         detailsPanel.add(lblFirstAired, "cell 0 2,alignx right");
       }
 
       dpFirstAired = new DatePicker(episodeToEdit.getFirstAired());
       detailsPanel.add(dpFirstAired, "cell 1 2 2 1,growx");
       {
-        JLabel lblDvdSeason = new JLabel(BUNDLE.getString("metatag.dvdseason")); //$NON-NLS-1$
+        JLabel lblDvdSeason = new TmmLabel(BUNDLE.getString("metatag.dvdseason")); //$NON-NLS-1$
         detailsPanel.add(lblDvdSeason, "cell 0 3,alignx right,aligny center");
 
         spDvdSeason = new JSpinner();
         detailsPanel.add(spDvdSeason, "cell 1 3,growx");
 
-        JLabel lblDvdEpisode = new JLabel(BUNDLE.getString("metatag.dvdepisode")); //$NON-NLS-1$
+        JLabel lblDvdEpisode = new TmmLabel(BUNDLE.getString("metatag.dvdepisode")); //$NON-NLS-1$
         detailsPanel.add(lblDvdEpisode, "cell 3 3,alignx right");
 
         spDvdEpisode = new JSpinner();
         detailsPanel.add(spDvdEpisode, "cell 4 3,growx");
 
-        JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
+        JLabel lblDvdOrder = new TmmLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
         detailsPanel.add(lblDvdOrder, "cell 6 3,alignx right");
 
         cbDvdOrder = new JCheckBox("");
         detailsPanel.add(cbDvdOrder, "cell 7 3");
       }
       {
-        JLabel lblDisplaySeason = new JLabel(BUNDLE.getString("metatag.displayseason")); //$NON-NLS-1$
+        JLabel lblDisplaySeason = new TmmLabel(BUNDLE.getString("metatag.displayseason")); //$NON-NLS-1$
         detailsPanel.add(lblDisplaySeason, "cell 0 4,alignx right");
 
         spDisplaySeason = new JSpinner();
         detailsPanel.add(spDisplaySeason, "cell 1 4,growx");
 
-        JLabel lblDisplayEpisode = new JLabel(BUNDLE.getString("metatag.displayepisode")); //$NON-NLS-1$
+        JLabel lblDisplayEpisode = new TmmLabel(BUNDLE.getString("metatag.displayepisode")); //$NON-NLS-1$
         detailsPanel.add(lblDisplayEpisode, "cell 3 4,alignx right");
 
         spDisplayEpisode = new JSpinner();
         detailsPanel.add(spDisplayEpisode, "cell 4 4,growx");
       }
-      JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+      JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
       detailsPanel.add(lblPlot, "cell 0 5,alignx right,aligny top");
       {
 
@@ -311,21 +312,21 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         scrollPane.setViewportView(taPlot);
       }
       {
-        JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+        JLabel lblWatched = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
         detailsPanel.add(lblWatched, "cell 0 6,alignx right");
 
         chckbxWatched = new JCheckBox("");
         detailsPanel.add(chckbxWatched, "cell 1 6");
       }
       {
-        JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+        JLabel lblDateAdded = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
         detailsPanel.add(lblDateAdded, "cell 3 6,alignx right");
 
         spDateAdded = new JSpinner(new SpinnerDateModel());
         detailsPanel.add(spDateAdded, "cell 4 6 2 1,growx");
       }
       {
-        JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+        JLabel lblMediasource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         detailsPanel.add(lblMediasource, "cell 0 7,alignx right");
 
         cbMediaSource = new AutocompleteComboBox(MediaSource.values());
@@ -349,15 +350,15 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         detailsPanel.add(lblThumb, "cell 9 1 1 7,grow");
       }
       {
-        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
+        JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
         detailsPanel.add(lblRating, "cell 0 8,alignx right");
 
         spRating = new JSpinner();
         detailsPanel.add(spRating, "cell 1 8,growx");
       }
       {
-        JLabel lblRatingsT = new JLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
-        detailsPanel.add(lblRatingsT, "cell 0 9,alignx right,aligny top");
+        JLabel lblRatingsT = new TmmLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
+        detailsPanel.add(lblRatingsT, "flowy,cell 0 9,alignx right,aligny top");
 
         JScrollPane scrollPaneRatings = new JScrollPane();
         detailsPanel.add(scrollPaneRatings, "cell 1 9 4 1,grow");
@@ -365,17 +366,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
-
-        JButton btnAddRating = new JButton(new AddRatingAction());
-        btnAddRating.setMargin(BUTTON_MARGIN);
-        detailsPanel.add(btnAddRating, "flowy,cell 5 9,alignx left,aligny top");
-
-        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
-        btnRemoveRating.setMargin(BUTTON_MARGIN);
-        detailsPanel.add(btnRemoveRating, "cell 5 9,alignx left,aligny top");
       }
       {
-        JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+        JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
         detailsPanel.add(lblTags, "flowy,cell 6 9,alignx right,aligny top");
 
         JScrollPane scrollPaneTags = new JScrollPane();
@@ -408,6 +401,14 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       JButton btnMoveTagDown = new JButton(new MoveTagDownAction());
       btnMoveTagDown.setMargin(BUTTON_MARGIN);
       detailsPanel.add(btnMoveTagDown, "cell 6 9,alignx right,aligny top");
+
+      JButton btnAddRating = new JButton(new AddRatingAction());
+      btnAddRating.setMargin(BUTTON_MARGIN);
+      detailsPanel.add(btnAddRating, "cell 0 9,alignx right,aligny top");
+
+      JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+      btnRemoveRating.setMargin(BUTTON_MARGIN);
+      detailsPanel.add(btnRemoveRating, "cell 0 9,alignx right,aligny top");
     }
 
     /**********************************************************************************
@@ -418,7 +419,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       tabbedPane.addTab(BUNDLE.getString("movie.edit.castandcrew"), null, crewPanel, null); //$NON-NLS-1$
       crewPanel.setLayout(new MigLayout("", "[][150lp:300lp,grow][20lp:n][][150lp:300lp,grow]", "[100lp:250lp][20lp:n][100lp:200lp]"));
       {
-        JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
+        JLabel lblGuests = new TmmLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
         crewPanel.add(lblGuests, "flowy,cell 0 0,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -428,7 +429,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         tableGuests.configureScrollPane(scrollPane);
       }
       {
-        JLabel lblDirectorsT = new JLabel(BUNDLE.getString("metatag.directors")); //$NON-NLS-1$
+        JLabel lblDirectorsT = new TmmLabel(BUNDLE.getString("metatag.directors")); //$NON-NLS-1$
         crewPanel.add(lblDirectorsT, "flowy,cell 0 2,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -438,7 +439,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         tableDirectors.configureScrollPane(scrollPane);
       }
       {
-        JLabel lblWritersT = new JLabel(BUNDLE.getString("metatag.writers")); //$NON-NLS-1$
+        JLabel lblWritersT = new TmmLabel(BUNDLE.getString("metatag.writers")); //$NON-NLS-1$
         crewPanel.add(lblWritersT, "flowy,cell 3 2,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();

@@ -38,6 +38,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
@@ -115,32 +116,28 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       add(lblEpisode, "cell 2 1");
     }
     {
-      JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-      lblAiredT.setFont(lblAiredT.getFont().deriveFont(Font.BOLD));
+      JLabel lblAiredT = new TmmLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
       add(lblAiredT, "cell 0 2");
 
       lblAired = new JLabel("");
       add(lblAired, "cell 2 2");
     }
     {
-      JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      lblTagsT.setFont(lblTagsT.getFont().deriveFont(Font.BOLD));
+      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
       add(lblTagsT, "cell 0 3");
 
       lblTags = new JLabel("");
       add(lblTags, "cell 2 3");
     }
     {
-      JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      lblDateAddedT.setFont(lblDateAddedT.getFont().deriveFont(Font.BOLD));
+      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
       add(lblDateAddedT, "cell 0 4");
 
       lblDateAdded = new JLabel("");
       add(lblDateAdded, "cell 2 4");
     }
     {
-      JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      lblPathT.setFont(lblPathT.getFont().deriveFont(Font.BOLD));
+      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       add(lblPathT, "cell 0 5");
 
       lblPath = new LinkLabel("");

@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 
 import static org.tinymediamanager.core.Constants.ACTORS;
 
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
@@ -31,10 +30,10 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -113,25 +112,22 @@ public class TvShowEpisodeCastPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][200lp,grow][grow]"));
     {
-      JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
-      add(lblDirectorT, "cell 0 0,alignx right");
+      JLabel lblDirectorT = new TmmLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      add(lblDirectorT, "cell 0 0");
 
       lblDirector = new JLabel("");
       add(lblDirector, "cell 1 0 2 1,growx,wmin 0");
     }
     {
-      JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
-      add(lblWriterT, "cell 0 1,alignx right");
+      JLabel lblWriterT = new TmmLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+      add(lblWriterT, "cell 0 1");
 
       lblWriter = new JLabel("");
       add(lblWriter, "cell 1 1 2 1,growx,wmin 0");
     }
     {
-      JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
-      add(lblActorsT, "cell 0 2,alignx right,aligny top");
+      JLabel lblActorsT = new TmmLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      add(lblActorsT, "cell 0 2,aligny top");
 
       tableActors = new PersonTable(actorEventList);
       JScrollPane scrollPaneActors = new JScrollPane(tableActors);

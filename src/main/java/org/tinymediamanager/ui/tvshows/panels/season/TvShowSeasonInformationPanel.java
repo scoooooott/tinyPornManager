@@ -41,6 +41,7 @@ import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowSeasonSelectionModel;
 
@@ -152,7 +153,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
         TmmFontHelper.changeFont(lblTvshowTitle, 1.33, Font.BOLD);
       }
       {
-        JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season"));
+        JLabel lblSeasonT = new TmmLabel(BUNDLE.getString("metatag.season"));
         panelRight.add(lblSeasonT, "cell 0 1");
         TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
 
@@ -164,7 +165,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
         panelRight.add(new JSeparator(), "cell 0 2 2 1,growx");
       }
       {
-        JLabel lblEpisodelistT = new JLabel(BUNDLE.getString("metatag.episodes"));
+        JLabel lblEpisodelistT = new TmmLabel(BUNDLE.getString("metatag.episodes"));
         panelRight.add(lblEpisodelistT, "cell 0 3 2 1");
         tableEpisodes = new TmmTable(episodeTableModel);
         JScrollPane scrollPaneEpisodes = new JScrollPane(tableEpisodes);

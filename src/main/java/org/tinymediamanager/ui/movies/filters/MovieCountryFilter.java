@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -74,7 +75,7 @@ public class MovieCountryFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.country")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.country")); //$NON-NLS-1$
   }
 
   @Override

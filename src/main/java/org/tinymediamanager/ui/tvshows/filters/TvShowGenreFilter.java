@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
@@ -93,7 +94,7 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
   }
 
   @Override

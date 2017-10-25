@@ -43,6 +43,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieComparator;
@@ -129,25 +130,22 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             panelDetails.add(lblTitle, "cell 0 0 3 1,growx");
           }
           {
-            JLabel lblDatasourceT = new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
-            TmmFontHelper.changeFont(lblDatasourceT, Font.BOLD);
-            panelDetails.add(lblDatasourceT, "cell 0 2,alignx right");
+            JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+            panelDetails.add(lblDatasourceT, "cell 0 2");
 
             lblDatasource = new JLabel("");
             panelDetails.add(lblDatasource, "cell 2 2,growx,aligny center");
           }
           {
-            JLabel lblFolderOldT = new JLabel(BUNDLE.getString("renamer.oldfolder")); //$NON-NLS-1$
-            TmmFontHelper.changeFont(lblFolderOldT, Font.BOLD);
-            panelDetails.add(lblFolderOldT, "cell 0 4,alignx right");
+            JLabel lblFolderOldT = new TmmLabel(BUNDLE.getString("renamer.oldfolder")); //$NON-NLS-1$
+            panelDetails.add(lblFolderOldT, "cell 0 4");
 
             lblFolderOld = new JLabel("");
             panelDetails.add(lblFolderOld, "cell 2 4,growx,aligny center");
           }
           {
-            JLabel lblFolderNewT = new JLabel(BUNDLE.getString("renamer.newfolder")); //$NON-NLS-1$
-            TmmFontHelper.changeFont(lblFolderNewT, Font.BOLD);
-            panelDetails.add(lblFolderNewT, "cell 0 5,alignx right");
+            JLabel lblFolderNewT = new TmmLabel(BUNDLE.getString("renamer.newfolder")); //$NON-NLS-1$
+            panelDetails.add(lblFolderNewT, "cell 0 5");
 
             lblFolderNew = new JLabel("");
             panelDetails.add(lblFolderNew, "cell 2 5,growx,aligny center");
@@ -157,12 +155,10 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             panelDetails.add(panelMediaFiles, "cell 0 7 3 1,grow");
             panelMediaFiles.setLayout(new MigLayout("", "[grow][grow]", "[15px][grow]"));
             {
-              JLabel lblOldfilesT = new JLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
-              TmmFontHelper.changeFont(lblOldfilesT, Font.BOLD);
+              JLabel lblOldfilesT = new TmmLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
               panelMediaFiles.add(lblOldfilesT, "cell 0 0,alignx center");
 
-              JLabel lblNewfilesT = new JLabel(BUNDLE.getString("renamer.newfiles")); //$NON-NLS-1$
-              TmmFontHelper.changeFont(lblNewfilesT, Font.BOLD);
+              JLabel lblNewfilesT = new TmmLabel(BUNDLE.getString("renamer.newfiles")); //$NON-NLS-1$
               panelMediaFiles.add(lblNewfilesT, "cell 1 0,alignx center");
             }
             {

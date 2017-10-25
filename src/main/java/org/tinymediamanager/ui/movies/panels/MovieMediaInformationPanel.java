@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -55,10 +54,10 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 
@@ -140,35 +139,31 @@ public class MovieMediaInformationPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][][][grow]", "[][][][][::100lp][shrink 0][][][80lp,grow]"));
+    setLayout(new MigLayout("", "[][][20lp:n][grow]", "[][][][][::100lp][shrink 0][][][80lp,grow]"));
     {
-      JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
+      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
       add(lblRuntimeT, "cell 0 0");
 
       lblRuntime = new JLabel("");
       add(lblRuntime, "cell 1 0");
     }
     {
-      JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblWatchedT, Font.BOLD);
-      add(lblWatchedT, "cell 2 0");
+      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      add(lblWatchedT, "flowx,cell 3 0");
 
       chckbxWatched = new JCheckBox("");
       chckbxWatched.setEnabled(false);
       add(chckbxWatched, "cell 3 0");
     }
     {
-      JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblSourceT, Font.BOLD);
+      JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
       add(lblSourceT, "cell 0 1");
 
       lblSource = new JLabel("");
       add(lblSource, "cell 1 1 2 1");
     }
     {
-      JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblVideoT, Font.BOLD);
+      JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
       add(lblVideoT, "cell 0 2");
 
       JLabel lblMovieT = new JLabel(BUNDLE.getString("metatag.movie")); //$NON-NLS-1$
@@ -194,8 +189,7 @@ public class MovieMediaInformationPanel extends JPanel {
       panelVideoStreamDetails.add(new JLabel(""));
     }
     {
-      JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblAudioT, Font.BOLD);
+      JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
       add(lblAudioT, "cell 0 3");
 
       panelAudioStreamT = new JPanel();
@@ -207,8 +201,7 @@ public class MovieMediaInformationPanel extends JPanel {
       add(panelAudioStreamDetails, "cell 2 3 2 1,growx");
     }
     {
-      JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
+      JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
       add(lblSubtitle, "cell 0 4,aligny top");
 
       JScrollPane scrollPane = new JScrollPane();
@@ -223,16 +216,14 @@ public class MovieMediaInformationPanel extends JPanel {
       add(new JSeparator(), "cell 0 5 4 1,growx");
     }
     {
-      JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblDateAddedT, Font.BOLD);
+      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
       add(lblDateAddedT, "cell 0 6");
 
       lblDateAdded = new JLabel("");
       add(lblDateAdded, "cell 1 6 3 1");
     }
     {
-      JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
+      JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       add(lblMoviePathT, "cell 0 7");
 
       lblMoviePath = new LinkLabel("");
