@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -109,11 +110,15 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       JPanel panelHeader = new JPanel();
       panelHeader.setLayout(new MigLayout("", "[grow][]", "[]"));
 
+      // also attach the actionlistener to the textfield to trigger the search on enter in the textfield
+      Action searchAction = new SearchAction();
+
       tfMovieSetName = new JTextField();
+      tfMovieSetName.addActionListener(searchAction);
       panelHeader.add(tfMovieSetName, "cell 0 0,growx");
       tfMovieSetName.setColumns(10);
 
-      JButton btnSearch = new JButton(new SearchAction());
+      JButton btnSearch = new JButton(searchAction);
       panelHeader.add(btnSearch, "cell 1 0");
 
       setTopIformationPanel(panelHeader);

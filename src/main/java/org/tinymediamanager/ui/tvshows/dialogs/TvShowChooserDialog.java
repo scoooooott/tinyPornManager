@@ -176,16 +176,18 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(cbScraper, "cell 1 0,growx");
       }
       {
+        // also attach the actionlistener to the textfield to trigger the search on enter in the textfield
+        ActionListener searchAction = arg0 -> searchTvShow(textFieldSearchString.getText(), null);
+
         textFieldSearchString = new JTextField();
+        textFieldSearchString.addActionListener(searchAction);
         panelSearchField.add(textFieldSearchString, "cell 2 0,growx");
         textFieldSearchString.setColumns(10);
-      }
 
-      {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         btnSearch.setIcon(IconManager.SEARCH);
         panelSearchField.add(btnSearch, "cell 3 0");
-        btnSearch.addActionListener(arg0 -> searchTvShow(textFieldSearchString.getText(), null));
+        btnSearch.addActionListener(searchAction);
         getRootPane().setDefaultButton(btnSearch);
       }
       {

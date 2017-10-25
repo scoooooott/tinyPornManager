@@ -225,17 +225,18 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(cbScraper, "cell 1 0,growx");
       }
       {
+        // also attach the actionlistener to the textfield to trigger the search on enter in the textfield
+        ActionListener searchAction = arg0 -> searchMovie(textFieldSearchString.getText(), null);
+
         textFieldSearchString = new JTextField();
+        textFieldSearchString.addActionListener(searchAction);
         panelSearchField.add(textFieldSearchString, "cell 2 0,growx");
         textFieldSearchString.setColumns(10);
-      }
 
-      {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         panelSearchField.add(btnSearch, "cell 3 0");
         btnSearch.setIcon(IconManager.SEARCH);
-        btnSearch.addActionListener(arg0 -> searchMovie(textFieldSearchString.getText(), null));
-        getRootPane().setDefaultButton(btnSearch);
+        btnSearch.addActionListener(searchAction);
       }
       {
         JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
@@ -386,7 +387,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         okButton.setIcon(IconManager.APPLY_INV);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
-        addDefaultButton(okButton);
+        addButton(okButton);
       }
     }
 
