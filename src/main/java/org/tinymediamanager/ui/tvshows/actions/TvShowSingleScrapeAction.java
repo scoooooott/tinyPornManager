@@ -50,12 +50,25 @@ public class TvShowSingleScrapeAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
-    for (TvShow tvShow : selectedTvShows) {
-      // display tv show chooser
-      TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, selectedTvShows.size() > 1 ? true : false);
-      if (!chooser.showDialog()) {
+    int count = selectedTvShows.size();
+    int index = 0;
+
+    do {
+      TvShow tvShow = selectedTvShows.get(index);
+      TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, index, count);
+      chooser.setVisible(true);
+
+      if (!chooser.isContinueQueue()) {
         break;
       }
-    }
+
+      if (chooser.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+
+    } while (index < count);
   }
 }

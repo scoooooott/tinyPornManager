@@ -74,11 +74,25 @@ public class TvShowScrapeNewItemsAction extends TmmAction {
     TmmTaskManager.getInstance().addUnnamedTask(task);
 
     // whereas tv show scraping has to run in foreground
-    for (TvShow tvShow : newTvShows) {
-      TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, newTvShows.size() > 1 ? true : false);
-      if (!chooser.showDialog()) {
+    int count = newTvShows.size();
+    int index = 0;
+
+    do {
+      TvShow tvShow = newTvShows.get(index);
+      TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, index, count);
+      chooser.setVisible(true);
+
+      if (!chooser.isContinueQueue()) {
         break;
       }
-    }
+
+      if (chooser.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+
+    } while (index < count);
   }
 }

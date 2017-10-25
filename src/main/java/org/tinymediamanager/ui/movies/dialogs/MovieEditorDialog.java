@@ -131,7 +131,9 @@ public class MovieEditorDialog extends TmmDialog {
   private List<String>                       extrafanarts     = new ArrayList<>();
   private Rating                             userRating;
   private boolean                            continueQueue    = true;
-  private boolean                            inQueue;
+  private boolean                            navigateBack     = false;
+  private int                                queueIndex;
+  private int                                queueSize;
 
   private EventList<Person>                  cast;
   private EventList<Person>                  producers;
@@ -191,11 +193,14 @@ public class MovieEditorDialog extends TmmDialog {
    * 
    * @param movie
    *          the movie
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public MovieEditorDialog(Movie movie, boolean inQueue) {
-    super(BUNDLE.getString("movie.edit") + "  < " + movie.getPathNIO() + " >", "movieEditor"); //$NON-NLS-1$
+  public MovieEditorDialog(Movie movie, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("movie.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : "") + "  < " + movie.getPathNIO() + " >", //$NON-NLS-1$
+        "movieEditor");
 
     // default size - NEEDED, since we do not use pack() here
     setBounds(5, 5, 950, 600);
@@ -207,7 +212,8 @@ public class MovieEditorDialog extends TmmDialog {
     writers = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
 
     this.movieToEdit = movie;
-    this.inQueue = inQueue;
+    this.queueIndex = queueIndex;
+    this.queueSize = queueSize;
     this.ids = MediaIdTable.convertIdMapToEventList(movieToEdit.getIds());
     this.ratings = MediaRatingTable.convertRatingMapToEventList(movieToEdit.getRatings(), false);
     this.userRating = movieToEdit.getRating(Rating.USER);
@@ -930,9 +936,13 @@ public class MovieEditorDialog extends TmmDialog {
      * ButtonPanel
      **********************************************************************************/
     {
-      if (inQueue) {
+      if (queueSize > 1) {
         JButton btnAbort = new JButton(new AbortQueueAction());
         addButton(btnAbort);
+        if (queueIndex > 0) {
+          JButton backButton = new JButton(new NavigateBackAction()); // $NON-NLS-1$
+          addButton(backButton);
+        }
       }
 
       JButton cancelButton = new JButton(new DiscardAction());
@@ -941,6 +951,14 @@ public class MovieEditorDialog extends TmmDialog {
       JButton okButton = new JButton(new ChangeMovieAction());
       addDefaultButton(okButton);
     }
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 
   private class ChangeMovieAction extends AbstractAction {
@@ -1519,6 +1537,21 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       continueQueue = false;
+      setVisible(false);
+    }
+  }
+
+  private class NavigateBackAction extends AbstractAction {
+    private static final long serialVersionUID = -1652218154720642310L;
+
+    public NavigateBackAction() {
+      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.BACK_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      navigateBack = true;
       setVisible(false);
     }
   }

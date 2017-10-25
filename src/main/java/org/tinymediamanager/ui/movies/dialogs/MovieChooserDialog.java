@@ -115,6 +115,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private List<MediaScraper>         artworkScrapers;
   private List<MediaScraper>         trailerScrapers;
   private boolean                    continueQueue         = true;
+  private boolean                    navigateBack          = false;
 
   private EventList<Person>          castMemberEventList   = null;
   private MovieChooserModel          selectedResult        = null;
@@ -144,11 +145,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
    * 
    * @param movie
    *          the movie
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public MovieChooserDialog(Movie movie, boolean inQueue) {
-    super(BUNDLE.getString("moviechooser.search"), "movieChooser"); //$NON-NLS-1$
+  public MovieChooserDialog(Movie movie, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("moviechooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "movieChooser"); //$NON-NLS-1$
 
     // copy the values
     MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
@@ -369,12 +372,20 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         setBottomInformationPanel(infoPanel);
       }
       {
-        if (inQueue) {
+        if (queueSize > 1) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           abortButton.setIcon(IconManager.PROCESS_STOP);
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
           addButton(abortButton);
+
+          if (queueIndex > 0) {
+            JButton backButton = new JButton(BUNDLE.getString("Button.back")); //$NON-NLS-1$
+            backButton.setIcon(IconManager.BACK_INV);
+            backButton.setActionCommand("Back");
+            backButton.addActionListener(this);
+            addButton(backButton);
+          }
         }
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
@@ -605,6 +616,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       setVisible(false);
     }
 
+    // navigate back
+    if ("Back".equals(e.getActionCommand())) {
+      navigateBack = true;
+      setVisible(false);
+    }
   }
 
   private void searchMovie(String searchTerm, Movie movie) {
@@ -631,24 +647,20 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     });
   }
 
-  /**
-   * Shows the dialog and returns whether the work on the queue should be continued.
-   * 
-   * @return true, if successful
-   */
-  public boolean showDialog() {
-    // pack();
-    // setLocationRelativeTo(MainWindow.getActiveInstance());
-    setVisible(true);
-    return continueQueue;
-  }
-
   @Override
   public void dispose() {
     if (activeSearchTask != null && !activeSearchTask.isDone()) {
       activeSearchTask.cancel();
     }
     super.dispose();
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 
   /******************************************************************************

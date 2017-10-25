@@ -39,7 +39,7 @@ public class MovieSingleScrapeAction extends TmmAction {
   private static final long           serialVersionUID = 3066746719177708420L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieSingleScrapeAction(){
+  public MovieSingleScrapeAction() {
     putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
@@ -51,11 +51,25 @@ public class MovieSingleScrapeAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    for (Movie movie : selectedMovies) {
-      MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, selectedMovies.size() > 1 ? true : false);
-      if (!dialogMovieChooser.showDialog()) {
+    int selectedCount = selectedMovies.size();
+    int index = 0;
+
+    do {
+      Movie movie = selectedMovies.get(index);
+      MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, index, selectedCount);
+      dialogMovieChooser.setVisible(true);
+
+      if (!dialogMovieChooser.isContinueQueue()) {
         break;
       }
-    }
+
+      if (dialogMovieChooser.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+
+    } while (index < selectedCount);
   }
 }

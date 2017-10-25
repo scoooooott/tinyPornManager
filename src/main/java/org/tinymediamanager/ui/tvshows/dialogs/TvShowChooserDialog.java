@@ -103,6 +103,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private MediaScraper                mediaScraper;
   private List<MediaScraper>          artworkScrapers;
   private boolean                     continueQueue         = true;
+  private boolean                     navigateBack          = false;
 
   private JTextField                  textFieldSearchString;
   private MediaScraperComboBox        cbScraper;
@@ -121,11 +122,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
    * 
    * @param tvShow
    *          the tv show
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
-    super(BUNDLE.getString("tvshowchooser.search"), "tvShowChooser"); //$NON-NLS-1$
+  public TvShowChooserDialog(TvShow tvShow, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("tvshowchooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowChooser"); //$NON-NLS-1$
 
     // copy the values
     TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
@@ -306,12 +309,20 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       setBottomInformationPanel(infoPanel);
     }
     {
-      if (inQueue) {
+      if (queueSize > 1) {
         JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
         abortButton.setActionCommand("Abort");
         abortButton.addActionListener(this);
         abortButton.setIcon(IconManager.PROCESS_STOP);
         addButton(abortButton);
+
+        if (queueIndex > 0) {
+          JButton backButton = new JButton(BUNDLE.getString("Button.back")); //$NON-NLS-1$
+          backButton.setIcon(IconManager.BACK_INV);
+          backButton.setActionCommand("Back");
+          backButton.addActionListener(this);
+          addButton(backButton);
+        }
       }
       JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       cancelButton.setActionCommand("Cancel");
@@ -448,6 +459,19 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       setVisible(false);
     }
 
+    // navigate back
+    if ("Back".equals(e.getActionCommand())) {
+      navigateBack = true;
+      setVisible(false);
+    }
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 
   private void searchTvShow(String searchTerm, TvShow show) {

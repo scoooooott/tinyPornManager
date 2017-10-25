@@ -92,16 +92,27 @@ public class MovieScrapeTask extends TmmThreadPool {
     // initiate smart scrape
     if (!smartScrapeList.isEmpty() && !GraphicsEnvironment.isHeadless()) {
       try {
-        SwingUtilities.invokeAndWait(new Runnable() {
-          @Override
-          public void run() {
-            for (Movie movie : smartScrapeList) {
-              MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, smartScrapeList.size() > 1 ? true : false);
-              if (!dialogMovieChooser.showDialog()) {
-                break;
-              }
+        SwingUtilities.invokeAndWait(() -> {
+          int selectedCount = smartScrapeList.size();
+          int index = 0;
+
+          do {
+            Movie movie = smartScrapeList.get(index);
+            MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, index, selectedCount);
+            dialogMovieChooser.setVisible(true);
+
+            if (!dialogMovieChooser.isContinueQueue()) {
+              break;
             }
-          }
+
+            if (dialogMovieChooser.isNavigateBack()) {
+              index -= 1;
+            }
+            else {
+              index += 1;
+            }
+
+          } while (index < selectedCount);
         });
       }
       catch (Exception e) {

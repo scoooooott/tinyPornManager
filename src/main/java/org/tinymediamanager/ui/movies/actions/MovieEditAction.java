@@ -61,12 +61,25 @@ public class MovieEditAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    for (Movie movie : selectedMovies) {
-      MovieEditorDialog dialogMovieEditor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);
-      // dialogMovieEditor.setVisible(true);
-      if (!dialogMovieEditor.showDialog()) {
+    int selectedCount = selectedMovies.size();
+    int index = 0;
+
+    do {
+      Movie movie = selectedMovies.get(index);
+      MovieEditorDialog dialogMovieEditor = new MovieEditorDialog(movie, index, selectedCount);
+      dialogMovieEditor.setVisible(true);
+
+      if (!dialogMovieEditor.isContinueQueue()) {
         break;
       }
-    }
+
+      if (dialogMovieEditor.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+
+    } while (index < selectedCount);
   }
 }
