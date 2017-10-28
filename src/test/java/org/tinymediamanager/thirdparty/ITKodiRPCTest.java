@@ -3,6 +3,7 @@ package org.tinymediamanager.thirdparty;
 import java.util.ArrayList;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiException;
-import org.tinymediamanager.thirdparty.KodiRPC.SplitDataSource;
+import org.tinymediamanager.thirdparty.KodiRPC.SplitUri;
 
 public class ITKodiRPCTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(ITKodiRPCTest.class);
@@ -33,8 +34,37 @@ public class ITKodiRPCTest {
   }
 
   @Test
-  public void getAllMoviesASYNC() {
-    KodiRPC.getInstance().getAllMoviesASYNC();
+  public void getMappings() {
+    KodiRPC.getInstance().getAndSetEntityMappings();
+  }
+
+  @Test
+  public void testUris() {
+    testUri(
+        "zip:///C%3a%5cUsers%5cmamk%5cVideos%5cFilme%5cAvatar%20-%20Aufbruch%20nach%20Pandora%20(2009).zip/Avatar - Aufbruch nach Pandora (2009)/Avatar - Aufbruch nach Pandora (2009) (7.0) cd1.avi");
+    testUri("upnp://886fc236-b611-0730-0000-000017107649/1/");
+    testUri("\\\\NAS\\video");
+    testUri("\\\\12.2.3.4\\video");
+    testUri("smb://NAS/video/Bird.sampla.x264.mkv.mp4");
+    testUri("file://hostname/asdf.org"); // unknown remote host - blocking 5 sec on getting IP
+    testUri("file:///video/local.txt");
+    testUri("file:\\\\video\\local.txt");
+    testUri("file:\\\\\\video\\local.txt");
+    testUri(".\\video\\relative.txt");
+    testUri("file:///video/local.txt");
+    testUri("D:\\_neu\\TMM\\TEST_TV_DVD\\");
+  }
+
+  private void testUri(String s) {
+    System.out.println(new KodiRPC.SplitUri(s));
+  }
+
+  @Test
+  public void testUriMatching() {
+    // enter a valid hostname, else it will take long ;)
+    String s1 = "smb://NAS/video/a.mkv";
+    String s2 = "\\\\nas\\video\\a.mkv";
+    Assert.assertEquals(new KodiRPC.SplitUri(s1), new KodiRPC.SplitUri(s2));
   }
 
   @Test
@@ -67,7 +97,7 @@ public class ITKodiRPCTest {
 
   @Test
   public void getDataSources() {
-    for (SplitDataSource ds : KodiRPC.getInstance().getVideoDataSources()) {
+    for (SplitUri ds : KodiRPC.getInstance().getVideoDataSources()) {
       System.out.println(ds);
     }
   }
@@ -86,7 +116,7 @@ public class ITKodiRPCTest {
       KodiRPC.getInstance().connect(config);
     }
     catch (ApiException e) {
-      // fail(e.getMessage());
+      Assert.fail(e.getMessage());
     }
   }
 

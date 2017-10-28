@@ -26,6 +26,7 @@ import org.fourthline.cling.controlpoint.ActionCallback;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
+import org.fourthline.cling.model.message.header.STAllHeader;
 import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.Service;
@@ -81,6 +82,15 @@ public class Upnp {
     if (this.upnpService == null) {
       this.upnpService = new UpnpServiceImpl(UpnpListener.getListener());
     }
+  }
+
+  /**
+   * Sends a UPNP broadcast message, to find ALL devices.<br>
+   * Should be available shortly via getAvailablePlayers()
+   */
+  public void sendSearchRequest() {
+    createUpnpService();
+    this.upnpService.getControlPoint().search(new STAllHeader());
   }
 
   /**
