@@ -33,8 +33,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -57,7 +57,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
-import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -76,9 +76,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long               serialVersionUID = 5189531235704401313L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings                  settings         = TvShowModuleManager.SETTINGS;
@@ -197,8 +195,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JTextPane tpDefaultFolderPattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(tpDefaultFolderPattern, "cell 3 2");
+      JTextArea tpDefaultFolderPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+      add(tpDefaultFolderPattern, "cell 3 2, growx");
       TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
     }
     {
@@ -213,8 +211,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 4 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JTextPane tpDefaultSeasonPattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
-      add(tpDefaultSeasonPattern, "cell 3 4,aligny top");
+      JTextArea tpDefaultSeasonPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
+      add(tpDefaultSeasonPattern, "cell 3 4, , growx");
       TmmFontHelper.changeFont(tpDefaultSeasonPattern, 0.833);
     }
     {
@@ -229,8 +227,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(lblDefault, "flowx,cell 1 6 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JTextPane tpDefaultFilePattern = new ReadOnlyTextPane(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(tpDefaultFilePattern, "cell 3 6,aligny top");
+      JTextArea tpDefaultFilePattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
+      add(tpDefaultFilePattern, "cell 3 6,, growx");
       TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
     }
     {

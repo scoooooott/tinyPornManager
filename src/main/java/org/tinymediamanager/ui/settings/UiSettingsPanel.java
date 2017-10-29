@@ -27,7 +27,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -174,10 +175,7 @@ public class UiSettingsPanel extends JPanel {
       add(cbFontSize, "cell 2 8");
     }
     {
-      final JTextPane tpFontHint = new JTextPane(); // $NON-NLS-1$
-      tpFontHint.setOpaque(false);
-      tpFontHint.setEditable(false);
-      tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
+      final JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
       add(tpFontHint, "cell 1 9 2 1");
     }
     {

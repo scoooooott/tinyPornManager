@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -32,6 +32,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
@@ -83,7 +84,7 @@ public class MovieInformationPanel extends JPanel {
   private JLabel                      lblRunningTime;
   private LinkLabel                   lblTmdbid;
   private JLabel                      lblGenres;
-  private JTextPane                   tpPlot;
+  private JTextArea                   taPlot;
   private ImageLabel                  lblMoviePoster;
   private JLabel                      lblPosterSize;
   private ImageLabel                  lblMovieFanart;
@@ -184,11 +185,11 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
+      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[300lp:300lp,grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);
-        panelTopRight.add(lblMovieName, "cell 0 0, grow, wmin 0");
+        panelTopRight.add(lblMovieName, "cell 0 0, grow");
       }
       {
         panelTopRight.add(new JSeparator(), "cell 0 1,growx");
@@ -335,11 +336,8 @@ public class MovieInformationPanel extends JPanel {
         scrollPane.setBorder(null);
         panelTopRight.add(scrollPane, "cell 0 11,grow");
 
-        tpPlot = new JTextPane();
-        scrollPane.setViewportView(tpPlot);
-        tpPlot.setOpaque(false);
-        tpPlot.setFocusable(false);
-        tpPlot.setEditable(false);
+        taPlot = new ReadOnlyTextArea();
+        scrollPane.setViewportView(taPlot);
       }
     }
     {
@@ -431,9 +429,9 @@ public class MovieInformationPanel extends JPanel {
     autoBinding_17.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.plot");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_14, tpPlot, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_14, taPlot, jTextAreaBeanProperty);
     autoBinding_18.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovie.tagline");

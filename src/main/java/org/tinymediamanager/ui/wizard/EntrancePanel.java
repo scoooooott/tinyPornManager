@@ -23,13 +23,14 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.images.Logo;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
  * The class EntrancePanel is the first panel which is displayed in the wizard
- * 
+ *
  * @author Manuel Laggner
  */
 class EntrancePanel extends JPanel {
@@ -49,21 +50,15 @@ class EntrancePanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[50lp:50lp,grow][][10lp][][50lp:50lp,grow]", "[20lp:20lp,grow][][20lp:20lp][][50lp:50lp,grow]"));
 
-    final JTextPane tpGreetingHeader = new JTextPane();
-    tpGreetingHeader.setEditable(false);
-    tpGreetingHeader.setOpaque(false);
+    final JTextPane tpGreetingHeader = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.header")); //$NON-NLS-1$
     tpGreetingHeader.setEditorKit(new HTMLEditorKit());
-    tpGreetingHeader.setText(BUNDLE.getString("wizard.greeting.header")); //$NON-NLS-1$
     add(tpGreetingHeader, "cell 0 1 5 1,alignx center");
 
     JLabel lblLogo = new JLabel("");
     lblLogo.setIcon(new Logo(96));
     add(lblLogo, "cell 1 3,alignx right,aligny top");
 
-    JTextPane tpGreetingText = new JTextPane();
-    tpGreetingText.setEditable(false);
-    tpGreetingText.setText(BUNDLE.getString("wizard.greeting.text")); //$NON-NLS-1$
-    tpGreetingText.setOpaque(false);
+    JTextPane tpGreetingText = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.text")); //$NON-NLS-1$
     add(tpGreetingText, "cell 3 3,grow");
   }
 }

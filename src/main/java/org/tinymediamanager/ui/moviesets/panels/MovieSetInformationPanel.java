@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -41,6 +41,7 @@ import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.moviesets.MovieInMovieSetTableFormat;
@@ -68,7 +69,7 @@ public class MovieSetInformationPanel extends JPanel {
   private JLabel                       lblFanartSize;
   private ImageLabel                   lblPoster;
   private JLabel                       lblPosterSize;
-  private JTextPane                    tpOverview;
+  private JTextArea                    taOverview;
   private TmmTable                     tableAssignedMovies;
 
   private final MovieSetSelectionModel selectionModel;
@@ -160,11 +161,8 @@ public class MovieSetInformationPanel extends JPanel {
         JScrollPane scrollPaneOverview = new JScrollPane();
         panelRight.add(scrollPaneOverview, "cell 0 3,grow");
 
-        tpOverview = new JTextPane();
-        tpOverview.setOpaque(false);
-        tpOverview.setEditable(false);
-        tpOverview.setFocusable(false);
-        scrollPaneOverview.setViewportView(tpOverview);
+        taOverview = new ReadOnlyTextArea();
+        scrollPaneOverview.setViewportView(taOverview);
       }
       {
         panelRight.add(new JSeparator(), "cell 0 5,growx");
@@ -223,9 +221,9 @@ public class MovieSetInformationPanel extends JPanel {
     autoBinding.bind();
     //
     BeanProperty<MovieSetSelectionModel, String> tvShowSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovieSet.plot");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_1, tpOverview, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSetSelectionModel, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_1, taOverview, JTextAreaBeanProperty);
     autoBinding_1.bind();
   }
 }

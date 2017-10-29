@@ -68,7 +68,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieImageSettingsPanel.
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieImageSettingsPanel extends JPanel {

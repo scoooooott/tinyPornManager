@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -36,6 +36,7 @@ import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -392,11 +393,8 @@ public class MovieImageTypeSettingsPanel extends JPanel {
       chckbxDiscart1 = new JCheckBox("<dynamic>-disc.ext");
       panelFileNaming.add(chckbxDiscart1, "cell 2 16");
 
-      JTextPane tpFileNamingHint = new JTextPane();
+      JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
       panelFileNaming.add(tpFileNamingHint, "cell 0 18 4 1");
-      tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      tpFileNamingHint.setOpaque(false);
-      tpFileNamingHint.setEditable(false);
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }

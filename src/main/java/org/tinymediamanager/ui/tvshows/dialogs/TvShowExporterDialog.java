@@ -29,8 +29,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -49,6 +49,7 @@ import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
@@ -72,7 +73,7 @@ public class TvShowExporterDialog extends TmmDialog {
   private JList                list;
   private JLabel               lblTemplateName;
   private JLabel               lblUrl;
-  private JTextPane            tpDescription;
+  private JTextArea            tpDescription;
   private JCheckBox            chckbxTemplateWithDetail;
 
   /**
@@ -118,7 +119,7 @@ public class TvShowExporterDialog extends TmmDialog {
       JScrollPane scrollPaneDescription = new JScrollPane();
       panelExporterDetails.add(scrollPaneDescription, "cell 0 3,grow");
 
-      tpDescription = new JTextPane();
+      tpDescription = new ReadOnlyTextArea();
       scrollPaneDescription.setViewportView(tpDescription);
       splitPane.setDividerLocation(300);
 
@@ -230,9 +231,9 @@ public class TvShowExporterDialog extends TmmDialog {
     autoBinding_1.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_2 = BeanProperty.create("selectedElement.description");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JList, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
-        tpDescription, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<JList, String, JTextArea, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
+        tpDescription, JTextAreaBeanProperty);
     bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //

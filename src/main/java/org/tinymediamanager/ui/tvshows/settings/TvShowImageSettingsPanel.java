@@ -64,7 +64,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowImageSettingsPanel.
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShowImageSettingsPanel extends JPanel {

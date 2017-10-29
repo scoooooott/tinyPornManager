@@ -33,7 +33,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
@@ -63,7 +62,6 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
@@ -88,7 +86,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private JProgressBar               progressBar;
   private JTextField                 tfMovieSetName;
   private JTable                     tableMovieSets;
-  private JTextArea                  lblMovieSetName;
+  private JLabel                     lblMovieSetName;
   private ImageLabel                 lblMovieSetPoster;
   private JTable                     tableMovies;
   private JCheckBox                  cbAssignMovies;
@@ -173,8 +171,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         splitPane.setRightComponent(panelSearchDetail);
         panelSearchDetail.setLayout(new MigLayout("", "[150lp,grow 60][450lp,grow]", "[][250lp,grow][150lp][]"));
         {
-          lblMovieSetName = new ReadOnlyTextArea("");
-          lblMovieSetName.setOpaque(false);
+          lblMovieSetName = new JLabel("");
           TmmFontHelper.changeFont(lblMovieSetName, 1.166, Font.BOLD);
           panelSearchDetail.add(lblMovieSetName, "cell 0 0 2 1,growx");
         }
@@ -454,9 +451,9 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     jTableBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
-        lblMovieSetName, jTextAreaBeanProperty);
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
+        lblMovieSetName, jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");

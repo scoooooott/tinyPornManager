@@ -24,12 +24,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -39,6 +39,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -92,10 +93,7 @@ public class SortTitleSettingsPanel extends JPanel {
       add(lblSortingT, "cell 0 0 2 1");
     }
     {
-      final JTextPane tpSortingHint = new JTextPane();
-      tpSortingHint.setText(BUNDLE.getString("Settings.sorting.info")); // $NON-NLS-1$
-      tpSortingHint.setEditable(false);
-      tpSortingHint.setOpaque(false);
+      final JTextArea tpSortingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.sorting.info")); // $NON-NLS-1$
       add(tpSortingHint, "cell 1 1 2 1,grow");
     }
     {

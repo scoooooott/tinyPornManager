@@ -31,7 +31,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -44,6 +44,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -81,10 +82,7 @@ class MovieSourcePanel extends JPanel {
     add(panelMovieDataSources, "cell 0 1,grow");
     panelMovieDataSources.setLayout(new MigLayout("", "[grow][]", "[][200lp,grow]"));
     {
-      JTextPane tpDatasourceHint = new JTextPane();
-      tpDatasourceHint.setText(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
-      tpDatasourceHint.setOpaque(false);
-      tpDatasourceHint.setEditable(false);
+      JTextArea tpDatasourceHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
       panelMovieDataSources.add(tpDatasourceHint, "cell 0 0 2 1,grow");
     }
     {

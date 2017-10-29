@@ -24,7 +24,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +36,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.images.Logo;
 
 import net.miginfocom.swing.MigLayout;
@@ -126,11 +127,7 @@ public class AboutDialog extends TmmDialog {
         panelTranslators.add(lblTranslatorsT, "cell 0 0,alignx right,aligny top");
       }
       {
-        JTextPane tpTranslators = new JTextPane();
-        tpTranslators.setBorder(null);
-        tpTranslators.setEditable(false);
-        tpTranslators.setOpaque(false);
-        tpTranslators.setText(TRANSLATORS);
+        JTextArea tpTranslators = new ReadOnlyTextArea(TRANSLATORS);
         panelTranslators.add(tpTranslators, "cell 1 0,growx,aligny top");
       }
     }

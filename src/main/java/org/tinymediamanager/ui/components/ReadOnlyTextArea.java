@@ -17,6 +17,7 @@
 package org.tinymediamanager.ui.components;
 
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 /**
  * A readonly variant of the JTextArea
@@ -32,8 +33,11 @@ public class ReadOnlyTextArea extends JTextArea {
   public ReadOnlyTextArea(String text) {
     super(text);
 
+    setOpaque(false);
     setLineWrap(true);
     setWrapStyleWord(true);
     setEditable(false);
+    setFocusable(false);
+    setForeground(UIManager.getColor("Label.foreground"));
   }
 }

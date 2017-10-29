@@ -23,7 +23,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -33,6 +32,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -68,26 +68,11 @@ class DisclaimerPanel extends JPanel {
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       add(scrollPane, "cell 0 1,grow");
 
-      JTextArea taDisclaimer = new JTextArea();
-      taDisclaimer.setLineWrap(true);
-      taDisclaimer.setWrapStyleWord(true);
-      taDisclaimer.setEditable(false);
-      taDisclaimer.setText(
-          "tinyMediaManager is a media manager which helps to organize your media library by providing an easy access to third party services like \"The Movie Database (TMDb)\", \"TheTVDB.com\", \"Trakt.tv\" and more.\n"
-              + "tinyMediaManager itself does not offer any type of meta data or downloadable content - it only acts as an connector between your computer and services which offer this kind of data.\n\n"
-              + "tinyMediaManager is developed under the Apache v2 license (https://www.apache.org/licenses/LICENSE-2.0) and uses other open source components.\n"
-              + "This tool is developed and tested by multiple users, but still can contain bugs which can delete/destroy your media library. Be sure you always backup your data. We are not responsible for any data loss this tool caused!\n\n"
-              + "tinyMediaManager uses Google Analytics to help analyse which Operating Systems (type, architecture and version), Java versions and screen resolutions are used.\n"
-              + "We will never (and will not allow any third party to) use the statistical analytics tool to track or to collect any Personally Identifiable Information our uesers. Google will not associate your IP address with any other data held by Google. Neither we nor Google will link, or seek to link, an IP address with the identity of a computer user.\n\n"
-              + "If you do not agree to these term please close!");
+      JTextArea taDisclaimer = new ReadOnlyTextArea(BUNDLE.getString("wizard.disclaimer.long"));//$NON-NLS-1$
       scrollPane.setViewportView(taDisclaimer);
-
     }
     {
-      JTextPane taAnalytics = new JTextPane();
-      taAnalytics.setOpaque(false);
-      taAnalytics.setEditable(false);
-      taAnalytics.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
+      JTextArea taAnalytics = new JTextArea(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
       add(taAnalytics, "cell 0 3,grow");
 
       chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));//$NON-NLS-1$

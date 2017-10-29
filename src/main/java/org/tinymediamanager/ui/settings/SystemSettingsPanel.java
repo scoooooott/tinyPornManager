@@ -31,8 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -45,6 +45,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import com.sun.jna.Platform;
 
@@ -108,11 +109,9 @@ public class SystemSettingsPanel extends JPanel {
       btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
       add(btnSearchMediaPlayer, "cell 1 1 4 1");
 
-      JTextPane tpMediaPlayer = new JTextPane();
+      JTextArea tpMediaPlayer = new ReadOnlyTextArea(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
       add(tpMediaPlayer, "cell 1 2 5 1,growx");
-      tpMediaPlayer.setOpaque(false);
       TmmFontHelper.changeFont(tpMediaPlayer, 0.833);
-      tpMediaPlayer.setText(BUNDLE.getString("Settings.mediaplayer.hint"));
     }
     {
       final JLabel lblMemorySettingsT = new JLabel(BUNDLE.getString("Settings.memoryborder")); //$NON-NLS-1$
@@ -145,10 +144,8 @@ public class SystemSettingsPanel extends JPanel {
       JLabel lblMb = new JLabel("MB");
       add(lblMb, "cell 1 5 4 1,aligny top");
 
-      JTextPane tpMemoryHint = new JTextPane();
+      JTextArea tpMemoryHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
       add(tpMemoryHint, "cell 1 6 5 1,growx");
-      tpMemoryHint.setOpaque(false);
-      tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
       TmmFontHelper.changeFont(tpMemoryHint, 0.833);
     }
     {

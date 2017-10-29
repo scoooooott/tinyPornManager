@@ -53,6 +53,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -321,6 +322,7 @@ public class TvShowEditorDialog extends TmmDialog {
         details1Panel.add(scrollPanePlot, "cell 1 2 6 1,grow");
 
         tpPlot = new JTextPane();
+        tpPlot.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
         scrollPanePlot.setViewportView(tpPlot);
       }
       {

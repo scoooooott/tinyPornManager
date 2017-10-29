@@ -23,7 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -33,6 +33,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
@@ -113,10 +114,8 @@ public class MovieScraperOptionsSettingsPanel extends JPanel {
       sliderThreshold.setPaintLabels(true);
       add(sliderThreshold, "cell 1 8 2 1,growx,aligny top");
 
-      JTextPane tpScraperThresholdHint = new JTextPane();
-      tpScraperThresholdHint.setOpaque(false);
+      JTextArea tpScraperThresholdHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
       TmmFontHelper.changeFont(tpScraperThresholdHint, 0.833);
-      tpScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
       add(tpScraperThresholdHint, "cell 1 9 3 1");
     }
   }

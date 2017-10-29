@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -41,6 +41,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
@@ -68,7 +69,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JLabel                      lblEpisodeTitle;
   private ImageLabel                  lblEpisodeThumb;
   private ImageLabel                  lblSeasonPoster;
-  private JTextPane                   tpOverview;
+  private JTextArea                   taOverview;
   private MediaInformationLogosPanel  panelLogos;
   private JPanel                      panelDetails;
   private JLabel                      lblSeasonPosterSize;
@@ -188,10 +189,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
         JScrollPane scrollPanePlot = new JScrollPane();
         scrollPanePlot.setBorder(null);
-        tpOverview = new JTextPane();
-        tpOverview.setOpaque(false);
-        tpOverview.setEditable(false);
-        scrollPanePlot.setViewportView(tpOverview);
+
+        taOverview = new ReadOnlyTextArea();
+        scrollPanePlot.setViewportView(taOverview);
         panelRight.add(scrollPanePlot, "cell 0 10,grow");
       }
     }
@@ -246,9 +246,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     autoBinding_1.bind();
     //
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShowEpisode.plot");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowEpisodeSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_3, tpOverview, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_3, taOverview, JTextAreaBeanProperty);
     autoBinding_3.bind();
     //
     BeanProperty<TvShowEpisodeSelectionModel, Float> tvShowEpisodeSelectionModelBeanProperty_4 = BeanProperty

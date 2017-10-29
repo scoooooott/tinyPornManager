@@ -38,8 +38,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -76,7 +76,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -89,7 +89,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowChooserDialog.
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
@@ -110,7 +110,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private JComboBox<MediaLanguages>   cbLanguage;
   private JTable                      table;
   private JLabel                      lblTvShowName;
-  private JTextPane                   tpTvShowOverview;
+  private JTextArea                   tpTvShowOverview;
   private ImageLabel                  lblTvShowPoster;
   private JLabel                      lblProgressAction;
   private JProgressBar                progressBar;
@@ -119,7 +119,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
   /**
    * Instantiates a new tv show chooser dialog.
-   * 
+   *
    * @param tvShow
    *          the tv show
    * @param queueIndex
@@ -278,7 +278,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           scrollPane.setBorder(null);
           panelSearchDetail.add(scrollPane, "cell 1 1,grow");
 
-          tpTvShowOverview = new ReadOnlyTextPane();
+          tpTvShowOverview = new ReadOnlyTextArea();
           scrollPane.setViewportView(tpTvShowOverview);
         }
       }
@@ -577,9 +577,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
-        tpTvShowOverview, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
+        tpTvShowOverview, JTextAreaBeanProperty);
     bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //

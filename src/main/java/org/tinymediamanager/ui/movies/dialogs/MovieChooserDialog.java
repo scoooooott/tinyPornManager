@@ -39,8 +39,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -78,7 +78,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -129,7 +129,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private MediaScraperComboBox       cbScraper;
   private JTable                     tableSearchResults;
   private JLabel                     lblTitle;
-  private JTextPane                  tpMovieDescription;
+  private JTextArea                  taMovieDescription;
   private ImageLabel                 lblMoviePoster;
   private JLabel                     lblProgressAction;
   private JProgressBar               progressBar;
@@ -330,9 +330,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           panelSearchDetail.add(scrollPane, "cell 1 3,growx");
           scrollPane.setBorder(null);
           {
-            tpMovieDescription = new ReadOnlyTextPane();
-            tpMovieDescription.setOpaque(false);
-            scrollPane.setViewportView(tpMovieDescription);
+            taMovieDescription = new ReadOnlyTextArea();
+            scrollPane.setViewportView(taMovieDescription);
           }
         }
         {
@@ -814,9 +813,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
-        jTableBeanProperty_1, tpMovieDescription, jTextPaneBeanProperty);
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
+        jTableBeanProperty_1, taMovieDescription, JTextAreaBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");

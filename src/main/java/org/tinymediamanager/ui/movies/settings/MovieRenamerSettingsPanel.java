@@ -33,8 +33,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -55,7 +55,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -201,8 +201,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JTextPane tpDefaultFolderPattern = new ReadOnlyTextPane(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(tpDefaultFolderPattern, "cell 3 2");
+      JTextArea tpDefaultFolderPattern = new ReadOnlyTextArea(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+      add(tpDefaultFolderPattern, "cell 3 2, growx");
       TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
     }
     {
@@ -210,19 +210,19 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(lblMovieFilename, "cell 1 3 2 1,alignx right");
 
       tfMovieFilename = new JTextField();
-      add(tfMovieFilename, "cell 3 3,growx");
+      add(tfMovieFilename, "cell 3 3, growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
       add(lblDefault, "cell 1 4 2 1,alignx right");
       TmmFontHelper.changeFont(lblDefault, 0.833);
 
-      JTextPane tpDefaultFilePattern = new ReadOnlyTextPane(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(tpDefaultFilePattern, "cell 3 4");
+      JTextArea tpDefaultFilePattern = new ReadOnlyTextArea(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
+      add(tpDefaultFilePattern, "cell 3 4, growx");
       TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
     }
     {
-      JTextPane tpChooseAFolder = new ReadOnlyTextPane(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
-      add(tpChooseAFolder, "cell 2 5 2 1");
+      JTextArea tpChooseAFolder = new ReadOnlyTextArea(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
+      add(tpChooseAFolder, "cell 2 5 2 1, growx");
       TmmFontHelper.changeFont(tpChooseAFolder, 0.833);
     }
     {

@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import org.tinymediamanager.core.Message;
@@ -17,6 +17,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -25,13 +26,11 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class MessagePanel extends JPanel {
   private static final long           serialVersionUID = -7224510527137312686L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private JLabel                      lblTitle;
-  private JTextPane                   tpMessage;
+  private JTextArea                   taMessage;
   private JLabel                      lblIcon;
   private JLabel                      lblDate;
 
@@ -72,7 +71,7 @@ public class MessagePanel extends JPanel {
       // simply take the id
       text = message.getMessageId();
     }
-    tpMessage.setText(text);
+    taMessage.setText(text);
 
     switch (message.getMessageLevel()) {
       case ERROR:
@@ -117,9 +116,7 @@ public class MessagePanel extends JPanel {
 
     innerPanel.add(lblTitle, "4, 2, fill, default");
 
-    tpMessage = new JTextPane();
-    tpMessage.setOpaque(false);
-    tpMessage.setEditable(false);
-    innerPanel.add(tpMessage, "4, 4, fill, fill");
+    taMessage = new ReadOnlyTextArea();
+    innerPanel.add(taMessage, "4, 4, fill, fill");
   }
 }

@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
@@ -38,6 +38,7 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowThumbNaming;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -179,11 +180,8 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
       add(chckbxEpisodeThumb4, "cell 3 18");
     }
     {
-      JTextPane tpFileNamingHint = new JTextPane();
+      JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
       add(tpFileNamingHint, "cell 1 20 3 1");
-      tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      tpFileNamingHint.setOpaque(false);
-      tpFileNamingHint.setEditable(false);
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }

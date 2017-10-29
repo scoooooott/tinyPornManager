@@ -33,6 +33,7 @@ import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -81,13 +82,9 @@ public class GeneralSettingsPanel extends JPanel {
       chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
       add(chckbxDeleteTrash, "cell 1 4 2 1");
 
-      JTextArea tpAnalyticsDescription = new JTextArea();
-      tpAnalyticsDescription.setWrapStyleWord(true);
-      tpAnalyticsDescription.setLineWrap(true);
-      tpAnalyticsDescription.setEditable(false);
-      add(tpAnalyticsDescription, "flowx,cell 1 6 2 1,growx");
-      tpAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
-      tpAnalyticsDescription.setOpaque(false);
+      JTextArea taAnalyticsDescription = new ReadOnlyTextArea();
+      add(taAnalyticsDescription, "flowx,cell 1 6 2 1,growx");
+      taAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
     }
 
     chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));

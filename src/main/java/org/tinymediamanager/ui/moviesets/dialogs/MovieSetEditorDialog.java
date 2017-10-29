@@ -34,6 +34,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -180,6 +181,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       panelContent.add(scrollPaneOverview, "cell 1 2,grow");
 
       tpOverview = new JTextPane();
+      tpOverview.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
       scrollPaneOverview.setViewportView(tpOverview);
 
       JLabel lblMovies = new TmmLabel(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
