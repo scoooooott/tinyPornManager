@@ -344,10 +344,8 @@ public class TmmLightBorders extends BaseBorders {
     private static final long serialVersionUID  = -2851747427345778378L;
     protected static Insets   insets;
 
-    protected static int      TOP_BOTTOM_INSETS = 10;
-
     public PopupMenuBorder() {
-      insets = new Insets(TOP_BOTTOM_INSETS, 1, 2 * TOP_BOTTOM_INSETS, 1);
+      insets = new Insets(1, 0, 1, 0);
 
     }
 
@@ -385,10 +383,6 @@ public class TmmLightBorders extends BaseBorders {
       else {
         g.drawRect(x, y, w - 1, h - 1);
       }
-
-      // paint the bottom border in the default panel color
-      g.setColor(AbstractLookAndFeel.getBackgroundColor());
-      g.fillRect(x + 1, y + h - insets.bottom, w - 2, insets.bottom - 1);
 
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
     }
