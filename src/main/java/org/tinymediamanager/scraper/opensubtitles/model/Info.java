@@ -34,8 +34,10 @@ public class Info {
     this.status = (String) response.get("status");
 
     Object[] data = (Object[]) response.get("data");
-    for (int i = 0; i < data.length; i++) {
-      movieInfo.add(new MovieInfo(data[i]));
+    if (data != null) {
+      for (int i = 0; i < data.length; i++) {
+        movieInfo.add(new MovieInfo(data[i]));
+      }
     }
   }
 
@@ -63,7 +65,7 @@ public class Info {
     public String movieReleaseName = "";
     public String subFormat        = "";
     public String subDownloadLink  = "";
-    public Float subRating         = 0f;
+    public Float  subRating        = 0f;
     public String zipDownloadLink  = "";
     public String season           = "";
     public String episode          = "";
