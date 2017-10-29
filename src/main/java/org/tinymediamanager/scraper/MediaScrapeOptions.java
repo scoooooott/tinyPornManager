@@ -117,11 +117,7 @@ public class MediaScrapeOptions {
    * @return the id as int or 0
    */
   public int getIdAsInt(String providerId) {
-    Integer id = getIdAsInteger(providerId);
-    if (id == null) {
-      return 0;
-    }
-    return id.intValue();
+    return getIdAsIntOrDefault(providerId, 0);
   }
 
   /**
@@ -176,7 +172,7 @@ public class MediaScrapeOptions {
   public int getTmdbId() {
     int id = getIdAsInt(MediaMetadata.TMDB);
     if (id == 0) {
-      id = getIdAsInteger("tmdbId");
+      id = getIdAsIntOrDefault("tmdbId", 0);
     }
     return id;
   }
