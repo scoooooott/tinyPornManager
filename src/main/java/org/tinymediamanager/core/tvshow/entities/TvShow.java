@@ -389,16 +389,19 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     for (TvShowEpisode episode : dummyEpisodes) {
       episode.setTvShow(this);
-      addToSeason(episode);
+      TvShowSeason season = getSeasonForEpisode(episode);
 
-      // also fire the event there has no real episode for that dummy
+      // also fire the event there was no episode for that dummy yet
       boolean found = false;
-      for (TvShowEpisode e : episodes) {
+      for (TvShowEpisode e : season.getEpisodesForDisplay()) {
         if (e.getSeason() == episode.getSeason() && e.getEpisode() == episode.getEpisode()) {
           found = true;
           break;
         }
       }
+
+      season.addEpisode(episode);
+
       if (!found) {
         firePropertyChange(ADDED_EPISODE, null, episode);
       }

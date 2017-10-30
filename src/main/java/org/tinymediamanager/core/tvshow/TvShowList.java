@@ -299,23 +299,33 @@ public class TvShowList extends AbstractModelObject {
    * Load episodes from database.
    */
   void loadEpisodesFromDatabase(MVMap<UUID, String> episodesMap, ObjectMapper objectMapper) {
+    List<UUID> orphanedEpisodes = new ArrayList<>();
+
     // load all episodes from the database
     ObjectReader episodeObjectReader = objectMapper.readerFor(TvShowEpisode.class);
     int episodeCount = 0;
 
     for (UUID uuid : new ArrayList<>(episodesMap.keyList())) {
       try {
-        episodeCount++;
         TvShowEpisode episode = episodeObjectReader.readValue(episodesMap.get(uuid));
         episode.setDbId(uuid);
+
+        // check for orphaned episodes
+        boolean found = false;
 
         // and assign it the the right TV show
         for (TvShow tvShow : tvShowList) {
           if (tvShow.getDbId().equals(episode.getTvShowDbId())) {
+            episodeCount++;
             episode.setTvShow(tvShow);
             tvShow.addEpisode(episode);
+            found = true;
             break;
           }
+        }
+
+        if (!found) {
+          orphanedEpisodes.add(uuid);
         }
       }
       catch (Exception e) {
@@ -324,6 +334,12 @@ public class TvShowList extends AbstractModelObject {
         episodesMap.remove(uuid);
       }
     }
+
+    // remove orphaned episodes
+    for (UUID uuid : orphanedEpisodes) {
+      episodesMap.remove(uuid);
+    }
+
     LOGGER.info("found " + episodeCount + " episodes in database");
   }
 

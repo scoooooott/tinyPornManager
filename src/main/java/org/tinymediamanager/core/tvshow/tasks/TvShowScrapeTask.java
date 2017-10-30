@@ -184,49 +184,54 @@ public class TvShowScrapeTask extends TmmThreadPool {
 
             if (scraperMetadataConfig.isEpisodeList()) {
               List<TvShowEpisode> episodes = new ArrayList<>();
-              for (MediaMetadata me : ((ITvShowMetadataProvider) mediaMetadataScraper.getMediaProvider()).getEpisodeList(options)) {
-                TvShowEpisode ep = new TvShowEpisode();
-                ep.setEpisode(me.getEpisodeNumber());
-                ep.setSeason(me.getSeasonNumber());
-                ep.setDvdEpisode(me.getDvdEpisodeNumber());
-                ep.setDvdSeason(me.getDvdSeasonNumber());
-                ep.setTitle(me.getTitle());
-                ep.setOriginalTitle(me.getOriginalTitle());
-                ep.setPlot(me.getPlot());
+              try {
+                for (MediaMetadata me : ((ITvShowMetadataProvider) mediaMetadataScraper.getMediaProvider()).getEpisodeList(options)) {
+                  TvShowEpisode ep = new TvShowEpisode();
+                  ep.setEpisode(me.getEpisodeNumber());
+                  ep.setSeason(me.getSeasonNumber());
+                  ep.setDvdEpisode(me.getDvdEpisodeNumber());
+                  ep.setDvdSeason(me.getDvdSeasonNumber());
+                  ep.setTitle(me.getTitle());
+                  ep.setOriginalTitle(me.getOriginalTitle());
+                  ep.setPlot(me.getPlot());
 
-                List<Person> actors = new ArrayList<>();
-                List<Person> directors = new ArrayList<>();
-                List<Person> writers = new ArrayList<>();
+                  List<Person> actors = new ArrayList<>();
+                  List<Person> directors = new ArrayList<>();
+                  List<Person> writers = new ArrayList<>();
 
-                for (MediaCastMember member : me.getCastMembers()) {
-                  switch (member.getType()) {
-                    case ACTOR:
-                      Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
-                      actor.setThumbUrl(member.getImageUrl());
-                      actors.add(actor);
-                      break;
+                  for (MediaCastMember member : me.getCastMembers()) {
+                    switch (member.getType()) {
+                      case ACTOR:
+                        Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
+                        actor.setThumbUrl(member.getImageUrl());
+                        actors.add(actor);
+                        break;
 
-                    case DIRECTOR:
-                      Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
-                      director.setThumbUrl(member.getImageUrl());
-                      directors.add(director);
-                      break;
+                      case DIRECTOR:
+                        Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
+                        director.setThumbUrl(member.getImageUrl());
+                        directors.add(director);
+                        break;
 
-                    case WRITER:
-                      Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
-                      writer.setThumbUrl(member.getImageUrl());
-                      writers.add(writer);
-                      break;
+                      case WRITER:
+                        Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
+                        writer.setThumbUrl(member.getImageUrl());
+                        writers.add(writer);
+                        break;
 
-                    default:
-                      break;
+                      default:
+                        break;
+                    }
                   }
-                }
-                ep.setActors(actors);
-                ep.setDirectors(directors);
-                ep.setWriters(writers);
+                  ep.setActors(actors);
+                  ep.setDirectors(directors);
+                  ep.setWriters(writers);
 
-                episodes.add(ep);
+                  episodes.add(ep);
+                }
+              }
+              catch (Exception e) {
+                LOGGER.error(e.getMessage());
               }
               tvShow.setDummyEpisodes(episodes);
             }
