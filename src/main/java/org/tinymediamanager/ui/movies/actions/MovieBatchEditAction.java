@@ -29,7 +29,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieBulkEditorDialog;
 
 /**
  * The MovieBatchEditAction - to start a bulk edit of movies
@@ -54,7 +54,7 @@ public class MovieBatchEditAction extends TmmAction {
 
     // get data of all files within all selected movies
     if (selectedMovies.size() > 0) {
-      MovieBatchEditorDialog editor = new MovieBatchEditorDialog(selectedMovies);
+      MovieBulkEditorDialog editor = new MovieBulkEditorDialog(selectedMovies);
       editor.setLocationRelativeTo(MainWindow.getActiveInstance());
       editor.pack();
       editor.setVisible(true);
