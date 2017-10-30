@@ -176,7 +176,7 @@ public class UiSettingsPanel extends JPanel {
     }
     {
       final JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-      add(tpFontHint, "cell 1 9 2 1");
+      add(tpFontHint, "cell 1 9 2 1,growx");
     }
     {
       lblFontChangeHint = new JLabel("");

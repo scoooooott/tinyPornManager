@@ -72,7 +72,7 @@ class DisclaimerPanel extends JPanel {
       scrollPane.setViewportView(taDisclaimer);
     }
     {
-      JTextArea taAnalytics = new JTextArea(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
+      JTextArea taAnalytics = new ReadOnlyTextArea(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
       add(taAnalytics, "cell 0 3,grow");
 
       chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));//$NON-NLS-1$
