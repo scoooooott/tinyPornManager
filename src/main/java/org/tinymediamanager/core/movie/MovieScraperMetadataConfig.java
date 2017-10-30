@@ -15,16 +15,16 @@
  */
 package org.tinymediamanager.core.movie;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.tinymediamanager.core.AbstractModelObject;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 /**
  * The Class MovieScraperMetadataConfig.
  * 
  * @author Manuel Laggner
  */
-@XmlRootElement(name = "MovieScraperMetadata")
+@JsonAutoDetect
 public class MovieScraperMetadataConfig extends AbstractModelObject {
 
   /**

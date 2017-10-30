@@ -15,16 +15,16 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.tinymediamanager.core.AbstractModelObject;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 /**
  * The Class TvShowScraperMetadataConfig.
  * 
  * @author Manuel Laggner
  */
-@XmlRootElement(name = "TvShowScraperMetadata")
+@JsonAutoDetect
 public class TvShowScraperMetadataConfig extends AbstractModelObject {
 
   private boolean title;

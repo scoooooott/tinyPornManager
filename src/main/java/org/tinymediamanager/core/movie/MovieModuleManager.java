@@ -56,7 +56,6 @@ public class MovieModuleManager implements ITmmModule {
 
   private boolean                   enabled;
   private MVStore                   mvStore;
-  private ObjectMapper              objectMapper;
   private ObjectWriter              movieObjectWriter;
   private ObjectWriter              movieSetObjectWriter;
 
@@ -95,7 +94,7 @@ public class MovieModuleManager implements ITmmModule {
     mvStore.setReuseSpace(true);
 
     // configure JSON
-    objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);

@@ -17,40 +17,69 @@
 package org.tinymediamanager.core;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlTransient;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.ITmmUIFilter;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 /**
  * The class AbstractSettings is the base class for our settings structure. Loading/saving is handled by this class
  */
+@JsonAutoDetect
 public abstract class AbstractSettings extends AbstractModelObject {
-  private static final Logger LOGGER    = LoggerFactory.getLogger(AbstractSettings.class);
+  private static final Logger   LOGGER       = LoggerFactory.getLogger(AbstractSettings.class);
 
-  @XmlTransient
-  protected boolean           dirty;
-  @XmlTransient
-  protected boolean           newConfig = false;
-  @XmlTransient
-  protected String            settingsFolder;
+  @JsonIgnore
+  protected static ObjectMapper objectMapper = createObjectMapper();
+
+  @JsonIgnore
+  protected boolean             dirty;
+  @JsonIgnore
+  protected boolean             newConfig    = false;
+  @JsonIgnore
+  protected String              settingsFolder;
+
+  @JsonIgnore
+  protected ObjectWriter        objectWriter;
+
+  public AbstractSettings() {
+
+    objectWriter = createObjectWriter();
+  }
+
+  protected static ObjectMapper createObjectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, true);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, true);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, true);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, true);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.setTimeZone(TimeZone.getDefault());
+    objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+
+    return objectMapper;
+  }
 
   /**
    * Sets the dirty flag.
@@ -67,6 +96,11 @@ public abstract class AbstractSettings extends AbstractModelObject {
   public boolean isNewConfig() {
     return newConfig;
   }
+
+  /**
+   * create the object writer for the settings instance
+   */
+  abstract protected ObjectWriter createObjectWriter();
 
   /**
    * write the default settings values
@@ -87,7 +121,7 @@ public abstract class AbstractSettings extends AbstractModelObject {
    * 
    * @return the actual config filename
    */
-  abstract protected String getConfigFilename();
+  abstract public String getConfigFilename();
 
   /**
    * gets a logger for that class
@@ -97,7 +131,7 @@ public abstract class AbstractSettings extends AbstractModelObject {
   abstract protected Logger getLogger();
 
   /**
-   * save the settings to a xml file via JAXB
+   * save the settings to a JSON file
    */
   public void saveSettings() {
     // is there anything to save?
@@ -105,40 +139,26 @@ public abstract class AbstractSettings extends AbstractModelObject {
       return;
     }
 
-    // create JAXB context and instantiate marshaller
-    JAXBContext context;
-    Writer w = null;
+    // write as JSON
+    Writer writer = null;
     try {
-      context = JAXBContext.newInstance(this.getClass());
-      Marshaller m = context.createMarshaller();
-      m.setProperty("jaxb.encoding", "UTF-8");
-      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      w = new StringWriter();
-      m.marshal(this, w);
-      StringBuilder sb = new StringBuilder(w.toString());
-      w.close();
-
-      // on windows make windows conform linebreaks
-      if (SystemUtils.IS_OS_WINDOWS) {
-        sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
-      }
-
-      w = new FileWriter(new File(getSettingsFolder(), getConfigFilename()));
-      String xml = sb.toString();
-      IOUtils.write(xml, w);
-
+      String settings = objectWriter.writeValueAsString(this);
+      writer = new FileWriter(new File(getSettingsFolder(), getConfigFilename()));
+      IOUtils.write(settings, writer);
     }
     catch (Exception e) {
       getLogger().error("saveSettings", e);
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
     }
     finally {
-      try {
-        w.close();
-      }
-      catch (Exception e) {
-        getLogger().error("saveSettings", e);
-        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
+      if (writer != null) {
+        try {
+          writer.close();
+        }
+        catch (Exception e) {
+          getLogger().error("saveSettings", e);
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
+        }
       }
     }
 
@@ -170,32 +190,32 @@ public abstract class AbstractSettings extends AbstractModelObject {
       }
     }
 
-    // try to parse XML
-    JAXBContext context;
+    // unmarshall the JSON
     try {
-      context = JAXBContext.newInstance(clazz);
-      Unmarshaller um = context.createUnmarshaller();
       try {
         LOGGER.debug("Loading settings (" + filename + ") from " + folder);
-        Reader in = new InputStreamReader(new FileInputStream(new File(folder, filename)), "UTF-8");
-        instance = (AbstractSettings) um.unmarshal(in);
-        instance.settingsFolder = folder;
+        Reader reader = new FileReader(new File(folder, filename));
+        String settingsAsJson = IOUtils.toString(reader);
+
+        ObjectReader objectReader = objectMapper.readerFor(clazz);
+        instance = objectReader.readValue(settingsAsJson);
       }
       catch (Exception e) {
         LOGGER.warn("could not load settings - creating default ones...");
         instance = (AbstractSettings) clazz.newInstance();
+        instance.settingsFolder = folder;
         instance.newConfig = true;
         instance.dirty = true;
-        instance.settingsFolder = folder;
         instance.writeDefaultSettings();
-        instance.saveSettings();
       }
+      instance.settingsFolder = folder;
       instance.dirty = false;
     }
     catch (Exception e) {
       LOGGER.error("getInstance", e);
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
     }
+
     return instance;
   }
 

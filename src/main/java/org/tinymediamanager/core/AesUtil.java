@@ -28,9 +28,13 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 public class AesUtil {
-  private final int    keySize;
-  private final int    iterationCount;
-  private final Cipher cipher;
+  public static String  DEFAULT_VECTOR   = "727DEC2725991751BDFE3DBD0C6BF137";
+  public static String  DEFAULT_SALT     = "19CAD45282FBC7627B91A57F201B69E0359AFEB15DE328A88C0A2E05585F84C9";
+  public static AesUtil DEFAULT_INSTANCE = new AesUtil(128, 10);
+
+  private final int     keySize;
+  private final int     iterationCount;
+  private final Cipher  cipher;
 
   protected AesUtil(int keySize, int iterationCount) {
     this.keySize = keySize;

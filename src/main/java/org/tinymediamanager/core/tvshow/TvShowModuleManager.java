@@ -57,7 +57,6 @@ public class TvShowModuleManager implements ITmmModule {
 
   private boolean                    enabled;
   private MVStore                    mvStore;
-  private ObjectMapper               objectMapper;
   private ObjectWriter               tvShowObjectWriter;
   private ObjectWriter               episodeObjectWriter;
 
@@ -96,7 +95,7 @@ public class TvShowModuleManager implements ITmmModule {
     mvStore.setReuseSpace(true);
 
     // configure JSON
-    objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);

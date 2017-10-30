@@ -206,7 +206,8 @@ public class BugReportDialog extends TmmDialog {
     }
 
     // attach config files
-    List<String> configFiles = Arrays.asList("tmm.xml", MovieModuleManager.SETTINGS.CONFIG_FILE, TvShowModuleManager.SETTINGS.CONFIG_FILE);
+    List<String> configFiles = Arrays.asList(Settings.getInstance().getConfigFilename(), MovieModuleManager.SETTINGS.getConfigFilename(),
+        TvShowModuleManager.SETTINGS.getConfigFilename());
     for (String filename : configFiles) {
       try {
         ZipEntry ze = new ZipEntry(filename);

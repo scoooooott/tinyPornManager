@@ -15,93 +15,54 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.util.StrgUtils;
+
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * The Class Settings - holding all settings for tmm.
  * 
  * @author Manuel Laggner
  */
-@XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractSettings {
   private static final Logger   LOGGER                 = LoggerFactory.getLogger(Settings.class);
 
   public final static String    DEFAULT_CONFIG_FOLDER  = "data";
 
-  private String                settingsFolder         = DEFAULT_CONFIG_FOLDER;
+  private final static String   CONFIG_FILE            = "tmm.json";
+
   private static Settings       instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String   CONFIG_FILE            = "tmm.xml";
   private final static String   TITLE_PREFIX           = "titlePrefix";
-  private final static String   PREFIX                 = "prefix";
   private final static String   VIDEO_FILE_TYPE        = "videoFileTypes";
   private final static String   AUDIO_FILE_TYPE        = "audioFileTypes";
   private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileTypes";
-  private final static String   FILETYPE               = "filetype";
-  private final static String   PROXY_HOST             = "proxyHost";
-  private final static String   PROXY_PORT             = "proxyPort";
-  private final static String   PROXY_USERNAME         = "proxyUsername";
-  private final static String   PROXY_PASSWORD         = "proxyPassword";
-  private final static String   IMAGE_CACHE            = "imageCache";
-  private final static String   IMAGE_CACHE_TYPE       = "imageCacheType";
-  private final static String   LANGUAGE               = "language";
   private final static String   WOL_DEVICES            = "wolDevices";
-  private final static String   ENABLE_ANALYTICS       = "enableAnalytics";
 
-  private final static String   UPNP_SHARE_LIBRARY     = "upnpShareLibrary";
-  private final static String   UPNP_PLAY_ON_REMOTE    = "upnpRemotePlay";
-
-  @XmlElementWrapper(name = TITLE_PREFIX)
-  @XmlElement(name = PREFIX)
   private final List<String>    titlePrefix            = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = VIDEO_FILE_TYPE)
-  @XmlElement(name = FILETYPE)
   private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = AUDIO_FILE_TYPE)
-  @XmlElement(name = FILETYPE)
   private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
-  @XmlElement(name = FILETYPE)
   private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = WOL_DEVICES)
   private final List<WolDevice> wolDevices             = ObservableCollections.observableList(new ArrayList<WolDevice>());
 
-  @XmlAttribute
   private String                version                = "";
 
   private String                proxyHost;
@@ -146,11 +107,17 @@ public class Settings extends AbstractSettings {
    * Instantiates a new settings.
    */
   public Settings() {
+    super();
     addPropertyChangeListener(evt -> setDirty());
   }
 
   @Override
-  protected String getConfigFilename() {
+  protected ObjectWriter createObjectWriter() {
+    return objectMapper.writerFor(Settings.class);
+  }
+
+  @Override
+  public String getConfigFilename() {
     return CONFIG_FILE;
   }
 
@@ -341,6 +308,13 @@ public class Settings extends AbstractSettings {
   }
 
   /**
+   * needed for JSON unmarshalling
+   */
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  /**
    * sets the current version into settings file
    */
   public void setCurrentVersion() {
@@ -513,51 +487,8 @@ public class Settings extends AbstractSettings {
     return list;
   }
 
-  /**
-   * Save settings.
-   */
   public void saveSettings() {
-    // is there anything to save?
-    if (!dirty) {
-      return;
-    }
-
-    // create JAXB context and instantiate marshaller
-    JAXBContext context;
-    Writer w = null;
-    try {
-      context = JAXBContext.newInstance(Settings.class);
-      Marshaller m = context.createMarshaller();
-      m.setProperty("jaxb.encoding", "UTF-8");
-      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      w = new StringWriter();
-      m.marshal(this, w);
-      StringBuilder sb = new StringBuilder(w.toString());
-      w.close();
-
-      // on windows make windows conform linebreaks
-      if (SystemUtils.IS_OS_WINDOWS) {
-        sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
-      }
-
-      w = new FileWriter(new File(settingsFolder, CONFIG_FILE));
-      String xml = sb.toString();
-      IOUtils.write(xml, w);
-
-    }
-    catch (Exception e) {
-      LOGGER.error("saveSettings", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
-    }
-    finally {
-      try {
-        w.close();
-      }
-      catch (Exception e) {
-        LOGGER.error("saveSettings", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
-      }
-    }
+    super.saveSettings();
 
     // set proxy information
     setProxy();
@@ -571,7 +502,6 @@ public class Settings extends AbstractSettings {
    * 
    * @return the proxy host
    */
-  @XmlElement(name = PROXY_HOST)
   public String getProxyHost() {
     return proxyHost;
   }
@@ -585,7 +515,7 @@ public class Settings extends AbstractSettings {
   public void setProxyHost(String newValue) {
     String oldValue = this.proxyHost;
     this.proxyHost = newValue;
-    firePropertyChange(PROXY_HOST, oldValue, newValue);
+    firePropertyChange("proxyHost", oldValue, newValue);
   }
 
   /**
@@ -593,7 +523,6 @@ public class Settings extends AbstractSettings {
    * 
    * @return the proxy port
    */
-  @XmlElement(name = PROXY_PORT)
   public String getProxyPort() {
     return proxyPort;
   }
@@ -607,7 +536,7 @@ public class Settings extends AbstractSettings {
   public void setProxyPort(String newValue) {
     String oldValue = this.proxyPort;
     this.proxyPort = newValue;
-    firePropertyChange(PROXY_PORT, oldValue, newValue);
+    firePropertyChange("proxyPort", oldValue, newValue);
   }
 
   /**
@@ -615,7 +544,6 @@ public class Settings extends AbstractSettings {
    * 
    * @return the proxy username
    */
-  @XmlElement(name = PROXY_USERNAME)
   public String getProxyUsername() {
     return proxyUsername;
   }
@@ -629,7 +557,7 @@ public class Settings extends AbstractSettings {
   public void setProxyUsername(String newValue) {
     String oldValue = this.proxyUsername;
     this.proxyUsername = newValue;
-    firePropertyChange(PROXY_USERNAME, oldValue, newValue);
+    firePropertyChange("proxyUsername", oldValue, newValue);
   }
 
   /**
@@ -637,8 +565,8 @@ public class Settings extends AbstractSettings {
    * 
    * @return the proxy password
    */
-  @XmlElement(name = PROXY_PASSWORD)
-  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  @JsonSerialize(using = EncryptedStringSerializer.class)
+  @JsonDeserialize(using = EncryptedStringDeserializer.class)
   public String getProxyPassword() {
     return StringEscapeUtils.unescapeXml(proxyPassword);
   }
@@ -653,20 +581,18 @@ public class Settings extends AbstractSettings {
     newValue = StringEscapeUtils.escapeXml10(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
-    firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
+    firePropertyChange("proxyPassword", oldValue, newValue);
   }
 
   /**
    * Sets the proxy from system settings, if empty
    */
   public void setProxyFromSystem() {
-    String val = "";
-
     String[] proxyEnvs = { "http.proxyHost", "https.proxyHost", "proxyHost", "socksProxyHost" };
     for (String pe : proxyEnvs) {
-      if (StringUtils.isEmpty(getProxyHost())) {
-        val = System.getProperty(pe, "");
-        if (!val.isEmpty()) {
+      if (StringUtils.isBlank(getProxyHost())) {
+        String val = System.getProperty(pe, "");
+        if (StringUtils.isNotBlank(val)) {
           setProxyHost(val);
         }
       }
@@ -674,9 +600,9 @@ public class Settings extends AbstractSettings {
 
     String[] proxyPortEnvs = { "http.proxyPort", "https.proxyPort", "proxyPort", "socksProxyPort" };
     for (String ppe : proxyPortEnvs) {
-      if (StringUtils.isEmpty(getProxyPort())) {
-        val = System.getProperty(ppe, "");
-        if (!val.isEmpty()) {
+      if (StringUtils.isBlank(getProxyPort())) {
+        String val = System.getProperty(ppe, "");
+        if (StringUtils.isNotBlank(val)) {
           setProxyPort(val);
         }
       }
@@ -743,7 +669,7 @@ public class Settings extends AbstractSettings {
   public void setImageCache(boolean newValue) {
     boolean oldValue = this.imageCache;
     this.imageCache = newValue;
-    firePropertyChange(IMAGE_CACHE, oldValue, newValue);
+    firePropertyChange("imageCache", oldValue, newValue);
   }
 
   /**
@@ -764,13 +690,13 @@ public class Settings extends AbstractSettings {
   public void setImageCacheType(CacheType newValue) {
     CacheType oldValue = this.imageCacheType;
     this.imageCacheType = newValue;
-    firePropertyChange(IMAGE_CACHE_TYPE, oldValue, newValue);
+    firePropertyChange("imageCacheType", oldValue, newValue);
   }
 
   /**
    * is our library shared via UPNP?
    *
-   * @return
+   * @return true/false
    */
   public boolean isUpnpShareLibrary() {
     return upnpShareLibrary;
@@ -780,17 +706,18 @@ public class Settings extends AbstractSettings {
    * share library via UPNP?
    *
    * @param upnpShareLibrary
+   *          share library or not
    */
   public void setUpnpShareLibrary(boolean upnpShareLibrary) {
     boolean old = this.upnpShareLibrary;
     this.upnpShareLibrary = upnpShareLibrary;
-    firePropertyChange(UPNP_SHARE_LIBRARY, old, upnpShareLibrary);
+    firePropertyChange("upnpShareLibrary", old, upnpShareLibrary);
   }
 
   /**
    * should we search for rendering devices like Kodi, TVs, et all?
    *
-   * @return
+   * @return true/false
    */
   public boolean isUpnpRemotePlay() {
     return upnpRemotePlay;
@@ -800,11 +727,12 @@ public class Settings extends AbstractSettings {
    * should we search for rendering devices like Kodi, TVs, et all?
    *
    * @param upnpRemotePlay
+   *          search for remote devices or not
    */
   public void setUpnpRemotePlay(boolean upnpRemotePlay) {
     boolean old = this.upnpRemotePlay;
     this.upnpRemotePlay = upnpRemotePlay;
-    firePropertyChange(UPNP_PLAY_ON_REMOTE, old, upnpRemotePlay);
+    firePropertyChange("upnpRemotePlay", old, upnpRemotePlay);
   }
 
   /**
@@ -812,7 +740,6 @@ public class Settings extends AbstractSettings {
    * 
    * @return 2 char string - use "new Locale(getLanguage())"
    */
-  @XmlElement(name = LANGUAGE)
   public String getLanguage() {
     if (language == null || language.isEmpty()) {
       return Locale.getDefault().getLanguage();
@@ -830,7 +757,7 @@ public class Settings extends AbstractSettings {
     String oldValue = this.language;
     this.language = language;
     Locale.setDefault(Utils.getLocaleFromLanguage(language));
-    firePropertyChange(LANGUAGE, oldValue, language);
+    firePropertyChange("language", oldValue, language);
   }
 
   public void addWolDevice(WolDevice newDevice) {
@@ -847,7 +774,8 @@ public class Settings extends AbstractSettings {
     return wolDevices;
   }
 
-  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  @JsonSerialize(using = EncryptedStringSerializer.class)
+  @JsonDeserialize(using = EncryptedStringDeserializer.class)
   public String getTraktAccessToken() {
     return traktAccessToken;
   }
@@ -858,7 +786,8 @@ public class Settings extends AbstractSettings {
     firePropertyChange("traktAccessToken", oldValue, newValue);
   }
 
-  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  @JsonSerialize(using = EncryptedStringSerializer.class)
+  @JsonDeserialize(using = EncryptedStringDeserializer.class)
   public String getTraktRefreshToken() {
     return traktRefreshToken;
   }
@@ -882,7 +811,7 @@ public class Settings extends AbstractSettings {
   /**
    * gets saved Kodi HTTP port, or default
    * 
-   * @return
+   * @return the Kodi HTTP port
    */
   public int getKodiHttpPort() {
     return kodiHttpPort == 0 ? DEFAULT_KODI_HTTP_PORT : kodiHttpPort;
@@ -897,7 +826,7 @@ public class Settings extends AbstractSettings {
   /**
    * gets saved Kodi TCP port, or default
    * 
-   * @return
+   * @return the Kodi TCP port
    */
   public int getKodiTcpPort() {
     return kodiTcpPort == 0 ? 9090 : kodiTcpPort;
@@ -919,7 +848,8 @@ public class Settings extends AbstractSettings {
     firePropertyChange("kodiUsername", oldValue, newValue);
   }
 
-  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  @JsonSerialize(using = EncryptedStringSerializer.class)
+  @JsonDeserialize(using = EncryptedStringDeserializer.class)
   public String getKodiPassword() {
     return kodiPassword;
   }
@@ -977,7 +907,7 @@ public class Settings extends AbstractSettings {
   public void setEnableAnalytics(boolean newValue) {
     boolean oldValue = this.enableAnalytics;
     this.enableAnalytics = newValue;
-    firePropertyChange(ENABLE_ANALYTICS, oldValue, newValue);
+    firePropertyChange("enableAnalytics", oldValue, newValue);
   }
 
   public void setStoreWindowPreferences(boolean newValue) {

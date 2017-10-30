@@ -20,10 +20,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -49,44 +45,36 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 /**
  * The Class TvShowSettings.
  * 
  * @author Manuel Laggner
  */
-@XmlRootElement(name = "TvShowSettings")
 public class TvShowSettings extends AbstractSettings {
   private static final Logger                  LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
 
-  public final static String                   CONFIG_FILE                    = "tvShows.xml";
   public final static String                   DEFAULT_RENAMER_FOLDER_PATTERN = "${showTitle} (${showYear})";
   public final static String                   DEFAULT_RENAMER_SEASON_PATTERN = "Season ${seasonNr}";
   public final static String                   DEFAULT_RENAMER_FILE_PATTERN   = "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}";
+
+  private final static String                  CONFIG_FILE                    = "tvShows.json";
 
   private static TvShowSettings                instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String                  PATH                           = "path";
-  private final static String                  FILENAME                       = "filename";
   private final static String                  TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
-  private final static String                  SCRAPER                        = "scraper";
   private final static String                  ARTWORK_SCRAPERS               = "artworkScrapers";
 
-  private final static String                  SCRAPE_BEST_IMAGE              = "scrapeBestImage";
-  private final static String                  SCRAPER_LANGU                  = "scraperLanguage";
-  private final static String                  SUBTITLE_SCRAPER_LANGU         = "subtitleScraperLanguage";
   private final static String                  CERTIFICATION_COUNTRY          = "certificationCountry";
   private final static String                  RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
-  private final static String                  BUILD_IMAGE_CACHE_ON_IMPORT    = "buildImageCacheOnImport";
-  private final static String                  ASCII_REPLACEMENT              = "asciiReplacement";
   private final static String                  BAD_WORDS                      = "badWords";
-  private final static String                  ENTRY                          = "entry";
   private final static String                  SKIP_FOLDERS                   = "skipFolders";
   private final static String                  SUBTITLE_SCRAPERS              = "subtitleScrapers";
   private final static String                  UI_FILTERS                     = "uiFilters";
-  private final static String                  STORE_UI_FILTERS               = "storeUiFilters";
   private final static String                  NFO_FILENAME                   = "nfoFilename";
   private final static String                  POSTER_FILENAME                = "posterFilename";
   private final static String                  FANART_FILENAME                = "fanartFilename";
@@ -97,67 +85,21 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  CLEARLOGO_FILENAME             = "clearlogoFilename";
   private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
-  private final static String                  TV_SHOW_CONNECTOR              = "tvShowConnector";
-  private final static String                  TV_SHOW_TABLE_HIDDEN_COLUMNS   = "tvShowTableHiddenColumns";
 
-  @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
-  @XmlElement(name = PATH)
   private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = BAD_WORDS)
-  @XmlElement(name = ENTRY)
   private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = ARTWORK_SCRAPERS)
-  @XmlElement(name = ENTRY)
   private final List<String>                   artworkScrapers                = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = SKIP_FOLDERS)
-  @XmlElement(name = ENTRY)
   private final List<String>                   skipFolders                    = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = SUBTITLE_SCRAPERS)
-  @XmlElement(name = ENTRY)
   private final List<String>                   subtitleScrapers               = ObservableCollections.observableList(new ArrayList<String>());
-
-  @XmlElementWrapper(name = NFO_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowNfoNaming>          nfoFilenames                   = new ArrayList<>();
-
-  @XmlElementWrapper(name = POSTER_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowPosterNaming>       posterFilenames                = new ArrayList<>();
-
-  @XmlElementWrapper(name = FANART_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowFanartNaming>       fanartFilenames                = new ArrayList<>();
-
-  @XmlElementWrapper(name = BANNER_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowBannerNaming>       bannerFilenames                = new ArrayList<>();
-
-  @XmlElementWrapper(name = CLEARART_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowClearartNaming>     clearartFilenames              = new ArrayList<>();
-
-  @XmlElementWrapper(name = THUMB_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowThumbNaming>        thumbFilenames                 = new ArrayList<>();
-
-  @XmlElementWrapper(name = CLEARLOGO_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowClearlogoNaming>    clearlogoFilenames             = new ArrayList<>();
-
-  @XmlElementWrapper(name = LOGO_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowLogoNaming>         logoFilenames                  = new ArrayList<>();
-
-  @XmlElementWrapper(name = SEASON_POSTER_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowSeasonPosterNaming> seasonPosterFilenames          = new ArrayList<>();
-
-  @XmlElementWrapper(name = EPISODE_THUMB_FILENAME)
-  @XmlElement(name = FILENAME)
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
@@ -189,9 +131,15 @@ public class TvShowSettings extends AbstractSettings {
   private String                               preferredRating                = "tvdb";
 
   public TvShowSettings() {
+    super();
     addPropertyChangeListener(evt -> setDirty());
     scraperMetadataConfig = new TvShowScraperMetadataConfig();
     scraperMetadataConfig.addPropertyChangeListener(ect -> setDirty());
+  }
+
+  @Override
+  protected ObjectWriter createObjectWriter() {
+    return objectMapper.writerFor(TvShowSettings.class);
   }
 
   /**
@@ -217,7 +165,7 @@ public class TvShowSettings extends AbstractSettings {
   }
 
   @Override
-  protected String getConfigFilename() {
+  public String getConfigFilename() {
     return CONFIG_FILE;
   }
 
@@ -292,7 +240,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setScraper(String newValue) {
     String oldValue = this.scraper;
     this.scraper = newValue;
-    firePropertyChange(SCRAPER, oldValue, newValue);
+    firePropertyChange("scraper", oldValue, newValue);
   }
 
   public void addTvShowArtworkScraper(String newValue) {
@@ -320,7 +268,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setScrapeBestImage(boolean newValue) {
     boolean oldValue = this.scrapeBestImage;
     this.scrapeBestImage = newValue;
-    firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
+    firePropertyChange("scrapeBestImage", oldValue, newValue);
   }
 
   public MediaLanguages getScraperLanguage() {
@@ -330,7 +278,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setScraperLanguage(MediaLanguages newValue) {
     MediaLanguages oldValue = this.scraperLanguage;
     this.scraperLanguage = newValue;
-    firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
+    firePropertyChange("scraperLanguage", oldValue, newValue);
   }
 
   public MediaLanguages getSubtitleScraperLanguage() {
@@ -340,7 +288,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setSubtitleScraperLanguage(MediaLanguages newValue) {
     MediaLanguages oldValue = this.subtitleScraperLanguage;
     this.subtitleScraperLanguage = newValue;
-    firePropertyChange(SUBTITLE_SCRAPER_LANGU, oldValue, newValue);
+    firePropertyChange("subtitleScraperLanguage", oldValue, newValue);
   }
 
   public CountryCode getCertificationCountry() {
@@ -390,7 +338,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setBuildImageCacheOnImport(boolean newValue) {
     boolean oldValue = this.buildImageCacheOnImport;
     this.buildImageCacheOnImport = newValue;
-    firePropertyChange(BUILD_IMAGE_CACHE_ON_IMPORT, oldValue, newValue);
+    firePropertyChange("buildImageCacheOnImport", oldValue, newValue);
   }
 
   public boolean isAsciiReplacement() {
@@ -400,7 +348,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setAsciiReplacement(boolean newValue) {
     boolean oldValue = this.asciiReplacement;
     this.asciiReplacement = newValue;
-    firePropertyChange(ASCII_REPLACEMENT, oldValue, newValue);
+    firePropertyChange("asciiReplacement", oldValue, newValue);
   }
 
   public String getRenamerSpaceReplacement() {
@@ -529,11 +477,9 @@ public class TvShowSettings extends AbstractSettings {
   public void setTvShowTableHiddenColumns(List<String> hiddenColumns) {
     tvShowTableHiddenColumns.clear();
     tvShowTableHiddenColumns.addAll(hiddenColumns);
-    firePropertyChange(TV_SHOW_TABLE_HIDDEN_COLUMNS, null, tvShowTableHiddenColumns);
+    firePropertyChange("tvShowTableHiddenColumns", null, tvShowTableHiddenColumns);
   }
 
-  @XmlElementWrapper(name = TV_SHOW_TABLE_HIDDEN_COLUMNS)
-  @XmlElement(name = ENTRY)
   public List<String> getTvShowTableHiddenColumns() {
     return tvShowTableHiddenColumns;
   }
@@ -543,7 +489,6 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange(UI_FILTERS, null, uiFilters);
   }
 
-  @XmlElement(name = UI_FILTERS)
   public List<UIFilters> getUiFilters() {
     if (storeUiFilters) {
       return uiFilters;
@@ -554,7 +499,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setStoreUiFilters(boolean newValue) {
     boolean oldValue = this.storeUiFilters;
     this.storeUiFilters = newValue;
-    firePropertyChange(STORE_UI_FILTERS, oldValue, newValue);
+    firePropertyChange("storeUiFilters", oldValue, newValue);
   }
 
   public boolean isStoreUiFilters() {
@@ -722,13 +667,13 @@ public class TvShowSettings extends AbstractSettings {
   public void addSeasonPosterFilename(TvShowSeasonPosterNaming filename) {
     if (!seasonPosterFilenames.contains(filename)) {
       seasonPosterFilenames.add(filename);
-      firePropertyChange(CLEARLOGO_FILENAME, null, seasonPosterFilenames);
+      firePropertyChange(SEASON_POSTER_FILENAME, null, seasonPosterFilenames);
     }
   }
 
   public void clearSeasonPosterFilenames() {
     seasonPosterFilenames.clear();
-    firePropertyChange(CLEARLOGO_FILENAME, null, seasonPosterFilenames);
+    firePropertyChange(SEASON_POSTER_FILENAME, null, seasonPosterFilenames);
   }
 
   public List<TvShowSeasonPosterNaming> getSeasonPosterFilenames() {
@@ -745,7 +690,6 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange("certificationStyle", oldValue, newValue);
   }
 
-  @XmlElement(name = TV_SHOW_CONNECTOR)
   public TvShowConnectors getTvShowConnector() {
     return tvShowConnector;
   }
@@ -753,7 +697,7 @@ public class TvShowSettings extends AbstractSettings {
   public void setTvShowConnector(TvShowConnectors newValue) {
     TvShowConnectors oldValue = this.tvShowConnector;
     this.tvShowConnector = newValue;
-    firePropertyChange(TV_SHOW_CONNECTOR, oldValue, newValue);
+    firePropertyChange("tvShowConnector", oldValue, newValue);
   }
 
   public boolean isWriteCleanNfo() {
