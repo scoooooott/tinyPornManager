@@ -40,9 +40,6 @@ import com.jtattoo.plaf.JTattooUtilities;
 public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   protected static int BORDER_RADIUS = 15;
 
-  private boolean      rightBorder   = true;
-  private boolean      leftBorder    = true;
-  private boolean      bottomBorder  = true;
   private boolean      roundEdge     = true;
 
   public static ComponentUI createUI(JComponent c) {
@@ -55,32 +52,49 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
 
   public TmmLightBigTabbedPaneUI(JComponent c) {
     super();
-
-    if (Boolean.FALSE.equals(c.getClientProperty("rightBorder"))) {
-      rightBorder = false;
-    }
-
-    if (Boolean.FALSE.equals(c.getClientProperty("leftBorder"))) {
-      leftBorder = false;
-    }
-
-    if (Boolean.FALSE.equals(c.getClientProperty("bottomBorder"))) {
-      bottomBorder = false;
-    }
-
-    if (Boolean.FALSE.equals(c.getClientProperty("roundEdge"))) {
-      roundEdge = false;
-    }
   }
 
   @Override
   public void installDefaults() {
     super.installDefaults();
+
+    // defaults
     tabAreaBackground = new Color(41, 41, 41);
     tabInsets = new Insets(5, 20, 5, 20);
-    tabAreaInsets = new Insets(0, leftBorder ? 20 : 0, 15, rightBorder ? 20 : 0);
-    contentBorderInsets = new Insets(0, leftBorder ? 20 : 0, bottomBorder ? 20 + BORDER_RADIUS : BORDER_RADIUS, rightBorder ? 20 : 0);
+    tabAreaInsets = new Insets(0, 20, 15, 20);
+    contentBorderInsets = new Insets(0, 20, 20 + BORDER_RADIUS, 20);
     roundedTabs = false;
+
+    // overrides
+    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("rightBorder"))) {
+      tabAreaInsets.right = 0;
+      contentBorderInsets.right = 0;
+    }
+
+    if ("half".equals(this.tabPane.getClientProperty("rightBorder"))) {
+      tabAreaInsets.right = tabAreaInsets.right / 2;
+      contentBorderInsets.right = contentBorderInsets.right / 2;
+    }
+
+    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("leftBorder"))) {
+      tabAreaInsets.left = 0;
+      contentBorderInsets.left = 0;
+    }
+
+    if ("half".equals(this.tabPane.getClientProperty("leftBorder"))) {
+      tabAreaInsets.left = tabAreaInsets.left / 2;
+      contentBorderInsets.left = contentBorderInsets.left / 2;
+    }
+
+    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("bottomBorder"))) {
+      tabAreaInsets.bottom = 0;
+      contentBorderInsets.bottom = 0;
+    }
+
+    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("roundEdge"))) {
+      roundEdge = false;
+    }
+
   }
 
   @Override

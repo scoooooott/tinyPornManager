@@ -223,7 +223,17 @@ public class MainWindow extends JFrame {
     JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI());
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
-    JSplitPane splitPane = new JSplitPane();
+    JSplitPane splitPane = new JSplitPane() {
+      private static final long serialVersionUID = 9041548865608767661L;
+
+      @Override
+      public void updateUI() {
+        // putClientProperty("class", "rootPanel");
+        // putClientProperty("flatMode", Boolean.TRUE);
+
+        super.updateUI();
+      }
+    };
     splitPane.setContinuousLayout(true);
     splitPane.setOpaque(false);
     rootPanel.add(splitPane, "cell 0 0, grow");
@@ -233,7 +243,7 @@ public class MainWindow extends JFrame {
 
       @Override
       public void updateUI() {
-        putClientProperty("rightBorder", Boolean.FALSE);
+        putClientProperty("rightBorder", "half");
         super.updateUI();
       }
     };

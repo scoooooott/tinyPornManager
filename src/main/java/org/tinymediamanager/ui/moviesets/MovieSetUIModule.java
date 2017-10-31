@@ -83,7 +83,16 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     dataPanel.setLayout(new CardLayout());
 
     // panel for movie sets
-    JTabbedPane movieSetDetailPanel = new MainTabbedPane();
+    JTabbedPane movieSetDetailPanel = new MainTabbedPane() {
+      private static final long serialVersionUID = 3233548865608767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", "half");
+        super.updateUI();
+      }
+    };
+
     movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));//$NON-NLS-1$
     dataPanel.add(movieSetDetailPanel, "movieSet");
 

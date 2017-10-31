@@ -39,7 +39,6 @@ import com.jtattoo.plaf.BaseRadioButtonMenuItemUI;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.BaseSeparatorUI;
 import com.jtattoo.plaf.BaseSliderUI;
-import com.jtattoo.plaf.BaseSplitPaneUI;
 import com.jtattoo.plaf.BaseToolTipUI;
 import com.jtattoo.plaf.JTattooUtilities;
 
@@ -203,7 +202,6 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
             "SeparatorUI", BaseSeparatorUI.class.getName(),
             "ToolTipUI", BaseToolTipUI.class.getName(),
             "SliderUI", BaseSliderUI.class.getName(),
-            "SplitPaneUI", BaseSplitPaneUI.class.getName(),
             "FileChooserUI", BaseFileChooserUI.class.getName(),
             "MenuBarUI", BaseMenuBarUI.class.getName(),
             "MenuUI", BaseMenuUI.class.getName(),
@@ -235,7 +233,8 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
             "TextPaneUI", TmmLightTextPaneUI.class.getName(),
             "ScrollPaneUI", TmmLightScrollPaneUI.class.getName(),
             "ProgressBarUI", TmmLightProgressBarUI.class.getName(),
-            "SliderUI", TmmLightSliderUI.class.getName()
+            "SliderUI", TmmLightSliderUI.class.getName(),
+            "SplitPaneUI", TmmSplitPaneUI.class.getName(),
 //        "ViewportUI", TmmLightViewportUI.class.getName(),
     };
     table.putDefaults(uiDefaults);

@@ -124,7 +124,16 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     dataPanel.setLayout(new CardLayout());
 
     // panel for TV shows
-    JTabbedPane tvShowDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowDetailPanel = new MainTabbedPane() {
+      private static final long serialVersionUID = 3344548865608767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", "half");
+        super.updateUI();
+      }
+    };
+
     tvShowDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowInformationPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowCastPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowMediaInformationPanel(tvShowSelectionModel));//$NON-NLS-1$

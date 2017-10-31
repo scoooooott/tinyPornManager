@@ -120,7 +120,16 @@ public class MovieUIModule extends AbstractTmmUIModule {
     dataPanel.setLayout(new CardLayout());
 
     // tabbed pane containing the movie data
-    JTabbedPane tabbedPane = new MainTabbedPane();
+    JTabbedPane tabbedPane = new MainTabbedPane() {
+      private static final long serialVersionUID = 1234548865608767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", "half");
+        super.updateUI();
+      }
+    };
+
     tabbedPane.add(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.add(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.add(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$
