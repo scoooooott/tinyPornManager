@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows;
+package org.tinymediamanager.ui.tvshows.panels;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,10 +33,7 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowScraperMetadataPanel.
@@ -67,9 +61,6 @@ public class TvShowScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxScrapeEpisodes;
   private JCheckBox                   chckbxAired;
   private JCheckBox                   chckbxStatus;
-  private JPanel                      panelSelectButtons;
-  private JButton                     button;
-  private JButton                     button_1;
 
   /**
    * Instantiates a new tv show scraper metadata panel.
@@ -79,75 +70,59 @@ public class TvShowScraperMetadataPanel extends JPanel {
    */
   public TvShowScraperMetadataPanel(TvShowScraperMetadataConfig config) {
     this.config = config;
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"),
-            ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"), ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"),
-            ColumnSpec.decode("left:default"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+    initComponents();
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[][20lp:n][][20lp:n][][20lp:n][]", "[][][][][]"));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
-    add(chckbxTitle, "2, 2");
+    add(chckbxTitle, "cell 0 0");
 
     chckbxPlot = new JCheckBox(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-    add(chckbxPlot, "4, 2");
+    add(chckbxPlot, "cell 2 0");
 
     chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-    add(chckbxRating, "6, 2");
+    add(chckbxRating, "cell 4 0");
 
     chckbxRuntime = new JCheckBox(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    add(chckbxRuntime, "8, 2");
+    add(chckbxRuntime, "cell 6 0");
 
     chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-    add(chckbxYear, "2, 4");
+    add(chckbxYear, "cell 0 1");
 
     chckbxAired = new JCheckBox(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-    add(chckbxAired, "4, 4");
+    add(chckbxAired, "cell 2 1");
 
     chckbxStatus = new JCheckBox(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
-    add(chckbxStatus, "6, 4");
+    add(chckbxStatus, "cell 4 1");
 
     chckbxCertification = new JCheckBox(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-    add(chckbxCertification, "8, 4");
+    add(chckbxCertification, "cell 6 1");
 
     chckbxCast = new JCheckBox(BUNDLE.getString("metatag.cast")); //$NON-NLS-1$
-    add(chckbxCast, "2, 6");
+    add(chckbxCast, "cell 0 2");
 
     chckbxGenres = new JCheckBox(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-    add(chckbxGenres, "4, 6");
+    add(chckbxGenres, "cell 2 2");
 
     chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
-    add(chckbxArtwork, "6, 6");
+    add(chckbxArtwork, "cell 4 2");
 
     chckbxScrapeEpisodes = new JCheckBox(BUNDLE.getString("tvshow.scrapeepisodeseasondata")); //$NON-NLS-1$
-    add(chckbxScrapeEpisodes, "2, 8, 7, 1, fill, default");
-
-    panelSelectButtons = new JPanel();
-    add(panelSelectButtons, "2, 10, 4, 1, fill, fill");
-    panelSelectButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    add(chckbxScrapeEpisodes, "cell 0 3 7 1,aligny top");
 
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
+    add(btnSelectAll, "flowx,cell 0 4 7 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
-    btnSelectAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setCheckBoxState(true);
-      }
-    });
-    panelSelectButtons.add(btnSelectAll);
-
-    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
-    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
-    btnDeSelectAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setCheckBoxState(false);
-      }
-    });
-    panelSelectButtons.add(btnDeSelectAll);
+    btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     initDataBindings();
+
+    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    add(btnDeSelectAll, "cell 0 4");
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
   }
 
   private void setCheckBoxState(boolean state) {

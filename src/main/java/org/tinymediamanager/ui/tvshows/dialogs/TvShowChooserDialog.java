@@ -83,7 +83,7 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
-import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
+import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 

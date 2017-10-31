@@ -34,7 +34,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
+import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 

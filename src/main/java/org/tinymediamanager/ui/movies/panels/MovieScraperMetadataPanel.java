@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.panels;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -81,61 +81,61 @@ public class MovieScraperMetadataPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][][][][]", "[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][20lp:n][][20lp:n][][20lp:n][][20lp:n][]", "[]2lp[]2lp[]2lp[]"));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "cell 0 0");
 
     chckbxOriginalTitle = new JCheckBox(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
-    add(chckbxOriginalTitle, "cell 1 0");
+    add(chckbxOriginalTitle, "cell 2 0");
 
     chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-    add(chckbxYear, "cell 2 0");
+    add(chckbxYear, "cell 4 0");
 
     chckbxTagline = new JCheckBox(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-    add(chckbxTagline, "cell 3 0");
+    add(chckbxTagline, "cell 6 0");
 
     chckbxPlot = new JCheckBox(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-    add(chckbxPlot, "cell 4 0");
+    add(chckbxPlot, "cell 8 0");
 
     chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
     add(chckbxRating, "cell 0 1");
 
     chckbxRuntime = new JCheckBox(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    add(chckbxRuntime, "cell 1 1");
+    add(chckbxRuntime, "cell 2 1");
 
     chckbxCertification = new JCheckBox(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-    add(chckbxCertification, "cell 2 1");
+    add(chckbxCertification, "cell 4 1");
 
     chckbxGenres = new JCheckBox(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-    add(chckbxGenres, "cell 3 1");
+    add(chckbxGenres, "cell 6 1");
 
     chckbxTags = new JCheckBox(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-    add(chckbxTags, "cell 4 1");
+    add(chckbxTags, "cell 8 1");
 
     chckbxCast = new JCheckBox(BUNDLE.getString("metatag.cast")); //$NON-NLS-1$
     add(chckbxCast, "cell 0 2");
 
     chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
-    add(chckbxArtwork, "cell 1 2");
+    add(chckbxArtwork, "cell 2 2");
 
     chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-    add(chckbxTrailer, "cell 2 2");
+    add(chckbxTrailer, "cell 4 2");
 
     chckbxCollection = new JCheckBox(BUNDLE.getString("metatag.movieset"));
-    add(chckbxCollection, "flowx,cell 3 2");
+    add(chckbxCollection, "flowx,cell 6 2");
 
     lblMovieSetHint = new JLabel(IconManager.HINT);
-    add(lblMovieSetHint, "cell 3 2");
+    add(lblMovieSetHint, "cell 6 2");
     lblMovieSetHint.setToolTipText(BUNDLE.getString("Settings.movieset.scraper.hint"));
 
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
-    add(btnSelectAll, "flowx,cell 0 3 2 1");
+    add(btnSelectAll, "flowx,cell 0 3 3 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
     btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
-    add(btnDeSelectAll, "cell 0 3");
+    add(btnDeSelectAll, "cell 0 3 3 1");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
 

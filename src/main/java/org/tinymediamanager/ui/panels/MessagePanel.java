@@ -19,10 +19,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 public class MessagePanel extends JPanel {
   private static final long           serialVersionUID = -7224510527137312686L;
@@ -86,12 +83,10 @@ public class MessagePanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, RowSpec.decode("top:default"), FormSpecs.LINE_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[450lp,grow]", "[][]"));
 
     lblDate = new JLabel("");
-    add(lblDate, "2, 1");
+    add(lblDate, "cell 0 0,aligny top");
     JPanel innerPanel = new RoundedPanel() {
       private static final long serialVersionUID = -6407635030887890673L;
 
@@ -100,23 +95,19 @@ public class MessagePanel extends JPanel {
         drawShadow = false;
       }
     };
-    add(innerPanel, "2, 2, fill, default");
-    innerPanel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
+    add(innerPanel, "cell 0 1,growx");
+    innerPanel.setLayout(new MigLayout("", "[1px][350lp,grow]", "[1px][1px][]"));
 
     lblIcon = new JLabel("");
     lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-    innerPanel.add(lblIcon, "2, 2, 1, 3, center, center");
+    innerPanel.add(lblIcon, "cell 0 1,alignx center,aligny center");
 
     lblTitle = new JLabel();
     TmmFontHelper.changeFont(lblTitle, Font.BOLD);
 
-    innerPanel.add(lblTitle, "4, 2, fill, default");
+    innerPanel.add(lblTitle, "cell 1 0,growx");
 
     taMessage = new ReadOnlyTextArea();
-    innerPanel.add(taMessage, "4, 4, fill, fill");
+    innerPanel.add(taMessage, "cell 1 2,grow");
   }
 }

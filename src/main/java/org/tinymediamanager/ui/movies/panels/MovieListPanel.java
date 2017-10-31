@@ -86,10 +86,11 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
     // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
     MovieList movieList = MovieList.getInstance();
-    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList)movieList.getMovies()), new MovieComparator());
+    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
+        new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp,grow][]"));
+    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][]"));
 
     searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH); //$NON-NLS-1$
     add(searchField, "cell 0 0,growx");

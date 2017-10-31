@@ -33,9 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class LightBox is used to show images in a lightbox.
@@ -69,7 +67,7 @@ public class LightBox {
     backgroundPanel.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
     imagePanel = new JPanel();
-    imagePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("75px:grow"), }, new RowSpec[] { RowSpec.decode("fill:75px:grow"), }));
+    imagePanel.setLayout(new MigLayout("", "[75lp,grow]", "[75lp,grow]"));
     imagePanel.setSize(new Dimension((int) (frame.getContentPane().getWidth() * 0.95), (int) (frame.getContentPane().getHeight() * 0.95)));
     imagePanel.setOpaque(false);
 
@@ -83,7 +81,7 @@ public class LightBox {
       image.setImageUrl(url);
     }
 
-    imagePanel.add(image, "1, 1, fill, fill");
+    imagePanel.add(image, "cell 0 0,grow");
 
     backgroundPanel.addMouseListener(new MouseListener() {
       @Override

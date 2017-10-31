@@ -21,21 +21,17 @@ import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.border.AbstractBorder;
 import javax.swing.plaf.UIResource;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The class TmmTree is our base class for an enhanced JTree
@@ -104,7 +100,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
    * @return a list of all set tree nodes filters
    */
   public List<ITmmTreeFilter<E>> getFilters() {
-    return new ArrayList<ITmmTreeFilter<E>>(treeFilters);
+    return new ArrayList<>(treeFilters);
   }
 
   /**
@@ -251,45 +247,6 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
       g.drawLine(g.getClipBounds().x, height - 1, g.getClipBounds().width, height - 1);
 
       g2d.setComposite(savedComposite);
-    }
-  }
-
-  static class VerticalBorderPanel extends JPanel {
-    private static final long serialVersionUID = -3832845181622979771L;
-    private final Color       gridColor        = new Color(217, 217, 217);
-    private List<Integer>     columnsWithoutBorder;
-
-    public VerticalBorderPanel(int[] columnsWithoutBorder) {
-      this.columnsWithoutBorder = new ArrayList<Integer>();
-      for (int index = 0; index < columnsWithoutBorder.length; index++) {
-        this.columnsWithoutBorder.add(columnsWithoutBorder[index]);
-      }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      LayoutManager layout = getLayout();
-      if (!(layout instanceof FormLayout)) {
-        return;
-      }
-      FormLayout formLayout = (FormLayout) layout;
-      FormLayout.LayoutInfo layoutInfo = formLayout.getLayoutInfo(this);
-      int height = layoutInfo.getHeight();
-
-      g.setColor(this.gridColor);
-
-      for (int row = 0; row <= layoutInfo.rowOrigins.length - 1; row++) {
-        for (int col = 0; col <= layoutInfo.columnOrigins.length - 1; col++) {
-          if (columnsWithoutBorder.contains(col)) {
-            continue;
-          }
-
-          int x = layoutInfo.columnOrigins[col];
-          int y = layoutInfo.rowOrigins[row];
-          g.drawLine(x, y, x, y + height);
-        }
-      }
     }
   }
 }

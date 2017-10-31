@@ -34,7 +34,7 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
-import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
+import org.tinymediamanager.ui.movies.panels.MovieScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 

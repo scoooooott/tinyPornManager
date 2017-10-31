@@ -86,7 +86,7 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
-import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
+import org.tinymediamanager.ui.movies.panels.MovieScraperMetadataPanel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;

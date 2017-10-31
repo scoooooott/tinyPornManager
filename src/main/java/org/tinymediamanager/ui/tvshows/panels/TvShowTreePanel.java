@@ -58,10 +58,7 @@ import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class TvShowTreePanel is used to display the tree for TV dhows
@@ -74,27 +71,22 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TmmTreeTable                tree;
-  private TvShowList                  tvShowList       = TvShowList.getInstance();
-
-  private TvShowSelectionModel        tvShowSelectionModel;
 
   public TvShowTreePanel(TvShowSelectionModel selectionModel) {
-    this.tvShowSelectionModel = selectionModel;
-
-    setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("10dlu"), ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.DEFAULT_ROWSPEC, }));
+    TvShowSelectionModel tvShowSelectionModel = selectionModel;
+    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
-    add(searchField, "2, 1, fill, fill");
+    add(searchField, "cell 0 0,grow");
 
     final JToggleButton btnFilter = new JToggleButton("Filter");
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterMenuVisible(btnFilter.isSelected()));
-    add(btnFilter, "4, 1, default, bottom");
+    add(btnFilter, "cell 1 0,alignx left,aligny bottom");
 
     tree = new TmmTreeTable(new TvShowTreeDataProvider(), new TvShowTableFormat()) {
+      private static final long serialVersionUID = 5889201999994512935L;
+
       @Override
       public void storeFilters() {
         if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
@@ -155,7 +147,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     tree.addFilter(searchField);
     JScrollPane scrollPane = new JScrollPane(tree);
     tree.configureScrollPane(scrollPane, new int[] { 0 });
-    add(scrollPane, "1, 3, 5, 1, fill, fill");
+    add(scrollPane, "cell 0 1 2 1,grow");
     tree.adjustColumnPreferredWidths(3);
     tvShowSelectionModel.setTreeTable(tree);
 
@@ -200,6 +192,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     });
 
     // selecting first TV show at startup
+    TvShowList tvShowList = TvShowList.getInstance();
     if (tvShowList.getTvShows() != null && tvShowList.getTvShows().size() > 0) {
       SwingUtilities.invokeLater(() -> {
         ListSelectionModel selectionModel1 = tree.getSelectionModel();

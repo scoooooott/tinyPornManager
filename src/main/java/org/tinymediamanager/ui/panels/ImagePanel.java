@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.panels;
 
-import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -38,11 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.WrapLayout;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Image Panel is used to display all images for a MediaEntity
@@ -68,14 +64,14 @@ public class ImagePanel extends JPanel implements HierarchyListener {
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("50dlu:grow"), }, new RowSpec[] { RowSpec.decode("60dlu:grow"), }));
+    setLayout(new MigLayout("", "[400lp,grow]", "[300lp,grow]"));
 
     scrollPane = new JScrollPane();
-    add(scrollPane, "1, 1, fill, fill");
+    add(scrollPane, "cell 0 0,grow");
 
     panelImages = new JPanel();
-    panelImages.setLayout(new WrapLayout(FlowLayout.LEFT));
     scrollPane.setViewportView(panelImages);
+    panelImages.setLayout(new MigLayout("", "[]", "[]"));
   }
 
   /**
@@ -167,7 +163,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             publish(new ImageChunk(mediaFile.getFileAsPath().toString(), img));
             img = null;
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
         }
       }
@@ -188,7 +184,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
           panelImages.revalidate();
           scrollPane.repaint();
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
     }

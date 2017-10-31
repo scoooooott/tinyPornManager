@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -40,8 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
+import javax.swing.JLayer;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -49,8 +49,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.LayerUI;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,11 +71,10 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.sun.jna.Platform;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MainWindow.
@@ -215,29 +214,20 @@ public class MainWindow extends JFrame {
       // put the toolbar on the top
       getContentPane().add(toolbarPanel, BorderLayout.NORTH);
     }
-    JLayeredPane layeredPane = new JLayeredPane();
-    layeredPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("70dlu:grow") },
-        new RowSpec[] { RowSpec.decode("5dlu"), RowSpec.decode("fill:500px:grow") }));
-    getContentPane().add(layeredPane);
 
     JPanel rootPanel = new JPanel();
     rootPanel.putClientProperty("class", "rootPanel");
-    layeredPane.setLayer(rootPanel, 1);
-    layeredPane.add(rootPanel, "1, 1, 1, 2, fill, fill");
+    rootPanel.setLayout(new MigLayout("insets 0", "[900lp:n,grow]", "[400lp:n,grow]"));
 
-    rootPanel.setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(50dlu;default):grow"), }, new RowSpec[] { RowSpec.decode("fill:500px:grow"), }));
+    // to draw the shadow beneath the toolbar, encapsulate the panel
+    JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI());
+    getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setContinuousLayout(true);
     splitPane.setOpaque(false);
-    // splitPane.putClientProperty("flatMode", true);
-    rootPanel.add(splitPane, "1, 1, fill, fill");
+    rootPanel.add(splitPane, "cell 0 0, grow");
 
-    // JPanel leftPanel = new JPanel();
-    // leftPanel.putClientProperty("class", "roundedPanel");
-    // leftPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
-    // new RowSpec[] { RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
     tabbedPane = new MainTabbedPane() {
       private static final long serialVersionUID = 9041548865608767661L;
 
@@ -247,51 +237,25 @@ public class MainWindow extends JFrame {
         super.updateUI();
       }
     };
-    // leftPanel.add(tabbedPane, "1, 1, fill, fill");
     splitPane.setLeftComponent(tabbedPane);
 
-    // JPanel rightPanel = new JPanel();
-    // rightPanel.putClientProperty("class", "roundedPanel");
-    // rightPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300dlu:grow(3)"), },
-    // new RowSpec[] { RowSpec.decode("fill:200px:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
     detailPanel = new JPanel();
     detailPanel.setOpaque(false);
     detailPanel.setLayout(new CardLayout(0, 0));
-    // rightPanel.add(detailPanel, "1, 1, fill, fill");
     splitPane.setRightComponent(detailPanel);
-
-    // to draw the shadow beneath the toolbar
-    JPanel shadowPanel = new JPanel() {
-      private static final long serialVersionUID = 7962076698737494666L;
-
-      @Override
-      public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        GradientPaint gp = new GradientPaint(0, 0, new Color(32, 32, 32, 80), 0, 4, new Color(0, 0, 0, 0));
-        g2.setPaint(gp);
-        g2.fill(new Rectangle2D.Double(getX(), getY(), getX() + getWidth(), getY() + getHeight()));
-      }
-    };
-    shadowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec.decode("5dlu") }));
-    layeredPane.setLayer(shadowPanel, 2);
-    layeredPane.add(shadowPanel, "1, 1, fill, fill");
 
     addModule(MovieUIModule.getInstance());
     toolbarPanel.setUIModule(MovieUIModule.getInstance());
     addModule(MovieSetUIModule.getInstance());
     addModule(TvShowUIModule.getInstance());
 
-    ChangeListener changeListener = new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent changeEvent) {
-        JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
-        if (sourceTabbedPane.getSelectedComponent() instanceof ITmmTabItem) {
-          ITmmTabItem activeTab = (ITmmTabItem) sourceTabbedPane.getSelectedComponent();
-          toolbarPanel.setUIModule(activeTab.getUIModule());
-          CardLayout cl = (CardLayout) detailPanel.getLayout();
-          cl.show(detailPanel, activeTab.getUIModule().getModuleId());
-        }
+    ChangeListener changeListener = changeEvent -> {
+      JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+      if (sourceTabbedPane.getSelectedComponent() instanceof ITmmTabItem) {
+        ITmmTabItem activeTab = (ITmmTabItem) sourceTabbedPane.getSelectedComponent();
+        toolbarPanel.setUIModule(activeTab.getUIModule());
+        CardLayout cl = (CardLayout) detailPanel.getLayout();
+        cl.show(detailPanel, activeTab.getUIModule().getModuleId());
       }
     };
     tabbedPane.addChangeListener(changeListener);
@@ -307,26 +271,20 @@ public class MainWindow extends JFrame {
     MessageManager.instance.addListener(TmmUIMessageCollector.instance);
 
     // mouse event listener for context menu
-    Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-      @Override
-      public void eventDispatched(AWTEvent arg0) {
-        if (arg0 instanceof MouseEvent && MouseEvent.MOUSE_RELEASED == arg0.getID() && arg0.getSource() instanceof JTextComponent) {
-          MouseEvent me = (MouseEvent) arg0;
-          JTextComponent tc = (JTextComponent) arg0.getSource();
-          if (me.isPopupTrigger() && tc.getComponentPopupMenu() == null) {
-            TextFieldPopupMenu.buildCutCopyPaste().show(tc, me.getX(), me.getY());
-          }
+    Toolkit.getDefaultToolkit().addAWTEventListener(arg0 -> {
+      if (arg0 instanceof MouseEvent && MouseEvent.MOUSE_RELEASED == arg0.getID() && arg0.getSource() instanceof JTextComponent) {
+        MouseEvent me = (MouseEvent) arg0;
+        JTextComponent tc = (JTextComponent) arg0.getSource();
+        if (me.isPopupTrigger() && tc.getComponentPopupMenu() == null) {
+          TextFieldPopupMenu.buildCutCopyPaste().show(tc, me.getX(), me.getY());
         }
       }
     }, AWTEvent.MOUSE_EVENT_MASK);
 
     // inform user is MI could not be loaded
     if (Platform.isLinux() && StringUtils.isBlank(MediaInfo.version())) {
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("mediainfo.failed.linux")); //$NON-NLS-1$
-        }
+      SwingUtilities.invokeLater(() -> {
+        JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("mediainfo.failed.linux")); //$NON-NLS-1$
       });
     }
   }
@@ -400,5 +358,21 @@ public class MainWindow extends JFrame {
 
   public void createLightbox(String pathToFile, String urlToFile) {
     LightBox.showLightBox(instance, pathToFile, urlToFile);
+  }
+
+  private class ShadowLayerUI extends LayerUI<JComponent> {
+    @Override
+    public void paint(Graphics g, JComponent c) {
+      super.paint(g, c);
+
+      Graphics2D g2 = (Graphics2D) g.create();
+
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      GradientPaint gp = new GradientPaint(0, 0, new Color(32, 32, 32, 80), 0, 4, new Color(0, 0, 0, 0));
+      g2.setPaint(gp);
+      g2.fill(new Rectangle2D.Double(0, 0, getWidth(), 7));
+
+      g2.dispose();
+    }
   }
 }

@@ -33,14 +33,8 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -61,7 +55,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
 
   private JButton                     btnBack;
   private JButton                     btnNext;
-  private JButton                     btnCancel;
+  private JButton                     btnFinish;
   private JPanel                      panelContent;
 
   public TinyMediaManagerWizard() {
@@ -88,39 +82,25 @@ public class TinyMediaManagerWizard extends TmmDialog {
   }
 
   private void initComponents() {
-    JPanel panelSizing = new JPanel();
-    getContentPane().add(panelSizing, BorderLayout.CENTER);
-    panelSizing.setLayout(new MigLayout("", "[800lp,grow]", "[400lp,grow]"));
+    {
+      JPanel panelSizing = new JPanel();
+      getContentPane().add(panelSizing, BorderLayout.CENTER);
+      panelSizing.setLayout(new MigLayout("", "[800lp,grow]", "[400lp,grow]"));
 
-    panelContent = new JPanel();
-    panelContent.setLayout(new CardLayout());
-    panelSizing.add(panelContent, "cell 0 0,grow");
+      panelContent = new JPanel();
+      panelContent.setLayout(new CardLayout());
+      panelSizing.add(panelContent, "cell 0 0,grow");
+    }
+    {
+      btnBack = new JButton(new BackAction());
+      addButton(btnBack);
 
-    final JPanel panelSouth = new JPanel();
-    panelSouth
-        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC, }));
+      btnNext = new JButton(new NextAction());
+      addButton(btnNext);
 
-    final JPanel panelButtons = new JPanel();
-    EqualsLayout layout = new EqualsLayout(5);
-    layout.setMinWidth(75);
-    layout.setAlignment(EqualsLayout.RIGHT);
-    panelButtons.setLayout(layout);
-
-    panelSouth.add(panelButtons, "2, 2, fill, fill");
-    getContentPane().add(panelSouth, BorderLayout.SOUTH);
-
-    btnBack = new JButton();
-    btnBack.setAction(new BackAction());
-    panelButtons.add(btnBack);
-
-    btnNext = new JButton();
-    btnNext.setAction(new NextAction());
-    panelButtons.add(btnNext);
-
-    btnCancel = new JButton();
-    btnCancel.setAction(new FinishAction());
-    panelButtons.add(btnCancel);
+      btnFinish = new JButton(new FinishAction());
+      addButton(btnFinish);
+    }
   }
 
   @Override
@@ -150,6 +130,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
         btnBack.setEnabled(false);
       }
       btnNext.setEnabled(true);
+      btnFinish.setEnabled(false);
       CardLayout cl = (CardLayout) (panelContent.getLayout());
       cl.show(panelContent, "" + activePanelIndex);
     }
@@ -167,6 +148,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
       activePanelIndex++;
       if (panels.size() == activePanelIndex + 1) {
         btnNext.setEnabled(false);
+        btnFinish.setEnabled(true);
       }
       btnBack.setEnabled(true);
 
