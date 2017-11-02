@@ -41,7 +41,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -72,6 +71,11 @@ import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
 import com.sun.jna.Platform;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.ConsoleAppender;
+
 /**
  * The Class TinyMediaManager.
  * 
@@ -87,6 +91,9 @@ public class TinyMediaManager {
    *          the arguments
    */
   public static void main(String[] args) {
+    // should we change the log level for the console?
+    setConsoleLogLevel();
+
     // simple parse command line
     if (args != null && args.length > 0) {
       LOGGER.debug("TMM started with: " + Arrays.toString(args));
@@ -210,7 +217,7 @@ public class TinyMediaManager {
           doStartupTasks();
 
           // suppress logging messages from betterbeansbinding
-          org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
+          org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(java.util.logging.Level.SEVERE);
 
           // init ui logger
           TmmUILogCollector.init();
@@ -385,6 +392,7 @@ public class TinyMediaManager {
             catch (Exception ex) {
               LOGGER.warn(ex.getMessage());
             }
+            shutdownLogger();
             System.exit(0);
           }
         }
@@ -402,6 +410,7 @@ public class TinyMediaManager {
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
           }
+          shutdownLogger();
           System.exit(1);
         }
         catch (Exception e) {
@@ -409,6 +418,7 @@ public class TinyMediaManager {
           if (!GraphicsEnvironment.isHeadless()) {
             MessageDialog.showExceptionWindow(e);
           }
+          shutdownLogger();
           System.exit(1);
         }
       }
@@ -552,6 +562,52 @@ public class TinyMediaManager {
         WhatsNewDialog.showChangelog();
       }
     });
+  }
+
+  public static void shutdownLogger() {
+    LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    loggerContext.stop();
+  }
+
+  private static void setConsoleLogLevel() {
+    String loglevelAsString = System.getProperty("tmm.consoleloglevel", "");
+    Level level;
+
+    switch (loglevelAsString) {
+      case "ERROR":
+        level = Level.TRACE;
+        break;
+
+      case "WARN":
+        level = Level.WARN;
+        break;
+
+      case "INFO":
+        level = Level.INFO;
+        break;
+
+      case "DEBUG":
+        level = Level.DEBUG;
+        break;
+
+      case "TRACE":
+        level = Level.TRACE;
+        break;
+
+      default:
+        return;
+    }
+
+    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+    // get the console appener
+    Appender consoleAppender = lc.getLogger("ROOT").getAppender("CONSOLE");
+    if (consoleAppender instanceof ConsoleAppender) {
+      // and set a filter to drop messages beneath the given level
+      ThresholdLoggerFilter filter = new ThresholdLoggerFilter(level);
+      filter.start();
+      consoleAppender.addFilter(filter);
+    }
   }
 
   /**

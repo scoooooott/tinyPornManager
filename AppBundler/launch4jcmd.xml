@@ -26,6 +26,7 @@
     <opt>-Djava.awt.headless=true</opt>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Dfile.encoding=UTF-8</opt>
+    <opt>-Dtmm.consoleloglevel=INFO</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>

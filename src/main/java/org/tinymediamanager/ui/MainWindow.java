@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui;
 
+import static org.tinymediamanager.TinyMediaManager.shutdownLogger;
+
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -343,7 +345,7 @@ public class MainWindow extends JFrame {
           LOGGER.error("Cannot spawn process:", e);
         }
       }
-
+      shutdownLogger();
       System.exit(0); // calling the method is a must
     }
   }

@@ -10,6 +10,7 @@
     <!-- https://logback.qos.ch/manual/appenders.html -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/tmm.log</file>
+        <append>true</append>
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
         </encoder>
