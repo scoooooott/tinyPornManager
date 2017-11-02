@@ -72,6 +72,7 @@ public class TvShowInformationPanel extends JPanel {
   private MediaInformationLogosPanel  panelLogos;
 
   private TvShowSelectionModel        tvShowSelectionModel;
+  private JLabel                      lblOriginalTitle;
 
   /**
    * Instantiates a new tv show information panel.
@@ -152,51 +153,55 @@ public class TvShowInformationPanel extends JPanel {
     {
       JPanel panelRight = new JPanel();
       add(panelRight, "cell 1 0,grow");
-      panelRight.setLayout(new MigLayout("", "[450lp,grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("", "[450lp,grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
 
       {
         lblTvShowName = new JLabel("");
-        panelRight.add(lblTvShowName, "cell 0 0, wmin 0");
+        panelRight.add(lblTvShowName, "cell 0 0,growx,wmin 0");
         TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 1,growx");
+        lblOriginalTitle = new JLabel("");
+        panelRight.add(lblOriginalTitle, "cell 0 1,growx,wmin 0");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 2,growx");
       }
       {
         JPanel panelDetails = new TvShowDetailsPanel(tvShowSelectionModel);
-        panelRight.add(panelDetails, "cell 0 2,growx");
+        panelRight.add(panelDetails, "cell 0 3,growx");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 3,growx");
+        panelRight.add(new JSeparator(), "cell 0 4,growx");
       }
       {
         panelRatingStars = new StarRater(10, 1);
-        panelRight.add(panelRatingStars, "flowx,cell 0 4");
+        panelRight.add(panelRatingStars, "flowx,cell 0 5");
         panelRatingStars.setEnabled(false);
 
         lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 4");
+        panelRight.add(lblVoteCount, "cell 0 5");
 
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 4");
+        panelRight.add(lblRating, "cell 0 5");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 5,growx");
+        panelRight.add(new JSeparator(), "cell 0 6,growx");
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 6,growx");
+        panelRight.add(panelLogos, "cell 0 7,growx");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 7,growx");
+        panelRight.add(new JSeparator(), "cell 0 8,growx");
       }
       {
         JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot"));
-        panelRight.add(lblPlot, "cell 0 8");
+        panelRight.add(lblPlot, "cell 0 9");
         TmmFontHelper.changeFont(lblPlot, Font.BOLD);
 
         JScrollPane scrollPaneOverview = new JScrollPane();
-        panelRight.add(scrollPaneOverview, "cell 0 9,grow");
+        panelRight.add(scrollPaneOverview, "cell 0 10,grow");
 
         tpOverview = new ReadOnlyTextArea();
         scrollPaneOverview.setViewportView(tpOverview);
@@ -282,5 +287,10 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_3, lblVoteCount, jLabelBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShow.originalTitle");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_4, lblOriginalTitle, jLabelBeanProperty);
+    autoBinding_5.bind();
   }
 }

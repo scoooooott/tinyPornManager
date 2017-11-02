@@ -75,6 +75,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JLabel                      lblSeasonPosterSize;
   private JLabel                      lblEpisodeThumbSize;
   private JLabel                      lblPlot;
+  private JLabel                      lblOriginalTitle;
 
   /**
    * Instantiates a new tv show information panel.
@@ -140,59 +141,63 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     }
     {
       JPanel panelRight = new JPanel();
-      panelRight.setLayout(new MigLayout("", "[grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("", "[grow]", "[][][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
       add(panelRight, "cell 1 0,grow");
 
       {
-        lblTvShowName = new JLabel("");
+        lblTvShowName = new TmmLabel("", 1.33);
         panelRight.add(lblTvShowName, "flowx,cell 0 0,growx,wmin 0");
         TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
       }
       {
-        lblEpisodeTitle = new JLabel();
+        lblEpisodeTitle = new TmmLabel("", 1.16);
         panelRight.add(lblEpisodeTitle, "cell 0 1,growx, wmin 0");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 2, growx, wmin 0");
+        lblOriginalTitle = new JLabel("");
+        panelRight.add(lblOriginalTitle, "cell 0 2,growx, wmin 0");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 3,growx,wmin 0");
       }
       {
         panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
-        panelRight.add(panelDetails, "cell 0 3,growx");
+        panelRight.add(panelDetails, "cell 0 4,growx");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 4,growx");
+        panelRight.add(new JSeparator(), "cell 0 5,growx");
       }
       {
         panelRatingStars = new StarRater(10, 1);
-        panelRight.add(panelRatingStars, "flowx,cell 0 5");
+        panelRight.add(panelRatingStars, "flowx,cell 0 6");
         panelRatingStars.setEnabled(false);
 
         lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 5");
+        panelRight.add(lblVoteCount, "cell 0 6");
 
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 5");
+        panelRight.add(lblRating, "cell 0 6");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 6,growx");
+        panelRight.add(new JSeparator(), "cell 0 7,growx");
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 7");
+        panelRight.add(panelLogos, "cell 0 8");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 8,growx");
+        panelRight.add(new JSeparator(), "cell 0 9,growx");
       }
       {
         lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        panelRight.add(lblPlot, "cell 0 9");
+        panelRight.add(lblPlot, "cell 0 10");
 
         JScrollPane scrollPanePlot = new JScrollPane();
         scrollPanePlot.setBorder(null);
 
         taOverview = new ReadOnlyTextArea();
         scrollPanePlot.setViewportView(taOverview);
-        panelRight.add(scrollPanePlot, "cell 0 10,grow");
+        panelRight.add(scrollPanePlot, "cell 0 11,grow");
       }
     }
   }
@@ -262,5 +267,10 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, lblRating, jLabelBeanProperty);
     autoBinding_5.bind();
     //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty
+        .create("selectedTvShowEpisode.originalTitle");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_2, lblOriginalTitle, jLabelBeanProperty);
+    autoBinding_2.bind();
   }
 }

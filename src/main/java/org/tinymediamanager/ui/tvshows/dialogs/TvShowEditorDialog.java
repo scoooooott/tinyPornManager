@@ -167,6 +167,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
   private TmmTable                          tableIds;
   private TmmTable                          tableRatings;
+  private JTextField                        tfOriginalTitle;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -198,6 +199,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     {
       tfTitle.setText(tvShow.getTitle());
+      tfOriginalTitle.setText(tvShow.getOriginalTitle());
       tfSorttitle.setText(tvShow.getSortTitle());
       tpPlot.setText(tvShow.getPlot());
       lblPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
@@ -283,8 +285,8 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
-      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]",
-          "[][][75lp:150lp,grow 150][][][][][50lp:85lp][][75lp:125lp,grow]"));
+      details1Panel.setLayout(new MigLayout("", "[][grow][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]",
+          "[][][][75lp:150lp,grow 150][][][][][50lp:85lp][][75lp:125lp,grow]"));
 
       {
         JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -305,21 +307,28 @@ public class TvShowEditorDialog extends TmmDialog {
           }
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        details1Panel.add(lblPoster, "cell 8 0 1 9,grow");
+        details1Panel.add(lblPoster, "cell 8 0 1 10,grow");
+      }
+      {
+        JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
+        details1Panel.add(lblOriginalTitleT, "cell 0 1,alignx right");
+
+        tfOriginalTitle = new JTextField();
+        details1Panel.add(tfOriginalTitle, "cell 1 1 6 1,growx");
       }
       {
         JLabel lblSortTitle = new TmmLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
-        details1Panel.add(lblSortTitle, "cell 0 1,alignx right");
+        details1Panel.add(lblSortTitle, "cell 0 2,alignx right");
 
         tfSorttitle = new JTextField();
-        details1Panel.add(tfSorttitle, "cell 1 1 6 1,growx");
+        details1Panel.add(tfSorttitle, "cell 1 2 6 1,growx");
       }
       {
         JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        details1Panel.add(lblPlot, "cell 0 2,alignx right,aligny top");
+        details1Panel.add(lblPlot, "cell 0 3,alignx right,aligny top");
 
         JScrollPane scrollPanePlot = new JScrollPane();
-        details1Panel.add(scrollPanePlot, "cell 1 2 6 1,grow");
+        details1Panel.add(scrollPanePlot, "cell 1 3 6 1,grow");
 
         tpPlot = new JTextPane();
         tpPlot.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
@@ -327,55 +336,55 @@ public class TvShowEditorDialog extends TmmDialog {
       }
       {
         JLabel lblYear = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-        details1Panel.add(lblYear, "cell 0 3,alignx right");
+        details1Panel.add(lblYear, "cell 0 4,alignx right");
 
         spYear = new YearSpinner();
-        details1Panel.add(spYear, "cell 1 3,growx");
+        details1Panel.add(spYear, "cell 1 4,growx");
       }
       {
         JLabel lblpremiered = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
-        details1Panel.add(lblpremiered, "cell 3 3,alignx right");
+        details1Panel.add(lblpremiered, "cell 3 4,alignx right");
 
         dpPremiered = new DatePicker(tvShowToEdit.getFirstAired());
-        details1Panel.add(dpPremiered, "cell 4 3 2 1,growx");
+        details1Panel.add(dpPremiered, "cell 4 4 2 1,growx");
       }
       {
         JLabel lblRuntime = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-        details1Panel.add(lblRuntime, "cell 0 4,alignx right");
+        details1Panel.add(lblRuntime, "cell 0 5,alignx right");
 
         spRuntime = new JSpinner();
-        details1Panel.add(spRuntime, "flowx,cell 1 4,growx");
+        details1Panel.add(spRuntime, "flowx,cell 1 5,growx");
 
         JLabel lblMin = new TmmLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
-        details1Panel.add(lblMin, "cell 1 4");
+        details1Panel.add(lblMin, "cell 1 5");
       }
       {
         JLabel lblStatus = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
-        details1Panel.add(lblStatus, "cell 3 4,alignx right");
+        details1Panel.add(lblStatus, "cell 3 5,alignx right");
 
         cbStatus = new JComboBox(new String[] { "", "Continuing", "Ended" });
-        details1Panel.add(cbStatus, "cell 4 4,growx");
+        details1Panel.add(cbStatus, "cell 4 5,growx");
       }
       {
         JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-        details1Panel.add(lblCertification, "cell 0 5,alignx right");
+        details1Panel.add(lblCertification, "cell 0 6,alignx right");
 
         cbCertification = new JComboBox();
-        details1Panel.add(cbCertification, "cell 1 5,growx");
+        details1Panel.add(cbCertification, "cell 1 6,growx");
       }
       {
         JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
-        details1Panel.add(lblRating, "cell 0 6,alignx right");
+        details1Panel.add(lblRating, "cell 0 7,alignx right");
 
         spRating = new JSpinner();
-        details1Panel.add(spRating, "cell 1 6,growx");
+        details1Panel.add(spRating, "cell 1 7,growx");
       }
       {
         JLabel lblRatingsT = new TmmLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
-        details1Panel.add(lblRatingsT, "flowy,cell 0 7,alignx right,aligny top");
+        details1Panel.add(lblRatingsT, "flowy,cell 0 8,alignx right,aligny top");
 
         JScrollPane scrollPaneRatings = new JScrollPane();
-        details1Panel.add(scrollPaneRatings, "cell 1 7 4 1,growx");
+        details1Panel.add(scrollPaneRatings, "cell 1 8 4 1,growx");
 
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
@@ -384,10 +393,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
       {
         JLabel lblStudio = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-        details1Panel.add(lblStudio, "cell 0 8,alignx right");
+        details1Panel.add(lblStudio, "cell 0 9,alignx right");
 
         tfStudio = new JTextField();
-        details1Panel.add(tfStudio, "cell 1 8 6 1,growx");
+        details1Panel.add(tfStudio, "cell 1 9 6 1,growx");
       }
       {
         lblFanart = new ImageLabel();
@@ -401,7 +410,7 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblFanart, "cell 8 9,grow");
+        details1Panel.add(lblFanart, "cell 8 10,grow");
       }
       {
         lblBanner = new ImageLabel();
@@ -415,16 +424,16 @@ public class TvShowEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        details1Panel.add(lblBanner, "cell 1 9 6 1,grow");
+        details1Panel.add(lblBanner, "cell 1 10 6 1,grow");
       }
 
       JButton btnAddRating = new JButton(new AddRatingAction());
       btnAddRating.setMargin(BUTTON_MARGIN);
-      details1Panel.add(btnAddRating, "cell 0 7,alignx right,aligny top");
+      details1Panel.add(btnAddRating, "cell 0 8,alignx right,aligny top");
 
       JButton btnRemoveRating = new JButton(new RemoveRatingAction());
       btnRemoveRating.setMargin(BUTTON_MARGIN);
-      details1Panel.add(btnRemoveRating, "cell 0 7,alignx right,aligny top");
+      details1Panel.add(btnRemoveRating, "cell 0 8,alignx right,aligny top");
     }
 
     /**********************************************************************************
@@ -690,6 +699,7 @@ public class TvShowEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       tvShowToEdit.setTitle(tfTitle.getText());
+      tvShowToEdit.setOriginalTitle(tfOriginalTitle.getText());
       tvShowToEdit.setSortTitle(tfSorttitle.getText());
       tvShowToEdit.setYear((Integer) spYear.getValue());
       tvShowToEdit.setPlot(tpPlot.getText());

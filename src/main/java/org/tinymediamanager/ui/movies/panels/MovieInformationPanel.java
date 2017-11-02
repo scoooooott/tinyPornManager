@@ -93,6 +93,7 @@ public class MovieInformationPanel extends JPanel {
   private LinkLabel                   lblTraktId;
 
   private MediaInformationLogosPanel  panelLogos;
+  private JLabel                      lblOriginalTitle;
 
   /**
    * Instantiates a new movie information panel.
@@ -185,19 +186,23 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[300lp:300lp,grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
+      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[300lp:300lp,grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);
-        panelTopRight.add(lblMovieName, "cell 0 0, grow");
+        panelTopRight.add(lblMovieName, "cell 0 0,growy,wmin 0");
       }
       {
-        panelTopRight.add(new JSeparator(), "cell 0 1,growx");
+        lblOriginalTitle = new JLabel("");
+        panelTopRight.add(lblOriginalTitle, "cell 0 1,growx,wmin 0");
+      }
+      {
+        panelTopRight.add(new JSeparator(), "cell 0 2,growx");
       }
 
       {
         JPanel panelTopDetails = new JPanel();
-        panelTopRight.add(panelTopDetails, "cell 0 2,grow");
+        panelTopRight.add(panelTopDetails, "cell 0 3,grow");
         panelTopDetails.setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]"));
 
         {
@@ -291,50 +296,50 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 3,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 4,growx");
       }
 
       {
         starRater = new StarRater(10, 1);
-        panelTopRight.add(starRater, "flowx,cell 0 4,aligny center");
+        panelTopRight.add(starRater, "flowx,cell 0 5,aligny center");
         starRater.setEnabled(false);
 
         lblRating = new JLabel("");
-        panelTopRight.add(lblRating, "cell 0 4,aligny center");
+        panelTopRight.add(lblRating, "cell 0 5,aligny center");
 
         lblVoteCount = new JLabel("");
-        panelTopRight.add(lblVoteCount, "cell 0 4,aligny center");
+        panelTopRight.add(lblVoteCount, "cell 0 5,aligny center");
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 5,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 6,growx");
       }
 
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelTopRight.add(panelLogos, "cell 0 6,alignx left,aligny top");
+        panelTopRight.add(panelLogos, "cell 0 7,alignx left,aligny top");
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 7,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 8,growx");
       }
 
       {
         JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-        panelTopRight.add(lblTaglineT, "cell 0 8,alignx left,aligny top");
+        panelTopRight.add(lblTaglineT, "cell 0 9,alignx left,aligny top");
 
         lblTagline = new JLabel();
-        panelTopRight.add(lblTagline, "cell 0 9, growx, aligny top, wmin 0");
+        panelTopRight.add(lblTagline, "cell 0 10,growx,wmin 0,aligny top");
       }
 
       {
         JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        panelTopRight.add(lblPlotT, "cell 0 10,alignx left,aligny top");
+        panelTopRight.add(lblPlotT, "cell 0 11,alignx left,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(null);
-        panelTopRight.add(scrollPane, "cell 0 11,grow");
+        panelTopRight.add(scrollPane, "cell 0 12,grow");
 
         taPlot = new ReadOnlyTextArea();
         scrollPane.setViewportView(taPlot);
@@ -454,5 +459,10 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_5, lblTraktId, jLabelBeanProperty);
     autoBinding_6.setConverter(new ZeroIdConverter());
     autoBinding_6.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalTitle");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_6, lblOriginalTitle, jLabelBeanProperty);
+    autoBinding_8.bind();
   }
 }
