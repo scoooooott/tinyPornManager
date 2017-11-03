@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.movie.MovieEdition;
@@ -63,51 +66,53 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  */
 public class MovieNfoParser {
-  private Element            root;
-  private final List<String> supportedElements   = new ArrayList<>();
+  private static final Logger LOGGER              = LoggerFactory.getLogger(MovieNfoParser.class);
 
-  public String              title               = "";
-  public String              originaltitle       = "";
-  public String              sorttitle           = "";
-  public int                 year                = 0;
-  public Set                 set                 = null;
-  public int                 top250              = 0;
-  public String              plot                = "";
-  public String              outline             = "";
-  public String              tagline             = "";
-  public int                 runtime             = 0;
-  public Certification       certification       = Certification.NOT_RATED;
-  public String              country             = "";
-  public Date                releaseDate         = null;
-  public boolean             watched             = false;
-  public int                 playcount           = 0;
-  public String              languages           = "";
-  public MediaSource         source              = MediaSource.UNKNOWN;
-  public MovieEdition        edition             = MovieEdition.NONE;
-  public String              trailer             = "";
+  private Element             root;
+  private final List<String>  supportedElements   = new ArrayList<>();
 
-  public Map<String, Object> ids                 = new HashMap<>();
-  public Map<String, Rating> ratings             = new HashMap<>();
+  public String               title               = "";
+  public String               originaltitle       = "";
+  public String               sorttitle           = "";
+  public int                  year                = 0;
+  public Set                  set                 = null;
+  public int                  top250              = 0;
+  public String               plot                = "";
+  public String               outline             = "";
+  public String               tagline             = "";
+  public int                  runtime             = 0;
+  public Certification        certification       = Certification.NOT_RATED;
+  public String               country             = "";
+  public Date                 releaseDate         = null;
+  public boolean              watched             = false;
+  public int                  playcount           = 0;
+  public String               languages           = "";
+  public MediaSource          source              = MediaSource.UNKNOWN;
+  public MovieEdition         edition             = MovieEdition.NONE;
+  public String               trailer             = "";
 
-  public List<String>        posters             = new ArrayList<>();
-  public List<String>        fanarts             = new ArrayList<>();
-  public List<MediaGenres>   genres              = new ArrayList<>();
-  public List<String>        studios             = new ArrayList<>();
-  public List<String>        tags                = new ArrayList<>();
-  public List<Person>        actors              = new ArrayList<>();
-  public List<Person>        producers           = new ArrayList<>();
-  public List<Person>        directors           = new ArrayList<>();
-  public List<Person>        credits             = new ArrayList<>();
+  public Map<String, Object>  ids                 = new HashMap<>();
+  public Map<String, Rating>  ratings             = new HashMap<>();
 
-  public List<String>        unsupportedElements = new ArrayList<>();
+  public List<String>         posters             = new ArrayList<>();
+  public List<String>         fanarts             = new ArrayList<>();
+  public List<MediaGenres>    genres              = new ArrayList<>();
+  public List<String>         studios             = new ArrayList<>();
+  public List<String>         tags                = new ArrayList<>();
+  public List<Person>         actors              = new ArrayList<>();
+  public List<Person>         producers           = new ArrayList<>();
+  public List<Person>         directors           = new ArrayList<>();
+  public List<Person>         credits             = new ArrayList<>();
+
+  public List<String>         unsupportedElements = new ArrayList<>();
 
   /* some xbmc related tags we parse, but do not use internally */
-  public Fileinfo            fileinfo            = null;
-  public String              epbookmark          = "";
-  public Date                lastplayed          = null;
-  public String              status              = "";
-  public String              code                = "";
-  public Date                dateadded           = null;
+  public Fileinfo             fileinfo            = null;
+  public String               epbookmark          = "";
+  public Date                 lastplayed          = null;
+  public String               status              = "";
+  public String               code                = "";
+  public Date                 dateadded           = null;
 
   /**
    * create a new instance by parsing the document
@@ -127,43 +132,58 @@ public class MovieNfoParser {
     this.root = elements.get(0);
 
     // parse all supported fields
-    parseTitle();
-    parseOriginalTitle();
-    parseSorttitle();
-    parseRatingAndVotes();
-    parseSet();
-    parseYear();
-    parseTop250();
-    parsePlot();
-    parseOutline();
-    parseTagline();
-    parseRuntime();
-    parsePosters();
-    parseFanarts();
-    parseCertification();
-    parseIds();
-    parseCountry();
-    parseReleaseDate();
-    parseWatchedAndPlaycount();
-    parseGenres();
-    parseStudios();
-    parseCredits();
-    parseDirectors();
-    parseTags();
-    parseActors();
-    parseProducers();
-    parseFileinfo();
-    parseLanguages();
-    parseSource();
-    parseEdition();
-    parseTrailer();
+    parseTag(MovieNfoParser::parseTitle);
+    parseTag(MovieNfoParser::parseOriginalTitle);
+    parseTag(MovieNfoParser::parseSorttitle);
+    parseTag(MovieNfoParser::parseRatingAndVotes);
+    parseTag(MovieNfoParser::parseSet);
+    parseTag(MovieNfoParser::parseYear);
+    parseTag(MovieNfoParser::parseTop250);
+    parseTag(MovieNfoParser::parsePlot);
+    parseTag(MovieNfoParser::parseOutline);
+    parseTag(MovieNfoParser::parseTagline);
+    parseTag(MovieNfoParser::parseRuntime);
+    parseTag(MovieNfoParser::parsePosters);
+    parseTag(MovieNfoParser::parseFanarts);
+    parseTag(MovieNfoParser::parseCertification);
+    parseTag(MovieNfoParser::parseIds);
+    parseTag(MovieNfoParser::parseCountry);
+    parseTag(MovieNfoParser::parseReleaseDate);
+    parseTag(MovieNfoParser::parseWatchedAndPlaycount);
+    parseTag(MovieNfoParser::parseGenres);
+    parseTag(MovieNfoParser::parseStudios);
+    parseTag(MovieNfoParser::parseCredits);
+    parseTag(MovieNfoParser::parseDirectors);
+    parseTag(MovieNfoParser::parseTags);
+    parseTag(MovieNfoParser::parseActors);
+    parseTag(MovieNfoParser::parseProducers);
+    parseTag(MovieNfoParser::parseFileinfo);
+    parseTag(MovieNfoParser::parseLanguages);
+    parseTag(MovieNfoParser::parseSource);
+    parseTag(MovieNfoParser::parseEdition);
+    parseTag(MovieNfoParser::parseTrailer);
 
-    parseEpbookmark();
-    parseLastplayed();
-    parseStatus();
-    parseCode();
-    parseDateadded();
-    findUnsupportedElements();
+    parseTag(MovieNfoParser::parseEpbookmark);
+    parseTag(MovieNfoParser::parseLastplayed);
+    parseTag(MovieNfoParser::parseStatus);
+    parseTag(MovieNfoParser::parseCode);
+    parseTag(MovieNfoParser::parseDateadded);
+    parseTag(MovieNfoParser::findUnsupportedElements);
+  }
+
+  /**
+   * parse the tag in a save way
+   *
+   * @param function
+   *          the parsing function to be executed
+   */
+  private void parseTag(Function<MovieNfoParser, Void> function) {
+    try {
+      function.apply(this);
+    }
+    catch (Exception e) {
+      LOGGER.warn("problem parsing tag (line " + e.getStackTrace()[0].getLineNumber() + "):" + e.getMessage());
+    }
   }
 
   /**
@@ -221,37 +241,43 @@ public class MovieNfoParser {
   /**
    * the title usually comes in the title tag
    */
-  private void parseTitle() {
+  private Void parseTitle() {
     supportedElements.add("title");
 
     Element element = getSingleElement(root, "title");
     if (element != null) {
       title = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the original title usually comes in the originaltitle tag
    */
-  private void parseOriginalTitle() {
+  private Void parseOriginalTitle() {
     supportedElements.add("originaltitle");
 
     Element element = getSingleElement(root, "originaltitle");
     if (element != null) {
       originaltitle = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the sorttitle usually comes in the sorttitle tag
    */
-  private void parseSorttitle() {
+  private Void parseSorttitle() {
     supportedElements.add("sorttitle");
 
     Element element = getSingleElement(root, "sorttitle");
     if (element != null) {
       sorttitle = element.ownText();
     }
+
+    return null;
   }
 
   /**
@@ -259,7 +285,7 @@ public class MovieNfoParser {
    * - two separate fields: rating, votes (old style) or<br />
    * - in a nested ratings field (new style)
    */
-  private void parseRatingAndVotes() {
+  private Void parseRatingAndVotes() {
     supportedElements.add("rating");
     supportedElements.add("userrating");
     supportedElements.add("ratings");
@@ -351,6 +377,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -360,7 +388,7 @@ public class MovieNfoParser {
    * - old mediaportal style is a sets tag with a set child<br />
    * - new mediaportal style is a set tag with the set name
    */
-  private void parseSet() {
+  private Void parseSet() {
     supportedElements.add("sets");
     supportedElements.add("set");
 
@@ -403,12 +431,14 @@ public class MovieNfoParser {
         set.overview = "";
       }
     }
+
+    return null;
   }
 
   /**
    * the year usually comes in the year tag as an integer
    */
-  private void parseYear() {
+  private Void parseYear() {
     supportedElements.add("year");
 
     Element element = getSingleElement(root, "year");
@@ -419,12 +449,14 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * the top250 usually comes in the top250 tag as an integer (or empty)
    */
-  private void parseTop250() {
+  private Void parseTop250() {
     supportedElements.add("top250");
 
     Element element = getSingleElement(root, "top250");
@@ -435,48 +467,56 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * the plot usually comes in the plot tag as an integer (or empty)
    */
-  private void parsePlot() {
+  private Void parsePlot() {
     supportedElements.add("plot");
 
     Element element = getSingleElement(root, "plot");
     if (element != null) {
       plot = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the outline usually comes in the outline tag as an integer (or empty)
    */
-  private void parseOutline() {
+  private Void parseOutline() {
     supportedElements.add("outline");
 
     Element element = getSingleElement(root, "outline");
     if (element != null) {
       outline = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the tagline usually comes in the tagline tag as an integer (or empty)
    */
-  private void parseTagline() {
+  private Void parseTagline() {
     supportedElements.add("tagline");
 
     Element element = getSingleElement(root, "tagline");
     if (element != null) {
       tagline = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the runtime usually comes in the runtime tag as an integer
    */
-  private void parseRuntime() {
+  private Void parseRuntime() {
     supportedElements.add("runtime");
 
     Element element = getSingleElement(root, "runtime");
@@ -487,6 +527,8 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
@@ -494,7 +536,7 @@ public class MovieNfoParser {
    * - kodi usually puts it into thumb tags (multiple; in newer versions with an aspect attribute)<br />
    * - mediaportal puts it also in thumb tags (single)
    */
-  private void parsePosters() {
+  private Void parsePosters() {
     supportedElements.add("thumb");
 
     // get all thumb elements
@@ -510,6 +552,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -518,7 +562,7 @@ public class MovieNfoParser {
    * - kodi usually puts it into a fanart tag (in newer versions a nested thumb tag)<br />
    * - mediaportal puts it also into a fanart tag (with nested thumb tags)
    */
-  private void parseFanarts() {
+  private Void parseFanarts() {
     supportedElements.add("fanart");
 
     // get all thumb elements
@@ -538,6 +582,8 @@ public class MovieNfoParser {
         fanarts.add(fanart.ownText());
       }
     }
+
+    return null;
   }
 
   /**
@@ -545,7 +591,7 @@ public class MovieNfoParser {
    * - kodi has both tags filled, but certification has a much more clear format<br />
    * - mediaportal has only mpaa filled
    */
-  private void parseCertification() {
+  private Void parseCertification() {
     supportedElements.add("certification");
     supportedElements.add("mpaa");
 
@@ -556,6 +602,8 @@ public class MovieNfoParser {
     if (element != null) {
       certification = MovieHelpers.parseCertificationStringForMovieSetupCountry(element.ownText());
     }
+
+    return null;
   }
 
   /**
@@ -565,7 +613,7 @@ public class MovieNfoParser {
    * - tmdbId tag (tmdb Id> or<br />
    * - in a special nested tag (tmm store)
    */
-  private void parseIds() {
+  private Void parseIds() {
     supportedElements.add("id");
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
@@ -596,6 +644,11 @@ public class MovieNfoParser {
       for (Element entry : children) {
         Element key = getSingleElement(entry, "key");
         Element value = getSingleElement(entry, "value");
+
+        if (key == null || value == null) {
+          continue;
+        }
+
         if (StringUtils.isNoneBlank(key.ownText(), value.ownText())) {
           // check whether the id is an integer
           try {
@@ -625,24 +678,28 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * the country usually comes in the country tag
    */
-  private void parseCountry() {
+  private Void parseCountry() {
     supportedElements.add("country");
 
     Element element = getSingleElement(root, "country");
     if (element != null) {
       country = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the release date is usually in the premiered tag
    */
-  private void parseReleaseDate() {
+  private Void parseReleaseDate() {
     supportedElements.add("premiered");
     supportedElements.add("aired");
 
@@ -673,12 +730,14 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * parse the watched flag (watched tag) and playcount (playcount tag) together
    */
-  private void parseWatchedAndPlaycount() {
+  private Void parseWatchedAndPlaycount() {
     supportedElements.add("watched");
     supportedElements.add("playcount");
 
@@ -702,6 +761,8 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
@@ -709,7 +770,7 @@ public class MovieNfoParser {
    * - kodi has multiple genre tags<br />
    * - mediaportal as a nested genres tag
    */
-  private void parseGenres() {
+  private Void parseGenres() {
     supportedElements.add("genres");
     supportedElements.add("genre");
 
@@ -731,6 +792,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -738,7 +801,7 @@ public class MovieNfoParser {
    * - kodi has multiple studio tags<br />
    * - mediaportal has all studios (comma separated) in one studio tag
    */
-  private void parseStudios() {
+  private Void parseStudios() {
     supportedElements.add("studio");
 
     Elements elements = root.select(root.tagName() + " > studio");
@@ -757,6 +820,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -764,7 +829,7 @@ public class MovieNfoParser {
    * - kodi has multiple credits tags<br />
    * - mediaportal has all credits (comma separated) in one credits tag
    */
-  private void parseCredits() {
+  private Void parseCredits() {
     supportedElements.add("credits");
 
     Elements elements = root.select(root.tagName() + " > credits");
@@ -791,6 +856,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -798,7 +865,7 @@ public class MovieNfoParser {
    * - kodi has multiple director tags<br />
    * - mediaportal has all directors (comma separated) in one director tag
    */
-  private void parseDirectors() {
+  private Void parseDirectors() {
     supportedElements.add("director");
 
     Elements elements = root.select(root.tagName() + " > director");
@@ -827,12 +894,14 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * tags usually come in a tag tag
    */
-  private void parseTags() {
+  private Void parseTags() {
     supportedElements.add("tag");
 
     Elements elements = root.select(root.tagName() + " > tag");
@@ -841,6 +910,8 @@ public class MovieNfoParser {
         tags.add(element.ownText());
       }
     }
+
+    return null;
   }
 
   /**
@@ -849,7 +920,7 @@ public class MovieNfoParser {
    * - role<br />
    * - thumb
    */
-  private void parseActors() {
+  private Void parseActors() {
     supportedElements.add("actor");
 
     Elements elements = root.select(root.tagName() + " > actor");
@@ -874,6 +945,8 @@ public class MovieNfoParser {
         actors.add(actor);
       }
     }
+
+    return null;
   }
 
   /**
@@ -882,7 +955,7 @@ public class MovieNfoParser {
    * - role<br />
    * - thumb
    */
-  private void parseProducers() {
+  private Void parseProducers() {
     supportedElements.add("producer");
 
     Elements elements = root.select(root.tagName() + " > producer");
@@ -907,12 +980,14 @@ public class MovieNfoParser {
         producers.add(producer);
       }
     }
+
+    return null;
   }
 
   /**
    * parse file information.
    */
-  private void parseFileinfo() {
+  private Void parseFileinfo() {
     supportedElements.add("fileinfo");
 
     Element element = getSingleElement(root, "fileinfo");
@@ -949,6 +1024,8 @@ public class MovieNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   private Video parseVideo(Element element) {
@@ -1053,7 +1130,7 @@ public class MovieNfoParser {
   /**
    * spoken languages are usually stored in the languages tag
    */
-  private void parseLanguages() {
+  private Void parseLanguages() {
     supportedElements.add("languages");
 
     Element element = getSingleElement(root, "languages");
@@ -1076,12 +1153,14 @@ public class MovieNfoParser {
       }
       this.languages = StringUtils.join(languages.toArray(), ", ");
     }
+
+    return null;
   }
 
   /**
    * the media source is usually in the source tag
    */
-  private void parseSource() {
+  private Void parseSource() {
     supportedElements.add("source");
 
     Element element = getSingleElement(root, "source");
@@ -1092,12 +1171,14 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * the edition is usually in the edition tag
    */
-  private void parseEdition() {
+  private Void parseEdition() {
     supportedElements.add("edition");
 
     Element element = getSingleElement(root, "edition");
@@ -1108,12 +1189,14 @@ public class MovieNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * a trailer is usually in the trailer tag
    */
-  private void parseTrailer() {
+  private Void parseTrailer() {
     supportedElements.add("trailer");
 
     Element element = getSingleElement(root, "trailer");
@@ -1143,24 +1226,28 @@ public class MovieNfoParser {
         trailer = element.ownText();
       }
     }
+
+    return null;
   }
 
   /**
    * find epbookmark for xbmc related nfos
    */
-  private void parseEpbookmark() {
+  private Void parseEpbookmark() {
     supportedElements.add("epbookmark");
 
     Element element = getSingleElement(root, "epbookmark");
     if (element != null) {
       epbookmark = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * find lastplayed for xbmc related nfos
    */
-  private void parseLastplayed() {
+  private Void parseLastplayed() {
     supportedElements.add("lastplayed");
 
     Element element = getSingleElement(root, "lastplayed");
@@ -1175,36 +1262,42 @@ public class MovieNfoParser {
       catch (ParseException ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * find status for xbmc related nfos
    */
-  private void parseStatus() {
+  private Void parseStatus() {
     supportedElements.add("status");
 
     Element element = getSingleElement(root, "status");
     if (element != null) {
       status = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * find code for xbmc related nfos
    */
-  private void parseCode() {
+  private Void parseCode() {
     supportedElements.add("code");
 
     Element element = getSingleElement(root, "code");
     if (element != null) {
       code = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * find dateadded for xbmc related nfos
    */
-  private void parseDateadded() {
+  private Void parseDateadded() {
     supportedElements.add("dateadded");
 
     Element element = getSingleElement(root, "dateadded");
@@ -1219,12 +1312,14 @@ public class MovieNfoParser {
       catch (ParseException ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * find and store all unsupported tags
    */
-  private void findUnsupportedElements() {
+  private Void findUnsupportedElements() {
     // get all children of the root
     for (Element element : root.children()) {
       if (!supportedElements.contains(element.tagName())) {
@@ -1232,6 +1327,8 @@ public class MovieNfoParser {
         unsupportedElements.add(elementText);
       }
     }
+
+    return null;
   }
 
   /**

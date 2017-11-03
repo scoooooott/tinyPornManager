@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -51,6 +54,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  */
 public class TvShowNfoParser {
+  private static final Logger       LOGGER              = LoggerFactory.getLogger(TvShowNfoParser.class);
   /** ignore the following tags since they originally do not belong to a TV show NFO */
   private static final List<String> IGNORE              = Arrays.asList("set", "season", "episode", "displayseason", "displayepisode", "epbookmark",
       "resume");
@@ -111,34 +115,51 @@ public class TvShowNfoParser {
     this.root = elements.get(0);
 
     // parse all supported fields
-    parseTitle();
-    parseShowTitle();
-    parseRatingAndVotes();
-    parseYear();
-    parsePlot();
-    parseOutline();
-    parseRuntime();
-    parseStatus();
-    parsePosters();
-    parseBanners();
-    parseFanarts();
-    parseCertification();
-    parseIds();
-    parseReleaseDate();
-    parseWatchedAndPlaycount();
-    parseGenres();
-    parseStudios();
-    parseTags();
-    parseActors();
-    parseTrailer();
+    parseTag(TvShowNfoParser::parseTitle);
+    parseTag(TvShowNfoParser::parseShowTitle);
+    parseTag(TvShowNfoParser::parseRatingAndVotes);
+    parseTag(TvShowNfoParser::parseYear);
+    parseTag(TvShowNfoParser::parsePlot);
+    parseTag(TvShowNfoParser::parseOutline);
+    parseTag(TvShowNfoParser::parseRuntime);
+    parseTag(TvShowNfoParser::parseStatus);
+    parseTag(TvShowNfoParser::parsePosters);
+    parseTag(TvShowNfoParser::parseBanners);
+    parseTag(TvShowNfoParser::parseFanarts);
+    parseTag(TvShowNfoParser::parseCertification);
+    parseTag(TvShowNfoParser::parseIds);
+    parseTag(TvShowNfoParser::parseReleaseDate);
+    parseTag(TvShowNfoParser::parseWatchedAndPlaycount);
+    parseTag(TvShowNfoParser::parseGenres);
+    parseTag(TvShowNfoParser::parseStudios);
+    parseTag(TvShowNfoParser::parseTags);
+    parseTag(TvShowNfoParser::parseActors);
+    parseTag(TvShowNfoParser::parseTrailer);
 
-    parseTagline();
-    parseTop250();
-    parseLastplayed();
-    parseCode();
-    parseDateadded();
-    parseEpisodeguide();
-    findUnsupportedElements();
+    parseTag(TvShowNfoParser::parseTagline);
+    parseTag(TvShowNfoParser::parseTop250);
+    parseTag(TvShowNfoParser::parseLastplayed);
+    parseTag(TvShowNfoParser::parseCode);
+    parseTag(TvShowNfoParser::parseDateadded);
+    parseTag(TvShowNfoParser::parseEpisodeguide);
+    parseTag(TvShowNfoParser::findUnsupportedElements);
+  }
+
+  /**
+   * parse the tag in a save way
+   *
+   * @param function
+   *          the parsing function to be executed
+   */
+  private Void parseTag(Function<TvShowNfoParser, Void> function) {
+    try {
+      function.apply(this);
+    }
+    catch (Exception e) {
+      LOGGER.warn("problem parsing tag (line " + e.getStackTrace()[0].getLineNumber() + "):" + e.getMessage());
+    }
+
+    return null;
   }
 
   /**
@@ -196,25 +217,29 @@ public class TvShowNfoParser {
   /**
    * the title usually comes in the title tag
    */
-  private void parseTitle() {
+  private Void parseTitle() {
     supportedElements.add("title");
 
     Element element = getSingleElement(root, "title");
     if (element != null) {
       title = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the show title usually comes in the showTitle tag
    */
-  private void parseShowTitle() {
+  private Void parseShowTitle() {
     supportedElements.add("showtitle");
 
     Element element = getSingleElement(root, "showtitle");
     if (element != null) {
       showTitle = element.ownText();
     }
+
+    return null;
   }
 
   /**
@@ -222,7 +247,7 @@ public class TvShowNfoParser {
    * - two separate fields: rating, votes (old style) or<br />
    * - in a nested ratings field (new style)
    */
-  private void parseRatingAndVotes() {
+  private Void parseRatingAndVotes() {
     supportedElements.add("rating");
     supportedElements.add("userrating");
     supportedElements.add("ratings");
@@ -314,12 +339,14 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * the year usually comes in the year tag as an integer
    */
-  private void parseYear() {
+  private Void parseYear() {
     supportedElements.add("year");
 
     Element element = getSingleElement(root, "year");
@@ -330,12 +357,14 @@ public class TvShowNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * the top250 usually comes in the top250 tag as an integer (or empty)
    */
-  private void parseTop250() {
+  private Void parseTop250() {
     supportedElements.add("top250");
 
     Element element = getSingleElement(root, "top250");
@@ -346,48 +375,56 @@ public class TvShowNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * the plot usually comes in the plot tag as an integer (or empty)
    */
-  private void parsePlot() {
+  private Void parsePlot() {
     supportedElements.add("plot");
 
     Element element = getSingleElement(root, "plot");
     if (element != null) {
       plot = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the outline usually comes in the outline tag as an integer (or empty)
    */
-  private void parseOutline() {
+  private Void parseOutline() {
     supportedElements.add("outline");
 
     Element element = getSingleElement(root, "outline");
     if (element != null) {
       outline = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the tagline usually comes in the tagline tag as an integer (or empty)
    */
-  private void parseTagline() {
+  private Void parseTagline() {
     supportedElements.add("tagline");
 
     Element element = getSingleElement(root, "tagline");
     if (element != null) {
       tagline = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * the runtime usually comes in the runtime tag as an integer
    */
-  private void parseRuntime() {
+  private Void parseRuntime() {
     supportedElements.add("runtime");
 
     Element element = getSingleElement(root, "runtime");
@@ -398,25 +435,29 @@ public class TvShowNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * parse status in <status>xxx</status>
    */
-  private void parseStatus() {
+  private Void parseStatus() {
     supportedElements.add("status");
 
     Element element = getSingleElement(root, "status");
     if (element != null) {
       status = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * posters are usually inside <thumb>xxx</thumb> tag with an aspect of "poster"<br />
    * but there are also season poster in this tag
    */
-  private void parsePosters() {
+  private Void parsePosters() {
     supportedElements.add("thumb");
 
     // get all thumb elements
@@ -458,12 +499,14 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * banners are usually inside <thumb>xxx</thumb> tag with an aspect of "banner"
    */
-  private void parseBanners() {
+  private Void parseBanners() {
     // supportedElements.add("thumb"); //already registered with posters
 
     // get all thumb elements
@@ -479,6 +522,8 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -487,7 +532,7 @@ public class TvShowNfoParser {
    * - kodi usually puts it into a fanart tag (in newer versions a nested thumb tag)<br />
    * - mediaportal puts it also into a fanart tag (with nested thumb tags)
    */
-  private void parseFanarts() {
+  private Void parseFanarts() {
     supportedElements.add("fanart");
 
     // get all thumb elements
@@ -514,6 +559,8 @@ public class TvShowNfoParser {
         fanarts.add(prefix + fanart.ownText());
       }
     }
+
+    return null;
   }
 
   /**
@@ -521,7 +568,7 @@ public class TvShowNfoParser {
    * - kodi has both tags filled, but certification has a much more clear format<br />
    * - mediaportal has only mpaa filled
    */
-  private void parseCertification() {
+  private Void parseCertification() {
     supportedElements.add("certification");
     supportedElements.add("mpaa");
 
@@ -532,6 +579,8 @@ public class TvShowNfoParser {
     if (element != null) {
       certification = TvShowHelpers.parseCertificationStringForTvShowSetupCountry(element.ownText());
     }
+
+    return null;
   }
 
   /**
@@ -541,7 +590,7 @@ public class TvShowNfoParser {
    * - tmdbId tag (tmdb Id> or<br />
    * - in a special nested tag (tmm store)
    */
-  private void parseIds() {
+  private Void parseIds() {
     supportedElements.add("id");
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
@@ -589,6 +638,11 @@ public class TvShowNfoParser {
       for (Element entry : children) {
         Element key = getSingleElement(entry, "key");
         Element value = getSingleElement(entry, "value");
+
+        if (key == null || value == null) {
+          continue;
+        }
+
         if (StringUtils.isNoneBlank(key.ownText(), value.ownText())) {
           // check whether the id is an integer
           try {
@@ -618,12 +672,14 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * the release date is usually in the premiered tag
    */
-  private void parseReleaseDate() {
+  private Void parseReleaseDate() {
     supportedElements.add("premiered");
     supportedElements.add("aired");
 
@@ -654,12 +710,14 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * parse the watched flag (watched tag) and playcount (playcount tag) together
    */
-  private void parseWatchedAndPlaycount() {
+  private Void parseWatchedAndPlaycount() {
     supportedElements.add("watched");
     supportedElements.add("playcount");
 
@@ -673,6 +731,8 @@ public class TvShowNfoParser {
       catch (Exception ignored) {
       }
     }
+
+    return null;
   }
 
   /**
@@ -680,7 +740,7 @@ public class TvShowNfoParser {
    * - kodi has multiple genre tags<br />
    * - mediaportal as a nested genres tag
    */
-  private void parseGenres() {
+  private Void parseGenres() {
     supportedElements.add("genres");
     supportedElements.add("genre");
 
@@ -702,6 +762,8 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
@@ -709,7 +771,7 @@ public class TvShowNfoParser {
    * - kodi has multiple studio tags<br />
    * - mediaportal has all studios (comma separated) in one studio tag
    */
-  private void parseStudios() {
+  private Void parseStudios() {
     supportedElements.add("studio");
 
     Elements elements = root.select(root.tagName() + " > studio");
@@ -728,12 +790,14 @@ public class TvShowNfoParser {
         }
       }
     }
+
+    return null;
   }
 
   /**
    * tags usually come in a tag tag
    */
-  private void parseTags() {
+  private Void parseTags() {
     supportedElements.add("tag");
 
     Elements elements = root.select(root.tagName() + " > tag");
@@ -742,6 +806,8 @@ public class TvShowNfoParser {
         tags.add(element.ownText());
       }
     }
+
+    return null;
   }
 
   /**
@@ -750,7 +816,7 @@ public class TvShowNfoParser {
    * - role<br />
    * - thumb
    */
-  private void parseActors() {
+  private Void parseActors() {
     supportedElements.add("actor");
 
     Elements elements = root.select(root.tagName() + " > actor");
@@ -775,12 +841,14 @@ public class TvShowNfoParser {
         actors.add(actor);
       }
     }
+
+    return null;
   }
 
   /**
    * a trailer is usually in the trailer tag
    */
-  private void parseTrailer() {
+  private Void parseTrailer() {
     supportedElements.add("trailer");
 
     Element element = getSingleElement(root, "trailer");
@@ -810,12 +878,14 @@ public class TvShowNfoParser {
         trailer = element.ownText();
       }
     }
+
+    return null;
   }
 
   /**
    * find lastplayed for xbmc related nfos
    */
-  private void parseLastplayed() {
+  private Void parseLastplayed() {
     supportedElements.add("lastplayed");
 
     Element element = getSingleElement(root, "lastplayed");
@@ -830,24 +900,28 @@ public class TvShowNfoParser {
       catch (ParseException ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * find code for xbmc related nfos
    */
-  private void parseCode() {
+  private Void parseCode() {
     supportedElements.add("code");
 
     Element element = getSingleElement(root, "code");
     if (element != null) {
       code = element.ownText();
     }
+
+    return null;
   }
 
   /**
    * find dateadded for xbmc related nfos
    */
-  private void parseDateadded() {
+  private Void parseDateadded() {
     supportedElements.add("dateadded");
 
     Element element = getSingleElement(root, "dateadded");
@@ -862,24 +936,28 @@ public class TvShowNfoParser {
       catch (ParseException ignored) {
       }
     }
+
+    return null;
   }
 
   /**
    * find episodeguide for xbmc related nfos
    */
-  private void parseEpisodeguide() {
+  private Void parseEpisodeguide() {
     supportedElements.add("episodeguide");
 
     Element element = getSingleElement(root, "episodeguide");
     if (element != null) {
       episodeguide = element.children().toString();
     }
+
+    return null;
   }
 
   /**
    * find and store all unsupported tags
    */
-  private void findUnsupportedElements() {
+  private Void findUnsupportedElements() {
     // get all children of the root
     for (Element element : root.children()) {
       if (!IGNORE.contains(element.tagName()) && !supportedElements.contains(element.tagName())) {
@@ -887,6 +965,8 @@ public class TvShowNfoParser {
         unsupportedElements.add(elementText);
       }
     }
+
+    return null;
   }
 
   /**

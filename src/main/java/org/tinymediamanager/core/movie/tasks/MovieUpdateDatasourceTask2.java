@@ -453,9 +453,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         Movie nfo = null;
         try {
           MovieNfoParser movieNfoParser = MovieNfoParser.parseNfo(mf.getFileAsPath());
-          if (movieNfoParser.isValidNfo()) {
-            nfo = movieNfoParser.toMovie();
-          }
+          nfo = movieNfoParser.toMovie();
         }
         catch (Exception e) {
           LOGGER.warn("problem parsing NFO: " + e.getMessage());
