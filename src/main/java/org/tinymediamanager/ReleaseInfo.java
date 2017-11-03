@@ -36,17 +36,10 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class ReleaseInfo {
-
-  /** The Constant LOGGER. */
   private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseInfo.class);
 
-  /** The version. */
   private static String       version;
-
-  /** The build. */
   private static String       build;
-
-  /** The build date. */
   private static String       buildDate;
 
   static {
