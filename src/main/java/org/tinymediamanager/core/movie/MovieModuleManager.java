@@ -30,6 +30,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.CustomNullStringSerializerProvider;
 import org.tinymediamanager.core.ITmmModule;
+import org.tinymediamanager.core.NullKeySerializer;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -102,6 +103,7 @@ public class MovieModuleManager implements ITmmModule {
     objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
     objectMapper.setSerializerProvider(new CustomNullStringSerializerProvider());
+    objectMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
 
     movieObjectWriter = objectMapper.writerFor(Movie.class);
     movieSetObjectWriter = objectMapper.writerFor(MovieSet.class);

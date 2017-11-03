@@ -77,6 +77,7 @@ public abstract class AbstractSettings extends AbstractModelObject {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+    objectMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
 
     return objectMapper;
   }
