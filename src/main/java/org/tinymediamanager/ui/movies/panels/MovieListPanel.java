@@ -82,7 +82,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
   private void initComponents() {
     // putClientProperty("class", "roundedPanel");
-    setOpaque(false);
+    // setOpaque(false);
 
     // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
     MovieList movieList = MovieList.getInstance();

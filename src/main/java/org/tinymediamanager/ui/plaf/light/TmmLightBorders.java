@@ -345,7 +345,7 @@ public class TmmLightBorders extends BaseBorders {
     protected static Insets   insets;
 
     public PopupMenuBorder() {
-      insets = new Insets(1, 0, 1, 0);
+      insets = new Insets(1, 1, 1, 1);
 
     }
 

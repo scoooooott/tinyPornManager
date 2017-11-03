@@ -219,9 +219,13 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
 
   @Override
   protected void paintTabArea(Graphics g, int tabPlacement, int selectedIndex) {
-    g.setColor(new Color(41, 41, 41));
+    // redraw the black border
     Rectangle clipRect = g.getClipBounds();
-    g.fillRect(clipRect.x, clipRect.y, tabPane.getWidth(), maxTabHeight);
+    if (clipRect.y < maxTabHeight) {
+      g.setColor(tabAreaBackground);
+      g.fillRect(0, 0, tabPane.getWidth(), maxTabHeight);
+    }
+
     super.paintTabArea(g, tabPlacement, selectedIndex);
   }
 
@@ -229,8 +233,11 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   public void paint(Graphics g, JComponent c) {
     super.paint(g, c);
 
-    g.setColor(new Color(41, 41, 41));
+    // redraw the black border
     Rectangle clipRect = g.getClipBounds();
-    g.fillRect(clipRect.x, clipRect.y, tabPane.getWidth(), maxTabHeight);
+    if (clipRect.y < maxTabHeight) {
+      g.setColor(tabAreaBackground);
+      g.fillRect(0, 0, tabPane.getWidth(), maxTabHeight);
+    }
   }
 }
