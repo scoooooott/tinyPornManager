@@ -106,6 +106,7 @@ public class TinyMediaManager {
       if (head != null && head.equals("true")) {
         LOGGER.info("TMM started 'headless', and without params -> displaying syntax ");
         TinyMediaManagerCMD.printSyntax();
+        shutdownLogger();
         System.exit(0);
       }
     }
@@ -124,6 +125,7 @@ public class TinyMediaManager {
       else {
         System.out.println(msg);
       }
+      shutdownLogger();
       System.exit(1);
     }
 

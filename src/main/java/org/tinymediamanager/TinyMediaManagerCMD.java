@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager;
 
+import static org.tinymediamanager.TinyMediaManager.shutdownLogger;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -121,6 +123,7 @@ public class TinyMediaManagerCMD {
         if (args.length == 1) {
           // haahaa - we specified dryRun as only argument
           printSyntax();
+          shutdownLogger();
           System.exit(0);
         }
       }
@@ -168,16 +171,19 @@ public class TinyMediaManagerCMD {
         catch (Exception e) {
           System.out.println("ERROR: export failed because of: " + e.getMessage());
           printSyntax();
+          shutdownLogger();
           System.exit(0);
         }
       }
       else if (cmd.toLowerCase(Locale.ROOT).contains("help")) { // -help, --help, help ...
         printSyntax();
+        shutdownLogger();
         System.exit(0);
       }
       else {
         System.out.println("ERROR: unrecognized command " + cmd);
         printSyntax();
+        shutdownLogger();
         System.exit(0);
       }
     }
