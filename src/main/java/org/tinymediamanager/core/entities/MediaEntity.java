@@ -401,7 +401,12 @@ public abstract class MediaEntity extends AbstractModelObject {
       case DISC:
       case LOGO:
       case CLEARLOGO:
-        artworkUrlMap.put(type, url);
+        if (StringUtils.isBlank(url)) {
+          artworkUrlMap.remove(type);
+        }
+        else {
+          artworkUrlMap.put(type, url);
+        }
         break;
       default:
         return;

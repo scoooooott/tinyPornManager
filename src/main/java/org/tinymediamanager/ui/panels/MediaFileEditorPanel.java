@@ -139,7 +139,8 @@ public class MediaFileEditorPanel extends JPanel {
       {
         JPanel panelDetails = new JPanel();
         splitPane.setRightComponent(panelDetails);
-        panelDetails.setLayout(new MigLayout("", "[][50lp:50lp][20lp:n][][50lp:50lp][20lp:n][][][grow]", "[][][][][100lp:150lp][100lp:150lp]"));
+        panelDetails
+            .setLayout(new MigLayout("", "[][50lp:50lp][20lp:n][][50lp:50lp][20lp:n][][][50lp:n,grow]", "[][][][][100lp:150lp][100lp:150lp]"));
         {
           lblFilename = new JLabel("");
           TmmFontHelper.changeFont(lblFilename, 1.167, Font.BOLD);
