@@ -20,22 +20,12 @@ import static org.tinymediamanager.TinyMediaManager.shutdownLogger;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +42,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.LayerUI;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
@@ -138,54 +127,47 @@ public class MainWindow extends JFrame {
     try {
       final UpdaterTask updateWorker = new UpdaterTask();
 
-      updateWorker.addPropertyChangeListener(new PropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent evt) {
-          if ("state".equals(evt.getPropertyName()) && evt.getNewValue() == StateValue.DONE) {
-            try {
-              boolean update = updateWorker.get();
-              LOGGER.debug("update result was: " + update);
-              if (update) {
+      updateWorker.addPropertyChangeListener(evt -> {
+        if ("state".equals(evt.getPropertyName()) && evt.getNewValue() == StateValue.DONE) {
+          try {
+            boolean update = updateWorker.get();
+            LOGGER.debug("update result was: " + update);
+            if (update) {
 
-                // we might need this somewhen...
-                if (updateWorker.isForcedUpdate()) {
-                  LOGGER.info("Updating (forced)...");
+              // we might need this somewhen...
+              if (updateWorker.isForcedUpdate()) {
+                LOGGER.info("Updating (forced)...");
+                closeTmmAndStart(Utils.getPBforTMMupdate());
+                return;
+              }
+
+              // show whatsnewdialog with the option to update
+              if (StringUtils.isNotBlank(updateWorker.getChangelog())) {
+                UpdateDialog dialog = new UpdateDialog(updateWorker.getChangelog());
+                dialog.setVisible(true);
+              }
+              else {
+                // do the update without changelog popup
+
+                int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
+                    JOptionPane.YES_NO_OPTION);
+                if (answer == JOptionPane.OK_OPTION) {
+                  LOGGER.info("Updating...");
+
+                  // spawn getdown and exit TMM
                   closeTmmAndStart(Utils.getPBforTMMupdate());
-                  return;
-                }
-
-                // show whatsnewdialog with the option to update
-                if (StringUtils.isNotBlank(updateWorker.getChangelog())) {
-                  UpdateDialog dialog = new UpdateDialog(updateWorker.getChangelog());
-                  dialog.setVisible(true);
-                }
-                else {
-                  // do the update without changelog popup
-
-                  int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
-                      JOptionPane.YES_NO_OPTION);
-                  if (answer == JOptionPane.OK_OPTION) {
-                    LOGGER.info("Updating...");
-
-                    // spawn getdown and exit TMM
-                    closeTmmAndStart(Utils.getPBforTMMupdate());
-                  }
                 }
               }
             }
-            catch (Exception e) {
-              LOGGER.error("Update task failed!" + e.getMessage());
-            }
+          }
+          catch (Exception e) {
+            LOGGER.error("Update task failed!" + e.getMessage());
           }
         }
       });
 
       // update task start a few secs after GUI...
-      Timer timer = new Timer(5000, new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          updateWorker.execute();
-        }
-      });
+      Timer timer = new Timer(5000, e -> updateWorker.execute());
       timer.setRepeats(false);
       timer.start();
     }
@@ -370,21 +352,5 @@ public class MainWindow extends JFrame {
 
   public void createLightbox(String pathToFile, String urlToFile) {
     LightBox.showLightBox(instance, pathToFile, urlToFile);
-  }
-
-  private class ShadowLayerUI extends LayerUI<JComponent> {
-    @Override
-    public void paint(Graphics g, JComponent c) {
-      super.paint(g, c);
-
-      Graphics2D g2 = (Graphics2D) g.create();
-
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      GradientPaint gp = new GradientPaint(0, 0, new Color(32, 32, 32, 80), 0, 4, new Color(0, 0, 0, 0));
-      g2.setPaint(gp);
-      g2.fill(new Rectangle2D.Double(0, 0, getWidth(), 7));
-
-      g2.dispose();
-    }
   }
 }

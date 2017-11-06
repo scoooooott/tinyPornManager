@@ -41,6 +41,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -82,6 +83,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -358,7 +360,10 @@ public class MovieEditorDialog extends TmmDialog {
         super.updateUI();
       }
     };
-    getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+    // to draw the shadow beneath window frame, encapsulate the panel
+    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI());
+    getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
      * DetailsPanel 1

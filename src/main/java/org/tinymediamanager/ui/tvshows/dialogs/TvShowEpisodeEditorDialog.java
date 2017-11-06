@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -83,6 +84,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -218,10 +220,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    JPanel rootPanel = new JPanel();
-    rootPanel.setLayout(new BorderLayout());
-    getContentPane().add(rootPanel, BorderLayout.CENTER);
-
     JTabbedPane tabbedPane = new MainTabbedPane() {
       private static final long serialVersionUID = 71548865608767532L;
 
@@ -231,7 +229,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         super.updateUI();
       }
     };
-    rootPanel.add(tabbedPane, BorderLayout.CENTER);
+
+    // to draw the shadow beneath window frame, encapsulate the panel
+    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI());
+    getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
      * DetailsPanel 1

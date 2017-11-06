@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -79,6 +80,7 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.LeftDotTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
 import org.tinymediamanager.ui.UIConstants;
@@ -264,10 +266,6 @@ public class TvShowEditorDialog extends TmmDialog {
   }
 
   private void initComponents() {
-    JPanel rootPanel = new JPanel();
-    rootPanel.setLayout(new BorderLayout());
-    getContentPane().add(rootPanel, BorderLayout.CENTER);
-
     JTabbedPane tabbedPane = new MainTabbedPane() {
       private static final long serialVersionUID = 71548865608767532L;
 
@@ -277,7 +275,10 @@ public class TvShowEditorDialog extends TmmDialog {
         super.updateUI();
       }
     };
-    rootPanel.add(tabbedPane, BorderLayout.CENTER);
+
+    // to draw the shadow beneath window frame, encapsulate the panel
+    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI());
+    getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
      * DetailsPanel 1
