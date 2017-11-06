@@ -174,8 +174,9 @@ public enum Certification {
     NZ_R(CountryCode.NZ, "R", new String[] { "R" }),
 
     NO_A(CountryCode.NO, "A", new String[] { "A" }),
-    NO_7(CountryCode.NO, "7", new String[] { "7" }),
-    NO_11(CountryCode.NO, "11", new String[] { "11" }),
+    NO_6(CountryCode.NO, "6", new String[] { "6" }),
+    NO_9(CountryCode.NO, "9", new String[] { "9" }),
+    NO_12(CountryCode.NO, "12", new String[] { "12" }),
     NO_15(CountryCode.NO, "15", new String[] { "15" }),
     NO_18(CountryCode.NO, "18", new String[] { "18" }),
 
