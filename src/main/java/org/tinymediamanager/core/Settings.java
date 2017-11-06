@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.scraper.http.ProxySettings;
@@ -42,8 +41,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 public class Settings extends AbstractSettings {
   private static final Logger   LOGGER                 = LoggerFactory.getLogger(Settings.class);
-
-  public final static String    DEFAULT_CONFIG_FOLDER  = Globals.DATA_FOLDER;
 
   private final static String   CONFIG_FILE            = "tmm.json";
 
@@ -278,7 +275,7 @@ public class Settings extends AbstractSettings {
    * @return single instance of Settings
    */
   public static synchronized Settings getInstance() {
-    return getInstance(DEFAULT_CONFIG_FOLDER);
+    return getInstance(System.getProperty("tmm.datafolder", "data"));
   }
 
   /**

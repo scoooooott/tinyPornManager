@@ -23,10 +23,9 @@ import org.tinymediamanager.core.Settings;
  * @author Manuel Laggner
  */
 public class Globals {
-  private static final boolean DEBUG       = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
+  private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
 
-  public static final String   DATA_FOLDER = System.getProperty("tmm.datafolder", "data");
-  public static final Settings settings    = Settings.getInstance();
+  public static final Settings settings = Settings.getInstance();
 
   /**
    * are we in our internal debug mode?

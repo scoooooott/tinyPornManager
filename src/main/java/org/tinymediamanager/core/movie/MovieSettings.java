@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core.movie;
 
-import static org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
@@ -48,6 +46,7 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -189,7 +188,7 @@ public class MovieSettings extends AbstractSettings {
    * @return single instance of MovieSettings
    */
   public synchronized static MovieSettings getInstance() {
-    return getInstance(Settings.getInstance().getSettingsFolder());
+    return getInstance(Globals.settings.getSettingsFolder());
   }
 
   /**

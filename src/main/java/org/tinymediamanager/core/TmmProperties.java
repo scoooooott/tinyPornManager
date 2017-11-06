@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 
 /**
  * the class TmmProperties is used to store several UI related settings
@@ -48,7 +49,7 @@ public class TmmProperties {
 
     InputStream input = null;
     try {
-      input = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), PROPERTIES_FILE));
+      input = new FileInputStream(new File(Globals.settings.getSettingsFolder(), PROPERTIES_FILE));
       properties.load(input);
     }
     catch (FileNotFoundException ignored) {

@@ -24,11 +24,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.connector.TvShowConnectors;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearartNaming;
@@ -148,7 +148,7 @@ public class TvShowSettings extends AbstractSettings {
    * @return single instance of TvShowSettings
    */
   public synchronized static TvShowSettings getInstance() {
-    return getInstance(Settings.getInstance().getSettingsFolder());
+    return getInstance(Globals.settings.getSettingsFolder());
   }
 
   /**

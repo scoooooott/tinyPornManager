@@ -88,7 +88,7 @@ public class TvShowModuleManager implements ITmmModule {
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Paths.get(Globals.DATA_FOLDER, TV_SHOW_DB).toString()).compressHigh()
+    mvStore = new MVStore.Builder().fileName(Paths.get(Globals.settings.getSettingsFolder(), TV_SHOW_DB).toString()).compressHigh()
         .backgroundExceptionHandler((t, e) -> LOGGER.error("Error in the background thread of the persistent cache", e)).autoCommitBufferSize(4096)
         .open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
