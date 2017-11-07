@@ -146,7 +146,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                         tfTitle;
   private JTextField                         tfOriginalTitle;
   private YearSpinner                        spYear;
-  private JTextArea                          tpPlot;
+  private JTextArea                          taPlot;
 
   private ImageLabel                         lblPoster;
   private ImageLabel                         lblFanart;
@@ -268,8 +268,8 @@ public class MovieEditorDialog extends TmmDialog {
       cbSource.setSelectedItem(movieToEdit.getMediaSource());
       cbWatched.setSelected(movieToEdit.isWatched());
       tfTagline.setText(movieToEdit.getTagline());
-      tpPlot.setText(movieToEdit.getPlot());
-      tpPlot.setCaretPosition(0);
+      taPlot.setText(movieToEdit.getPlot());
+      taPlot.setCaretPosition(0);
       spRuntime.setValue(movieToEdit.getRuntime());
       spTop250.setValue(movie.getTop250());
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
@@ -362,7 +362,7 @@ public class MovieEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI());
+    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -424,11 +424,11 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPanePlot = new JScrollPane();
         details1Panel.add(scrollPanePlot, "cell 1 4 6 1,grow,wmin 0");
 
-        tpPlot = new JTextArea();
-        tpPlot.setLineWrap(true);
-        tpPlot.setWrapStyleWord(true);
-        tpPlot.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
-        scrollPanePlot.setViewportView(tpPlot);
+        taPlot = new JTextArea();
+        taPlot.setLineWrap(true);
+        taPlot.setWrapStyleWord(true);
+        taPlot.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
+        scrollPanePlot.setViewportView(taPlot);
       }
 
       {
@@ -513,7 +513,7 @@ public class MovieEditorDialog extends TmmDialog {
             updateArtworkUrl(lblFanart, tfFanart);
           }
         });
-        details1Panel.add(lblFanart, "cell 8 9 1 3,grow");
+        details1Panel.add(lblFanart, "cell 8 8 1 4,grow");
       }
 
       JButton btnAddRating = new JButton(new AddRatingAction());
@@ -532,7 +532,8 @@ public class MovieEditorDialog extends TmmDialog {
       JPanel details2Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
 
-      details2Panel.setLayout(new MigLayout("", "[][][20lp:50lp][][50lp:100lp][20lp:n][][300lp:300lp]", "[][][][][][pref!][20lp:n][100lp:150lp][]"));
+      details2Panel.setLayout(
+          new MigLayout("", "[][][20lp:50lp][][50lp:100lp][20lp:n][][300lp:300lp]", "[][][][][][pref!][20lp:n][100lp:150lp,grow][][grow 200]"));
       {
         JLabel lblDateAdded = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
         details2Panel.add(lblDateAdded, "cell 0 0,alignx right");
@@ -693,7 +694,8 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JPanel crewPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("movie.edit.castandcrew"), null, crewPanel, null); //$NON-NLS-1$
-      crewPanel.setLayout(new MigLayout("", "[][150lp:300lp,grow][20lp:n][][150lp:300lp,grow]", "[100lp:250lp][20lp:n][100lp:200lp]"));
+      crewPanel
+          .setLayout(new MigLayout("", "[][150lp:300lp,grow][20lp:n][][150lp:300lp,grow]", "[100lp:250lp,grow][20lp:n][100lp:200lp,grow][grow]"));
       {
         JLabel lblActors = new TmmLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
         crewPanel.add(lblActors, "flowy,cell 0 0,alignx right,aligny top");
@@ -817,7 +819,7 @@ public class MovieEditorDialog extends TmmDialog {
     }
 
     /**********************************************************************************
-     * artwork and trailer
+     * artwork and trailer urls
      **********************************************************************************/
     {
       JPanel artworkAndTrailerPanel = new JPanel();
@@ -906,7 +908,7 @@ public class MovieEditorDialog extends TmmDialog {
      **********************************************************************************/
     {
       JPanel artworkPanel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("edit.localartwork"), null, artworkPanel, null);
+      tabbedPane.addTab(BUNDLE.getString("metatag.extraartwork"), null, artworkPanel, null);
       artworkPanel.setLayout(new MigLayout("", "[200lp:300lp,grow][20lp:n][200lp:300lp,grow][20lp:n][100lp:200lp,grow]",
           "[][100lp:125lp,grow][20lp:n][][100lp:125lp,grow][20lp:n][][100lp:150lp,grow]"));
       {
@@ -1083,7 +1085,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setTitle(tfTitle.getText());
       movieToEdit.setOriginalTitle(tfOriginalTitle.getText());
       movieToEdit.setTagline(tfTagline.getText());
-      movieToEdit.setPlot(tpPlot.getText());
+      movieToEdit.setPlot(taPlot.getText());
       movieToEdit.setYear((Integer) spYear.getValue());
       movieToEdit.setReleaseDate(dpReleaseDate.getDate());
       movieToEdit.setRuntime((Integer) spRuntime.getValue());

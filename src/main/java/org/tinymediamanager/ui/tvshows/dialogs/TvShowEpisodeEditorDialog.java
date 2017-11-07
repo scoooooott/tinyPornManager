@@ -170,7 +170,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
     super(BUNDLE.getString("tvshow.edit") + "  < " + episode.getFirstVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
-    setBounds(5, 5, 964, 632);
 
     // creation of lists
     guests = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -231,7 +230,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI());
+    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -240,8 +239,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     {
       JPanel detailsPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), detailsPanel);
-      detailsPanel.setLayout(
-          new MigLayout("", "[][grow][75lp:100lp][][][50lp:75lp][][][25lp:n][200lp:250lp,grow]", "[][][][][][][75lp:150lp,grow][][][][50lp,grow][]"));
+      detailsPanel.setLayout(new MigLayout("", "[][20lp:75lp][50lp:75lp][][60lp:75lp][50lp:75lp][20lp:n][][25lp:n][200lp:250lp,grow]",
+          "[][][][][][][100lp:125lp,grow][][][][100lp][pref:pref:pref]"));
 
       {
         JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -291,10 +290,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         detailsPanel.add(spDvdEpisode, "cell 4 4,growx");
 
         JLabel lblDvdOrder = new TmmLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
-        detailsPanel.add(lblDvdOrder, "cell 6 4,alignx right");
+        detailsPanel.add(lblDvdOrder, "flowx,cell 6 4 2 1");
 
         cbDvdOrder = new JCheckBox("");
-        detailsPanel.add(cbDvdOrder, "cell 7 4");
+        detailsPanel.add(cbDvdOrder, "cell 6 4 2 1");
       }
       {
         JLabel lblDisplaySeason = new TmmLabel(BUNDLE.getString("metatag.displayseason")); //$NON-NLS-1$
@@ -309,9 +308,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         spDisplayEpisode = new JSpinner();
         detailsPanel.add(spDisplayEpisode, "cell 4 5,growx");
       }
-      JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      detailsPanel.add(lblPlot, "cell 0 6,alignx right,aligny top");
       {
+        JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        detailsPanel.add(lblPlot, "cell 0 6,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
         detailsPanel.add(scrollPane, "cell 1 6 7 1,grow");
@@ -357,7 +356,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
         });
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        detailsPanel.add(lblThumb, "cell 9 0 1 9,grow");
+        detailsPanel.add(lblThumb, "cell 9 0 1 7,grow");
       }
       {
         JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
@@ -371,54 +370,55 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         detailsPanel.add(lblRatingsT, "flowy,cell 0 10,alignx right,aligny top");
 
         JScrollPane scrollPaneRatings = new JScrollPane();
-        detailsPanel.add(scrollPaneRatings, "cell 1 10 4 1,grow");
+        detailsPanel.add(scrollPaneRatings, "cell 1 10 5 2,grow");
 
         tableRatings = new MediaRatingTable(ratings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
+
+        JButton btnAddRating = new JButton(new AddRatingAction());
+        btnAddRating.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnAddRating, "cell 0 10,alignx right,aligny top");
+
+        JButton btnRemoveRating = new JButton(new RemoveRatingAction());
+        btnRemoveRating.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnRemoveRating, "cell 0 10,alignx right,aligny top");
       }
       {
         JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-        detailsPanel.add(lblTags, "flowy,cell 6 10,alignx right,aligny top");
+        detailsPanel.add(lblTags, "flowy,cell 7 8 1 3,alignx right,aligny top");
 
         JScrollPane scrollPaneTags = new JScrollPane();
-        detailsPanel.add(scrollPaneTags, "cell 7 10 3 1,grow");
+        detailsPanel.add(scrollPaneTags, "cell 8 8 2 3,grow");
 
         listTags = new JList();
         scrollPaneTags.setViewportView(listTags);
 
+        JButton btnRemoveTag = new JButton(new RemoveTagAction());
+        btnRemoveTag.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnRemoveTag, "cell 7 8,alignx right,aligny top");
+
+        JButton btnAddTag = new JButton(new AddTagAction());
+        btnAddTag.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnAddTag, "cell 7 8,alignx right,aligny top");
+
+        JButton btnMoveTagUp = new JButton(new MoveTagUpAction());
+        btnMoveTagUp.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnMoveTagUp, "cell 7 8,alignx right,aligny top");
+
+        JButton btnMoveTagDown = new JButton(new MoveTagDownAction());
+        btnMoveTagDown.setMargin(BUTTON_MARGIN);
+        detailsPanel.add(btnMoveTagDown, "cell 7 8,alignx right,aligny top");
+
         cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInEpisodes());
         cbTags.setEditable(true);
         cbTagsAutoCompleteSupport = cbTags.getAutoCompleteSupport();
+
         InputMap im = cbTags.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         cbTags.getActionMap().put(enterAction, new AddTagAction());
-        detailsPanel.add(cbTags, "cell 7 11 3 1,growx");
+        detailsPanel.add(cbTags, "cell 8 11 2 1,growx");
       }
-
-      JButton btnAddTag = new JButton(new AddTagAction());
-      btnAddTag.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnAddTag, "cell 6 10,alignx right,aligny top");
-
-      JButton btnRemoveTag = new JButton(new RemoveTagAction());
-      btnRemoveTag.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnRemoveTag, "cell 6 10,alignx right,aligny top");
-
-      JButton btnMoveTagUp = new JButton(new MoveTagUpAction());
-      btnMoveTagUp.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnMoveTagUp, "cell 6 10,alignx right,aligny top");
-
-      JButton btnMoveTagDown = new JButton(new MoveTagDownAction());
-      btnMoveTagDown.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnMoveTagDown, "cell 6 10,alignx right,aligny top");
-
-      JButton btnAddRating = new JButton(new AddRatingAction());
-      btnAddRating.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnAddRating, "cell 0 10,alignx right,aligny top");
-
-      JButton btnRemoveRating = new JButton(new RemoveRatingAction());
-      btnRemoveRating.setMargin(BUTTON_MARGIN);
-      detailsPanel.add(btnRemoveRating, "cell 0 10,alignx right,aligny top");
     }
 
     /**********************************************************************************
@@ -866,11 +866,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
     mediaFilesPanel.unbindBindings();
     dpFirstAired.cleanup();
-  }
-
-  @Override
-  public void pack() {
-    // do not let it pack - it looks weird
   }
 
   private class AddRatingAction extends AbstractAction {
