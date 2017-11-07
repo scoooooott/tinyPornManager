@@ -217,11 +217,15 @@ public class TvShowEditorDialog extends TmmDialog {
       lblClearart.setImagePath(tvShow.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(tvShow.getArtworkFilename(MediaFileType.THUMB));
       lblBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
-      lblPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
-      lblThumb.setImagePath(tvShow.getArtworkFilename(MediaFileType.THUMB));
-      lblLogo.setImagePath(tvShow.getArtworkFilename(MediaFileType.LOGO));
-      lblClearlogo.setImagePath(tvShow.getArtworkFilename(MediaFileType.CLEARLOGO));
-      lblClearart.setImagePath(tvShow.getArtworkFilename(MediaFileType.CLEARART));
+
+      tfPoster.setText(tvShow.getArtworkUrl(MediaFileType.POSTER));
+      tfFanart.setText(tvShow.getArtworkUrl(MediaFileType.FANART));
+      tfLogo.setText(tvShow.getArtworkUrl(MediaFileType.LOGO));
+      tfClearLogo.setText(tvShow.getArtworkUrl(MediaFileType.CLEARLOGO));
+      tfClearArt.setText(tvShow.getArtworkUrl(MediaFileType.CLEARART));
+      tfThumb.setText(tvShow.getArtworkUrl(MediaFileType.THUMB));
+      tfBanner.setText(tvShow.getArtworkUrl(MediaFileType.BANNER));
+
       tfStudio.setText(tvShow.getProductionCompany());
       cbStatus.setSelectedItem(tvShow.getStatus());
       spRuntime.setValue(tvShow.getRuntime());
