@@ -123,6 +123,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
     FileOutputStream outputStream = null;
     InputStream is = null;
+    Path tempFile = null;
     try {
       String oldFilename = movie.getArtworkFilename(type);
       // we are lucky and have chosen our enums wisely
@@ -134,7 +135,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // fetch and store images
       Url url1 = new Url(artworkUrl);
-      Path tempFile = movie.getPathNIO().resolve(filename + ".part");
+      tempFile = movie.getPathNIO().resolve(filename + ".part");
       outputStream = new FileOutputStream(tempFile.toFile());
       is = url1.getInputStream();
       IOUtils.copy(is, outputStream);
@@ -187,11 +188,13 @@ public class MovieExtraImageFetcher implements Runnable {
       else {
         LOGGER.error("fetch image: " + e.getMessage());
       }
+    }
+    finally {
       IOUtils.closeQuietly(is);
       IOUtils.closeQuietly(outputStream);
       // remove temp file
-      Path tempFile = movie.getPathNIO().resolve(filename + ".part");
-      if (Files.exists(tempFile)) {
+      // Path tempFile = movie.getPathNIO().resolve(filename + ".part");
+      if (tempFile != null && Files.exists(tempFile)) {
         Utils.deleteFileSafely(tempFile);
       }
     }
