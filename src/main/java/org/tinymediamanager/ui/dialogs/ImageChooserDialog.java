@@ -246,7 +246,7 @@ public class ImageChooserDialog extends TmmDialog {
       JButton btnUnMarkExtrathumbs = new JButton("");
       contentPanel.add(btnUnMarkExtrathumbs, "cell 0 2");
       btnUnMarkExtrathumbs.setMargin(BUTTON_MARGIN);
-      btnUnMarkExtrathumbs.setIcon(IconManager.UNCHECK_ALL);
+      btnUnMarkExtrathumbs.setIcon(IconManager.CLEAR_ALL);
       btnUnMarkExtrathumbs.setToolTipText(BUNDLE.getString("image.extrathumbs.unmarkall")); //$NON-NLS-1$
       btnUnMarkExtrathumbs.addActionListener(arg0 -> {
         for (JToggleButton button : buttons) {
@@ -269,7 +269,7 @@ public class ImageChooserDialog extends TmmDialog {
       JButton btnUnMarkExtrafanart = new JButton("");
       contentPanel.add(btnUnMarkExtrafanart, "cell 0 3");
       btnUnMarkExtrafanart.setMargin(BUTTON_MARGIN);
-      btnUnMarkExtrafanart.setIcon(IconManager.UNCHECK_ALL);
+      btnUnMarkExtrafanart.setIcon(IconManager.CLEAR_ALL);
       btnUnMarkExtrafanart.setToolTipText(BUNDLE.getString("image.extrafanart.unmarkall")); //$NON-NLS-1$
       btnUnMarkExtrafanart.addActionListener(arg0 -> {
         for (JToggleButton button : buttons) {
@@ -837,8 +837,8 @@ public class ImageChooserDialog extends TmmDialog {
     public LocalFileChooseAction() {
       putValue(NAME, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.FILE_OPEN);
-      putValue(LARGE_ICON_KEY, IconManager.FILE_OPEN);
+      putValue(SMALL_ICON, IconManager.FILE_OPEN_INV);
+      putValue(LARGE_ICON_KEY, IconManager.FILE_OPEN_INV);
     }
 
     @Override

@@ -119,7 +119,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
 
     initDataBindings();
 
-    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
     add(btnDeSelectAll, "cell 0 4");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));

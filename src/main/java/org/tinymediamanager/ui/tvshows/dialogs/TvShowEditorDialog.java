@@ -1384,8 +1384,8 @@ public class TvShowEditorDialog extends TmmDialog {
     AbortAction() {
       putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.PROCESS_STOP);
-      putValue(LARGE_ICON_KEY, IconManager.PROCESS_STOP);
+      putValue(SMALL_ICON, IconManager.STOP_INV);
+      putValue(LARGE_ICON_KEY, IconManager.STOP_INV);
     }
 
     @Override
@@ -1468,8 +1468,8 @@ public class TvShowEditorDialog extends TmmDialog {
 
     CloneEpisodeAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshowepisode.clone")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.COPY);
-      putValue(LARGE_ICON_KEY, IconManager.COPY);
+      putValue(SMALL_ICON, IconManager.COPY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.COPY_INV);
     }
 
     @Override

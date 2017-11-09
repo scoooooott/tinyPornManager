@@ -57,38 +57,37 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_TOOLS_HOVER         = loadImage("icn_tools_hover.png");
 
   // packaged icons
-  public final static ImageIcon            CHECK_ALL                   = loadImage("check-all.png");
-  public final static ImageIcon            CHECKMARK                   = loadImage("checkmark.png");
-  public final static ImageIcon            CLAPBOARD                   = loadImage("clapboard.png");
-  public final static ImageIcon            COPY                        = loadImage("copy.png");
-  public final static ImageIcon            CROSS                       = loadImage("cross.png");
-  public final static ImageIcon            DELETE                      = loadImage("delete.png");
   public final static ImageIcon            DOT_AVAILABLE               = loadImage("dot_available.png");
   public final static ImageIcon            DOT_UNAVAILABLE             = loadImage("dot_unavailable.png");
-  public final static ImageIcon            DOWNLOAD                    = loadImage("download.png");
-  public final static ImageIcon            DOWNLOAD_DISABLED           = loadImage("download-disabled.png");
-  public final static ImageIcon            ERROR                       = loadImage("error.png");
-  public final static ImageIcon            EXPORT                      = loadImage("export.png");
-  public final static ImageIcon            FILE_OPEN                   = loadImage("file-open.png");
-  public final static ImageIcon            FILTER                      = loadImage("filter.png");
-  public final static ImageIcon            HINT                        = loadImage("hint.png");
-  public final static ImageIcon            IMAGE                       = loadImage("image.png");
-  public final static ImageIcon            INFO                        = loadImage("info.png");
-
   public final static ImageIcon            NEW                         = loadImage("new.png");
-  public final static ImageIcon            PLAY_SMALL                  = loadImage("play-small.png");
-  public final static ImageIcon            PLAY                        = loadImage("play.png");
-  public final static ImageIcon            PROCESS_STOP                = loadImage("process-stop.png");
-  public final static ImageIcon            REFRESH                     = loadImage("refresh.png");
-  public final static ImageIcon            REGISTER                    = loadImage("register.png");
-  public final static ImageIcon            SEARCH                      = loadImage("icn_searchfield.png");
-  public final static ImageIcon            SETTINGS_SMALL              = loadImage("settings-small.png");
   public final static ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
-  public final static ImageIcon            SUBTITLE                    = loadImage("subtitle.png");
-  public final static ImageIcon            SYNC                        = loadImage("sync.png");
-  public final static ImageIcon            UNCHECK_ALL                 = loadImage("uncheck-all.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
+
+  // Material icons normal
+  public final static ImageIcon            ADD                         = createMaterialFontIcon('\uE145', 16);
+  public final static ImageIcon            BUG                         = createMaterialFontIcon('\uE868', 16);
+  public final static ImageIcon            CANCEL                      = createMaterialFontIcon('\uE14C', 16);
+  public final static ImageIcon            CHECK_ALL                   = createMaterialFontIcon('\uE877', 16);
+  public final static ImageIcon            CLEAR_ALL                   = createMaterialFontIcon('\uE0B8', 16);
+  public final static ImageIcon            CONFIGURE                   = createMaterialFontIcon('\uE869', 16);
+  public final static ImageIcon            DELETE                      = createMaterialFontIcon('\uE872', 16);
+  public final static ImageIcon            DELETE_FOREVER              = createMaterialFontIcon('\uE92B', 16);
+  public final static ImageIcon            DOWNLOAD                    = createMaterialFontIcon('\uE2C4', 16);
+  public final static ImageIcon            FEEDBACK                    = createMaterialFontIcon('\uE158', 16);
+  public final static ImageIcon            EDIT                        = createMaterialFontIcon('\uE150', 16);
+  public final static ImageIcon            ERROR                       = createMaterialFontIcon('\uE002', 16);
+  public final static ImageIcon            EXPORT                      = createMaterialFontIcon('\uE2C6', 16);
+  public final static ImageIcon            FILTER_ACTIVE               = createMaterialFontIcon('\uE152', 16, Color.RED);
+  public final static ImageIcon            HINT                        = createMaterialFontIcon('\uE88F', 16);
+  public final static ImageIcon            IMAGE                       = createMaterialFontIcon('\uE410', 16);
+  public final static ImageIcon            PLAY                        = createMaterialFontIcon('\uE037', 16);
+  public final static ImageIcon            PLAY_LARGE                  = createMaterialFontIcon('\uE039', 32);
+  public final static ImageIcon            REFRESH                     = createMaterialFontIcon('\uE5D5', 32);
+  public final static ImageIcon            REMOVE                      = createMaterialFontIcon('\uE15B', 16);
+  public final static ImageIcon            SEARCH                      = createMaterialFontIcon('\uE8B6', 16);
+  public final static ImageIcon            SUBTITLE                    = createMaterialFontIcon('\uE24C', 16);
+  public final static ImageIcon            SYNC                        = createMaterialFontIcon('\uE627', 16);
 
   // Material icons light (button usage)
   public final static ImageIcon            ADD_INV                     = createMaterialFontIcon('\uE145', 16, true);
@@ -97,18 +96,13 @@ public class IconManager {
   public final static ImageIcon            APPLY_INV                   = createMaterialFontIcon('\uE876', 16, true);
   public final static ImageIcon            BACK_INV                    = createMaterialFontIcon('\uE5C4', 16, true);
   public final static ImageIcon            CANCEL_INV                  = createMaterialFontIcon('\uE14C', 16, true);
+  public final static ImageIcon            COPY_INV                    = createMaterialFontIcon('\uE14D', 16, true);
   public final static ImageIcon            DATE_PICKER                 = createMaterialFontIcon('\uE916', 16, true);
+  public final static ImageIcon            FILTER_INV                  = createMaterialFontIcon('\uE152', 16, true);
+  public final static ImageIcon            FILE_OPEN_INV               = createMaterialFontIcon('\uE24D', 16, true);
   public final static ImageIcon            IMAGE_INV                   = createMaterialFontIcon('\uE3F4', 16, true);
   public final static ImageIcon            REMOVE_INV                  = createMaterialFontIcon('\uE15B', 16, true);
-
-  // Material icons normal
-  public final static ImageIcon            ADD                         = createMaterialFontIcon('\uE145', 16);
-  public final static ImageIcon            BUG                         = createMaterialFontIcon('\uE868', 16);
-  public final static ImageIcon            CANCEL                      = createMaterialFontIcon('\uE14C', 16);
-  public final static ImageIcon            CONFIGURE                   = createMaterialFontIcon('\uE869', 16);
-  public final static ImageIcon            FEEDBACK                    = createMaterialFontIcon('\uE158', 16);
-  public final static ImageIcon            EDIT                        = createMaterialFontIcon('\uE150', 16);
-  public final static ImageIcon            REMOVE                      = createMaterialFontIcon('\uE15B', 16);
+  public final static ImageIcon            STOP_INV                    = createMaterialFontIcon('\uE5C9', 16, true);
 
   // Material icons - column headers
   public final static ImageIcon            COUNT                       = createFontIcon('#', 20);
@@ -124,9 +118,6 @@ public class IconManager {
   public final static ImageIcon            TRAILER                     = createMaterialFontIcon('\uE02C', 18);
   public final static ImageIcon            VIDEO_FORMAT                = createMaterialFontIcon('\uE85B', 18);
   public final static ImageIcon            WATCHED                     = createMaterialFontIcon('\uE037', 18);
-
-  // OBSOLETE ICONS (will be dropped when legacy code is removed)
-  public final static ImageIcon            EXIT                        = loadImage("exit.png");
 
   public static ImageIcon loadImage(String name) {
     URL file = IconManager.class.getResource("images/interface/" + name);

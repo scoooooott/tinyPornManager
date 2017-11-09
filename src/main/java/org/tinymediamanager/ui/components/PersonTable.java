@@ -106,9 +106,9 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
        */
       col = new Column(BUNDLE.getString("image.url"), "imageUrl", person -> {
         if (StringUtils.isNotBlank(person.getThumbUrl())) {
-          return IconManager.CHECKMARK;
+          return IconManager.DOT_AVAILABLE;
         }
-        return null;
+        return IconManager.DOT_UNAVAILABLE;
       }, ImageIcon.class);
       col.setColumnResizeable(false);
       col.setHeaderIcon(IconManager.IMAGES);

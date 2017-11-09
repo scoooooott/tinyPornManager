@@ -147,7 +147,7 @@ public abstract class MediaFilesPanel extends JPanel {
       switch (column) {
         case 0:
           if (mediaFile.isVideo()) {
-            return IconManager.PLAY_SMALL;
+            return IconManager.PLAY;
           }
           if (mediaFile.isGraphic()) {
             return IconManager.SEARCH;

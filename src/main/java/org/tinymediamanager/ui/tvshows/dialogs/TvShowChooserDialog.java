@@ -313,7 +313,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
         abortButton.setActionCommand("Abort");
         abortButton.addActionListener(this);
-        abortButton.setIcon(IconManager.PROCESS_STOP);
+        abortButton.setIcon(IconManager.STOP_INV);
         addButton(abortButton);
 
         if (queueIndex > 0) {

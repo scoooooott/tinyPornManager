@@ -42,7 +42,7 @@ public class MovieDeleteAction extends TmmAction {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieDeleteAction() {
-    putValue(SMALL_ICON, IconManager.DELETE);
+    putValue(SMALL_ICON, IconManager.DELETE_FOREVER);
     putValue(NAME, BUNDLE.getString("movie.delete")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.delete.hint")); //$NON-NLS-1$
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.SHIFT_MASK));

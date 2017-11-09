@@ -172,7 +172,7 @@ public class MovieTrailerPanel extends JPanel {
           return null;
 
         case 1:
-          return IconManager.PLAY_SMALL;
+          return IconManager.PLAY;
 
         case 2:
           return trailer.getInNfo();

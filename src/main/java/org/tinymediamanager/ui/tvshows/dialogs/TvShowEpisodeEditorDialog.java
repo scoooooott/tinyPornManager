@@ -771,7 +771,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     AbortQueueAction() {
       putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.PROCESS_STOP);
+      putValue(SMALL_ICON, IconManager.STOP_INV);
     }
 
     @Override

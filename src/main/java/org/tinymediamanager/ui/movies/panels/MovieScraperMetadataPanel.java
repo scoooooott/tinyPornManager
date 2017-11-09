@@ -134,7 +134,7 @@ public class MovieScraperMetadataPanel extends JPanel {
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
     btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
-    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
     add(btnDeSelectAll, "cell 0 3 3 1");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));

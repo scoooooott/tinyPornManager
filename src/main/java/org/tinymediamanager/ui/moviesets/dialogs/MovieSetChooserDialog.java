@@ -218,7 +218,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
         btnAbort.setActionCommand("Abort");
         btnAbort.setToolTipText(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-        btnAbort.setIcon(IconManager.PROCESS_STOP);
+        btnAbort.setIcon(IconManager.STOP_INV);
         btnAbort.addActionListener(this);
         addButton(btnAbort);
       }

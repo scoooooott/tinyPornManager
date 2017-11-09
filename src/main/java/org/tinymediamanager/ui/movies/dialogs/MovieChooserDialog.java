@@ -190,7 +190,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
 
       {
-        final JButton btnPlay = new JButton(IconManager.PLAY_SMALL);
+        final JButton btnPlay = new JButton(IconManager.PLAY);
         btnPlay.setFocusable(false);
         btnPlay.addActionListener(e -> {
           MediaFile mf = movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0);
@@ -373,7 +373,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       {
         if (queueSize > 1) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-          abortButton.setIcon(IconManager.PROCESS_STOP);
+          abortButton.setIcon(IconManager.STOP_INV);
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
           addButton(abortButton);

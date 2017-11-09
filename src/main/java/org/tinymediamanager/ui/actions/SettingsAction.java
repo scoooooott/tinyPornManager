@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.SettingsDialog;
 
@@ -35,8 +34,6 @@ public class SettingsAction extends TmmAction {
 
   public SettingsAction() {
     putValue(NAME, BUNDLE.getString("tmm.settings")); //$NON-NLS-1$
-    putValue(SMALL_ICON, IconManager.SETTINGS_SMALL);
-    putValue(LARGE_ICON_KEY, IconManager.SETTINGS_SMALL);
   }
 
   @Override

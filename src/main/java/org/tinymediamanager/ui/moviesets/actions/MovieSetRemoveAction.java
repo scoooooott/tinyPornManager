@@ -39,8 +39,8 @@ public class MovieSetRemoveAction extends TmmAction {
    */
   public MovieSetRemoveAction() {
     putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
-    putValue(LARGE_ICON_KEY, IconManager.REMOVE);
-    putValue(SMALL_ICON, IconManager.REMOVE);
+    putValue(LARGE_ICON_KEY, IconManager.DELETE);
+    putValue(SMALL_ICON, IconManager.DELETE);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
   }
 

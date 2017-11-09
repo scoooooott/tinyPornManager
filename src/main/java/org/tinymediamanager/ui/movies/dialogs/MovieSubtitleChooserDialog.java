@@ -225,7 +225,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     {
       if (inQueue) {
         JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-        btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
+        btnAbortQueue.setIcon(IconManager.STOP_INV);
         btnAbortQueue.addActionListener(e -> {
           continueQueue = false;
           setVisible(false);
