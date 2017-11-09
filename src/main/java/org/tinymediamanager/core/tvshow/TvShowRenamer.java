@@ -728,16 +728,37 @@ public class TvShowRenamer {
       // VIDEO_EXTRA
       ////////////////////////////////////////////////////////////////////////
       case VIDEO_EXTRA:
-        String name = mf.getBasename();
-        Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
-        Matcher m = p.matcher(name);
-        if (m.matches()) {
-          name = name.substring(m.end(1)); // everything behind
-        }
-        // if not, MF must be within /extras/ folder - use name 1:1
-        MediaFile videoExtra = new MediaFile(mf);
-        videoExtra.setFile(seasonFolder.resolve(newFilename + "-extras-" + name + "." + mf.getExtension()));
-        newFiles.add(videoExtra);
+        // String name = mf.getBasename();
+        // Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
+        // Matcher m = p.matcher(name);
+        // if (m.matches()) {
+        // name = name.substring(m.end(1)); // everything behind
+        // }
+        // // if not, MF must be within /extras/ folder - use name 1:1
+        // MediaFile videoExtra = new MediaFile(mf);
+        // videoExtra.setFile(seasonFolder.resolve(newFilename + "-extras-" + name + "." + mf.getExtension()));
+
+        // don't mess with extras - keep em 1:1
+        newFiles.add(new MediaFile(mf));
+        break;
+
+      // missing enums
+      case AUDIO:
+      case BANNER:
+      case CLEARART:
+      case CLEARLOGO:
+      case DISC:
+      case EXTRAFANART:
+      case EXTRATHUMB:
+      case GRAPHIC:
+      case LANDSCAPE:
+      case LOGO:
+      case POSTER:
+      case SAMPLE:
+      case SEASON_POSTER:
+      case TEXT:
+      case UNKNOWN:
+      default:
         break;
     }
 
