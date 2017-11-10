@@ -1430,12 +1430,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public String getNfoFilename(TvShowEpisodeNfoNaming nfoNaming) {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    String baseName;
+    MediaFile firstMediaFile = mfs.get(0);
+
+    String baseName = "";
     if (isDisc()) {
-      baseName = "VIDEO_TS"; // FIXME: BluRay?
+      if (firstMediaFile.isBlurayFile()) {
+        baseName = "BDMV.nfo"; // dunno, but more correct
+      }
+      if (firstMediaFile.isDVDFile()) {
+        baseName = "VIDEO_TS.nfo";
+      }
+      if (firstMediaFile.isHdDVDFile()) {
+        baseName = "HVDVD_TS.nfo";
+      }
     }
     else {
-      baseName = mfs.get(0).getBasename();
+      baseName = firstMediaFile.getBasename();
     }
     return nfoNaming.getFilename(baseName, "nfo");
   }

@@ -80,7 +80,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders          = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
-      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ");
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipRegex            = "^[.][\\w@]+.*";
@@ -544,7 +544,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           // find EP root folder, and do not walk lower than showDir!
           Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
           String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-          while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+          while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
             discRoot = discRoot.getParent();
             folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
           }
@@ -628,7 +628,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                   // set correct EP path in case of disc files
                   Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
                   String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-                  while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                  while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
                     discRoot = discRoot.getParent();
                     folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
                   }
@@ -706,7 +706,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 // set correct EP path in case of disc files
                 Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
                 String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-                while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
                   discRoot = discRoot.getParent();
                   folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
                 }
@@ -741,7 +741,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               // set correct EP path in case of disc files
               Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
               String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-              while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+              while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
                 discRoot = discRoot.getParent();
                 folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
               }

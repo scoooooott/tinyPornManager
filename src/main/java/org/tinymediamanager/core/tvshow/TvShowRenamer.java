@@ -423,7 +423,8 @@ public class TvShowRenamer {
     // ........ \epFolder \disc... \mf
     Path disc = mf.getFileAsPath().getParent();
     Path epFolder = disc.getParent();
-    if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")) {
+    if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")
+        && !disc.getFileName().toString().equalsIgnoreCase("HVDVD_TS")) {
       LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
       return;
     }

@@ -144,6 +144,7 @@ public class Settings extends AbstractSettings {
     addVideoFileTypes(".dv");
     addVideoFileTypes(".dvr-ms");
     addVideoFileTypes(".disc"); // video stubs
+    addVideoFileTypes(".evo"); // hd-dvd
     addVideoFileTypes(".fli");
     addVideoFileTypes(".flv");
     addVideoFileTypes(".h264");

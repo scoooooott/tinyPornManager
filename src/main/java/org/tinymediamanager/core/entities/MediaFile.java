@@ -487,11 +487,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isDiscFile() {
-    return isBlurayFile() || isDVDFile();
+    return isBlurayFile() || isDVDFile() || isHdDVDFile();
   }
 
   /**
-   * is this a BLURAY "disc file"? (video_ts, vts...) for movierenamer
+   * is this a DVD "disc file"? (video_ts, vts...) for movierenamer
    *
    * @return true/false
    */
@@ -501,7 +501,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * is this a DVD "disc file"? (index, movieobject, bdmv, ...) for movierenamer
+   * is this a HD-DVD "disc file"? (hvdvd_ts, hv...) for movierenamer
+   *
+   * @return true/false
+   */
+  public boolean isHdDVDFile() {
+    String name = getFilename().toLowerCase(Locale.ROOT);
+    String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
+    return "hvdvd_ts".equals(foldername) && name.matches(".*(evo|bup|ifo|map)$");
+  }
+
+  /**
+   * is this a Bluray "disc file"? (index, movieobject, bdmv, ...) for movierenamer
    *
    * @return true/false
    */
