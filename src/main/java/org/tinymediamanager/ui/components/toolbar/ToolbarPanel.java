@@ -18,7 +18,9 @@ package org.tinymediamanager.ui.components.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.nio.file.Files;
@@ -28,6 +30,7 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -110,6 +113,8 @@ public class ToolbarPanel extends JPanel {
   private ToolbarMenu                 menuEdit;
   private ToolbarMenu                 menuRename;
 
+  private JPopupMenu                  taskListPopupMenu;
+
   private JPanel                      panelEast;
 
   public ToolbarPanel() {
@@ -139,16 +144,19 @@ public class ToolbarPanel extends JPanel {
     panelCenter.add(btnTasks, "cell 6 0, alignx center, aligny bottom");
 
     JButton btnSettings = new ToolbarButton(IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
-    btnSettings.setAction(new SettingsAction());
+    Action settingsAction = new SettingsAction();
+    btnSettings.setAction(settingsAction);
     panelCenter.add(btnSettings, "cell 7 0, alignx center, aligny bottom");
 
-    JButton btnTools = new ToolbarButton(IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER, buildToolsMenu());
+    JPopupMenu toolsPopupMenu = buildToolsMenu();
+    JButton btnTools = new ToolbarButton(IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER, toolsPopupMenu);
     panelCenter.add(btnTools, "cell 8 0, alignx center, aligny bottom");
 
     btnExport = new ToolbarButton(IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
     panelCenter.add(btnExport, "cell 9 0, alignx center, aligny bottom");
 
-    JButton btnInfo = new ToolbarButton(IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER, buildInfoMenu());
+    JPopupMenu infoPopupMenu = buildInfoMenu();
+    JButton btnInfo = new ToolbarButton(IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER, infoPopupMenu);
     panelCenter.add(btnInfo, "cell 10 0, alignx center, aligny bottom");
 
     JButton btnDonate = new ToolbarButton(IconManager.TOOLBAR_DONATE, IconManager.TOOLBAR_DONATE_HOVER);
@@ -167,25 +175,76 @@ public class ToolbarPanel extends JPanel {
     menuRename = new ToolbarMenu(BUNDLE.getString("Toolbar.rename"));
     panelCenter.add(menuRename, "cell 4 1, center");
 
-    JLabel lblProgress = new JLabel(BUNDLE.getString("Toolbar.progress"));
-    panelCenter.add(lblProgress, "cell 6 1, center");
+    taskListPopupMenu = new TaskListPopup();
+    ToolbarMenu menuProgress = new ToolbarMenu(BUNDLE.getString("Toolbar.progress"), taskListPopupMenu);
+    panelCenter.add(menuProgress, "cell 6 1, center");
 
     JLabel lblSettings = new JLabel(BUNDLE.getString("Toolbar.settings"));
+    lblSettings.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        settingsAction.actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    lblSettings.setForeground(Color.GRAY);
     panelCenter.add(lblSettings, "cell 7 1, center");
 
-    JLabel lblTools = new JLabel(BUNDLE.getString("Toolbar.tools"));
+    ToolbarMenu lblTools = new ToolbarMenu(BUNDLE.getString("Toolbar.tools"), toolsPopupMenu);
     panelCenter.add(lblTools, "cell 8 1, center");
 
     JLabel lblExport = new JLabel(BUNDLE.getString("Toolbar.export"));
-    lblExport.setForeground(ToolbarMenu.COLOR);
+    lblExport.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (btnExport.getAction() != null) {
+          btnExport.getAction().actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
+        }
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    lblExport.setForeground(Color.GRAY);
     panelCenter.add(lblExport, "cell 9 1, center");
 
-    JLabel lblAbout = new JLabel(BUNDLE.getString("Toolbar.help"));
-    lblAbout.setForeground(ToolbarMenu.COLOR);
-    panelCenter.add(lblAbout, "cell 10 1, center");
+    ToolbarMenu menuHelp = new ToolbarMenu(BUNDLE.getString("Toolbar.help"), infoPopupMenu);
+    panelCenter.add(menuHelp, "cell 10 1, center");
 
     JLabel lblDonate = new JLabel(BUNDLE.getString("Toolbar.donate"));
-    lblDonate.setForeground(ToolbarMenu.COLOR);
+    lblDonate.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        btnDonate.getAction().actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    lblDonate.setForeground(Color.GRAY);
     panelCenter.add(lblDonate, "cell 11 1, center");
 
     panelEast = new JPanel();
@@ -260,8 +319,6 @@ public class ToolbarPanel extends JPanel {
     TmmTaskManager.getInstance().addTaskListener(tmmTaskListener);
 
     button.addMouseListener(new MouseListener() {
-      private JPopupMenu taskListPopupMenu = new TaskListPopup();
-
       @Override
       public void mouseReleased(MouseEvent arg0) {
       }
@@ -286,7 +343,7 @@ public class ToolbarPanel extends JPanel {
 
       @Override
       public void mouseClicked(MouseEvent arg0) {
-        taskListPopupMenu.show(button, button.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), taskListPopupMenu.getHeight());
+        taskListPopupMenu.show(button, button.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), button.getHeight());
       }
     });
 

@@ -22,8 +22,8 @@ import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -34,16 +34,16 @@ import javax.swing.SwingConstants;
 import org.apache.commons.lang3.StringUtils;
 
 public class ToolbarMenu extends JLabel {
-  public static Color      COLOR       = Color.GRAY;
-  public static Color      COLOR_HOVER = Color.WHITE;
+  public static Color        COLOR       = Color.GRAY;
+  public static Color        COLOR_HOVER = Color.WHITE;
 
-  private static int       arrowSize   = 10;
+  private static int         arrowSize   = 10;
 
-  private static ImageIcon menuImage;
-  private static ImageIcon menuImageHover;
+  protected static ImageIcon menuImage;
+  protected static ImageIcon menuImageHover;
 
-  private final String     defaultText;
-  private JPopupMenu       popupMenu   = null;
+  protected final String     defaultText;
+  protected JPopupMenu       popupMenu   = null;
 
   public ToolbarMenu(String text) {
     super(text, SwingConstants.CENTER);
@@ -54,19 +54,23 @@ public class ToolbarMenu extends JLabel {
     setOpaque(false);
     setForeground(COLOR);
 
-    addMouseListener(new MouseListener() {
-      @Override
-      public void mouseReleased(MouseEvent arg0) {
-      }
+    setMouseListener();
+  }
 
-      @Override
-      public void mousePressed(MouseEvent arg0) {
-      }
+  public ToolbarMenu(String text, JPopupMenu popupMenu) {
+    this(text);
 
+    if (popupMenu != null) {
+      setPopupMenu(popupMenu);
+    }
+  }
+
+  protected void setMouseListener() {
+    addMouseListener(new MouseAdapter() {
       @Override
       public void mouseExited(MouseEvent arg0) {
         setForeground(COLOR);
-        if (popupMenu != null && popupMenu.getSubElements().length > 0) {
+        if (popupMenu != null) {
           setIcon(getMenuIndicatorImage());
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
@@ -75,7 +79,7 @@ public class ToolbarMenu extends JLabel {
       @Override
       public void mouseEntered(MouseEvent arg0) {
         setForeground(COLOR_HOVER);
-        if (popupMenu != null && popupMenu.getSubElements().length > 0) {
+        if (popupMenu != null) {
           setIcon(getMenuIndicatorHoverImage());
           setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
@@ -83,7 +87,7 @@ public class ToolbarMenu extends JLabel {
 
       @Override
       public void mouseClicked(MouseEvent arg0) {
-        if (popupMenu != null && popupMenu.getSubElements().length > 0) {
+        if (popupMenu != null) {
           popupMenu.show(ToolbarMenu.this, ToolbarMenu.this.getWidth() - (int) popupMenu.getPreferredSize().getWidth(), ToolbarMenu.this.getHeight());
         }
       }
@@ -100,7 +104,7 @@ public class ToolbarMenu extends JLabel {
       setText(popupMenu.getLabel());
     }
 
-    if (popupMenu != null && popupMenu.getSubElements().length > 0) {
+    if (popupMenu != null) {
       setIcon(getMenuIndicatorImage());
     }
     else {
@@ -108,7 +112,7 @@ public class ToolbarMenu extends JLabel {
     }
   }
 
-  private ImageIcon getMenuIndicatorHoverImage() {
+  protected ImageIcon getMenuIndicatorHoverImage() {
     if (menuImageHover != null) {
       return menuImageHover;
     }
@@ -117,7 +121,7 @@ public class ToolbarMenu extends JLabel {
     return menuImageHover;
   }
 
-  private ImageIcon getMenuIndicatorImage() {
+  protected ImageIcon getMenuIndicatorImage() {
     if (menuImage != null) {
       return menuImage;
     }
@@ -126,7 +130,7 @@ public class ToolbarMenu extends JLabel {
     return menuImage;
   }
 
-  private Image paintMenuImage(boolean hover) {
+  protected Image paintMenuImage(boolean hover) {
     BufferedImage img = new BufferedImage(arrowSize, arrowSize, BufferedImage.TYPE_INT_RGB);
     Graphics2D g = img.createGraphics();
     g.setColor(hover ? COLOR : COLOR_HOVER);
@@ -156,7 +160,7 @@ public class ToolbarMenu extends JLabel {
     return Toolkit.getDefaultToolkit().createImage(dimg.getSource());
   }
 
-  private BufferedImage rotate(BufferedImage img, int angle) {
+  protected BufferedImage rotate(BufferedImage img, int angle) {
     int w = img.getWidth();
     int h = img.getHeight();
     BufferedImage dimg = new BufferedImage(w, h, img.getType());
@@ -165,5 +169,4 @@ public class ToolbarMenu extends JLabel {
     g.drawImage(img, null, 0, 0);
     return dimg;
   }
-
 }
