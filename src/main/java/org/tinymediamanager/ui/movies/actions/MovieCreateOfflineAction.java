@@ -34,8 +34,8 @@ public class MovieCreateOfflineAction extends TmmAction {
 
   public MovieCreateOfflineAction() {
     putValue(NAME, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
-    putValue(LARGE_ICON_KEY, IconManager.ADD_INV);
-    putValue(SMALL_ICON, IconManager.ADD_INV);
+    putValue(LARGE_ICON_KEY, IconManager.ADD);
+    putValue(SMALL_ICON, IconManager.ADD);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
   }
 

@@ -168,7 +168,9 @@ public class TmmTable extends JTable {
     TableColumnModel columnModel = getColumnModel();
     for (int col = 0; col < getColumnCount(); col++) {
 
-      int maxwidth = 0;
+      int maxWidth = 0;
+      int minWidth = columnModel.getColumn(col).getMinWidth();
+
       // header
       TableCellRenderer rend = columnModel.getColumn(col).getHeaderRenderer();
       Object value = columnModel.getColumn(col).getHeaderValue();
@@ -176,21 +178,26 @@ public class TmmTable extends JTable {
         rend = getTableHeader().getDefaultRenderer();
       }
       Component comp = rend.getTableCellRendererComponent(this, value, false, false, -1, col);
-      maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
+      maxWidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxWidth);
 
       // rows
       for (int row = 0; row < getRowCount(); row++) {
         rend = getCellRenderer(row, col);
         value = getValueAt(row, col);
         comp = rend.getTableCellRendererComponent(this, value, false, false, row, col);
-        maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
+        maxWidth = Math.max(comp.getPreferredSize().width + margin, maxWidth);
+      }
+
+      // do not set the max width below the min width
+      if (maxWidth < minWidth) {
+        maxWidth = minWidth;
       }
 
       TableColumn column = columnModel.getColumn(col);
-      column.setPreferredWidth(maxwidth);
+      column.setPreferredWidth(maxWidth);
       if (!column.getResizable()) {
-        column.setMinWidth(maxwidth);
-        column.setMaxWidth(maxwidth);
+        column.setMinWidth(minWidth);
+        column.setMaxWidth(maxWidth);
       }
     }
   }

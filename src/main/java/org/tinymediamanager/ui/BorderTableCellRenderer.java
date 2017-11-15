@@ -79,6 +79,7 @@ public class BorderTableCellRenderer extends DefaultTableCellRenderer {
       }
       if (movie.isNewlyAdded()) {
         setHorizontalTextPosition(SwingConstants.LEADING);
+        setIconTextGap(10);
         setIcon(IconManager.NEW);
       }
       else {

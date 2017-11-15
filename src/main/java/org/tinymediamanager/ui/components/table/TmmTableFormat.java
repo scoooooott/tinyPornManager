@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.IconManager;
 
@@ -71,6 +72,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return columns.get(i).columnResizeable;
   }
 
+  public int getMinWidth(int i) {
+    return columns.get(i).minWidth;
+  }
+
   protected class Column {
     private String            columnTitle;
     private String            columnIdentifier;
@@ -80,12 +85,14 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     private TableCellRenderer cellRenderer     = null;
     private ImageIcon         headerIcon       = null;
     private boolean           columnResizeable = true;
+    private int               minWidth         = 0;
 
     public Column(String title, String identifier, Function<E, ?> value, Class clazz) {
       columnTitle = title;
       columnIdentifier = identifier;
       columnValue = value;
       columnClass = clazz;
+      minWidth = Globals.settings.getFontSize() * 2;
     }
 
     public void setColumnComparator(Comparator comparator) {
@@ -102,6 +109,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
 
     public void setColumnResizeable(boolean resizeable) {
       columnResizeable = resizeable;
+    }
+
+    public void setMinWidth(int minWidth) {
+      this.minWidth = minWidth;
     }
   }
 

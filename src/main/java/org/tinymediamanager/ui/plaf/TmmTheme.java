@@ -19,6 +19,9 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jtattoo.plaf.AbstractTheme;
 
 /**
@@ -27,20 +30,20 @@ import com.jtattoo.plaf.AbstractTheme;
  * @author Manuel Laggner
  */
 public class TmmTheme extends AbstractTheme {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmmTheme.class);
 
-  public static final String FONT = "Dialog";
+  public static final String  FONT   = "Dialog";
 
   static {
     try {
-      InputStream fontStream = TmmTheme.class.getResource("MaterialIcons-Regular.ttf").openStream();
+      // InputStream fontStream = TmmTheme.class.getResource("fontawesome-pro-light-300.ttf").openStream();
+      InputStream fontStream = TmmTheme.class.getResource("fontawesome-pro-regular-400.ttf").openStream();
       Font materialIconsRegular = Font.createFont(Font.TRUETYPE_FONT, fontStream);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(materialIconsRegular);
       fontStream.close();
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("could not load icon font: " + e.getMessage());
     }
-
   }
 }

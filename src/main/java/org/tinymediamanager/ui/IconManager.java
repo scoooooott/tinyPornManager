@@ -20,6 +20,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.net.URL;
@@ -29,8 +30,12 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
+import org.tinymediamanager.Globals;
+
 public class IconManager {
   private final static Map<URI, ImageIcon> ICON_CACHE                  = new HashMap<>();
+  private final static int                 DEFAULT_FONT_SIZE           = Globals.settings.getFontSize();
+
   public final static ImageIcon            EMPTY_IMAGE                 = new ImageIcon(IconManager.class.getResource("images/empty.png"));
 
   // toolbar icons
@@ -59,65 +64,65 @@ public class IconManager {
   // packaged icons
   public final static ImageIcon            DOT_AVAILABLE               = loadImage("dot_available.png");
   public final static ImageIcon            DOT_UNAVAILABLE             = loadImage("dot_unavailable.png");
-  public final static ImageIcon            NEW                         = loadImage("new.png");
   public final static ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
 
-  // Material icons normal
-  public final static ImageIcon            ADD                         = createMaterialFontIcon('\uE145', 16);
-  public final static ImageIcon            BUG                         = createMaterialFontIcon('\uE868', 16);
-  public final static ImageIcon            CANCEL                      = createMaterialFontIcon('\uE14C', 16);
-  public final static ImageIcon            CHECK_ALL                   = createMaterialFontIcon('\uE877', 16);
-  public final static ImageIcon            CLEAR_ALL                   = createMaterialFontIcon('\uE0B8', 16);
-  public final static ImageIcon            CONFIGURE                   = createMaterialFontIcon('\uE869', 16);
-  public final static ImageIcon            DELETE                      = createMaterialFontIcon('\uE872', 16);
-  public final static ImageIcon            DELETE_FOREVER              = createMaterialFontIcon('\uE92B', 16);
-  public final static ImageIcon            DOWNLOAD                    = createMaterialFontIcon('\uE2C4', 16);
-  public final static ImageIcon            FEEDBACK                    = createMaterialFontIcon('\uE158', 16);
-  public final static ImageIcon            EDIT                        = createMaterialFontIcon('\uE150', 16);
-  public final static ImageIcon            ERROR                       = createMaterialFontIcon('\uE002', 16);
-  public final static ImageIcon            EXPORT                      = createMaterialFontIcon('\uE2C6', 16);
-  public final static ImageIcon            FILTER_ACTIVE               = createMaterialFontIcon('\uE152', 16, Color.RED);
-  public final static ImageIcon            HINT                        = createMaterialFontIcon('\uE88F', 16);
-  public final static ImageIcon            IMAGE                       = createMaterialFontIcon('\uE410', 16);
-  public final static ImageIcon            PLAY                        = createMaterialFontIcon('\uE037', 16);
-  public final static ImageIcon            PLAY_LARGE                  = createMaterialFontIcon('\uE039', 32);
-  public final static ImageIcon            REFRESH                     = createMaterialFontIcon('\uE5D5', 32);
-  public final static ImageIcon            REMOVE                      = createMaterialFontIcon('\uE15B', 16);
-  public final static ImageIcon            SEARCH                      = createMaterialFontIcon('\uE8B6', 16);
-  public final static ImageIcon            SUBTITLE                    = createMaterialFontIcon('\uE24C', 16);
-  public final static ImageIcon            SYNC                        = createMaterialFontIcon('\uE627', 16);
+  // font awesome icons normal
+  public final static ImageIcon            ADD                         = createFontAwesomeIcon('\uF067');
+  public final static ImageIcon            BUG                         = createFontAwesomeIcon('\uF188');
+  public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF00D');
+  public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A');
+  public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8');
+  public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
+  public final static ImageIcon            DELETE                      = createFontAwesomeIcon('\uF00D');
+  public final static ImageIcon            DELETE_FOREVER              = createFontAwesomeIcon('\uF2ED');
+  public final static ImageIcon            DOWNLOAD                    = createFontAwesomeIcon('\uF019');
+  public final static ImageIcon            FEEDBACK                    = createFontAwesomeIcon('\uF0E0');
+  public final static ImageIcon            EDIT                        = createFontAwesomeIcon('\uF044');
+  public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
+  public final static ImageIcon            EXPORT                      = createFontAwesomeIcon('\uF14D');
+  public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
+  public final static ImageIcon            HINT                        = createFontAwesomeIcon('\uF05A');
+  public final static ImageIcon            IMAGE                       = createFontAwesomeIcon('\uF03E');
+  public final static ImageIcon            MEDIAINFO                   = createFontAwesomeIcon('\uF129');
+  public final static ImageIcon            NEW                         = createTextIcon("new", 14);
+  public final static ImageIcon            PLAY                        = createFontAwesomeIcon('\uF04B');
+  public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
+  public final static ImageIcon            REFRESH                     = createFontAwesomeIcon('\uF01E');
+  public final static ImageIcon            REMOVE                      = createFontAwesomeIcon('\uF068');
+  public final static ImageIcon            SEARCH                      = createFontAwesomeIcon('\uF002');
+  public final static ImageIcon            SUBTITLE                    = createFontAwesomeIcon('\uF086');
+  public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021');
 
-  // Material icons light (button usage)
-  public final static ImageIcon            ADD_INV                     = createMaterialFontIcon('\uE145', 16, true);
-  public final static ImageIcon            ARROW_UP_INV                = createMaterialFontIcon('\uE5D8', 16, true);
-  public final static ImageIcon            ARROW_DOWN_INV              = createMaterialFontIcon('\uE5DB', 16, true);
-  public final static ImageIcon            APPLY_INV                   = createMaterialFontIcon('\uE876', 16, true);
-  public final static ImageIcon            BACK_INV                    = createMaterialFontIcon('\uE5C4', 16, true);
-  public final static ImageIcon            CANCEL_INV                  = createMaterialFontIcon('\uE14C', 16, true);
-  public final static ImageIcon            COPY_INV                    = createMaterialFontIcon('\uE14D', 16, true);
-  public final static ImageIcon            DATE_PICKER                 = createMaterialFontIcon('\uE916', 16, true);
-  public final static ImageIcon            FILTER_INV                  = createMaterialFontIcon('\uE152', 16, true);
-  public final static ImageIcon            FILE_OPEN_INV               = createMaterialFontIcon('\uE24D', 16, true);
-  public final static ImageIcon            IMAGE_INV                   = createMaterialFontIcon('\uE3F4', 16, true);
-  public final static ImageIcon            REMOVE_INV                  = createMaterialFontIcon('\uE15B', 16, true);
-  public final static ImageIcon            STOP_INV                    = createMaterialFontIcon('\uE5C9', 16, true);
+  // font awesome icons light (button usage)
+  public final static ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', true);
+  public final static ImageIcon            ARROW_UP_INV                = createFontAwesomeIcon('\uF077', true);
+  public final static ImageIcon            ARROW_DOWN_INV              = createFontAwesomeIcon('\uF078', true);
+  public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF00C', true);
+  public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF053', true);
+  public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF00D', true);
+  public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', true);
+  public final static ImageIcon            DATE_PICKER                 = createFontAwesomeIcon('\uF073', true);
+  public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', true);
+  public final static ImageIcon            FILE_OPEN_INV               = createFontAwesomeIcon('\uF07C', true);
+  public final static ImageIcon            IMAGE_INV                   = createFontAwesomeIcon('\uF03E', true);
+  public final static ImageIcon            REMOVE_INV                  = createFontAwesomeIcon('\uF068', true);
+  public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
 
-  // Material icons - column headers
-  public final static ImageIcon            COUNT                       = createFontIcon('#', 20);
-  public final static ImageIcon            DATE_ADDED                  = createMaterialFontIcon('\uE02E', 18);
-  public final static ImageIcon            EPISODES                    = createFontIcon('E', 20);
-  public final static ImageIcon            FILE_SIZE                   = createMaterialFontIcon('\uE161', 18);
-  public final static ImageIcon            IMAGES                      = createMaterialFontIcon('\uE410', 18);
-  public final static ImageIcon            MOVIE                       = createMaterialFontIcon('\uE54D', 18);
-  public final static ImageIcon            NFO                         = createMaterialFontIcon('\uE873', 18);
-  public final static ImageIcon            RATING                      = createMaterialFontIcon('\uE838', 18);
-  public final static ImageIcon            SEASONS                     = createFontIcon('S', 20);
-  public final static ImageIcon            SUBTITLES                   = createMaterialFontIcon('\uE24C', 18);
-  public final static ImageIcon            TRAILER                     = createMaterialFontIcon('\uE02C', 18);
-  public final static ImageIcon            VIDEO_FORMAT                = createMaterialFontIcon('\uE85B', 18);
-  public final static ImageIcon            WATCHED                     = createMaterialFontIcon('\uE037', 18);
+  // font awesome icons - column headers
+  public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
+  public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
+  public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
+  public final static ImageIcon            FILE_SIZE                   = createFontAwesomeIcon('\uF0C7', 16);
+  public final static ImageIcon            IMAGES                      = createFontAwesomeIcon('\uF302', 16);
+  public final static ImageIcon            NFO                         = createFontAwesomeIcon('\uF15C', 16);
+  public final static ImageIcon            RATING                      = createFontAwesomeIcon('\uF005', 16);
+  public final static ImageIcon            SEASONS                     = createTextIcon("S", 18);
+  public final static ImageIcon            SUBTITLES                   = createFontAwesomeIcon('\uF086', 16);
+  public final static ImageIcon            TRAILER                     = createFontAwesomeIcon('\uF008', 16);
+  public final static ImageIcon            VIDEO_FORMAT                = createFontAwesomeIcon('\uF320', 16);
+  public final static ImageIcon            WATCHED                     = createFontAwesomeIcon('\uF04B', 16);
 
   public static ImageIcon loadImage(String name) {
     URL file = IconManager.class.getResource("images/interface/" + name);
@@ -173,20 +178,49 @@ public class IconManager {
   }
 
   /**
-   * create a image off the material icon font
+   * create a image off the font awesome icon font in the default size 14pt for 12pt base font size.
+   *
+   * @param iconId
+   *          the icon id
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId) {
+    return createFontAwesomeIcon(iconId, calculateFontSize(14 / 12.0f), UIManager.getColor("Label.foreground"));
+  }
+
+  private static int calculateFontSize(float scaleFactor) {
+    return (int) Math.floor(DEFAULT_FONT_SIZE * scaleFactor);
+    // return Math.round(DEFAULT_FONT_SIZE * scaleFactor);
+  }
+
+  /**
+   * create a image off the font awesome icon font in given size (scaling to the base font size of 12pt applied!)
    *
    * @param iconId
    *          the icon id
    * @param size
    *          the desired font size
-   * @return
+   * @return the generated icon
    */
-  public static ImageIcon createMaterialFontIcon(char iconId, int size) {
-    return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
+  public static ImageIcon createFontAwesomeIcon(char iconId, int size) {
+    return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.foreground"));
   }
 
   /**
-   * create a image off the material icon font
+   * create a image off the awesome icon font with the given scaling factor
+   *
+   * @param iconId
+   *          the icon id
+   * @param scaleFactor
+   *          the scale factor to apply
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, float scaleFactor) {
+    return createFontAwesomeIcon(iconId, calculateFontSize(scaleFactor), UIManager.getColor("Label.foreground"));
+  }
+
+  /**
+   * create a image off the awesome icon font in given size (scaling to the base font size of 12pt applied!)
    *
    * @param iconId
    *          the icon id
@@ -194,19 +228,45 @@ public class IconManager {
    *          the desired font size
    * @param inverse
    *          inverse color
-   * @return
+   * @return the generated icon
    */
-  public static ImageIcon createMaterialFontIcon(char iconId, int size, boolean inverse) {
+  public static ImageIcon createFontAwesomeIcon(char iconId, int size, boolean inverse) {
     if (inverse) {
-      return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.background"));
+      return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.background"));
     }
     else {
-      return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
+      return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.foreground"));
     }
   }
 
   /**
-   * create a image off the material icon font
+   * create a image off the awesome icon font in the default size 14pt for 12pt base font size.
+   *
+   * @param iconId
+   *          the icon id
+   * @param inverse
+   *          inverse color
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, boolean inverse) {
+    return createFontAwesomeIcon(iconId, 14, inverse);
+  }
+
+  /**
+   * create a image off the awesome icon font size 14pt for 12pt base font size.
+   *
+   * @param iconId
+   *          the icon id
+   * @param color
+   *          the color to create the icon in
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, Color color) {
+    return createFontAwesomeIcon(iconId, 14, color);
+  }
+
+  /**
+   * create a image off the awesome icon font
    *
    * @param iconId
    *          the icon id
@@ -214,40 +274,50 @@ public class IconManager {
    *          the desired font size
    * @param color
    *          the color to create the icon in
-   * @return
+   * @return the generated icon
    */
-  public static ImageIcon createMaterialFontIcon(char iconId, int size, Color color) {
-    Font materialFont = new Font("Material Icons", Font.PLAIN, size);
-    return createFontIcon(materialFont, iconId, size, color);
+  public static ImageIcon createFontAwesomeIcon(char iconId, int size, Color color) {
+    Font font = new Font("Font Awesome 5 Pro Regular", Font.PLAIN, size);
+    return createFontIcon(font, String.valueOf(iconId), color);
   }
 
-  private static ImageIcon createFontIcon(char iconId, int size) {
-    return createFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
+  private static ImageIcon createTextIcon(String text, int size) {
+    return createTextIcon(text, size, UIManager.getColor("Label.foreground"));
   }
 
-  private static ImageIcon createFontIcon(char iconId, int size, Color color) {
+  private static ImageIcon createTextIcon(String text, int size, Color color) {
     Font defaultfont = (Font) UIManager.get("Label.font");
     if (defaultfont == null) {
       return null;
     }
     Font font = defaultfont.deriveFont(Font.BOLD, (float) size);
-    return createFontIcon(font, iconId, size, color);
+    return createFontIcon(font, text, color);
   }
 
-  private static ImageIcon createFontIcon(Font font, char iconId, int size, Color color) {
+  private static ImageIcon createFontIcon(Font font, String text, Color color) {
     try {
       // calculate icon size
-      BufferedImage tmp = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+      BufferedImage tmp = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setFont(font);
-      int iconWidth = g2.getFontMetrics().charWidth(iconId);
-      int iconHeight = g2.getFontMetrics().getHeight();
+
+      // get the visual bounds of the string (this is more realiable than the string bounds)
+      // Rectangle2D bounds = g2.getFontMetrics().getStringBounds(text, g2);
+      Rectangle2D bounds = font.createGlyphVector(g2.getFontRenderContext(), text).getVisualBounds();
+      int iconWidth = (int) Math.ceil(bounds.getWidth()) + 2; // +2 to avoid clipping problems
+      int iconHeight = (int) Math.ceil(bounds.getHeight()) + 2; // +2 to avoid clipping problems
+
       g2.dispose();
+
+      // if width is less than height, increase the width to be at least a square
+      if (iconWidth < iconHeight) {
+        iconWidth = iconHeight;
+      }
 
       // and draw it
       BufferedImage buffer = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) buffer.getGraphics();
-      // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+      // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       // g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
       Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
       if (desktopHints != null) {
@@ -257,11 +327,8 @@ public class IconManager {
       g2.setFont(font);
       g2.setColor(color);
 
-      int sy = size;
-      g2.drawString(String.valueOf(iconId), 0, sy);
-      g2.dispose();
-
-      g2.drawImage(buffer, 0, 0, null);
+      // draw the glyhps centered
+      g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), (int) (Math.ceil(-bounds.getY()) + 1));
       g2.dispose();
       return new ImageIcon(buffer);
     }

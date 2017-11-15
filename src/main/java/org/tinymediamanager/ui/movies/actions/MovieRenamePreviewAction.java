@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.ImageIcon;
-
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -36,8 +34,6 @@ public class MovieRenamePreviewAction extends TmmAction {
 
   public MovieRenamePreviewAction() {
     putValue(NAME, BUNDLE.getString("movie.renamepreview")); //$NON-NLS-1$
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.renamepreview.hint")); //$NON-NLS-1$
   }
 
