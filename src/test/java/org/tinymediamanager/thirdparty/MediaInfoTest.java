@@ -34,6 +34,12 @@ public class MediaInfoTest extends BasicTest {
     System.out.println(MediaInfo.staticOption("Info_Capacities"));
   }
 
+  @Test
+  public void displayInfoOutputFormats() {
+    // since version 17.10
+    System.out.println(MediaInfo.staticOption("Info_OutputFormats"));
+  }
+
   /**
    * displays all supported codecs
    */
@@ -46,7 +52,8 @@ public class MediaInfoTest extends BasicTest {
   public void mediaFile() {
     setTraceLogging();
 
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
+    // MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo.17.10.iso"));
     mf.gatherMediaInformation();
 
     System.out.println("----------------------");
