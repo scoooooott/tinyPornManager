@@ -26,6 +26,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,23 +59,24 @@ public class ImageLabel extends JLabel {
     CENTER
   }
 
-  private static final long                  serialVersionUID   = -2524445544386464158L;
-  protected static final ResourceBundle      BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final char                  ICON_ID            = '\uE40B';
+  private static final long                  serialVersionUID       = -2524445544386464158L;
+  protected static final ResourceBundle      BUNDLE                 = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final char                  ICON_ID                = '\uF03E';
+  private static final Color                 EMPTY_BACKGROUND_COLOR = new Color(141, 165, 179);
 
   protected BufferedImage                    scaledImage;
   protected String                           imageUrl;
   protected String                           imagePath;
-  protected Position                         position           = Position.TOP_LEFT;
+  protected Position                         position               = Position.TOP_LEFT;
   protected boolean                          drawBorder;
   protected boolean                          drawFullWidth;
-  protected boolean                          enabledLightbox    = false;
-  protected boolean                          useCache           = true;
-  protected float                            desiredAspectRatio = 0f;
-  protected boolean                          drawShadow         = false;
+  protected boolean                          enabledLightbox        = false;
+  protected boolean                          useCache               = true;
+  protected float                            desiredAspectRatio     = 0f;
+  protected boolean                          drawShadow             = false;
 
-  protected SwingWorker<BufferedImage, Void> worker             = null;
-  protected MouseListener                    lightboxListener   = null;
+  protected SwingWorker<BufferedImage, Void> worker                 = null;
+  protected MouseListener                    lightboxListener       = null;
 
   public ImageLabel() {
     super("");
@@ -299,20 +301,21 @@ public class ImageLabel extends JLabel {
       int fontSize = (int) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
 
       // draw the _no image found_ icon
-      Font materialFont = new Font("Material Icons", Font.PLAIN, fontSize);
+      Font font = new Font("Font Awesome 5 Pro Regular", Font.PLAIN, fontSize);
       BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      g2.setColor(new Color(213, 213, 213));
+      g2.setColor(EMPTY_BACKGROUND_COLOR);
       g2.fillRect(0, 0, newWidth, newHeight);
 
-      g2.setFont(materialFont);
-      g2.setColor(UIManager.getColor("Label.foreground"));
-      int iconWidth = g2.getFontMetrics().charWidth(ICON_ID);
-      int iconHeight = g2.getFontMetrics().getHeight();
-      g2.drawString(String.valueOf(ICON_ID), newWidth / 2 - iconWidth / 2, newHeight / 2 + iconHeight / 2);
+      g2.setFont(font);
+      g2.setColor(UIManager.getColor("Panel.background"));
+      Rectangle2D bounds = font.createGlyphVector(g2.getFontRenderContext(), String.valueOf(ICON_ID)).getVisualBounds();
+      int iconWidth = (int) Math.ceil(bounds.getWidth()) + 2; // +2 to avoid clipping problems
+      int iconHeight = (int) Math.ceil(bounds.getHeight()) + 2; // +2 to avoid clipping problems
+      g2.drawString(String.valueOf(ICON_ID), (newWidth - iconWidth) / 2, (newHeight + iconHeight) / 2);
 
       g2.dispose();
 
