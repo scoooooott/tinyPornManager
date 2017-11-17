@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.BorderFactory;
 import javax.swing.UIDefaults;
 
 import com.jtattoo.plaf.AbstractBorderFactory;
@@ -190,7 +191,10 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     table.put("ProgressBar.background", getTheme().getBackgroundColorDark());
     table.put("ProgressBar.foreground", getFocusCellColor());
     table.put("TriStateCheckBox.icon", getIconFactory().getCheckBoxIcon());
-    // table.put("Table.foreground", getForegroundColor());
+
+    // put some spacing between grid and cell content
+    table.put("Table.cellNoFocusBorder", BorderFactory.createEmptyBorder(1, 3, 1, 3));
+    table.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(1, 3, 1, 3));
   }
 
   @Override

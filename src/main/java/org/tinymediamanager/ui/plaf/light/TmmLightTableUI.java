@@ -15,11 +15,12 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Insets;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,7 @@ import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.AbstractBorder;
 import javax.swing.plaf.ComponentUI;
 
 import com.jtattoo.plaf.BaseTableUI;
@@ -80,34 +80,59 @@ public class TmmLightTableUI extends BaseTableUI {
           try {
             colsNotToDraw.addAll((List) prop);
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
         }
+
         // if the component to render is a JComponent, add our tweaks.
         if (component instanceof JComponent) {
           JComponent jcomponent = (JComponent) component;
           jcomponent.setOpaque(isSelected);
+
           if (isSelected && !colsNotToDraw.contains(columnAtPoint)) {
-            boolean draw = true;
-            // draw the new border only if there is no spacing in the existend border
-            if (jcomponent.getBorder() instanceof EmptyBorder) {
-              EmptyBorder border = (EmptyBorder) jcomponent.getBorder();
-              Insets borderInsets = border.getBorderInsets();
-              if (borderInsets.left > 1 || borderInsets.right > 1 || borderInsets.top > 1 || borderInsets.bottom > 1) {
-                draw = false;
-              }
-            }
-            else if (jcomponent.getBorder() instanceof CompoundBorder) {
-              draw = false;
-            }
-            if (draw) {
-              jcomponent.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, SELECTED_BORDER));
-            }
+            jcomponent.setBorder(BorderFactory.createCompoundBorder(new RightSideBorder(SELECTED_BORDER), jcomponent.getBorder()));
           }
+
+          // if (isSelected && !colsNotToDraw.contains(columnAtPoint)) {
+          // boolean draw = true;
+          //
+          // // draw the new border only if there is no spacing in the existend border
+          // if (jcomponent.getBorder() instanceof EmptyBorder) {
+          // EmptyBorder border = (EmptyBorder) jcomponent.getBorder();
+          // Insets borderInsets = border.getBorderInsets();
+          // if (borderInsets.left > 1 || borderInsets.right > 1 || borderInsets.top > 1 || borderInsets.bottom > 1) {
+          // draw = false;
+          // }
+          // }
+          // else if (jcomponent.getBorder() instanceof CompoundBorder) {
+          // draw = false;
+          // }
+          // if (draw) {
+          // jcomponent.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, SELECTED_BORDER));
+          // }
+          // }
         }
 
         super.paintComponent(graphics, component, container, x, y, w, h, shouldValidate);
       }
     };
+  }
+
+  private static class RightSideBorder extends AbstractBorder {
+
+    private final Color color;
+    private final int   thickness = 1;
+
+    public RightSideBorder(Color color) {
+      this.color = color;
+    }
+
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+      Graphics2D g2d = (Graphics2D) g.create();
+      g2d.setColor(this.color);
+      g2d.setStroke(new BasicStroke(thickness));
+      g2d.drawLine(width - 1, 0, width - 1, height - 1);
+      g2d.dispose();
+    }
   }
 }

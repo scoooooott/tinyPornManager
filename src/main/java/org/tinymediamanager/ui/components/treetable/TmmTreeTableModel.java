@@ -230,5 +230,6 @@ public class TmmTreeTableModel implements ITmmTreeTableModel {
     }
 
     column.setResizable(tmmTableFormat.getColumnResizeable(columnIndex));
+    column.setMinWidth(tmmTableFormat.getMinWidth(columnIndex));
   }
 }

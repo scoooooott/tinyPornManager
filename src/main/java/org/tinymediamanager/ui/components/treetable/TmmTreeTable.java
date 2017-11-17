@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.components.treetable;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;
@@ -106,9 +105,9 @@ public class TmmTreeTable extends TmmTable {
     getTableHeader().setReorderingAllowed(false);
     getTableHeader().setOpaque(false);
     setOpaque(false);
-    setRowHeight(22);
+    // setRowHeight(22);
     setGridColor(TABLE_GRID_COLOR);
-    setIntercellSpacing(new Dimension(0, 0));
+    // setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint grid lines over the entire viewport.
     setShowGrid(false);
   }

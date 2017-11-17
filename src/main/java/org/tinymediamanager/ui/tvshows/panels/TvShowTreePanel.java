@@ -142,7 +142,6 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         });
       }
     });
-    tree.adjustColumnPreferredWidths(3);
 
     tree.addFilter(searchField);
     JScrollPane scrollPane = new JScrollPane(tree);

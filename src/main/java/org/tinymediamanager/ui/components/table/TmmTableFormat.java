@@ -92,7 +92,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       columnIdentifier = identifier;
       columnValue = value;
       columnClass = clazz;
-      minWidth = Globals.settings.getFontSize() * 2;
+      minWidth = (int) (Globals.settings.getFontSize() * 2.3);
     }
 
     public void setColumnComparator(Comparator comparator) {
