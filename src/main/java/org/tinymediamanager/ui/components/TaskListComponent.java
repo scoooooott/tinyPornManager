@@ -148,7 +148,7 @@ public class TaskListComponent extends JPanel {
     private static final long serialVersionUID = -2634569716059018131L;
 
     private CancelAction() {
-      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(SMALL_ICON, IconManager.CANCEL_INV);
     }
 
     @Override

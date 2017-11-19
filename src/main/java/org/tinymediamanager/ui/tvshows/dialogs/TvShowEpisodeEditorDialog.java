@@ -755,8 +755,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     DiscardAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.CANCEL);
-      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
+      putValue(SMALL_ICON, IconManager.CANCEL_INV);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
 
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      btnCancel.setIcon(IconManager.CANCEL);
+      btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(e -> {
         startDownload = false;
         setVisible(false);

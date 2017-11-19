@@ -35,6 +35,7 @@ import org.tinymediamanager.Globals;
 public class IconManager {
   private final static Map<URI, ImageIcon> ICON_CACHE                  = new HashMap<>();
   private final static int                 DEFAULT_FONT_SIZE           = Globals.settings.getFontSize();
+  private final static Color               ICON_COLOR                  = new Color(45, 121, 162);
 
   public final static ImageIcon            EMPTY_IMAGE                 = new ImageIcon(IconManager.class.getResource("images/empty.png"));
 
@@ -68,32 +69,30 @@ public class IconManager {
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
 
+  // font awesome icons for actions in the popup menu
+  public final static ImageIcon            ADD                         = createFontAwesomeIcon('\uF067', ICON_COLOR);
+  public final static ImageIcon            BUG                         = createFontAwesomeIcon('\uF188', ICON_COLOR);
+  public final static ImageIcon            DELETE                      = createFontAwesomeIcon('\uF00D', ICON_COLOR);
+  public final static ImageIcon            DELETE_FOREVER              = createFontAwesomeIcon('\uF2ED', ICON_COLOR);
+  public final static ImageIcon            DOWNLOAD                    = createFontAwesomeIcon('\uF019', ICON_COLOR);
+  public final static ImageIcon            FEEDBACK                    = createFontAwesomeIcon('\uF0E0', ICON_COLOR);
+  public final static ImageIcon            EDIT                        = createFontAwesomeIcon('\uF044', ICON_COLOR);
+  public final static ImageIcon            EXPORT                      = createFontAwesomeIcon('\uF14D', ICON_COLOR);
+  public final static ImageIcon            HINT                        = createFontAwesomeIcon('\uF05A', ICON_COLOR);
+  public final static ImageIcon            IMAGE                       = createFontAwesomeIcon('\uF03E', ICON_COLOR);
+  public final static ImageIcon            MEDIAINFO                   = createFontAwesomeIcon('\uF129', ICON_COLOR);
+  public final static ImageIcon            PLAY                        = createFontAwesomeIcon('\uF04B', ICON_COLOR);
+  public final static ImageIcon            REFRESH                     = createFontAwesomeIcon('\uF01E', ICON_COLOR);
+  public final static ImageIcon            REMOVE                      = createFontAwesomeIcon('\uF068', ICON_COLOR);
+  public final static ImageIcon            SEARCH                      = createFontAwesomeIcon('\uF002', ICON_COLOR);
+  public final static ImageIcon            SUBTITLE                    = createFontAwesomeIcon('\uF086', ICON_COLOR);
+  public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
+
   // font awesome icons normal
-  public final static ImageIcon            ADD                         = createFontAwesomeIcon('\uF067');
-  public final static ImageIcon            BUG                         = createFontAwesomeIcon('\uF188');
-  public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF00D');
-  public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A');
-  public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8');
-  public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
-  public final static ImageIcon            DELETE                      = createFontAwesomeIcon('\uF00D');
-  public final static ImageIcon            DELETE_FOREVER              = createFontAwesomeIcon('\uF2ED');
-  public final static ImageIcon            DOWNLOAD                    = createFontAwesomeIcon('\uF019');
-  public final static ImageIcon            FEEDBACK                    = createFontAwesomeIcon('\uF0E0');
-  public final static ImageIcon            EDIT                        = createFontAwesomeIcon('\uF044');
   public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
-  public final static ImageIcon            EXPORT                      = createFontAwesomeIcon('\uF14D');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
-  public final static ImageIcon            HINT                        = createFontAwesomeIcon('\uF05A');
-  public final static ImageIcon            IMAGE                       = createFontAwesomeIcon('\uF03E');
-  public final static ImageIcon            MEDIAINFO                   = createFontAwesomeIcon('\uF129');
   public final static ImageIcon            NEW                         = createTextIcon("new", 14);
-  public final static ImageIcon            PLAY                        = createFontAwesomeIcon('\uF04B');
   public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
-  public final static ImageIcon            REFRESH                     = createFontAwesomeIcon('\uF01E');
-  public final static ImageIcon            REMOVE                      = createFontAwesomeIcon('\uF068');
-  public final static ImageIcon            SEARCH                      = createFontAwesomeIcon('\uF002');
-  public final static ImageIcon            SUBTITLE                    = createFontAwesomeIcon('\uF086');
-  public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021');
 
   // font awesome icons light (button usage)
   public final static ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', true);
@@ -102,6 +101,8 @@ public class IconManager {
   public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF00C', true);
   public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF053', true);
   public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF00D', true);
+  public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A', true);
+  public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8', true);
   public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', true);
   public final static ImageIcon            DATE_PICKER                 = createFontAwesomeIcon('\uF073', true);
   public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', true);
@@ -111,6 +112,7 @@ public class IconManager {
   public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
 
   // font awesome icons - column headers
+  public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
@@ -302,10 +304,14 @@ public class IconManager {
       g2.setFont(font);
 
       // get the visual bounds of the string (this is more realiable than the string bounds)
-      // Rectangle2D bounds = g2.getFontMetrics().getStringBounds(text, g2);
+      Rectangle2D defaultBounds = g2.getFontMetrics().getStringBounds("M", g2);
       Rectangle2D bounds = font.createGlyphVector(g2.getFontRenderContext(), text).getVisualBounds();
       int iconWidth = (int) Math.ceil(bounds.getWidth()) + 2; // +2 to avoid clipping problems
       int iconHeight = (int) Math.ceil(bounds.getHeight()) + 2; // +2 to avoid clipping problems
+
+      if (iconHeight < defaultBounds.getHeight()) {
+        iconHeight = (int) Math.ceil(defaultBounds.getHeight());
+      }
 
       g2.dispose();
 
@@ -328,7 +334,8 @@ public class IconManager {
       g2.setColor(color);
 
       // draw the glyhps centered
-      g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), (int) (Math.ceil(-bounds.getY()) + 1));
+      int y = (int) Math.round(bounds.getY() - (defaultBounds.getHeight() - bounds.getHeight()) / 2);
+      g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), -y);
       g2.dispose();
       return new ImageIcon(buffer);
     }
