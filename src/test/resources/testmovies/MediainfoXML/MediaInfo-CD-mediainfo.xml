@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Mediainfo version="0.7.87">
+<Mediainfo
+        version="0.1"
+        ref="F:\\VIDEO_TS\VIDEO_TS.IFO">
     <File>
         <track type="General">
             <Count>322</Count>
@@ -11,8 +13,8 @@
             <Video_Format_List>MPEG Video</Video_Format_List>
             <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
             <Codecs_Video>MPEG-1 Video</Codecs_Video>
-            <Complete_name>v:\VIDEO_TS\VIDEO_TS.IFO</Complete_name>
-            <Folder_name>v:\VIDEO_TS</Folder_name>
+            <Complete_name>F:\\VIDEO_TS\VIDEO_TS.IFO</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
             <File_name>VIDEO_TS</File_name>
             <File_extension>IFO</File_extension>
             <Format>DVD Video</Format>
@@ -31,12 +33,12 @@
             <File_size>6.000 KiB</File_size>
             <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
             <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 FPS</Frame_rate>
-            <File_creation_date>UTC 2003-12-26 22:22:39.000</File_creation_date>
-            <File_creation_date__local_>2003-12-27 00:22:39.000</File_creation_date__local_>
-            <File_last_modification_date>UTC 2003-12-26 22:22:39.000</File_last_modification_date>
-            <File_last_modification_date__local_>2003-12-27 00:22:39.000</File_last_modification_date__local_>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
         </track>
 
         <track type="Video">
@@ -58,16 +60,14 @@
             <Bit_rate_mode>Variable</Bit_rate_mode>
             <Width>720</Width>
             <Width>720 pixels</Width>
-            <Height>480</Height>
-            <Height>480 pixels</Height>
-            <Pixel_aspect_ratio>0.889</Pixel_aspect_ratio>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Pixel_aspect_ratio>1.067</Pixel_aspect_ratio>
             <Display_aspect_ratio>1.333</Display_aspect_ratio>
             <Display_aspect_ratio>4:3</Display_aspect_ratio>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 (29970/1000) FPS</Frame_rate>
-            <FrameRate_Num>29970</FrameRate_Num>
-            <FrameRate_Den>1000</FrameRate_Den>
-            <Standard>NTSC</Standard>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Standard>PAL</Standard>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
         </track>
@@ -84,8 +84,8 @@
             <Video_Format_List>MPEG Video</Video_Format_List>
             <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
             <Codecs_Video>MPEG-1 Video</Codecs_Video>
-            <Complete_name>v:\VIDEO_TS\VIDEO_TS.BUP</Complete_name>
-            <Folder_name>v:\VIDEO_TS</Folder_name>
+            <Complete_name>F:\\VIDEO_TS\VIDEO_TS.BUP</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
             <File_name>VIDEO_TS</File_name>
             <File_extension>BUP</File_extension>
             <Format>DVD Video</Format>
@@ -104,12 +104,12 @@
             <File_size>6.000 KiB</File_size>
             <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
             <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 FPS</Frame_rate>
-            <File_creation_date>UTC 2003-12-26 22:22:39.000</File_creation_date>
-            <File_creation_date__local_>2003-12-27 00:22:39.000</File_creation_date__local_>
-            <File_last_modification_date>UTC 2003-12-26 22:22:39.000</File_last_modification_date>
-            <File_last_modification_date__local_>2003-12-27 00:22:39.000</File_last_modification_date__local_>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
         </track>
 
         <track type="Video">
@@ -131,16 +131,14 @@
             <Bit_rate_mode>Variable</Bit_rate_mode>
             <Width>720</Width>
             <Width>720 pixels</Width>
-            <Height>480</Height>
-            <Height>480 pixels</Height>
-            <Pixel_aspect_ratio>0.889</Pixel_aspect_ratio>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Pixel_aspect_ratio>1.067</Pixel_aspect_ratio>
             <Display_aspect_ratio>1.333</Display_aspect_ratio>
             <Display_aspect_ratio>4:3</Display_aspect_ratio>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 (29970/1000) FPS</Frame_rate>
-            <FrameRate_Num>29970</FrameRate_Num>
-            <FrameRate_Den>1000</FrameRate_Den>
-            <Standard>NTSC</Standard>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Standard>PAL</Standard>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
         </track>
@@ -159,155 +157,12 @@
             <Video_Format_List>MPEG Video</Video_Format_List>
             <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
             <Codecs_Video>MPEG-2 Video</Codecs_Video>
-            <Audio_Format_List>MPEG Audio</Audio_Format_List>
-            <Audio_Format_WithHint_List>MPEG Audio</Audio_Format_WithHint_List>
-            <Audio_codecs>MPEG-1 Audio</Audio_codecs>
-            <Complete_name>v:\VIDEO_TS\VTS_01_0.BUP</Complete_name>
-            <Folder_name>v:\VIDEO_TS</Folder_name>
-            <File_name>VTS_01_0</File_name>
-            <File_extension>BUP</File_extension>
-            <Format>DVD Video</Format>
-            <Format>DVD Video</Format>
-            <Format_Extensions_usually_used>ifo</Format_Extensions_usually_used>
-            <Commercial_name>DVD Video</Commercial_name>
-            <Format_profile>Program</Format_profile>
-            <Codec>DVD Video</Codec>
-            <Codec>DVD Video</Codec>
-            <Codec_Extensions_usually_used>ifo</Codec_Extensions_usually_used>
-            <File_size>12288</File_size>
-            <File_size>12.0 KiB</File_size>
-            <File_size>12 KiB</File_size>
-            <File_size>12 KiB</File_size>
-            <File_size>12.0 KiB</File_size>
-            <File_size>12.00 KiB</File_size>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:01:59;29</Duration>
-            <Duration>00:02:00.033 (00:01:59;29)</Duration>
-            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
-            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
-            <Overall_bit_rate>819</Overall_bit_rate>
-            <Overall_bit_rate>819 b/s</Overall_bit_rate>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 FPS</Frame_rate>
-            <Frame_count>3597</Frame_count>
-            <File_creation_date>UTC 2003-12-26 22:22:39.000</File_creation_date>
-            <File_creation_date__local_>2003-12-27 00:22:39.000</File_creation_date__local_>
-            <File_last_modification_date>UTC 2003-12-26 22:22:39.000</File_last_modification_date>
-            <File_last_modification_date__local_>2003-12-27 00:22:39.000</File_last_modification_date__local_>
-        </track>
-
-        <track type="Video">
-            <Count>334</Count>
-            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
-            <Kind_of_stream>Video</Kind_of_stream>
-            <Kind_of_stream>Video</Kind_of_stream>
-            <Stream_identifier>0</Stream_identifier>
-            <ID>224</ID>
-            <ID>224 (0xE0)</ID>
-            <Format>MPEG Video</Format>
-            <Commercial_name>MPEG Video</Commercial_name>
-            <Format_version>Version 2</Format_version>
-            <Internet_media_type>video/MPV</Internet_media_type>
-            <Codec>MPEG-2V</Codec>
-            <Codec>MPEG-2 Video</Codec>
-            <Codec_Family>MPEG-V</Codec_Family>
-            <Duration>120020</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 20 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.020</Duration>
-            <Duration>00:01:59;29</Duration>
-            <Duration>00:02:00.020 (00:01:59;29)</Duration>
-            <Bit_rate_mode>VBR</Bit_rate_mode>
-            <Bit_rate_mode>Variable</Bit_rate_mode>
-            <Width>720</Width>
-            <Width>720 pixels</Width>
-            <Height>480</Height>
-            <Height>480 pixels</Height>
-            <Pixel_aspect_ratio>0.889</Pixel_aspect_ratio>
-            <Display_aspect_ratio>1.333</Display_aspect_ratio>
-            <Display_aspect_ratio>4:3</Display_aspect_ratio>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 (29970/1000) FPS</Frame_rate>
-            <FrameRate_Num>29970</FrameRate_Num>
-            <FrameRate_Den>1000</FrameRate_Den>
-            <Frame_count>3597</Frame_count>
-            <Standard>NTSC</Standard>
-            <Compression_mode>Lossy</Compression_mode>
-            <Compression_mode>Lossy</Compression_mode>
-        </track>
-
-        <track type="Audio">
-            <Count>272</Count>
-            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
-            <Kind_of_stream>Audio</Kind_of_stream>
-            <Kind_of_stream>Audio</Kind_of_stream>
-            <Stream_identifier>0</Stream_identifier>
-            <ID>0 (0x0)</ID>
-            <ID>0 (0x0)</ID>
-            <Format>MPEG Audio</Format>
-            <Commercial_name>MPEG Audio</Commercial_name>
-            <Format_profile>Version 1</Format_profile>
-            <Internet_media_type>audio/mpeg</Internet_media_type>
-            <Codec>MPEG-1A</Codec>
-            <Codec>MPEG-1 Audio</Codec>
-            <Codec_Family>MPEG-A</Codec_Family>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Channel_s_>2</Channel_s_>
-            <Channel_s_>2 channels</Channel_s_>
-            <Sampling_rate>48000</Sampling_rate>
-            <Sampling_rate>48.0 kHz</Sampling_rate>
-            <Samples_count>5761584</Samples_count>
-            <Compression_mode>Lossy</Compression_mode>
-            <Compression_mode>Lossy</Compression_mode>
-        </track>
-
-        <track type="Menu">
-            <Count>92</Count>
-            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
-            <Kind_of_stream>Menu</Kind_of_stream>
-            <Kind_of_stream>Menu</Kind_of_stream>
-            <Stream_identifier>0</Stream_identifier>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Chapters_Pos_Begin>90</Chapters_Pos_Begin>
-            <Chapters_Pos_End>91</Chapters_Pos_End>
-            <_00_00_00000>Chapter 1</_00_00_00000>
-            <List__Audio_>0</List__Audio_>
-        </track>
-
-    </File>
-    <File>
-        <track type="General">
-            <Count>322</Count>
-            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
-            <Kind_of_stream>General</Kind_of_stream>
-            <Kind_of_stream>General</Kind_of_stream>
-            <Stream_identifier>0</Stream_identifier>
-            <Count_of_video_streams>1</Count_of_video_streams>
-            <Count_of_audio_streams>1</Count_of_audio_streams>
-            <Count_of_menu_streams>1</Count_of_menu_streams>
-            <Video_Format_List>MPEG Video</Video_Format_List>
-            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
-            <Codecs_Video>MPEG-2 Video</Codecs_Video>
-            <Audio_Format_List>MPEG Audio</Audio_Format_List>
-            <Audio_Format_WithHint_List>MPEG Audio</Audio_Format_WithHint_List>
-            <Audio_codecs>MPEG-1 Audio</Audio_codecs>
-            <Complete_name>v:\VIDEO_TS\VTS_01_0.IFO</Complete_name>
-            <Folder_name>v:\VIDEO_TS</Folder_name>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Audio_Language_List>German</Audio_Language_List>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_0.IFO</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
             <File_name>VTS_01_0</File_name>
             <File_extension>IFO</File_extension>
             <Format>DVD Video</Format>
@@ -318,30 +173,30 @@
             <Codec>DVD Video</Codec>
             <Codec>DVD Video</Codec>
             <Codec_Extensions_usually_used>ifo</Codec_Extensions_usually_used>
-            <File_size>12288</File_size>
-            <File_size>12.0 KiB</File_size>
-            <File_size>12 KiB</File_size>
-            <File_size>12 KiB</File_size>
-            <File_size>12.0 KiB</File_size>
-            <File_size>12.00 KiB</File_size>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:01:59;29</Duration>
-            <Duration>00:02:00.033 (00:01:59;29)</Duration>
+            <File_size>71680</File_size>
+            <File_size>70.0 KiB</File_size>
+            <File_size>70 KiB</File_size>
+            <File_size>70 KiB</File_size>
+            <File_size>70.0 KiB</File_size>
+            <File_size>70.00 KiB</File_size>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27:05</Duration>
+            <Duration>01:50:27.200 (01:50:27:05)</Duration>
             <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
             <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
-            <Overall_bit_rate>819</Overall_bit_rate>
-            <Overall_bit_rate>819 b/s</Overall_bit_rate>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 FPS</Frame_rate>
-            <Frame_count>3597</Frame_count>
-            <File_creation_date>UTC 2003-12-26 22:22:39.000</File_creation_date>
-            <File_creation_date__local_>2003-12-27 00:22:39.000</File_creation_date__local_>
-            <File_last_modification_date>UTC 2003-12-26 22:22:39.000</File_last_modification_date>
-            <File_last_modification_date__local_>2003-12-27 00:22:39.000</File_last_modification_date__local_>
+            <Overall_bit_rate>87</Overall_bit_rate>
+            <Overall_bit_rate>87 bps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>165680</Frame_count>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
         </track>
 
         <track type="Video">
@@ -359,28 +214,26 @@
             <Codec>MPEG-2V</Codec>
             <Codec>MPEG-2 Video</Codec>
             <Codec_Family>MPEG-V</Codec_Family>
-            <Duration>120020</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 20 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.020</Duration>
-            <Duration>00:01:59;29</Duration>
-            <Duration>00:02:00.020 (00:01:59;29)</Duration>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27:05</Duration>
+            <Duration>01:50:27.200 (01:50:27:05)</Duration>
             <Bit_rate_mode>VBR</Bit_rate_mode>
             <Bit_rate_mode>Variable</Bit_rate_mode>
             <Width>720</Width>
             <Width>720 pixels</Width>
-            <Height>480</Height>
-            <Height>480 pixels</Height>
-            <Pixel_aspect_ratio>0.889</Pixel_aspect_ratio>
-            <Display_aspect_ratio>1.333</Display_aspect_ratio>
-            <Display_aspect_ratio>4:3</Display_aspect_ratio>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 (29970/1000) FPS</Frame_rate>
-            <FrameRate_Num>29970</FrameRate_Num>
-            <FrameRate_Den>1000</FrameRate_Den>
-            <Frame_count>3597</Frame_count>
-            <Standard>NTSC</Standard>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>165680</Frame_count>
+            <Standard>PAL</Standard>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
         </track>
@@ -391,46 +244,77 @@
             <Kind_of_stream>Audio</Kind_of_stream>
             <Kind_of_stream>Audio</Kind_of_stream>
             <Stream_identifier>0</Stream_identifier>
-            <ID>0 (0x0)</ID>
-            <ID>0 (0x0)</ID>
-            <Format>MPEG Audio</Format>
-            <Commercial_name>MPEG Audio</Commercial_name>
-            <Format_profile>Version 1</Format_profile>
-            <Internet_media_type>audio/mpeg</Internet_media_type>
-            <Codec>MPEG-1A</Codec>
-            <Codec>MPEG-1 Audio</Codec>
-            <Codec_Family>MPEG-A</Codec_Family>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Channel_s_>2</Channel_s_>
-            <Channel_s_>2 channels</Channel_s_>
+            <ID>129 (0x81)</ID>
+            <ID>129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
             <Sampling_rate>48000</Sampling_rate>
-            <Sampling_rate>48.0 kHz</Sampling_rate>
-            <Samples_count>5761584</Samples_count>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>318105600</Samples_count>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
+            <Language>de</Language>
+            <Language>German</Language>
+            <Language>German</Language>
+            <Language>de</Language>
+            <Language>deu</Language>
+            <Language>de</Language>
         </track>
 
         <track type="Menu">
-            <Count>92</Count>
+            <Count>119</Count>
             <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
             <Kind_of_stream>Menu</Kind_of_stream>
             <Kind_of_stream>Menu</Kind_of_stream>
             <Stream_identifier>0</Stream_identifier>
-            <Duration>120033</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 33 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.033</Duration>
-            <Duration>00:02:00.033</Duration>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27.200</Duration>
             <Chapters_Pos_Begin>90</Chapters_Pos_Begin>
-            <Chapters_Pos_End>91</Chapters_Pos_End>
+            <Chapters_Pos_End>118</Chapters_Pos_End>
             <_00_00_00000>Chapter 1</_00_00_00000>
-            <List__Audio_>0</List__Audio_>
+            <_00_02_10680>Chapter 2</_00_02_10680>
+            <_00_04_10560>Chapter 3</_00_04_10560>
+            <_00_06_09840>Chapter 4</_00_06_09840>
+            <_00_09_46360>Chapter 5</_00_09_46360>
+            <_00_11_59120>Chapter 6</_00_11_59120>
+            <_00_18_45400>Chapter 7</_00_18_45400>
+            <_00_22_21160>Chapter 8</_00_22_21160>
+            <_00_24_01480>Chapter 9</_00_24_01480>
+            <_00_26_33760>Chapter 10</_00_26_33760>
+            <_00_28_29920>Chapter 11</_00_28_29920>
+            <_00_32_55400>Chapter 12</_00_32_55400>
+            <_00_40_48240>Chapter 13</_00_40_48240>
+            <_00_46_39720>Chapter 14</_00_46_39720>
+            <_00_50_38760>Chapter 15</_00_50_38760>
+            <_00_56_18160>Chapter 16</_00_56_18160>
+            <_00_57_44920>Chapter 17</_00_57_44920>
+            <_01_03_51600>Chapter 18</_01_03_51600>
+            <_01_07_41520>Chapter 19</_01_07_41520>
+            <_01_10_48440>Chapter 20</_01_10_48440>
+            <_01_12_52720>Chapter 21</_01_12_52720>
+            <_01_14_43160>Chapter 22</_01_14_43160>
+            <_01_19_11160>Chapter 23</_01_19_11160>
+            <_01_24_05840>Chapter 24</_01_24_05840>
+            <_01_29_38800>Chapter 25</_01_29_38800>
+            <_01_34_52600>Chapter 26</_01_34_52600>
+            <_01_38_09360>Chapter 27</_01_38_09360>
+            <_01_42_31320>Chapter 28</_01_42_31320>
+            <List__Audio_>1</List__Audio_>
         </track>
 
     </File>
@@ -447,14 +331,14 @@
             <Video_Format_List>MPEG Video</Video_Format_List>
             <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
             <Codecs_Video>MPEG-2 Video</Codecs_Video>
-            <Audio_Format_List>MPEG Audio</Audio_Format_List>
-            <Audio_Format_WithHint_List>MPEG Audio</Audio_Format_WithHint_List>
-            <Audio_codecs>MPEG-1 Audio layer 2</Audio_codecs>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
             <Menu_Format_List>DVD-Video</Menu_Format_List>
             <Menu_Format_WithHint_List>DVD-Video</Menu_Format_WithHint_List>
             <Menu_codecs>DVD-Video</Menu_codecs>
-            <Complete_name>v:\VIDEO_TS\VTS_01_1.VOB</Complete_name>
-            <Folder_name>v:\VIDEO_TS</Folder_name>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_1.VOB</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
             <File_name>VTS_01_1</File_name>
             <File_extension>VOB</File_extension>
             <Format>MPEG-PS</Format>
@@ -465,38 +349,38 @@
             <Codec>MPEG-PS</Codec>
             <Codec>MPEG-PS</Codec>
             <Codec_Extensions_usually_used>mpeg mpg m2p vob pss</Codec_Extensions_usually_used>
-            <File_size>34928640</File_size>
-            <File_size>33.3 MiB</File_size>
-            <File_size>33 MiB</File_size>
-            <File_size>33 MiB</File_size>
-            <File_size>33.3 MiB</File_size>
-            <File_size>33.31 MiB</File_size>
-            <Duration>120153</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 153 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.153</Duration>
-            <Duration>00:02:00;05</Duration>
-            <Duration>00:02:00.153 (00:02:00;05)</Duration>
+            <File_size>1073739776</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024.0 MiB</File_size>
+            <Duration>1428960</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>23mn 48s 960ms</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>00:23:48.960</Duration>
+            <Duration>00:23:48:24</Duration>
+            <Duration>00:23:48.960 (00:23:48:24)</Duration>
             <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
             <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
-            <Overall_bit_rate>2325611</Overall_bit_rate>
-            <Overall_bit_rate>2 326 kb/s</Overall_bit_rate>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 FPS</Frame_rate>
-            <Frame_count>3601</Frame_count>
-            <Stream_size>698047</Stream_size>
-            <Stream_size>682 KiB (2%)</Stream_size>
-            <Stream_size>682 KiB</Stream_size>
-            <Stream_size>682 KiB</Stream_size>
-            <Stream_size>682 KiB</Stream_size>
-            <Stream_size>681.7 KiB</Stream_size>
-            <Stream_size>682 KiB (2%)</Stream_size>
-            <Proportion_of_this_stream>0.01998</Proportion_of_this_stream>
-            <File_creation_date>UTC 2003-12-26 22:22:39.000</File_creation_date>
-            <File_creation_date__local_>2003-12-27 00:22:39.000</File_creation_date__local_>
-            <File_last_modification_date>UTC 2003-12-26 22:22:39.000</File_last_modification_date>
-            <File_last_modification_date__local_>2003-12-27 00:22:39.000</File_last_modification_date__local_>
+            <Overall_bit_rate>6011308</Overall_bit_rate>
+            <Overall_bit_rate>6 011 Kbps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>35724</Frame_count>
+            <Stream_size>21372740</Stream_size>
+            <Stream_size>20.4 MiB (2%)</Stream_size>
+            <Stream_size>20 MiB</Stream_size>
+            <Stream_size>20 MiB</Stream_size>
+            <Stream_size>20.4 MiB</Stream_size>
+            <Stream_size>20.38 MiB</Stream_size>
+            <Stream_size>20.4 MiB (2%)</Stream_size>
+            <Proportion_of_this_stream>0.01990</Proportion_of_this_stream>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
         </track>
 
         <track type="Video">
@@ -512,47 +396,51 @@
             <Commercial_name>MPEG-2 Video</Commercial_name>
             <Format_version>Version 2</Format_version>
             <Format_profile>Main@Main</Format_profile>
-            <Format_settings>BVOP</Format_settings>
+            <Format_settings>CustomMatrix / BVOP</Format_settings>
             <Format_settings__BVOP>Yes</Format_settings__BVOP>
             <Format_settings__BVOP>Yes</Format_settings__BVOP>
-            <Format_settings__Matrix>Default</Format_settings__Matrix>
-            <Format_settings__Matrix>Default</Format_settings__Matrix>
-            <Format_settings__GOP>M=3, N=18</Format_settings__GOP>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_Settings_Matrix_Data>
+                0808080908090B0B0B0B0B0B0D0C0D0D0D0D0D0D0D0D0D0D0D0E0E0E1111110D0D0D0C0C0D0D10101111121012111111111313141414181817171C1C1D222229
+                /
+                080808080808090909090909090909090909090909090909090909090A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B
+            </Format_Settings_Matrix_Data>
+            <Format_settings__GOP>M=3, N=12</Format_settings__GOP>
             <Format_settings__picture_structure>Frame</Format_settings__picture_structure>
             <Internet_media_type>video/MPV</Internet_media_type>
             <Codec>MPEG-2V</Codec>
             <Codec>MPEG-2 Video</Codec>
             <Codec_Family>MPEG-V</Codec_Family>
             <Codec_profile>Main@Main</Codec_profile>
-            <Codec_settings__Matrix>Default</Codec_settings__Matrix>
-            <Duration>120153</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 153 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.153</Duration>
-            <Duration>00:02:00:01</Duration>
-            <Duration>00:02:00.153 (00:02:00:01)</Duration>
+            <Codec_settings>CustomMatrix</Codec_settings>
+            <Codec_settings__Matrix>Custom</Codec_settings__Matrix>
+            <Duration>1428960</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>23mn 48s 960ms</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>00:23:48.960</Duration>
+            <Duration>00:23:48:24</Duration>
+            <Duration>00:23:48.960 (00:23:48:24)</Duration>
             <Bit_rate_mode>VBR</Bit_rate_mode>
             <Bit_rate_mode>Variable</Bit_rate_mode>
-            <Bit_rate>2087331</Bit_rate>
-            <Bit_rate>2 087 kb/s</Bit_rate>
-            <Maximum_bit_rate>7500000</Maximum_bit_rate>
-            <Maximum_bit_rate>7 500 kb/s</Maximum_bit_rate>
+            <Bit_rate>5443683</Bit_rate>
+            <Bit_rate>5 444 Kbps</Bit_rate>
+            <Maximum_bit_rate>9800000</Maximum_bit_rate>
+            <Maximum_bit_rate>9 800 Kbps</Maximum_bit_rate>
             <Width>720</Width>
             <Width>720 pixels</Width>
-            <Height>480</Height>
-            <Height>480 pixels</Height>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
             <Sampled_Width>720</Sampled_Width>
-            <Sampled_Height>480</Sampled_Height>
-            <Pixel_aspect_ratio>0.889</Pixel_aspect_ratio>
-            <Display_aspect_ratio>1.333</Display_aspect_ratio>
-            <Display_aspect_ratio>4:3</Display_aspect_ratio>
-            <Frame_rate>29.970</Frame_rate>
-            <Frame_rate>29.970 (30000/1001) FPS</Frame_rate>
-            <FrameRate_Num>30000</FrameRate_Num>
-            <FrameRate_Den>1001</FrameRate_Den>
-            <Frame_count>3601</Frame_count>
-            <Standard>NTSC</Standard>
+            <Sampled_Height>576</Sampled_Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>35724</Frame_count>
+            <Standard>PAL</Standard>
             <Resolution>8</Resolution>
             <Resolution>8 bits</Resolution>
             <Colorimetry>4:2:0</Colorimetry>
@@ -563,108 +451,124 @@
             <Bit_depth>8 bits</Bit_depth>
             <Scan_type>Interlaced</Scan_type>
             <Scan_type>Interlaced</Scan_type>
-            <Scan_order>BFF</Scan_order>
-            <Scan_order>Bottom Field First</Scan_order>
-            <Interlacement>BFF</Interlacement>
-            <Interlacement>Bottom Field First</Interlacement>
+            <Scan_order>TFF</Scan_order>
+            <Scan_order>Top Field First</Scan_order>
+            <Interlacement>TFF</Interlacement>
+            <Interlacement>Top Field First</Interlacement>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
-            <Bits__Pixel_Frame_>0.202</Bits__Pixel_Frame_>
-            <Delay>178.022</Delay>
-            <Delay>178 ms</Delay>
-            <Delay>178 ms</Delay>
-            <Delay>178 ms</Delay>
-            <Delay>00:00:00.178</Delay>
-            <Delay_DropFrame>No</Delay_DropFrame>
+            <Bits__Pixel_Frame_>0.525</Bits__Pixel_Frame_>
+            <Delay>49.756</Delay>
+            <Delay>50ms</Delay>
+            <Delay>50ms</Delay>
+            <Delay>50ms</Delay>
+            <Delay>00:00:00.050</Delay>
             <Delay__origin>Container</Delay__origin>
             <Delay__origin>Container</Delay__origin>
-            <Delay_Original>0</Delay_Original>
-            <Delay_Original>00:00:00.000</Delay_Original>
-            <Delay_Original_Settings>drop_frame_flag=0 / closed_gop=1 / broken_link=0</Delay_Original_Settings>
-            <Delay_Original_DropFrame>No</Delay_Original_DropFrame>
-            <Delay_Original_Source>Stream</Delay_Original_Source>
-            <Time_code_of_first_frame>00:00:00:00</Time_code_of_first_frame>
-            <Time_code_source>Group of pictures header</Time_code_source>
-            <GOP__Open_Closed>Open</GOP__Open_Closed>
-            <GOP__Open_Closed>Open</GOP__Open_Closed>
-            <GOP__Open_Closed_of_first_frame>Closed</GOP__Open_Closed_of_first_frame>
-            <GOP__Open_Closed_of_first_frame>Closed</GOP__Open_Closed_of_first_frame>
-            <Stream_size>31350017</Stream_size>
-            <Stream_size>29.9 MiB (90%)</Stream_size>
-            <Stream_size>30 MiB</Stream_size>
-            <Stream_size>30 MiB</Stream_size>
-            <Stream_size>29.9 MiB</Stream_size>
-            <Stream_size>29.90 MiB</Stream_size>
-            <Stream_size>29.9 MiB (90%)</Stream_size>
-            <Proportion_of_this_stream>0.89754</Proportion_of_this_stream>
+            <Stream_size>972350652</Stream_size>
+            <Stream_size>927 MiB (91%)</Stream_size>
+            <Stream_size>927 MiB</Stream_size>
+            <Stream_size>927 MiB</Stream_size>
+            <Stream_size>927 MiB</Stream_size>
+            <Stream_size>927.3 MiB</Stream_size>
+            <Stream_size>927 MiB (91%)</Stream_size>
+            <Proportion_of_this_stream>0.90557</Proportion_of_this_stream>
             <Buffer_size>229376</Buffer_size>
-            <colour_description_present>Yes</colour_description_present>
-            <Color_primaries>BT.601 NTSC</Color_primaries>
-            <Transfer_characteristics>BT.601</Transfer_characteristics>
-            <Matrix_coefficients>BT.601</Matrix_coefficients>
-            <intra_dc_precision>9</intra_dc_precision>
+            <intra_dc_precision>10</intra_dc_precision>
         </track>
 
         <track type="Audio">
-            <Count>272</Count>
+            <Count>302</Count>
             <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
             <Kind_of_stream>Audio</Kind_of_stream>
             <Kind_of_stream>Audio</Kind_of_stream>
             <Stream_identifier>0</Stream_identifier>
             <StreamOrder>0</StreamOrder>
             <FirstPacketOrder>1</FirstPacketOrder>
-            <ID>192</ID>
-            <ID>192 (0xC0)</ID>
-            <Format>MPEG Audio</Format>
-            <Commercial_name>MPEG Audio</Commercial_name>
-            <Format_version>Version 1</Format_version>
-            <Format_profile>Layer 2</Format_profile>
-            <Internet_media_type>audio/mpeg</Internet_media_type>
-            <Codec>MPA1L2</Codec>
-            <Codec>MPEG-1 Audio layer 2</Codec>
-            <Duration>120024</Duration>
-            <Duration>2 min</Duration>
-            <Duration>2 min 0 s 24 ms</Duration>
-            <Duration>2 min</Duration>
-            <Duration>00:02:00.024</Duration>
-            <Duration>00:02:00.024</Duration>
+            <ID>189-129</ID>
+            <ID>189 (0xBD)-129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Mode_extension>CM (complete main)</Mode_extension>
+            <Format_settings__Endianness>Big</Format_settings__Endianness>
+            <Muxing_mode>DVD-Video</Muxing_mode>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>1428864</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>23mn 48s 864ms</Duration>
+            <Duration>23mn 48s</Duration>
+            <Duration>00:23:48.864</Duration>
+            <Duration>00:24:00:12</Duration>
+            <Duration>00:23:48.864 (00:24:00:12)</Duration>
             <Bit_rate_mode>CBR</Bit_rate_mode>
             <Bit_rate_mode>Constant</Bit_rate_mode>
-            <Bit_rate>192000</Bit_rate>
-            <Bit_rate>192 kb/s</Bit_rate>
-            <Channel_s_>2</Channel_s_>
-            <Channel_s_>2 channels</Channel_s_>
+            <Bit_rate>448000</Bit_rate>
+            <Bit_rate>448 Kbps</Bit_rate>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+            <Channel_positions>3/2/0.1</Channel_positions>
+            <ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+            <Samples_per_frame>1536</Samples_per_frame>
             <Sampling_rate>48000</Sampling_rate>
-            <Sampling_rate>48.0 kHz</Sampling_rate>
-            <Samples_count>5761152</Samples_count>
-            <Frame_count>5001</Frame_count>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>68585472</Samples_count>
+            <Frame_rate>31.250</Frame_rate>
+            <Frame_rate>31.250 fps (1536 spf)</Frame_rate>
+            <Frame_count>44652</Frame_count>
             <Compression_mode>Lossy</Compression_mode>
             <Compression_mode>Lossy</Compression_mode>
-            <Delay>144.656</Delay>
-            <Delay>145 ms</Delay>
-            <Delay>145 ms</Delay>
-            <Delay>145 ms</Delay>
-            <Delay>00:00:00.145</Delay>
+            <Delay>49.756</Delay>
+            <Delay>50ms</Delay>
+            <Delay>50ms</Delay>
+            <Delay>50ms</Delay>
+            <Delay>00:00:00.050</Delay>
             <Delay__origin>Container</Delay__origin>
             <Delay__origin>Container</Delay__origin>
-            <Delay_relative_to_video>-33</Delay_relative_to_video>
-            <Delay_relative_to_video>-33 ms</Delay_relative_to_video>
-            <Delay_relative_to_video>-33 ms</Delay_relative_to_video>
-            <Delay_relative_to_video>-33 ms</Delay_relative_to_video>
-            <Delay_relative_to_video>-00:00:00.033</Delay_relative_to_video>
-            <Video0_delay>-33</Video0_delay>
-            <Video0_delay>-33 ms</Video0_delay>
-            <Video0_delay>-33 ms</Video0_delay>
-            <Video0_delay>-33 ms</Video0_delay>
-            <Video0_delay>-00:00:00.033</Video0_delay>
-            <Stream_size>2880576</Stream_size>
-            <Stream_size>2.75 MiB (8%)</Stream_size>
-            <Stream_size>3 MiB</Stream_size>
-            <Stream_size>2.7 MiB</Stream_size>
-            <Stream_size>2.75 MiB</Stream_size>
-            <Stream_size>2.747 MiB</Stream_size>
-            <Stream_size>2.75 MiB (8%)</Stream_size>
-            <Proportion_of_this_stream>0.08247</Proportion_of_this_stream>
+            <Delay_relative_to_video>0</Delay_relative_to_video>
+            <Delay_relative_to_video>00:00:00.000</Delay_relative_to_video>
+            <Video0_delay>0</Video0_delay>
+            <Video0_delay>00:00:00.000</Video0_delay>
+            <Stream_size>80016384</Stream_size>
+            <Stream_size>76.3 MiB (7%)</Stream_size>
+            <Stream_size>76 MiB</Stream_size>
+            <Stream_size>76 MiB</Stream_size>
+            <Stream_size>76.3 MiB</Stream_size>
+            <Stream_size>76.31 MiB</Stream_size>
+            <Stream_size>76.3 MiB (7%)</Stream_size>
+            <Proportion_of_this_stream>0.07452</Proportion_of_this_stream>
+            <bsid>8</bsid>
+            <dialnorm>-31</dialnorm>
+            <dialnorm>-31 dB</dialnorm>
+            <compr>11.76</compr>
+            <compr>11.76 dB</compr>
+            <dynrng>6.02</dynrng>
+            <dynrng>6.02 dB</dynrng>
+            <acmod>7</acmod>
+            <lfeon>1</lfeon>
+            <dialnorm_Average>-31</dialnorm_Average>
+            <dialnorm_Average>-31 dB</dialnorm_Average>
+            <dialnorm_Minimum>-31</dialnorm_Minimum>
+            <dialnorm_Minimum>-31 dB</dialnorm_Minimum>
+            <dialnorm_Maximum>-31</dialnorm_Maximum>
+            <dialnorm_Maximum>-31 dB</dialnorm_Maximum>
+            <dialnorm_Count>450</dialnorm_Count>
+            <compr_Average>9.76</compr_Average>
+            <compr_Average>9.76 dB</compr_Average>
+            <compr_Minimum>-2.50</compr_Minimum>
+            <compr_Minimum>-2.50 dB</compr_Minimum>
+            <compr_Maximum>12.04</compr_Maximum>
+            <compr_Maximum>12.04 dB</compr_Maximum>
+            <compr_Count>450</compr_Count>
+            <dynrng_Average>4.28</dynrng_Average>
+            <dynrng_Average>4.28 dB</dynrng_Average>
+            <dynrng_Minimum>-1.64</dynrng_Minimum>
+            <dynrng_Minimum>-1.64 dB</dynrng_Minimum>
+            <dynrng_Maximum>6.02</dynrng_Maximum>
+            <dynrng_Maximum>6.02 dB</dynrng_Maximum>
+            <dynrng_Count>450</dynrng_Count>
         </track>
 
         <track type="Menu">
@@ -680,4 +584,1267 @@
         </track>
 
     </File>
+    <File>
+        <track type="General">
+            <Count>322</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Count_of_video_streams>1</Count_of_video_streams>
+            <Count_of_audio_streams>1</Count_of_audio_streams>
+            <Count_of_menu_streams>1</Count_of_menu_streams>
+            <Video_Format_List>MPEG Video</Video_Format_List>
+            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
+            <Codecs_Video>MPEG-2 Video</Codecs_Video>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Menu_Format_List>DVD-Video</Menu_Format_List>
+            <Menu_Format_WithHint_List>DVD-Video</Menu_Format_WithHint_List>
+            <Menu_codecs>DVD-Video</Menu_codecs>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_2.VOB</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
+            <File_name>VTS_01_2</File_name>
+            <File_extension>VOB</File_extension>
+            <Format>MPEG-PS</Format>
+            <Format>MPEG-PS</Format>
+            <Format_Extensions_usually_used>mpeg mpg m2p vob pss</Format_Extensions_usually_used>
+            <Commercial_name>MPEG-PS</Commercial_name>
+            <Internet_media_type>video/MP2P</Internet_media_type>
+            <Codec>MPEG-PS</Codec>
+            <Codec>MPEG-PS</Codec>
+            <Codec_Extensions_usually_used>mpeg mpg m2p vob pss</Codec_Extensions_usually_used>
+            <File_size>1073739776</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024.0 MiB</File_size>
+            <Duration>1722680</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>28mn 42s 680ms</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>00:28:42.680</Duration>
+            <Duration>00:28:42:17</Duration>
+            <Duration>00:28:42.680 (00:28:42:17)</Duration>
+            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+            <Overall_bit_rate>4986369</Overall_bit_rate>
+            <Overall_bit_rate>4 986 Kbps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>43067</Frame_count>
+            <Stream_size>21370565</Stream_size>
+            <Stream_size>20.4 MiB (2%)</Stream_size>
+            <Stream_size>20 MiB</Stream_size>
+            <Stream_size>20 MiB</Stream_size>
+            <Stream_size>20.4 MiB</Stream_size>
+            <Stream_size>20.38 MiB</Stream_size>
+            <Stream_size>20.4 MiB (2%)</Stream_size>
+            <Proportion_of_this_stream>0.01990</Proportion_of_this_stream>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
+        </track>
+
+        <track type="Video">
+            <Count>335</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <FirstPacketOrder>0</FirstPacketOrder>
+            <ID>224</ID>
+            <ID>224 (0xE0)</ID>
+            <Format>MPEG Video</Format>
+            <Commercial_name>MPEG-2 Video</Commercial_name>
+            <Format_version>Version 2</Format_version>
+            <Format_profile>Main@Main</Format_profile>
+            <Format_settings>CustomMatrix / BVOP</Format_settings>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_Settings_Matrix_Data>
+                0808080908090B0B0B0B0B0B0D0C0D0D0D0D0D0D0D0D0D0D0D0E0E0E1111110D0D0D0C0C0D0D10101111121012111111111313141414181817171C1C1D222229
+                /
+                080808080808090909090909090909090909090909090909090909090A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B
+            </Format_Settings_Matrix_Data>
+            <Format_settings__GOP>M=3, N=12</Format_settings__GOP>
+            <Format_settings__picture_structure>Frame</Format_settings__picture_structure>
+            <Internet_media_type>video/MPV</Internet_media_type>
+            <Codec>MPEG-2V</Codec>
+            <Codec>MPEG-2 Video</Codec>
+            <Codec_Family>MPEG-V</Codec_Family>
+            <Codec_profile>Main@Main</Codec_profile>
+            <Codec_settings>CustomMatrix</Codec_settings>
+            <Codec_settings__Matrix>Custom</Codec_settings__Matrix>
+            <Duration>1722680</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>28mn 42s 680ms</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>00:28:42.680</Duration>
+            <Duration>00:28:42:17</Duration>
+            <Duration>00:28:42.680 (00:28:42:17)</Duration>
+            <Bit_rate_mode>VBR</Bit_rate_mode>
+            <Bit_rate_mode>Variable</Bit_rate_mode>
+            <Bit_rate>4439141</Bit_rate>
+            <Bit_rate>4 439 Kbps</Bit_rate>
+            <Maximum_bit_rate>9800000</Maximum_bit_rate>
+            <Maximum_bit_rate>9 800 Kbps</Maximum_bit_rate>
+            <Width>720</Width>
+            <Width>720 pixels</Width>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Sampled_Width>720</Sampled_Width>
+            <Sampled_Height>576</Sampled_Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>43067</Frame_count>
+            <Standard>PAL</Standard>
+            <Resolution>8</Resolution>
+            <Resolution>8 bits</Resolution>
+            <Colorimetry>4:2:0</Colorimetry>
+            <Color_space>YUV</Color_space>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Bit_depth>8</Bit_depth>
+            <Bit_depth>8 bits</Bit_depth>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_order>TFF</Scan_order>
+            <Scan_order>Top Field First</Scan_order>
+            <Interlacement>TFF</Interlacement>
+            <Interlacement>Top Field First</Interlacement>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Bits__Pixel_Frame_>0.428</Bits__Pixel_Frame_>
+            <Delay>1429089.750</Delay>
+            <Delay>23mn 49s</Delay>
+            <Delay>23mn 49s 90ms</Delay>
+            <Delay>23mn 49s</Delay>
+            <Delay>00:23:49.090</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Stream_size>955902267</Stream_size>
+            <Stream_size>912 MiB (89%)</Stream_size>
+            <Stream_size>912 MiB</Stream_size>
+            <Stream_size>912 MiB</Stream_size>
+            <Stream_size>912 MiB</Stream_size>
+            <Stream_size>911.6 MiB</Stream_size>
+            <Stream_size>912 MiB (89%)</Stream_size>
+            <Proportion_of_this_stream>0.89026</Proportion_of_this_stream>
+            <Buffer_size>229376</Buffer_size>
+            <intra_dc_precision>10</intra_dc_precision>
+        </track>
+
+        <track type="Audio">
+            <Count>302</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <StreamOrder>0</StreamOrder>
+            <FirstPacketOrder>1</FirstPacketOrder>
+            <ID>189-129</ID>
+            <ID>189 (0xBD)-129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Mode_extension>CM (complete main)</Mode_extension>
+            <Format_settings__Endianness>Big</Format_settings__Endianness>
+            <Muxing_mode>DVD-Video</Muxing_mode>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>1722624</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>28mn 42s 624ms</Duration>
+            <Duration>28mn 42s</Duration>
+            <Duration>00:28:42.624</Duration>
+            <Duration>00:28:56:16</Duration>
+            <Duration>00:28:42.624 (00:28:56:16)</Duration>
+            <Bit_rate_mode>CBR</Bit_rate_mode>
+            <Bit_rate_mode>Constant</Bit_rate_mode>
+            <Bit_rate>448000</Bit_rate>
+            <Bit_rate>448 Kbps</Bit_rate>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+            <Channel_positions>3/2/0.1</Channel_positions>
+            <ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+            <Samples_per_frame>1536</Samples_per_frame>
+            <Sampling_rate>48000</Sampling_rate>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>82685952</Samples_count>
+            <Frame_rate>31.250</Frame_rate>
+            <Frame_rate>31.250 fps (1536 spf)</Frame_rate>
+            <Frame_count>53832</Frame_count>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Delay>1428945.750</Delay>
+            <Delay>23mn 48s</Delay>
+            <Delay>23mn 48s 946ms</Delay>
+            <Delay>23mn 48s</Delay>
+            <Delay>00:23:48.946</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Delay_relative_to_video>-144</Delay_relative_to_video>
+            <Delay_relative_to_video>-144ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-144ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-144ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-00:00:00.144</Delay_relative_to_video>
+            <Video0_delay>-144</Video0_delay>
+            <Video0_delay>-144ms</Video0_delay>
+            <Video0_delay>-144ms</Video0_delay>
+            <Video0_delay>-144ms</Video0_delay>
+            <Video0_delay>-00:00:00.144</Video0_delay>
+            <Stream_size>96466944</Stream_size>
+            <Stream_size>92.0 MiB (9%)</Stream_size>
+            <Stream_size>92 MiB</Stream_size>
+            <Stream_size>92 MiB</Stream_size>
+            <Stream_size>92.0 MiB</Stream_size>
+            <Stream_size>92.00 MiB</Stream_size>
+            <Stream_size>92.0 MiB (9%)</Stream_size>
+            <Proportion_of_this_stream>0.08984</Proportion_of_this_stream>
+            <bsid>8</bsid>
+            <dialnorm>-31</dialnorm>
+            <dialnorm>-31 dB</dialnorm>
+            <compr>-1.16</compr>
+            <compr>-1.16 dB</compr>
+            <dynrng>-0.14</dynrng>
+            <dynrng>-0.14 dB</dynrng>
+            <acmod>7</acmod>
+            <lfeon>1</lfeon>
+            <dialnorm_Average>-31</dialnorm_Average>
+            <dialnorm_Average>-31 dB</dialnorm_Average>
+            <dialnorm_Minimum>-31</dialnorm_Minimum>
+            <dialnorm_Minimum>-31 dB</dialnorm_Minimum>
+            <dialnorm_Maximum>-31</dialnorm_Maximum>
+            <dialnorm_Maximum>-31 dB</dialnorm_Maximum>
+            <dialnorm_Count>433</dialnorm_Count>
+            <compr_Average>1.05</compr_Average>
+            <compr_Average>1.05 dB</compr_Average>
+            <compr_Minimum>-1.16</compr_Minimum>
+            <compr_Minimum>-1.16 dB</compr_Minimum>
+            <compr_Maximum>3.15</compr_Maximum>
+            <compr_Maximum>3.15 dB</compr_Maximum>
+            <compr_Count>433</compr_Count>
+            <dynrng_Average>1.91</dynrng_Average>
+            <dynrng_Average>1.91 dB</dynrng_Average>
+            <dynrng_Minimum>-0.28</dynrng_Minimum>
+            <dynrng_Minimum>-0.28 dB</dynrng_Minimum>
+            <dynrng_Maximum>4.22</dynrng_Maximum>
+            <dynrng_Maximum>4.22 dB</dynrng_Maximum>
+            <dynrng_Count>433</dynrng_Count>
+        </track>
+
+        <track type="Menu">
+            <Count>90</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Format>DVD-Video</Format>
+            <Commercial_name>DVD-Video</Commercial_name>
+            <Codec>DVD-Video</Codec>
+            <Codec>DVD-Video</Codec>
+        </track>
+
+    </File>
+    <File>
+        <track type="General">
+            <Count>322</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Count_of_video_streams>1</Count_of_video_streams>
+            <Count_of_audio_streams>1</Count_of_audio_streams>
+            <Count_of_menu_streams>1</Count_of_menu_streams>
+            <Video_Format_List>MPEG Video</Video_Format_List>
+            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
+            <Codecs_Video>MPEG-2 Video</Codecs_Video>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Menu_Format_List>DVD-Video</Menu_Format_List>
+            <Menu_Format_WithHint_List>DVD-Video</Menu_Format_WithHint_List>
+            <Menu_codecs>DVD-Video</Menu_codecs>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_3.VOB</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
+            <File_name>VTS_01_3</File_name>
+            <File_extension>VOB</File_extension>
+            <Format>MPEG-PS</Format>
+            <Format>MPEG-PS</Format>
+            <Format_Extensions_usually_used>mpeg mpg m2p vob pss</Format_Extensions_usually_used>
+            <Commercial_name>MPEG-PS</Commercial_name>
+            <Internet_media_type>video/MP2P</Internet_media_type>
+            <Codec>MPEG-PS</Codec>
+            <Codec>MPEG-PS</Codec>
+            <Codec_Extensions_usually_used>mpeg mpg m2p vob pss</Codec_Extensions_usually_used>
+            <File_size>1073739776</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024.0 MiB</File_size>
+            <Duration>1470464</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>24mn 30s 464ms</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>00:24:30.464</Duration>
+            <Duration>00:24:30:05</Duration>
+            <Duration>00:24:30.464 (00:24:30:05)</Duration>
+            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+            <Overall_bit_rate>5841638</Overall_bit_rate>
+            <Overall_bit_rate>5 842 Kbps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>36755</Frame_count>
+            <Stream_size>21541554</Stream_size>
+            <Stream_size>20.5 MiB (2%)</Stream_size>
+            <Stream_size>21 MiB</Stream_size>
+            <Stream_size>21 MiB</Stream_size>
+            <Stream_size>20.5 MiB</Stream_size>
+            <Stream_size>20.54 MiB</Stream_size>
+            <Stream_size>20.5 MiB (2%)</Stream_size>
+            <Proportion_of_this_stream>0.02006</Proportion_of_this_stream>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
+        </track>
+
+        <track type="Video">
+            <Count>335</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <FirstPacketOrder>1</FirstPacketOrder>
+            <ID>224</ID>
+            <ID>224 (0xE0)</ID>
+            <Format>MPEG Video</Format>
+            <Commercial_name>MPEG-2 Video</Commercial_name>
+            <Format_version>Version 2</Format_version>
+            <Format_profile>Main@Main</Format_profile>
+            <Format_settings>CustomMatrix / BVOP</Format_settings>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_Settings_Matrix_Data>
+                0808080908090B0B0B0B0B0B0D0C0D0D0D0D0D0D0D0D0D0D0D0E0E0E1111110D0D0D0C0C0D0D10101111121012111111111313141414181817171C1C1D222229
+                /
+                080808080808090909090909090909090909090909090909090909090A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B
+            </Format_Settings_Matrix_Data>
+            <Format_settings__GOP>M=3, N=12</Format_settings__GOP>
+            <Format_settings__picture_structure>Frame</Format_settings__picture_structure>
+            <Internet_media_type>video/MPV</Internet_media_type>
+            <Codec>MPEG-2V</Codec>
+            <Codec>MPEG-2 Video</Codec>
+            <Codec_Family>MPEG-V</Codec_Family>
+            <Codec_profile>Main@Main</Codec_profile>
+            <Codec_settings>CustomMatrix</Codec_settings>
+            <Codec_settings__Matrix>Custom</Codec_settings__Matrix>
+            <Duration>1470200</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>24mn 30s 200ms</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>00:24:30.200</Duration>
+            <Duration>00:24:30:05</Duration>
+            <Duration>00:24:30.200 (00:24:30:05)</Duration>
+            <Bit_rate_mode>VBR</Bit_rate_mode>
+            <Bit_rate_mode>Variable</Bit_rate_mode>
+            <Bit_rate>5277390</Bit_rate>
+            <Bit_rate>5 277 Kbps</Bit_rate>
+            <Maximum_bit_rate>9800000</Maximum_bit_rate>
+            <Maximum_bit_rate>9 800 Kbps</Maximum_bit_rate>
+            <Width>720</Width>
+            <Width>720 pixels</Width>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Sampled_Width>720</Sampled_Width>
+            <Sampled_Height>576</Sampled_Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>36755</Frame_count>
+            <Standard>PAL</Standard>
+            <Resolution>8</Resolution>
+            <Resolution>8 bits</Resolution>
+            <Colorimetry>4:2:0</Colorimetry>
+            <Color_space>YUV</Color_space>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Bit_depth>8</Bit_depth>
+            <Bit_depth>8 bits</Bit_depth>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_order>TFF</Scan_order>
+            <Scan_order>Top Field First</Scan_order>
+            <Interlacement>TFF</Interlacement>
+            <Interlacement>Top Field First</Interlacement>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Bits__Pixel_Frame_>0.509</Bits__Pixel_Frame_>
+            <Delay>3151969.750</Delay>
+            <Delay>52mn 31s</Delay>
+            <Delay>52mn 31s 970ms</Delay>
+            <Delay>52mn 31s</Delay>
+            <Delay>00:52:31.970</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Stream_size>969852238</Stream_size>
+            <Stream_size>925 MiB (90%)</Stream_size>
+            <Stream_size>925 MiB</Stream_size>
+            <Stream_size>925 MiB</Stream_size>
+            <Stream_size>925 MiB</Stream_size>
+            <Stream_size>924.9 MiB</Stream_size>
+            <Stream_size>925 MiB (90%)</Stream_size>
+            <Proportion_of_this_stream>0.90325</Proportion_of_this_stream>
+            <Buffer_size>229376</Buffer_size>
+            <intra_dc_precision>10</intra_dc_precision>
+        </track>
+
+        <track type="Audio">
+            <Count>302</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <StreamOrder>0</StreamOrder>
+            <FirstPacketOrder>0</FirstPacketOrder>
+            <ID>189-129</ID>
+            <ID>189 (0xBD)-129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Mode_extension>CM (complete main)</Mode_extension>
+            <Format_settings__Endianness>Big</Format_settings__Endianness>
+            <Muxing_mode>DVD-Video</Muxing_mode>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>1470464</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>24mn 30s 464ms</Duration>
+            <Duration>24mn 30s</Duration>
+            <Duration>00:24:30.464</Duration>
+            <Duration>00:24:42:10</Duration>
+            <Duration>00:24:30.464 (00:24:42:10)</Duration>
+            <Bit_rate_mode>CBR</Bit_rate_mode>
+            <Bit_rate_mode>Constant</Bit_rate_mode>
+            <Bit_rate>448000</Bit_rate>
+            <Bit_rate>448 Kbps</Bit_rate>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+            <Channel_positions>3/2/0.1</Channel_positions>
+            <ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+            <Samples_per_frame>1536</Samples_per_frame>
+            <Sampling_rate>48000</Sampling_rate>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>70582272</Samples_count>
+            <Frame_rate>31.250</Frame_rate>
+            <Frame_rate>31.250 fps (1536 spf)</Frame_rate>
+            <Frame_count>45952</Frame_count>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Delay>3151601.750</Delay>
+            <Delay>52mn 31s</Delay>
+            <Delay>52mn 31s 602ms</Delay>
+            <Delay>52mn 31s</Delay>
+            <Delay>00:52:31.602</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Delay_relative_to_video>-368</Delay_relative_to_video>
+            <Delay_relative_to_video>-368ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-368ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-368ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-00:00:00.368</Delay_relative_to_video>
+            <Video0_delay>-368</Video0_delay>
+            <Video0_delay>-368ms</Video0_delay>
+            <Video0_delay>-368ms</Video0_delay>
+            <Video0_delay>-368ms</Video0_delay>
+            <Video0_delay>-00:00:00.368</Video0_delay>
+            <Stream_size>82345984</Stream_size>
+            <Stream_size>78.5 MiB (8%)</Stream_size>
+            <Stream_size>79 MiB</Stream_size>
+            <Stream_size>79 MiB</Stream_size>
+            <Stream_size>78.5 MiB</Stream_size>
+            <Stream_size>78.53 MiB</Stream_size>
+            <Stream_size>78.5 MiB (8%)</Stream_size>
+            <Proportion_of_this_stream>0.07669</Proportion_of_this_stream>
+            <bsid>8</bsid>
+            <dialnorm>-31</dialnorm>
+            <dialnorm>-31 dB</dialnorm>
+            <compr>3.15</compr>
+            <compr>3.15 dB</compr>
+            <dynrng>4.22</dynrng>
+            <dynrng>4.22 dB</dynrng>
+            <acmod>7</acmod>
+            <lfeon>1</lfeon>
+            <dialnorm_Average>-31</dialnorm_Average>
+            <dialnorm_Average>-31 dB</dialnorm_Average>
+            <dialnorm_Minimum>-31</dialnorm_Minimum>
+            <dialnorm_Minimum>-31 dB</dialnorm_Minimum>
+            <dialnorm_Maximum>-31</dialnorm_Maximum>
+            <dialnorm_Maximum>-31 dB</dialnorm_Maximum>
+            <dialnorm_Count>408</dialnorm_Count>
+            <compr_Average>1.83</compr_Average>
+            <compr_Average>1.83 dB</compr_Average>
+            <compr_Minimum>-1.80</compr_Minimum>
+            <compr_Minimum>-1.80 dB</compr_Minimum>
+            <compr_Maximum>3.15</compr_Maximum>
+            <compr_Maximum>3.15 dB</compr_Maximum>
+            <compr_Count>408</compr_Count>
+            <dynrng_Average>2.72</dynrng_Average>
+            <dynrng_Average>2.72 dB</dynrng_Average>
+            <dynrng_Minimum>-1.48</dynrng_Minimum>
+            <dynrng_Minimum>-1.48 dB</dynrng_Minimum>
+            <dynrng_Maximum>4.38</dynrng_Maximum>
+            <dynrng_Maximum>4.38 dB</dynrng_Maximum>
+            <dynrng_Count>408</dynrng_Count>
+        </track>
+
+        <track type="Menu">
+            <Count>90</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Format>DVD-Video</Format>
+            <Commercial_name>DVD-Video</Commercial_name>
+            <Codec>DVD-Video</Codec>
+            <Codec>DVD-Video</Codec>
+        </track>
+
+    </File>
+    <File>
+        <track type="General">
+            <Count>322</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Count_of_video_streams>1</Count_of_video_streams>
+            <Count_of_audio_streams>1</Count_of_audio_streams>
+            <Count_of_menu_streams>1</Count_of_menu_streams>
+            <Video_Format_List>MPEG Video</Video_Format_List>
+            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
+            <Codecs_Video>MPEG-2 Video</Codecs_Video>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Menu_Format_List>DVD-Video</Menu_Format_List>
+            <Menu_Format_WithHint_List>DVD-Video</Menu_Format_WithHint_List>
+            <Menu_codecs>DVD-Video</Menu_codecs>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_4.VOB</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
+            <File_name>VTS_01_4</File_name>
+            <File_extension>VOB</File_extension>
+            <Format>MPEG-PS</Format>
+            <Format>MPEG-PS</Format>
+            <Format_Extensions_usually_used>mpeg mpg m2p vob pss</Format_Extensions_usually_used>
+            <Commercial_name>MPEG-PS</Commercial_name>
+            <Internet_media_type>video/MP2P</Internet_media_type>
+            <Codec>MPEG-PS</Codec>
+            <Codec>MPEG-PS</Codec>
+            <Codec_Extensions_usually_used>mpeg mpg m2p vob pss</Codec_Extensions_usually_used>
+            <File_size>1073739776</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024 MiB</File_size>
+            <File_size>1 024.0 MiB</File_size>
+            <Duration>1567360</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>26mn 7s 360ms</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>00:26:07.360</Duration>
+            <Duration>00:26:07:00</Duration>
+            <Duration>00:26:07.360 (00:26:07:00)</Duration>
+            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+            <Overall_bit_rate>5480501</Overall_bit_rate>
+            <Overall_bit_rate>5 481 Kbps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>39175</Frame_count>
+            <Stream_size>21588996</Stream_size>
+            <Stream_size>20.6 MiB (2%)</Stream_size>
+            <Stream_size>21 MiB</Stream_size>
+            <Stream_size>21 MiB</Stream_size>
+            <Stream_size>20.6 MiB</Stream_size>
+            <Stream_size>20.59 MiB</Stream_size>
+            <Stream_size>20.6 MiB (2%)</Stream_size>
+            <Proportion_of_this_stream>0.02011</Proportion_of_this_stream>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
+        </track>
+
+        <track type="Video">
+            <Count>335</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <FirstPacketOrder>0</FirstPacketOrder>
+            <ID>224</ID>
+            <ID>224 (0xE0)</ID>
+            <Format>MPEG Video</Format>
+            <Commercial_name>MPEG-2 Video</Commercial_name>
+            <Format_version>Version 2</Format_version>
+            <Format_profile>Main@Main</Format_profile>
+            <Format_settings>CustomMatrix / BVOP</Format_settings>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_Settings_Matrix_Data>
+                0808080908090B0B0B0B0B0B0D0C0D0D0D0D0D0D0D0D0D0D0D0E0E0E1111110D0D0D0C0C0D0D10101111121012111111111313141414181817171C1C1D222229
+                /
+                080808080808090909090909090909090909090909090909090909090A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B
+            </Format_Settings_Matrix_Data>
+            <Format_settings__GOP>M=3, N=12</Format_settings__GOP>
+            <Format_settings__picture_structure>Frame</Format_settings__picture_structure>
+            <Internet_media_type>video/MPV</Internet_media_type>
+            <Codec>MPEG-2V</Codec>
+            <Codec>MPEG-2 Video</Codec>
+            <Codec_Family>MPEG-V</Codec_Family>
+            <Codec_profile>Main@Main</Codec_profile>
+            <Codec_settings>CustomMatrix</Codec_settings>
+            <Codec_settings__Matrix>Custom</Codec_settings__Matrix>
+            <Duration>1567000</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>26mn 7s 0ms</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>00:26:07.000</Duration>
+            <Duration>00:26:07:00</Duration>
+            <Duration>00:26:07.000 (00:26:07:00)</Duration>
+            <Bit_rate_mode>VBR</Bit_rate_mode>
+            <Bit_rate_mode>Variable</Bit_rate_mode>
+            <Bit_rate>4923439</Bit_rate>
+            <Bit_rate>4 923 Kbps</Bit_rate>
+            <Maximum_bit_rate>9800000</Maximum_bit_rate>
+            <Maximum_bit_rate>9 800 Kbps</Maximum_bit_rate>
+            <Width>720</Width>
+            <Width>720 pixels</Width>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Sampled_Width>720</Sampled_Width>
+            <Sampled_Height>576</Sampled_Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>39175</Frame_count>
+            <Standard>PAL</Standard>
+            <Resolution>8</Resolution>
+            <Resolution>8 bits</Resolution>
+            <Colorimetry>4:2:0</Colorimetry>
+            <Color_space>YUV</Color_space>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Bit_depth>8</Bit_depth>
+            <Bit_depth>8 bits</Bit_depth>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_order>TFF</Scan_order>
+            <Scan_order>Top Field First</Scan_order>
+            <Interlacement>TFF</Interlacement>
+            <Interlacement>Top Field First</Interlacement>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Bits__Pixel_Frame_>0.475</Bits__Pixel_Frame_>
+            <Delay>4622490.000</Delay>
+            <Delay>1h 17mn</Delay>
+            <Delay>1h 17mn 2s 490ms</Delay>
+            <Delay>1h 17mn</Delay>
+            <Delay>01:17:02.490</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Stream_size>964378620</Stream_size>
+            <Stream_size>920 MiB (90%)</Stream_size>
+            <Stream_size>920 MiB</Stream_size>
+            <Stream_size>920 MiB</Stream_size>
+            <Stream_size>920 MiB</Stream_size>
+            <Stream_size>919.7 MiB</Stream_size>
+            <Stream_size>920 MiB (90%)</Stream_size>
+            <Proportion_of_this_stream>0.89815</Proportion_of_this_stream>
+            <Buffer_size>229376</Buffer_size>
+            <intra_dc_precision>10</intra_dc_precision>
+        </track>
+
+        <track type="Audio">
+            <Count>302</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <StreamOrder>0</StreamOrder>
+            <FirstPacketOrder>1</FirstPacketOrder>
+            <ID>189-129</ID>
+            <ID>189 (0xBD)-129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Mode_extension>CM (complete main)</Mode_extension>
+            <Format_settings__Endianness>Big</Format_settings__Endianness>
+            <Muxing_mode>DVD-Video</Muxing_mode>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>1567360</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>26mn 7s 360ms</Duration>
+            <Duration>26mn 7s</Duration>
+            <Duration>00:26:07.360</Duration>
+            <Duration>00:26:20:00</Duration>
+            <Duration>00:26:07.360 (00:26:20:00)</Duration>
+            <Bit_rate_mode>CBR</Bit_rate_mode>
+            <Bit_rate_mode>Constant</Bit_rate_mode>
+            <Bit_rate>448000</Bit_rate>
+            <Bit_rate>448 Kbps</Bit_rate>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+            <Channel_positions>3/2/0.1</Channel_positions>
+            <ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+            <Samples_per_frame>1536</Samples_per_frame>
+            <Sampling_rate>48000</Sampling_rate>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>75233280</Samples_count>
+            <Frame_rate>31.250</Frame_rate>
+            <Frame_rate>31.250 fps (1536 spf)</Frame_rate>
+            <Frame_count>48980</Frame_count>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Delay>4622098.000</Delay>
+            <Delay>1h 17mn</Delay>
+            <Delay>1h 17mn 2s 98ms</Delay>
+            <Delay>1h 17mn</Delay>
+            <Delay>01:17:02.098</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Delay_relative_to_video>-392</Delay_relative_to_video>
+            <Delay_relative_to_video>-392ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-392ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-392ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-00:00:00.392</Delay_relative_to_video>
+            <Video0_delay>-392</Video0_delay>
+            <Video0_delay>-392ms</Video0_delay>
+            <Video0_delay>-392ms</Video0_delay>
+            <Video0_delay>-392ms</Video0_delay>
+            <Video0_delay>-00:00:00.392</Video0_delay>
+            <Stream_size>87772160</Stream_size>
+            <Stream_size>83.7 MiB (8%)</Stream_size>
+            <Stream_size>84 MiB</Stream_size>
+            <Stream_size>84 MiB</Stream_size>
+            <Stream_size>83.7 MiB</Stream_size>
+            <Stream_size>83.71 MiB</Stream_size>
+            <Stream_size>83.7 MiB (8%)</Stream_size>
+            <Proportion_of_this_stream>0.08174</Proportion_of_this_stream>
+            <bsid>8</bsid>
+            <dialnorm>-31</dialnorm>
+            <dialnorm>-31 dB</dialnorm>
+            <compr>-1.16</compr>
+            <compr>-1.16 dB</compr>
+            <dynrng>-0.42</dynrng>
+            <dynrng>-0.42 dB</dynrng>
+            <acmod>7</acmod>
+            <lfeon>1</lfeon>
+            <dialnorm_Average>-31</dialnorm_Average>
+            <dialnorm_Average>-31 dB</dialnorm_Average>
+            <dialnorm_Minimum>-31</dialnorm_Minimum>
+            <dialnorm_Minimum>-31 dB</dialnorm_Minimum>
+            <dialnorm_Maximum>-31</dialnorm_Maximum>
+            <dialnorm_Maximum>-31 dB</dialnorm_Maximum>
+            <dialnorm_Count>386</dialnorm_Count>
+            <compr_Average>0.01</compr_Average>
+            <compr_Average>0.01 dB</compr_Average>
+            <compr_Minimum>-2.14</compr_Minimum>
+            <compr_Minimum>-2.14 dB</compr_Minimum>
+            <compr_Maximum>1.94</compr_Maximum>
+            <compr_Maximum>1.94 dB</compr_Maximum>
+            <compr_Count>386</compr_Count>
+            <dynrng_Average>0.50</dynrng_Average>
+            <dynrng_Average>0.50 dB</dynrng_Average>
+            <dynrng_Minimum>-1.80</dynrng_Minimum>
+            <dynrng_Minimum>-1.80 dB</dynrng_Minimum>
+            <dynrng_Maximum>2.96</dynrng_Maximum>
+            <dynrng_Maximum>2.96 dB</dynrng_Maximum>
+            <dynrng_Count>386</dynrng_Count>
+        </track>
+
+        <track type="Menu">
+            <Count>90</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Format>DVD-Video</Format>
+            <Commercial_name>DVD-Video</Commercial_name>
+            <Codec>DVD-Video</Codec>
+            <Codec>DVD-Video</Codec>
+        </track>
+
+    </File>
+    <File>
+        <track type="General">
+            <Count>322</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Count_of_video_streams>1</Count_of_video_streams>
+            <Count_of_audio_streams>1</Count_of_audio_streams>
+            <Count_of_menu_streams>1</Count_of_menu_streams>
+            <Video_Format_List>MPEG Video</Video_Format_List>
+            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
+            <Codecs_Video>MPEG-2 Video</Codecs_Video>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Menu_Format_List>DVD-Video</Menu_Format_List>
+            <Menu_Format_WithHint_List>DVD-Video</Menu_Format_WithHint_List>
+            <Menu_codecs>DVD-Video</Menu_codecs>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_5.VOB</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
+            <File_name>VTS_01_5</File_name>
+            <File_extension>VOB</File_extension>
+            <Format>MPEG-PS</Format>
+            <Format>MPEG-PS</Format>
+            <Format_Extensions_usually_used>mpeg mpg m2p vob pss</Format_Extensions_usually_used>
+            <Commercial_name>MPEG-PS</Commercial_name>
+            <Internet_media_type>video/MP2P</Internet_media_type>
+            <Codec>MPEG-PS</Codec>
+            <Codec>MPEG-PS</Codec>
+            <Codec_Extensions_usually_used>mpeg mpg m2p vob pss</Codec_Extensions_usually_used>
+            <File_size>282462208</File_size>
+            <File_size>269 MiB</File_size>
+            <File_size>269 MiB</File_size>
+            <File_size>269 MiB</File_size>
+            <File_size>269 MiB</File_size>
+            <File_size>269.4 MiB</File_size>
+            <Duration>437728</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>7mn 17s 728ms</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>00:07:17.728</Duration>
+            <Duration>00:07:17:11</Duration>
+            <Duration>00:07:17.728 (00:07:17:11)</Duration>
+            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+            <Overall_bit_rate>5162333</Overall_bit_rate>
+            <Overall_bit_rate>5 162 Kbps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>10936</Frame_count>
+            <Stream_size>5787011</Stream_size>
+            <Stream_size>5.52 MiB (2%)</Stream_size>
+            <Stream_size>6 MiB</Stream_size>
+            <Stream_size>5.5 MiB</Stream_size>
+            <Stream_size>5.52 MiB</Stream_size>
+            <Stream_size>5.519 MiB</Stream_size>
+            <Stream_size>5.52 MiB (2%)</Stream_size>
+            <Proportion_of_this_stream>0.02049</Proportion_of_this_stream>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
+        </track>
+
+        <track type="Video">
+            <Count>335</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <FirstPacketOrder>0</FirstPacketOrder>
+            <ID>224</ID>
+            <ID>224 (0xE0)</ID>
+            <Format>MPEG Video</Format>
+            <Commercial_name>MPEG-2 Video</Commercial_name>
+            <Format_version>Version 2</Format_version>
+            <Format_profile>Main@Main</Format_profile>
+            <Format_settings>CustomMatrix / BVOP</Format_settings>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__BVOP>Yes</Format_settings__BVOP>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_settings__Matrix>Custom</Format_settings__Matrix>
+            <Format_Settings_Matrix_Data>
+                0808080908090B0B0B0B0B0B0D0C0D0D0D0D0D0D0D0D0D0D0D0E0E0E1111110D0D0D0C0C0D0D10101111121012111111111313141414181817171C1C1D222229
+                /
+                080808080808090909090909090909090909090909090909090909090A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B
+            </Format_Settings_Matrix_Data>
+            <Format_settings__GOP>M=3, N=12</Format_settings__GOP>
+            <Format_settings__picture_structure>Frame</Format_settings__picture_structure>
+            <Internet_media_type>video/MPV</Internet_media_type>
+            <Codec>MPEG-2V</Codec>
+            <Codec>MPEG-2 Video</Codec>
+            <Codec_Family>MPEG-V</Codec_Family>
+            <Codec_profile>Main@Main</Codec_profile>
+            <Codec_settings>CustomMatrix</Codec_settings>
+            <Codec_settings__Matrix>Custom</Codec_settings__Matrix>
+            <Duration>437440</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>7mn 17s 440ms</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>00:07:17.440</Duration>
+            <Duration>00:07:17:11</Duration>
+            <Duration>00:07:17.440 (00:07:17:11)</Duration>
+            <Bit_rate_mode>VBR</Bit_rate_mode>
+            <Bit_rate_mode>Variable</Bit_rate_mode>
+            <Bit_rate>4611603</Bit_rate>
+            <Bit_rate>4 612 Kbps</Bit_rate>
+            <Maximum_bit_rate>9800000</Maximum_bit_rate>
+            <Maximum_bit_rate>9 800 Kbps</Maximum_bit_rate>
+            <Width>720</Width>
+            <Width>720 pixels</Width>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Sampled_Width>720</Sampled_Width>
+            <Sampled_Height>576</Sampled_Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>10936</Frame_count>
+            <Standard>PAL</Standard>
+            <Resolution>8</Resolution>
+            <Resolution>8 bits</Resolution>
+            <Colorimetry>4:2:0</Colorimetry>
+            <Color_space>YUV</Color_space>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Chroma_subsampling>4:2:0</Chroma_subsampling>
+            <Bit_depth>8</Bit_depth>
+            <Bit_depth>8 bits</Bit_depth>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_type>Interlaced</Scan_type>
+            <Scan_order>TFF</Scan_order>
+            <Scan_order>Top Field First</Scan_order>
+            <Interlacement>TFF</Interlacement>
+            <Interlacement>Top Field First</Interlacement>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Bits__Pixel_Frame_>0.445</Bits__Pixel_Frame_>
+            <Delay>6189810.000</Delay>
+            <Delay>1h 43mn</Delay>
+            <Delay>1h 43mn 9s 810ms</Delay>
+            <Delay>1h 43mn</Delay>
+            <Delay>01:43:09.810</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Stream_size>252162429</Stream_size>
+            <Stream_size>240 MiB (89%)</Stream_size>
+            <Stream_size>240 MiB</Stream_size>
+            <Stream_size>240 MiB</Stream_size>
+            <Stream_size>240 MiB</Stream_size>
+            <Stream_size>240.5 MiB</Stream_size>
+            <Stream_size>240 MiB (89%)</Stream_size>
+            <Proportion_of_this_stream>0.89273</Proportion_of_this_stream>
+            <Buffer_size>229376</Buffer_size>
+            <intra_dc_precision>10</intra_dc_precision>
+        </track>
+
+        <track type="Audio">
+            <Count>302</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <StreamOrder>0</StreamOrder>
+            <FirstPacketOrder>1</FirstPacketOrder>
+            <ID>189-129</ID>
+            <ID>189 (0xBD)-129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Mode_extension>CM (complete main)</Mode_extension>
+            <Format_settings__Endianness>Big</Format_settings__Endianness>
+            <Muxing_mode>DVD-Video</Muxing_mode>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>437728</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>7mn 17s 728ms</Duration>
+            <Duration>7mn 17s</Duration>
+            <Duration>00:07:17.728</Duration>
+            <Duration>00:07:21:08</Duration>
+            <Duration>00:07:17.728 (00:07:21:08)</Duration>
+            <Bit_rate_mode>CBR</Bit_rate_mode>
+            <Bit_rate_mode>Constant</Bit_rate_mode>
+            <Bit_rate>448000</Bit_rate>
+            <Bit_rate>448 Kbps</Bit_rate>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+            <Channel_positions>3/2/0.1</Channel_positions>
+            <ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+            <Samples_per_frame>1536</Samples_per_frame>
+            <Sampling_rate>48000</Sampling_rate>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>21010944</Samples_count>
+            <Frame_rate>31.250</Frame_rate>
+            <Frame_rate>31.250 fps (1536 spf)</Frame_rate>
+            <Frame_count>13679</Frame_count>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Delay>6189490.000</Delay>
+            <Delay>1h 43mn</Delay>
+            <Delay>1h 43mn 9s 490ms</Delay>
+            <Delay>1h 43mn</Delay>
+            <Delay>01:43:09.490</Delay>
+            <Delay__origin>Container</Delay__origin>
+            <Delay__origin>Container</Delay__origin>
+            <Delay_relative_to_video>-320</Delay_relative_to_video>
+            <Delay_relative_to_video>-320ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-320ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-320ms</Delay_relative_to_video>
+            <Delay_relative_to_video>-00:00:00.320</Delay_relative_to_video>
+            <Video0_delay>-320</Video0_delay>
+            <Video0_delay>-320ms</Video0_delay>
+            <Video0_delay>-320ms</Video0_delay>
+            <Video0_delay>-320ms</Video0_delay>
+            <Video0_delay>-00:00:00.320</Video0_delay>
+            <Stream_size>24512768</Stream_size>
+            <Stream_size>23.4 MiB (9%)</Stream_size>
+            <Stream_size>23 MiB</Stream_size>
+            <Stream_size>23 MiB</Stream_size>
+            <Stream_size>23.4 MiB</Stream_size>
+            <Stream_size>23.38 MiB</Stream_size>
+            <Stream_size>23.4 MiB (9%)</Stream_size>
+            <Proportion_of_this_stream>0.08678</Proportion_of_this_stream>
+            <bsid>8</bsid>
+            <dialnorm>-31</dialnorm>
+            <dialnorm>-31 dB</dialnorm>
+            <compr>0.53</compr>
+            <compr>0.53 dB</compr>
+            <dynrng>1.02</dynrng>
+            <dynrng>1.02 dB</dynrng>
+            <acmod>7</acmod>
+            <lfeon>1</lfeon>
+            <dialnorm_Average>-31</dialnorm_Average>
+            <dialnorm_Average>-31 dB</dialnorm_Average>
+            <dialnorm_Minimum>-31</dialnorm_Minimum>
+            <dialnorm_Minimum>-31 dB</dialnorm_Minimum>
+            <dialnorm_Maximum>-31</dialnorm_Maximum>
+            <dialnorm_Maximum>-31 dB</dialnorm_Maximum>
+            <dialnorm_Count>854</dialnorm_Count>
+            <compr_Average>9.94</compr_Average>
+            <compr_Average>9.94 dB</compr_Average>
+            <compr_Minimum>-0.86</compr_Minimum>
+            <compr_Minimum>-0.86 dB</compr_Minimum>
+            <compr_Maximum>11.76</compr_Maximum>
+            <compr_Maximum>11.76 dB</compr_Maximum>
+            <compr_Count>854</compr_Count>
+            <dynrng_Average>5.20</dynrng_Average>
+            <dynrng_Average>5.20 dB</dynrng_Average>
+            <dynrng_Minimum>-0.86</dynrng_Minimum>
+            <dynrng_Minimum>-0.86 dB</dynrng_Minimum>
+            <dynrng_Maximum>6.02</dynrng_Maximum>
+            <dynrng_Maximum>6.02 dB</dynrng_Maximum>
+            <dynrng_Count>854</dynrng_Count>
+        </track>
+
+        <track type="Menu">
+            <Count>90</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Format>DVD-Video</Format>
+            <Commercial_name>DVD-Video</Commercial_name>
+            <Codec>DVD-Video</Codec>
+            <Codec>DVD-Video</Codec>
+        </track>
+
+    </File>
+    <File>
+        <track type="General">
+            <Count>322</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Kind_of_stream>General</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Count_of_video_streams>1</Count_of_video_streams>
+            <Count_of_audio_streams>1</Count_of_audio_streams>
+            <Count_of_menu_streams>1</Count_of_menu_streams>
+            <Video_Format_List>MPEG Video</Video_Format_List>
+            <Video_Format_WithHint_List>MPEG Video</Video_Format_WithHint_List>
+            <Codecs_Video>MPEG-2 Video</Codecs_Video>
+            <Audio_Format_List>AC-3</Audio_Format_List>
+            <Audio_Format_WithHint_List>AC-3</Audio_Format_WithHint_List>
+            <Audio_codecs>AC3</Audio_codecs>
+            <Audio_Language_List>German</Audio_Language_List>
+            <Complete_name>F:\\VIDEO_TS\VTS_01_0.BUP</Complete_name>
+            <Folder_name>F:\\VIDEO_TS</Folder_name>
+            <File_name>VTS_01_0</File_name>
+            <File_extension>BUP</File_extension>
+            <Format>DVD Video</Format>
+            <Format>DVD Video</Format>
+            <Format_Extensions_usually_used>ifo</Format_Extensions_usually_used>
+            <Commercial_name>DVD Video</Commercial_name>
+            <Format_profile>Program</Format_profile>
+            <Codec>DVD Video</Codec>
+            <Codec>DVD Video</Codec>
+            <Codec_Extensions_usually_used>ifo</Codec_Extensions_usually_used>
+            <File_size>71680</File_size>
+            <File_size>70.0 KiB</File_size>
+            <File_size>70 KiB</File_size>
+            <File_size>70 KiB</File_size>
+            <File_size>70.0 KiB</File_size>
+            <File_size>70.00 KiB</File_size>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27:05</Duration>
+            <Duration>01:50:27.200 (01:50:27:05)</Duration>
+            <Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+            <Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+            <Overall_bit_rate>87</Overall_bit_rate>
+            <Overall_bit_rate>87 bps</Overall_bit_rate>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>165680</Frame_count>
+            <File_creation_date>UTC 2010-01-28 10:54:42.000</File_creation_date>
+            <File_creation_date__local_>2010-01-28 12:54:42.000</File_creation_date__local_>
+            <File_last_modification_date>UTC 2010-01-28 10:54:42.000</File_last_modification_date>
+            <File_last_modification_date__local_>2010-01-28 12:54:42.000</File_last_modification_date__local_>
+        </track>
+
+        <track type="Video">
+            <Count>334</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Kind_of_stream>Video</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <ID>224</ID>
+            <ID>224 (0xE0)</ID>
+            <Format>MPEG Video</Format>
+            <Commercial_name>MPEG Video</Commercial_name>
+            <Format_version>Version 2</Format_version>
+            <Internet_media_type>video/MPV</Internet_media_type>
+            <Codec>MPEG-2V</Codec>
+            <Codec>MPEG-2 Video</Codec>
+            <Codec_Family>MPEG-V</Codec_Family>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27:05</Duration>
+            <Duration>01:50:27.200 (01:50:27:05)</Duration>
+            <Bit_rate_mode>VBR</Bit_rate_mode>
+            <Bit_rate_mode>Variable</Bit_rate_mode>
+            <Width>720</Width>
+            <Width>720 pixels</Width>
+            <Height>576</Height>
+            <Height>576 pixels</Height>
+            <Pixel_aspect_ratio>1.422</Pixel_aspect_ratio>
+            <Display_aspect_ratio>1.778</Display_aspect_ratio>
+            <Display_aspect_ratio>16:9</Display_aspect_ratio>
+            <Frame_rate>25.000</Frame_rate>
+            <Frame_rate>25.000 fps</Frame_rate>
+            <Frame_count>165680</Frame_count>
+            <Standard>PAL</Standard>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+        </track>
+
+        <track type="Audio">
+            <Count>272</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Kind_of_stream>Audio</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <ID>129 (0x81)</ID>
+            <ID>129 (0x81)</ID>
+            <Format>AC-3</Format>
+            <Format_Info>Audio Coding 3</Format_Info>
+            <Commercial_name>AC-3</Commercial_name>
+            <Codec>AC3</Codec>
+            <Codec>AC3</Codec>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Channel_s_>6</Channel_s_>
+            <Channel_s_>6 channels</Channel_s_>
+            <Sampling_rate>48000</Sampling_rate>
+            <Sampling_rate>48.0 KHz</Sampling_rate>
+            <Samples_count>318105600</Samples_count>
+            <Compression_mode>Lossy</Compression_mode>
+            <Compression_mode>Lossy</Compression_mode>
+            <Language>de</Language>
+            <Language>German</Language>
+            <Language>German</Language>
+            <Language>de</Language>
+            <Language>deu</Language>
+            <Language>de</Language>
+        </track>
+
+        <track type="Menu">
+            <Count>119</Count>
+            <Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Kind_of_stream>Menu</Kind_of_stream>
+            <Stream_identifier>0</Stream_identifier>
+            <Duration>6627200</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>1h 50mn 27s 200ms</Duration>
+            <Duration>1h 50mn</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Duration>01:50:27.200</Duration>
+            <Chapters_Pos_Begin>90</Chapters_Pos_Begin>
+            <Chapters_Pos_End>118</Chapters_Pos_End>
+            <_00_00_00000>Chapter 1</_00_00_00000>
+            <_00_02_10680>Chapter 2</_00_02_10680>
+            <_00_04_10560>Chapter 3</_00_04_10560>
+            <_00_06_09840>Chapter 4</_00_06_09840>
+            <_00_09_46360>Chapter 5</_00_09_46360>
+            <_00_11_59120>Chapter 6</_00_11_59120>
+            <_00_18_45400>Chapter 7</_00_18_45400>
+            <_00_22_21160>Chapter 8</_00_22_21160>
+            <_00_24_01480>Chapter 9</_00_24_01480>
+            <_00_26_33760>Chapter 10</_00_26_33760>
+            <_00_28_29920>Chapter 11</_00_28_29920>
+            <_00_32_55400>Chapter 12</_00_32_55400>
+            <_00_40_48240>Chapter 13</_00_40_48240>
+            <_00_46_39720>Chapter 14</_00_46_39720>
+            <_00_50_38760>Chapter 15</_00_50_38760>
+            <_00_56_18160>Chapter 16</_00_56_18160>
+            <_00_57_44920>Chapter 17</_00_57_44920>
+            <_01_03_51600>Chapter 18</_01_03_51600>
+            <_01_07_41520>Chapter 19</_01_07_41520>
+            <_01_10_48440>Chapter 20</_01_10_48440>
+            <_01_12_52720>Chapter 21</_01_12_52720>
+            <_01_14_43160>Chapter 22</_01_14_43160>
+            <_01_19_11160>Chapter 23</_01_19_11160>
+            <_01_24_05840>Chapter 24</_01_24_05840>
+            <_01_29_38800>Chapter 25</_01_29_38800>
+            <_01_34_52600>Chapter 26</_01_34_52600>
+            <_01_38_09360>Chapter 27</_01_38_09360>
+            <_01_42_31320>Chapter 28</_01_42_31320>
+            <List__Audio_>1</List__Audio_>
+        </track>
+
+    </File>
 </Mediainfo>
+

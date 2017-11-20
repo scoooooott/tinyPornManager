@@ -495,7 +495,6 @@ public class MediaInfo implements Closeable {
     Menu,
     @Deprecated
     Chapters; // replaced by 'other'
-    ;
   }
 
   /**

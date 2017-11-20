@@ -18,10 +18,8 @@ package org.tinymediamanager.core.entities;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,9 +38,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1516,20 +1511,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (Files.exists(xmlFile)) {
       try {
         LOGGER.info("ISO: try to parse " + xmlFile);
-
-        JAXBContext context = JAXBContext.newInstance(MediaInfoXMLParser.class);
-        Unmarshaller um = context.createUnmarshaller();
-        MediaInfoXMLParser xml = new MediaInfoXMLParser();
-
-        Reader in = Files.newBufferedReader(xmlFile, StandardCharsets.UTF_8);
-        xml = (MediaInfoXMLParser) um.unmarshal(in);
-        in.close();
-        xml.snapshot();
+        MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
 
         // get snapshot from biggest file
-        setMiSnapshot(xml.getBiggestFile().snapshot);
-        setDuration(xml.getDuration()); // accumulated duration
-        return xml.getFilesize();
+        MediaInfoXMLParser.MiFile mainFile = xml.getMainFile();
+        setMiSnapshot(mainFile.snapshot);
+        setDuration(mainFile.getDuration()); // accumulated duration
+        return 0;
       }
       catch (Exception e) {
         LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
@@ -1645,16 +1633,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * DO NOT USE - only for ISO!!!
    */
-  @Deprecated
-  public void setMediaInfo(MediaInfo mediaInfo) {
+  private void setMediaInfo(MediaInfo mediaInfo) {
     this.mediaInfo = mediaInfo;
   }
 
   /**
    * DO NOT USE - only for ISO!!!
    */
-  @Deprecated
-  public void setMiSnapshot(Map<StreamKind, List<Map<String, String>>> miSnapshot) {
+  private void setMiSnapshot(Map<StreamKind, List<Map<String, String>>> miSnapshot) {
     this.miSnapshot = miSnapshot;
   }
 
@@ -1669,7 +1655,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private int parseToInt(String str) {
     try {
-      return Integer.parseInt(str);
+      return Integer.parseInt(str.trim());
     }
     catch (Exception ignored) {
       return 0;

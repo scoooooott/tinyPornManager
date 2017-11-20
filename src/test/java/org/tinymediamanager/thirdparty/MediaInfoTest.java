@@ -1,5 +1,8 @@
 package org.tinymediamanager.thirdparty;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import java.nio.file.Paths;
 import java.util.Date;
 
@@ -7,6 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 
 public class MediaInfoTest extends BasicTest {
 
@@ -14,6 +19,208 @@ public class MediaInfoTest extends BasicTest {
   public static void setUp() throws Exception {
     MediaInfoUtils.loadMediaInfo();
 
+  }
+
+  @Test
+  public void testIsoXml() {
+    // DVD ISO - old format
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo.0.7.99.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(720);
+      assertThat(mf.getVideoHeight()).isEqualTo(576);
+      assertThat(mf.getVideoCodec()).isEqualTo("MPEG");
+      assertThat(mf.getDuration()).isEqualTo(5160);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(8);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("AC3");
+      assertThat(audioStream.getLanguage()).isEqualTo("eng");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(32);
+      MediaFileSubtitle subtitle = mf.getSubtitles().get(0);
+      assertThat(subtitle.getLanguage()).isEqualTo("eng");
+      assertThat(subtitle.getCodec()).isEqualTo("RLE");
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // DVD ISO - new format
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo.17.10.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(720);
+      assertThat(mf.getVideoHeight()).isEqualTo(576);
+      assertThat(mf.getVideoCodec()).isEqualTo("MPEG");
+      assertThat(mf.getDuration()).isEqualTo(5184);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(8);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("AC3");
+      assertThat(audioStream.getLanguage()).isEqualTo("eng");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(32);
+      MediaFileSubtitle subtitle = mf.getSubtitles().get(0);
+      assertThat(subtitle.getLanguage()).isEqualTo("eng");
+      assertThat(subtitle.getCodec()).isEqualTo("RLE");
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // BD ISO
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(1920);
+      assertThat(mf.getVideoHeight()).isEqualTo(1080);
+      assertThat(mf.getVideoCodec()).isEqualTo("h264");
+      assertThat(mf.getDuration()).isEqualTo(888);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(1);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("AC3");
+      assertThat(audioStream.getLanguage()).isEqualTo("eng");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(10);
+      MediaFileSubtitle subtitle = mf.getSubtitles().get(0);
+      assertThat(subtitle.getLanguage()).isEqualTo("deu");
+      assertThat(subtitle.getCodec()).isEqualTo("PGS");
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // BD-MPLS ISO
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(1920);
+      assertThat(mf.getVideoHeight()).isEqualTo(1080);
+      assertThat(mf.getVideoCodec()).isEqualTo("h264");
+      assertThat(mf.getDuration()).isEqualTo(5624);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(4);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(8);
+      assertThat(audioStream.getCodec()).isEqualTo("DTSHD");
+      assertThat(audioStream.getLanguage()).isEqualTo("eng");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(7);
+      MediaFileSubtitle subtitle = mf.getSubtitles().get(0);
+      assertThat(subtitle.getLanguage()).isEqualTo("eng");
+      assertThat(subtitle.getCodec()).isEqualTo("PGS");
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // BD ISO without size in xml
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-nosize.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(1920);
+      assertThat(mf.getVideoHeight()).isEqualTo(1080);
+      assertThat(mf.getVideoCodec()).isEqualTo("h264");
+      assertThat(mf.getDuration()).isEqualTo(6626);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(1);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("DTSHD");
+      assertThat(audioStream.getLanguage()).isEqualTo("deu");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(3);
+      MediaFileSubtitle subtitle = mf.getSubtitles().get(0);
+      assertThat(subtitle.getLanguage()).isEqualTo("deu");
+      assertThat(subtitle.getCodec()).isEqualTo("PGS");
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // CD ISO
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-CD.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(720);
+      assertThat(mf.getVideoHeight()).isEqualTo(576);
+      assertThat(mf.getVideoCodec()).isEqualTo("MPEG-2");
+      assertThat(mf.getDuration()).isEqualTo(6627);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(1);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("AC3");
+      assertThat(audioStream.getLanguage()).isEqualTo("deu");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(0);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // CD ISO without language information
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-CD-nolang.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(720);
+      assertThat(mf.getVideoHeight()).isEqualTo(480);
+      assertThat(mf.getVideoCodec()).isEqualTo("MPEG-2");
+      assertThat(mf.getDuration()).isEqualTo(120);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(1);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(2);
+      assertThat(audioStream.getCodec()).isEqualTo("MPEG1 Audio");
+      assertThat(audioStream.getLanguage()).isEmpty();
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(0);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
+    // MKV ISO
+    try {
+      MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-MKV.iso"));
+      mf.gatherMediaInformation();
+
+      assertThat(mf.getVideoWidth()).isEqualTo(720);
+      assertThat(mf.getVideoHeight()).isEqualTo(302);
+      assertThat(mf.getVideoCodec()).isEqualTo("h264");
+      assertThat(mf.getDuration()).isEqualTo(6412);
+
+      assertThat(mf.getAudioStreams().size()).isEqualTo(1);
+      // first audio stream is AC-3 english/5.1
+      MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
+      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getCodec()).isEqualTo("AC3");
+      assertThat(audioStream.getLanguage()).isEqualTo("deu");
+
+      assertThat(mf.getSubtitles().size()).isEqualTo(0);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
   }
 
   @Test
