@@ -89,6 +89,7 @@ public class IconManager {
   public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
 
   // font awesome icons normal
+  public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
   public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
   public final static ImageIcon            NEW                         = createTextIcon("new", 14);
@@ -112,7 +113,6 @@ public class IconManager {
   public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
 
   // font awesome icons - column headers
-  public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);

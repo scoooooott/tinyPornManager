@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -280,6 +281,16 @@ public class TmmTable extends JTable {
         // b.getAccessibleContext().setAccessibleDescription(selectVisibleColumnsLabel);
         b.addActionListener(evt -> TmmTableColumnSelectionPopup.showColumnSelectionPopup(b, TmmTable.this));
         b.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseEntered(MouseEvent e) {
+            scrollPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+          }
+
+          @Override
+          public void mouseExited(MouseEvent e) {
+            scrollPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+
           @Override
           public void mouseClicked(MouseEvent me) {
             TmmTableColumnSelectionPopup.showColumnSelectionPopup(b, TmmTable.this);
