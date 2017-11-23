@@ -71,6 +71,7 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                    chckbxDisplayOriginalTitle;
   private JCheckBox                    chckbxPersonalRatingFirst;
   private AutocompleteComboBox<String> cbRating;
+  private JCheckBox                    chckbxIncludeExternalAudioStreams;
 
   public MovieSettingsPanel() {
     // UI initializations
@@ -95,7 +96,7 @@ public class MovieSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][20lp][50lp][][]", "[][][][][][][20lp][][][][20lp][][][][20lp][][][][][]"));
+    setLayout(new MigLayout("", "[25lp:n][20lp][50lp][][]", "[][][][][][][20lp][][][][20lp][][][][][20lp][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
@@ -118,7 +119,7 @@ public class MovieSettingsPanel extends JPanel {
       add(lblRating, "flowx,cell 1 4 4 1");
 
       cbRating = new AutocompleteComboBox(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
-      add(cbRating, "cell 1 4");
+      add(cbRating, "cell 1 4 4 1");
     }
     {
       chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
@@ -147,31 +148,35 @@ public class MovieSettingsPanel extends JPanel {
       add(chckbxRuntimeFromMi, "cell 1 13 4 1");
     }
     {
+      chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo")); //$NON-NLS-1$
+      add(chckbxIncludeExternalAudioStreams, "cell 1 14 3 1");
+    }
+    {
       JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 15 5 1");
+      add(lblPresetT, "cell 0 16 5 1");
     }
     {
       JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 16 4 1");
+      add(lblPresetHintT, "cell 1 17 4 1");
     }
     {
       btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 2 17,growx");
+      add(btnPresetKodi, "flowx,cell 2 18,growx");
 
       btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 3 17,growx");
+      add(btnPresetXbmc, "cell 3 18,growx");
     }
     {
       btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 2 18,growx");
+      add(btnPresetMediaPortal1, "flowx,cell 2 19,growx");
 
       btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 3 18,growx");
+      add(btnPresetMediaPortal2, "cell 3 19,growx");
     }
     {
       btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 2 19,growx");
+      add(btnPresetPlex, "cell 2 20,growx");
     }
     {
       chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
@@ -240,5 +245,10 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, String, AutocompleteComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_8, cbRating, autocompleteComboBoxBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_9 = BeanProperty.create("includeExternalAudioStreams");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_9, chckbxIncludeExternalAudioStreams, jCheckBoxBeanProperty);
+    autoBinding_9.bind();
   }
 }

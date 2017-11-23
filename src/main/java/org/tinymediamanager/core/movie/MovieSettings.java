@@ -160,6 +160,7 @@ public class MovieSettings extends AbstractSettings {
 
   // misc
   private boolean                          runtimeFromMediaInfo                = false;
+  private boolean                          includeExternalAudioStreams         = false;
   private boolean                          syncTrakt                           = false;
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
@@ -893,6 +894,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.runtimeFromMediaInfo;
     this.runtimeFromMediaInfo = newValue;
     firePropertyChange("runtimeFromMediaInfo", oldValue, newValue);
+  }
+
+  public boolean isIncludeExternalAudioStreams() {
+    return includeExternalAudioStreams;
+  }
+
+  public void setIncludeExternalAudioStreams(boolean newValue) {
+    boolean oldValue = this.includeExternalAudioStreams;
+    this.includeExternalAudioStreams = newValue;
+    firePropertyChange("includeExternalAudioStreams", oldValue, newValue);
   }
 
   public boolean isAsciiReplacement() {

@@ -29,6 +29,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.w3c.dom.Element;
@@ -217,6 +218,29 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         audio.appendChild(channels);
 
         streamdetails.appendChild(audio);
+      }
+
+      // also include external audio files if set
+      if (MovieModuleManager.SETTINGS.isIncludeExternalAudioStreams()) {
+        for (MediaFile audioFile : movie.getMediaFiles(MediaFileType.AUDIO)) {
+          for (MediaFileAudioStream audioStream : mediaFile.getAudioStreams()) {
+            Element audio = document.createElement("audio");
+
+            Element codec = document.createElement("codec");
+            codec.setTextContent(audioStream.getCodec());
+            audio.appendChild(codec);
+
+            Element language = document.createElement("language");
+            language.setTextContent(audioStream.getLanguage());
+            audio.appendChild(language);
+
+            Element channels = document.createElement("channels");
+            channels.setTextContent(Integer.toString(audioStream.getChannelsAsInt()));
+            audio.appendChild(channels);
+
+            streamdetails.appendChild(audio);
+          }
+        }
       }
 
       for (MediaFileSubtitle sub : mediaFile.getSubtitles()) {
