@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
@@ -82,7 +83,7 @@ public class MediaMetadata {
   private int                           displayEpisodeNumber = -1;
   private int                           displaySeasonNumber  = -1;
   private int                           absoluteNumber       = -1;
-  private String                        status               = "";
+  private MediaAiredStatus              status               = MediaAiredStatus.UNKNOWN;
 
   // multi value
   private final List<MediaRating>       ratings              = new ArrayList<>();
@@ -198,6 +199,10 @@ public class MediaMetadata {
 
   private float merge(float val1, float val2) {
     return val1 <= 0 ? val2 : val1;
+  }
+
+  private MediaAiredStatus merge(MediaAiredStatus val1, MediaAiredStatus val2) {
+    return val1 == MediaAiredStatus.UNKNOWN ? val2 : val1;
   }
 
   /**
@@ -1093,7 +1098,7 @@ public class MediaMetadata {
    * 
    * @return the airing status
    */
-  public String getStatus() {
+  public MediaAiredStatus getStatus() {
     return status;
   }
 
@@ -1103,8 +1108,18 @@ public class MediaMetadata {
    * @param status
    *          the airing status to be set
    */
-  public void setStatus(String status) {
-    this.status = StrgUtils.getNonNullString(status);
+  public void setStatus(MediaAiredStatus status) {
+    this.status = status;
+  }
+
+  /**
+   * Parse/Set the airing status
+   *
+   * @param statusAsText
+   *          the airing status to be parsed and set
+   */
+  public void setStatus(String statusAsText) {
+    this.status = MediaAiredStatus.findAiredStatus(statusAsText);
   }
 
   /**
