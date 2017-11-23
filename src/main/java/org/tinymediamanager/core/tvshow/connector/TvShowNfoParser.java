@@ -44,6 +44,7 @@ import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -69,7 +70,7 @@ public class TvShowNfoParser {
   public int                        runtime             = 0;
   public Certification              certification       = Certification.NOT_RATED;
   public Date                       releaseDate         = null;
-  public String                     status              = "";
+  public MediaAiredStatus           status              = MediaAiredStatus.UNKNOWN;
   public boolean                    watched             = false;
   public int                        playcount           = 0;
 
@@ -447,7 +448,7 @@ public class TvShowNfoParser {
 
     Element element = getSingleElement(root, "status");
     if (element != null) {
-      status = element.ownText();
+      status = MediaAiredStatus.findAiredStatus(element.ownText());
     }
 
     return null;

@@ -39,6 +39,7 @@ import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class TvShowToNfoConnectorTest {
@@ -160,7 +161,7 @@ public class TvShowToNfoConnectorTest {
     tvShow.setId("trakt", 655);
     tvShow.setProductionCompany("FOX (US)");
     tvShow.setCertification(Certification.US_TVPG);
-    tvShow.setStatus("Ended");
+    tvShow.setStatus(MediaAiredStatus.ENDED);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     tvShow.setFirstAired(sdf.parse("1987-04-12"));

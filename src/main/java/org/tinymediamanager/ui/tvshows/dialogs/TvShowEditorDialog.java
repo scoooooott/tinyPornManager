@@ -74,6 +74,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -153,7 +154,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
   private JSpinner                          spRating;
   private JComboBox                         cbCertification;
-  private JComboBox                         cbStatus;
+  private JComboBox<MediaAiredStatus>       cbStatus;
 
   private AutocompleteComboBox<String>      cbTags;
   private AutoCompleteSupport<String>       cbTagsAutoCompleteSupport;
@@ -391,7 +392,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblStatus = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
         details1Panel.add(lblStatus, "cell 3 6,alignx right");
 
-        cbStatus = new JComboBox(new String[] { "", "Continuing", "Ended" });
+        cbStatus = new JComboBox(MediaAiredStatus.values());
         details1Panel.add(cbStatus, "cell 4 6,growx");
       }
       {
@@ -894,7 +895,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
       tvShowToEdit.setFirstAired(dpPremiered.getDate());
 
-      tvShowToEdit.setStatus(cbStatus.getSelectedItem().toString());
+      tvShowToEdit.setStatus((MediaAiredStatus) cbStatus.getSelectedItem());
 
       // user rating
       Map<String, Rating> ratings = new HashMap<>();

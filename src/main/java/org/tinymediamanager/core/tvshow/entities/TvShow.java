@@ -84,6 +84,7 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
@@ -115,7 +116,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                               firstAired            = null;
   @JsonProperty
-  private String                             status                = "";
+  private MediaAiredStatus                   status                = MediaAiredStatus.UNKNOWN;
   @JsonProperty
   private String                             sortTitle             = "";
   @JsonProperty
@@ -236,7 +237,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setSortTitle(StringUtils.isEmpty(sortTitle) || force ? other.sortTitle : sortTitle);
     setRuntime(runtime == 0 || force ? other.runtime : runtime);
     setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
-    setStatus(StringUtils.isBlank(status) || force ? other.status : status);
+    setStatus(status == MediaAiredStatus.UNKNOWN || force ? other.status : status);
     setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
 
     // when force is set, clear the lists/maps and add all other values
@@ -1085,7 +1086,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @return the status
    */
-  public String getStatus() {
+  public MediaAiredStatus getStatus() {
     return status;
   }
 
@@ -1095,8 +1096,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param newValue
    *          the new status
    */
-  public void setStatus(String newValue) {
-    String oldValue = this.status;
+  public void setStatus(MediaAiredStatus newValue) {
+    MediaAiredStatus oldValue = this.status;
     this.status = newValue;
     firePropertyChange(STATUS, oldValue, newValue);
   }

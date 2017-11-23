@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class TvShowNfoParserTest {
@@ -99,7 +100,7 @@ public class TvShowNfoParserTest {
       assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
-      assertThat(parser.status).isNotEmpty();
+      assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
       assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA);
@@ -192,7 +193,7 @@ public class TvShowNfoParserTest {
       assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
-      assertThat(parser.status).isNotEmpty();
+      assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
       assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA);
@@ -285,7 +286,7 @@ public class TvShowNfoParserTest {
       assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
-      assertThat(parser.status).isNotEmpty();
+      assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
       assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA);
@@ -378,7 +379,7 @@ public class TvShowNfoParserTest {
       assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
-      assertThat(parser.status).isNotEmpty();
+      assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
       assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA);

@@ -68,7 +68,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
   protected final String    ORACLE_IS_STANDALONE = "http://www.oracle.com/xml/is-standalone";
 
   protected final TvShow    tvShow;
-  protected TvShowNfoParser parser = null;
+  protected TvShowNfoParser parser               = null;
 
   protected Document        document;
   protected Element         root;
@@ -390,7 +390,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addStatus() {
     Element status = document.createElement("status");
-    status.setTextContent(tvShow.getStatus());
+    status.setTextContent(tvShow.getStatus().getName());
     root.appendChild(status);
   }
 

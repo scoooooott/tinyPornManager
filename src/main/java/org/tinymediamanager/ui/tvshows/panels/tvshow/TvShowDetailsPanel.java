@@ -268,7 +268,7 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_7, lblPremiered, jLabelBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.status");
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.status.name");
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_5, lblStatus, jLabelBeanProperty);
     autoBinding_5.bind();
