@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-animated</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
 
     <name>Animated poster scraper</name>
     <description>A scraper for animated movie posters and fanarts</description>
@@ -20,7 +20,7 @@
         <url>https://github.com/tinyMediaManager/${project.artifactId}</url>
         <connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-        <tag>scraper-animated-1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
