@@ -630,8 +630,9 @@ public abstract class ImdbParser {
       if (elementText.equals("Certification")) {
         Element nextElement = element.nextElementSibling();
         if (nextElement != null) {
-          Elements certificationElements = nextElement.getElementsByAttributeValueStarting("href",
-              "/search/title?certificates=" + options.getCountry().getAlpha2());
+          String languageCode = options.getCountry().getAlpha2();
+          Elements certificationElements = nextElement.getElementsByAttributeValueStarting("href", "/search/title?certificates=" + languageCode);
+          boolean done = false;
           for (Element certificationElement : certificationElements) {
             String certText = certificationElement.ownText();
             int startOfCert = certText.indexOf(":");
@@ -642,9 +643,28 @@ public abstract class ImdbParser {
             Certification certification = Certification.getCertification(options.getCountry(), certText);
             if (certification != null) {
               md.addCertification(certification);
+              done = true;
               break;
             }
           }
+
+          if (!done && languageCode.equals("DE")) {
+            certificationElements = nextElement.getElementsByAttributeValueStarting("href", "/search/title?certificates=XWG");
+            for (Element certificationElement : certificationElements) {
+              String certText = certificationElement.ownText();
+              int startOfCert = certText.indexOf(":");
+              if (startOfCert > 0 && certText.length() > startOfCert + 1) {
+                certText = certText.substring(startOfCert + 1);
+              }
+
+              Certification certification = Certification.getCertification(options.getCountry(), certText);
+              if (certification != null) {
+                md.addCertification(certification);
+                break;
+              }
+            }
+          }
+
         }
       }
     }
