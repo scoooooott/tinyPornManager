@@ -115,14 +115,14 @@ public class ImdbMovieParser extends ImdbParser {
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
 
-    // worker for imdb request (/combined) (everytime from www.imdb.com)
+    // worker for imdb request (/reference) (everytime from www.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());
     StringBuilder sb = new StringBuilder(ImdbSiteDefinition.IMDB_COM.getSite());
     sb.append("title/");
     sb.append(imdbId);
-    sb.append("/combined");
+    sb.append("/reference");
     Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
-    Future<Document> futureCombined = compSvcImdb.submit(worker);
+    Future<Document> futureReference = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary;
@@ -143,8 +143,8 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     Document doc;
-    doc = futureCombined.get();
-    parseCombinedPage(doc, options, md);
+    doc = futureReference.get();
+    parseReferencePage(doc, options, md);
 
     /*
      * plot from /plotsummary

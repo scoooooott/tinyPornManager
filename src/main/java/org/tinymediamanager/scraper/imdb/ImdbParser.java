@@ -403,7 +403,7 @@ public abstract class ImdbParser {
     return languages.toString().toLowerCase(Locale.ROOT);
   }
 
-  protected MediaMetadata parseCombinedPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  protected MediaMetadata parseReferencePage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     /*
      * title and year have the following structure
      * 
@@ -544,7 +544,7 @@ public abstract class ImdbParser {
       String elementText = element.ownText();
 
       if (elementText.equals("Taglines")) {
-        if (!!ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
+        if (!ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
           Element taglineElement = element.nextElementSibling();
           if (taglineElement != null) {
             String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
@@ -678,12 +678,13 @@ public abstract class ImdbParser {
       directorsElement = directorsElement.nextElementSibling();
     }
     if (directorsElement != null) {
-      directorsElement = directorsElement.getElementsByClass("name").first();
-      String director = directorsElement.text().trim();
+      for (Element directorElement : directorsElement.getElementsByClass("name")) {
+        String director = directorElement.text().trim();
 
-      MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-      cm.setName(director);
-      md.addCastMember(cm);
+        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+        cm.setName(director);
+        md.addCastMember(cm);
+      }
     }
 
     // actors
