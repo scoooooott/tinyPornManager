@@ -434,11 +434,11 @@ public abstract class ImdbParser {
         String yearText = content.substring(startOfYear);
 
         // search year
-        Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
+        Pattern yearPattern = Pattern.compile("[1-2][0-9]{3}");
         Matcher matcher = yearPattern.matcher(yearText);
         while (matcher.find()) {
-          if (matcher.group(1) != null) {
-            String movieYear = matcher.group(1);
+          if (matcher.group(0) != null) {
+            String movieYear = matcher.group(0);
             try {
               md.setYear(Integer.parseInt(movieYear));
               break;
