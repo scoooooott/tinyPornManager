@@ -79,4 +79,18 @@ public interface IMediaInformation {
    * @return count of audio channels
    */
   public int getMediaInfoAudioChannels();
+
+  /**
+   * gets the container format
+   * 
+   * @return the container format
+   */
+  public String getMediaInfoContainerFormat();
+
+  /**
+   * gets the media source
+   * 
+   * @return the media source
+   */
+  public MediaSource getMediaInfoSource();
 }
