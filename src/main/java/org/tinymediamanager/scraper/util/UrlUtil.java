@@ -264,7 +264,7 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:57.0) Gecko/20100101 Firefox/57.0<br>
    * but with correct OS and language values
    */
   public static String generateUA() {
@@ -274,7 +274,7 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:57.0) Gecko/20100101 Firefox/57.0<br>
    * but with correct OS and language values
    * 
    * @param language
@@ -300,7 +300,7 @@ public class UrlUtil {
     Locale l = getLocaleFromLanguage(language);
 
     // @formatter:off
-    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:40.0) Gecko/20100101 Firefox/40.0", hardcodeOS,
+    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:57.0) Gecko/20100101 Firefox/57.0", hardcodeOS,
         System.getProperty("os.name", ""), System.getProperty("os.version", ""), System.getProperty("os.arch", ""), l.getLanguage(), l.getCountry());
     // @formatter:on
   }
