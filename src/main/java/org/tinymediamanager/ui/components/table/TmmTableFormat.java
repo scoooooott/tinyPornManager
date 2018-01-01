@@ -1,5 +1,8 @@
 package org.tinymediamanager.ui.components.table;
 
+import java.awt.Canvas;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -9,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +30,18 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
 
   protected List<Column> columns = new ArrayList<>();
+
+  public TmmTableFormat() {
+  }
+
+  protected FontMetrics getFontMetrics() {
+    Font defaultFont = UIManager.getFont("Table.font");
+    if (defaultFont == null) {
+      defaultFont = UIManager.getFont("Label.font");
+    }
+    Canvas canvas = new Canvas();
+    return canvas.getFontMetrics(defaultFont);
+  }
 
   protected void addColumn(Column column) {
     columns.add(column);
