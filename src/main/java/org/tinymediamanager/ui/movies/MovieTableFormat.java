@@ -29,6 +29,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -116,7 +117,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setColumnComparator(floatComparator);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
-    col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
+    col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
 
     /*
@@ -128,7 +129,12 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
     col.setCellRenderer(new DateTableCellRenderer(dateFormat));
     col.setColumnResizeable(false);
-    col.setMinWidth((int) (fontMetrics.stringWidth(dateFormat.format(new Date())) * 1.2f));
+    try {
+      Date date = StrgUtils.parseDate("2012-12-12");
+      col.setMinWidth((int) (fontMetrics.stringWidth(dateFormat.format(date)) * 1.2f));
+    }
+    catch (Exception ignored) {
+    }
     addColumn(col);
 
     /*
