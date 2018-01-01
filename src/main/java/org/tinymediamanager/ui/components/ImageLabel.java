@@ -384,7 +384,7 @@ public class ImageLabel extends JLabel {
     protected BufferedImage doInBackground() throws Exception {
       try {
         Url url = new Url(imageUrl);
-        return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+        return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
             Scalr.OP_ANTIALIAS);
       }
       catch (Exception e) {
@@ -431,7 +431,7 @@ public class ImageLabel extends JLabel {
 
       if (file != null && Files.exists(file)) {
         try {
-          return Scalr.resize(ImageCache.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+          return Scalr.resize(ImageCache.createImage(file), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
               Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
