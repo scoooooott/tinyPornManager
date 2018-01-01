@@ -49,13 +49,13 @@ public class Settings extends AbstractSettings {
   /**
    * Constants mainly for events
    */
-  private final static String   TITLE_PREFIX           = "titlePrefix";
-  private final static String   VIDEO_FILE_TYPE        = "videoFileTypes";
-  private final static String   AUDIO_FILE_TYPE        = "audioFileTypes";
-  private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileTypes";
+  private final static String   TITLE_PREFIX           = "titlePrefixes";
+  private final static String   VIDEO_FILE_TYPE        = "videoFileType";
+  private final static String   AUDIO_FILE_TYPE        = "audioFileType";
+  private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
   private final static String   WOL_DEVICES            = "wolDevices";
 
-  private final List<String>    titlePrefix            = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<String>());
   private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
   private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
   private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<String>());
@@ -131,117 +131,117 @@ public class Settings extends AbstractSettings {
     // default video file types derived from
     // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
     videoFileTypes.clear();
-    addVideoFileTypes(".3gp");
-    addVideoFileTypes(".asf");
-    addVideoFileTypes(".asx");
-    addVideoFileTypes(".avc");
-    addVideoFileTypes(".avi");
-    addVideoFileTypes(".bdmv");
-    addVideoFileTypes(".bin");
-    addVideoFileTypes(".bivx");
-    addVideoFileTypes(".dat");
-    addVideoFileTypes(".divx");
-    addVideoFileTypes(".dv");
-    addVideoFileTypes(".dvr-ms");
-    addVideoFileTypes(".disc"); // video stubs
-    addVideoFileTypes(".evo"); // hd-dvd
-    addVideoFileTypes(".fli");
-    addVideoFileTypes(".flv");
-    addVideoFileTypes(".h264");
-    addVideoFileTypes(".img");
-    addVideoFileTypes(".iso");
-    addVideoFileTypes(".mts");
-    addVideoFileTypes(".mt2s");
-    addVideoFileTypes(".m2ts");
-    addVideoFileTypes(".m2v");
-    addVideoFileTypes(".m4v");
-    addVideoFileTypes(".mkv");
-    addVideoFileTypes(".mov");
-    addVideoFileTypes(".mp4");
-    addVideoFileTypes(".mpeg");
-    addVideoFileTypes(".mpg");
-    addVideoFileTypes(".nrg");
-    addVideoFileTypes(".nsv");
-    addVideoFileTypes(".nuv");
-    addVideoFileTypes(".ogm");
-    addVideoFileTypes(".pva");
-    addVideoFileTypes(".qt");
-    addVideoFileTypes(".rm");
-    addVideoFileTypes(".rmvb");
-    addVideoFileTypes(".strm");
-    addVideoFileTypes(".svq3");
-    addVideoFileTypes(".ts");
-    addVideoFileTypes(".ty");
-    addVideoFileTypes(".viv");
-    addVideoFileTypes(".vob");
-    addVideoFileTypes(".vp3");
-    addVideoFileTypes(".wmv");
-    addVideoFileTypes(".xvid");
+    addVideoFileType(".3gp");
+    addVideoFileType(".asf");
+    addVideoFileType(".asx");
+    addVideoFileType(".avc");
+    addVideoFileType(".avi");
+    addVideoFileType(".bdmv");
+    addVideoFileType(".bin");
+    addVideoFileType(".bivx");
+    addVideoFileType(".dat");
+    addVideoFileType(".divx");
+    addVideoFileType(".dv");
+    addVideoFileType(".dvr-ms");
+    addVideoFileType(".disc"); // video stubs
+    addVideoFileType(".evo"); // hd-dvd
+    addVideoFileType(".fli");
+    addVideoFileType(".flv");
+    addVideoFileType(".h264");
+    addVideoFileType(".img");
+    addVideoFileType(".iso");
+    addVideoFileType(".mts");
+    addVideoFileType(".mt2s");
+    addVideoFileType(".m2ts");
+    addVideoFileType(".m2v");
+    addVideoFileType(".m4v");
+    addVideoFileType(".mkv");
+    addVideoFileType(".mov");
+    addVideoFileType(".mp4");
+    addVideoFileType(".mpeg");
+    addVideoFileType(".mpg");
+    addVideoFileType(".nrg");
+    addVideoFileType(".nsv");
+    addVideoFileType(".nuv");
+    addVideoFileType(".ogm");
+    addVideoFileType(".pva");
+    addVideoFileType(".qt");
+    addVideoFileType(".rm");
+    addVideoFileType(".rmvb");
+    addVideoFileType(".strm");
+    addVideoFileType(".svq3");
+    addVideoFileType(".ts");
+    addVideoFileType(".ty");
+    addVideoFileType(".viv");
+    addVideoFileType(".vob");
+    addVideoFileType(".vp3");
+    addVideoFileType(".wmv");
+    addVideoFileType(".xvid");
     Collections.sort(videoFileTypes);
 
     audioFileTypes.clear();
-    addAudioFileTypes(".a52");
-    addAudioFileTypes(".aa3");
-    addAudioFileTypes(".aac");
-    addAudioFileTypes(".ac3");
-    addAudioFileTypes(".adt");
-    addAudioFileTypes(".adts");
-    addAudioFileTypes(".aif");
-    addAudioFileTypes(".aiff");
-    addAudioFileTypes(".alac");
-    addAudioFileTypes(".ape");
-    addAudioFileTypes(".at3");
-    addAudioFileTypes(".atrac");
-    addAudioFileTypes(".au");
-    addAudioFileTypes(".dts");
-    addAudioFileTypes(".flac");
-    addAudioFileTypes(".m4a");
-    addAudioFileTypes(".m4b");
-    addAudioFileTypes(".m4p");
-    addAudioFileTypes(".mid");
-    addAudioFileTypes(".midi");
-    addAudioFileTypes(".mka");
-    addAudioFileTypes(".mp3");
-    addAudioFileTypes(".mpa");
-    addAudioFileTypes(".oga");
-    addAudioFileTypes(".ogg");
-    addAudioFileTypes(".pcm");
-    addAudioFileTypes(".ra");
-    addAudioFileTypes(".ram");
-    addAudioFileTypes(".rm");
-    addAudioFileTypes(".tta");
-    addAudioFileTypes(".wav");
-    addAudioFileTypes(".wave");
-    addAudioFileTypes(".wma");
+    addAudioFileType(".a52");
+    addAudioFileType(".aa3");
+    addAudioFileType(".aac");
+    addAudioFileType(".ac3");
+    addAudioFileType(".adt");
+    addAudioFileType(".adts");
+    addAudioFileType(".aif");
+    addAudioFileType(".aiff");
+    addAudioFileType(".alac");
+    addAudioFileType(".ape");
+    addAudioFileType(".at3");
+    addAudioFileType(".atrac");
+    addAudioFileType(".au");
+    addAudioFileType(".dts");
+    addAudioFileType(".flac");
+    addAudioFileType(".m4a");
+    addAudioFileType(".m4b");
+    addAudioFileType(".m4p");
+    addAudioFileType(".mid");
+    addAudioFileType(".midi");
+    addAudioFileType(".mka");
+    addAudioFileType(".mp3");
+    addAudioFileType(".mpa");
+    addAudioFileType(".oga");
+    addAudioFileType(".ogg");
+    addAudioFileType(".pcm");
+    addAudioFileType(".ra");
+    addAudioFileType(".ram");
+    addAudioFileType(".rm");
+    addAudioFileType(".tta");
+    addAudioFileType(".wav");
+    addAudioFileType(".wave");
+    addAudioFileType(".wma");
     Collections.sort(audioFileTypes);
 
     // default subtitle files
     subtitleFileTypes.clear();
-    addSubtitleFileTypes(".aqt");
-    addSubtitleFileTypes(".cvd");
-    addSubtitleFileTypes(".dks");
-    addSubtitleFileTypes(".jss");
-    addSubtitleFileTypes(".sub");
-    addSubtitleFileTypes(".sup");
-    addSubtitleFileTypes(".ttxt");
-    addSubtitleFileTypes(".mpl");
-    addSubtitleFileTypes(".pjs");
-    addSubtitleFileTypes(".psb");
-    addSubtitleFileTypes(".rt");
-    addSubtitleFileTypes(".srt");
-    addSubtitleFileTypes(".smi");
-    addSubtitleFileTypes(".ssf");
-    addSubtitleFileTypes(".ssa");
-    addSubtitleFileTypes(".svcd");
-    addSubtitleFileTypes(".usf");
-    // addSubtitleFileTypes(".idx"); // not a subtitle! just index for .sub
-    addSubtitleFileTypes(".ass");
-    addSubtitleFileTypes(".pgs");
-    addSubtitleFileTypes(".vobsub");
+    addSubtitleFileType(".aqt");
+    addSubtitleFileType(".cvd");
+    addSubtitleFileType(".dks");
+    addSubtitleFileType(".jss");
+    addSubtitleFileType(".sub");
+    addSubtitleFileType(".sup");
+    addSubtitleFileType(".ttxt");
+    addSubtitleFileType(".mpl");
+    addSubtitleFileType(".pjs");
+    addSubtitleFileType(".psb");
+    addSubtitleFileType(".rt");
+    addSubtitleFileType(".srt");
+    addSubtitleFileType(".smi");
+    addSubtitleFileType(".ssf");
+    addSubtitleFileType(".ssa");
+    addSubtitleFileType(".svcd");
+    addSubtitleFileType(".usf");
+    // addSubtitleFileType(".idx"); // not a subtitle! just index for .sub
+    addSubtitleFileType(".ass");
+    addSubtitleFileType(".pgs");
+    addSubtitleFileType(".vobsub");
     Collections.sort(subtitleFileTypes);
 
     // default title prefix
-    titlePrefix.clear();
+    titlePrefixes.clear();
     addTitlePrefix("A");
     addTitlePrefix("An");
     addTitlePrefix("The");
@@ -263,7 +263,7 @@ public class Settings extends AbstractSettings {
     addTitlePrefix("D'");
     addTitlePrefix("D´");
     addTitlePrefix("D`");
-    Collections.sort(titlePrefix);
+    Collections.sort(titlePrefixes);
 
     setProxyFromSystem();
 
@@ -335,9 +335,9 @@ public class Settings extends AbstractSettings {
    *          the prefix
    */
   public void addTitlePrefix(String prfx) {
-    if (!titlePrefix.contains(prfx)) {
-      titlePrefix.add(prfx);
-      firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+    if (!titlePrefixes.contains(prfx)) {
+      titlePrefixes.add(prfx);
+      firePropertyChange(TITLE_PREFIX, null, titlePrefixes);
     }
   }
 
@@ -348,8 +348,8 @@ public class Settings extends AbstractSettings {
    *          the prfx
    */
   public void removeTitlePrefix(String prfx) {
-    titlePrefix.remove(prfx);
-    firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+    titlePrefixes.remove(prfx);
+    firePropertyChange(TITLE_PREFIX, null, titlePrefixes);
   }
 
   /**
@@ -358,7 +358,7 @@ public class Settings extends AbstractSettings {
    * @return the title prefix
    */
   public List<String> getTitlePrefix() {
-    return titlePrefix;
+    return titlePrefixes;
   }
 
   /**
@@ -367,7 +367,7 @@ public class Settings extends AbstractSettings {
    * @param type
    *          the type
    */
-  public void addVideoFileTypes(String type) {
+  public void addVideoFileType(String type) {
     if (!type.startsWith(".")) {
       type = "." + type;
     }
@@ -403,7 +403,7 @@ public class Settings extends AbstractSettings {
    * @param type
    *          the type
    */
-  public void addAudioFileTypes(String type) {
+  public void addAudioFileType(String type) {
     if (!type.startsWith(".")) {
       type = "." + type;
     }
@@ -439,7 +439,7 @@ public class Settings extends AbstractSettings {
    * @param type
    *          the type
    */
-  public void addSubtitleFileTypes(String type) {
+  public void addSubtitleFileType(String type) {
     if (!type.startsWith(".")) {
       type = "." + type;
     }
