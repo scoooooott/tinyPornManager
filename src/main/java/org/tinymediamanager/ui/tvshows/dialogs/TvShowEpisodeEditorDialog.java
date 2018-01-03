@@ -331,9 +331,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
             Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path); //$NON-NLS-1$
             if (file != null && Utils.isRegularFile(file)) {
               String fileName = file.toAbsolutePath().toString();
-              lblThumb.setImageUrl("file:/" + fileName);
               TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);
-              tfThumb.setText("");
+              lblThumb.setImageUrl("file:/" + fileName);
+              tfThumb.setText(lblThumb.getImageUrl());
             }
           }
         });
@@ -693,7 +693,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDisplaySeason((Integer) spDisplaySeason.getValue());
       episodeToEdit.setDisplayEpisode((Integer) spDisplayEpisode.getValue());
       episodeToEdit.setPlot(taPlot.getText());
-      episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
 
       Object mediaSource = cbMediaSource.getSelectedItem();
       if (mediaSource instanceof MediaSource) {
@@ -735,9 +734,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDirectors(directors);
       episodeToEdit.setWriters(writers);
 
-      if (StringUtils.isNotEmpty(lblThumb.getImageUrl()) && (!lblThumb.getImageUrl().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
+      if (StringUtils.isNotEmpty(tfThumb.getText()) && (!tfThumb.getText().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
           || StringUtils.isBlank(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)))) {
-        episodeToEdit.setArtworkUrl(lblThumb.getImageUrl(), MediaFileType.THUMB);
+        episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         episodeToEdit.writeThumbImage();
       }
 

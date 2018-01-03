@@ -1053,12 +1053,7 @@ public class MovieEditorDialog extends TmmDialog {
 
   private void updateArtworkUrl(ImageLabel imageLabel, JTextField textField) {
     if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
-      if (imageLabel.getImageUrl().startsWith("file")) {
-        textField.setText("");
-      }
-      else {
-        textField.setText(imageLabel.getImageUrl());
-      }
+      textField.setText(imageLabel.getImageUrl());
     }
   }
 
@@ -1094,15 +1089,6 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
-
-      movieToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
-      movieToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
-      movieToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
-      movieToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
-      movieToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
-      movieToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
-      movieToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
-      movieToEdit.setArtworkUrl(tfDisc.getText(), MediaFileType.DISC);
 
       Object movieEdition = cbEdition.getSelectedItem();
       if (movieEdition instanceof MovieEdition) {
@@ -1166,44 +1152,43 @@ public class MovieEditorDialog extends TmmDialog {
       MediaFileEditorPanel.syncMediaFiles(mediaFiles, movieToEdit.getMediaFiles());
       movieToEdit.fireEventForChangedMediaInformation();
 
-      if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
-        movieToEdit.setArtworkUrl(lblPoster.getImageUrl(), MediaFileType.POSTER);
+      if (!StringUtils.isEmpty(tfPoster.getText()) && !tfPoster.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+        movieToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
         movieToEdit.downloadArtwork(MediaFileType.POSTER);
       }
 
-      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.FANART))) {
-        movieToEdit.setArtworkUrl(lblFanart.getImageUrl(), MediaFileType.FANART);
+      if (!StringUtils.isEmpty(tfFanart.getText()) && !tfFanart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.FANART))) {
+        movieToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
         movieToEdit.downloadArtwork(MediaFileType.FANART);
       }
 
-      if (!StringUtils.isEmpty(lblLogo.getImageUrl()) && !lblLogo.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
-        movieToEdit.setArtworkUrl(lblLogo.getImageUrl(), MediaFileType.LOGO);
+      if (!StringUtils.isEmpty(tfLogo.getText()) && !tfLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
+        movieToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
         movieToEdit.downloadArtwork(MediaFileType.LOGO);
       }
 
-      if (!StringUtils.isEmpty(lblClearlogo.getImageUrl())
-          && !lblClearlogo.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
-        movieToEdit.setArtworkUrl(lblClearlogo.getImageUrl(), MediaFileType.CLEARLOGO);
+      if (!StringUtils.isEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+        movieToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
         movieToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
       }
 
-      if (!StringUtils.isEmpty(lblBanner.getImageUrl()) && !lblBanner.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
-        movieToEdit.setArtworkUrl(lblBanner.getImageUrl(), MediaFileType.BANNER);
+      if (!StringUtils.isEmpty(tfBanner.getText()) && !tfBanner.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+        movieToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
         movieToEdit.downloadArtwork(MediaFileType.BANNER);
       }
 
-      if (!StringUtils.isEmpty(lblClearart.getImageUrl()) && !lblClearart.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
-        movieToEdit.setArtworkUrl(lblClearart.getImageUrl(), MediaFileType.CLEARART);
+      if (!StringUtils.isEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
+        movieToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
         movieToEdit.downloadArtwork(MediaFileType.CLEARART);
       }
 
-      if (!StringUtils.isEmpty(lblThumb.getImageUrl()) && !lblThumb.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.THUMB))) {
-        movieToEdit.setArtworkUrl(lblThumb.getImageUrl(), MediaFileType.THUMB);
+      if (!StringUtils.isEmpty(tfThumb.getText()) && !tfThumb.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.THUMB))) {
+        movieToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         movieToEdit.downloadArtwork(MediaFileType.THUMB);
       }
 
-      if (!StringUtils.isEmpty(lblDisc.getImageUrl()) && !lblDisc.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
-        movieToEdit.setArtworkUrl(lblDisc.getImageUrl(), MediaFileType.DISC);
+      if (!StringUtils.isEmpty(tfDisc.getText()) && !tfDisc.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
+        movieToEdit.setArtworkUrl(tfDisc.getText(), MediaFileType.DISC);
         movieToEdit.downloadArtwork(MediaFileType.DISC);
       }
 
