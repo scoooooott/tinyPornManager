@@ -303,6 +303,10 @@ class TmdbTvShowMetadataProvider {
         cm.setName(castMember.name);
         cm.setCharacter(castMember.character);
         md.addCastMember(cm);
+
+        if (!StringUtils.isEmpty(castMember.profile_path)) {
+          cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
+        }
       }
     }
 
@@ -486,6 +490,10 @@ class TmdbTvShowMetadataProvider {
       cm.setName(castMember.name);
       cm.setCharacter(castMember.character);
       md.addCastMember(cm);
+
+      if (!StringUtils.isEmpty(castMember.profile_path)) {
+        cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
+      }
     }
 
     // Thumb

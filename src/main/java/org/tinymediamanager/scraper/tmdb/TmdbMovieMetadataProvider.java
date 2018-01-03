@@ -631,7 +631,7 @@ class TmdbMovieMetadataProvider {
         cm.setName(castMember.name);
 
         if (!StringUtils.isEmpty(castMember.profile_path)) {
-          cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + castMember.profile_path);
+          cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
         }
         md.addCastMember(cm);
       }
@@ -657,7 +657,7 @@ class TmdbMovieMetadataProvider {
         cm.setName(crewMember.name);
 
         if (!StringUtils.isEmpty(crewMember.profile_path)) {
-          cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + crewMember.profile_path);
+          cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + crewMember.profile_path);
         }
         md.addCastMember(cm);
       }
