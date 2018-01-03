@@ -68,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -1562,5 +1563,15 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public int getMediaInfoAudioChannels() {
     return 0;
+  }
+
+  @Override
+  public String getMediaInfoContainerFormat() {
+    return "";
+  }
+
+  @Override
+  public MediaSource getMediaInfoSource() {
+    return MediaSource.UNKNOWN;
   }
 }

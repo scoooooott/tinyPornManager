@@ -37,14 +37,16 @@ public class MediaSource extends DynaEnum<MediaSource> {
 
   // the well known and XBMC/Kodi compatible sources
   // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
-  public final static MediaSource              UHD_BLURAY  = new MediaSource("UHD_BLURAY", 0, "Bluray",
+  public final static MediaSource              UHD_BLURAY  = new MediaSource("UHD_BLURAY", 0, "UHD Bluray",
       "(uhd|ultrahd)[ .\\-]?(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
-  public final static MediaSource              BLURAY      = new MediaSource("BLURAY", 0, "Bluray",
+  public final static MediaSource              BLURAY      = new MediaSource("BLURAY", 2, "Bluray",
       "(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
-  public final static MediaSource              DVD         = new MediaSource("DVD", 1, "DVD", "(dvd|video_ts|dvdrip|dvdr)");
-  public final static MediaSource              HDDVD       = new MediaSource("HDDVD", 3, "HDDVD", "(hddvd|hddvdrip)");
-  public final static MediaSource              TV          = new MediaSource("TV", 2, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
-  public final static MediaSource              VHS         = new MediaSource("VHS", 4, "VHS", "(vhs)");
+  public final static MediaSource              DVD         = new MediaSource("DVD", 4, "DVD", "(dvd|video_ts|dvdrip|dvdr)");
+  public final static MediaSource              HDDVD       = new MediaSource("HDDVD", 6, "HDDVD", "(hddvd|hddvdrip)");
+  public final static MediaSource              TV          = new MediaSource("TV", 8, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
+  public final static MediaSource              VHS         = new MediaSource("VHS", 10, "VHS", "(vhs)");
+  public final static MediaSource              LASERDISC   = new MediaSource("LASERDISC", 12, "LaserDisc", "(laserdisc)");
+  public final static MediaSource              D_VHS       = new MediaSource("D_VHS", 14, "D-VHS");
 
   // other sources
   public final static MediaSource              HDRIP       = new MediaSource("HDRIP", 5, "HDRip", "(hdrip)");

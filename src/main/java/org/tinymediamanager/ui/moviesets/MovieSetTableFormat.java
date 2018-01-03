@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.awt.FontMetrics;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -40,12 +41,15 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
 
   public MovieSetTableFormat() {
 
+    FontMetrics fontMetrics = getFontMetrics();
+
     /*
      * movie count
      */
     Column col = new Column(BUNDLE.getString("movieset.moviecount"), "seasons", node -> getMovieCount(node), String.class);
     col.setHeaderIcon(IconManager.COUNT);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
 
     /*
@@ -54,6 +58,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", node -> getRating(node), String.class);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
 
     /*
@@ -62,6 +67,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.format"), "format", node -> getFormat(node), String.class);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("1080p") * 1.2f));
     addColumn(col);
 
     /*
@@ -70,6 +76,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", node -> getFileSize(node), String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);
 
     /*

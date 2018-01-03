@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.FontMetrics;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -27,6 +29,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -52,6 +55,8 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<String> fileSizeComparator = new FileSizeComparator();
     Comparator<Integer> integerComparator = new IntegerComparator();
 
+    FontMetrics fontMetrics = getFontMetrics();
+
     /*
      * title
      */
@@ -66,6 +71,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);
     col.setColumnComparator(integerComparator);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("2000") * 1.2f));
     addColumn(col);
 
     /*
@@ -111,6 +117,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setColumnComparator(floatComparator);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
 
     /*
@@ -119,8 +126,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
     col.setColumnComparator(dateComparator);
     col.setHeaderIcon(IconManager.DATE_ADDED);
-    col.setCellRenderer(new DateTableCellRenderer(SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)));
+    DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
+    col.setCellRenderer(new DateTableCellRenderer(dateFormat));
     col.setColumnResizeable(false);
+    try {
+      Date date = StrgUtils.parseDate("2012-12-12");
+      col.setMinWidth((int) (fontMetrics.stringWidth(dateFormat.format(date)) * 1.2f));
+    }
+    catch (Exception ignored) {
+    }
     addColumn(col);
 
     /*
@@ -130,6 +144,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setColumnComparator(videoFormatComparator);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("1080p") * 1.2f));
     addColumn(col);
 
     /*
@@ -151,6 +166,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setColumnComparator(fileSizeComparator);
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);
 
     /*

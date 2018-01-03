@@ -69,7 +69,7 @@ public class FileTypesSettingsPanel extends JPanel {
     // data init
     btnAddVideoFiletype.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfVideoFiletype.getText())) {
-        Globals.settings.addVideoFileTypes(tfVideoFiletype.getText());
+        Globals.settings.addVideoFileType(tfVideoFiletype.getText());
         tfVideoFiletype.setText("");
       }
     });
@@ -82,7 +82,7 @@ public class FileTypesSettingsPanel extends JPanel {
     });
     btnAddSubtitleFiletype.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfSubtitleFiletype.getText())) {
-        Globals.settings.addSubtitleFileTypes(tfSubtitleFiletype.getText());
+        Globals.settings.addSubtitleFileType(tfSubtitleFiletype.getText());
         tfSubtitleFiletype.setText("");
       }
     });
@@ -95,7 +95,7 @@ public class FileTypesSettingsPanel extends JPanel {
     });
     btnAddAudioFiletype.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfAudioFiletype.getText())) {
-        Globals.settings.addAudioFileTypes(tfAudioFiletype.getText());
+        Globals.settings.addAudioFileType(tfAudioFiletype.getText());
         tfAudioFiletype.setText("");
       }
     });

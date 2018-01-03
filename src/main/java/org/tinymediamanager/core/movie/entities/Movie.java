@@ -2128,6 +2128,22 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return 0;
   }
 
+  @Override
+  public String getMediaInfoContainerFormat() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getContainerFormat();
+    }
+
+    return "";
+  }
+
+  @Override
+  public MediaSource getMediaInfoSource() {
+    return getMediaSource();
+  }
+
   public String getVideo3DFormat() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (videos.size() > 0) {

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.awt.FontMetrics;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -40,6 +41,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowTableFormat() {
+    FontMetrics fontMetrics = getFontMetrics();
 
     /*
      * season count
@@ -47,6 +49,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     Column col = new Column(BUNDLE.getString("metatag.seasons"), "seasons", node -> getSeasons(node), String.class);
     col.setHeaderIcon(IconManager.SEASONS);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
 
     /*
@@ -55,6 +58,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.episodes"), "episodes", node -> getEpisodes(node), String.class);
     col.setHeaderIcon(IconManager.EPISODES);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
 
     /*
@@ -63,6 +67,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", node -> getRating(node), String.class);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
 
     /*
@@ -71,6 +76,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.format"), "format", node -> getFormat(node), String.class);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("1080p") * 1.2f));
     addColumn(col);
 
     /*
@@ -79,6 +85,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", node -> getFileSize(node), String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);
 
     /*
