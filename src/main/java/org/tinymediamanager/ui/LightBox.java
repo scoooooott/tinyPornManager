@@ -72,7 +72,7 @@ public class LightBox {
     imagePanel.setOpaque(false);
 
     image = new ImageLabel(true);
-    image.setUseCache(false);
+    image.setPreferCache(false);
     image.setPosition(Position.CENTER);
     if (StringUtils.isNotBlank(path)) {
       image.setImagePath(path);

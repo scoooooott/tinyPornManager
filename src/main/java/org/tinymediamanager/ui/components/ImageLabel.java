@@ -71,7 +71,7 @@ public class ImageLabel extends JLabel {
   protected boolean                          drawBorder;
   protected boolean                          drawFullWidth;
   protected boolean                          enabledLightbox        = false;
-  protected boolean                          useCache               = true;
+  protected boolean                          preferCache            = true;
   protected float                            desiredAspectRatio     = 0f;
   protected boolean                          drawShadow             = false;
 
@@ -366,8 +366,8 @@ public class ImageLabel extends JLabel {
     }
   }
 
-  public void setUseCache(boolean useCache) {
-    this.useCache = useCache;
+  public void setPreferCache(boolean preferCache) {
+    this.preferCache = preferCache;
   }
 
   /*
@@ -381,7 +381,7 @@ public class ImageLabel extends JLabel {
     }
 
     @Override
-    protected BufferedImage doInBackground() throws Exception {
+    protected BufferedImage doInBackground() {
       try {
         Url url = new Url(imageUrl);
         return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
@@ -423,10 +423,23 @@ public class ImageLabel extends JLabel {
     }
 
     @Override
-    protected BufferedImage doInBackground() throws Exception {
-      Path file = ImageCache.getCachedFile(Paths.get(imagePath));
+    protected BufferedImage doInBackground() {
+      Path file = null;
+
+      // we prefer reading it from the cache
+      if (preferCache) {
+        file = ImageCache.getCachedFile(Paths.get(imagePath));
+      }
+
+      // not in the cache - read it from the path
       if (file == null) {
         file = Paths.get(imagePath);
+      }
+
+      // not available in the path and not preferred from the cache..
+      // well just try to read it from the cache
+      if ((file == null || !Files.exists(file)) && !preferCache) {
+        file = ImageCache.getCachedFile(Paths.get(imagePath));
       }
 
       if (file != null && Files.exists(file)) {
