@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.panels;
 
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.WrapLayout;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -58,7 +60,6 @@ public class ImagePanel extends JPanel implements HierarchyListener {
   /**
    * UI components
    */
-
   private JPanel              panelImages;
   private JScrollPane         scrollPane;
 
@@ -67,11 +68,13 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     setLayout(new MigLayout("", "[400lp,grow]", "[300lp,grow]"));
 
     scrollPane = new JScrollPane();
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     add(scrollPane, "cell 0 0,grow");
 
     panelImages = new JPanel();
+    panelImages.setLayout(new WrapLayout(FlowLayout.LEFT));
     scrollPane.setViewportView(panelImages);
-    panelImages.setLayout(new MigLayout("", "[]", "[]"));
   }
 
   /**
