@@ -189,7 +189,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         textFieldSearchString.setColumns(10);
 
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-        btnSearch.setIcon(IconManager.SEARCH);
+        btnSearch.setIcon(IconManager.SEARCH_INV);
         panelSearchField.add(btnSearch, "cell 3 0");
         btnSearch.addActionListener(searchAction);
         getRootPane().setDefaultButton(btnSearch);

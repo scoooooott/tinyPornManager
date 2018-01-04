@@ -42,7 +42,7 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
   protected String                    filterText       = "";
 
   public TmmTreeTextFilter() {
-    super(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
     initDocumentListener();
   }
 

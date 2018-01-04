@@ -93,6 +93,7 @@ public class IconManager {
   public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
   public final static ImageIcon            NEW                         = createTextIcon("new", 14);
+  public final static ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');
   public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
 
   // font awesome icons light (button usage)
@@ -109,7 +110,9 @@ public class IconManager {
   public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', true);
   public final static ImageIcon            FILE_OPEN_INV               = createFontAwesomeIcon('\uF07C', true);
   public final static ImageIcon            IMAGE_INV                   = createFontAwesomeIcon('\uF03E', true);
+  public final static ImageIcon            PLAY_INV                    = createFontAwesomeIcon('\uF04B', true);
   public final static ImageIcon            REMOVE_INV                  = createFontAwesomeIcon('\uF068', true);
+  public final static ImageIcon            SEARCH_INV                  = createFontAwesomeIcon('\uF002', true);
   public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
 
   // font awesome icons - column headers
@@ -334,7 +337,7 @@ public class IconManager {
       g2.setColor(color);
 
       // draw the glyhps centered
-      int y = (int) Math.round(bounds.getY() - (defaultBounds.getHeight() - bounds.getHeight()) / 2);
+      int y = (int) Math.floor(bounds.getY() - (defaultBounds.getHeight() - bounds.getHeight()) / 2);
       g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), -y);
       g2.dispose();
       return new ImageIcon(buffer);

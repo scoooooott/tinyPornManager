@@ -305,8 +305,8 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     SearchAction() {
       putValue(NAME, BUNDLE.getString("Button.search")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.SEARCH);
-      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH_INV);
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH_INV);
     }
 
     @Override

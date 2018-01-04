@@ -190,7 +190,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
 
       {
-        final JButton btnPlay = new JButton(IconManager.PLAY);
+        final JButton btnPlay = new JButton(IconManager.PLAY_INV);
         btnPlay.setFocusable(false);
         btnPlay.addActionListener(e -> {
           MediaFile mf = movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0);
@@ -239,7 +239,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         panelSearchField.add(btnSearch, "cell 3 0");
-        btnSearch.setIcon(IconManager.SEARCH);
+        btnSearch.setIcon(IconManager.SEARCH_INV);
         btnSearch.addActionListener(searchAction);
       }
       {

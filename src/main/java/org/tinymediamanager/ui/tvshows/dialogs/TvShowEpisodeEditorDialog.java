@@ -615,7 +615,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
     SearchAction() {
       putValue(NAME, BUNDLE.getString("tvshowepisodechooser.search")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH_INV);
     }
 
     @Override

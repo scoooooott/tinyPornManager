@@ -92,7 +92,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
     setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][]"));
 
-    searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH); //$NON-NLS-1$
+    searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
     add(searchField, "cell 0 0,growx");
 
     MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<>(searchField, new MovieFilterator());
