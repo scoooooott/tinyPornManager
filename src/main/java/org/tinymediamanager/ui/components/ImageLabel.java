@@ -72,6 +72,7 @@ public class ImageLabel extends JLabel {
   protected boolean                          drawFullWidth;
   protected boolean                          enabledLightbox        = false;
   protected boolean                          preferCache            = true;
+  protected boolean                          isLightBox             = false;
   protected float                            desiredAspectRatio     = 0f;
   protected boolean                          drawShadow             = false;
 
@@ -123,15 +124,16 @@ public class ImageLabel extends JLabel {
     }
 
     scaledImage = null;
-    this.repaint();
 
     if (StringUtils.isBlank(newValue)) {
+      this.repaint();
       return;
     }
 
     // load image in separate worker -> performance
     worker = new ImageLoader(this.imagePath, this.getSize());
     worker.execute();
+    this.repaint();
   }
 
   public void clearImage() {
@@ -156,15 +158,16 @@ public class ImageLabel extends JLabel {
     }
 
     scaledImage = null;
-    this.repaint();
 
     if (StringUtils.isEmpty(newValue)) {
+      this.repaint();
       return;
     }
 
     // fetch image in separate worker -> performance
     worker = new ImageFetcher(this.getSize());
     worker.execute();
+    this.repaint();
   }
 
   public void setDesiredAspectRatio(float desiredAspectRatio) {
@@ -282,7 +285,8 @@ public class ImageLabel extends JLabel {
         g.drawImage(scaledImage, offsetX, offsetY, newWidth, newHeight, this);
       }
     }
-    else {
+    // do not draw the "no image found" icon if the worker is loading or in lightbox usage
+    else if (!isLoading() && !isLightBox) {
       // nothing to draw; draw the _no image found_ indicator
       int newWidth;
       int newHeight;
@@ -332,6 +336,10 @@ public class ImageLabel extends JLabel {
     }
   }
 
+  protected boolean isLoading() {
+    return worker != null && !worker.isDone();
+  }
+
   private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
     if ((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
         || (originalHeight > newHeight * 1.2f) && newWidth > 10) {
@@ -368,6 +376,10 @@ public class ImageLabel extends JLabel {
 
   public void setPreferCache(boolean preferCache) {
     this.preferCache = preferCache;
+  }
+
+  public void setIsLightbox(boolean value) {
+    this.isLightBox = value;
   }
 
   /*

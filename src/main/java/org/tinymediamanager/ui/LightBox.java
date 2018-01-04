@@ -28,6 +28,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -73,13 +74,18 @@ public class LightBox {
 
     image = new ImageLabel(true);
     image.setPreferCache(false);
+    image.setIsLightbox(true);
     image.setPosition(Position.CENTER);
-    if (StringUtils.isNotBlank(path)) {
-      image.setImagePath(path);
-    }
-    else if (StringUtils.isBlank(url)) {
-      image.setImageUrl(url);
-    }
+
+    // run later to avoid strange loading artefacts
+    SwingUtilities.invokeLater(() -> {
+      if (StringUtils.isNotBlank(path)) {
+        image.setImagePath(path);
+      }
+      else if (StringUtils.isBlank(url)) {
+        image.setImageUrl(url);
+      }
+    });
 
     imagePanel.add(image, "cell 0 0,grow");
 
