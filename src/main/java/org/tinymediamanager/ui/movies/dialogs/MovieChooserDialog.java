@@ -186,7 +186,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       {
         lblPath = new JLabel("");
         TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
-        panelPath.add(lblPath, "cell 0 0");
+        panelPath.add(lblPath, "cell 0 0, growx, wmin 0");
       }
 
       {
@@ -311,7 +311,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         {
           lblTitle = new JLabel("");
           TmmFontHelper.changeFont(lblTitle, 1.167, Font.BOLD);
-          panelSearchDetail.add(lblTitle, "cell 1 0");
+          panelSearchDetail.add(lblTitle, "cell 1 0, wmin 0");
         }
         {
           lblOriginalTitle = new JLabel("");
@@ -319,7 +319,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         }
         {
           lblTagline = new JLabel("");
-          panelSearchDetail.add(lblTagline, "cell 1 2");
+          panelSearchDetail.add(lblTagline, "cell 1 2, wmin 0");
         }
         {
           lblMoviePoster = new ImageLabel(false);
@@ -327,7 +327,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         }
         {
           JScrollPane scrollPane = new JScrollPane();
-          panelSearchDetail.add(scrollPane, "cell 1 3,growx");
+          panelSearchDetail.add(scrollPane, "cell 1 3,grow");
           scrollPane.setBorder(null);
           {
             taMovieDescription = new ReadOnlyTextArea();

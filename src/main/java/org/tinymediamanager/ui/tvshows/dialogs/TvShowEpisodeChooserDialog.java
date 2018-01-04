@@ -105,7 +105,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       {
         lblPath = new JLabel("");
         TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
-        panelPath.add(lblPath, "cell 0 0");
+        panelPath.add(lblPath, "cell 0 0, wmin 0");
       }
 
       setTopIformationPanel(panelPath);

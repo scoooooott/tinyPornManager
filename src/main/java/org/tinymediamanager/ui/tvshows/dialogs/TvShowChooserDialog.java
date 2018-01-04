@@ -154,7 +154,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       {
         lblPath = new JLabel("");
         TmmFontHelper.changeFont(lblPath, 1.16667, Font.BOLD);
-        panelPath.add(lblPath, "cell 0 0");
+        panelPath.add(lblPath, "cell 0 0, growx, wmin 0");
       }
 
       setTopIformationPanel(panelPath);
@@ -267,7 +267,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         {
           lblTvShowName = new JLabel("");
           TmmFontHelper.changeFont(lblTvShowName, 1.166, Font.BOLD);
-          panelSearchDetail.add(lblTvShowName, "cell 0 0 2 1,growx,aligny top");
+          panelSearchDetail.add(lblTvShowName, "cell 0 0 2 1,growx, aligny top, wmin 0");
         }
         {
           lblTvShowPoster = new ImageLabel(false);
