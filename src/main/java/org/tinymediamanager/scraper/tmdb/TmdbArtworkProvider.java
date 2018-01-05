@@ -232,6 +232,15 @@ class TmdbArtworkProvider {
 
   private void prepareDefaultFanart(MediaArtwork ma, MediaScrapeOptions options) {
     for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
+      // X-LARGE
+      if (image.getWidth() >= 3840) {
+        if (options.getFanartSize().getOrder() >= MediaArtwork.FanartSizes.XLARGE.getOrder()) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(MediaArtwork.FanartSizes.XLARGE.getOrder());
+          break;
+        }
+        continue;
+      }
       // LARGE
       if (image.getWidth() >= 1920) {
         if (options.getFanartSize().getOrder() >= MediaArtwork.FanartSizes.LARGE.getOrder()) {
