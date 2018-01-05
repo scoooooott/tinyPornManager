@@ -74,7 +74,7 @@ public class MediaArtwork {
     private String text;
     private int    order;
 
-    private PosterSizes(String text, int order) {
+    PosterSizes(String text, int order) {
       this.text = text;
       this.order = order;
     }
@@ -96,6 +96,7 @@ public class MediaArtwork {
    * @since 1.0
    */
   public enum FanartSizes {
+    XLARGE(BUNDLE.getString("Settings.image.xlarge") + ": ~3840x2160px", 16), //$NON-NLS-1$
     LARGE(BUNDLE.getString("Settings.image.large") + ": ~1920x1080px", 8), //$NON-NLS-1$
     MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~1280x720px", 2), //$NON-NLS-1$
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~300x168px", 1); //$NON-NLS-1$
@@ -103,7 +104,7 @@ public class MediaArtwork {
     private String text;
     private int    order;
 
-    private FanartSizes(String text, int order) {
+    FanartSizes(String text, int order) {
       this.text = text;
       this.order = order;
     }
