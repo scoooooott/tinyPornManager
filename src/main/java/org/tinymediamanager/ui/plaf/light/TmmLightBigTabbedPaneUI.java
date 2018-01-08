@@ -62,7 +62,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     tabAreaBackground = new Color(41, 41, 41);
     tabInsets = new Insets(5, 20, 5, 20);
     tabAreaInsets = new Insets(0, 20, 15, 20);
-    contentBorderInsets = new Insets(0, 20, 20 + BORDER_RADIUS, 20);
+    contentBorderInsets = new Insets(0, 20, 10 + BORDER_RADIUS, 20);
     roundedTabs = false;
 
     // overrides
@@ -145,7 +145,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     int xt = contentBorderInsets.left;
     int yt = 0;
     int wt = w - contentBorderInsets.left - contentBorderInsets.right;
-    int ht = h - contentBorderInsets.bottom + BORDER_RADIUS;
+    int ht = h - BORDER_RADIUS;
 
     g2D.setColor(AbstractLookAndFeel.getBackgroundColor());
 

@@ -95,7 +95,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,grow");

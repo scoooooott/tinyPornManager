@@ -89,14 +89,14 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
   private void initComponents() {
     // putClientProperty("class", "roundedPanel");
-    // setOpaque(false);
+    setOpaque(false);
 
     movieList = MovieList.getInstance();
     SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][]"));
 
     searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
     add(searchField, "cell 0 0,growx");

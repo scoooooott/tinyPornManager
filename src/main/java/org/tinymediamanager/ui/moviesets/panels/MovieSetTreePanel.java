@@ -74,7 +74,7 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][400lp,grow][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][400lp,grow][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
