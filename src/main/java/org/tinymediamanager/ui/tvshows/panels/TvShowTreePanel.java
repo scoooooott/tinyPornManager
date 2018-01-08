@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -36,7 +37,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -70,11 +76,26 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  private TvShowList                  tvShowList       = TvShowList.getInstance();
+
   private TmmTreeTable                tree;
+  private JLabel                      lblEpisodeCountFiltered;
+  private JLabel                      lblEpisodeCountTotal;
+  private JLabel                      lblTvShowCountFiltered;
+  private JLabel                      lblTvShowCountTotal;
 
   public TvShowTreePanel(TvShowSelectionModel selectionModel) {
-    TvShowSelectionModel tvShowSelectionModel = selectionModel;
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow]"));
+    initComponents();
+    initDataBindings();
+
+    selectionModel.setTreeTable(tree);
+
+    // initialize filteredCount
+    updateFilteredCount();
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,grow");
@@ -148,12 +169,12 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     tree.configureScrollPane(scrollPane, new int[] { 0 });
     add(scrollPane, "cell 0 1 2 1,grow");
     tree.adjustColumnPreferredWidths(3);
-    tvShowSelectionModel.setTreeTable(tree);
 
     tree.setRootVisible(false);
 
     tree.getModel().addTableModelListener(arg0 -> {
-      // lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+      updateFilteredCount();
+
       // select first Tvshow if nothing is selected
       ListSelectionModel selectionModel1 = tree.getSelectionModel();
       if (selectionModel1.isSelectionEmpty() && tree.getModel().getRowCount() > 0) {
@@ -211,6 +232,53 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
       }
     };
     tree.addMouseListener(mouseListener);
+
+    {
+      JLabel lblTvShowCount = new JLabel(BUNDLE.getString("tmm.tvshows") + ":"); //$NON-NLS-1$
+      add(lblTvShowCount, "flowx,cell 0 2 2 1");
+
+      lblTvShowCountFiltered = new JLabel("");
+      add(lblTvShowCountFiltered, "cell 0 2 2 1");
+
+      JLabel lblTvShowCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      add(lblTvShowCountOf, "cell 0 2 2 1");
+
+      lblTvShowCountTotal = new JLabel("");
+      add(lblTvShowCountTotal, "cell 0 2");
+    }
+    {
+      JLabel lblEpisodeCount = new JLabel(BUNDLE.getString("metatag.episodes") + ":"); //$NON-NLS-1$
+      add(lblEpisodeCount, "flowx,cell 0 3 2 1");
+
+      lblEpisodeCountFiltered = new JLabel("");
+      add(lblEpisodeCountFiltered, "cell 0 3");
+
+      JLabel lblEpisodeCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      add(lblEpisodeCountOf, "cell 0 3");
+
+      lblEpisodeCountTotal = new JLabel("");
+      add(lblEpisodeCountTotal, "cell 0 3");
+    }
+  }
+
+  private void updateFilteredCount() {
+    int tvShowCount = 0;
+    int episodeCount = 0;
+    for (int i = 0; i < tree.getTreeTableModel().getRowCount(); i++) {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(i, 0);
+      if (node != null) {
+        // movie set node
+        if (node.getUserObject() instanceof TvShow) {
+          tvShowCount++;
+          for (int j = 0; j < node.getChildCount(); j++) {
+            TreeNode child = node.getChildAt(j);
+            episodeCount += child.getChildCount();
+          }
+        }
+      }
+    }
+    lblTvShowCountFiltered.setText(String.valueOf(tvShowCount));
+    lblEpisodeCountFiltered.setText(String.valueOf(episodeCount));
   }
 
   @Override
@@ -263,5 +331,18 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         tree.expandRow(i++);
       } while (i < tree.getRowCount());
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<TvShowList, Integer> tvShowListBeanProperty = BeanProperty.create("tvShowCount");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList, tvShowListBeanProperty,
+        lblTvShowCountTotal, jLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<TvShowList, Integer> tvShowListBeanProperty_1 = BeanProperty.create("episodeCount");
+    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
+        tvShowListBeanProperty_1, lblEpisodeCountTotal, jLabelBeanProperty);
+    autoBinding_1.bind();
   }
 }

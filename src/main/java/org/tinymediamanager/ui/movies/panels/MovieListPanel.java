@@ -33,6 +33,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -72,9 +76,12 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
   MovieSelectionModel                 selectionModel;
 
+  private MovieList                   movieList;
+
   private JTextField                  searchField;
   private TmmTable                    movieTable;
   private JLabel                      lblMovieCountFiltered;
+  private JLabel                      lblMovieCountTotal;
 
   public MovieListPanel() {
     initComponents();
@@ -84,8 +91,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     // putClientProperty("class", "roundedPanel");
     // setOpaque(false);
 
-    // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
-    MovieList movieList = MovieList.getInstance();
+    movieList = MovieList.getInstance();
     SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
@@ -161,17 +167,22 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected()));
     add(btnExtendedFilter, "cell 1 0");
 
-    JLabel lblMovieCount = new JLabel("Movies:");
+    JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
     add(lblMovieCount, "flowx,cell 0 2 2 1");
 
     lblMovieCountFiltered = new JLabel("");
     add(lblMovieCountFiltered, "cell 0 2");
 
-    JLabel lblMovieCountOf = new JLabel("of");
+    JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
     add(lblMovieCountOf, "cell 0 2");
 
-    JLabel lblMovieCountTotal = new JLabel("");
+    lblMovieCountTotal = new JLabel("");
     add(lblMovieCountTotal, "cell 0 2");
+
+    initDataBindings();
+
+    // initialize filteredCount
+    lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
   }
 
   public MovieSelectionModel getSelectionModel() {
@@ -208,5 +219,13 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
       }
     });
     movieTable.addMouseListener(new TablePopupListener(popupMenu, movieTable));
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieCount");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty,
+        lblMovieCountTotal, jLabelBeanProperty);
+    autoBinding.bind();
   }
 }

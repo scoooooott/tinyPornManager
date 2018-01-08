@@ -87,6 +87,7 @@ public class MovieList extends AbstractModelObject {
   private final List<Certification>    certificationsObservable;
 
   private final PropertyChangeListener tagListener;
+  private final PropertyChangeListener movieSetListener;
   private final Comparator<MovieSet>   movieSetComparator = new MovieSetComparator();
 
   /**
@@ -115,6 +116,18 @@ public class MovieList extends AbstractModelObject {
       if (CERTIFICATION.equals(evt.getPropertyName())) {
         Movie movie = (Movie) evt.getSource();
         updateCertifications(movie);
+      }
+    };
+
+    movieSetListener = evt -> {
+      switch (evt.getPropertyName()) {
+        case Constants.ADDED_MOVIE:
+        case Constants.REMOVED_MOVIE:
+          firePropertyChange("movieInMovieSetCount", null, getMovieInMovieSetCount());
+          break;
+
+        default:
+          break;
       }
     };
 
@@ -716,6 +729,19 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Gets the movie in movie set count.
+   *
+   * @return the movie in movie set count
+   */
+  public int getMovieInMovieSetCount() {
+    int count = 0;
+    for (MovieSet movieSet : movieSetList) {
+      count += movieSet.getMovies().size();
+    }
+    return count;
+  }
+
+  /**
    * Gets the tags in movies.
    * 
    * @return the tags in movies
@@ -946,8 +972,10 @@ public class MovieList extends AbstractModelObject {
   public void addMovieSet(MovieSet movieSet) {
     int oldValue = movieSetList.size();
     this.movieSetList.add(movieSet);
+    movieSet.addPropertyChangeListener(movieSetListener);
     firePropertyChange(Constants.ADDED_MOVIE_SET, null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
+    firePropertyChange("movieInMovieSetCount", oldValue, getMovieInMovieSetCount());
   }
 
   /**
@@ -959,6 +987,7 @@ public class MovieList extends AbstractModelObject {
   public void removeMovieSet(MovieSet movieSet) {
     int oldValue = movieSetList.size();
     movieSet.removeAllMovies();
+    movieSet.removePropertyChangeListener(movieSetListener);
 
     try {
       movieSetList.remove(movieSet);
@@ -970,6 +999,7 @@ public class MovieList extends AbstractModelObject {
 
     firePropertyChange(Constants.REMOVED_MOVIE_SET, null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
+    firePropertyChange("movieInMovieSetCount", oldValue, getMovieInMovieSetCount());
   }
 
   private MovieSet findMovieSet(String title, int tmdbId) {
@@ -1036,17 +1066,14 @@ public class MovieList extends AbstractModelObject {
 
       // and push a message
       // also delay it so that the UI has time to start up
-      Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            Thread.sleep(15000);
-          }
-          catch (Exception ignored) {
-          }
-          Message message = new Message(MessageLevel.SEVERE, "tmm.movies", "message.database.corrupteddata");
-          MessageManager.instance.pushMessage(message);
+      Thread thread = new Thread(() -> {
+        try {
+          Thread.sleep(15000);
         }
+        catch (Exception ignored) {
+        }
+        Message message = new Message(MessageLevel.SEVERE, "tmm.movies", "message.database.corrupteddata");
+        MessageManager.instance.pushMessage(message);
       });
       thread.start();
     }

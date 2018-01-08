@@ -25,7 +25,6 @@ import static org.tinymediamanager.core.Constants.TV_SHOWS;
 import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
 import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,26 +93,23 @@ public class TvShowList extends AbstractModelObject {
     audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
 
     // the tag listener: its used to always have a full list of all tags used in tmm
-    propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        // listen to changes of tags
-        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShow) {
-          TvShow tvShow = (TvShow) evt.getSource();
-          updateTvShowTags(tvShow);
-        }
-        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
-          TvShowEpisode episode = (TvShowEpisode) evt.getSource();
-          updateEpisodeTags(episode);
-        }
-        if ((MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName()))
-            && evt.getSource() instanceof TvShowEpisode) {
-          TvShowEpisode episode = (TvShowEpisode) evt.getSource();
-          updateMediaInformationLists(episode);
-        }
-        if (EPISODE_COUNT.equals(evt.getPropertyName())) {
-          firePropertyChange(EPISODE_COUNT, 0, 1);
-        }
+    propertyChangeListener = evt -> {
+      // listen to changes of tags
+      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShow) {
+        TvShow tvShow = (TvShow) evt.getSource();
+        updateTvShowTags(tvShow);
+      }
+      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+        updateEpisodeTags(episode);
+      }
+      if ((MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName()))
+          && evt.getSource() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+        updateMediaInformationLists(episode);
+      }
+      if (EPISODE_COUNT.equals(evt.getPropertyName())) {
+        firePropertyChange(EPISODE_COUNT, 0, 1);
       }
     };
   }

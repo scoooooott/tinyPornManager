@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -22,6 +23,10 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -52,11 +57,24 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
   private TmmTreeTable                 tree;
 
   private final MovieList              movieList        = MovieList.getInstance();
-  private final MovieSetSelectionModel selectionModel;
+
+  private JLabel                      lblMovieCountFiltered;
+  private JLabel                      lblMovieCountTotal;
+  private JLabel                      lblMovieSetCountFiltered;
+  private JLabel                      lblMovieSetCountTotal;
 
   public MovieSetTreePanel(MovieSetSelectionModel movieSetSelectionModel) {
-    selectionModel = movieSetSelectionModel;
-    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][400lp,grow]"));
+    initComponents();
+    initDataBindings();
+
+    movieSetSelectionModel.setTreeTable(tree);
+
+    // initialize filteredCount
+    updateFilteredCount();
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][400lp,grow][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
@@ -128,12 +146,12 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
     tree.configureScrollPane(scrollPane, new int[] { 0 });
     add(scrollPane, "cell 0 1 2 1,grow");
     tree.adjustColumnPreferredWidths(3);
-    movieSetSelectionModel.setTreeTable(tree);
 
     tree.setRootVisible(false);
 
     tree.getModel().addTableModelListener(arg0 -> {
-      // lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+      updateFilteredCount();
+
       // select first movie set if nothing is selected
       ListSelectionModel selectionModel1 = tree.getSelectionModel();
       if (selectionModel1.isSelectionEmpty() && tree.getModel().getRowCount() > 0) {
@@ -184,6 +202,49 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
       }
     };
     tree.addMouseListener(mouseListener);
+    {
+      JLabel lblMovieSetCount = new JLabel(BUNDLE.getString("tmm.moviesets") + ":"); //$NON-NLS-1$
+      add(lblMovieSetCount, "flowx,cell 0 2 2 1");
+
+      lblMovieSetCountFiltered = new JLabel("");
+      add(lblMovieSetCountFiltered, "cell 0 2 2 1");
+
+      JLabel lblMovieSetCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      add(lblMovieSetCountOf, "cell 0 2 2 1");
+
+      lblMovieSetCountTotal = new JLabel("");
+      add(lblMovieSetCountTotal, "cell 0 2");
+    }
+    {
+      JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
+      add(lblMovieCount, "flowx,cell 0 3 2 1");
+
+      lblMovieCountFiltered = new JLabel("");
+      add(lblMovieCountFiltered, "cell 0 3");
+
+      JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      add(lblMovieCountOf, "cell 0 3");
+
+      lblMovieCountTotal = new JLabel("");
+      add(lblMovieCountTotal, "cell 0 3");
+    }
+  }
+
+  private void updateFilteredCount() {
+    int movieSetCount = 0;
+    int movieCount = 0;
+    for (int i = 0; i < tree.getTreeTableModel().getRowCount(); i++) {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(i, 0);
+      if (node != null) {
+        // movie set node
+        if (node.getUserObject() instanceof MovieSet) {
+          movieSetCount++;
+          movieCount += node.getChildCount();
+        }
+      }
+    }
+    lblMovieSetCountFiltered.setText(String.valueOf(movieSetCount));
+    lblMovieCountFiltered.setText(String.valueOf(movieCount));
   }
 
   @Override
@@ -236,5 +297,18 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
         tree.expandRow(i++);
       } while (i < tree.getRowCount());
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieSetCount");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty,
+        lblMovieSetCountTotal, jLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<MovieList, Integer> movieListBeanProperty_1 = BeanProperty.create("movieInMovieSetCount");
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieList,
+        movieListBeanProperty_1, lblMovieCountTotal, jLabelBeanProperty);
+    autoBinding_1.bind();
   }
 }
