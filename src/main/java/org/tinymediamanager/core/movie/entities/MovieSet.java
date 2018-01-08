@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TMDB;
 
 import java.nio.file.Files;
@@ -96,7 +98,14 @@ public class MovieSet extends MediaEntity {
 
   @Override
   public void setTitle(String newValue) {
+    String oldValue = this.title;
     super.setTitle(newValue);
+
+    firePropertyChange(TITLE_FOR_UI, oldValue, newValue);
+
+    oldValue = this.titleSortable;
+    titleSortable = "";
+    firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
 
     synchronized (movies) {
       for (Movie movie : movies) {
