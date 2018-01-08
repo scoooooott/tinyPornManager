@@ -394,7 +394,7 @@ public class MovieImageTypeSettingsPanel extends JPanel {
       panelFileNaming.add(chckbxDiscart1, "cell 2 16");
 
       JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      panelFileNaming.add(tpFileNamingHint, "cell 0 18 4 1");
+      panelFileNaming.add(tpFileNamingHint, "cell 0 18 4 1,growx");
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }

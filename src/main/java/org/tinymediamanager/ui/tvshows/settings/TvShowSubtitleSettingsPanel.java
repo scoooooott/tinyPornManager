@@ -144,12 +144,6 @@ public class TvShowSubtitleSettingsPanel extends JPanel {
     String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
         + color.getGreen() + "," + color.getBlue() + "); }";
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
-
-    cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    add(cbScraperLanguage, "cell 1 4");
-
-    cbLanguageStyle = new JComboBox(LanguageStyle.values());
-    add(cbLanguageStyle, "cell 1 5,growx");
     ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
 
     // select default tv show subtitle scraper
@@ -200,10 +194,16 @@ public class TvShowSubtitleSettingsPanel extends JPanel {
     {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
       add(lblScraperLanguage, "flowx,cell 1 4,aligny center");
+
+      cbScraperLanguage = new JComboBox(MediaLanguages.values());
+      add(cbScraperLanguage, "cell 1 4");
     }
     {
       JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
       add(lblLanguageStyle, "flowx,cell 1 5");
+
+      cbLanguageStyle = new JComboBox(LanguageStyle.values());
+      add(cbLanguageStyle, "cell 1 5,growx");
     }
   }
 

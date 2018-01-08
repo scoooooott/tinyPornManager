@@ -120,12 +120,6 @@ public class MovieSubtitleSettingsPanel extends JPanel {
     TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
     TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
-    cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    add(cbScraperLanguage, "cell 1 4");
-
-    cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
-    add(cbSubtitleLanguageStyle, "cell 1 5");
-
     tableScraper.getModel().addTableModelListener(arg0 -> {
       // click on the checkbox
       if (arg0.getColumn() == 0) {
@@ -201,10 +195,16 @@ public class MovieSubtitleSettingsPanel extends JPanel {
     {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
       add(lblScraperLanguage, "flowx,cell 1 4,alignx left");
+
+      cbScraperLanguage = new JComboBox(MediaLanguages.values());
+      add(cbScraperLanguage, "cell 1 4");
     }
     {
       JLabel lblSubtitleLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
       add(lblSubtitleLanguageStyle, "flowx,cell 1 5,alignx left");
+
+      cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
+      add(cbSubtitleLanguageStyle, "cell 1 5");
     }
   }
 

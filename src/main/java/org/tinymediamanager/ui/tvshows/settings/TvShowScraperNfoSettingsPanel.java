@@ -80,33 +80,36 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp,grow]", "[][][][][10lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][10lp][][][10lp][][][10lp][]"));
     {
       JLabel lblNfoSettingsT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblNfoSettingsT, 1.16667, Font.BOLD);
-      add(lblNfoSettingsT, "cell 0 0 2 1");
+      add(lblNfoSettingsT, "cell 0 0 3 1");
 
       JLabel lblNfoFormatT = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-      add(lblNfoFormatT, "flowx,cell 1 1");
+      add(lblNfoFormatT, "flowx,cell 1 1 2 1");
 
       cbNfoFormat = new JComboBox(TvShowConnectors.values());
-      add(cbNfoFormat, "cell 1 1");
+      add(cbNfoFormat, "cell 1 1 2 1");
 
       JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-      add(lblNfoLanguage, "flowx,cell 1 2");
+      add(lblNfoLanguage, "flowx,cell 1 3 2 1");
+
+      JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
+      add(lblNfoLanguageDesc, "cell 2 4");
 
       JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationFormatT, "flowx,cell 1 3");
+      add(lblCertificationFormatT, "flowx,cell 1 6 2 1");
+
+      cbCertificationStyle = new JComboBox();
+      add(cbCertificationStyle, "cell 2 7");
 
       chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-      add(chckbxWriteCleanNfo, "cell 1 5");
+      add(chckbxWriteCleanNfo, "cell 1 9 2 1");
     }
 
     cbNfoLanguage = new JComboBox(MediaLanguages.values());
-    add(cbNfoLanguage, "cell 1 2");
-
-    cbCertificationStyle = new JComboBox();
-    add(cbCertificationStyle, "cell 1 3");
+    add(cbNfoLanguage, "cell 1 3 2 1");
   }
 
   /**

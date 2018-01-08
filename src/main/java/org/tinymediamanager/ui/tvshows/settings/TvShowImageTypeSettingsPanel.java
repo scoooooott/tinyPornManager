@@ -181,7 +181,7 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
     }
     {
       JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      add(tpFileNamingHint, "cell 1 20 3 1");
+      add(tpFileNamingHint, "cell 1 20 3 1,growx");
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }
