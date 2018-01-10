@@ -597,14 +597,18 @@ public abstract class ImdbParser {
         Element nextElement = element.nextElementSibling();
         if (nextElement != null) {
           Elements countryElements = nextElement.getElementsByAttributeValueStarting("href", "/country/");
+          Pattern pattern = Pattern.compile("/country/(.*)");
 
           for (Element countryElement : countryElements) {
-            String countryText = countryElement.ownText();
-            if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
-              md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage().getLanguage(), countryText));
-            }
-            else {
-              md.addCountry(countryText);
+            Matcher matcher = pattern.matcher(countryElement.attr("href"));
+            if (matcher.matches()) {
+              if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+                md.addCountry(
+                    LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage().getLanguage(), countryElement.text(), matcher.group(1)));
+              }
+              else {
+                md.addCountry(matcher.group(1));
+              }
             }
           }
         }
@@ -614,14 +618,18 @@ public abstract class ImdbParser {
         Element nextElement = element.nextElementSibling();
         if (nextElement != null) {
           Elements languageElements = nextElement.getElementsByAttributeValueStarting("href", "/language/");
+          Pattern pattern = Pattern.compile("/language/(.*)");
 
           for (Element languageElement : languageElements) {
-            String languageText = languageElement.ownText();
-            if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
-              md.addSpokenLanguage(LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), languageText));
-            }
-            else {
-              md.addSpokenLanguage(languageText);
+            Matcher matcher = pattern.matcher(languageElement.attr("href"));
+            if (matcher.matches()) {
+              if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+                md.addSpokenLanguage(
+                    LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), languageElement.text(), matcher.group(1)));
+              }
+              else {
+                md.addSpokenLanguage(matcher.group(1));
+              }
             }
           }
         }

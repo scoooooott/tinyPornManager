@@ -315,6 +315,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
+      mp.getProviderInfo().getConfig().addBoolean("scrapeLanguageNames", false);
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0472033");
       options.setCountry(CountryCode.US);
@@ -370,6 +371,10 @@ public class ImdbMetadataProviderTest {
       checkProductionCompany(
           Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
           md);
+
+      // check localized values
+      assertThat(md.getCountries()).containsOnly("US");
+      assertThat(md.getSpokenLanguages()).containsOnly("en");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -381,6 +386,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
+      mp.getProviderInfo().getConfig().addBoolean("localReleaseDate", true);
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0114746");
       options.setCountry(CountryCode.DE);
@@ -393,7 +399,7 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("12 Monkeys", 1995, "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
-          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "05-01-1996", md);
+          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "01-02-1996", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -431,6 +437,10 @@ public class ImdbMetadataProviderTest {
 
       // check production company
       checkProductionCompany(Arrays.asList("Universal Pictures", "Atlas Entertainment", "Classico"), md);
+
+      // check localized values
+      assertThat(md.getCountries()).containsOnly("Vereinigte Staaten von Amerika");
+      assertThat(md.getSpokenLanguages()).containsOnly("Englisch", "Französisch");
     }
     catch (Exception e) {
       e.printStackTrace();
