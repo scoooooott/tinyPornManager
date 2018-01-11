@@ -75,7 +75,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("Result", results);
 
       // result count
-      assertEquals("Result count", 6, results.size());
+      assertThat(results.size()).isGreaterThanOrEqualTo(5);
 
       // check first result (Inglourious Basterds - 2009 - tt0361748)
       MediaSearchResult result = results.get(0);
@@ -323,6 +323,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
+      mp.getProviderInfo().getConfig().addBoolean("scrapeLanguageNames", false);
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0472033");
       options.setCountry(CountryCode.US);
@@ -378,6 +379,10 @@ public class ImdbMetadataProviderTest {
       checkProductionCompany(
           Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
           md);
+
+      // check localized values
+      assertThat(md.getCountries()).containsOnly("US");
+      assertThat(md.getSpokenLanguages()).containsOnly("en");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -389,6 +394,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
+      mp.getProviderInfo().getConfig().addBoolean("localReleaseDate", true);
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0114746");
       options.setCountry(CountryCode.DE);
@@ -401,7 +407,7 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("12 Monkeys", 1995, "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
-          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "05-01-1996", md);
+          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "01-02-1996", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -439,6 +445,10 @@ public class ImdbMetadataProviderTest {
 
       // check production company
       checkProductionCompany(Arrays.asList("Universal Pictures", "Atlas Entertainment", "Classico"), md);
+
+      // check localized values
+      assertThat(md.getCountries()).containsOnly("Vereinigte Staaten von Amerika");
+      assertThat(md.getSpokenLanguages()).containsOnly("Englisch", "Französisch");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -461,7 +471,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("Brave", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
+      checkMovieDetails("Brave", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman, Steve Purcell",
           "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
 
       // check poster
@@ -475,6 +485,7 @@ public class ImdbMetadataProviderTest {
       genres.add(MediaGenres.COMEDY);
       genres.add(MediaGenres.FAMILY);
       genres.add(MediaGenres.FANTASY);
+      genres.add(MediaGenres.THRILLER);
       checkGenres(genres, md);
 
       // check plot
@@ -525,7 +536,8 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
+      checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93,
+          "Mark Andrews, Brenda Chapman, Steve Purcell",
           "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
     }
     catch (Exception e) {
@@ -675,7 +687,7 @@ public class ImdbMetadataProviderTest {
     // not null
     assertNotNull(md.getCastMembers(CastType.ACTOR));
     // count of castmembers
-    assertEquals("castMember count", count, md.getCastMembers(CastType.ACTOR).size());
+    assertThat(md.getCastMembers(CastType.ACTOR).size()).isGreaterThanOrEqualTo(count);
     // check all defined members
     for (int i = 0; i < castMembers.size(); i++) {
       MediaCastMember expected = castMembers.get(i);

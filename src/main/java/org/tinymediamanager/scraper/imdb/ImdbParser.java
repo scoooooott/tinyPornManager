@@ -404,7 +404,7 @@ public abstract class ImdbParser {
     return languages.toString().toLowerCase(Locale.ROOT);
   }
 
-  protected MediaMetadata parseCombinedPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  protected MediaMetadata parseReferencePage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     /*
      * title and year have the following structure
      * 
@@ -412,30 +412,34 @@ public abstract class ImdbParser {
      * class="title-extra">Brave <i>(original title)</i></span> </span></h1> </div>
      */
 
-    // parse title and year
-    Element title = doc.getElementById("tn15title");
+    // title
+    Element title = doc.getElementsByAttributeValue("name", "title").first();
     if (title != null) {
-      Element element;
-      // title
-      Elements elements = title.getElementsByTag("h1");
-      if (elements.size() > 0) {
-        element = elements.first();
-        String movieTitle = cleanString(element.ownText());
+      String movieTitle = cleanString(title.attr("content"));
+      int yearStart = movieTitle.lastIndexOf("(");
+      if (yearStart > 0) {
+        movieTitle = movieTitle.substring(0, yearStart - 1).trim();
         md.setTitle(movieTitle);
       }
+    }
 
-      // year
-      elements = title.getElementsByTag("span");
-      if (elements.size() > 0) {
-        element = elements.first();
-        String content = element.text();
+    // original title and year
+    Element originalTitleYear = doc.getElementsByAttributeValue("property", "og:title").first();
+    if (originalTitleYear != null) {
+      String content = originalTitleYear.attr("content");
+      int startOfYear = content.lastIndexOf("(");
+      if (startOfYear > 0) {
+        String originalTitle = content.substring(0, startOfYear - 1).trim();
+        md.setOriginalTitle(originalTitle);
+
+        String yearText = content.substring(startOfYear);
 
         // search year
-        Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
-        Matcher matcher = yearPattern.matcher(content);
+        Pattern yearPattern = Pattern.compile("[1-2][0-9]{3}");
+        Matcher matcher = yearPattern.matcher(yearText);
         while (matcher.find()) {
-          if (matcher.group(1) != null) {
-            String movieYear = matcher.group(1);
+          if (matcher.group(0) != null) {
+            String movieYear = matcher.group(0);
             try {
               md.setYear(Integer.parseInt(movieYear));
               break;
@@ -445,23 +449,24 @@ public abstract class ImdbParser {
           }
         }
       }
-
-      // original title
-      elements = title.getElementsByAttributeValue("class", "title-extra");
-      if (elements.size() > 0) {
-        element = elements.first();
-        String content = element.ownText().trim();
-        content = cleanString(StringUtils.removeEnd(StringUtils.removeStart(content, ","), ","));
-        md.setOriginalTitle(content);
-      }
     }
 
     // poster
-    Element poster = doc.getElementById("primary-poster");
+    Element poster = doc.getElementsByAttributeValue("property", "og:image").first();
     if (poster != null) {
-      String posterUrl = poster.attr("src");
-      posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX600_");
-      posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY600_");
+      String posterUrl = poster.attr("content");
+
+      int fileStart = posterUrl.lastIndexOf("/");
+      if (fileStart > 0) {
+        int parameterStart = posterUrl.indexOf("_", fileStart);
+        if (parameterStart > 0) {
+          int startOfExtension = posterUrl.lastIndexOf(".");
+          if (startOfExtension > parameterStart) {
+            posterUrl = posterUrl.substring(0, parameterStart) + posterUrl.substring(startOfExtension);
+
+          }
+        }
+      }
       processMediaArt(md, MediaArtwork.MediaArtworkType.POSTER, posterUrl);
     }
 
@@ -470,161 +475,104 @@ public abstract class ImdbParser {
      */
 
     // rating and rating count
-    Element ratingElement = doc.getElementById("tn15rating");
+    Element ratingElement = doc.getElementsByClass("ipl-rating-star__rating").first();
     if (ratingElement != null) {
-      Elements elements = ratingElement.getElementsByClass("starbar-meta");
-      if (elements.size() > 0) {
-        Element div = elements.get(0);
-
-        MediaRating rating = new MediaRating("imdb");
-
-        // rating comes in <b> tag
-        Elements b = div.getElementsByTag("b");
-        if (b.size() == 1) {
-          String ratingAsString = b.text();
-          Pattern ratingPattern = Pattern.compile("([0-9]\\.[0-9])/10");
-          Matcher matcher = ratingPattern.matcher(ratingAsString);
-          while (matcher.find()) {
-            if (matcher.group(1) != null) {
-              try {
-                rating.setRating(Float.valueOf(matcher.group(1)));
-                rating.setMaxValue(10);
-              }
-              catch (Exception ignored) {
-              }
-              break;
-            }
-          }
+      String ratingAsString = ratingElement.ownText().replace(",", ".");
+      Element votesElement = doc.getElementsByClass("ipl-rating-star__total-votes").first();
+      if (votesElement != null) {
+        String countAsString = votesElement.ownText().replaceAll("[.,()]", "").trim();
+        try {
+          MediaRating rating = new MediaRating("imdb");
+          rating.setRating(Float.valueOf(ratingAsString));
+          rating.setVoteCount(Integer.parseInt(countAsString));
+          md.addRating(rating);
         }
-
-        // count
-        Elements a = div.getElementsByAttributeValue("href", "ratings");
-        if (a.size() == 1) {
-          String countAsString = a.text().replaceAll("[.,]|votes", "").trim();
+        catch (Exception ignored) {
+        }
+      }
+    }
+    // top250
+    Element topRatedElement = doc.getElementsByAttributeValue("href", "/chart/top").first();
+    if (topRatedElement != null) {
+      Pattern topPattern = Pattern.compile("Top Rated Movies: #([0-9]{1,3})");
+      Matcher matcher = topPattern.matcher(topRatedElement.ownText());
+      while (matcher.find()) {
+        if (matcher.group(1) != null) {
           try {
-            rating.setVoteCount(Integer.parseInt(countAsString));
+            String top250Text = matcher.group(1);
+            md.setTop250(Integer.parseInt(top250Text));
           }
           catch (Exception ignored) {
-          }
-        }
-
-        md.addRating(rating);
-      }
-
-      // top250
-      elements = ratingElement.getElementsByClass("starbar-special");
-      if (elements.size() > 0) {
-        Elements a = elements.get(0).getElementsByTag("a");
-        if (a.size() > 0) {
-          Element anchor = a.get(0);
-          Pattern topPattern = Pattern.compile("Top 250: #([0-9]{1,3})");
-          Matcher matcher = topPattern.matcher(anchor.ownText());
-          while (matcher.find()) {
-            if (matcher.group(1) != null) {
-              try {
-                md.setTop250(Integer.parseInt(matcher.group(1)));
-              }
-              catch (Exception ignored) {
-              }
-            }
           }
         }
       }
     }
 
-    // parse all items coming by <div class="info">
-    Elements elements = doc.getElementsByClass("info");
+    // releasedate
+    Element releaseDateElement = doc.getElementsByAttributeValue("href", "/title/" + options.getImdbId().toLowerCase() + "/releaseinfo").first();
+    if (releaseDateElement != null) {
+      String releaseDateText = releaseDateElement.ownText();
+      int startOfCountry = releaseDateText.indexOf("(");
+      if (startOfCountry > 0) {
+        releaseDateText = releaseDateText.substring(0, startOfCountry - 1).trim();
+      }
+      try {
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+        Date parsedDate = sdf.parse(releaseDateText);
+        md.setReleaseDate(parsedDate);
+      }
+      catch (ParseException otherformat) {
+        try {
+          SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
+          Date parsedDate = sdf.parse(releaseDateText);
+          md.setReleaseDate(parsedDate);
+        }
+        catch (ParseException ignored) {
+        }
+      }
+    }
+
+    Elements elements = doc.getElementsByClass("ipl-zebra-list__label");
     for (Element element : elements) {
-      // only parse divs
-      if (!"div".equals(element.tag().getName())) {
+      // only parse tds
+      if (!"td".equals(element.tag().getName())) {
         continue;
       }
 
-      // elements with h5 are the titles of the values
-      Elements h5 = element.getElementsByTag("h5");
-      if (h5.size() > 0) {
-        Element firstH5 = h5.first();
-        String h5Title = firstH5.text();
+      String elementText = element.ownText();
 
-        // release date
-        /*
-         * <div class="info"><h5>Release Date:</h5><div class="info-content">5 January 1996 (USA)<a class= "tn15more inline"
-         * href="/title/tt0114746/releaseinfo" onclick=
-         * "(new Image()).src='/rg/title-tease/releasedates/images/b.gif?link=/title/tt0114746/releaseinfo';" > See more</a>&nbsp;</div></div>
-         */
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getReleaseDate() + ".*")) {
-          Elements div = element.getElementsByClass("info-content");
-          if (div.size() > 0) {
-            Element releaseDateElement = div.first();
-            String releaseDate = cleanString(releaseDateElement.ownText().replaceAll("»", ""));
-            Pattern pattern = Pattern.compile("(.*)\\(.*\\)");
-            Matcher matcher = pattern.matcher(releaseDate);
-            if (matcher.find()) {
-              try {
-                SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-                Date parsedDate = sdf.parse(matcher.group(1));
-                md.setReleaseDate(parsedDate);
-              }
-              catch (ParseException otherformat) {
-                try {
-                  SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
-                  Date parsedDate = sdf.parse(matcher.group(1));
-                  md.setReleaseDate(parsedDate);
-                }
-                catch (ParseException ignored) {
-                }
-              }
-            }
-          }
-        }
-
-        /*
-         * <div class="info"><h5>Tagline:</h5><div class="info-content"> (7) To Defend Us... <a class="tn15more inline"
-         * href="/title/tt0472033/taglines" onClick= "(new Image()).src='/rg/title-tease/taglines/images/b.gif?link=/title/tt0472033/taglines';" >See
-         * more</a>&nbsp;&raquo; </div></div>
-         */
-        // tagline
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*")
-            && !ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
-          Elements div = element.getElementsByClass("info-content");
-          if (div.size() > 0) {
-            Element taglineElement = div.first();
+      if (elementText.equals("Taglines")) {
+        if (!ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
+          Element taglineElement = element.nextElementSibling();
+          if (taglineElement != null) {
             String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
             md.setTagline(tagline);
           }
         }
+      }
 
-        /*
-         * <div class="info-content"><a href="/Sections/Genres/Animation/">Animation</a> | <a href="/Sections/Genres/Action/">Action</a> | <a
-         * href="/Sections/Genres/Adventure/">Adventure</a> | <a href="/Sections/Genres/Fantasy/">Fantasy</a> | <a
-         * href="/Sections/Genres/Mystery/">Mystery</a> | <a href="/Sections/Genres/Sci-Fi/">Sci-Fi</a> | <a
-         * href="/Sections/Genres/Thriller/">Thriller</a> <a class= "tn15more inline" href="/title/tt0472033/keywords" onClick=
-         * "(new Image()).src='/rg/title-tease/keywords/images/b.gif?link=/title/tt0472033/keywords';" > See more</a>&nbsp;&raquo; </div>
-         */
-        // genres are only scraped from akas.imdb.com
-        if (h5Title.matches("(?i)" + getImdbSite().getGenre() + "(.*)")) {
-          Elements div = element.getElementsByClass("info-content");
-          if (div.size() > 0) {
-            Elements a = div.first().getElementsByTag("a");
-            for (Element anchor : a) {
-              if (anchor.attr("href").matches("/Sections/Genres/.*")) {
-                md.addGenre(getTmmGenre(anchor.ownText()));
-              }
-            }
+      if (elementText.equals("Genres")) {
+        Element nextElement = element.nextElementSibling();
+        if (nextElement != null) {
+          Elements genreElements = nextElement.getElementsByAttributeValueStarting("href", "/genre/");
+
+          for (Element genreElement : genreElements) {
+            String genreText = genreElement.ownText();
+            md.addGenre(getTmmGenre(genreText));
           }
         }
-        // }
+      }
 
-        /*
-         * <div class="info"><h5>Runtime:</h5><div class="info-content">162 min | 171 min (special edition) | 178 min (extended cut)</div></div>
-         */
-        // runtime
-        // if (h5Title.matches("(?i)" + imdbSite.getRuntime() + ".*")) {
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getRuntime() + ".*")) {
-          Elements div = element.getElementsByClass("info-content");
-          if (div.size() > 0) {
-            Element taglineElement = div.first();
-            String first = taglineElement.ownText().split("\\|")[0];
+      /*
+       * Old HTML, but maybe the same content formart <div class="info"><h5>Runtime:</h5><div class="info-content">162 min | 171 min (special edition)
+       * | 178 min (extended cut)</div></div>
+       */
+      if (elementText.equals("Runtime")) {
+        Element nextElement = element.nextElementSibling();
+        if (nextElement != null) {
+          Element runtimeElement = nextElement.getElementsByClass("ipl-inline-list__item").first();
+          if (runtimeElement != null) {
+            String first = runtimeElement.ownText().split("\\|")[0];
             String runtimeAsString = cleanString(first.replaceAll("min", ""));
             int runtime = 0;
             try {
@@ -641,20 +589,20 @@ public abstract class ImdbParser {
             md.setRuntime(runtime);
           }
         }
+      }
 
-        // <div class="info"><h5>Country:</h5><div class="info-content"><a href="/country/fr">France</a> | <a href="/country/es">Spain</a> | <a
-        // href="/country/it">Italy</a> | <a href="/country/hu">Hungary</a></div></div>
-        // <div class="info-content"><a href="/country/xwg">West Germany</a></div> (!!!)
+      if (elementText.equals("Country")) {
+        Element nextElement = element.nextElementSibling();
+        if (nextElement != null) {
+          Elements countryElements = nextElement.getElementsByAttributeValueStarting("href", "/country/");
+          Pattern pattern = Pattern.compile("/country/(.*)");
 
-        // country
-        if (h5Title.matches("(?i)Country.*")) {
-          Elements a = element.getElementsByTag("a");
-          for (Element anchor : a) {
-            Pattern pattern = Pattern.compile("/country/(.*)");
-            Matcher matcher = pattern.matcher(anchor.attr("href"));
+          for (Element countryElement : countryElements) {
+            Matcher matcher = pattern.matcher(countryElement.attr("href"));
             if (matcher.matches()) {
               if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
-                md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage().getLanguage(), anchor.text(), matcher.group(1)));
+                md.addCountry(
+                    LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage().getLanguage(), countryElement.text(), matcher.group(1)));
               }
               else {
                 md.addCountry(matcher.group(1));
@@ -662,21 +610,20 @@ public abstract class ImdbParser {
             }
           }
         }
+      }
 
-        /*
-         * <div class="info"><h5>Language:</h5><div class="info-content"><a href="/language/en">English</a> | <a href="/language/de">German</a> | <a
-         * href="/language/fr">French</a> | <a href="/language/it">Italian</a></div>
-         */
-        // Spoken languages
-        if (h5Title.matches("(?i)Language.*")) {
-          Elements a = element.getElementsByTag("a");
-          for (Element anchor : a) {
-            Pattern pattern = Pattern.compile("/language/(.*)");
-            Matcher matcher = pattern.matcher(anchor.attr("href"));
+      if (elementText.equals("Language")) {
+        Element nextElement = element.nextElementSibling();
+        if (nextElement != null) {
+          Elements languageElements = nextElement.getElementsByAttributeValueStarting("href", "/language/");
+          Pattern pattern = Pattern.compile("/language/(.*)");
+
+          for (Element languageElement : languageElements) {
+            Matcher matcher = pattern.matcher(languageElement.attr("href"));
             if (matcher.matches()) {
               if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
                 md.addSpokenLanguage(
-                    LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), anchor.text(), matcher.group(1)));
+                    LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), languageElement.text(), matcher.group(1)));
               }
               else {
                 md.addSpokenLanguage(matcher.group(1));
@@ -684,137 +631,142 @@ public abstract class ImdbParser {
             }
           }
         }
+      }
 
-        /*
-         * <div class="info"><h5>Certification:</h5><div class="info-content"><a href="/search/title?certificates=us:pg">USA:PG</a> <i>(certificate
-         * #47489)</i> | <a href="/search/title?certificates=ca:pg">Canada:PG</a> <i>(Ontario)</i> | <a
-         * href="/search/title?certificates=au:pg">Australia:PG</a> | <a href="/search/title?certificates=in:u">India:U</a> | <a
-         * href="/search/title?certificates=ie:pg">Ireland:PG</a> ...</div></div>
-         */
-        // certification
-        // if (h5Title.matches("(?i)" + imdbSite.getCertification() + ".*")) {
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getCertification() + ".*")) {
-          Elements a = element.getElementsByTag("a");
-          for (Element anchor : a) {
-            // certification for the right country
-            if (anchor.attr("href").matches("(?i)/search/title\\?certificates=" + options.getCountry().getAlpha2() + ".*")) {
-              Pattern certificationPattern = Pattern.compile(".*:(.*)");
-              Matcher matcher = certificationPattern.matcher(anchor.ownText());
-              Certification certification = null;
-              while (matcher.find()) {
-                if (matcher.group(1) != null) {
-                  certification = Certification.getCertification(options.getCountry(), matcher.group(1));
-                }
+      if (elementText.equals("Certification")) {
+        Element nextElement = element.nextElementSibling();
+        if (nextElement != null) {
+          String languageCode = options.getCountry().getAlpha2();
+          Elements certificationElements = nextElement.getElementsByAttributeValueStarting("href", "/search/title?certificates=" + languageCode);
+          boolean done = false;
+          for (Element certificationElement : certificationElements) {
+            String certText = certificationElement.ownText();
+            int startOfCert = certText.indexOf(":");
+            if (startOfCert > 0 && certText.length() > startOfCert + 1) {
+              certText = certText.substring(startOfCert + 1);
+            }
+
+            Certification certification = Certification.getCertification(options.getCountry(), certText);
+            if (certification != null) {
+              md.addCertification(certification);
+              done = true;
+              break;
+            }
+          }
+
+          if (!done && languageCode.equals("DE")) {
+            certificationElements = nextElement.getElementsByAttributeValueStarting("href", "/search/title?certificates=XWG");
+            for (Element certificationElement : certificationElements) {
+              String certText = certificationElement.ownText();
+              int startOfCert = certText.indexOf(":");
+              if (startOfCert > 0 && certText.length() > startOfCert + 1) {
+                certText = certText.substring(startOfCert + 1);
               }
 
+              Certification certification = Certification.getCertification(options.getCountry(), certText);
               if (certification != null) {
                 md.addCertification(certification);
                 break;
               }
             }
           }
-        }
-      }
 
-      /*
-       * <div id="director-info" class="info"> <h5>Director:</h5> <div class="info-content"><a href="/name/nm0000416/" onclick=
-       * "(new Image()).src='/rg/directorlist/position-1/images/b.gif?link=name/nm0000416/';" >Terry Gilliam</a><br/> </div> </div>
-       */
-      // director
-      if ("director-info".equals(element.id())) {
-        Elements a = element.getElementsByTag("a");
-        for (Element anchor : a) {
-          if (anchor.attr("href").matches("/name/nm.*")) {
-            MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-            cm.setName(anchor.ownText());
-            md.addCastMember(cm);
-          }
         }
       }
     }
 
-    /*
-     * <table class="cast"> <tr class="odd"><td class="hs"><a href="http://pro.imdb.com/widget/resume_redirect/" onClick=
-     * "(new Image()).src='/rg/resume/prosystem/images/b.gif?link=http://pro.imdb.com/widget/resume_redirect/';" ><img src=
-     * "http://i.media-imdb.com/images/SF9113d6f5b7cb1533c35313ccd181a6b1/tn15/no_photo.png" width="25" height="31" border="0"></td><td class="nm"><a
-     * href="/name/nm0577828/" onclick= "(new Image()).src='/rg/castlist/position-1/images/b.gif?link=/name/nm0577828/';" >Joseph Melito</a></td><td
-     * class="ddd"> ... </td><td class="char"><a href="/character/ch0003139/">Young Cole</a></td></tr> <tr class="even"><td class="hs"><a
-     * href="/name/nm0000246/" onClick= "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0000246/';" ><img src=
-     * "http://ia.media-imdb.com/images/M/MV5BMjA0MjMzMTE5OF5BMl5BanBnXkFtZTcwMzQ2ODE3Mw@@._V1._SY30_SX23_.jpg" width="23" height="32"
-     * border="0"></a><br></td><td class="nm"><a href="/name/nm0000246/" onclick=
-     * "(new Image()).src='/rg/castlist/position-2/images/b.gif?link=/name/nm0000246/';" >Bruce Willis</a></td><td class="ddd"> ... </td><td
-     * class="char"><a href="/character/ch0003139/">James Cole</a></td></tr> <tr class="odd"><td class="hs"><a href="/name/nm0781218/" onClick=
-     * "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0781218/';" ><img src=
-     * "http://ia.media-imdb.com/images/M/MV5BODI1MTA2MjkxM15BMl5BanBnXkFtZTcwMTcwMDg2Nw@@._V1._SY30_SX23_.jpg" width="23" height="32"
-     * border="0"></a><br></td><td class="nm"><a href="/name/nm0781218/" onclick=
-     * "(new Image()).src='/rg/castlist/position-3/images/b.gif?link=/name/nm0781218/';" >Jon Seda</a></td><td class="ddd"> ... </td><td
-     * class="char"><a href="/character/ch0003143/">Jose</a></td></tr>...</table>
-     */
-    // cast
-    elements = doc.getElementsByClass("cast");
-    if (elements.size() > 0) {
-      Elements tr = elements.get(0).getElementsByTag("tr");
+    // director
+    Element directorsElement = doc.getElementById("directors");
+    while (directorsElement != null && directorsElement.tag().getName() != "header") {
+      directorsElement = directorsElement.parent();
+    }
+    if (directorsElement != null) {
+      directorsElement = directorsElement.nextElementSibling();
+    }
+    if (directorsElement != null) {
+      for (Element directorElement : directorsElement.getElementsByClass("name")) {
+        String director = directorElement.text().trim();
+
+        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+        cm.setName(director);
+        md.addCastMember(cm);
+      }
+    }
+
+    // actors
+    Element castTableElement = doc.getElementsByClass("cast_list").first();
+    if (castTableElement != null) {
+      Elements tr = castTableElement.getElementsByTag("tr");
       for (Element row : tr) {
         MediaCastMember cm = parseCastMember(row);
-        if (StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
+        if (cm != null && StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
           cm.setType(MediaCastMember.CastType.ACTOR);
           md.addCastMember(cm);
         }
       }
     }
 
-    Element content = doc.getElementById("tn15content");
-    if (content != null) {
-      elements = content.getElementsByTag("table");
-      for (Element table : elements) {
-        // writers
-        if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getWriter())) {
-          Elements anchors = table.getElementsByTag("a");
-          for (Element anchor : anchors) {
-            if (anchor.attr("href").matches("/name/nm.*")) {
-              MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-              cm.setName(anchor.ownText());
-              md.addCastMember(cm);
-            }
-          }
-        }
+    // writers
+    Element writersElement = doc.getElementById("writers");
+    while (writersElement != null && writersElement.tag().getName() != "header") {
+      writersElement = writersElement.parent();
+    }
+    if (writersElement != null) {
+      writersElement = writersElement.nextElementSibling();
+    }
+    if (writersElement != null) {
+      Elements writersElements = writersElement.getElementsByAttributeValueStarting("href", "/name/");
 
-        // producers
-        if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
-          Elements rows = table.getElementsByTag("tr");
-          for (Element row : rows) {
-            if (row.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
-              continue;
-            }
-            Elements columns = row.children();
-            if (columns.size() == 0) {
-              continue;
-            }
-            MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
-            String name = cleanString(columns.get(0).text());
-            if (StringUtils.isBlank(name)) {
-              continue;
-            }
-            cm.setName(name);
-            if (columns.size() >= 3) {
-              cm.setPart(cleanString(columns.get(2).text()));
-            }
-            md.addCastMember(cm);
-          }
-        }
+      for (Element writerElement : writersElements) {
+        String writer = cleanString(writerElement.ownText());
+        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+        cm.setName(writer);
+        md.addCastMember(cm);
       }
     }
 
-    // Production companies
-    elements = doc.getElementsByClass("blackcatheader");
-    for (Element blackcatheader : elements) {
-      if (blackcatheader.ownText().equals(ImdbSiteDefinition.IMDB_COM.getProductionCompanies())) {
-        Elements a = blackcatheader.nextElementSibling().getElementsByTag("a");
-        for (Element anchor : a) {
-          md.addProductionCompany(anchor.ownText());
-        }
+    // producers
+    Element producersElement = doc.getElementById("producers");
+    while (producersElement != null && producersElement.tag().getName() != "header") {
+      producersElement = producersElement.parent();
+    }
+    if (producersElement != null) {
+      producersElement = producersElement.nextElementSibling();
+    }
+    if (producersElement != null) {
+      Elements producersElements = producersElement.getElementsByAttributeValueStarting("href", "/name/");
 
+      for (Element producerElement : producersElements) {
+        String producer = cleanString(producerElement.ownText());
+        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
+        cm.setName(producer);
+        md.addCastMember(cm);
+      }
+    }
+
+    // producers
+    Elements prodCompHeaderElements = doc.getElementsByClass("ipl-list-title");
+    Element prodCompHeaderElement = null;
+
+    for (Element possibleProdCompHeaderEl : prodCompHeaderElements) {
+      if (possibleProdCompHeaderEl.ownText().equals("Production Companies")) {
+        prodCompHeaderElement = possibleProdCompHeaderEl;
         break;
+      }
+    }
+
+    while (prodCompHeaderElement != null && prodCompHeaderElement.tag().getName() != "header") {
+      prodCompHeaderElement = prodCompHeaderElement.parent();
+    }
+    if (prodCompHeaderElement != null) {
+      prodCompHeaderElement = prodCompHeaderElement.nextElementSibling();
+    }
+    if (prodCompHeaderElement != null) {
+      Elements prodCompElements = prodCompHeaderElement.getElementsByAttributeValueStarting("href", "/company/");
+
+      for (Element prodCompElement : prodCompElements) {
+        String prodComp = prodCompElement.ownText();
+        md.addProductionCompany(prodComp);
       }
     }
 
@@ -878,42 +830,46 @@ public abstract class ImdbParser {
   }
 
   protected MediaCastMember parseCastMember(Element row) {
-    Elements td = row.getElementsByTag("td");
-    MediaCastMember cm = new MediaCastMember();
-    for (Element column : td) {
-      // actor thumb
-      if (column.hasClass("hs")) {
-        Elements img = column.getElementsByTag("img");
-        if (img.size() > 0) {
-          String thumbUrl = img.get(0).attr("src");
-          if (thumbUrl.contains("no_photo.png")) {
-            cm.setImageUrl("");
+
+    Element nameElement = row.getElementsByAttributeValueStarting("itemprop", "name").first();
+    if (nameElement == null) {
+      return null;
+    }
+    String name = cleanString(nameElement.ownText());
+    String characterName = "";
+
+    Element characterElement = row.getElementsByClass("character").first();
+    if (characterElement != null) {
+      characterName = cleanString(characterElement.text());
+      // and now strip off trailing commentaries like - (120 episodes,
+      // 2006-2014)
+      characterName = characterName.replaceAll("\\(.*?\\)$", "").trim();
+    }
+
+    String image = "";
+    Element imageElement = row.getElementsByTag("img").first();
+    if (imageElement != null) {
+      String imageSrc = imageElement.attr("loadlate");
+
+      if (!StringUtils.isEmpty(imageSrc)) {
+        int fileStart = imageSrc.lastIndexOf("/");
+        if (fileStart > 0) {
+          int parameterStart = imageSrc.indexOf("_", fileStart);
+          if (parameterStart > 0) {
+            int startOfExtension = imageSrc.lastIndexOf(".");
+            if (startOfExtension > parameterStart) {
+              imageSrc = imageSrc.substring(0, parameterStart) + imageSrc.substring(startOfExtension);
+            }
           }
-          else {
-            thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
-            thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "");
-            cm.setImageUrl(thumbUrl);
-          }
         }
-      }
-      // actor name
-      if (column.hasClass("nm")) {
-        cm.setName(cleanString(column.text()));
-      }
-      // character
-      if (column.hasClass("char")) {
-        try {
-          String characterName = cleanString(column.text());
-          // and now strip off trailing commentaries like - (120 episodes,
-          // 2006-2014)
-          characterName = characterName.replaceAll("\\(.*?\\)$", "").trim();
-          cm.setCharacter(characterName);
-        }
-        catch (Exception ignored) {
-        }
+        image = imageSrc;
       }
     }
 
+    MediaCastMember cm = new MediaCastMember();
+    cm.setCharacter(characterName);
+    cm.setName(name);
+    cm.setImageUrl(image);
     return cm;
   }
 

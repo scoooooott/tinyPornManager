@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -115,14 +116,14 @@ public class ImdbMovieParser extends ImdbParser {
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
 
-    // worker for imdb request (/combined) (everytime from www.imdb.com)
+    // worker for imdb request (/reference) (everytime from www.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());
     StringBuilder sb = new StringBuilder(ImdbSiteDefinition.IMDB_COM.getSite());
     sb.append("title/");
     sb.append(imdbId);
-    sb.append("/combined");
+    sb.append("/reference");
     Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
-    Future<Document> futureCombined = compSvcImdb.submit(worker);
+    Future<Document> futureReference = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary;
@@ -143,8 +144,8 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     Document doc;
-    doc = futureCombined.get();
-    parseCombinedPage(doc, options, md);
+    doc = futureReference.get();
+    parseReferencePage(doc, options, md);
 
     /*
      * plot from /plotsummary
@@ -169,7 +170,7 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // did we get a release date?
-    if (md.getReleaseDate() == null || !ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
+    if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
       // get the date from the releaseinfo page
       Future<Document> futureReleaseinfo;
       sb = new StringBuilder(imdbSite.getSite());
@@ -185,7 +186,7 @@ public class ImdbMovieParser extends ImdbParser {
 
     // get data from tmdb?
     if (futureTmdb != null && (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
-            || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
+        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
         if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null) {
@@ -235,27 +236,64 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   private MediaMetadata parseReleaseinfoPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+    Date releaseDate = null;
+    Pattern pattern = Pattern.compile("/calendar/\\?region=(.{2})");
+
     Element tableReleaseDates = doc.getElementById("release_dates");
     if (tableReleaseDates != null) {
-      Elements columns = tableReleaseDates.getElementsByClass("release_date");
-      if (columns != null && !columns.isEmpty()) {
-        Element td = columns.first();
-        try {
-          SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-          Date parsedDate = sdf.parse(td.text());
-          md.setReleaseDate(parsedDate);
-        }
-        catch (ParseException otherformat) {
-          try {
-            SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
-            Date parsedDate = sdf.parse(td.text());
-            md.setReleaseDate(parsedDate);
+      Elements rows = tableReleaseDates.getElementsByTag("tr");
+      // first round: check the release date for the first one with the requested country
+      for (Element row : rows) {
+        // get the anchor
+        Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
+        if (anchor != null) {
+          Matcher matcher = pattern.matcher(anchor.attr("href"));
+          if (matcher.find() && options.getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+            Element column = row.getElementsByClass("release_date").first();
+            if (column != null) {
+              try {
+                SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+                releaseDate = sdf.parse(column.text());
+                break;
+              }
+              catch (ParseException otherformat) {
+                try {
+                  SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
+                  releaseDate = sdf.parse(column.text());
+                  break;
+                }
+                catch (ParseException ignored) {
+                }
+              }
+            }
           }
-          catch (ParseException ignored) {
+        }
+      }
+
+      // no matching local release date found; take the first one
+      if (releaseDate == null) {
+        Element column = tableReleaseDates.getElementsByClass("release_date").first();
+        if (column != null) {
+          try {
+            SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+            releaseDate = sdf.parse(column.text());
+          }
+          catch (ParseException otherformat) {
+            try {
+              SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
+              releaseDate = sdf.parse(column.text());
+            }
+            catch (ParseException ignored) {
+            }
           }
         }
       }
     }
+
+    if (releaseDate != null) {
+      md.setReleaseDate(releaseDate);
+    }
+
     return md;
   }
 }

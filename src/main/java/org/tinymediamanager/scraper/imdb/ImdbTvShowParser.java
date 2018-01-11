@@ -21,7 +21,6 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInf
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -31,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +41,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
@@ -127,12 +126,12 @@ public class ImdbTvShowParser extends ImdbParser {
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
 
-    // get combined data
-    CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/combined");
+    // get reference data
+    CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/reference");
     url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
-    parseCombinedPage(doc, options, md);
+    parseReferencePage(doc, options, md);
 
     // get plot
     url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/plotsummary");
@@ -187,107 +186,55 @@ public class ImdbTvShowParser extends ImdbParser {
       return md;
     }
 
-    // then parse the actors page to get the rest
-    Url url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epcast");
-    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
-    Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+    md.setId(providerInfo.getId(), wantedEpisode.getId(providerInfo.getId()));
+    md.setEpisodeNumber(wantedEpisode.getEpisodeNumber());
+    md.setSeasonNumber(wantedEpisode.getSeasonNumber());
+    md.setTitle(wantedEpisode.getTitle());
+    md.setPlot(wantedEpisode.getPlot());
+    md.setRatings(wantedEpisode.getRatings());
+    md.setReleaseDate(wantedEpisode.getReleaseDate());
 
-    // the base content of this page starts here
-    Element content = doc.getElementById("tn15content");
-    Elements episodeStart = content.getElementsByTag("h4");
-    // every episode starts with an h4 containing the title
-    for (Element h4 : episodeStart) {
-      Elements anchors = h4.getElementsByAttributeValueStarting("href", "/title/tt");
-      if (anchors == null || anchors.isEmpty()) {
-        continue;
-      }
-
-      // now we match the corresponding result from the episode parsing list
-      if (anchors.get(0).attr("href").endsWith(wantedEpisode.getId(providerInfo.getId()) + "/")) {
-        md.setId(providerInfo.getId(), wantedEpisode.getId(providerInfo.getId()));
-        md.setEpisodeNumber(wantedEpisode.getEpisodeNumber());
-        md.setSeasonNumber(wantedEpisode.getSeasonNumber());
-        md.setTitle(wantedEpisode.getTitle());
-        md.setPlot("");
-
-        md.setRatings(wantedEpisode.getRatings());
-
-        // parse release date
-        Element releaseDate = h4.nextElementSibling();
-        if (releaseDate.tag().getName().equals("b")) {
-          try {
-            SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-            Date parsedDate = sdf.parse(releaseDate.ownText());
-            md.setReleaseDate(parsedDate);
-          }
-          catch (ParseException ignored) {
-            ignored.printStackTrace();
-          }
-
-          // parse plot - this is really tricky, because the plot is not in any
-          // tag for itself:
-          // <b>7 July 2006</b><br>The police department in Santa Barbara hires
-          // someone they think is a psychic detective.<br/>
-          // first store the reference of the preceeding <b>
-          Element b = releaseDate.nextElementSibling();
-          // and then iterate over all text nodes of the parent until we get the
-          // right node
-          for (TextNode node : content.textNodes()) {
-            if (node.previousSibling() == b) {
-              md.setPlot(node.text());
-              break;
-            }
-          }
-        }
-
-        // and finally the cast which is the nextmost <div> after the h4
-        Element next = h4.nextElementSibling();
-        while (true) {
-          if (next.tag().getName().equals("div")) {
-            Elements rows = next.getElementsByTag("tr");
-            for (Element row : rows) {
-              MediaCastMember cm = parseCastMember(row);
-              if (StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
-                cm.setType(MediaCastMember.CastType.ACTOR);
-                md.addCastMember(cm);
-              }
-            }
-            break;
-          }
-          next = next.nextElementSibling();
-        }
-        break;
-      }
-    }
-
-    // last but not least get the directors/writers
-    if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
-      String epId = (String) wantedEpisode.getId(providerInfo.getId());
-      url = new Url(imdbSite.getSite() + "/title/" + epId);
+    // and finally the cast which needed to be fetched from the fullcredits page
+    if (wantedEpisode.getId(providerInfo.getId()) instanceof String
+        && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
+      Url url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/fullcredits");
       url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
-      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+      Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
-      Elements elements = doc.getElementsByClass("plot_summary");
-      if (!elements.isEmpty()) {
-        Elements directors = elements.get(0).getElementsByAttributeValue("itemprop", "director");
-        for (Element director : directors) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-          cm.setName(director.text());
-          md.addCastMember(cm);
+      // director & writer
+      Element fullcredits = doc.getElementById("fullcredits_content");
+      if (fullcredits != null) {
+        Elements tables = fullcredits.getElementsByTag("table");
+
+        // first table are directors
+        if (tables.get(0) != null) {
+          for (Element director : tables.get(0).getElementsByClass("name")) {
+            MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+            cm.setName(director.text());
+            md.addCastMember(cm);
+          }
         }
 
-        Elements writers = elements.get(0).getElementsByAttributeValue("itemprop", "creator");
-        for (Element writer : writers) {
-          if (writer.text().contains("(created by)")) {
-            continue;
+        // second table are writers
+        if (tables.get(0) != null) {
+          for (Element director : tables.get(0).getElementsByClass("name")) {
+            MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+            cm.setName(director.text());
+            md.addCastMember(cm);
           }
-          if (!"http://schema.org/Person".equals(writer.attr("itemtype"))) {
-            continue;
-          }
+        }
+      }
 
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-          cm.setName(writer.text());
-          md.addCastMember(cm);
+      // actors
+      Element castTableElement = doc.getElementsByClass("cast_list").first();
+      if (castTableElement != null) {
+        Elements tr = castTableElement.getElementsByTag("tr");
+        for (Element row : tr) {
+          MediaCastMember cm = parseCastMember(row);
+          if (cm != null && StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
+            cm.setType(MediaCastMember.CastType.ACTOR);
+            md.addCastMember(cm);
+          }
         }
       }
     }
@@ -314,29 +261,72 @@ public class ImdbTvShowParser extends ImdbParser {
       return episodes;
     }
 
+    // we need to parse every season for its own _._
+    // first the specials
     CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
     url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
-    Pattern rowPattern = Pattern.compile("([0-9]*)\\.([0-9]*)");
+    parseEpisodeList(0, episodes, doc);
+
+    // then parse every season
+    for (int i = 1;; i++) {
+      try {
+        url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
+        url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
+        doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+        // if the given season number and the parsed one does not match, break here
+        if (!parseEpisodeList(i, episodes, doc)) {
+          break;
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("problem parsing ep list: " + e.getMessage());
+      }
+    }
+
+    return episodes;
+  }
+
+  private boolean parseEpisodeList(int season, List<MediaEpisode> episodes, Document doc) {
+    Pattern unknownPattern = Pattern.compile("Unknown");
+    Pattern seasonEpisodePattern = Pattern.compile("S([0-9]*), Ep([0-9]*)");
+    int episodeCounter = 0;
+
     // parse episodes
-    Elements tables = doc.getElementsByTag("table");
+    Elements tables = doc.getElementsByClass("eplist");
     for (Element table : tables) {
-      Elements rows = table.getElementsByTag("tr");
+      Elements rows = table.getElementsByClass("list_item");
       for (Element row : rows) {
-        Matcher matcher = rowPattern.matcher(row.text());
-        if (matcher.find() && matcher.groupCount() >= 2) {
+        Matcher matcher = season == 0 ? unknownPattern.matcher(row.text()) : seasonEpisodePattern.matcher(row.text());
+        if (matcher.find() && (season == 0 || matcher.groupCount() >= 2)) {
           try {
             // we found a row containing episode data
             MediaMetadata ep = new MediaMetadata(providerInfo.getId());
 
             // parse season and ep number
-            ep.setSeasonNumber(Integer.parseInt(matcher.group(1)));
-            ep.setEpisodeNumber(Integer.parseInt(matcher.group(2)));
+            if (season == 0) {
+              ep.setSeasonNumber(season);
+              ep.setEpisodeNumber(++episodeCounter);
+            }
+            else {
+              ep.setSeasonNumber(Integer.parseInt(matcher.group(1)));
+              ep.setEpisodeNumber(Integer.parseInt(matcher.group(2)));
+            }
+
+            // check if we have still valid data
+            if (season > 0 && season != ep.getSeasonNumber()) {
+              return false;
+            }
 
             // get ep title and id
             Elements anchors = row.getElementsByAttributeValueStarting("href", "/title/tt");
-            ep.setTitle(anchors.get(0).text());
+            for (Element anchor : anchors) {
+              if ("name".equals(anchor.attr("itemprop"))) {
+                ep.setTitle(anchor.text());
+                break;
+              }
+            }
 
             String id = "";
             Matcher idMatcher = IMDB_ID_PATTERN.matcher(anchors.get(0).attr("href"));
@@ -350,18 +340,35 @@ public class ImdbTvShowParser extends ImdbParser {
               ep.setId(providerInfo.getId(), id);
             }
 
-            Elements cols = row.getElementsByTag("td");
-            if (cols != null && cols.size() >= 4) {
-              try {
-                MediaRating rating = new MediaRating(providerInfo.getId());
-                // rating is the third column
-                rating.setRating(Float.parseFloat(cols.get(2).ownText()));
-                // vote count is the fourth column
-                rating.setVoteCount(MetadataUtil.parseInt(cols.get(3).ownText()));
-                ep.addRating(rating);
+            // plot
+            Element plot = row.getElementsByClass("item_description").first();
+            if (plot != null) {
+              ep.setPlot(plot.ownText());
+            }
+
+            // rating and rating count
+            Element ratingElement = row.getElementsByClass("ipl-rating-star__rating").first();
+            if (ratingElement != null) {
+              String ratingAsString = ratingElement.ownText().replace(",", ".");
+
+              Element votesElement = row.getElementsByClass("ipl-rating-star__total-votes").first();
+              if (votesElement != null) {
+                String countAsString = votesElement.ownText().replaceAll("[.,()]", "").trim();
+                try {
+                  MediaRating rating = new MediaRating(providerInfo.getId());
+                  rating.setRating(Float.valueOf(ratingAsString));
+                  rating.setVoteCount(Integer.parseInt(countAsString));
+                  ep.addRating(rating);
+                }
+                catch (Exception ignored) {
+                }
               }
-              catch (Exception ignored) {
-              }
+            }
+
+            // release date
+            Element releaseDate = row.getElementsByClass("airdate").first();
+            if (releaseDate != null) {
+              ep.setReleaseDate(StrgUtils.parseDate(releaseDate.ownText()));
             }
 
             episodes.add(ep);
@@ -372,7 +379,6 @@ public class ImdbTvShowParser extends ImdbParser {
         }
       }
     }
-
-    return episodes;
+    return true;
   }
 }
