@@ -64,6 +64,9 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 public abstract class ImdbParser {
   protected static final Pattern IMDB_ID_PATTERN = Pattern.compile("/title/(tt[0-9]{7})/");
   protected final MediaType      type;
+  protected SimpleDateFormat     sdf1            = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+  protected SimpleDateFormat     sdf2            = new SimpleDateFormat("MMMM yyyy", Locale.US);
+  protected SimpleDateFormat     sdf3            = new SimpleDateFormat("d MMM. yyyy", Locale.US);
 
   protected ImdbParser(MediaType type) {
     this.type = type;
@@ -516,20 +519,7 @@ public abstract class ImdbParser {
       if (startOfCountry > 0) {
         releaseDateText = releaseDateText.substring(0, startOfCountry - 1).trim();
       }
-      try {
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-        Date parsedDate = sdf.parse(releaseDateText);
-        md.setReleaseDate(parsedDate);
-      }
-      catch (ParseException otherformat) {
-        try {
-          SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
-          Date parsedDate = sdf.parse(releaseDateText);
-          md.setReleaseDate(parsedDate);
-        }
-        catch (ParseException ignored) {
-        }
-      }
+      md.setReleaseDate(parseDate(releaseDateText));
     }
 
     Elements elements = doc.getElementsByClass("ipl-zebra-list__label");
@@ -878,6 +868,28 @@ public abstract class ImdbParser {
    */
   private boolean yearDiffers(Integer i1, Integer i2) {
     return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  }
+
+  protected Date parseDate(String dateAsSting) {
+    try {
+      return sdf1.parse(dateAsSting);
+    }
+    catch (ParseException ignored) {
+    }
+
+    try {
+      return sdf2.parse(dateAsSting);
+    }
+    catch (ParseException ignored) {
+    }
+
+    try {
+      return sdf3.parse(dateAsSting);
+    }
+    catch (ParseException ignored) {
+    }
+
+    return null;
   }
 
   /****************************************************************************

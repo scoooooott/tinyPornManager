@@ -18,11 +18,8 @@ package org.tinymediamanager.scraper.imdb;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +38,6 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
@@ -195,8 +191,7 @@ public class ImdbTvShowParser extends ImdbParser {
     md.setReleaseDate(wantedEpisode.getReleaseDate());
 
     // and finally the cast which needed to be fetched from the fullcredits page
-    if (wantedEpisode.getId(providerInfo.getId()) instanceof String
-        && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
+    if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
       Url url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/fullcredits");
       url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
       Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
@@ -288,7 +283,7 @@ public class ImdbTvShowParser extends ImdbParser {
     return episodes;
   }
 
-  private boolean parseEpisodeList(int season, List<MediaEpisode> episodes, Document doc) {
+  private boolean parseEpisodeList(int season, List<MediaMetadata> episodes, Document doc) {
     Pattern unknownPattern = Pattern.compile("Unknown");
     Pattern seasonEpisodePattern = Pattern.compile("S([0-9]*), Ep([0-9]*)");
     int episodeCounter = 0;
@@ -368,7 +363,7 @@ public class ImdbTvShowParser extends ImdbParser {
             // release date
             Element releaseDate = row.getElementsByClass("airdate").first();
             if (releaseDate != null) {
-              ep.setReleaseDate(StrgUtils.parseDate(releaseDate.ownText()));
+              ep.setReleaseDate(parseDate(releaseDate.ownText()));
             }
 
             episodes.add(ep);

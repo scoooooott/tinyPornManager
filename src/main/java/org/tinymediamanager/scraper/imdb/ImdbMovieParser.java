@@ -20,10 +20,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
@@ -251,20 +248,7 @@ public class ImdbMovieParser extends ImdbParser {
           if (matcher.find() && options.getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
             Element column = row.getElementsByClass("release_date").first();
             if (column != null) {
-              try {
-                SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-                releaseDate = sdf.parse(column.text());
-                break;
-              }
-              catch (ParseException otherformat) {
-                try {
-                  SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
-                  releaseDate = sdf.parse(column.text());
-                  break;
-                }
-                catch (ParseException ignored) {
-                }
-              }
+              releaseDate = parseDate(column.text());
             }
           }
         }
@@ -274,18 +258,7 @@ public class ImdbMovieParser extends ImdbParser {
       if (releaseDate == null) {
         Element column = tableReleaseDates.getElementsByClass("release_date").first();
         if (column != null) {
-          try {
-            SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-            releaseDate = sdf.parse(column.text());
-          }
-          catch (ParseException otherformat) {
-            try {
-              SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
-              releaseDate = sdf.parse(column.text());
-            }
-            catch (ParseException ignored) {
-            }
-          }
+          releaseDate = parseDate(column.text());
         }
       }
     }
