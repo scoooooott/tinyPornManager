@@ -89,7 +89,9 @@ skip_md5_cache = true
 # NOTE: please consider to write fundamental changes to the commandline start scripts
 # and all other launchers too
 #####################################################################################
-jvmarg = -Xms64m 
+jvmarg = -XX:+IgnoreUnrecognizedVMOptions
+jvmarg = --add-modules=java.xml.ws
+jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = [windows] -Dsun.java2d.d3d=false
