@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
@@ -40,9 +39,9 @@ import javax.swing.UIManager;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
 
 /**
@@ -60,7 +59,6 @@ public class ImageLabel extends JLabel {
   }
 
   private static final long                  serialVersionUID       = -2524445544386464158L;
-  protected static final ResourceBundle      BUNDLE                 = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final char                  ICON_ID                = '\uF03E';
   private static final Color                 EMPTY_BACKGROUND_COLOR = new Color(141, 165, 179);
 
@@ -75,6 +73,7 @@ public class ImageLabel extends JLabel {
   protected boolean                          isLightBox             = false;
   protected float                            desiredAspectRatio     = 0f;
   protected boolean                          drawShadow             = false;
+  protected boolean                          cacheUrl               = false;
 
   protected SwingWorker<BufferedImage, Void> worker                 = null;
   protected MouseListener                    lightboxListener       = null;
@@ -382,6 +381,16 @@ public class ImageLabel extends JLabel {
     this.isLightBox = value;
   }
 
+  /**
+   * should the url get cached for this session
+   * 
+   * @param cacheUrl
+   *          true if the image behind this url should be cache in this session
+   */
+  public void setCacheUrl(boolean cacheUrl) {
+    this.cacheUrl = cacheUrl;
+  }
+
   /*
    * inner class for downloading online images
    */
@@ -395,7 +404,13 @@ public class ImageLabel extends JLabel {
     @Override
     protected BufferedImage doInBackground() {
       try {
-        Url url = new Url(imageUrl);
+        Url url;
+        if (cacheUrl) {
+          url = new CachedUrl(imageUrl);
+        }
+        else {
+          url = new Url(imageUrl);
+        }
         return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
             Scalr.OP_ANTIALIAS);
       }

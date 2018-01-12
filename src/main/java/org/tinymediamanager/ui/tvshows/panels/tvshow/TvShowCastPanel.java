@@ -72,6 +72,9 @@ public class TvShowCastPanel extends JPanel {
 
     initComponents();
 
+    lblActorImage.enableLightbox();
+    lblActorImage.setCacheUrl(true);
+
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();

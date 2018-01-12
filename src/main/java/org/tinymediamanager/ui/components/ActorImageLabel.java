@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.components;
 import java.awt.Graphics;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ResourceBundle;
 
 import javax.swing.SwingWorker;
 
@@ -26,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class ActorImageLabel.
@@ -36,7 +34,6 @@ import org.tinymediamanager.ui.UTF8Control;
 public class ActorImageLabel extends ImageLabel {
 
   private static final long           serialVersionUID = -1768796209645569296L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   protected SwingWorker<Void, Void>   actorWorker      = null;
   protected MediaEntity               mediaEntity      = null;
@@ -64,9 +61,9 @@ public class ActorImageLabel extends ImageLabel {
     }
 
     scaledImage = null;
-    this.repaint();
 
     if (StringUtils.isEmpty(newValue)) {
+      this.repaint();
       return;
     }
 
@@ -80,6 +77,7 @@ public class ActorImageLabel extends ImageLabel {
 
       worker = new ImageFetcher(this.getSize());
       worker.execute();
+      this.repaint();
     }
     else {
       scaledImage = null;
@@ -120,7 +118,7 @@ public class ActorImageLabel extends ImageLabel {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       // set file (or cached one) if existent
       String actorImageFilename = actor.getNameForStorage();
       if (StringUtils.isNotBlank(actorImageFilename)) {

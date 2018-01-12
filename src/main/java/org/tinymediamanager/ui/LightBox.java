@@ -76,13 +76,14 @@ public class LightBox {
     image.setPreferCache(false);
     image.setIsLightbox(true);
     image.setPosition(Position.CENTER);
+    image.setCacheUrl(true);
 
     // run later to avoid strange loading artefacts
     SwingUtilities.invokeLater(() -> {
       if (StringUtils.isNotBlank(path)) {
         image.setImagePath(path);
       }
-      else if (StringUtils.isBlank(url)) {
+      else if (StringUtils.isNotBlank(url)) {
         image.setImageUrl(url);
       }
     });

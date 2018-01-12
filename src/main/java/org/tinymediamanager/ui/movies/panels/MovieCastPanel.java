@@ -76,6 +76,9 @@ public class MovieCastPanel extends JPanel {
     initComponents();
     initDataBindings();
 
+    lblActorThumb.enableLightbox();
+    lblActorThumb.setCacheUrl(true);
+
     tableProducer.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
     tableProducer.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
     tableActors.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
