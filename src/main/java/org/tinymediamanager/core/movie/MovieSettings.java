@@ -81,10 +81,10 @@ public class MovieSettings extends AbstractSettings {
   private final static String              ARTWORK_SCRAPERS                    = "artworkScrapers";
   private final static String              TRAILER_SCRAPERS                    = "trailerScrapers";
   private final static String              SUBTITLE_SCRAPERS                   = "subtitleScrapers";
-  private final static String              BAD_WORDS                           = "badWords";
+  private final static String              BAD_WORD                            = "badWord";
   private final static String              UI_FILTERS                          = "uiFilters";
   private final static String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
-  private final static String              SKIP_FOLDERS                        = "skipFolders";
+  private final static String              SKIP_FOLDER                         = "skipFolder";
 
   private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<String>());
   private final List<MovieNfoNaming>       nfoFilenames                        = new ArrayList<>();
@@ -695,18 +695,18 @@ public class MovieSettings extends AbstractSettings {
   public void addSkipFolder(String newValue) {
     if (!skipFolders.contains(newValue)) {
       skipFolders.add(newValue);
-      firePropertyChange(SKIP_FOLDERS, null, skipFolders);
+      firePropertyChange(SKIP_FOLDER, null, skipFolders);
     }
   }
 
   public void removeSkipFolder(String newValue) {
     if (skipFolders.contains(newValue)) {
       skipFolders.remove(newValue);
-      firePropertyChange(SKIP_FOLDERS, null, skipFolders);
+      firePropertyChange(SKIP_FOLDER, null, skipFolders);
     }
   }
 
-  public List<String> getSkipFolders() {
+  public List<String> getSkipFolder() {
     return skipFolders;
   }
 
@@ -919,16 +919,16 @@ public class MovieSettings extends AbstractSettings {
   public void addBadWord(String badWord) {
     if (!badWords.contains(badWord.toLowerCase(Locale.ROOT))) {
       badWords.add(badWord.toLowerCase(Locale.ROOT));
-      firePropertyChange(BAD_WORDS, null, badWords);
+      firePropertyChange(BAD_WORD, null, badWords);
     }
   }
 
   public void removeBadWord(String badWord) {
     badWords.remove(badWord.toLowerCase(Locale.ROOT));
-    firePropertyChange(BAD_WORDS, null, badWords);
+    firePropertyChange(BAD_WORD, null, badWords);
   }
 
-  public List<String> getBadWords() {
+  public List<String> getBadWord() {
     // convert to lowercase for easy contains checking
     ListIterator<String> iterator = badWords.listIterator();
     while (iterator.hasNext()) {

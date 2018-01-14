@@ -114,7 +114,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     btnRemoveIgnore.addActionListener(e -> {
       int row = listIgnore.getSelectedIndex();
       if (row != -1) { // nothing selected
-        String ingore = settings.getSkipFolders().get(row);
+        String ingore = settings.getSkipFolder().get(row);
         settings.removeSkipFolder(ingore);
       }
     });
@@ -129,7 +129,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     btnRemoveBadWord.addActionListener(arg0 -> {
       int row = listBadWords.getSelectedIndex();
       if (row != -1) {
-        String badWord = MovieModuleManager.SETTINGS.getBadWords().get(row);
+        String badWord = MovieModuleManager.SETTINGS.getBadWord().get(row);
         MovieModuleManager.SETTINGS.removeBadWord(badWord);
       }
     });
@@ -241,7 +241,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_6 = BeanProperty.create("badWords");
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_6 = BeanProperty.create("badWord");
     JListBinding<String, MovieSettings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, listBadWords);
     jListBinding.bind();
@@ -251,7 +251,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
         settingsBeanProperty_4, listDataSources);
     jListBinding_1.bind();
     //
-    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_12 = BeanProperty.create("skipFolders");
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_12 = BeanProperty.create("skipFolder");
     JListBinding<String, MovieSettings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();

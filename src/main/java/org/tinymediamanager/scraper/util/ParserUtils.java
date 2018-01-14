@@ -150,7 +150,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.SETTINGS.getBadWords().contains(s[i].toLowerCase(Locale.ROOT))) {
+        if (!MovieModuleManager.SETTINGS.getBadWord().contains(s[i].toLowerCase(Locale.ROOT))) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
           switch (word.toUpperCase(Locale.ROOT)) {
@@ -289,7 +289,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.SETTINGS.getBadWords().contains(s[i].toLowerCase(Locale.ROOT))) {
+        if (!MovieModuleManager.SETTINGS.getBadWord().contains(s[i].toLowerCase(Locale.ROOT))) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
           switch (word.toUpperCase(Locale.ROOT)) {
@@ -371,7 +371,7 @@ public class ParserUtils {
     }
 
     // also remove bad words
-    for (String s : TvShowModuleManager.SETTINGS.getBadWords()) {
+    for (String s : TvShowModuleManager.SETTINGS.getBadWord()) {
       filename = filename.replaceAll("(?i)\\W" + s + "(\\W|$)", " "); // TV bad words must start AND END with a non-word (else too global) or line end
       if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
         LOGGER.trace("Removed some TV bad word (" + s + "): " + before + " -> " + filename);

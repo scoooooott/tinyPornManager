@@ -104,14 +104,14 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
       String path = TmmProperties.getInstance().getProperty("movie.ignore.path"); //$NON-NLS-1$
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
-        settings.addTvShowSkipFolder(file.toAbsolutePath().toString());
+        settings.addSkipFolder(file.toAbsolutePath().toString());
       }
     });
     btnRemoveSkipFolder.addActionListener(e -> {
       int row = listExclude.getSelectedIndex();
       if (row != -1) { // nothing selected
-        String ingore = settings.getSkipFolders().get(row);
-        settings.removeTvShowSkipFolder(ingore);
+        String ingore = settings.getSkipFolder().get(row);
+        settings.removeSkipFolder(ingore);
       }
     });
     btnAddBadWord.addActionListener(e -> {
@@ -123,7 +123,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
     btnRemoveBadWord.addActionListener(arg0 -> {
       int row = listBadWords.getSelectedIndex();
       if (row != -1) {
-        String badWord = TvShowModuleManager.SETTINGS.getBadWords().get(row);
+        String badWord = TvShowModuleManager.SETTINGS.getBadWord().get(row);
         TvShowModuleManager.SETTINGS.removeBadWord(badWord);
       }
     });
@@ -239,12 +239,12 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
         settingsBeanProperty_2, listDatasources);
     jListBinding.bind();
     //
-    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_3 = BeanProperty.create("tvShowSkipFolders");
+    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_3 = BeanProperty.create("skipFolder");
     JListBinding<String, TvShowSettings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, listExclude);
     jListBinding_1.bind();
     //
-    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("badWords");
+    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("badWord");
     JListBinding<String, TvShowSettings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, listBadWords);
     jListBinding_2.bind();

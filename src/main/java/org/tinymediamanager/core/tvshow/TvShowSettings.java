@@ -71,8 +71,8 @@ public class TvShowSettings extends AbstractSettings {
 
   private final static String                  CERTIFICATION_COUNTRY          = "certificationCountry";
   private final static String                  RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
-  private final static String                  BAD_WORDS                      = "badWords";
-  private final static String                  SKIP_FOLDERS                   = "skipFolders";
+  private final static String                  BAD_WORD                       = "badWord";
+  private final static String                  SKIP_FOLDER                    = "skipFolder";
   private final static String                  SUBTITLE_SCRAPERS              = "subtitleScrapers";
   private final static String                  UI_FILTERS                     = "uiFilters";
   private final static String                  NFO_FILENAME                   = "nfoFilename";
@@ -391,37 +391,37 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange("dvdOrder", oldValue, newValue);
   }
 
-  public void addTvShowSkipFolder(String newValue) {
+  public void addSkipFolder(String newValue) {
     if (!skipFolders.contains(newValue)) {
       skipFolders.add(newValue);
-      firePropertyChange(SKIP_FOLDERS, null, skipFolders);
+      firePropertyChange(SKIP_FOLDER, null, skipFolders);
     }
   }
 
-  public void removeTvShowSkipFolder(String newValue) {
+  public void removeSkipFolder(String newValue) {
     if (skipFolders.contains(newValue)) {
       skipFolders.remove(newValue);
-      firePropertyChange(SKIP_FOLDERS, null, skipFolders);
+      firePropertyChange(SKIP_FOLDER, null, skipFolders);
     }
   }
 
-  public List<String> getSkipFolders() {
+  public List<String> getSkipFolder() {
     return skipFolders;
   }
 
   public void addBadWord(String badWord) {
     if (!badWords.contains(badWord.toLowerCase())) {
       badWords.add(badWord.toLowerCase());
-      firePropertyChange(BAD_WORDS, null, badWords);
+      firePropertyChange(BAD_WORD, null, badWords);
     }
   }
 
   public void removeBadWord(String badWord) {
     badWords.remove(badWord.toLowerCase());
-    firePropertyChange(BAD_WORDS, null, badWords);
+    firePropertyChange(BAD_WORD, null, badWords);
   }
 
-  public List<String> getBadWords() {
+  public List<String> getBadWord() {
     // convert to lowercase for easy contains checking
     ListIterator<String> iterator = badWords.listIterator();
     while (iterator.hasNext()) {

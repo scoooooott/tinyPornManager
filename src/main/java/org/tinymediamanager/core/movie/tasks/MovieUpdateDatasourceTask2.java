@@ -1211,7 +1211,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !MovieModuleManager.SETTINGS.getSkipFolders().contains(path.toFile().getAbsolutePath())) {
+              && !MovieModuleManager.SETTINGS.getSkipFolder().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -1239,7 +1239,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !MovieModuleManager.SETTINGS.getSkipFolders().contains(path.toFile().getAbsolutePath())) {
+            && !MovieModuleManager.SETTINGS.getSkipFolder().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -1289,7 +1289,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
-          || MovieModuleManager.SETTINGS.getSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
@@ -1367,7 +1367,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase(Locale.ROOT);
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
-          || Files.exists(dir.resolve(".nomedia")) || MovieModuleManager.SETTINGS.getSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || Files.exists(dir.resolve(".nomedia")) || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
