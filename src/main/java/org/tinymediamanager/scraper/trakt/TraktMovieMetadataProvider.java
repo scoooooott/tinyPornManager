@@ -214,57 +214,121 @@ class TraktMovieMetadataProvider {
     if (credits != null) {
       for (CastMember cast : ListUtils.nullSafe(credits.cast)) {
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
+        cm.setId(TraktMetadataProvider.providerInfo.getId(), cast.person.ids.trakt);
+        cm.setId(MediaMetadata.IMDB, cast.person.ids.imdb);
+        cm.setId(MediaMetadata.TMDB, cast.person.ids.tmdb);
         cm.setName(cast.person.name);
         cm.setCharacter(cast.character);
+
+        if (StringUtils.isNotBlank(cast.person.ids.slug)) {
+          cm.setProfileUrl("https://trakt.tv/people/" + cast.person.ids.slug);
+        }
+
         md.addCastMember(cm);
       }
       if (credits.crew != null) {
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.directing)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.production)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.writing)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.costumeAndMakeUp)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.sound)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.camera)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.art)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
+          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
           cm.setName(crew.person.name);
           cm.setPart(crew.job);
+
+          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+          }
+
           md.addCastMember(cm);
         }
       }
