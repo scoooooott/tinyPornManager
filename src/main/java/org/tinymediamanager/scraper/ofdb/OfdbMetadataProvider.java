@@ -323,7 +323,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
             cm.setName(aname);
             String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
             if (!id.isEmpty()) {
-              cm.setId(id);
+              cm.setId(providerInfo.getId(), id);
               // thumb
               // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
               // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
@@ -335,6 +335,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
                 cm.setImageUrl(imgurl);
               }
               catch (Exception e) {
+              }
+              // profile path
+              Element profileAnchor = a.getElementsByAttributeValueStarting("href", "view.php?page=person").first();
+              if (profileAnchor != null) {
+                cm.setProfileUrl(BASE_URL + "/" + profileAnchor.attr("href"));
               }
             }
             String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>").replaceAll("<[^>]*>", "");
