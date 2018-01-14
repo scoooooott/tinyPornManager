@@ -870,74 +870,6 @@ public class TvShowRenamer {
       LOGGER.warn("unable to process token: " + token);
       return token;
     }
-    // String ret = "";
-    // if (show == null) {
-    // show = new TvShow();
-    // }
-    // if (episode == null) {
-    // episode = new TvShowEpisode();
-    // }
-    // MediaFile mf = new MediaFile();
-    // if (episode.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-    // mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
-    // }
-    // switch (token.toUpperCase(Locale.ROOT)) {
-    // // SHOW
-    // case "$N":
-    // ret = show.getTitle();
-    // break;
-    // case "$M":
-    // ret = show.getTitleSortable();
-    // break;
-    // case "$Y":
-    // ret = show.getYear() == 0 ? "" : Integer.toString(show.getYear());
-    // break;
-    //
-    // // EPISODE
-    // case "$1":
-    // ret = String.valueOf(episode.getSeason());
-    // break;
-    // case "$2":
-    // ret = lz(episode.getSeason());
-    // break;
-    // case "$3":
-    // ret = String.valueOf(episode.getDvdSeason());
-    // break;
-    // case "$4":
-    // ret = lz(episode.getDvdSeason());
-    // break;
-    // case "$E":
-    // ret = lz(episode.getEpisode());
-    // break;
-    // case "$D":
-    // ret = lz(episode.getDvdEpisode());
-    // break;
-    // case "$T":
-    // ret = episode.getTitle();
-    // break;
-    // case "$S":
-    // if (episode.getMediaSource() != MediaSource.UNKNOWN) {
-    // ret = episode.getMediaSource().toString();
-    // }
-    // break;
-    //
-    // // MEDIAFILE
-    // case "$R":
-    // ret = mf.getVideoResolution();
-    // break;
-    // case "$A":
-    // ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
-    // break;
-    // case "$V":
-    // ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
-    // break;
-    // case "$F":
-    // ret = mf.getVideoFormat();
-    // break;
-    // default:
-    // break;
-    // }
-    // return ret;
   }
 
   /**
@@ -954,18 +886,7 @@ public class TvShowRenamer {
       return "";
     }
 
-    String newDestination = getTokenValue(show, null, template);
-    // String newDestination = template;
-    //
-    // // replace all $x parameters
-    // Matcher m = token.matcher(template);
-    // while (m.find()) {
-    // String value = getTokenValue(show, null, m.group(1));
-    // newDestination = replaceToken(newDestination, m.group(1), value);
-    // }
-
-    newDestination = cleanupDestination(newDestination);
-    return newDestination;
+    return cleanupDestination(getTokenValue(show, null, template));
   }
 
   /**
@@ -1163,6 +1084,12 @@ public class TvShowRenamer {
 
     // replace trailing dots and spaces
     destination = destination.replaceAll("[ \\.]+$", "");
+
+    // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
+
+    destination = destination.replaceAll(": ", " - "); // nicer
+    destination = destination.replaceAll(":", "-"); // nicer
+    destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
 
     return destination.trim();
   }
