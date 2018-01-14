@@ -322,6 +322,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     for (Actor actor : actors) {
       MediaCastMember member = new MediaCastMember(CastType.ACTOR);
+      member.setId(providerInfo.getId(), actor.getId());
       member.setName(actor.getName());
       member.setCharacter(actor.getRole());
       member.setImageUrl(actor.getImage());
