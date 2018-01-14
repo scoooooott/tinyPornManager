@@ -627,11 +627,15 @@ class TmdbMovieMetadataProvider {
       for (CastMember castMember : ListUtils.nullSafe(movie.credits.cast)) {
         MediaCastMember cm = new MediaCastMember();
         cm.setType(MediaCastMember.CastType.ACTOR);
+        cm.setId(providerInfo.getId(), castMember.id);
         cm.setCharacter(castMember.character);
         cm.setName(castMember.name);
 
         if (!StringUtils.isEmpty(castMember.profile_path)) {
           cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
+        }
+        if (castMember.id != null) {
+          cm.setProfileUrl("https://www.themoviedb.org/person/" + castMember.id);
         }
         md.addCastMember(cm);
       }
@@ -654,11 +658,16 @@ class TmdbMovieMetadataProvider {
         else {
           continue;
         }
+        cm.setId(providerInfo.getId(), crewMember.id);
         cm.setName(crewMember.name);
 
         if (!StringUtils.isEmpty(crewMember.profile_path)) {
           cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + crewMember.profile_path);
         }
+        if (crewMember.id != null) {
+          cm.setProfileUrl("https://www.themoviedb.org/person/" + crewMember.id);
+        }
+
         md.addCastMember(cm);
       }
     }

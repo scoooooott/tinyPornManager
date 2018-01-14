@@ -51,6 +51,7 @@ import com.uwetrottmann.tmdb2.entities.BaseTvEpisode;
 import com.uwetrottmann.tmdb2.entities.BaseTvShow;
 import com.uwetrottmann.tmdb2.entities.CastMember;
 import com.uwetrottmann.tmdb2.entities.ContentRating;
+import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.entities.TvShow;
@@ -300,13 +301,18 @@ class TmdbTvShowMetadataProvider {
     if (complete.credits != null) {
       for (CastMember castMember : ListUtils.nullSafe(complete.credits.cast)) {
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
+        cm.setId(providerInfo.getId(), castMember.id);
         cm.setName(castMember.name);
         cm.setCharacter(castMember.character);
-        md.addCastMember(cm);
+        if (castMember.id != null) {
+          cm.setProfileUrl("https://www.themoviedb.org/person/" + castMember.id);
+        }
 
         if (!StringUtils.isEmpty(castMember.profile_path)) {
           cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
         }
+
+        md.addCastMember(cm);
       }
     }
 
@@ -487,13 +493,49 @@ class TmdbTvShowMetadataProvider {
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
       MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
+      cm.setId(providerInfo.getId(), castMember.id);
       cm.setName(castMember.name);
       cm.setCharacter(castMember.character);
-      md.addCastMember(cm);
+      if (castMember.id != null) {
+        cm.setProfileUrl("https://www.themoviedb.org/person/" + castMember.id);
+      }
 
       if (!StringUtils.isEmpty(castMember.profile_path)) {
         cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
       }
+
+      md.addCastMember(cm);
+    }
+
+    // crew
+    for (CrewMember crewMember : ListUtils.nullSafe(episode.crew)) {
+      MediaCastMember cm = new MediaCastMember();
+      if ("Director".equals(crewMember.job)) {
+        cm.setType(MediaCastMember.CastType.DIRECTOR);
+        cm.setPart(crewMember.department);
+      }
+      else if ("Writing".equals(crewMember.department)) {
+        cm.setType(MediaCastMember.CastType.WRITER);
+        cm.setPart(crewMember.department);
+      }
+      else if ("Production".equals(crewMember.department)) {
+        cm.setType(MediaCastMember.CastType.PRODUCER);
+        cm.setPart(crewMember.job);
+      }
+      else {
+        continue;
+      }
+      cm.setId(providerInfo.getId(), crewMember.id);
+      cm.setName(crewMember.name);
+
+      if (!StringUtils.isEmpty(crewMember.profile_path)) {
+        cm.setImageUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + crewMember.profile_path);
+      }
+      if (crewMember.id != null) {
+        cm.setProfileUrl("https://www.themoviedb.org/person/" + crewMember.id);
+      }
+
+      md.addCastMember(cm);
     }
 
     // Thumb
