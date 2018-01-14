@@ -15,8 +15,8 @@
  */
 package org.tinymediamanager.scraper.entities;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -47,14 +47,14 @@ public class MediaCastMember {
     PRODUCER
   }
 
-  private String       id;
-  private String       name;
-  private String       character;
-  private String       part;
-  private String       providerDataUrl;
-  private String       imageUrl;
-  private CastType     type;
-  private List<String> fanart = new LinkedList<>();
+  private String                    name       = "";
+  private String                    character  = "";
+  private String                    part       = "";
+  private String                    imageUrl   = "";
+  private String                    profileUrl = "";
+  private CastType                  type;
+
+  protected HashMap<String, Object> ids        = new HashMap<>(0);
 
   public MediaCastMember() {
   }
@@ -63,18 +63,61 @@ public class MediaCastMember {
     setType(type);
   }
 
-  public String getId() {
-    return id;
+  /**
+   * set the given ID; if the value is zero/"" or null, the key is removed from the existing keys
+   *
+   * @param key
+   *          the ID-key
+   * @param value
+   *          the ID-value
+   */
+  public void setId(String key, Object value) {
+    // remove ID, if empty/0/null
+    // if we only skipped it, the existing entry will stay although someone changed it to empty.
+    String v = String.valueOf(value);
+    if ("".equals(v) || "0".equals(v) || "null".equals(v)) {
+      ids.remove(key);
+    }
+    else {
+      ids.put(key, value);
+    }
   }
 
-  public void setId(String id) {
-    this.id = id;
+  /**
+   * get the given id
+   *
+   * @param key
+   *          the ID-key
+   * @return
+   */
+  public Object getId(String key) {
+    return ids.get(key);
   }
 
+  /**
+   * get all ID for this object. These are the IDs from the various scraper
+   *
+   * @return a map of all IDs
+   */
+  public Map<String, Object> getIds() {
+    return ids;
+  }
+
+  /**
+   * get the name for that cast member
+   * 
+   * @return the name of that cast member
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * set the name of that cast member
+   * 
+   * @param name
+   *          the name of that cast member
+   */
   public void setName(String name) {
     this.name = StrgUtils.getNonNullString(name);
   }
@@ -98,24 +141,23 @@ public class MediaCastMember {
     this.part = StrgUtils.getNonNullString(part);
   }
 
-  public String getProviderDataUrl() {
-    return providerDataUrl;
-  }
-
-  public void setProviderDataUrl(String providerDataUrl) {
-    this.providerDataUrl = StrgUtils.getNonNullString(providerDataUrl);
-  }
-
+  /**
+   * get the type of the cast member
+   * 
+   * @return the cast member type
+   */
   public CastType getType() {
     return type;
   }
 
+  /**
+   * set the cast member type
+   * 
+   * @param type
+   *          the cast member type
+   */
   public void setType(CastType type) {
     this.type = type;
-  }
-
-  public void addFanart(String url) {
-    fanart.add(StrgUtils.getNonNullString(url).trim());
   }
 
   /**
@@ -137,12 +179,42 @@ public class MediaCastMember {
     this.character = StrgUtils.getNonNullString(character);
   }
 
+  /**
+   * get the image url of that cast member
+   * 
+   * @return the image url or an empty string
+   */
   public String getImageUrl() {
     return imageUrl;
   }
 
+  /**
+   * set the image url of that cast member
+   * 
+   * @param imageUrl
+   *          the image url
+   */
   public void setImageUrl(String imageUrl) {
     this.imageUrl = StrgUtils.getNonNullString(imageUrl);
+  }
+
+  /**
+   * get the profile url of that cast member
+   * 
+   * @return the profile url or an empty string
+   */
+  public String getProfileUrl() {
+    return profileUrl;
+  }
+
+  /**
+   * set the profile url of that cast member
+   * 
+   * @param profileUrl
+   *          the profile url
+   */
+  public void setProfileUrl(String profileUrl) {
+    this.profileUrl = profileUrl;
   }
 
   /**
