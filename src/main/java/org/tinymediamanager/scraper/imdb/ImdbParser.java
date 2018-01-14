@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.imdb;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -62,11 +63,12 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner
  */
 public abstract class ImdbParser {
-  protected static final Pattern IMDB_ID_PATTERN = Pattern.compile("/title/(tt[0-9]{7})/");
+  protected static final Pattern IMDB_ID_PATTERN   = Pattern.compile("/title/(tt[0-9]{7})/");
+  protected static final Pattern PERSON_ID_PATTERN = Pattern.compile("/name/(nm[0-9]{7})/");
   protected final MediaType      type;
-  protected SimpleDateFormat     sdf1            = new SimpleDateFormat("d MMMM yyyy", Locale.US);
-  protected SimpleDateFormat     sdf2            = new SimpleDateFormat("MMMM yyyy", Locale.US);
-  protected SimpleDateFormat     sdf3            = new SimpleDateFormat("d MMM. yyyy", Locale.US);
+  protected SimpleDateFormat     sdf1              = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+  protected SimpleDateFormat     sdf2              = new SimpleDateFormat("MMMM yyyy", Locale.US);
+  protected SimpleDateFormat     sdf3              = new SimpleDateFormat("d MMM. yyyy", Locale.US);
 
   protected ImdbParser(MediaType type) {
     this.type = type;
@@ -679,6 +681,19 @@ public abstract class ImdbParser {
 
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
         cm.setName(director);
+        // profile path
+        Element anchor = directorElement.getElementsByAttributeValueStarting("href", "/name/").first();
+        if (anchor != null) {
+          Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+          if (matcher.find()) {
+            if (matcher.group(0) != null) {
+              cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+            }
+            if (matcher.group(1) != null) {
+              cm.setId(providerInfo.getId(), matcher.group(1));
+            }
+          }
+        }
         md.addCastMember(cm);
       }
     }
@@ -711,6 +726,19 @@ public abstract class ImdbParser {
         String writer = cleanString(writerElement.ownText());
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
         cm.setName(writer);
+        // profile path
+        Element anchor = writerElement.getElementsByAttributeValueStarting("href", "/name/").first();
+        if (anchor != null) {
+          Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+          if (matcher.find()) {
+            if (matcher.group(0) != null) {
+              cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+            }
+            if (matcher.group(1) != null) {
+              cm.setId(providerInfo.getId(), matcher.group(1));
+            }
+          }
+        }
         md.addCastMember(cm);
       }
     }
@@ -856,10 +884,28 @@ public abstract class ImdbParser {
       }
     }
 
+    // profile path
+    String profilePath = "";
+    String id = "";
+    Element anchor = row.getElementsByAttributeValueStarting("href", "/name/").first();
+    if (anchor != null) {
+      Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+      if (matcher.find()) {
+        if (matcher.group(0) != null) {
+          profilePath = "http://www.imdb.com" + matcher.group(0);
+        }
+        if (matcher.group(1) != null) {
+          id = matcher.group(1);
+        }
+      }
+    }
+
     MediaCastMember cm = new MediaCastMember();
+    cm.setId(providerInfo.getId(), id);
     cm.setCharacter(characterName);
     cm.setName(name);
     cm.setImageUrl(image);
+    cm.setProfileUrl(profilePath);
     return cm;
   }
 

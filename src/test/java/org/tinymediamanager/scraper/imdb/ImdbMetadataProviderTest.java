@@ -363,6 +363,7 @@ public class ImdbMetadataProviderTest {
       cm.setName("Christopher Plummer");
       cm.setCharacter("#1");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SX400_.jpg");
+      cm.setProfileUrl("http://www.imdb.com/name/nm0001626/");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
@@ -370,6 +371,7 @@ public class ImdbMetadataProviderTest {
       cm.setName("Martin Landau");
       cm.setCharacter("#2");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SX400_.jpg");
+      cm.setProfileUrl("http://www.imdb.com/name/nm0001445/");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
@@ -431,6 +433,7 @@ public class ImdbMetadataProviderTest {
       cm.setName("Joseph Melito");
       cm.setCharacter("Young Cole");
       cm.setImageUrl("");
+      cm.setProfileUrl("http://www.imdb.com/name/nm0577828/");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
@@ -438,6 +441,7 @@ public class ImdbMetadataProviderTest {
       cm.setName("Bruce Willis");
       cm.setCharacter("James Cole");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMjA0MjMzMTE5OF5BMl5BanBnXkFtZTcwMzQ2ODE3Mw@@._V1._SX400_.jpg");
+      cm.setProfileUrl("http://www.imdb.com/name/nm0000246/");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
@@ -573,7 +577,7 @@ public class ImdbMetadataProviderTest {
       genres.add(MediaGenres.DOCUMENTARY);
       genres.add(MediaGenres.BIOGRAPHY);
       genres.add(MediaGenres.COMEDY);
-      ;
+
       checkGenres(genres, md);
 
       // check plot
@@ -700,8 +704,15 @@ public class ImdbMetadataProviderTest {
       assertEquals("character", expected.getCharacter(), actual.getCharacter());
 
       // thumb
-      // changes some time; cannot check here
-      // assertNotEquals("thumb", "", actual.getImageUrl());
+      if (StringUtils.isNotBlank(expected.getImageUrl())) {
+        // image may be hosted on a differnent CDN; just check if it is not empty
+        assertNotEquals("thumb", "", actual.getImageUrl());
+      }
+
+      // profile path
+      if (StringUtils.isNotBlank(expected.getProfileUrl())) {
+        assertEquals("profile", expected.getProfileUrl(), actual.getProfileUrl());
+      }
     }
   }
 
