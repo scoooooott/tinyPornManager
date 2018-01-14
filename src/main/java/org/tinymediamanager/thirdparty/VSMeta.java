@@ -1,9 +1,5 @@
 package org.tinymediamanager.thirdparty;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.WRITER;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -402,18 +398,15 @@ public class VSMeta {
     for (MediaCastMember mcm : cast) {
       switch (mcm.getType()) {
         case ACTOR:
-          Person actor = new Person(ACTOR, mcm.getName(), mcm.getCharacter());
-          m.addActor(actor);
+          m.addActor(new Person(mcm));
           break;
 
         case DIRECTOR:
-          Person director = new Person(DIRECTOR, mcm.getName(), "Director");
-          m.addDirector(director);
+          m.addDirector(new Person(mcm));
           break;
 
         case WRITER:
-          Person writer = new Person(WRITER, mcm.getName(), "Writer");
-          m.addDirector(writer);
+          m.addDirector(new Person(mcm));
           break;
 
         default:
@@ -450,18 +443,15 @@ public class VSMeta {
     for (MediaCastMember mcm : cast) {
       switch (mcm.getType()) {
         case ACTOR:
-          Person actor = new Person(ACTOR, mcm.getName(), mcm.getCharacter());
-          ep.addActor(actor);
+          ep.addActor(new Person(mcm));
           break;
 
         case DIRECTOR:
-          Person director = new Person(DIRECTOR, mcm.getName(), "Director");
-          ep.addDirector(director);
+          ep.addDirector(new Person(mcm));
           break;
 
         case WRITER:
-          Person writer = new Person(WRITER, mcm.getName(), "Writer");
-          ep.addWriter(writer);
+          ep.addWriter(new Person(mcm));
           break;
 
         default:

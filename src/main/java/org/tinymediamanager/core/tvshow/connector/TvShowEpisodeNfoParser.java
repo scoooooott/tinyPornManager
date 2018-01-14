@@ -16,6 +16,10 @@
 
 package org.tinymediamanager.core.tvshow.connector;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -914,6 +918,10 @@ public class TvShowEpisodeNfoParser {
             case "thumb":
               actor.thumb = child.ownText();
               break;
+
+            case "profile":
+              actor.profile = child.ownText();
+              break;
           }
         }
         if (StringUtils.isNotBlank(actor.name)) {
@@ -1254,24 +1262,21 @@ public class TvShowEpisodeNfoParser {
       episode.setMediaSource(source);
 
       for (Person actor : actors) {
-        org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(
-            org.tinymediamanager.core.entities.Person.Type.ACTOR, actor.name, actor.role);
-        cast.setThumbUrl(actor.thumb);
-        episode.addActor(cast);
+        episode.addActor(morphPerson(ACTOR, actor));
       }
 
       for (Person director : directors) {
-        org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(
-            org.tinymediamanager.core.entities.Person.Type.DIRECTOR, director.name, "Director");
-        cast.setThumbUrl(director.thumb);
-        episode.addDirector(cast);
+        if (StringUtils.isBlank(director.role)) {
+          director.role = "Director";
+        }
+        episode.addDirector(morphPerson(DIRECTOR, director));
       }
 
       for (Person writer : credits) {
-        org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(
-            org.tinymediamanager.core.entities.Person.Type.WRITER, writer.name, "Writer");
-        cast.setThumbUrl(writer.thumb);
-        episode.addWriter(cast);
+        if (StringUtils.isBlank(writer.role)) {
+          writer.role = "Writer";
+        }
+        episode.addWriter(morphPerson(WRITER, writer));
       }
 
       for (String tag : tags) {
@@ -1279,6 +1284,17 @@ public class TvShowEpisodeNfoParser {
       }
 
       return episode;
+    }
+
+    private org.tinymediamanager.core.entities.Person morphPerson(org.tinymediamanager.core.entities.Person.Type type, Person nfoPerson) {
+      org.tinymediamanager.core.entities.Person person = new org.tinymediamanager.core.entities.Person(type);
+
+      person.setName(nfoPerson.name);
+      person.setRole(nfoPerson.role);
+      person.setThumbUrl(nfoPerson.thumb);
+      person.setProfileUrl(nfoPerson.profile);
+
+      return person;
     }
   }
 
@@ -1296,9 +1312,10 @@ public class TvShowEpisodeNfoParser {
   }
 
   public static class Person {
-    public String name  = "";
-    public String role  = "";
-    public String thumb = "";
+    public String name    = "";
+    public String role    = "";
+    public String thumb   = "";
+    public String profile = "";
   }
 
   public static class Fileinfo {

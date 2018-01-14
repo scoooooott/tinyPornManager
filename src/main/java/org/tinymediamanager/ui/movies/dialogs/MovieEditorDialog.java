@@ -278,27 +278,19 @@ public class MovieEditorDialog extends TmmDialog {
       spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
 
       for (Person origCast : movieToEdit.getActors()) {
-        Person actor = new Person(Person.Type.ACTOR, origCast.getName(), origCast.getRole());
-        actor.setThumbUrl(origCast.getThumbUrl());
-        cast.add(actor);
+        cast.add(new Person(origCast));
       }
 
       for (Person origProducer : movieToEdit.getProducers()) {
-        Person producer = new Person(Person.Type.PRODUCER, origProducer.getName(), origProducer.getRole());
-        producer.setThumbUrl(origProducer.getThumbUrl());
-        producers.add(producer);
+        producers.add(new Person(origProducer));
       }
 
       for (Person origDirector : movieToEdit.getDirectors()) {
-        Person director = new Person(Person.Type.DIRECTOR, origDirector.getName(), origDirector.getRole());
-        director.setThumbUrl(origDirector.getThumbUrl());
-        directors.add(director);
+        directors.add(new Person(origDirector));
       }
 
       for (Person origWriter : movieToEdit.getWriters()) {
-        Person writer = new Person(Person.Type.WRITER, origWriter.getName(), origWriter.getRole());
-        writer.setThumbUrl(origWriter.getThumbUrl());
-        writers.add(writer);
+        writers.add(new Person(origWriter));
       }
 
       genres.addAll(movieToEdit.getGenres());

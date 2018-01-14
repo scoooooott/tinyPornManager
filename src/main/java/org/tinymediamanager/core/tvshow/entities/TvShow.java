@@ -37,7 +37,6 @@ import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.TVDB;
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -764,9 +763,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
-            actor.setThumbUrl(member.getImageUrl());
-            actors.add(actor);
+            actors.add(new Person(member));
             break;
 
           default:

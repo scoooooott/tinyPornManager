@@ -15,10 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.WRITER;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -211,9 +207,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       cbMediaSource.setSelectedItem(episodeToEdit.getMediaSource());
 
       for (Person origCast : episodeToEdit.getGuests()) {
-        Person actor = new Person(ACTOR, origCast.getName(), origCast.getRole());
-        actor.setThumbUrl(origCast.getThumbUrl());
-        guests.add(actor);
+        guests.add(new Person(origCast));
       }
 
       tags.addAll(episodeToEdit.getTags());
@@ -641,21 +635,15 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         for (MediaCastMember member : metadata.getCastMembers()) {
           switch (member.getType()) {
             case ACTOR:
-              Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
-              actor.setThumbUrl(member.getImageUrl());
-              guests.add(actor);
+              guests.add(new Person(member));
               break;
 
             case DIRECTOR:
-              Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
-              director.setThumbUrl(member.getImageUrl());
-              directors.add(director);
+              directors.add(new Person(member));
               break;
 
             case WRITER:
-              Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
-              writer.setThumbUrl(member.getImageUrl());
-              writers.add(writer);
+              writers.add(new Person(member));
               break;
 
             default:
@@ -835,21 +823,15 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           for (MediaCastMember member : metadata.getCastMembers()) {
             switch (member.getType()) {
               case ACTOR:
-                Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
-                actor.setThumbUrl(member.getImageUrl());
-                guests.add(actor);
+                guests.add(new Person(member));
                 break;
 
               case DIRECTOR:
-                Person director = new Person(DIRECTOR, member.getName(), member.getPart());
-                director.setThumbUrl(member.getImageUrl());
-                directors.add(director);
+                directors.add(new Person(member));
                 break;
 
               case WRITER:
-                Person writer = new Person(WRITER, member.getName(), member.getPart());
-                writer.setThumbUrl(member.getImageUrl());
-                writers.add(writer);
+                writers.add(new Person(member));
                 break;
 
               default:

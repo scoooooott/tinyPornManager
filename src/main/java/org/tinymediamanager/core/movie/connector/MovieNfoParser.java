@@ -939,6 +939,9 @@ public class MovieNfoParser {
           case "thumb":
             actor.thumb = child.ownText();
             break;
+
+          case "profile":
+            actor.profile = child.ownText();
         }
       }
       if (StringUtils.isNotBlank(actor.name)) {
@@ -1402,25 +1405,25 @@ public class MovieNfoParser {
     movie.setSortTitle(sorttitle);
 
     for (Person actor : actors) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(ACTOR, actor.name, actor.role);
-      cast.setThumbUrl(actor.thumb);
-      movie.addActor(cast);
+      movie.addActor(morphPerson(ACTOR, actor));
     }
 
     for (Person producer : producers) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(PRODUCER, producer.name, producer.role);
-      cast.setThumbUrl(producer.thumb);
-      movie.addProducer(cast);
+      movie.addProducer(morphPerson(PRODUCER, producer));
     }
 
     for (Person director : directors) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(DIRECTOR, director.name, "Director");
-      movie.addDirector(cast);
+      if (StringUtils.isBlank(director.role)) {
+        director.role = "Director";
+      }
+      movie.addDirector(morphPerson(DIRECTOR, director));
     }
 
     for (Person writer : credits) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(WRITER, writer.name, "Writer");
-      movie.addWriter(cast);
+      if (StringUtils.isBlank(writer.role)) {
+        writer.role = "Writer";
+      }
+      movie.addWriter(morphPerson(WRITER, writer));
     }
 
     for (MediaGenres genre : genres) {
@@ -1447,6 +1450,17 @@ public class MovieNfoParser {
     return movie;
   }
 
+  private org.tinymediamanager.core.entities.Person morphPerson(org.tinymediamanager.core.entities.Person.Type type, Person nfoPerson) {
+    org.tinymediamanager.core.entities.Person person = new org.tinymediamanager.core.entities.Person(type);
+
+    person.setName(nfoPerson.name);
+    person.setRole(nfoPerson.role);
+    person.setThumbUrl(nfoPerson.thumb);
+    person.setProfileUrl(nfoPerson.profile);
+
+    return person;
+  }
+
   /*
    * entity classes
    */
@@ -1463,9 +1477,10 @@ public class MovieNfoParser {
   }
 
   public static class Person {
-    public String name  = "";
-    public String role  = "";
-    public String thumb = "";
+    public String name    = "";
+    public String role    = "";
+    public String thumb   = "";
+    public String profile = "";
   }
 
   public static class Fileinfo {

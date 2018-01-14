@@ -238,9 +238,7 @@ public class TvShowEditorDialog extends TmmDialog {
       cbCertification.setSelectedItem(tvShow.getCertification());
 
       for (Person origCast : tvShow.getActors()) {
-        Person actor = new Person(ACTOR, origCast.getName(), origCast.getRole());
-        actor.setThumbUrl(origCast.getThumbUrl());
-        actors.add(actor);
+        actors.add(new Person(origCast));
       }
       lblBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
       lblFanart.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));

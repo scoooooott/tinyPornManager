@@ -28,9 +28,15 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
@@ -44,7 +50,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  *
  * @author Manuel Laggner
  */
-public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTable {
+public class PersonTable extends TmmTable {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
@@ -69,17 +75,15 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
   public PersonTable(EventList<Person> personEventList, boolean edit) {
     super();
 
-    DefaultEventTableModel<Person> castTableModel = new TmmTableModel<>(GlazedListsSwing.swingThreadProxyList(personEventList),
+    DefaultEventTableModel<Person> personTableModel = new TmmTableModel<>(GlazedListsSwing.swingThreadProxyList(personEventList),
         new PersonTableFormat(edit));
-    setModel(castTableModel);
+    setModel(personTableModel);
     // init();
 
     adjustColumnPreferredWidths(3);
-    if (edit) {
-      PersonTableButtonListener listener = new PersonTableButtonListener(this, personEventList, BUNDLE.getString("cast.edit"));
-      addMouseListener(listener);
-      addMouseMotionListener(listener);
-    }
+    PersonTableButtonListener listener = new PersonTableButtonListener(this, personEventList, BUNDLE.getString("cast.edit"));
+    addMouseListener(listener);
+    addMouseMotionListener(listener);
   }
 
   /**
@@ -115,6 +119,19 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
       addColumn(col);
 
       /*
+       * profile
+       */
+      col = new Column(BUNDLE.getString("profile.url"), "profileUrl", person -> {
+        if (StringUtils.isNotBlank(person.getProfileUrl())) {
+          return IconManager.DOT_AVAILABLE;
+        }
+        return IconManager.DOT_UNAVAILABLE;
+      }, ImageIcon.class);
+      col.setColumnResizeable(false);
+      col.setHeaderIcon(IconManager.IDCARD);
+      addColumn(col);
+
+      /*
        * edit
        */
       if (edit) {
@@ -130,6 +147,7 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
    * helper class for listening to the edit button
    */
   private static class PersonTableButtonListener implements MouseListener, MouseMotionListener {
+    private static final Logger     LOGGER = LoggerFactory.getLogger(PersonTableButtonListener.class);
     private final JTable            personTable;
     private final EventList<Person> personEventList;
     private final String            windowTitle;
@@ -142,14 +160,28 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
 
     @Override
     public void mouseClicked(MouseEvent arg0) {
+      int row = personTable.rowAtPoint(arg0.getPoint());
       int col = personTable.columnAtPoint(arg0.getPoint());
-      if (isEditorColumn(col)) {
-        int row = personTable.rowAtPoint(arg0.getPoint());
+
+      if (isLinkColumn(row, col)) {
         row = personTable.convertRowIndexToModel(row);
         Person person = personEventList.get(row);
+
         if (person != null) {
-          PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(personTable), windowTitle, person);
-          dialog.setVisible(true);
+          if (isEditorColumn(col)) {
+            PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(personTable), windowTitle, person);
+            dialog.setVisible(true);
+          }
+          else if (isProfileColumn(row, col)) {
+            try {
+              TmmUIHelper.browseUrl(person.getProfileUrl());
+            }
+            catch (Exception e1) {
+              LOGGER.error("Donate", e1);
+              MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, person.getProfileUrl(), "message.erroropenurl",
+                  new String[] { ":", e1.getLocalizedMessage() }));
+            }
+          }
         }
       }
     }
@@ -157,8 +189,12 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
     @Override
     public void mouseEntered(MouseEvent e) {
       JTable table = (JTable) e.getSource();
-      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (isEditorColumn(col)) {
+
+      Point point = new Point(e.getX(), e.getY());
+      int row = table.rowAtPoint(point);
+      int col = table.columnAtPoint(point);
+
+      if (isLinkColumn(row, col)) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
@@ -166,8 +202,12 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
     @Override
     public void mouseExited(MouseEvent e) {
       JTable table = (JTable) e.getSource();
-      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (!isEditorColumn(col)) {
+
+      Point point = new Point(e.getX(), e.getY());
+      int row = table.rowAtPoint(point);
+      int col = table.columnAtPoint(point);
+
+      if (!isLinkColumn(row, col)) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     }
@@ -175,12 +215,15 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
     @Override
     public void mouseMoved(MouseEvent e) {
       JTable table = (JTable) e.getSource();
-      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      isEditorColumn(col);
-      if (!isEditorColumn(col) && table.getCursor().getType() == Cursor.HAND_CURSOR) {
+
+      Point point = new Point(e.getX(), e.getY());
+      int row = table.rowAtPoint(point);
+      int col = table.columnAtPoint(point);
+
+      if (!isLinkColumn(row, col) && table.getCursor().getType() == Cursor.HAND_CURSOR) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
-      if (isEditorColumn(col) && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
+      if (isLinkColumn(row, col) && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
@@ -195,6 +238,43 @@ public class PersonTable extends org.tinymediamanager.ui.components.table.TmmTab
 
     @Override
     public void mouseDragged(MouseEvent arg0) {
+    }
+
+    /**
+     * check whether this column is the profile column
+     * 
+     * @param column
+     *          the column
+     * @return true/false
+     */
+    private boolean isLinkColumn(int row, int column) {
+      return isEditorColumn(column) || isProfileColumn(row, column);
+    }
+
+    /**
+     * check whether this column is the profile column
+     *
+     * @param row
+     *          the row index
+     * 
+     * @param column
+     *          the column index
+     * @return true/false
+     */
+    private boolean isProfileColumn(int row, int column) {
+      if (column < 0 || row < 0) {
+        return false;
+      }
+
+      if (!"profileUrl".equals(personTable.getColumnModel().getColumn(column).getIdentifier())) {
+        return false;
+      }
+
+      // check if that person has a profile url
+      row = personTable.convertRowIndexToModel(row);
+      Person person = personEventList.get(row);
+
+      return StringUtils.isNotBlank(person.getProfileUrl());
     }
 
     /**

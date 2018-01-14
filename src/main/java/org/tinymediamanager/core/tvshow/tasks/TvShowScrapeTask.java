@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -202,21 +200,15 @@ public class TvShowScrapeTask extends TmmThreadPool {
                   for (MediaCastMember member : me.getCastMembers()) {
                     switch (member.getType()) {
                       case ACTOR:
-                        Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
-                        actor.setThumbUrl(member.getImageUrl());
-                        actors.add(actor);
+                        actors.add(new Person(member));
                         break;
 
                       case DIRECTOR:
-                        Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
-                        director.setThumbUrl(member.getImageUrl());
-                        directors.add(director);
+                        directors.add(new Person(member));
                         break;
 
                       case WRITER:
-                        Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
-                        writer.setThumbUrl(member.getImageUrl());
-                        writers.add(writer);
+                        writers.add(new Person(member));
                         break;
 
                       default:

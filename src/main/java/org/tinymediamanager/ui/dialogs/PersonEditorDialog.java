@@ -43,6 +43,7 @@ public class PersonEditorDialog extends TmmDialog {
   private JTextField        tfName;
   private JTextField        tfRole;
   private JTextField        tfImageUrl;
+  private JTextField        tfProfileUrl;
 
   public PersonEditorDialog(Window owner, String title, Person person) {
     super(owner, title, "personEditor");
@@ -53,13 +54,14 @@ public class PersonEditorDialog extends TmmDialog {
     tfName.setText(personToEdit.getName());
     tfRole.setText(personToEdit.getRole());
     tfImageUrl.setText(personToEdit.getThumbUrl());
+    tfProfileUrl.setText(personToEdit.getProfileUrl());
   }
 
   private void initComponents() {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent);
-      panelContent.setLayout(new MigLayout("", "[][300lp:n,grow][]", "[][][]"));
+      panelContent.setLayout(new MigLayout("", "[][300lp:n,grow][]", "[][][][]"));
       {
         JLabel lblNameT = new JLabel(BUNDLE.getString("metatag.name"));
         panelContent.add(lblNameT, "cell 0 0,alignx trailing");
@@ -101,6 +103,14 @@ public class PersonEditorDialog extends TmmDialog {
         });
         panelContent.add(btnShowImage, "cell 2 2");
       }
+      {
+        JLabel lblProfileUrlT = new JLabel(BUNDLE.getString("profile.url"));
+        panelContent.add(lblProfileUrlT, "cell 0 3,alignx trailing");
+
+        tfProfileUrl = new JTextField();
+        panelContent.add(tfProfileUrl, "cell 1 3,growx");
+        tfProfileUrl.setColumns(10);
+      }
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
@@ -112,6 +122,7 @@ public class PersonEditorDialog extends TmmDialog {
         personToEdit.setName(tfName.getText());
         personToEdit.setRole(tfRole.getText());
         personToEdit.setThumbUrl(tfImageUrl.getText());
+        personToEdit.setProfileUrl(tfProfileUrl.getText());
         setVisible(false);
       });
       addDefaultButton(btnOk);

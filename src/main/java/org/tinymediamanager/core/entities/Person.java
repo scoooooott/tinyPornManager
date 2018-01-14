@@ -19,14 +19,13 @@ import static org.tinymediamanager.core.Constants.NAME;
 import static org.tinymediamanager.core.Constants.ROLE;
 import static org.tinymediamanager.core.Constants.THUMB;
 
-import java.util.HashMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,16 +47,15 @@ public class Person extends AbstractModelObject {
   }
 
   @JsonProperty
-  private Type                      type       = Type.OTHER;
+  private Type   type       = Type.OTHER;
   @JsonProperty
-  private String                    name       = "";
+  private String name       = "";
   @JsonProperty
-  private String                    role       = "";
+  private String role       = "";
   @JsonProperty
-  private String                    thumbUrl   = "";
-
+  private String thumbUrl   = "";
   @JsonProperty
-  protected HashMap<String, Object> ids        = new HashMap<>(0);
+  private String profileUrl = "";
 
   /**
    * JSON constructor - please do not use
@@ -87,6 +85,47 @@ public class Person extends AbstractModelObject {
     this.thumbUrl = thumbUrl;
   }
 
+  public Person(Type type, String name, String role, String thumbUrl, String profileUrl) {
+    this.type = type;
+    this.name = name;
+    this.role = role;
+    this.thumbUrl = thumbUrl;
+    this.profileUrl = profileUrl;
+  }
+
+  public Person(MediaCastMember mediaCastMember) {
+    this.name = mediaCastMember.getName();
+    this.thumbUrl = mediaCastMember.getImageUrl();
+    this.profileUrl = mediaCastMember.getProfileUrl();
+
+    switch (mediaCastMember.getType()) {
+      case ACTOR:
+        type = Type.ACTOR;
+        role = mediaCastMember.getCharacter();
+        break;
+
+      case DIRECTOR:
+        type = Type.DIRECTOR;
+        role = mediaCastMember.getPart();
+        break;
+
+      case WRITER:
+        type = Type.WRITER;
+        role = mediaCastMember.getPart();
+        break;
+
+      case PRODUCER:
+        type = Type.PRODUCER;
+        role = mediaCastMember.getPart();
+        break;
+
+      default:
+        type = Type.OTHER;
+        role = mediaCastMember.getPart();
+        break;
+    }
+  }
+
   /**
    * copy constructor
    * 
@@ -98,7 +137,7 @@ public class Person extends AbstractModelObject {
     this.name = source.name;
     this.role = source.role;
     this.thumbUrl = source.thumbUrl;
-    this.ids.putAll(source.ids);
+    this.profileUrl = source.profileUrl;
   }
 
   /**
@@ -200,6 +239,25 @@ public class Person extends AbstractModelObject {
   }
 
   /**
+   * get the profile url of that person (or an empty string)
+   * 
+   * @return the profile url or an empty string
+   */
+  public String getProfileUrl() {
+    return profileUrl;
+  }
+
+  /**
+   * set the profile url of that person
+   * 
+   * @param profileUrl
+   *          the profile url
+   */
+  public void setProfileUrl(String profileUrl) {
+    this.profileUrl = profileUrl;
+  }
+
+  /**
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
@@ -221,7 +279,8 @@ public class Person extends AbstractModelObject {
     Person cast = (Person) obj;
 
     // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)
+        && StringUtils.equals(profileUrl, cast.profileUrl)) {
       return true;
     }
 

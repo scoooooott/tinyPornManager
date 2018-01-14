@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * An extension of JLabel which looks like a link and responds appropriately when clicked. Note that this class will only work with Swing 1.1.1 and
  * later. Note that because of the way this class is implemented, getText() will not return correct values, user <code>getNormalText</code> instead.
@@ -37,6 +39,8 @@ import javax.swing.JLabel;
 public class LinkLabel extends JLabel {
   private static final long serialVersionUID = 3762584745632060187L;
 
+  protected String          link;
+
   /**
    * Creates a new LinkLabel with the given text.
    * 
@@ -45,6 +49,7 @@ public class LinkLabel extends JLabel {
    */
   public LinkLabel(String text) {
     super(text);
+    setLink(text);
 
     if (Desktop.isDesktopSupported()) {
       Font font = getFont();
@@ -59,6 +64,32 @@ public class LinkLabel extends JLabel {
   }
 
   /**
+   * Creates a new LinkLabel with the given text.
+   */
+  public LinkLabel() {
+    this(null);
+  }
+
+  /**
+   * set the link target (useful if the text and link differs)
+   * 
+   * @param link
+   *          the link target
+   */
+  public void setLink(String link) {
+    this.link = link;
+  }
+
+  /**
+   * get the link target
+   * 
+   * @return the link target
+   */
+  public String getLink() {
+    return link;
+  }
+
+  /**
    * Processes mouse events and responds to clicks.
    * 
    * @param evt
@@ -67,8 +98,8 @@ public class LinkLabel extends JLabel {
   @Override
   protected void processMouseEvent(MouseEvent evt) {
     super.processMouseEvent(evt);
-    if (evt.getID() == MouseEvent.MOUSE_CLICKED)
-      fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText()));
+    if (evt.getID() == MouseEvent.MOUSE_CLICKED && StringUtils.isNotBlank(getLink()))
+      fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getLink()));
   }
 
   /**

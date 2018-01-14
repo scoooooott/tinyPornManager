@@ -802,27 +802,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            Person actor = new Person(Person.Type.ACTOR, member.getName(), member.getCharacter());
-            actor.setThumbUrl(member.getImageUrl());
-            actors.add(actor);
+            actors.add(new Person(member));
             break;
 
           case DIRECTOR:
-            Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
-            director.setThumbUrl(member.getImageUrl());
-            directors.add(director);
+            directors.add(new Person(member));
             break;
 
           case WRITER:
-            Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
-            writer.setThumbUrl(member.getImageUrl());
-            writers.add(writer);
+            writers.add(new Person(member));
             break;
 
           case PRODUCER:
-            Person producer = new Person(Person.Type.PRODUCER, member.getName(), member.getPart());
-            producer.setThumbUrl(member.getImageUrl());
-            producers.add(producer);
+            producers.add(new Person(member));
             break;
 
           default:

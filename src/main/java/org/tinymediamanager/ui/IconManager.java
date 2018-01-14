@@ -121,6 +121,7 @@ public class IconManager {
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
   public final static ImageIcon            FILE_SIZE                   = createFontAwesomeIcon('\uF0C7', 16);
   public final static ImageIcon            IMAGES                      = createFontAwesomeIcon('\uF302', 16);
+  public final static ImageIcon            IDCARD                      = createFontAwesomeIcon('\uF2C2', 16);
   public final static ImageIcon            NFO                         = createFontAwesomeIcon('\uF15C', 16);
   public final static ImageIcon            RATING                      = createFontAwesomeIcon('\uF005', 16);
   public final static ImageIcon            SEASONS                     = createTextIcon("S", 18);

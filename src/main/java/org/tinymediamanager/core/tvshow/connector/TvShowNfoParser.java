@@ -836,6 +836,10 @@ public class TvShowNfoParser {
           case "thumb":
             actor.thumb = child.ownText();
             break;
+
+          case "profile":
+            actor.profile = child.ownText();
+            break;
         }
       }
       if (StringUtils.isNotBlank(actor.name)) {
@@ -1024,10 +1028,7 @@ public class TvShowNfoParser {
     show.setStatus(status);
 
     for (Person actor : actors) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(
-          org.tinymediamanager.core.entities.Person.Type.ACTOR, actor.name, actor.role);
-      cast.setThumbUrl(actor.thumb);
-      show.addActor(cast);
+      show.addActor(morphPerson(org.tinymediamanager.core.entities.Person.Type.ACTOR, actor));
     }
 
     for (MediaGenres genre : genres) {
@@ -1039,6 +1040,17 @@ public class TvShowNfoParser {
     }
 
     return show;
+  }
+
+  private org.tinymediamanager.core.entities.Person morphPerson(org.tinymediamanager.core.entities.Person.Type type, Person nfoPerson) {
+    org.tinymediamanager.core.entities.Person person = new org.tinymediamanager.core.entities.Person(type);
+
+    person.setName(nfoPerson.name);
+    person.setRole(nfoPerson.role);
+    person.setThumbUrl(nfoPerson.thumb);
+    person.setProfileUrl(nfoPerson.profile);
+
+    return person;
   }
 
   /*
@@ -1055,8 +1067,9 @@ public class TvShowNfoParser {
   }
 
   public static class Person {
-    public String name  = "";
-    public String role  = "";
-    public String thumb = "";
+    public String name    = "";
+    public String role    = "";
+    public String thumb   = "";
+    public String profile = "";
   }
 }

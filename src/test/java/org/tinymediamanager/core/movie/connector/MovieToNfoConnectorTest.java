@@ -262,7 +262,8 @@ public class MovieToNfoConnectorTest {
     movie.addToTags("Disney");
     movie.addToTags("Oriental");
 
-    movie.addActor(new Person(Person.Type.ACTOR, "Scott Weinger", "Aladdin 'Al' (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Scott Weinger", "Aladdin 'Al' (voice)",
+        "https://image.tmdb.org/t/p/w640/rlZpPoORiJzStzIuAyrPOlLhnaL.jpg", "https://www.themoviedb.org/person/15827"));
     movie.addActor(new Person(Person.Type.ACTOR, "Robin Williams", "Genie (voice)"));
 
     movie.addProducer(new Person(Person.Type.PRODUCER, "Ron Clements", "Producer"));

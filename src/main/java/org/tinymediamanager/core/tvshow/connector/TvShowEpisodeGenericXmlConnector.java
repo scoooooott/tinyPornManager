@@ -466,6 +466,10 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
       thumb.setTextContent(tvShowActor.getThumbUrl());
       actor.appendChild(thumb);
 
+      Element profile = document.createElement("profile");
+      profile.setTextContent(tvShowActor.getProfileUrl());
+      actor.appendChild(profile);
+
       root.appendChild(actor);
     }
   }

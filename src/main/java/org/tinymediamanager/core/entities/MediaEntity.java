@@ -538,6 +538,14 @@ public abstract class MediaEntity extends AbstractModelObject {
     return this.duplicate;
   }
 
+  /**
+   * set the given ID; if the value is zero/"" or null, the key is removed from the existing keys
+   *
+   * @param key
+   *          the ID-key
+   * @param value
+   *          the ID-value
+   */
   public void setId(String key, Object value) {
     // remove ID, if empty/0/null
     // if we only skipped it, the existing entry will stay although someone changed it to empty.
@@ -556,6 +564,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
+  /**
+   * remove the given ID
+   * 
+   * @param key
+   *          the ID-key
+   */
   public void removeId(String key) {
     Object obj = ids.remove(key);
     if (obj != null) {
@@ -563,12 +577,21 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
+  /**
+   * get the given id
+   *
+   * @param key
+   *          the ID-key
+   * @return
+   */
   public Object getId(String key) {
     return ids.get(key);
   }
 
   /**
    * any ID as String or empty
+   * 
+   * @return the ID-value as String or an empty string
    */
   public String getIdAsString(String key) {
     Object obj = ids.get(key);
@@ -580,6 +603,8 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /**
    * any ID as int or 0
+   * 
+   * @return the ID-value as int or an empty string
    */
   public int getIdAsInt(String key) {
     int id = 0;

@@ -505,6 +505,10 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
       thumb.setTextContent(movieActor.getThumbUrl());
       actor.appendChild(thumb);
 
+      Element profile = document.createElement("profile");
+      profile.setTextContent(movieActor.getProfileUrl());
+      actor.appendChild(profile);
+
       root.appendChild(actor);
     }
   }
