@@ -277,6 +277,7 @@ public class MediaInfoTest extends BasicTest {
     System.out.println("vid: " + mf.getExactVideoFormat());
     System.out.println("vcodec: " + mf.getVideoCodec());
     System.out.println("vdef: " + mf.getVideoDefinitionCategory());
+    System.out.println("FPS: " + mf.getFrameRate());
     System.out.println("var: " + mf.getAspectRatio());
     System.out.println("ws?: " + mf.isWidescreen());
 

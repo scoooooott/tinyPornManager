@@ -149,6 +149,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @JsonProperty
   private int                                        bitDepth             = 0;
   @JsonProperty
+  private double                                     frameRate            = 0.0d;
+  @JsonProperty
   private int                                        durationInSecs       = 0;
   @JsonProperty
   private int                                        stacking             = 0;
@@ -1309,6 +1311,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return this.overallBitRate + " kbps";
   }
 
+  public double getFrameRate() {
+    return frameRate;
+  }
+
+  public void setFrameRate(double frameRate) {
+    double oldValue = this.frameRate;
+    this.frameRate = frameRate;
+    firePropertyChange("frameRate", oldValue, frameRate);
+  }
+
   /**
    * returns the overall bit depth for this file.
    *
@@ -1723,6 +1735,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       catch (Exception ignored) {
       }
 
+      try {
+        String fr = getMediaInfo(StreamKind.Audio, i, "FrameRate");
+        setFrameRate(Double.parseDouble(fr));
+      }
+      catch (Exception ignored) {
+      }
+
       String language = getMediaInfo(StreamKind.Audio, i, "Language/String", "Language");
       if (language.isEmpty()) {
         if (!isDiscFile()) { // video_ts parsed 'ts' as Tsonga
@@ -1751,6 +1770,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
     setBitDepth(parseToInt(bd));
+
+    try {
+      String fr = getMediaInfo(StreamKind.Video, 0, "FrameRate");
+      setFrameRate(Double.parseDouble(fr));
+    }
+    catch (Exception ignored) {
+    }
 
     if (height == 0 || scanType.isEmpty()) {
       setExactVideoFormat("");
