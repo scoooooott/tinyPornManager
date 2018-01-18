@@ -74,6 +74,7 @@ public class ParserUtilsTest extends BasicTest {
     assertEqual("Wehe Wenn Sie Losgelassen | 1958", detectTY("Wehe.wenn.sie.losgelassen.1958.German.720p.HDTV.x264-AIDA"));
     assertEqual("Wehe Wenn Sie Losgelassen | 1958", detectTY("Wehe.wenn.sie.losgelassen.1958.German.HDTVRip.x264-AIDA"));
     assertEqual("Z For Zachariah | 2015", detectTY("Z.for.Zachariah.3D.2015.German.DL.1080p.BluRay.x264-STEREOSCOPiC"));
+    assertEqual("Transformers | 2007", detectTY("Transformers.2007.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos.mkv"));
 
     // check some weird TV shows names ;)
     // ok, we cannot do anything for the episode numbers..
