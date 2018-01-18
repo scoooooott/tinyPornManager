@@ -1571,8 +1571,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               long pos = 0L;
               // The parsing loop
               do {
+                // limit read to maxBuffer, or to end of file size (cannot determine file end in stream!!)
+                Long toread = pos + BUFFER_SIZE > entry.getSize() ? entry.getSize() - pos : BUFFER_SIZE;
+                // LOGGER.trace("ISO: reading " + toread);
+
                 // Reading data somewhere, do what you want for this.
-                From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
+                From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, toread.intValue());
                 if (From_Buffer_Size > 0) {
                   pos += From_Buffer_Size; // add bytes read to file position
 
