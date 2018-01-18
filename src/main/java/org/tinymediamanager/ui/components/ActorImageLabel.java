@@ -33,11 +33,11 @@ import org.tinymediamanager.core.entities.Person;
  */
 public class ActorImageLabel extends ImageLabel {
 
-  private static final long           serialVersionUID = -1768796209645569296L;
+  private static final long         serialVersionUID = -1768796209645569296L;
 
-  protected SwingWorker<Void, Void>   actorWorker      = null;
-  protected MediaEntity               mediaEntity      = null;
-  protected Person                    actor            = null;
+  protected SwingWorker<Void, Void> actorWorker      = null;
+  protected MediaEntity             mediaEntity      = null;
+  protected Person                  actor            = null;
 
   public void setActor(MediaEntity mediaEntity, Person actor) {
     if (mediaEntity != null && actor != null && actor != this.actor) {
@@ -90,7 +90,7 @@ public class ActorImageLabel extends ImageLabel {
     if (isShowing() && scaledImage == null && this.actor != null) {
       // load actors async
       if (actorWorker != null && !actorWorker.isDone()) {
-        actorWorker.cancel(true);
+        actorWorker.cancel(false);
       }
 
       // load image in separate worker -> performance
