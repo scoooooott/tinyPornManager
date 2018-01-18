@@ -100,9 +100,9 @@ public class MovieActorImageFetcher implements Runnable {
             Utils.copyFileSafe(cache, actorImage);
           }
         }
-        else {
-          LOGGER.warn("Cannot download actor image " + actor);
-        }
+        // else {
+        // LOGGER.warn("Cannot download actor image " + actor);
+        // }
       }
 
     }
