@@ -21,6 +21,30 @@
 		<property name="rev" value="prerelease" />
 	</target>
 
+	<target name="checkArchitecture">
+
+		<condition property="is64Bit">
+			<equals arg1="${os.arch}" arg2="amd64"/>
+		</condition>
+	</target>
+	
+	<target name="launch4j64" depends="checkArchitecture" if="is64Bit">
+		<chmod file="AppBundler/launch4j-x64/bin/windres" perm="ugo+rx" />
+		<chmod file="AppBundler/launch4j-x64/bin/ld" perm="ugo+rx" />
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j-x64/launch4j.jar:AppBundler/launch4j-x64/lib/xstream.jar" />
+		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManager.exe" />
+		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerUpd.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
+	</target>
+	<target name="launch4j32" depends="checkArchitecture" unless="is64Bit">
+		<chmod file="AppBundler/launch4j-x86/bin/windres" perm="ugo+rx" />
+		<chmod file="AppBundler/launch4j-x86/bin/ld" perm="ugo+rx" />
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j-x86/launch4j.jar:AppBundler/launch4j-x86/lib/xstream.jar" />
+		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManager.exe" />
+		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerUpd.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
+	</target>
+
 	<target name="downloadLocale">
 		<get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" dest="locale/messages_${lang}.properties" username="api" password="1/a04c0440e9b337680f9faf9466efaccc7e0358bd" ignoreerrors="true" />
 	</target>
@@ -43,7 +67,9 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="el" />
 		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="fa" /></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="fa" />
+		</antcall>
 		<antcall target="downloadLocale">
 			<param name="lang" value="fr" />
 		</antcall>
@@ -223,10 +249,8 @@
 		<!-- ===================================================== -->
 		<!-- prepare build for Windows -->
 		<!-- ===================================================== -->
-		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
-		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManager.exe" />
-		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerUpd.exe" />
-		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
+		<antcall target="launch4j32"/>
+		<antcall target="launch4j64"/>
 		<copy todir="${dist.dir}/win">
 			<fileset dir="${build.dir}">
 				<include name="**/*" />

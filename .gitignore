@@ -20,7 +20,7 @@ pom.xml.*
 *.iml
 
 #Eclipse
-bin
+/bin
 
 #tinyMediaManager
 cache
