@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.entities;
 
+import java.util.Locale;
+
 import org.tinymediamanager.core.AbstractModelObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,9 +57,14 @@ public class MediaFileAudioStream extends AbstractModelObject {
     int highest = 0;
     if (!channels.isEmpty()) {
       try {
-        String part = channels.replaceAll("[a-zA-Z]", ""); // remove "Ch" and other words (keep delims!)
-        String[] parts = part.split("/");
+        String[] parts = channels.split("/");
         for (String p : parts) {
+          if (p.toLowerCase(Locale.ROOT).contains("object")) {
+            // "11 objects / 6 channels" - ignore objects
+            continue;
+          }
+          p = p.replaceAll("[a-zA-Z]", ""); // remove now all characters
+
           int ch = 0;
           String[] c = p.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
           for (String s : c) {

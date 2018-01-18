@@ -112,5 +112,10 @@ public class MovieMediaFileTest extends BasicTest {
 
     as.setChannels("Object Based / 8 channels");
     assertEqual(8, as.getChannelsAsInt());
+
+    as.setChannels("11 objects / 6 channels");
+    assertEqual(6, as.getChannelsAsInt());
+    as.setChannels("11 objects / 5.1 channels");
+    assertEqual(6, as.getChannelsAsInt());
   }
 }
