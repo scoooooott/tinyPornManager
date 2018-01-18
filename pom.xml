@@ -199,7 +199,7 @@
         <dependency>
             <groupId>com.github.stephenc.java-iso-tools</groupId>
             <artifactId>loop-fs-iso-impl</artifactId>
-            <version>2.0.1-TMM</version>
+            <version>2.0.2-TMM</version>
         </dependency>
         <dependency>
             <groupId>org.nanohttpd</groupId>
