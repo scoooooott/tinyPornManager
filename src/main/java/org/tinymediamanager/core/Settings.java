@@ -203,6 +203,7 @@ public class Settings extends AbstractSettings {
     addAudioFileType(".mka");
     addAudioFileType(".mp3");
     addAudioFileType(".mpa");
+    addAudioFileType(".mlp");
     addAudioFileType(".oga");
     addAudioFileType(".ogg");
     addAudioFileType(".pcm");
@@ -210,6 +211,7 @@ public class Settings extends AbstractSettings {
     addAudioFileType(".ram");
     addAudioFileType(".rm");
     addAudioFileType(".tta");
+    addAudioFileType(".thd");
     addAudioFileType(".wav");
     addAudioFileType(".wave");
     addAudioFileType(".wma");
