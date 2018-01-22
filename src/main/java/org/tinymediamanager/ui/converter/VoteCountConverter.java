@@ -16,8 +16,10 @@
 package org.tinymediamanager.ui.converter;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.jdesktop.beansbinding.Converter;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class VoteCountConverter.
@@ -25,16 +27,14 @@ import org.jdesktop.beansbinding.Converter;
  * @author Manuel Laggner
  */
 public class VoteCountConverter extends Converter<Integer, String> {
-
-  private Locale locale = Locale.getDefault();
+  /** @wbp.nls.resourceBundle messages */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private Locale                      locale = Locale.getDefault();
 
   @Override
   public String convertForward(Integer arg0) {
-    if (arg0 instanceof Integer && (int) arg0 > 0) {
-      StringBuilder sb = new StringBuilder("(");
-      sb.append(String.format(locale, "%,d", arg0));
-      sb.append(" votes)");
-      return sb.toString();
+    if (arg0 instanceof Integer && arg0 > 0) {
+      return String.format(locale, "(%,d %s)", arg0, BUNDLE.getString("metatag.votes"));
     }
     return "";
   }

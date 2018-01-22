@@ -44,6 +44,7 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -176,14 +177,14 @@ public class TvShowInformationPanel extends JPanel {
       }
       {
         panelRatingStars = new StarRater(10, 1);
-        panelRight.add(panelRatingStars, "flowx,cell 0 5");
+        panelRight.add(panelRatingStars, "flowx,cell 0 5,aligny center");
         panelRatingStars.setEnabled(false);
 
-        lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 5");
-
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 5");
+        panelRight.add(lblRating, "cell 0 5,aligny center");
+
+        lblVoteCount = new JLabel("");
+        panelRight.add(lblVoteCount, "cell 0 5,aligny center");
       }
       {
         panelRight.add(new JSeparator(), "cell 0 6,growx");
@@ -286,6 +287,7 @@ public class TvShowInformationPanel extends JPanel {
     BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.rating.votes");
     AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_3, lblVoteCount, jLabelBeanProperty);
+    autoBinding_4.setConverter(new VoteCountConverter());
     autoBinding_4.bind();
     //
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShow.originalTitle");

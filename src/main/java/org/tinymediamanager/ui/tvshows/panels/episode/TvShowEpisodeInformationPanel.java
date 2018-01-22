@@ -44,6 +44,7 @@ import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -169,14 +170,14 @@ public class TvShowEpisodeInformationPanel extends JPanel {
       }
       {
         panelRatingStars = new StarRater(10, 1);
-        panelRight.add(panelRatingStars, "flowx,cell 0 6");
+        panelRight.add(panelRatingStars, "flowx,cell 0 6,aligny center");
         panelRatingStars.setEnabled(false);
 
-        lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 6");
-
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 6");
+        panelRight.add(lblRating, "cell 0 6,aligny center");
+
+        lblVoteCount = new JLabel("");
+        panelRight.add(lblVoteCount, "cell 0 6,aligny center");
       }
       {
         panelRight.add(new JSeparator(), "cell 0 7,growx");
@@ -272,5 +273,12 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_2, lblOriginalTitle, jLabelBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, Integer> tvShowEpisodeSelectionModelBeanProperty_5 = BeanProperty
+        .create("selectedTvShowEpisode.rating.votes");
+    AutoBinding<TvShowEpisodeSelectionModel, Integer, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_5, lblVoteCount, jLabelBeanProperty);
+    autoBinding_6.setConverter(new VoteCountConverter());
+    autoBinding_6.bind();
   }
 }
