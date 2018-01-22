@@ -261,7 +261,9 @@ public class ImdbMetadataProviderTest {
       assertEquals("7 July 2006", sdf.format(md.getReleaseDate()));
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
       assertEquals(1, md.getCastMembers(CastType.DIRECTOR).size());
+      assertEquals("Michael Engler", md.getCastMembers(CastType.DIRECTOR).get(0).getName());
       assertEquals(1, md.getCastMembers(CastType.WRITER).size());
+      assertEquals("Steve Franks", md.getCastMembers(CastType.WRITER).get(0).getName());
 
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);

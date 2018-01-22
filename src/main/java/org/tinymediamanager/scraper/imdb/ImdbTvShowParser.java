@@ -224,8 +224,8 @@ public class ImdbTvShowParser extends ImdbParser {
         }
 
         // second table are writers
-        if (tables.get(0) != null) {
-          for (Element writer : tables.get(0).getElementsByClass("name")) {
+        if (tables.get(1) != null) {
+          for (Element writer : tables.get(1).getElementsByClass("name")) {
             MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
             cm.setName(writer.text());
             // profile path
