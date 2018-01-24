@@ -19,10 +19,14 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTableCellRenderer;
 
 /**
@@ -39,18 +43,37 @@ public class TvShowTreeCellRenderer extends TmmTreeTableCellRenderer {
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-    Component renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+        column);
 
     if (value instanceof TvShowTreeDataProvider.TvShowSeasonTreeNode) {
       TvShowSeason season = (TvShowSeason) ((TvShowTreeDataProvider.TvShowSeasonTreeNode) value).getUserObject();
       if (season.isDummy()) {
         renderer.setForeground(colorDummy);
       }
+      if (season.isNewlyAdded()) {
+        renderer.setHorizontalTextPosition(SwingConstants.LEADING);
+        renderer.setIconTextGap(10);
+        renderer.setIcon(IconManager.NEW);
+      }
     }
     else if (value instanceof TvShowTreeDataProvider.TvShowEpisodeTreeNode) {
       TvShowEpisode episode = (TvShowEpisode) ((TvShowTreeDataProvider.TvShowEpisodeTreeNode) value).getUserObject();
       if (episode.isDummy()) {
         renderer.setForeground(colorDummy);
+      }
+      if (episode.isNewlyAdded()) {
+        renderer.setHorizontalTextPosition(SwingConstants.LEADING);
+        renderer.setIconTextGap(10);
+        renderer.setIcon(IconManager.NEW);
+      }
+    }
+    else if (value instanceof TvShowTreeDataProvider.TvShowTreeNode) {
+      TvShow tvShow = (TvShow) ((TvShowTreeDataProvider.TvShowTreeNode) value).getUserObject();
+      if (tvShow.isNewlyAdded()) {
+        renderer.setHorizontalTextPosition(SwingConstants.LEADING);
+        renderer.setIconTextGap(10);
+        renderer.setIcon(IconManager.NEW);
       }
     }
 
