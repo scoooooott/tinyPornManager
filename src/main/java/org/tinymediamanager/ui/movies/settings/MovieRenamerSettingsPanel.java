@@ -95,7 +95,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private ActionListener                 actionCreateRenamerExample = e -> createRenamerExample();
   private TmmTable                       tableExamples;
-  private JLabel                         lblMMDWarning;
+  private ReadOnlyTextArea               taMMDWarning;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -226,9 +226,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       TmmFontHelper.changeFont(tpChooseAFolder, 0.833);
     }
     {
-      lblMMDWarning = new JLabel(BUNDLE.getString("Settings.renamer.folder.warning"));
-      lblMMDWarning.setForeground(Color.red);
-      add(lblMMDWarning, "cell 1 6 3 1,growx");
+      taMMDWarning = new ReadOnlyTextArea(BUNDLE.getString("Settings.renamer.folder.warning"));
+      taMMDWarning.setForeground(Color.red);
+      add(taMMDWarning, "cell 1 6 4 1,growx");
     }
     {
       chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
@@ -295,10 +295,10 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
     // empty is valid (although not unique)
     if (!tfMoviePath.getText().isEmpty() && !MovieRenamer.isFolderPatternUnique(tfMoviePath.getText())) {
-      lblMMDWarning.setVisible(true);
+      taMMDWarning.setVisible(true);
     }
     else {
-      lblMMDWarning.setVisible(false);
+      taMMDWarning.setVisible(false);
     }
 
     if (cbMovieForPreview.getSelectedItem() instanceof MoviePreviewContainer) {
