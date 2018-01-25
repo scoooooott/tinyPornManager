@@ -17,6 +17,8 @@ package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -30,9 +32,11 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 import net.miginfocom.swing.MigLayout;
@@ -58,6 +62,7 @@ public class MovieImageExtraPanel extends JPanel {
   private JCheckBox                   chckbxStoreMoviesetArtwork;
   private JTextField                  tfMovieSetArtworkFolder;
   private JCheckBox                   chckbxMovieSetArtwork;
+  private JButton                     btnSelectFolder;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -67,6 +72,16 @@ public class MovieImageExtraPanel extends JPanel {
     // UI init
     initComponents();
     initDataBindings();
+
+    // further initializations
+    btnSelectFolder.addActionListener(arg0 -> {
+      String path = TmmProperties.getInstance().getProperty("movieset.folderchooser.path");
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser"), path); //$NON-NLS-1$
+      if (file != null && Files.isDirectory(file)) {
+        tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("movieset.folderchooser.path", file.toAbsolutePath().toString());
+      }
+    });
   }
 
   private void initComponents() {
@@ -120,7 +135,7 @@ public class MovieImageExtraPanel extends JPanel {
     add(tfMovieSetArtworkFolder, "cell 2 12,growx");
     tfMovieSetArtworkFolder.setColumns(30);
 
-    JButton btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
+    btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
     add(btnSelectFolder, "cell 2 12");
   }
 
