@@ -825,7 +825,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
       setDirectors(directors);
       setWriters(writers);
       setProducers(producers);
-      writeActorImages();
     }
 
     // genres
@@ -905,6 +904,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // rename the movie if that has been chosen in the settings
     if (MovieModuleManager.SETTINGS.isRenameAfterScrape()) {
       MovieRenamer.renameMovie(this);
+    }
+
+    // write actor images after possible rename (to have a good folder structure)
+    if (config.isCast()) {
+      writeActorImages();
     }
   }
 
