@@ -70,6 +70,12 @@ public class LinkLabel extends JLabel {
     this(null);
   }
 
+  @Override
+  public void setText(String text) {
+    super.setText(text);
+    setLink(text);
+  }
+
   /**
    * set the link target (useful if the text and link differs)
    * 
