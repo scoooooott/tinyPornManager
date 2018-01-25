@@ -125,12 +125,6 @@ public class TvShowScraperSettingsPanel extends JPanel {
     TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
     TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
-    cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    add(cbScraperLanguage, "cell 1 4");
-
-    cbCertificationCountry = new JComboBox(CountryCode.values());
-    add(cbCertificationCountry, "cell 1 5");
-
     // implement listener to simulate button group
     tableScraper.getModel().addTableModelListener(arg0 -> {
       // click on the checkbox
@@ -217,12 +211,19 @@ public class TvShowScraperSettingsPanel extends JPanel {
       JSeparator separator = new JSeparator();
       add(separator, "cell 1 3 2 1,growx");
     }
-    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); // $NON-NLS-1$
-    add(lblScraperLanguage, "flowx,cell 1 4,growx");
     {
+      JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); // $NON-NLS-1$
+      add(lblScraperLanguage, "flowx,cell 1 4,growx");
 
+      cbScraperLanguage = new JComboBox(MediaLanguages.values());
+      add(cbScraperLanguage, "cell 1 4");
+    }
+    {
       JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); // $NON-NLS-1$
       add(lblCountry, "flowx,cell 1 5");
+
+      cbCertificationCountry = new JComboBox(CountryCode.values());
+      add(cbCertificationCountry, "cell 1 5");
     }
   }
 
