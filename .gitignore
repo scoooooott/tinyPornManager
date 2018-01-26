@@ -21,3 +21,4 @@ pom.xml.*
 /cache/
 /data/
 /ignore/
+/bin/
