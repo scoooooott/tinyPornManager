@@ -158,7 +158,7 @@ public class MovieInformationPanel extends JPanel {
 
   private void initComponents() {
     putClientProperty("class", "roundedPanel");
-    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 250]", "[][][shrink 0][][]"));
+    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 350]", "[grow][][shrink 0][][]"));
 
     {
       JPanel panelLeft = new JPanel();

@@ -28,6 +28,9 @@ import org.tinymediamanager.ui.components.ImageLabel;
  * @author Manuel Laggner
  */
 public class ColumnLayout implements LayoutManager2 {
+  private static Dimension MIN_SIZE = new Dimension(1, 1);
+  private static Dimension MAX_SIZE = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
   @Override
   public void layoutContainer(Container parent) {
     Component components[] = parent.getComponents();
@@ -36,15 +39,16 @@ public class ColumnLayout implements LayoutManager2 {
     if (components.length == 0)
       return;
 
-    // do a layouting based on the parent's width
+    // do a layouting based on the parent's size
     int y = 0;
-    int width = parent.getWidth();
+    Dimension maxSize = preferredLayoutSize(parent);
+    int width = (int) (maxSize.width * 0.98);
 
     for (Component component : components) {
       Dimension preferredSize = component.getPreferredSize();
       int height = preferredSize.height;
       if (component instanceof ImageLabel) {
-        height = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
+        height = (int) (preferredSize.getHeight() * width * 1.0 / preferredSize.getWidth());
       }
       component.setBounds(0, y, width, height);
       y += height;
@@ -53,7 +57,7 @@ public class ColumnLayout implements LayoutManager2 {
 
   @Override
   public Dimension minimumLayoutSize(Container parent) {
-    return new Dimension(1, 1);
+    return MIN_SIZE;
   }
 
   @Override
@@ -61,18 +65,39 @@ public class ColumnLayout implements LayoutManager2 {
     Component components[] = parent.getComponents();
 
     // calculate the complete height
-    int width = parent.getWidth();
-    int height = 0;
+    int maxWidth = parent.getWidth();
+    int maxHeight = parent.getHeight();
 
-    for (Component component : components) {
-      Dimension preferredSize = component.getPreferredSize();
-      if (component instanceof ImageLabel) {
-        int proportionalHeight = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
-        height += proportionalHeight;
+    if (maxWidth == 0 || maxHeight == 0) {
+      return MIN_SIZE;
+    }
+
+    int width = maxWidth;
+    int height;
+
+    // max 10 runs to prevent endless loops
+    int counter = 0;
+
+    while (true) {
+      counter++;
+      height = 0;
+
+      for (Component component : components) {
+        Dimension preferredSize = component.getPreferredSize();
+        if (component instanceof ImageLabel) {
+          int proportionalHeight = (int) (preferredSize.getHeight() * width * 1.0 / preferredSize.getWidth());
+          height += proportionalHeight;
+        }
+        else {
+          height += preferredSize.height;
+        }
       }
-      else {
-        height += preferredSize.height;
+
+      if (width < 1 || height < maxHeight || counter > 10) {
+        break;
       }
+
+      width = (int) (width * 0.95);
     }
 
     return new Dimension(width, height);
@@ -106,11 +131,6 @@ public class ColumnLayout implements LayoutManager2 {
 
   @Override
   public Dimension maximumLayoutSize(Container target) {
-    Dimension prefSize = preferredLayoutSize(target);
-    int height = target.getHeight();
-    if (height > prefSize.height) {
-      return prefSize;
-    }
-    return new Dimension(prefSize.width * height / prefSize.height, height);
+    return MAX_SIZE;
   }
 }
