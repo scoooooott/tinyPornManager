@@ -216,8 +216,8 @@ class TmdbMovieMetadataProvider {
       }
       else {
         float score = MetadataUtil.calculateScore(searchString, result.getTitle());
-        if (yearDiffers(year, result.getYear())) {
-          float diff = (float) Math.abs(year - result.getYear()) / 100;
+        if (year != null && yearDiffers(year.intValue(), result.getYear())) {
+          float diff = (float) Math.abs(year.intValue() - result.getYear()) / 100;
           LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
           score -= diff;
         }
@@ -692,7 +692,7 @@ class TmdbMovieMetadataProvider {
   /**
    * Is i1 != i2 (when >0)
    */
-  private boolean yearDiffers(Integer i1, Integer i2) {
-    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  private boolean yearDiffers(int i1, int i2) {
+    return i1 > 0 && i2 > 0 && i1 != i2;
   }
 }
