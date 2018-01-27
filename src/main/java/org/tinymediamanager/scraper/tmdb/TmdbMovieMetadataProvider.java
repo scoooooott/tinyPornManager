@@ -211,16 +211,24 @@ class TmdbMovieMetadataProvider {
     for (MediaSearchResult result : resultList) {
       // calculate score for all found movies
       if (imdbId.equals(result.getIMDBId()) || String.valueOf(tmdbId).equals(result.getId())) {
-        // perfect match
+        LOGGER.debug("perfect match by ID - set score to 1");
         result.setScore(1);
       }
       else {
         float score = MetadataUtil.calculateScore(searchString, result.getTitle());
+
         if (year != null && yearDiffers(year.intValue(), result.getYear())) {
           float diff = (float) Math.abs(year.intValue() - result.getYear()) / 100;
           LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
           score -= diff;
         }
+
+        if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
+          // no poster?
+          LOGGER.debug("no poster - downgrading score by 0.01");
+          score -= 0.01f;
+        }
+
         result.setScore(score);
       }
     }
@@ -527,7 +535,9 @@ class TmdbMovieMetadataProvider {
     searchResult.setOriginalTitle(movie.original_title);
     searchResult.setOriginalLanguage(movie.original_language);
 
-    searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
+    if (movie.poster_path != null && !movie.poster_path.isEmpty()) {
+      searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
+    }
 
     // parse release date to year
     if (movie.release_date != null) {

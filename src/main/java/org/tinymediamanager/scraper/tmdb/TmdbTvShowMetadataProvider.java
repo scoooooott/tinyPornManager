@@ -769,7 +769,10 @@ class TmdbTvShowMetadataProvider {
     result.setId(Integer.toString(tvShow.id));
     result.setTitle(tvShow.name);
     result.setOriginalTitle(tvShow.original_name);
-    result.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + tvShow.poster_path);
+
+    if (tvShow.poster_path != null && !tvShow.poster_path.isEmpty()) {
+      result.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + tvShow.poster_path);
+    }
 
     // parse release date to year
     if (tvShow.first_air_date != null) {
@@ -779,8 +782,35 @@ class TmdbTvShowMetadataProvider {
     }
 
     // calculate score
-    result.setScore(MetadataUtil.calculateScore(query.getQuery(), result.getTitle()));
+    if (query.getImdbId().equals(result.getIMDBId()) || String.valueOf(query.getTmdbId()).equals(result.getId())) {
+      LOGGER.debug("perfect match by ID - set score to 1");
+      result.setScore(1);
+    }
+    else {
+      float score = MetadataUtil.calculateScore(query.getQuery(), result.getTitle());
+
+      if (query.getYear() > 0 && yearDiffers(query.getYear(), result.getYear())) {
+        float diff = (float) Math.abs(query.getYear() - result.getYear()) / 100;
+        LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+        score -= diff;
+      }
+
+      if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
+        LOGGER.debug("no poster - downgrading score by 0.01");
+        score -= 0.01f;
+      }
+
+      result.setScore(score);
+    }
+
     return result;
+  }
+
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(int i1, int i2) {
+    return i1 > 0 && i2 > 0 && i1 != i2;
   }
 
 }
