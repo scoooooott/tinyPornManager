@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.components;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,16 +50,14 @@ public class LinkLabel extends JLabel {
     super(text);
     setLink(text);
 
-    if (Desktop.isDesktopSupported()) {
-      Font font = getFont();
-      Map attributes = font.getAttributes();
-      attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-      attributes.put(TextAttribute.FOREGROUND, Color.BLUE);
-      setFont(font.deriveFont(attributes));
+    Font font = getFont();
+    Map attributes = font.getAttributes();
+    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+    attributes.put(TextAttribute.FOREGROUND, Color.BLUE);
+    setFont(font.deriveFont(attributes));
 
-      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      enableEvents(MouseEvent.MOUSE_EVENT_MASK);
-    }
+    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    enableEvents(MouseEvent.MOUSE_EVENT_MASK);
   }
 
   /**
