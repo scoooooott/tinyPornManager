@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2017 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.BaseProgressBarUI;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.JComponent;
-import javax.swing.JProgressBar;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,6 +24,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.RoundRectangle2D;
+
+import javax.swing.JComponent;
+import javax.swing.JProgressBar;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.BaseProgressBarUI;
+import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * @author Manuel Laggner
