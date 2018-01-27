@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -110,6 +111,11 @@ public class MediaEntityImageFetcherTask implements Runnable {
           Url url1 = new Url(url);
           FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
           InputStream is = url1.getInputStream();
+          if (is == null) {
+            // 404 et all
+            IOUtils.closeQuietly(outputStream);
+            throw new FileNotFoundException("Error accessing url: " + url1.getStatusLine());
+          }
           IOUtils.copy(is, outputStream);
           outputStream.flush();
           try {
@@ -181,6 +187,10 @@ public class MediaEntityImageFetcherTask implements Runnable {
         if (e instanceof InterruptedException) {
           // only warning
           LOGGER.warn("interrupted image download");
+        }
+        else if (e instanceof FileNotFoundException) {
+          // only warning
+          LOGGER.warn(e.getMessage());
         }
         else {
           LOGGER.error("fetch image", e);
