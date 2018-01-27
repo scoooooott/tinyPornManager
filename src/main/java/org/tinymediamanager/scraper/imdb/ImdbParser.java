@@ -912,8 +912,8 @@ public abstract class ImdbParser {
   /**
    * Is i1 != i2 (when >0)
    */
-  private boolean yearDiffers(Integer i1, Integer i2) {
-    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  private boolean yearDiffers(int i1, int i2) {
+    return i1 > 0 && i2 > 0 && i1 != i2;
   }
 
   protected Date parseDate(String dateAsSting) {
