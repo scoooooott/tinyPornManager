@@ -34,7 +34,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -115,7 +115,7 @@ public class TvShowScraperOptionsSettingsPanel extends JPanel {
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;
 
-      BufferedImage scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
           Scalr.OP_ANTIALIAS);
       return new ImageIcon(scaledImage);
     }

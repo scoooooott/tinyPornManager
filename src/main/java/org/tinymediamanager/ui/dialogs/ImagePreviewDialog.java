@@ -26,7 +26,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -87,7 +87,7 @@ public class ImagePreviewDialog extends TmmDialog {
     protected BufferedImage doInBackground() throws Exception {
       try {
         Url url = new Url(imageUrl);
-        return ImageCache.createImage(url.getBytes());
+        return ImageUtils.createImage(url.getBytes());
       }
       catch (Exception e) {
         LOGGER.warn("fetch image: " + e.getMessage());

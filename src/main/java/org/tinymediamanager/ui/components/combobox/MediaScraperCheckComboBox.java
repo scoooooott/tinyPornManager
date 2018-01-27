@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.IconManager;
 
@@ -157,7 +157,7 @@ public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;
 
-      BufferedImage scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
           Scalr.OP_ANTIALIAS);
       return new ImageIcon(scaledImage);
     }

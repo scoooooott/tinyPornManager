@@ -50,7 +50,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -273,11 +273,11 @@ public class MovieScraperSettingsPanel extends JPanel {
 
       BufferedImage scaledImage;
       if (!scraper.isEnabled()) {
-        scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+        scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
             Scalr.OP_GRAYSCALE);
       }
       else {
-        scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+        scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
             Scalr.OP_ANTIALIAS);
       }
       return new ImageIcon(scaledImage);

@@ -28,7 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -284,7 +284,7 @@ public class MovieExtraImageFetcher implements Runnable {
           file = folder.resolve("thumb" + (i + 1) + ".jpg");
           outputStream = new FileOutputStream(file.toFile());
           try {
-            is = ImageCache.scaleImage(url, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
+            is = ImageUtils.scaleImage(url, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
           }
           catch (Exception e) {
             LOGGER.warn("problem with rescaling: " + e.getMessage());

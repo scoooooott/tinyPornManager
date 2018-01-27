@@ -15,16 +15,11 @@
  */
 package org.tinymediamanager.core;
 
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +33,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -50,7 +44,6 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
-import org.tinymediamanager.thirdparty.ImageLoader;
 
 /**
  * The Class ImageCache - used to build a local image cache (scaled down versions & thumbnails - also for offline access).
@@ -107,152 +100,6 @@ public class ImageCache {
   }
 
   /**
-   * Scale image to fit in the given width.
-   * 
-   * @param imageUrl
-   *          the image url
-   * @param width
-   *          the width
-   * @return the input stream
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws InterruptedException
-   */
-  public static InputStream scaleImage(String imageUrl, int width) throws IOException, InterruptedException {
-    Url url = new Url(imageUrl);
-
-    BufferedImage originalImage = null;
-    try {
-      originalImage = createImage(url.getBytes());
-    }
-    catch (Exception e) {
-      throw new IOException(e.getMessage());
-    }
-
-    Point size = new Point();
-    size.x = width;
-    size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
-
-    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
-    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
-    originalImage = null;
-
-    ImageWriter imgWrtr = null;
-    ImageWriteParam imgWrtrPrm = null;
-
-    // here we have two different ways to create our thumb
-    // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
-    // b) a scaled down png (with transparency) which we can store without any more modifying as png
-    if (hasTransparentPixels(scaledImage)) {
-      // transparent image -> png
-      imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
-      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
-
-    }
-    else {
-      // non transparent image -> jpg
-      // convert to rgb
-      BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-      ColorConvertOp xformOp = new ColorConvertOp(null);
-      xformOp.filter(scaledImage, rgb);
-      imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
-      imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-      imgWrtrPrm.setCompressionQuality(0.80f);
-
-      scaledImage = rgb;
-    }
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ImageOutputStream output = ImageIO.createImageOutputStream(baos);
-    imgWrtr.setOutput(output);
-    IIOImage outputImage = new IIOImage(scaledImage, null, null);
-    imgWrtr.write(null, outputImage, imgWrtrPrm);
-    imgWrtr.dispose();
-    scaledImage = null;
-
-    byte[] bytes = baos.toByteArray();
-
-    output.flush();
-    output.close();
-    baos.close();
-
-    return new ByteArrayInputStream(bytes);
-  }
-
-  /**
-   * Scale image to fit in the given width.
-   * 
-   * @param file
-   *          the original image file
-   * @param width
-   *          the width
-   * @return the input stream
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws InterruptedException
-   */
-  public static InputStream scaleImage(Path file, int width) throws IOException, InterruptedException {
-    BufferedImage originalImage = null;
-    try {
-      originalImage = createImage(file);
-    }
-    catch (Exception e) {
-      throw new IOException(e.getMessage());
-    }
-
-    Point size = new Point();
-    size.x = width;
-    size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
-
-    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
-    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
-    originalImage = null;
-
-    ImageWriter imgWrtr = null;
-    ImageWriteParam imgWrtrPrm = null;
-
-    // here we have two different ways to create our thumb
-    // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
-    // b) a scaled down png (with transparency) which we can store without any more modifying as png
-    if (hasTransparentPixels(scaledImage)) {
-      // transparent image -> png
-      imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
-      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
-
-    }
-    else {
-      // non transparent image -> jpg
-      // convert to rgb
-      BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-      ColorConvertOp xformOp = new ColorConvertOp(null);
-      xformOp.filter(scaledImage, rgb);
-      imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
-      imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-      imgWrtrPrm.setCompressionQuality(0.80f);
-
-      scaledImage = rgb;
-    }
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ImageOutputStream output = ImageIO.createImageOutputStream(baos);
-    imgWrtr.setOutput(output);
-    IIOImage outputImage = new IIOImage(scaledImage, null, null);
-    imgWrtr.write(null, outputImage, imgWrtrPrm);
-    imgWrtr.dispose();
-    scaledImage = null;
-
-    byte[] bytes = baos.toByteArray();
-
-    output.flush();
-    output.close();
-    baos.close();
-
-    return new ByteArrayInputStream(bytes);
-  }
-
-  /**
    * Cache image.
    * 
    * @param mf
@@ -276,7 +123,7 @@ public class ImageCache {
       // rescale & cache
       BufferedImage originalImage = null;
       try {
-        originalImage = createImage(originalFile);
+        originalImage = ImageUtils.createImage(originalFile);
       }
       catch (Exception e) {
         throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
@@ -315,7 +162,8 @@ public class ImageCache {
         }
       }
 
-      Point size = calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(), originalImage.getHeight(), true);
+      Point size = ImageUtils.calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
+          originalImage.getHeight(), true);
       BufferedImage scaledImage = null;
 
       if (Globals.settings.getImageCacheType() == CacheType.FAST) {
@@ -334,7 +182,7 @@ public class ImageCache {
       // here we have two different ways to create our thumb
       // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
       // b) a scaled down png (with transparency) which we can store without any more modifying as png
-      if (hasTransparentPixels(scaledImage)) {
+      if (ImageUtils.hasTransparentPixels(scaledImage)) {
         // transparent image -> png
         imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
         imgWrtrPrm = imgWrtr.getDefaultWriteParam();
@@ -369,18 +217,6 @@ public class ImageCache {
     }
 
     return cachedFile;
-  }
-
-  private static boolean hasTransparentPixels(BufferedImage image) {
-    for (int x = 0; x < image.getWidth(); x++) {
-      for (int y = 0; y < image.getHeight(); y++) {
-        int pixel = image.getRGB(x, y);
-        if ((pixel >> 24) == 0x00) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   /**
@@ -533,50 +369,4 @@ public class ImageCache {
     }
   }
 
-  /**
-   * calculate a new size which fits into maxWidth and maxHeight
-   * 
-   * @param maxWidth
-   *          the maximum width of the result
-   * @param maxHeight
-   *          the maximum height of the result
-   * @param originalWidth
-   *          the width of the source
-   * @param originalHeight
-   *          the height of the source
-   * @param respectFactor
-   *          should we respect the aspect ratio?
-   * @return the calculated new size
-   */
-  public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
-    Point size = new Point();
-    if (respectFactor) {
-      // calculate on available height
-      size.y = maxHeight;
-      size.x = (int) (size.y * (double) originalWidth / (double) originalHeight);
-
-      if (size.x > maxWidth) {
-        // calculate on available height
-        size.x = maxWidth;
-        size.y = (int) (size.x * (double) originalHeight / (double) originalWidth);
-      }
-    }
-    else {
-      size.x = maxWidth;
-      size.y = maxHeight;
-    }
-    return size;
-  }
-
-  public static BufferedImage createImage(byte[] imageData) throws Exception {
-    return createImage(Toolkit.getDefaultToolkit().createImage(imageData));
-  }
-
-  public static BufferedImage createImage(Path file) throws Exception {
-    return createImage(Toolkit.getDefaultToolkit().createImage(file.toFile().getAbsolutePath()));
-  }
-
-  public static BufferedImage createImage(Image img) {
-    return ImageLoader.createImage(img);
-  }
 }

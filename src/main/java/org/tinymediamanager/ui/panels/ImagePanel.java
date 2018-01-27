@@ -36,6 +36,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.WrapLayout;
@@ -153,8 +154,8 @@ public class ImagePanel extends JPanel implements HierarchyListener {
               file = mediaFile.getFileAsPath();
             }
             LOGGER.debug("loading " + file);
-            BufferedImage bufferedImage = ImageCache.createImage(file);
-            Point size = ImageCache.calculateSize(maxWidth, maxHeight, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
+            BufferedImage bufferedImage = ImageUtils.createImage(file);
+            Point size = ImageUtils.calculateSize(maxWidth, maxHeight, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
             // BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
             BufferedImage img = Scalr.resize(bufferedImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
             bufferedImage = null;

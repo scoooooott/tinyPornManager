@@ -56,7 +56,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -349,7 +349,7 @@ public class ImageChooserDialog extends TmmDialog {
       case DISC:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 180 };
-        size = ImageCache.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageUtils.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case BANNER:
@@ -357,14 +357,14 @@ public class ImageChooserDialog extends TmmDialog {
       case CLEARLOGO:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 120 };
-        size = ImageCache.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageUtils.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case POSTER:
       default:
         gbl.columnWidths = new int[] { 180 };
         gbl.rowHeights = new int[] { 270 };
-        size = ImageCache.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageUtils.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
     }
@@ -512,7 +512,7 @@ public class ImageChooserDialog extends TmmDialog {
         art.setPreviewUrl(url);
 
         Url url1 = new Url(art.getPreviewUrl());
-        final BufferedImage bufferedImage = ImageCache.createImage(url1.getBytes());
+        final BufferedImage bufferedImage = ImageUtils.createImage(url1.getBytes());
 
         SwingUtilities.invokeLater(() -> {
           addImage(bufferedImage, art);
@@ -781,7 +781,7 @@ public class ImageChooserDialog extends TmmDialog {
             Url url = null;
             try {
               url = new Url(art.getPreviewUrl());
-              BufferedImage bufferedImage = ImageCache.createImage(url.getBytes());
+              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytes());
 
               DownloadChunk chunk = new DownloadChunk();
               chunk.artwork = art;

@@ -39,6 +39,7 @@ import javax.swing.UIManager;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
@@ -61,10 +62,15 @@ public class ImageLabel extends JLabel {
   private static final long                  serialVersionUID       = -2524445544386464158L;
   private static final char                  ICON_ID                = '\uF03E';
   private static final Color                 EMPTY_BACKGROUND_COLOR = new Color(141, 165, 179);
+  private static final Dimension             EMPTY_SIZE             = new Dimension(0, 0);
 
+  protected byte[]                           originalImageBytes;
+  protected Dimension                        originalImageSize      = EMPTY_SIZE;
   protected BufferedImage                    scaledImage;
+
   protected String                           imageUrl;
   protected String                           imagePath;
+
   protected Position                         position               = Position.TOP_LEFT;
   protected boolean                          drawBorder;
   protected boolean                          drawFullWidth;
@@ -122,7 +128,7 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
-    scaledImage = null;
+    clearImageData();
 
     if (StringUtils.isBlank(newValue)) {
       this.repaint();
@@ -138,8 +144,14 @@ public class ImageLabel extends JLabel {
   public void clearImage() {
     imagePath = "";
     imageUrl = "";
-    scaledImage = null;
+    clearImageData();
     this.repaint();
+  }
+
+  private void clearImageData() {
+    scaledImage = null;
+    originalImageBytes = null;
+    originalImageSize = EMPTY_SIZE;
   }
 
   public String getImageUrl() {
@@ -156,7 +168,7 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
-    scaledImage = null;
+    clearImageData();
 
     if (StringUtils.isEmpty(newValue)) {
       this.repaint();
@@ -183,8 +195,9 @@ public class ImageLabel extends JLabel {
       // no desired aspect ratio; get the JLabel's preferred size
       return super.getPreferredSize();
     }
-    if (scaledImage != null) {
-      return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+    if (originalImageSize != EMPTY_SIZE) {
+      return new Dimension(getParent().getWidth(),
+          (int) (getParent().getWidth() / (float) originalImageSize.width * (float) originalImageSize.height));
     }
     return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / desiredAspectRatio) + 1);
   }
@@ -194,8 +207,8 @@ public class ImageLabel extends JLabel {
     super.paintComponent(g);
 
     if (scaledImage != null) {
-      int originalWidth = scaledImage.getWidth(null);
-      int originalHeight = scaledImage.getHeight(null);
+      int scaledImageWidth = scaledImage.getWidth(null);
+      int scaledImageHeight = scaledImage.getHeight(null);
 
       // calculate new height/width
       int newWidth = 0;
@@ -205,7 +218,7 @@ public class ImageLabel extends JLabel {
       int offsetY = 0;
 
       if (drawBorder && !drawFullWidth && !drawShadow) {
-        Point size = ImageCache.calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
+        Point size = ImageUtils.calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalImageSize.width, originalImageSize.height, true);
 
         // calculate offsets
         if (position == Position.TOP_RIGHT || position == Position.BOTTOM_RIGHT) {
@@ -225,7 +238,7 @@ public class ImageLabel extends JLabel {
         newHeight = size.y;
 
         // when the image size differs too much - reload and rescale the original image
-        recreateScaledImageIfNeeded(originalWidth, originalHeight, newWidth, newHeight);
+        recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, newWidth, newHeight);
 
         g.setColor(Color.BLACK);
         g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
@@ -235,12 +248,12 @@ public class ImageLabel extends JLabel {
         g.drawImage(scaledImage, offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else if (drawShadow && !drawFullWidth) {
-        Point size = ImageCache.calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+        Point size = ImageUtils.calculateSize(this.getWidth(), this.getHeight(), originalImageSize.width, originalImageSize.height, true);
         newWidth = size.x;
         newHeight = size.y;
 
         // when the image size differs too much - reload and rescale the original image
-        recreateScaledImageIfNeeded(originalWidth, originalHeight, this.getWidth() - 8, this.getHeight() - 8);
+        recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, this.getWidth() - 8, this.getHeight() - 8);
 
         // draw shadow
         ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
@@ -254,10 +267,10 @@ public class ImageLabel extends JLabel {
       else {
         Point size = null;
         if (drawFullWidth) {
-          size = new Point(this.getWidth(), this.getWidth() * originalHeight / originalWidth);
+          size = new Point(this.getWidth(), this.getWidth() * originalImageSize.height / originalImageSize.width);
         }
         else {
-          size = ImageCache.calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+          size = ImageUtils.calculateSize(this.getWidth(), this.getHeight(), originalImageSize.width, originalImageSize.height, true);
         }
 
         // calculate offsets
@@ -278,7 +291,7 @@ public class ImageLabel extends JLabel {
         newHeight = size.y;
 
         // when the image size differs too much - reload and rescale the original image
-        recreateScaledImageIfNeeded(originalWidth, originalHeight, newWidth, newHeight);
+        recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, newWidth, newHeight);
 
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
         g.drawImage(scaledImage, offsetX, offsetY, newWidth, newHeight, this);
@@ -340,15 +353,12 @@ public class ImageLabel extends JLabel {
   }
 
   private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
-    if ((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
-        || (originalHeight > newHeight * 1.2f) && newWidth > 10) {
-      if (StringUtils.isNotBlank(imagePath)) {
-        worker = new ImageLoader(imagePath, new Dimension(newWidth, newHeight));
-        worker.execute();
+    if (originalWidth < 20 || originalHeight < 20 || newWidth != originalWidth || newHeight != originalHeight) {
+      try {
+        scaledImage = Scalr.resize(ImageUtils.createImage(originalImageBytes), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight,
+            Scalr.OP_ANTIALIAS);
       }
-      else if (StringUtils.isNoneBlank(imageUrl)) {
-        worker = new ImageFetcher(new Dimension(newWidth, newHeight));
-        worker.execute();
+      catch (Exception ignored) {
       }
     }
   }
@@ -411,8 +421,10 @@ public class ImageLabel extends JLabel {
         else {
           url = new Url(imageUrl);
         }
-        return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
-            Scalr.OP_ANTIALIAS);
+        originalImageBytes = url.getBytes();
+        BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
+        originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+        return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);
       }
       catch (Exception e) {
         imageUrl = "";
@@ -471,8 +483,10 @@ public class ImageLabel extends JLabel {
 
       if (file != null && Files.exists(file)) {
         try {
-          return Scalr.resize(ImageCache.createImage(file), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
-              Scalr.OP_ANTIALIAS);
+          originalImageBytes = Files.readAllBytes(file);
+          BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
+          originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+          return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
           return null;
