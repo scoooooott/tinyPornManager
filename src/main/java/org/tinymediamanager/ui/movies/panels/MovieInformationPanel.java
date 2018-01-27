@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,10 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ColumnLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -94,6 +98,7 @@ public class MovieInformationPanel extends JPanel {
 
   private MediaInformationLogosPanel  panelLogos;
   private JLabel                      lblOriginalTitle;
+  private JButton                     btnPlay;
 
   /**
    * Instantiates a new movie information panel.
@@ -154,6 +159,18 @@ public class MovieInformationPanel extends JPanel {
     };
 
     movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
+    btnPlay.addActionListener(e -> {
+      MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
+      try {
+        TmmUIHelper.openFile(mf.getFileAsPath());
+      }
+      catch (Exception ex) {
+        LOGGER.error("open file", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+      }
+    });
   }
 
   private void initComponents() {
@@ -186,23 +203,27 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[300lp:300lp,grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
+      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);
-        panelTopRight.add(lblMovieName, "cell 0 0,growy,wmin 0");
+        panelTopRight.add(lblMovieName, "flowx,cell 0 0,wmin 0,grow");
+      }
+      {
+        btnPlay = new FlatButton(IconManager.PLAY_LARGE);
+        panelTopRight.add(btnPlay, "cell 1 0 1 2,aligny top");
       }
       {
         lblOriginalTitle = new JLabel("");
         panelTopRight.add(lblOriginalTitle, "cell 0 1,growx,wmin 0");
       }
       {
-        panelTopRight.add(new JSeparator(), "cell 0 2,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 2 2 1,growx");
       }
 
       {
         JPanel panelTopDetails = new JPanel();
-        panelTopRight.add(panelTopDetails, "cell 0 3,grow");
+        panelTopRight.add(panelTopDetails, "cell 0 3 2 1,grow");
         panelTopDetails.setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]"));
 
         {
@@ -229,7 +250,7 @@ public class MovieInformationPanel extends JPanel {
                   .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
             }
           });
-          panelTopDetails.add(lblImdbid, "cell 3 0,growx");
+          panelTopDetails.add(lblImdbid, "cell 3 0");
         }
 
         {
@@ -256,7 +277,7 @@ public class MovieInformationPanel extends JPanel {
                   .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
             }
           });
-          panelTopDetails.add(lblTmdbid, "cell 3 1,growx");
+          panelTopDetails.add(lblTmdbid, "cell 3 1");
         }
 
         {
@@ -296,12 +317,12 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 4,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 4 2 1,growx");
       }
 
       {
         starRater = new StarRater(10, 1);
-        panelTopRight.add(starRater, "flowx,cell 0 5,aligny center");
+        panelTopRight.add(starRater, "flowx,cell 0 5 2 1,aligny center");
         starRater.setEnabled(false);
 
         lblRating = new JLabel("");
@@ -312,34 +333,34 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 6,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 6 2 1,growx");
       }
 
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelTopRight.add(panelLogos, "cell 0 7,alignx left,aligny top");
+        panelTopRight.add(panelLogos, "cell 0 7 2 1,alignx left,aligny top");
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 8,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 8 2 1,growx");
       }
 
       {
         JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-        panelTopRight.add(lblTaglineT, "cell 0 9,alignx left,aligny top");
+        panelTopRight.add(lblTaglineT, "cell 0 9 2 1,alignx left,aligny top");
 
         lblTagline = new JLabel();
-        panelTopRight.add(lblTagline, "cell 0 10,growx,wmin 0,aligny top");
+        panelTopRight.add(lblTagline, "cell 0 10 2 1,growx,wmin 0,aligny top");
       }
 
       {
         JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        panelTopRight.add(lblPlotT, "cell 0 11,alignx left,aligny top");
+        panelTopRight.add(lblPlotT, "cell 0 11 2 1,alignx left,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(null);
-        panelTopRight.add(scrollPane, "cell 0 12,grow");
+        panelTopRight.add(scrollPane, "cell 0 12 2 1,grow");
 
         taPlot = new ReadOnlyTextArea();
         scrollPane.setViewportView(taPlot);

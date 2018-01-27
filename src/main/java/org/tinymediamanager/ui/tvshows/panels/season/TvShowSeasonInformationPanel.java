@@ -148,9 +148,8 @@ public class TvShowSeasonInformationPanel extends JPanel {
       add(panelRight, "cell 1 0,grow");
       panelRight.setLayout(new MigLayout("", "[][323px,grow]", "[][][shrink 0][][286px,grow]"));
       {
-        lblTvshowTitle = new JLabel("");
+        lblTvshowTitle = new TmmLabel("", 1.33);
         panelRight.add(lblTvshowTitle, "cell 0 0 2 1");
-        TmmFontHelper.changeFont(lblTvshowTitle, 1.33, Font.BOLD);
       }
       {
         JLabel lblSeasonT = new TmmLabel(BUNDLE.getString("metatag.season"));

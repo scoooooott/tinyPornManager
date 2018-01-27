@@ -19,11 +19,11 @@ import static org.tinymediamanager.core.Constants.SEASON_POSTER;
 import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,11 +34,18 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.ColumnLayout;
-import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -56,9 +63,10 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeInformationPanel extends JPanel {
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeInformationPanel.class);
   private static final long           serialVersionUID = 2032708149757390567L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
 
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
 
@@ -77,6 +85,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JLabel                      lblEpisodeThumbSize;
   private JLabel                      lblPlot;
   private JLabel                      lblOriginalTitle;
+  private JButton                     btnPlay;
 
   /**
    * Instantiates a new tv show information panel.
@@ -112,6 +121,18 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     };
 
     this.tvShowEpisodeSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
+    btnPlay.addActionListener(e -> {
+      MediaFile mf = this.tvShowEpisodeSelectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
+      try {
+        TmmUIHelper.openFile(mf.getFileAsPath());
+      }
+      catch (Exception ex) {
+        LOGGER.error("open file", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+      }
+    });
   }
 
   private void initComponents() {
@@ -142,13 +163,16 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     }
     {
       JPanel panelRight = new JPanel();
-      panelRight.setLayout(new MigLayout("", "[grow]", "[][][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("", "[grow][][]", "[][][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
       add(panelRight, "cell 1 0,grow");
 
       {
         lblTvShowName = new TmmLabel("", 1.33);
         panelRight.add(lblTvShowName, "flowx,cell 0 0,growx,wmin 0");
-        TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
+      }
+      {
+        btnPlay = new FlatButton(IconManager.PLAY_LARGE);
+        panelRight.add(btnPlay, "cell 1 0 1 4,aligny top");
       }
       {
         lblEpisodeTitle = new TmmLabel("", 1.16);
@@ -159,46 +183,46 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         panelRight.add(lblOriginalTitle, "cell 0 2,growx, wmin 0");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 3,growx,wmin 0");
+        panelRight.add(new JSeparator(), "cell 0 3 2 1,growx,wmin 0");
       }
       {
         panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
-        panelRight.add(panelDetails, "cell 0 4,growx");
+        panelRight.add(panelDetails, "cell 0 4 2 1,growx");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 5,growx");
+        panelRight.add(new JSeparator(), "cell 0 5 2 1,growx");
       }
       {
         panelRatingStars = new StarRater(10, 1);
-        panelRight.add(panelRatingStars, "flowx,cell 0 6,aligny center");
+        panelRight.add(panelRatingStars, "flowx,cell 0 6 2 1,aligny center");
         panelRatingStars.setEnabled(false);
 
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 6,aligny center");
+        panelRight.add(lblRating, "cell 0 6 2 1,aligny center");
 
         lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 6,aligny center");
+        panelRight.add(lblVoteCount, "cell 0 6 2 1,aligny center");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 7,growx");
+        panelRight.add(new JSeparator(), "cell 0 7 2 1,growx");
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 8");
+        panelRight.add(panelLogos, "cell 0 8 2 1");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 9,growx");
+        panelRight.add(new JSeparator(), "cell 0 9 2 1,growx");
       }
       {
         lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-        panelRight.add(lblPlot, "cell 0 10");
+        panelRight.add(lblPlot, "cell 0 10 2 1");
 
         JScrollPane scrollPanePlot = new JScrollPane();
         scrollPanePlot.setBorder(null);
 
         taOverview = new ReadOnlyTextArea();
         scrollPanePlot.setViewportView(taOverview);
-        panelRight.add(scrollPanePlot, "cell 0 11,grow");
+        panelRight.add(scrollPanePlot, "cell 0 11 2 1,grow");
       }
     }
   }
