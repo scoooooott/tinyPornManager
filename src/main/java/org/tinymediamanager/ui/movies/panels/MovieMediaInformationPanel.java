@@ -86,6 +86,7 @@ public class MovieMediaInformationPanel extends JPanel {
   private JLabel                      lblVideoResolution;
   private JLabel                      lblVideoBitrate;
   private JLabel                      lblVideoBitDepth;
+  private JLabel                      lblFrameRate;
   private JPanel                      panelAudioStreamT;
   private JPanel                      panelAudioStreamDetails;
   private JPanel                      panelSubtitle;
@@ -185,8 +186,8 @@ public class MovieMediaInformationPanel extends JPanel {
       lblVideoBitDepth = new JLabel("");
       panelVideoStreamDetails.add(lblVideoBitDepth);
 
-      // to create the same spacing as in audio
-      panelVideoStreamDetails.add(new JLabel(""));
+      lblFrameRate = new JLabel("");
+      panelVideoStreamDetails.add(lblFrameRate);
     }
     {
       JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
@@ -274,6 +275,7 @@ public class MovieMediaInformationPanel extends JPanel {
     lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
     lblVideoBitDepth.setText(mediaFile.getBitDepthString());
     lblSource.setText(movieSelectionModel.getSelectedMovie().getMediaSource().toString());
+    lblFrameRate.setText(String.format("%.2f fps", mediaFile.getFrameRate()));
   }
 
   private void buildAudioStreamDetails() {

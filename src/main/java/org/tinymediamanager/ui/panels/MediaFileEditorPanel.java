@@ -62,7 +62,9 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.ui.DoubleInputVerifier;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.IntegerInputVerifier;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -100,6 +102,7 @@ public class MediaFileEditorPanel extends JPanel {
   private JButton                         btnRemoveSubtitle;
   private JComboBox<String>               cb3dFormat;
   private JComboBox                       cbAspectRatio;
+  private JTextField                      tfFrameRate;
 
   public MediaFileEditorPanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = ObservableCollections.observableList(new ArrayList<MediaFileContainer>());
@@ -140,11 +143,11 @@ public class MediaFileEditorPanel extends JPanel {
         JPanel panelDetails = new JPanel();
         splitPane.setRightComponent(panelDetails);
         panelDetails
-            .setLayout(new MigLayout("", "[][50lp:50lp][20lp:n][][50lp:50lp][20lp:n][][][50lp:n,grow]", "[][][][][100lp:150lp][100lp:150lp]"));
+            .setLayout(new MigLayout("", "[][65lp:65lp][20lp:n][][65lp:65lp][20lp:n][][][50lp:n,grow]", "[][][][][100lp:150lp][100lp:150lp]"));
         {
           lblFilename = new JLabel("");
           TmmFontHelper.changeFont(lblFilename, 1.167, Font.BOLD);
-          panelDetails.add(lblFilename, "cell 0 0 5 1,growx");
+          panelDetails.add(lblFilename, "cell 0 0 9 1,growx");
         }
         {
           JLabel lblCodec = new TmmLabel(BUNDLE.getString("metatag.codec"));
@@ -167,6 +170,7 @@ public class MediaFileEditorPanel extends JPanel {
           panelDetails.add(lblWidth, "cell 0 2,alignx right");
 
           tfWidth = new JTextField();
+          tfWidth.setInputVerifier(new IntegerInputVerifier());
           panelDetails.add(tfWidth, "cell 1 2,growx");
           tfWidth.setColumns(10);
         }
@@ -175,6 +179,7 @@ public class MediaFileEditorPanel extends JPanel {
           panelDetails.add(lblHeight, "cell 3 2,alignx right");
 
           tfHeight = new JTextField();
+          tfHeight.setInputVerifier(new IntegerInputVerifier());
           panelDetails.add(tfHeight, "cell 4 2,growx");
           tfHeight.setColumns(10);
         }
@@ -197,11 +202,20 @@ public class MediaFileEditorPanel extends JPanel {
           panelDetails.add(cbAspectRatio, "cell 7 2,growx");
         }
         {
+          JLabel lblFrameRate = new TmmLabel(BUNDLE.getString("metatag.framerate"));
+          panelDetails.add(lblFrameRate, "cell 0 3,alignx trailing");
+
+          tfFrameRate = new JTextField();
+          tfFrameRate.setInputVerifier(new DoubleInputVerifier());
+          panelDetails.add(tfFrameRate, "cell 1 3,growx");
+          tfFrameRate.setColumns(10);
+        }
+        {
           JLabel lbld = new TmmLabel("3D Format");
-          panelDetails.add(lbld, "cell 0 3,alignx right");
+          panelDetails.add(lbld, "cell 3 3,alignx right");
 
           cb3dFormat = new JComboBox<>(threeDFormats);
-          panelDetails.add(cb3dFormat, "cell 1 3,growx,aligny top");
+          panelDetails.add(cb3dFormat, "cell 4 3,growx,aligny top");
         }
         {
           JLabel lblAudiostreams = new TmmLabel("AudioStreams");
@@ -265,6 +279,7 @@ public class MediaFileEditorPanel extends JPanel {
 
     // add selection listener to disable editing when needed
     tableMediaFiles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
       private Set<MediaFileType> videoTypes = new HashSet<>(Arrays.asList(VIDEO, VIDEO_EXTRA, SAMPLE, TRAILER));
 
       @Override
@@ -285,6 +300,7 @@ public class MediaFileEditorPanel extends JPanel {
           }
         }
       }
+
     });
   }
 
@@ -459,6 +475,9 @@ public class MediaFileEditorPanel extends JPanel {
           if (mfEditor.getAspectRatio() != mfOriginal.getAspectRatio()) {
             mfOriginal.setAspectRatio(mfEditor.getAspectRatio());
           }
+          if (mfEditor.getFrameRate() != mfOriginal.getFrameRate()) {
+            mfOriginal.setFrameRate(mfEditor.getFrameRate());
+          }
           if (!mfEditor.getVideo3DFormat().equals(mfOriginal.getVideo3DFormat())) {
             mfOriginal.setVideo3DFormat(mfEditor.getVideo3DFormat());
           }
@@ -559,5 +578,11 @@ public class MediaFileEditorPanel extends JPanel {
     AutoBinding<TmmTable, Float, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, tableMediaFiles,
         tmmTableBeanProperty, cbAspectRatio, jComboBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<TmmTable, Double> tmmTableBeanProperty_1 = BeanProperty.create("selectedElement.mediaFile.frameRate");
+    BeanProperty<JTextField, String> jFormattedTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<TmmTable, Double, JTextField, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, tableMediaFiles,
+        tmmTableBeanProperty_1, tfFrameRate, jFormattedTextFieldBeanProperty);
+    autoBinding_7.bind();
   }
 }
