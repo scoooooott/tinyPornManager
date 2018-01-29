@@ -30,7 +30,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -62,7 +61,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      */
     Column col = new Column(BUNDLE.getString("metatag.title"), "title", movie -> movie, Movie.class);
     col.setColumnComparator(movieComparator);
-    col.setCellRenderer(new BorderTableCellRenderer());
+    col.setCellRenderer(new MovieBorderTableCellRenderer());
+    addColumn(col);
+
+    /*
+     * original title (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.originaltitle"), "originalTitle", movie -> movie, Movie.class);
+    col.setColumnComparator(movieComparator);
+    col.setCellRenderer(new MovieBorderTableCellRenderer());
     addColumn(col);
 
     /*

@@ -169,7 +169,6 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          storeUiSorting                      = false;
   private SortColumn                       sortColumn                          = SortColumn.TITLE;
   private boolean                          sortAscending                       = true;
-  private boolean                          displayOriginalTitleInTable         = false;
 
   public MovieSettings() {
     super();
@@ -221,7 +220,7 @@ public class MovieSettings extends AbstractSettings {
   @Override
   protected void writeDefaultSettings() {
     // hidden columns
-    setMovieTableHiddenColumns(Arrays.asList("dateAdded", "filename", "path", "movieset", "fileSize"));
+    setMovieTableHiddenColumns(Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize"));
 
     nfoFilenames.clear();
     addNfoFilename(MovieNfoNaming.MOVIE_NFO);
@@ -794,16 +793,6 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.sortAscending;
     this.sortAscending = newValue;
     firePropertyChange("sortAscending", oldValue, newValue);
-  }
-
-  public boolean isDisplayOriginalTitleInTable() {
-    return displayOriginalTitleInTable;
-  }
-
-  public void setDisplayOriginalTitleInTable(boolean newValue) {
-    boolean oldValue = this.displayOriginalTitleInTable;
-    this.displayOriginalTitleInTable = newValue;
-    firePropertyChange("displayOriginalTitleInTable", oldValue, newValue);
   }
 
   public boolean isWriteActorImages() {

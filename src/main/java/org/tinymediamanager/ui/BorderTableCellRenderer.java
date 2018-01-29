@@ -21,12 +21,8 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class BorderCellRenderer.
@@ -69,24 +65,7 @@ public class BorderTableCellRenderer extends DefaultTableCellRenderer {
     Border defaultBorder = ((JComponent) comp).getBorder();
     this.setBorder(BorderFactory.createCompoundBorder(defaultBorder, border));
 
-    if (value instanceof Movie) {
-      Movie movie = (Movie) value;
-      if (MovieModuleManager.SETTINGS.isDisplayOriginalTitleInTable()) {
-        setValue(movie.getOriginalTitleSortable());
-      }
-      else {
-        setValue(movie.getTitleSortable());
-      }
-      if (movie.isNewlyAdded()) {
-        setHorizontalTextPosition(SwingConstants.LEADING);
-        setIconTextGap(10);
-        setIcon(IconManager.NEW);
-      }
-      else {
-        setIcon(null);
-      }
-    }
-    else if (value != null) {
+    if (value != null) {
       setValue(value.toString());
     }
     else {
