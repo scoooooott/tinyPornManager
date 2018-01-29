@@ -102,6 +102,12 @@
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-omdbapi</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-opensubtitles</artifactId>
             <version>3.0-SNAPSHOT</version>
             <scope>provided</scope>
