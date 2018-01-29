@@ -113,7 +113,7 @@ public class OmdbMetadataProviderTest {
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getCountries()).contains("USA");
       assertThat(md.getSpokenLanguages()).contains("English");
-      assertThat(md.getRating()).isNotNull();
+      assertThat(md.getRatings().size() == 2);
       assertThat(md.getGenres()).contains(MediaGenres.ACTION, MediaGenres.SCIENCE_FICTION);
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotNull();
 
@@ -135,7 +135,7 @@ public class OmdbMetadataProviderTest {
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getCountries()).contains("USA");
       assertThat(md.getSpokenLanguages()).contains("English", "Spanish");
-      assertThat(md.getRating()).isNotNull();
+      assertThat(md.getRatings().size() == 2);
       assertThat(md.getGenres()).contains(MediaGenres.ADVENTURE, MediaGenres.COMEDY, MediaGenres.FAMILY);
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotNull();
 

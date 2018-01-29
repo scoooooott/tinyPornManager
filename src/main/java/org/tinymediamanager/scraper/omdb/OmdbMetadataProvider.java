@@ -36,6 +36,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
@@ -116,7 +117,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
 
     // id from omdb proxy?
     if (!MetadataUtil.isValidImdbId(imdbId)) {
-      imdbId = query.getId(getProviderInfo().getId());
+      imdbId = query.getIdAsString(getProviderInfo().getId());
     }
 
     // imdbid check
@@ -202,8 +203,19 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
     metadata.setCountries(getResult(result.country, ","));
 
     try {
-      metadata.setRating(Double.parseDouble(result.imdbRating));
-      metadata.setVoteCount(Integer.parseInt(result.imdbVotes));
+      MediaRating rating = new MediaRating("imdb");
+      rating.setRating(Double.parseDouble(result.imdbRating));
+      rating.setVoteCount(Integer.parseInt(result.imdbVotes));
+      rating.setMaxValue(10);
+      metadata.addRating(rating);
+    }
+    catch (NumberFormatException ignored) {
+    }
+    try {
+      MediaRating rating = new MediaRating("metascore");
+      rating.setRating(Double.parseDouble(result.metascore));
+      rating.setMaxValue(100);
+      metadata.addRating(rating);
     }
     catch (NumberFormatException ignored) {
     }
