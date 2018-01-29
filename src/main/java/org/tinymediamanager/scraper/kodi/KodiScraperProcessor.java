@@ -99,7 +99,7 @@ class KodiScraperProcessor {
       }
       // Boolean b = BooleanUtils.toBooleanObject(options.get(cond));
       Boolean b = scraper.getProviderInfo().getConfig().getValueAsBool(cond);
-
+      b = (b == null || b); // prevent NPE
       LOGGER.trace("Processing Conditional: {} > {}", regex.getConditional(), (not ? !b : b));
       boolean b2 = (b == null || b.booleanValue() == true);
       if (!(b2 || (not && !b2))) {
