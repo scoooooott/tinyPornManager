@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.UIResource;
 
@@ -69,10 +70,14 @@ public class TmmWindowDecorationPanel extends JPanel {
   private boolean                wasMaximized;
   private boolean                wasMaximizeError = false;
 
+  // remember the root pane border
+  private Border                 rootPaneBorder;
+
   public TmmWindowDecorationPanel() {
     setOpaque(false);
     state = -1;
     wasMaximized = false;
+    rootPaneBorder = MainWindow.getActiveInstance().getRootPane().getBorder();
 
     iconifyIcon = UIManager.getIcon("InternalFrame.iconifyIcon");
     maximizeIcon = UIManager.getIcon("InternalFrame.maximizeIcon");
@@ -419,6 +424,10 @@ public class TmmWindowDecorationPanel extends JPanel {
       }
       else if ("windowMaximized".equals(name)) {
         wasMaximized = true;
+      }
+
+      if ("windowRestore".equals(name)) {
+        getRootPane().setBorder(rootPaneBorder);
       }
     }
   }
