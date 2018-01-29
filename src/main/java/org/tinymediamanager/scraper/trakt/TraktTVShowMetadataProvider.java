@@ -175,7 +175,7 @@ class TraktTVShowMetadataProvider {
         }
 
         if (episode.first_aired != null) {
-          ep.setReleaseDate(episode.first_aired);
+          ep.setReleaseDate(TraktUtils.toDate(episode.first_aired));
         }
 
         if (episode.ids != null) {
@@ -289,7 +289,7 @@ class TraktTVShowMetadataProvider {
 
     md.addCertification(Certification.findCertification(show.certification));
     md.addCountry(show.country);
-    md.setReleaseDate(show.first_aired);
+    md.setReleaseDate(TraktUtils.toDate(show.first_aired));
     if (show.status != null) {
       md.setStatus(show.status.toString());
     }
@@ -481,7 +481,7 @@ class TraktTVShowMetadataProvider {
         for (Episode ep : season.episodes) {
           if (ep.first_aired != null) {
             Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String epAired = formatter.format(ep.first_aired.toDate());
+            String epAired = formatter.format(TraktUtils.toDate(ep.first_aired));
             if (epAired.equals(aired)) {
               episode = ep;
               break;
@@ -521,7 +521,7 @@ class TraktTVShowMetadataProvider {
     rating.setMaxValue(10);
     md.addRating(rating);
 
-    md.setReleaseDate(episode.first_aired);
+    md.setReleaseDate(TraktUtils.toDate(episode.first_aired));
 
     return md;
   }

@@ -189,7 +189,7 @@ class TraktMovieMetadataProvider {
     md.setYear(movie.year);
     md.setRuntime(movie.runtime);
     md.addCertification(Certification.findCertification(movie.certification));
-    md.setReleaseDate(movie.released.toDate());
+    md.setReleaseDate(TraktUtils.toDate(movie.released));
 
     MediaRating rating = new MediaRating("trakt");
     rating.setRating(movie.rating);
