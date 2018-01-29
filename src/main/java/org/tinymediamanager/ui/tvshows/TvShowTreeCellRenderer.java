@@ -70,7 +70,7 @@ public class TvShowTreeCellRenderer extends TmmTreeTableCellRenderer {
     }
     else if (value instanceof TvShowTreeDataProvider.TvShowTreeNode) {
       TvShow tvShow = (TvShow) ((TvShowTreeDataProvider.TvShowTreeNode) value).getUserObject();
-      if (tvShow.isNewlyAdded()) {
+      if (tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
         renderer.setHorizontalTextPosition(SwingConstants.LEADING);
         renderer.setIconTextGap(10);
         renderer.setIcon(IconManager.NEW);
