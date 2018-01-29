@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-animated</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 
     <name>Animated poster scraper</name>
     <description>A scraper for animated movie posters and fanarts</description>
