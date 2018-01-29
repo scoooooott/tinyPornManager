@@ -118,6 +118,7 @@ public class OmdbMetadataProviderTest {
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotNull();
 
       // Men in Black
+      scrapeOptions.setImdbId(""); // empty IMDB!!
       scrapeOptions.setId(mp.getProviderInfo().getId(), "tt0119654");
       md = mp.getMetadata(scrapeOptions);
       assertThat(md.getCertifications()).isNotEmpty();

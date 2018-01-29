@@ -114,6 +114,11 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
       imdbId = query.getImdbId();
     }
 
+    // id from omdb proxy?
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = query.getId(getProviderInfo().getId());
+    }
+
     // imdbid check
     if (!MetadataUtil.isValidImdbId(imdbId)) {
       LOGGER.warn("no imdb id found");
