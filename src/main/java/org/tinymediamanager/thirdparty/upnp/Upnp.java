@@ -28,10 +28,12 @@ import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.message.header.STAllHeader;
 import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
+import org.fourthline.cling.model.message.header.UDAServiceTypeHeader;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.UDADeviceType;
 import org.fourthline.cling.model.types.UDAServiceId;
+import org.fourthline.cling.model.types.UDAServiceType;
 import org.fourthline.cling.registry.RegistrationException;
 import org.fourthline.cling.support.avtransport.callback.Play;
 import org.fourthline.cling.support.avtransport.callback.SetAVTransportURI;
@@ -114,6 +116,33 @@ public class Upnp {
     for (Device device : this.upnpService.getRegistry().getDevices()) {
       if (device.getType().getType().equals("MediaRenderer")) {
         ret.add(device);
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * Finds all Kodi devices in network<br>
+   * You might want to call sendPlayerSearchRequest() a few secs before, to populate freshly
+   * 
+   * @return List of devices
+   */
+  public List<Device> getKodiDevices() {
+    createUpnpService();
+    List<Device> ret = new ArrayList<>();
+    this.upnpService.getControlPoint().search(new UDAServiceTypeHeader(new UDAServiceType("ConnectionManager", 1)));
+    try {
+      Thread.sleep(5000);
+    }
+    catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    for (Device device : this.upnpService.getRegistry().getDevices()) {
+      if (device.getDetails().getModelDetails().getModelName().equalsIgnoreCase("Kodi")) {
+        if (!ret.contains(device)) {
+          ret.add(device);
+        }
       }
     }
     return ret;
