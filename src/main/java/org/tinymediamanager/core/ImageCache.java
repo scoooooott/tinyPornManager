@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +42,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -90,8 +90,9 @@ public class ImageCache {
       }
       // now uses a simple md5 hash, which should have a fairly low collision
       // rate, especially for our limited use
-      byte[] key = DigestUtils.md5(path);
-      return new String(Hex.encodeHex(key));
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] key = md.digest(path.getBytes());
+      return StrgUtils.bytesToHex(key);
     }
     catch (Exception e) {
       LOGGER.error("Failed to create cached filename for image: " + path, e);
