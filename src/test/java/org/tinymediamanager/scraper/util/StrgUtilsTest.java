@@ -20,4 +20,8 @@ public class StrgUtilsTest {
     Assert.assertTrue(StrgUtils.compareVersion("SVN", "SVN") < 0); // dito for SVN
   }
 
+  @Test
+  public void hex() {
+    Assert.assertEquals("6162636465666768", StrgUtils.bytesToHex("abcdefgh".getBytes()));
+  }
 }

@@ -25,7 +25,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,9 @@ public class SubtitleUtils {
    * Size of the chunks that will be hashed in bytes (64 KB)
    */
   private static final int    HASH_CHUNK_SIZE = 64 * 1024;
+
+  private SubtitleUtils() {
+  }
 
   /**
    * Returns SubDB hash or empty string if error
@@ -71,7 +73,7 @@ public class SubtitleUtils {
       md.update(hbytes);
       md.update(tbytes);
 
-      return Hex.encodeHexString(md.digest());
+      return StrgUtils.bytesToHex(md.digest());
     }
     catch (Exception e) {
       LOGGER.error("Error computing SubDB hash", e);

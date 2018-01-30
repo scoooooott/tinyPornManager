@@ -34,6 +34,10 @@ import java.util.regex.Pattern;
 public class StrgUtils {
   private static final Map<Integer, Replacement> REPLACEMENTS          = buildReplacementMap();
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
+  private final static char[]                    HEX_ARRAY             = "0123456789ABCDEF".toCharArray();
+
+  private StrgUtils() {
+  }
 
   /*
    * build a replacement map of characters, which are not handled right by the normalizer method
@@ -61,6 +65,22 @@ public class StrgUtils {
         "El", "Los", "La", "Las", "Un", "Unos", "Una", "Unas" // spanish
     };
     // @formatter:on
+  }
+
+  /**
+   * ByteArray to HEX String
+   * 
+   * @param bytes
+   * @return
+   */
+  public static String bytesToHex(byte[] bytes) {
+    char[] hexChars = new char[bytes.length * 2];
+    for (int j = 0; j < bytes.length; j++) {
+      int v = bytes[j] & 0xFF;
+      hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+      hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+    }
+    return new String(hexChars);
   }
 
   /**
