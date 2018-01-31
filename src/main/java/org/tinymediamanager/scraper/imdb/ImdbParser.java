@@ -198,8 +198,8 @@ public abstract class ImdbParser {
           Elements imgs = posters.get(0).getElementsByTag("img");
           for (Element img : imgs) {
             posterUrl = img.attr("src");
-            posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX200_");
-            posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY200_");
+            posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "");
+            posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "");
             posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
           }
         }
@@ -295,8 +295,8 @@ public abstract class ImdbParser {
         Elements imgs = element.getElementsByTag("img");
         for (Element img : imgs) {
           posterUrl = img.attr("src");
-          posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX200_");
-          posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY200_");
+          posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "");
+          posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "");
           posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
         }
       }

@@ -128,6 +128,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   static void processMediaArt(MediaMetadata md, MediaArtworkType type, String image) {
     MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type);
     ma.setPreviewUrl(image);
+    ma.setDefaultUrl(image);
     md.addMediaArt(ma);
   }
 

@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -390,6 +391,22 @@ public class ImdbTvShowParser extends ImdbParser {
             Element releaseDate = row.getElementsByClass("airdate").first();
             if (releaseDate != null) {
               ep.setReleaseDate(parseDate(releaseDate.ownText()));
+            }
+
+            // poster
+            Element image = row.getElementsByTag("img").first();
+            if (image != null) {
+              String posterUrl = image.attr("src");
+              posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "");
+              posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "");
+              posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
+
+              if (StringUtils.isNotBlank(posterUrl)) {
+                MediaArtwork ma = new MediaArtwork(ImdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.THUMB);
+                ma.setPreviewUrl(posterUrl);
+                ma.setDefaultUrl(posterUrl);
+                ep.addMediaArt(ma);
+              }
             }
 
             episodes.add(ep);
