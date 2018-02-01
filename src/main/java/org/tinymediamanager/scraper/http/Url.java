@@ -31,7 +31,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +61,10 @@ public class Url {
   protected static OkHttpClient        client;
 
   protected static final String        USER_AGENT            = "User-Agent";
+  // where is such a list in std java?
+  // https://github.com/xbmc/xbmc/blob/master/xbmc/addons/kodi-addon-dev-kit/include/kodi/Filesystem.h#L195
+  public static final List<String>     KNOWN_HEADERS         = Arrays.asList("accept", "accept-charset", "accept-encoding", "accept-language",
+      "authorization", "cookie", "customrequest", "noshout", "postdata", "referer", "user-agent", "seekable", "sslcipherlist", "Via");
   protected int                        responseCode          = 0;
   protected String                     responseMessage       = "";
   protected Charset                    responseCharset       = null;
@@ -114,6 +122,10 @@ public class Url {
     }
     this.url = url;
 
+    if (url.contains("|")) {
+      splitHeadersFromUrl();
+    }
+
     // morph to URI to check syntax of the url
     try {
       uri = morphStringToUri(url);
@@ -130,6 +142,25 @@ public class Url {
    * A constructor for inherited classes which needs a special setup
    */
   protected Url() {
+  }
+
+  /**
+   * pipe could be delimiter for header values (like seen in Kodi)<br>
+   * http://www.asdfcom/page?what=do|Referer=http://my.site.com<br>
+   * http://de.clip-1.filmtrailer.com/2845_14749_a_4.flv?log_var=67|491100001-1|-<br>
+   * split away from url, and add as header
+   * 
+   */
+  protected void splitHeadersFromUrl() {
+    Pattern p = Pattern.compile(".*\\|(.*?)=(.*?)$");
+    Matcher m = p.matcher(this.url);
+    if (m.find()) {
+      if (KNOWN_HEADERS.contains(m.group(1).toLowerCase(Locale.ROOT))) {
+        // ok, url might have a pipe, but we now have a recognized header - set it
+        this.url = this.url.substring(0, m.start(1) - 1); // -1 is pipe char
+        addHeader(m.group(1), m.group(2));
+      }
+    }
   }
 
   /**

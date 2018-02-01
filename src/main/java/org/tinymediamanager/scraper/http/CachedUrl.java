@@ -41,6 +41,10 @@ public class CachedUrl extends Url {
 
   public CachedUrl(String url) throws MalformedURLException {
     this.url = url;
+    if (url.contains("|")) {
+      splitHeadersFromUrl();
+    }
+
     // morph to URI to check syntax of the url
     try {
       this.uri = morphStringToUri(url);
