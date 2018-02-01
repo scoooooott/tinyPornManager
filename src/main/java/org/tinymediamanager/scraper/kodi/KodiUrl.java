@@ -77,8 +77,9 @@ class KodiUrl {
       }
     }
     else {
-      this.urlString = url;
+      this.urlString = url.trim();
     }
+    LOGGER.trace("KodiUrl using Url from String: " + urlString);
   }
 
   public KodiUrl(String url, KodiScraper kodiScraper) {
@@ -93,8 +94,9 @@ class KodiUrl {
 
   private void updateFromElement(Element e) {
     urlString = e.getTextContent();
-    if (urlString != null)
+    if (urlString != null) {
       urlString = urlString.trim();
+    }
     LOGGER.trace("KodiUrl using Url from Xml: " + urlString);
     functionName = e.getAttribute("function");
     // TODO: pull in post, spoof, etc.
@@ -166,7 +168,8 @@ class KodiUrl {
       LOGGER.error("InputStream was NULL!!!");
       return "";
     }
-    return IOUtils.toString(getInputStream());
+    // return IOUtils.toString(getInputStream()); // why call 2 times and not recycle IS?
+    return IOUtils.toString(is, "UTF-8"); // let's try ;)
   }
 
   @Override

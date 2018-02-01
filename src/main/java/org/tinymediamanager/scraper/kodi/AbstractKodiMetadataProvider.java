@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -59,7 +60,7 @@ import org.w3c.dom.ls.LSSerializer;
  */
 public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvider {
   private static final Logger          LOGGER       = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
-
+  private final UnicodeUnescaper       uu           = new UnicodeUnescaper();
   private final DocumentBuilderFactory factory;
 
   public KodiScraper                   scraper;
@@ -144,6 +145,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         catch (Exception ignored) {
         }
         float score = MetadataUtil.calculateScore(arg, t);
+        // if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
+        // getLogger().debug("no poster - downgrading score by 0.01");
+        // score = score - 0.01f;
+        // }
         if (yearDiffers(sr.getYear(), year)) {
           float diff = (float) Math.abs(year - sr.getYear()) / 100;
           LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
@@ -212,10 +217,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return "";
   }
 
-  protected Document parseXmlString(String xml) throws Exception {
+  protected Document parseXmlString(String xmlString) throws Exception {
     DocumentBuilder parser = factory.newDocumentBuilder();
 
+    String xml = xmlString;
     // xml = Utils.replaceAcutesHTML(xml);
+    xml = uu.translate(xml);
     xml = StringEscapeUtils.unescapeHtml4(xml);
     xml = StringEscapeUtils.unescapeXml(xml);
     xml = StringEscapeUtils.unescapeXml(xml);

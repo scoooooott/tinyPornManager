@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.kodi;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,13 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiScraperProcessor {
-  public static final String  FUNCTION_SETTINGS = "GetSettings";
-  private static final Logger LOGGER            = LoggerFactory.getLogger(KodiScraperProcessor.class);
-  private static final int    PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
-  private boolean             truncateLogging   = true;
-  private KodiScraper         scraper           = null;
-  private String              buffers[]         = new String[21];
+  public static final String     FUNCTION_SETTINGS = "GetSettings";
+  private static final Logger    LOGGER            = LoggerFactory.getLogger(KodiScraperProcessor.class);
+  private static final int       PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
+  private boolean                truncateLogging   = true;
+  private KodiScraper            scraper           = null;
+  private String                 buffers[]         = new String[21];
+  private final UnicodeUnescaper uu                = new UnicodeUnescaper();
 
   public KodiScraperProcessor(KodiScraper scraper) {
     if (scraper == null)
@@ -189,12 +191,18 @@ class KodiScraperProcessor {
     return g;
   }
 
+  /**
+   * By default html tags and special characters are stripped from the matches
+   * 
+   * @param group
+   * @return
+   */
   private String cleanHtml(String group) {
     if (group == null)
       return "";
     LOGGER.trace("Before Clean Html: " + group);
     // String s = group.replaceAll("<[^>]+>", "");
-    String s = Jsoup.parse(group).text();
+    String s = Jsoup.parse(uu.translate(group)).body().text();
     LOGGER.trace("After  Clean Html: " + s);
     return s;
   }
@@ -296,6 +304,7 @@ class KodiScraperProcessor {
       text = "";
     }
     text = KodiUtil.fixXmlHeader(text); // fix possible XML header errors
+    text = KodiUtil.fixScripts(text); // fix possible scripts
     text = processOutputBuffersForPropertyReferences(text); // replace $INFO vars
 
     LOGGER.trace("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
@@ -307,6 +316,7 @@ class KodiScraperProcessor {
       buffer = "";
     }
     buffer = KodiUtil.fixXmlHeader(buffer); // fix possible XML header errors
+    buffer = KodiUtil.fixScripts(buffer); // fix possible scripts
     buffer = processOutputBuffersForPropertyReferences(buffer); // replace $INFO vars
 
     LOGGER.trace(String.format("Get String Buffer: %s", buffer));

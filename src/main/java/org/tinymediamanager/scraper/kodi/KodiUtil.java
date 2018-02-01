@@ -85,6 +85,19 @@ class KodiUtil {
   }
 
   /**
+   * fixes document.write("<sc" + "ript") XML validation
+   * 
+   * @param xml
+   * @return
+   */
+  public static String fixScripts(String xml) {
+    String ret = xml;
+    ret = ret.replace("<sc\" \\+ \"ript", "<script");
+    ret = ret.replace("</\" \\+ \"script", "</script");
+    return ret;
+  }
+
+  /**
    * tries to detect the Kodi installation folder
    * 
    * @return File or NULL
