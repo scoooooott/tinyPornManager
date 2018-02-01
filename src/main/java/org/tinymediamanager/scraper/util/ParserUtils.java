@@ -232,6 +232,15 @@ public class ParserUtils {
     }
     LOGGER.trace("ARR: " + opt);
 
+    // detect OTR recordings - at least with that special pattern
+    p = Pattern.compile(".*?(_\\d{2}\\.\\d{2}\\.\\d{2}[_ ]+\\d{2}\\-\\d{2}\\_).*"); // like _12.11.17_20-15_
+    m = p.matcher(fname);
+    if (m.matches() && m.start(1) > 10) {
+      // start at some later point, not that if pattern is first
+      LOGGER.trace("OTR: " + m.group(1));
+      fname = fname.substring(0, m.start(1));
+    }
+
     // parse good filename
     String[] s = StringUtils.split(fname, DELIMITER);
     if (s.length == 0) {

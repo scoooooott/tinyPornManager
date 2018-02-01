@@ -76,6 +76,14 @@ public class ParserUtilsTest extends BasicTest {
     assertEqual("Z For Zachariah | 2015", detectTY("Z.for.Zachariah.3D.2015.German.DL.1080p.BluRay.x264-STEREOSCOPiC"));
     assertEqual("Transformers | 2007", detectTY("Transformers.2007.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos.mkv"));
 
+    // OTR recording naming
+    assertEqual("Linkin Park Road To Revolution Und Live From Madison Square Garden",
+        detectTY("Linkin_Park__Road_to_Revolution_und_Live_from_Madison_Square_Garden_12.05.02_01-27_unk.HQ.avi.otrkey"));
+    assertEqual("Prohibition Eine Amerikanische Erfahrung",
+        detectTY("Prohibition_Eine_amerikanische_Erfahrung_12.11.10_22-00_arte_55_TVOON_DE.mpg.HD.avi.otrkey"));
+    assertEqual("Rockpalast Depeche Mode", detectTY("Rockpalast__Depeche_Mode_12.09.19_20-15_ardeinsfestival_60_TVOON_DE.mpg.HQ.avi.otrkey"));
+    assertEqual("Rockpalast U2", detectTY("Rockpalast__U2_12.09.17_22-10_ardeinsfestival_60_TVOON_DE.mpg.HQ.avi.otrkey"));
+
     // check some weird TV shows names ;)
     // ok, we cannot do anything for the episode numbers..
     // assertEqual("Simon & Simon S02e13", detectTY("Simon & Simon - S02E13\\VIDEO_TS\\VTS_01_1.VOB"));
@@ -117,6 +125,7 @@ public class ParserUtilsTest extends BasicTest {
     assertEqual("Looney Tunes 1960x05 Episodename", detectTY("Looney Tunes - 1960x05 - Episodename"));
     assertEqual("The Big Bang Theory S04e01 31 Liebhaber Aufgerundet", detectTY("The Big Bang Theory_S04E01_31 Liebhaber, aufgerundet.m4v"));
     assertEqual("Shaun Das Schaf S01e02 1x04 Badetag Summen Der Bienen", detectTY("Shaun das Schaf - S01E02_1x04 - Badetag_Summen der Bienen.ts"));
+
   }
 
   private String detectTY(String filename) {
