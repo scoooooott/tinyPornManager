@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-omdbapi</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 
 	<name>omdbapi scraper</name>
 	<description>A metadata scraper for omdbapi.com</description>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>api-scraper</artifactId>
-			<version>2.5</version>
+			<version>3.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
