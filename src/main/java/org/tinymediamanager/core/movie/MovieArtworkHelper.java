@@ -54,6 +54,13 @@ public class MovieArtworkHelper {
    *          the type of artwork to be downloaded
    */
   public static void downloadArtwork(Movie movie, MediaFileType type) {
+
+    // extra handling for extrafanart & extrathumbs
+    if (type == MediaFileType.EXTRAFANART || type == MediaFileType.EXTRATHUMB) {
+      downloadExtraArtwork(movie, type);
+      return;
+    }
+
     String url = movie.getArtworkUrl(type);
     if (StringUtils.isBlank(url)) {
       return;
@@ -93,11 +100,6 @@ public class MovieArtworkHelper {
       case DISC:
         fileNamings.addAll(getDiscartNamesForMovie(movie));
         break;
-
-      case EXTRAFANART:
-      case EXTRATHUMB:
-        downloadExtraArtwork(movie, type);
-        return;
 
       default:
         return;
