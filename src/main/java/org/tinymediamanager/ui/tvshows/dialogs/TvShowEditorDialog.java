@@ -491,7 +491,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JScrollPane scrollPaneIds = new JScrollPane();
         details2Panel.add(scrollPaneIds, "cell 4 1,grow");
 
-        tableIds = new MediaIdTable(ids, ScraperType.TV_SHOW);
+        tableIds = new MediaIdTable(ids);
         tableIds.configureScrollPane(scrollPaneIds);
 
         JButton btnAddId = new JButton(new AddIdAction());
@@ -1284,7 +1284,8 @@ public class TvShowEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       MediaId mediaId = new MediaId();
-      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId);
+      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId,
+          ScraperType.TV_SHOW);
       dialog.setVisible(true);
 
       if (StringUtils.isNoneBlank(mediaId.key, mediaId.value)) {

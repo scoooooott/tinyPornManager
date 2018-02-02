@@ -18,15 +18,21 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.components.MediaIdTable;
+import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -38,16 +44,23 @@ import net.miginfocom.swing.MigLayout;
 public class IdEditorDialog extends TmmDialog {
   private final MediaIdTable.MediaId idToEdit;
 
-  private JTextField                 tfProviderId;
+  private Set<String>                providerIds;
+
+  private JComboBox                  cbProviderId;
   private JTextField                 tfId;
 
-  public IdEditorDialog(Window owner, String title, MediaIdTable.MediaId mediaId) {
+  public IdEditorDialog(Window owner, String title, MediaIdTable.MediaId mediaId, ScraperType type) {
     super(owner, title, "idEditor");
     idToEdit = mediaId;
 
+    providerIds = new HashSet<>();
+    for (MediaScraper scraper : MediaScraper.getMediaScrapers(type)) {
+      providerIds.add(scraper.getId());
+    }
+
     initComponents();
 
-    tfProviderId.setText(idToEdit.key);
+    cbProviderId.setSelectedItem(idToEdit.key);
     tfId.setText(idToEdit.value);
   }
 
@@ -60,9 +73,8 @@ public class IdEditorDialog extends TmmDialog {
         JLabel lblProviderIdT = new JLabel(BUNDLE.getString("metatag.id.source"));
         panelContent.add(lblProviderIdT, "cell 0 0,alignx trailing");
 
-        tfProviderId = new JTextField();
-        panelContent.add(tfProviderId, "cell 1 0,growx");
-        tfProviderId.setColumns(10);
+        cbProviderId = new AutocompleteComboBox(providerIds);
+        panelContent.add(cbProviderId, "cell 1 0,growx");
       }
       {
         JLabel lblIdT = new JLabel(BUNDLE.getString("metatag.id"));
@@ -81,12 +93,12 @@ public class IdEditorDialog extends TmmDialog {
 
         JButton btnOk = new JButton(BUNDLE.getString("Button.save"));
         btnOk.addActionListener(e -> {
-          if (StringUtils.isAnyBlank(tfId.getText(), tfProviderId.getText())) {
+          if (StringUtils.isAnyBlank(tfId.getText(), (String) cbProviderId.getSelectedItem())) {
             JOptionPane.showMessageDialog(IdEditorDialog.this, BUNDLE.getString("id.empty"));
             return;
           }
 
-          idToEdit.key = tfProviderId.getText();
+          idToEdit.key = (String) cbProviderId.getSelectedItem();
           idToEdit.value = tfId.getText();
           setVisible(false);
         });

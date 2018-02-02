@@ -544,7 +544,7 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPaneIds = new JScrollPane();
         details2Panel.add(scrollPaneIds, "cell 7 0 1 6,growx");
 
-        tableIds = new MediaIdTable(ids, ScraperType.MOVIE);
+        tableIds = new MediaIdTable(ids);
         tableIds.configureScrollPane(scrollPaneIds);
         scrollPaneIds.setViewportView(tableIds);
       }
@@ -1329,7 +1329,7 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       MediaId mediaId = new MediaId();
-      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId);
+      IdEditorDialog dialog = new IdEditorDialog(SwingUtilities.getWindowAncestor(tableIds), BUNDLE.getString("id.add"), mediaId, ScraperType.MOVIE);
       dialog.setVisible(true);
 
       if (StringUtils.isNoneBlank(mediaId.key, mediaId.value)) {

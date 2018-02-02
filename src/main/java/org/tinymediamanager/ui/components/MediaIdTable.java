@@ -15,19 +15,11 @@
  */
 package org.tinymediamanager.ui.components;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.table.TableColumn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -62,26 +54,13 @@ public class MediaIdTable extends TmmTable {
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
   }
 
-  public MediaIdTable(EventList<MediaId> ids, ScraperType type) {
+  public MediaIdTable(EventList<MediaId> ids) {
     this.idMap = null;
     this.editable = true;
     this.idList = ids;
     setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat(editable)));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
-    TableColumn column = getColumnModel().getColumn(0);
-
-    Set<String> providerIds = new HashSet<>();
-    for (MediaId id : ids) {
-      providerIds.add(id.key);
-    }
-    for (MediaScraper scraper : MediaScraper.getMediaScrapers(type)) {
-      providerIds.add(scraper.getId());
-    }
-    JComboBox<String> comboBox = new JComboBox<>(providerIds.toArray(new String[0]));
-
-    column.setCellEditor(new DefaultCellEditor(comboBox));
   }
 
   public static EventList<MediaId> convertIdMapToEventList(Map<String, Object> idMap) {
@@ -149,7 +128,7 @@ public class MediaIdTable extends TmmTable {
 
     @Override
     public boolean isEditable(MediaId arg0, int arg1) {
-      return editable;
+      return editable && arg1 == 1;
     }
 
     @Override
