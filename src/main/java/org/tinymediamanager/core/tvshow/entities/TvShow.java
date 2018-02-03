@@ -1548,6 +1548,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public double getMediaInfoFrameRate() {
+    return 0;
+  }
+
+  @Override
   public boolean isVideoIn3D() {
     return false;
   }

@@ -57,6 +57,7 @@ public final class Constants {
   public final static String FANART_URL             = "fanartUrl";
   public final static String FIRST_AIRED            = "firstAired";
   public final static String FIRST_AIRED_AS_STRING  = "firstAiredAsString";
+  public final static String FRAME_RATE             = "frameRate";
   public final static String GENRE                  = "genre";
   public final static String GENRES_AS_STRING       = "genresAsString";
   public final static String HAS_IMAGES             = "hasImages";

@@ -78,6 +78,7 @@ public class TvShowList extends AbstractModelObject {
   private final List<String>     episodeTagsObservable;
   private final List<String>     videoCodecsObservable;
   private final List<String>     audioCodecsObservable;
+  private final List<Double>     frameRateObservable;
 
   private PropertyChangeListener propertyChangeListener;
 
@@ -86,11 +87,12 @@ public class TvShowList extends AbstractModelObject {
    */
   private TvShowList() {
     // create the lists
-    tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
-    tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<>()));
+    tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    frameRateObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
 
     // the tag listener: its used to always have a full list of all tags used in tmm
     propertyChangeListener = evt -> {
@@ -616,38 +618,26 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateMediaInformationLists(TvShowEpisode episode) {
-    // video codec
-    List<String> availableCodecs = new ArrayList<>(videoCodecsObservable);
+    // video codec & frame rate
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+      // video codec
       String codec = mf.getVideoCodec();
-      boolean codecFound = false;
-
-      for (String mfCodec : availableCodecs) {
-        if (mfCodec.equals(codec)) {
-          codecFound = true;
-          break;
-        }
+      if (!videoCodecsObservable.contains(codec)) {
+        addVideoCodec(codec);
       }
 
-      if (!codecFound) {
-        addVideoCodec(codec);
+      // frame rate
+      Double frameRate = mf.getFrameRate();
+      if (!frameRateObservable.contains(frameRate)) {
+        addFrameRate(frameRate);
       }
     }
 
     // audio codec
-    availableCodecs = new ArrayList<>(audioCodecsObservable);
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String codec = audio.getCodec();
-        boolean codecFound = false;
-        for (String mfCodec : availableCodecs) {
-          if (mfCodec.equals(codec)) {
-            codecFound = true;
-            break;
-          }
-        }
-
-        if (!codecFound) {
+        if (!audioCodecsObservable.contains(codec)) {
           addAudioCodec(codec);
         }
       }
@@ -669,6 +659,21 @@ public class TvShowList extends AbstractModelObject {
     firePropertyChange(VIDEO_CODEC, null, videoCodecsObservable);
   }
 
+  private void addFrameRate(Double newFrameRate) {
+    if (newFrameRate == 0) {
+      return;
+    }
+
+    synchronized (frameRateObservable) {
+      if (frameRateObservable.contains(newFrameRate)) {
+        return;
+      }
+      frameRateObservable.add(newFrameRate);
+    }
+
+    firePropertyChange(Constants.FRAME_RATE, null, frameRateObservable);
+  }
+
   private void addAudioCodec(String newCodec) {
     if (StringUtils.isBlank(newCodec)) {
       return;
@@ -686,6 +691,10 @@ public class TvShowList extends AbstractModelObject {
 
   public List<String> getVideoCodecsInEpisodes() {
     return videoCodecsObservable;
+  }
+
+  public List<Double> getFrameRatesInEpisodes() {
+    return frameRateObservable;
   }
 
   public List<String> getAudioCodecsInEpisodes() {

@@ -53,11 +53,18 @@ public interface IMediaInformation {
   public float getMediaInfoAspectRatio();
 
   /**
-   * gets the media info video codec (i.e. divx)
+   * gets the media info video codec (e.g. divx)
    * 
    * @return the video codec
    */
   public String getMediaInfoVideoCodec();
+
+  /**
+   * get the media info frame rate (e.g. 25.0)
+   *
+   * @return the frame rate
+   */
+  public double getMediaInfoFrameRate();
 
   /**
    * is the video in 3D
@@ -67,14 +74,14 @@ public interface IMediaInformation {
   public boolean isVideoIn3D();
 
   /**
-   * gets the audio codec (i.e mp3)
+   * gets the audio codec (e.g. mp3)
    * 
    * @return the audio codec
    */
   public String getMediaInfoAudioCodec();
 
   /**
-   * gets the count of audio channels (i.e. 6 at 5.1 sound)
+   * gets the count of audio channels (e.g, 6 at 5.1 sound)
    * 
    * @return count of audio channels
    */

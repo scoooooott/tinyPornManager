@@ -37,6 +37,7 @@ import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowCastFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowDatasourceFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowEmptyFilter;
+import org.tinymediamanager.ui.tvshows.filters.TvShowFrameRateFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowGenreFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowMediaSourceFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowMissingArtworkFilter;
@@ -99,6 +100,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     addFilter(new TvShowTagFilter());
     addFilter(new TvShowVideoFormatFilter());
     addFilter(new TvShowVideoCodecFilter());
+    addFilter(new TvShowFrameRateFilter());
     addFilter(new TvShowAudioCodecFilter());
     addFilter(new TvShowMediaSourceFilter());
     addFilter(new TvShowDatasourceFilter());

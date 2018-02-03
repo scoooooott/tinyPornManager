@@ -85,6 +85,7 @@ public class MovieList extends AbstractModelObject {
   private final List<String>           videoCodecsObservable;
   private final List<String>           audioCodecsObservable;
   private final List<Certification>    certificationsObservable;
+  private final List<Double>           frameRateObservable;
 
   private final PropertyChangeListener tagListener;
   private final PropertyChangeListener movieSetListener;
@@ -96,11 +97,12 @@ public class MovieList extends AbstractModelObject {
   private MovieList() {
     // create all lists
     movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Movie.class));
-    movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>()));
-    tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
-    certificationsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<Certification>());
+    movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<>()));
+    tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    certificationsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    frameRateObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
 
     // the tag listener: its used to always have a full list of all tags used in tmm
     tagListener = evt -> {
@@ -779,38 +781,26 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateMediaInformationLists(Movie movie) {
-    // video codec
-    List<String> availableCodecs = new ArrayList<>(videoCodecsObservable);
+    // video codec & frame rate
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      // video codec
       String codec = mf.getVideoCodec();
-      boolean codecFound = false;
-
-      for (String mfCodec : availableCodecs) {
-        if (mfCodec.equals(codec)) {
-          codecFound = true;
-          break;
-        }
+      if (!videoCodecsObservable.contains(codec)) {
+        addVideoCodec(codec);
       }
 
-      if (!codecFound) {
-        addVideoCodec(codec);
+      // frame rate
+      Double frameRate = mf.getFrameRate();
+      if (!frameRateObservable.contains(frameRate)) {
+        addFrameRate(frameRate);
       }
     }
 
     // audio codec
-    availableCodecs = new ArrayList<>(audioCodecsObservable);
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String codec = audio.getCodec();
-        boolean codecFound = false;
-        for (String mfCodec : availableCodecs) {
-          if (mfCodec.equals(codec)) {
-            codecFound = true;
-            break;
-          }
-        }
-
-        if (!codecFound) {
+        if (!audioCodecsObservable.contains(codec)) {
           addAudioCodec(codec);
         }
       }
@@ -835,9 +825,13 @@ public class MovieList extends AbstractModelObject {
     return certificationsObservable;
   }
 
+  public List<Double> getFrameRatesInMovies() {
+    return frameRateObservable;
+  }
+
   /**
    * Adds the tag.
-   * 
+   *
    * @param newTag
    *          the new tag
    */
@@ -868,7 +862,7 @@ public class MovieList extends AbstractModelObject {
       videoCodecsObservable.add(newCodec);
     }
 
-    firePropertyChange("videoCodec", null, videoCodecsObservable);
+    firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsObservable);
   }
 
   private void addAudioCodec(String newCodec) {
@@ -883,7 +877,7 @@ public class MovieList extends AbstractModelObject {
       audioCodecsObservable.add(newCodec);
     }
 
-    firePropertyChange("audioCodec", null, audioCodecsObservable);
+    firePropertyChange(Constants.AUDIO_CODEC, null, audioCodecsObservable);
   }
 
   private void addCertification(Certification newCert) {
@@ -898,7 +892,22 @@ public class MovieList extends AbstractModelObject {
       certificationsObservable.add(newCert);
     }
 
-    firePropertyChange("certification", null, certificationsObservable);
+    firePropertyChange(Constants.CERTIFICATION, null, certificationsObservable);
+  }
+
+  private void addFrameRate(Double newFrameRate) {
+    if (newFrameRate == 0) {
+      return;
+    }
+
+    synchronized (frameRateObservable) {
+      if (frameRateObservable.contains(newFrameRate)) {
+        return;
+      }
+      frameRateObservable.add(newFrameRate);
+    }
+
+    firePropertyChange(Constants.FRAME_RATE, null, frameRateObservable);
   }
 
   /**
