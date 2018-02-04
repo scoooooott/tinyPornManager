@@ -48,11 +48,12 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$ ,
     RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$ ,
     RUNTIME(BUNDLE.getString("metatag.runtime")), //$NON-NLS-1$ ,
-    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")); //$NON-NLS-1$ ,
+    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")), //$NON-NLS-1$ ,
+    FRAME_RATE(BUNDLE.getString("metatag.framerate")); //$NON-NLS-1$ ,
 
     private String title;
 
-    private SortColumn(String title) {
+    SortColumn(String title) {
       this.title = title;
     }
 
@@ -195,6 +196,16 @@ public class MovieExtendedComparator implements Comparator<Movie> {
             sortOrder = videoBitrate1.compareTo(videoBitrate2);
           }
           break;
+
+        case FRAME_RATE:
+          Double frameRate1 = movie1.getMediaInfoFrameRate();
+          Double frameRate2 = movie2.getMediaInfoFrameRate();
+          sortOrder = compareNullFirst(frameRate1, frameRate2);
+          if (sortOrder == 0) {
+            sortOrder = frameRate1.compareTo(frameRate2);
+          }
+          break;
+
         case RELEASE_DATE:
           sortOrder = compareNullFirst(movie1.getReleaseDate(), movie2.getReleaseDate());
           if (sortOrder == 0) {
