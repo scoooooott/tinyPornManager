@@ -176,6 +176,7 @@ public class TvShowRenamerTest extends BasicTest {
 
   @Test
   public void testRename() {
+    // run with default settings
     TvShowSettings settings = TvShowSettings.getInstance("target/settings");
 
     testSimpleEpisode();
@@ -239,7 +240,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     Path video = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.mkv");
     assertThat(video).exists();
-    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.jpg");
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 - Pilot-thumb.jpg");
     assertThat(thumb).exists();
     Path nfo = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.nfo");
     assertThat(nfo).exists();
@@ -324,7 +325,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     Path video = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.mkv");
     assertThat(video).exists();
-    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.jpg");
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2-thumb.jpg");
     assertThat(thumb).exists();
     Path nfo = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.nfo");
     assertThat(nfo).exists();
@@ -393,7 +394,7 @@ public class TvShowRenamerTest extends BasicTest {
     assertThat(video).exists();
     video = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.part2.mkv");
     assertThat(video).exists();
-    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.jpg");
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 - Pilot-thumb.jpg");
     assertThat(thumb).exists();
     Path nfo = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.nfo");
     assertThat(nfo).exists();
@@ -488,7 +489,7 @@ public class TvShowRenamerTest extends BasicTest {
     assertThat(video).exists();
     video = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.part2.mkv");
     assertThat(video).exists();
-    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.jpg");
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2-thumb.jpg");
     assertThat(thumb).exists();
     Path nfo = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.nfo");
     assertThat(nfo).exists();

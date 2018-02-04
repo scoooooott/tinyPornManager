@@ -68,14 +68,13 @@ public class TvShowRenamer {
   private static final Logger             LOGGER         = LoggerFactory.getLogger(TvShowRenamer.class);
   private static final TvShowSettings     SETTINGS       = TvShowModuleManager.SETTINGS;
 
-  private static final String[]           seasonNumbers  = { "${seasonNr}", "${seasonNr2}", "${seasonNrDvd}", "${seasonNrDvd2}" };
-  private static final String[]           episodeNumbers = { "${episodeNr}", "${episodeNr2}", "${episodeNrDvd}", "${episodeNrDvd2}" };
-  private static final String[]           episodeTitles  = { "${title}", "${titleSortable}" };
-  private static final String[]           showTitles     = { "${showTitle}", "${showTitleSortable}" };
+  private static final String[]           seasonNumbers  = { "seasonNr", "seasonNr2", "seasonNrDvd", "seasonNrDvd2" };
+  private static final String[]           episodeNumbers = { "episodeNr", "episodeNr2", "episodeNrDvd", "episodeNrDvd2" };
+  private static final String[]           episodeTitles  = { "title", "titleSortable" };
+  private static final String[]           showTitles     = { "showTitle", "showTitleSortable" };
 
-  private static final Pattern            epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)?\\$[ED]", Pattern.CASE_INSENSITIVE);
-  private static final Pattern            seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)?[\\$][1234]", Pattern.CASE_INSENSITIVE);
-  // private static final Pattern token = Pattern.compile("(\\$[\\w#])");
+  private static final Pattern            epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)\\$\\{.*?\\}", Pattern.CASE_INSENSITIVE);
+  private static final Pattern            seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)\\$\\{.*?\\}", Pattern.CASE_INSENSITIVE);
 
   public static final Map<String, String> TOKEN_MAP      = createTokenMap();
 
@@ -942,12 +941,6 @@ public class TvShowRenamer {
       TvShowEpisode firstEp = episodes.get(0);
 
       newDestination = getTokenValue(firstEp.getTvShow(), firstEp, template);
-      // replace all $x parameters
-      // Matcher m = token.matcher(template);
-      // while (m.find()) {
-      // String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
-      // newDestination = replaceToken(newDestination, m.group(1), value);
-      // }
     }
     else {
       // multi episodes
@@ -957,23 +950,17 @@ public class TvShowRenamer {
       // *******************
       // LOOP 1 - season/episode
       // *******************
-      if (getPatternPos(newDestination, seasonNumbers) > -1) {
-        Matcher m = seDelimiter.matcher(newDestination);
-        if (m.find()) {
-          if (m.group(1) != null) {
-            loopNumbers += m.group(1); // "delimiter"
-          }
-          loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
+      if (StringUtils.isNotBlank(getTokenFromTemplate(newDestination, seasonNumbers))) {
+        Matcher matcher = seDelimiter.matcher(newDestination);
+        if (matcher.find()) {
+          loopNumbers += matcher.group(0);
         }
       }
 
-      if (getPatternPos(newDestination, episodeNumbers) > -1) {
-        Matcher m = epDelimiter.matcher(newDestination);
-        if (m.find()) {
-          if (m.group(1) != null) {
-            loopNumbers += m.group(1); // "delimiter"
-          }
-          loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
+      if (StringUtils.isNotBlank(getTokenFromTemplate(newDestination, episodeNumbers))) {
+        Matcher matcher = epDelimiter.matcher(newDestination);
+        if (matcher.find()) {
+          loopNumbers += matcher.group(0);
         }
       }
       loopNumbers = loopNumbers.trim();
@@ -982,13 +969,6 @@ public class TvShowRenamer {
       String episodeParts = "";
       for (TvShowEpisode episode : episodes) {
         String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
-        // String episodePart = loopNumbers;
-        // replace all $x parameters
-        // Matcher m = token.matcher(episodePart);
-        // while (m.find()) {
-        // String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
-        // episodePart = replaceToken(episodePart, m.group(1), value);
-        // }
         episodeParts += " " + episodePart;
       }
 
@@ -1001,24 +981,20 @@ public class TvShowRenamer {
       // LOOP 2 - title
       // *******************
       String loopTitles = "";
-      int titlePos = getPatternPos(template, episodeTitles);
-      if (titlePos > -1) {
-        loopTitles += template.substring(titlePos, titlePos + 2); // add replacer
+      String titleToken = getTokenFromTemplate(template, episodeTitles);
+      if (StringUtils.isNotBlank(titleToken)) {
+        Pattern pattern = Pattern.compile("\\$\\{" + titleToken + ".*?\\}", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(template);
+        if (matcher.find()) {
+          loopTitles += matcher.group(0);
+        }
       }
       loopTitles = loopTitles.trim();
 
       // foreach episode, replace and append pattern:
       episodeParts = "";
       for (TvShowEpisode episode : episodes) {
-        String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
-        // String episodePart = loopTitles;
-        //
-        // // replace all $x parameters
-        // Matcher m = token.matcher(episodePart);
-        // while (m.find()) {
-        // String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
-        // episodePart = replaceToken(episodePart, m.group(1), value);
-        // }
+        String episodePart = getTokenValue(episode.getTvShow(), episode, loopTitles);
 
         // separate multiple titles via -
         if (StringUtils.isNotBlank(episodeParts)) {
@@ -1027,18 +1003,11 @@ public class TvShowRenamer {
         episodeParts += " " + episodePart;
       }
       // replace original pattern, with our combined
-      if (!loopTitles.isEmpty()) {
+      if (StringUtils.isNotBlank(loopTitles)) {
         newDestination = newDestination.replace(loopTitles, episodeParts);
       }
 
       newDestination = getTokenValue(firstEp.getTvShow(), firstEp, newDestination);
-      // // replace all other $x parameters
-      // Matcher m = token.matcher(newDestination);
-      // while (m.find()) {
-      // String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
-      // newDestination = replaceToken(newDestination, m.group(1), value);
-      // }
-
     } // end multi episodes
 
     newDestination = cleanupDestination(newDestination);
@@ -1165,6 +1134,7 @@ public class TvShowRenamer {
    *          an array of all possible values
    * @return the position of the first occurrence
    */
+  @Deprecated
   private static int getPatternPos(String pattern, String[] possibleValues) {
     int pos = -1;
     for (String r : possibleValues) {
@@ -1173,6 +1143,25 @@ public class TvShowRenamer {
       }
     }
     return pos;
+  }
+
+  /**
+   * returns the first found token from the matched pattern
+   *
+   * @param template
+   *          the template to be searched for
+   * @param possibleTokens
+   *          the tokens to look for
+   * @return the found token or an emtpy string
+   */
+  private static String getTokenFromTemplate(String template, String[] possibleTokens) {
+
+    for (String token : possibleTokens) {
+      if (template.contains("${" + token)) {
+        return token;
+      }
+    }
+    return "";
   }
 
   private static String replaceToken(String destination, String token, String replacement) {
