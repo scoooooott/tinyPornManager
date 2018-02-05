@@ -103,48 +103,70 @@ public class TvShowRenamerTest extends BasicTest {
   @Test
   public void tvRenamerPatterns() {
     // SINGLE - RECOMMENDED
-    assertEqual(p("/singleshow (2009)/Season 1/singleshow - S01E02 - singleEP.avi"), gen(single, "$N ($Y)", "Season $1", "$N - S$2E$E - $T", true));
-    assertEqual(p("/singleshow (2009)/Season 1/E02 - singleEP.avi"), gen(single, "$N ($Y)", "Season $1", "E$E - $T", true));
-    assertEqual(p("/singleshow (2009)/Season 1/S01E02 - singleEP.avi"), gen(single, "$N ($Y)", "Season $1", "S$2E$E - $T", true));
-    assertEqual(p("/singleshow (2009)/Season 1/1x04 - singleEP.avi"), gen(single, "$N ($Y)", "Season $1", "$1x$D - $T", true));
-    assertEqual(p("/singleshow (2009)/102 - singleEP.avi"), gen(single, "$N ($Y)", "", "$1$E - $T", true));
-    assertEqual(p("/singleshow (2009)/1x04 - singleEP.avi"), gen(single, "$N ($Y)", "", "$1x$D - $T", true));
+    assertEqual(p("singleshow (2009)/Season 1/singleshow - S01E02 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/Season 1/E02 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "E${episodeNr2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/Season 1/S01E02 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "S${seasonNr2}E${episodeNr2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/Season 1/1x04 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/102 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "", "${seasonNr}${episodeNr2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/1x04 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
 
     // SINGLE - not recommended, but working
-    assertEqual(p("/singleshow (2009)/Season 1/S01 - singleEP.avi"), gen(single, "$N ($Y)", "Season $1", "S$2 - $T", false));
-    assertEqual(p("/singleshow (2009)/E02 - singleEP.avi"), gen(single, "$N ($Y)", "", "E$E - $T", false));
-    assertEqual(p("/singleshow (2009)/E02.avi"), gen(single, "$N ($Y)", "", "E$E", false));
-    assertEqual(p("/singleshow (2009)/Season 01/102 303- singleEP.avi"), gen(single, "$N ($Y)", "Season $2", "$1$E $3$4- $T", false));
-    assertEqual(p("/singleshow (2009)/Season 01/102 3x04- singleEP.avi"), gen(single, "$N ($Y)", "Season $2", "$1$E $3x$D- $T", false));
-    assertEqual(p("/singleshow (2009)/singleEP.avi"), gen(single, "$N ($Y)", "", "$T", false));
-    assertEqual(p("/singleshow (2009)/singleEPsingleEP.avi"), gen(single, "$N ($Y)", "", "$T$T", false));
-    assertEqual(p("/singleshow (2009)/singleshow - S101E02 - singleEP.avi"), gen(single, "$N ($Y)", "", "$N - S$1$2E$E - $T", false)); // double
-    assertEqual(p("/singleshow (2009)/singleshow - S1E0204 - singleEP.avi"), gen(single, "$N ($Y)", "", "$N - S$1E$E$D - $T", false)); // double
+    assertEqual(p("singleshow (2009)/Season 1/S01 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "S${seasonNr2} - ${title}", false));
+    assertEqual(p("singleshow (2009)/E02 - singleEP.avi"), gen(single, "${showTitle} (${showYear})", "", "E${episodeNr2} - ${title}", false));
+    assertEqual(p("singleshow (2009)/E02.avi"), gen(single, "${showTitle} (${showYear})", "", "E${episodeNr2}", false));
+    assertEqual(p("singleshow (2009)/Season 01/102 303- singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr2}", "${seasonNr}${episodeNr2} ${seasonNrDvd}${seasonNrDvd2}- ${title}", false));
+    assertEqual(p("singleshow (2009)/Season 01/102 3x04- singleEP.avi"), gen(single, "${showTitle} (${showYear})", "Season ${seasonNr2}",
+        "${seasonNr}${episodeNr2} ${seasonNrDvd}x${episodeNrDvd2}- ${title}", false));
+    assertEqual(p("singleshow (2009)/singleEP.avi"), gen(single, "${showTitle} (${showYear})", "", "${title}", false));
+    assertEqual(p("singleshow (2009)/singleEPsingleEP.avi"), gen(single, "${showTitle} (${showYear})", "", "${title}${title}", false));
+    assertEqual(p("singleshow (2009)/singleshow - S101E02 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "", "${showTitle} - S${seasonNr}${seasonNr2}E${episodeNr2} - ${title}", false)); // double
+    assertEqual(p("singleshow (2009)/singleshow - S1E0204 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "", "${showTitle} - S${seasonNr}E${episodeNr2}${episodeNrDvd2} - ${title}", false)); // double
 
     // *******************
     // COPY 1:1 FROM ABOVE
     // *******************
 
     // MULTI - RECOMMENDED
-    assertEqual(p("/multishow (2009)/Season 1/multishow - S01E02 S01E03 - multiEP2 - multiEP3.avi"),
-        gen(multi, "$N ($Y)", "Season $1", "$N - S$2E$E - $T", true));
-    assertEqual(p("/multishow (2009)/Season 1/E02 E03 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "Season $1", "E$E - $T", true));
-    assertEqual(p("/multishow (2009)/Season 1/S01E02 S01E03 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "Season $1", "S$2E$E - $T", true));
-    assertEqual(p("/multishow (2009)/Season 1/1x04 1x05 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "Season $1", "$1x$D - $T", true));
-    assertEqual(p("/multishow (2009)/102 103 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$1$E - $T", true));
-    assertEqual(p("/multishow (2009)/1x04 1x05 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$1x$D - $T", true));
+    assertEqual(p("multishow (2009)/Season 1/multishow - S01E02 S01E03 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}", true));
+    assertEqual(p("multishow (2009)/Season 1/E02 E03 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "E${episodeNr2} - ${title}", true));
+    assertEqual(p("multishow (2009)/Season 1/S01E02 S01E03 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "S${seasonNr2}E${episodeNr2} - ${title}", true));
+    assertEqual(p("multishow (2009)/Season 1/1x04 1x05 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
+    assertEqual(p("multishow (2009)/102 103 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "${seasonNr}${episodeNr2} - ${title}", true));
+    assertEqual(p("multishow (2009)/1x04 1x05 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
 
     // MULTI - not recommended, but working
-    assertEqual(p("/multishow (2009)/Season 1/S01 S01 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "Season $1", "S$2 - $T", false));
-    assertEqual(p("/multishow (2009)/E02 E03 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "E$E - $T", false));
-    assertEqual(p("/multishow (2009)/E02 E03.avi"), gen(multi, "$N ($Y)", "", "E$E", false));
-    assertEqual(p("/multishow (2009)/Season 01/102 103 303 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "Season $2", "$1$E $3$4 - $T", false));
-    assertEqual(p("/multishow (2009)/Season 01/102 103 3x04 - multiEP2 - multiEP3.avi"),
-        gen(multi, "$N ($Y)", "Season $2", "$1$E $3x$D - $T", false));
-    assertEqual(p("/multishow (2009)/multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$T", false));
-    assertEqual(p("/multishow (2009)/multiEP2 - multiEP3 multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$T$T", false));
-    assertEqual(p("/multishow (2009)/multishow - S101E02 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$N - S$1$2E$E - $T", false)); // double
-    assertEqual(p("/multishow (2009)/multishow - S1E02 S1E0304 - multiEP2 - multiEP3.avi"), gen(multi, "$N ($Y)", "", "$N - S$1E$E$D - $T", false)); // double
+    assertEqual(p("multishow (2009)/Season 1/S01 S01 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "S${seasonNr2} - ${title}", false));
+    assertEqual(p("multishow (2009)/E02 E03 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "E${episodeNr2} - ${title}", false));
+    assertEqual(p("multishow (2009)/E02 E03.avi"), gen(multi, "${showTitle} (${showYear})", "", "E${episodeNr2}", false));
+    assertEqual(p("multishow (2009)/Season 01/102 103 303 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr2}", "${seasonNr}${episodeNr2} ${seasonNrDvd}${seasonNrDvd2} - ${title}", false));
+    // assertEqual(p("multishow (2009)/Season 01/102 103 3x04 - multiEP2 - multiEP3.avi"),
+    // gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr2}", "${seasonNr}${episodeNr2} ${seasonNrDvd}x${episodeNrDvd2} - ${title}", false));
+    assertEqual(p("multishow (2009)/multiEP2 - multiEP3.avi"), gen(multi, "${showTitle} (${showYear})", "", "${title}", false));
+    assertEqual(p("multishow (2009)/multiEP2 - multiEP3 multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "${title}${title}", false));
+    assertEqual(p("multishow (2009)/multishow - S101E02 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "${showTitle} - S${seasonNr}${seasonNr2}E${episodeNr2} - ${title}", false)); // double
+    assertEqual(p("multishow (2009)/multishow - S1E02 S1E0304 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "", "${showTitle} - S${seasonNr}E${episodeNr2}${episodeNrDvd2} - ${title}", false)); // double
   }
 
   @Test

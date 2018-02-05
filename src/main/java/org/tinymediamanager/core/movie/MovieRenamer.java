@@ -433,10 +433,6 @@ public class MovieRenamer {
     }
     cleanup.removeAll(Collections.singleton(null)); // remove all NULL ones!
 
-    // update movie path at end of renaming - we need the old one here!!
-    // movie.setPath(newPathname);
-    // movie.saveToDb();
-
     // BASENAME
     String newVideoBasename = "";
     if (!isFilePatternValid()) {
@@ -875,6 +871,7 @@ public class MovieRenamer {
           }
         }
         break;
+
       case BANNER:
         for (MovieBannerNaming name : MovieArtworkHelper.getBannerNamesForMovie(movie)) {
           String newBannerName = name.getFilename(newFilename, getArtworkExtension(mf));
@@ -885,6 +882,7 @@ public class MovieRenamer {
           }
         }
         break;
+
       case CLEARART:
         for (MovieClearartNaming name : MovieArtworkHelper.getClearartNamesForMovie(movie)) {
           String newClearartName = name.getFilename(newFilename, getArtworkExtension(mf));
@@ -895,10 +893,10 @@ public class MovieRenamer {
           }
         }
         break;
+
       case DISC:
         for (MovieDiscartNaming name : MovieArtworkHelper.getDiscartNamesForMovie(movie)) {
           String newDiscartName = name.getFilename(newFilename, getArtworkExtension(mf));
-          ;
           if (StringUtils.isNotBlank(newDiscartName)) {
             MediaFile discart = new MediaFile(mf);
             discart.setFile(newMovieDir.resolve(newDiscartName));
@@ -906,10 +904,10 @@ public class MovieRenamer {
           }
         }
         break;
+
       case LOGO:
         for (MovieLogoNaming name : MovieArtworkHelper.getLogoNamesForMovie(movie)) {
           String newLogoName = name.getFilename(newFilename, getArtworkExtension(mf));
-          ;
           if (StringUtils.isNotBlank(newLogoName)) {
             MediaFile logo = new MediaFile(mf);
             logo.setFile(newMovieDir.resolve(newLogoName));
@@ -917,6 +915,7 @@ public class MovieRenamer {
           }
         }
         break;
+
       case CLEARLOGO:
         for (MovieClearlogoNaming name : MovieArtworkHelper.getClearlogoNamesForMovie(movie)) {
           String newClearlogoName = name.getFilename(newFilename, getArtworkExtension(mf));
@@ -927,6 +926,7 @@ public class MovieRenamer {
           }
         }
         break;
+
       case THUMB:
         for (MovieThumbNaming name : MovieArtworkHelper.getThumbNamesForMovie(movie)) {
           String newThumbName = name.getFilename(newFilename, getArtworkExtension(mf));
@@ -937,6 +937,7 @@ public class MovieRenamer {
           }
         }
         break;
+
       // *************
       // OK, from here we check only the settings
       // *************
@@ -945,11 +946,13 @@ public class MovieRenamer {
           newFiles.add(defaultMF);
         }
         break;
+
       case EXTRATHUMB:
         if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
         }
         break;
+
       // *************
       // here we add all others
       // *************
@@ -1012,12 +1015,6 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFilename(String template, Movie movie) {
-    // // replace optional group first
-    // Pattern regex = Pattern.compile("\\{(.*?)\\}");
-    // Matcher mat = regex.matcher(template);
-    // while (mat.find()) {
-    // template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, true));
-    // }
     return createDestination(template, movie, true);
   }
 
@@ -1031,12 +1028,6 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFoldername(String template, Movie movie) {
-    // // replace optional group first
-    // Pattern regex = Pattern.compile("\\{(.*?)\\}");
-    // Matcher mat = regex.matcher(template);
-    // while (mat.find()) {
-    // template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, false));
-    // }
     return createDestination(template, movie, false);
   }
 
@@ -1092,108 +1083,6 @@ public class MovieRenamer {
       LOGGER.warn("unable to process token: " + token);
       return token;
     }
-    // String ret = "";
-    // MediaFile mf = new MediaFile();
-    // if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-    // mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
-    // }
-    // switch (token.toUpperCase(Locale.ROOT)) {
-    // case "$T":
-    // ret = movie.getTitle();
-    // break;
-    // case "$1":
-    // ret = getFirstAlphaNum(movie.getTitle());
-    // break;
-    // case "$2":
-    // ret = getFirstAlphaNum(movie.getTitleSortable());
-    // break;
-    // case "$Y":
-    // ret = movie.getYear() == 0 ? "" : Integer.toString(movie.getYear());
-    // break;
-    // case "$O":
-    // ret = movie.getOriginalTitle();
-    // break;
-    // case "$M":
-    // if (movie.getMovieSet() != null
-    // && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
-    // ret = movie.getMovieSet().getTitleSortable();
-    // }
-    // break;
-    // case "$N":
-    // if (movie.getMovieSet() != null
-    // && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
-    // ret = movie.getMovieSet().getTitle();
-    // }
-    // break;
-    // case "$I":
-    // ret = movie.getImdbId();
-    // break;
-    // case "$E":
-    // ret = movie.getTitleSortable();
-    // break;
-    // case "$L":
-    // ret = movie.getSpokenLanguages();
-    // break;
-    // case "$C":
-    // if (movie.getCertification() != Certification.NOT_RATED) {
-    // ret = movie.getCertification().getName();
-    // }
-    // break;
-    // case "$U":
-    // if (movie.getEdition() != MovieEdition.NONE) {
-    // ret = movie.getEditionAsString();
-    // }
-    // break;
-    // case "$G":
-    // if (!movie.getGenres().isEmpty()) {
-    // MediaGenres genre = movie.getGenres().get(0);
-    // ret = genre.getLocalizedName();
-    // }
-    // break;
-    // case "$D":
-    // if (!movie.getDirectors().isEmpty()) {
-    // ret = movie.getDirectors().get(0).getName();
-    // }
-    // break;
-    // case "$R":
-    // ret = mf.getVideoResolution();
-    // break;
-    // case "$3":
-    // if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
-    // ret = mf.getVideo3DFormat();
-    // }
-    // else if (movie.isVideoIn3D()) { // no MI info, but flag set from user
-    // ret = "3D";
-    // }
-    // break;
-    // case "$A":
-    // ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
-    // break;
-    // case "$V":
-    // ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
-    // break;
-    // case "$F":
-    // ret = mf.getVideoFormat();
-    // break;
-    // case "$S":
-    // if (movie.getMediaSource() != MediaSource.UNKNOWN) {
-    // ret = movie.getMediaSource().toString();
-    // }
-    // break;
-    // case "$#":
-    // if (movie.getRating() > 0) {
-    // ret = String.valueOf(movie.getRating());
-    // }
-    // break;
-    // case "$K":
-    // if (!movie.getTags().isEmpty()) {
-    // ret = movie.getTags().get(0);
-    // }
-    // default:
-    // break;
-    // }
-    //
-    // return ret;
   }
 
   /**
@@ -1227,15 +1116,6 @@ public class MovieRenamer {
   public static String createDestination(String template, Movie movie, boolean forFilename) {
 
     String newDestination = getTokenValue(movie, template);
-    // String newDestination = template;
-    //
-    // // replace all $x parameters
-    // Pattern p = Pattern.compile("(\\$[\\w#])"); // # is for rating
-    // Matcher m = p.matcher(template);
-    // while (m.find()) {
-    // String value = getTokenValue(movie, m.group(1));
-    // newDestination = replaceToken(newDestination, m.group(1), value);
-    // }
 
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
@@ -1293,17 +1173,10 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("[ \\.]+$", "");
     }
 
-    return newDestination.trim();
-  }
+    // replace invalid characters
+    newDestination = replaceInvalidCharacters(newDestination);
 
-  private static String replaceToken(String destination, String token, String replacement) {
-    String replacingCleaned = "";
-    if (StringUtils.isNotBlank(replacement)) {
-      // replace illegal characters
-      // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
-      replacingCleaned = replaceInvalidCharacters(replacement);
-    }
-    return destination.replace(token, replacingCleaned);
+    return newDestination.trim();
   }
 
   /**

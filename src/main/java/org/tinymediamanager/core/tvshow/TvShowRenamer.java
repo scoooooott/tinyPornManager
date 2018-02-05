@@ -728,16 +728,6 @@ public class TvShowRenamer {
       // VIDEO_EXTRA
       ////////////////////////////////////////////////////////////////////////
       case VIDEO_EXTRA:
-        // String name = mf.getBasename();
-        // Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
-        // Matcher m = p.matcher(name);
-        // if (m.matches()) {
-        // name = name.substring(m.end(1)); // everything behind
-        // }
-        // // if not, MF must be within /extras/ folder - use name 1:1
-        // MediaFile videoExtra = new MediaFile(mf);
-        // videoExtra.setFile(seasonFolder.resolve(newFilename + "-extras-" + name + "." + mf.getExtension()));
-
         // don't mess with extras - keep em 1:1
         newFiles.add(new MediaFile(mf));
         break;
@@ -802,9 +792,8 @@ public class TvShowRenamer {
     // replace all other tokens
     seasonFolderName = createDestination(seasonFolderName, tvShowSeason);
 
-    // only allow empty season dir if the season is in the filename
-    if (StringUtils.isBlank(seasonFolderName) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
-        || SETTINGS.getRenamerFilename().contains("$3") || SETTINGS.getRenamerFilename().contains("$4"))) {
+    // only allow empty season dir if the season is in the filename (aka recommended)
+    if (StringUtils.isBlank(seasonFolderName) && !TvShowRenamer.isRecommended(template, TvShowModuleManager.SETTINGS.getRenamerFilename())) {
       seasonFolderName = "Season " + String.valueOf(season);
     }
     return seasonFolderName;
@@ -907,15 +896,6 @@ public class TvShowRenamer {
     episode.setSeason(season.getSeason());
 
     String newDestination = getTokenValue(season.getTvShow(), episode, template);
-    // String newDestination = template;
-    //
-    // // replace all $x parameters
-    // Matcher m = token.matcher(template);
-    // while (m.find()) {
-    // String value = getTokenValue(season.getTvShow(), episode, m.group(1));
-    // newDestination = replaceToken(newDestination, m.group(1), value);
-    // }
-
     newDestination = cleanupDestination(newDestination);
     return newDestination;
   }
@@ -950,18 +930,41 @@ public class TvShowRenamer {
       // *******************
       // LOOP 1 - season/episode
       // *******************
-      if (StringUtils.isNotBlank(getTokenFromTemplate(newDestination, seasonNumbers))) {
+      String seasonToken = getTokenFromTemplate(newDestination, seasonNumbers);
+      if (StringUtils.isNotBlank(seasonToken)) {
+        String seasonPart = "";
         Matcher matcher = seDelimiter.matcher(newDestination);
         if (matcher.find()) {
-          loopNumbers += matcher.group(0);
+          seasonPart = matcher.group(0);
         }
+        else {
+          // no season info found? search for the token itself
+          Pattern pattern = Pattern.compile("\\$\\{" + seasonToken + ".*?\\}");
+          matcher = pattern.matcher(newDestination);
+          if (matcher.find()) {
+            seasonPart = matcher.group(0);
+          }
+        }
+        loopNumbers += seasonPart;
       }
 
-      if (StringUtils.isNotBlank(getTokenFromTemplate(newDestination, episodeNumbers))) {
+      String episodeToken = getTokenFromTemplate(newDestination, episodeNumbers);
+      if (StringUtils.isNotBlank(episodeToken)) {
+        String episodePart = "";
         Matcher matcher = epDelimiter.matcher(newDestination);
         if (matcher.find()) {
-          loopNumbers += matcher.group(0);
+          episodePart += matcher.group(0);
         }
+        else {
+          // no episode info found? search for the token itself
+          Pattern pattern = Pattern.compile("\\$\\{" + episodeToken + ".*?\\}");
+          matcher = pattern.matcher(newDestination);
+          if (matcher.find()) {
+            episodePart = matcher.group(0);
+          }
+        }
+
+        loopNumbers += episodePart;
       }
       loopNumbers = loopNumbers.trim();
 
@@ -1055,7 +1058,6 @@ public class TvShowRenamer {
     destination = destination.replaceAll("[ \\.]+$", "");
 
     // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
-
     destination = destination.replaceAll(": ", " - "); // nicer
     destination = destination.replaceAll(":", "-"); // nicer
     destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
@@ -1118,7 +1120,7 @@ public class TvShowRenamer {
   private static int count(String pattern, String[] possibleValues) {
     int count = 0;
     for (String r : possibleValues) {
-      if (pattern.contains(r)) {
+      if (containsToken(pattern, r)) {
         count++;
       }
     }
@@ -1134,11 +1136,10 @@ public class TvShowRenamer {
    *          an array of all possible values
    * @return the position of the first occurrence
    */
-  @Deprecated
   private static int getPatternPos(String pattern, String[] possibleValues) {
     int pos = -1;
     for (String r : possibleValues) {
-      if (pattern.contains(r)) {
+      if (containsToken(pattern, r)) {
         pos = pattern.indexOf(r);
       }
     }
@@ -1155,37 +1156,18 @@ public class TvShowRenamer {
    * @return the found token or an emtpy string
    */
   private static String getTokenFromTemplate(String template, String[] possibleTokens) {
-
     for (String token : possibleTokens) {
-      if (template.contains("${" + token)) {
+      if (containsToken(template, token)) {
         return token;
       }
     }
     return "";
   }
 
-  private static String replaceToken(String destination, String token, String replacement) {
-    String replacingCleaned = "";
-    if (StringUtils.isNotBlank(replacement)) {
-      // replace illegal characters
-      // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
-      replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
-    }
-    return destination.replace(token, replacingCleaned);
-  }
-
-  /**
-   * replaces all invalid/illegal characters for filenames with ""<br>
-   * except the colon, which will be changed to a dash
-   * 
-   * @param source
-   *          string to clean
-   * @return cleaned string
-   */
-  public static String replaceInvalidCharacters(String source) {
-    source = source.replaceAll(": ", " - "); // nicer
-    source = source.replaceAll(":", "-"); // nicer
-    return source.replaceAll("([\"\\\\:<>|/?*])", "");
+  private static boolean containsToken(String template, String token) {
+    Pattern pattern = Pattern.compile("\\$\\{" + token + "[\\};]");
+    Matcher matcher = pattern.matcher(template);
+    return matcher.find();
   }
 
   private static String getArtworkExtension(MediaFile mf) {
