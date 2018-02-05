@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -150,6 +151,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       cbSpaceReplacement.setSelectedIndex(index);
     }
 
+    lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
+
     // examples
     exampleEventList.add(new TvShowRenamerExample("${title}"));
     exampleEventList.add(new TvShowRenamerExample("${titleSortable}"));
@@ -263,7 +266,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     }
     {
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 15 4 1");
+      add(lblExample, "cell 1 15 4 1, wmin 0");
       TmmFontHelper.changeFont(lblExample, Font.BOLD);
     }
     {

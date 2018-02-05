@@ -16,6 +16,7 @@
 
 package org.tinymediamanager.ui;
 
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -25,4 +26,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class LeftDotTableCellRenderer extends DefaultTableCellRenderer {
 
+  public LeftDotTableCellRenderer() {
+    super();
+    putClientProperty("clipPosition", SwingConstants.LEFT);
+  }
 }

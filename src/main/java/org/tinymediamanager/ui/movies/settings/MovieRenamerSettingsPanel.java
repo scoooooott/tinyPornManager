@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -157,6 +158,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     chckbxAsciiReplacement.addActionListener(actionCreateRenamerExample);
     chckbxSpaceSubstitution.addActionListener(actionCreateRenamerExample);
 
+    lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
+
     // examples
     exampleEventList.add(new MovieRenamerExample("${title}"));
     exampleEventList.add(new MovieRenamerExample("${originalTitle}"));
@@ -267,7 +270,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(cbMovieForPreview, "cell 1 15 4 1");
 
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 16 4 1");
+      add(lblExample, "cell 1 16 4 1, wmin 0");
       TmmFontHelper.changeFont(lblExample, 0.916, Font.BOLD);
 
       DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
