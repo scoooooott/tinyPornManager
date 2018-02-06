@@ -1026,8 +1026,9 @@ public class TvShowRenamer {
    */
   private static String cleanupDestination(String destination) {
     // replace empty brackets
-    destination = destination.replaceAll("\\(\\)", "");
-    destination = destination.replaceAll("\\[\\]", "");
+    destination = destination.replaceAll("\\([ ]?\\)", "");
+    destination = destination.replaceAll("\\[[ ]?\\]", "");
+    destination = destination.replaceAll("\\{[ ]?\\}", "");
 
     // if there are multiple file separators in a row - strip them out
     if (SystemUtils.IS_OS_WINDOWS) {

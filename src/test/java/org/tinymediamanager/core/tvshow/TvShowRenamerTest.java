@@ -115,6 +115,8 @@ public class TvShowRenamerTest extends BasicTest {
         gen(single, "${showTitle} (${showYear})", "", "${seasonNr}${episodeNr2} - ${title}", true));
     assertEqual(p("singleshow (2009)/1x04 - singleEP.avi"),
         gen(single, "${showTitle} (${showYear})", "", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
+    assertEqual(p("singleshow (2009)/Season 1/E02 - singleEP.avi"),
+        gen(single, "${showTitle} (${showYear})", "Season ${seasonNr}", "E${episodeNr2} - ${title} () [] {} ( ) [ ] { } ", true));
 
     // SINGLE - not recommended, but working
     assertEqual(p("singleshow (2009)/Season 1/S01 - singleEP.avi"),
@@ -149,6 +151,8 @@ public class TvShowRenamerTest extends BasicTest {
         gen(multi, "${showTitle} (${showYear})", "", "${seasonNr}${episodeNr2} - ${title}", true));
     assertEqual(p("multishow (2009)/1x04 1x05 - multiEP2 - multiEP3.avi"),
         gen(multi, "${showTitle} (${showYear})", "", "${seasonNr}x${episodeNrDvd2} - ${title}", true));
+    assertEqual(p("multishow (2009)/Season 1/E02 E03 - multiEP2 - multiEP3.avi"),
+        gen(multi, "${showTitle} (${showYear})", "Season ${seasonNr}", "E${episodeNr2} - ${title} () [] {} ( ) [ ] { } ", true));
 
     // MULTI - not recommended, but working
     assertEqual(p("multishow (2009)/Season 1/S01 S01 - multiEP2 - multiEP3.avi"),
