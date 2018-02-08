@@ -78,12 +78,6 @@
             <artifactId>joda-time</artifactId>
             <version>2.9.9</version>
         </dependency>
-        <!-- load after retrofit2 to avoid problems with gson versions -->
-        <dependency>
-            <groupId>com.jakewharton.retrofit</groupId>
-            <artifactId>retrofit1-okhttp3-client</artifactId>
-            <version>1.1.0</version>
-        </dependency>
 
         <!-- for score testing -->
         <dependency>
