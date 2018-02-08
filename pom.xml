@@ -315,22 +315,8 @@
                         </goals>
                         <configuration>
                             <excludeGroupIds>org.tinymediamanager.plugins</excludeGroupIds>
-                            <excludeArtifactIds>retrofit</excludeArtifactIds>
                             <includeScope>runtime</includeScope>
                             <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- workaround for 2 same named retrofit dependencies -->
-                        <id>copy-retrofit</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>retrofit</includeArtifactIds>
-                            <includeScope>runtime</includeScope>
-                            <stripVersion>false</stripVersion>
                         </configuration>
                     </execution>
                     <execution>
