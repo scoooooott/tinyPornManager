@@ -41,7 +41,6 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import retrofit.RetrofitError;
 
 /**
  * The Class MoviemeterMetadataProvider. A meta data provider for the site moviemeter.nl
@@ -149,19 +148,19 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       if (mmId != 0) {
         LOGGER.debug("MovieMeter: getMetadata(mmId): " + mmId);
         try {
-          fd = api.getFilmService().getMovieInfo(mmId);
+          fd = api.getFilmService().getMovieInfo(mmId).execute().body();
         }
-        catch (RetrofitError e) {
-          LOGGER.warn("Error getting movie via MovieMeter id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        catch (Exception e) {
+          LOGGER.warn("Error getting movie via MovieMeter id: " + e.getMessage());
         }
       }
       else if (StringUtils.isNotBlank(imdbId)) {
         LOGGER.debug("MovieMeter: filmSearchImdb(imdbId): " + imdbId);
         try {
-          fd = api.getFilmService().getMovieInfoByImdbId(imdbId);
+          fd = api.getFilmService().getMovieInfoByImdbId(imdbId).execute().body();
         }
-        catch (RetrofitError e) {
-          LOGGER.warn("Error getting movie via IMDB id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        catch (Exception e) {
+          LOGGER.warn("Error getting movie via IMDB id: " + e.getMessage());
         }
       }
     }
@@ -271,22 +270,22 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       // 1. "search" with IMDBid (get details, well)
       if (StringUtils.isNotEmpty(imdb)) {
         try {
-          fd = api.getFilmService().getMovieInfoByImdbId(imdb);
+          fd = api.getFilmService().getMovieInfoByImdbId(imdb).execute().body();
           LOGGER.debug("found result with IMDB id");
         }
-        catch (RetrofitError e) {
-          LOGGER.warn("Error searching by IMDB id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        catch (Exception e) {
+          LOGGER.warn("Error searching by IMDB id: " + e.getMessage());
         }
       }
 
       // 2. try with searchString
       if (fd == null) {
         try {
-          moviesFound.addAll(api.getSearchService().searchFilm(searchString));
+          moviesFound.addAll(api.getSearchService().searchFilm(searchString).execute().body());
           LOGGER.debug("found " + moviesFound.size() + " results");
         }
-        catch (RetrofitError e) {
-          LOGGER.warn("Error searching: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        catch (Exception e) {
+          LOGGER.warn("Error searching: " + e.getMessage());
         }
       }
     }

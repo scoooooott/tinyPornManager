@@ -34,7 +34,7 @@ public class MovieMeterSearchServiceTest {
 
     try {
       SearchService searchService = movieMeter.getSearchService();
-      List<MMFilm> result = searchService.searchFilm("avatar");
+      List<MMFilm> result = searchService.searchFilm("avatar").execute().body();
 
       assertThat(result).isNotNull();
       assertThat(result).isNotEmpty();

@@ -19,10 +19,11 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface SearchService {
-  @GET("/film/")
-  List<MMFilm> searchFilm(@Query("q") String query);
+  @GET("film/")
+  Call<List<MMFilm>> searchFilm(@Query("q") String query);
 }

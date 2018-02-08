@@ -17,13 +17,14 @@ package org.tinymediamanager.scraper.moviemeter.services;
 
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface FilmService {
-  @GET("/film/{id}")
-  MMFilm getMovieInfo(@Path("id") int id);
+  @GET("film/{id}")
+  Call<MMFilm> getMovieInfo(@Path("id") int id);
 
-  @GET("/film/{imdbId}")
-  MMFilm getMovieInfoByImdbId(@Path("imdbId") String imdbId);
+  @GET("film/{imdbId}")
+  Call<MMFilm> getMovieInfoByImdbId(@Path("imdbId") String imdbId);
 }

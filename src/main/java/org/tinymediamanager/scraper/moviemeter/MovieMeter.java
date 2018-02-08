@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
 
@@ -30,11 +31,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.bind.DateTypeAdapter;
-import com.jakewharton.retrofit.Ok3Client;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 class MovieMeter {
   // the base API url
@@ -42,7 +45,7 @@ class MovieMeter {
   // the api key query parameter; hast to be supplied at all calls
   public static final String PARAM_API_KEY = "api_key";
 
-  private RestAdapter        restAdapter;
+  private Retrofit           restAdapter;
   private boolean            isDebug;
   private String             apiKey;
 
@@ -76,9 +79,9 @@ class MovieMeter {
    */
   public MovieMeter setIsDebug(boolean isDebug) {
     this.isDebug = isDebug;
-    if (restAdapter != null) {
-      restAdapter.setLogLevel(isDebug ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE);
-    }
+    // if (restAdapter != null) {
+    // restAdapter.setLogLevel(isDebug ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE);
+    // }
     return this;
   }
 
@@ -87,28 +90,30 @@ class MovieMeter {
    *
    * @return A {@link retrofit.RestAdapter.Builder} with no modifications.
    */
-  protected RestAdapter.Builder newRestAdapterBuilder() {
-    return new RestAdapter.Builder();
+  protected Retrofit.Builder newRestAdapterBuilder() {
+    return new Retrofit.Builder();
   }
 
   /**
    * Return the current {@link retrofit.RestAdapter} instance. If none exists (first call), builds a new one.
    */
-  protected RestAdapter getRestAdapter() {
+  protected Retrofit getRestAdapter() {
     if (restAdapter == null) {
-      RestAdapter.Builder builder = newRestAdapterBuilder();
-      builder.setEndpoint(API_URL);
-      builder.setConverter(new GsonConverter(getGsonBuilder().create()));
-      builder.setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
-      builder.setRequestInterceptor(new RequestInterceptor() {
+      Retrofit.Builder builder = newRestAdapterBuilder();
+      builder.baseUrl(API_URL);
+      builder.addConverterFactory(GsonConverterFactory.create(getGsonBuilder().create()));
+      builder.client(TmmHttpClient.newBuilder().addInterceptor(new Interceptor() {
         @Override
-        public void intercept(RequestInterceptor.RequestFacade requestFacade) {
-          requestFacade.addQueryParam(PARAM_API_KEY, apiKey);
+        public Response intercept(Chain chain) throws IOException {
+          Request request = chain.request();
+          HttpUrl url = request.url().newBuilder().addQueryParameter(PARAM_API_KEY, apiKey).build();
+          request = request.newBuilder().url(url).build();
+          return chain.proceed(request);
         }
-      });
-      if (isDebug) {
-        builder.setLogLevel(RestAdapter.LogLevel.FULL);
-      }
+      }).build());
+      // if (isDebug) {
+      // builder.setLogLevel(RestAdapter.LogLevel.FULL);
+      // }
       restAdapter = builder.build();
     }
     return restAdapter;

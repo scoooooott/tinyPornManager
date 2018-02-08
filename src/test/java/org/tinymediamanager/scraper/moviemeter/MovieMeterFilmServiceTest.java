@@ -23,6 +23,8 @@ import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.moviemeter.services.FilmService;
 import org.tinymediamanager.scraper.util.ApiKey;
 
+import retrofit2.Response;
+
 public class MovieMeterFilmServiceTest {
 
   @Test
@@ -34,13 +36,14 @@ public class MovieMeterFilmServiceTest {
       FilmService filmService = movieMeter.getFilmService();
 
       // Avatar by MM id
-      MMFilm film = filmService.getMovieInfo(17552);
+      Response<MMFilm> resp = filmService.getMovieInfo(17552).execute();
+      MMFilm film = resp.body();
 
       assertThat(film).isNotNull();
       assertThat(film.title).isEqualTo("Avatar");
 
       // Avatar by imdb id
-      film = filmService.getMovieInfoByImdbId("tt0499549");
+      film = filmService.getMovieInfoByImdbId("tt0499549").execute().body();
 
       assertThat(film).isNotNull();
       assertThat(film.title).isEqualTo("Avatar");
