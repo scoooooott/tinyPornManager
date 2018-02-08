@@ -17,8 +17,9 @@ package org.tinymediamanager.scraper.fanarttv.services;
 
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
 
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface MovieService {
   /**
@@ -27,6 +28,6 @@ public interface MovieService {
    * @param id
    *          tmdb_id or imdb_id.
    */
-  @GET("/movies/{id}")
-  Images getMovieImages(@Path("id") String id);
+  @GET("movies/{id}")
+  Call<Images> getMovieImages(@Path("id") String id);
 }

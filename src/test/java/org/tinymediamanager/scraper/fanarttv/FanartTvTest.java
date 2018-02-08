@@ -32,7 +32,7 @@ public class FanartTvTest {
 
     // Avatar; tmdb_id 19995
     try {
-      Images images = api.getMovieService().getMovieImages("19995");
+      Images images = api.getMovieService().getMovieImages("19995").execute().body();
 
       assertThat(images).isNotNull();
       assertThat(images.hdmovielogo).isNotNull();
@@ -61,7 +61,7 @@ public class FanartTvTest {
 
     // Avatar, imdb_id tt0499549
     try {
-      Images images = api.getMovieService().getMovieImages("tt0499549");
+      Images images = api.getMovieService().getMovieImages("tt0499549").execute().body();
 
       assertThat(images).isNotNull();
       assertThat(images.hdmovielogo).isNotNull();
@@ -96,7 +96,7 @@ public class FanartTvTest {
 
     // Breaking Bad; tvdb_id 81189
     try {
-      Images images = api.getTvShowService().getTvShowImages(81189);
+      Images images = api.getTvShowService().getTvShowImages(81189).execute().body();
 
       assertThat(images).isNotNull();
       assertThat(images.hdtvlogo).isNotNull();

@@ -37,6 +37,7 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit2.Response;
 
 /**
  * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
@@ -146,14 +147,14 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
-    Images images = null;
+    Response<Images> images = null;
     String imdbId = options.getImdbId();
     int tmdbId = options.getTmdbId();
 
     if (StringUtils.isNotBlank(imdbId)) {
       try {
         LOGGER.debug("getArtwork with IMDB id: " + imdbId);
-        images = api.getMovieService().getMovieImages(imdbId);
+        images = api.getMovieService().getMovieImages(imdbId).execute();
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: " + e.getMessage());
@@ -163,19 +164,19 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     if (images == null && tmdbId != 0) {
       try {
         LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
-        images = api.getMovieService().getMovieImages(Integer.toString(tmdbId));
+        images = api.getMovieService().getMovieImages(Integer.toString(tmdbId)).execute();
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: " + e.getMessage());
       }
     }
 
-    if (images == null) {
+    if (images == null || !images.isSuccessful()) {
       LOGGER.info("got no result");
       return returnArtwork;
     }
 
-    returnArtwork = getArtwork(images, artworkType);
+    returnArtwork = getArtwork(images.body(), artworkType);
     Collections.sort(returnArtwork, new MediaArtwork.MediaArtworkComparator(language));
 
     return returnArtwork;
@@ -191,7 +192,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
-    Images images = null;
+    Response<Images> images = null;
     int tvdbId = options.getIdAsInt(MediaMetadata.TVDB);
 
     // no ID found? try the old one
@@ -202,7 +203,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     if (tvdbId > 0) {
       try {
         LOGGER.debug("getArtwork with TVDB id: " + tvdbId);
-        images = api.getTvShowService().getTvShowImages(tvdbId);
+        images = api.getTvShowService().getTvShowImages(tvdbId).execute();
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: " + e.getMessage());
@@ -213,12 +214,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       return returnArtwork;
     }
 
-    if (images == null) {
+    if (images == null || !images.isSuccessful()) {
       LOGGER.info("got no result");
       return returnArtwork;
     }
-
-    returnArtwork = getArtwork(images, artworkType);
+    returnArtwork = getArtwork(images.body(), artworkType);
     Collections.sort(returnArtwork, new MediaArtwork.MediaArtworkComparator(language));
 
     return returnArtwork;

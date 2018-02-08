@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
 
@@ -30,11 +31,12 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
-import com.jakewharton.retrofit.Ok3Client;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * The class FanartTv is the abstraction of the Fanart.tv API
@@ -46,7 +48,7 @@ public class FanartTv {
   public static final String PARAM_API_KEY    = "api-key";
   public static final String PARAM_CLIENT_KEY = "client-key";
 
-  private RestAdapter        restAdapter;
+  private Retrofit           restAdapter;
   private boolean            isDebug;
   private String             apiKey;
   private String             clientKey;
@@ -105,9 +107,10 @@ public class FanartTv {
    */
   public FanartTv setIsDebug(boolean isDebug) {
     this.isDebug = isDebug;
-    if (restAdapter != null) {
-      restAdapter.setLogLevel(isDebug ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE);
-    }
+    // FIXME: no logging anymore, plain okhttp
+    // if (restAdapter != null) {
+    // restAdapter.setLogLevel(isDebug ? Retrofit.LogLevel.FULL : Retrofit.LogLevel.NONE);
+    // }
     return this;
   }
 
@@ -116,31 +119,34 @@ public class FanartTv {
    *
    * @return A {@link retrofit.RestAdapter.Builder} with no modifications.
    */
-  protected RestAdapter.Builder newRestAdapterBuilder() {
-    return new RestAdapter.Builder();
+  protected Retrofit.Builder newRestAdapterBuilder() {
+    return new Retrofit.Builder();
   }
 
   /**
    * Return the current {@link retrofit.RestAdapter} instance. If none exists (first call), builds a new one.
    */
-  protected RestAdapter getRestAdapter() {
+  protected Retrofit getRestAdapter() {
     if (restAdapter == null) {
-      RestAdapter.Builder builder = newRestAdapterBuilder();
-      builder.setEndpoint(API_URL);
-      builder.setConverter(new GsonConverter(getGsonBuilder().create()));
-      builder.setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
-      builder.setRequestInterceptor(new RequestInterceptor() {
+      Retrofit.Builder builder = newRestAdapterBuilder();
+      builder.baseUrl(API_URL);
+      builder.addConverterFactory(GsonConverterFactory.create(getGsonBuilder().create()));
+      builder.client(TmmHttpClient.newBuilder().addInterceptor(new Interceptor() {
         @Override
-        public void intercept(RequestInterceptor.RequestFacade requestFacade) {
-          requestFacade.addHeader(PARAM_API_KEY, apiKey);
+        public Response intercept(Chain chain) throws IOException {
+          Request original = chain.request();
+          Request.Builder request = original.newBuilder().method(original.method(), original.body());
+          request.addHeader(PARAM_API_KEY, apiKey);
           if (StringUtils.isNotBlank(clientKey)) {
-            requestFacade.addHeader(PARAM_CLIENT_KEY, clientKey);
+            request.addHeader(PARAM_CLIENT_KEY, clientKey);
           }
+          Response response = chain.proceed(request.build());
+          return response;
         }
-      });
-      if (isDebug) {
-        builder.setLogLevel(RestAdapter.LogLevel.FULL);
-      }
+      }).build());
+      // if (isDebug) {
+      // builder.setLogLevel(RestAdapter.LogLevel.FULL);
+      // }
       restAdapter = builder.build();
     }
     return restAdapter;
