@@ -40,6 +40,7 @@ import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
+import org.tinymediamanager.scraper.omdb.entities.MovieRating;
 import org.tinymediamanager.scraper.omdb.entities.MovieSearch;
 import org.tinymediamanager.scraper.omdb.service.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
@@ -205,7 +206,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
     try {
       MediaRating rating = new MediaRating("imdb");
       rating.setRating(Double.parseDouble(result.imdbRating));
-      rating.setVoteCount(Integer.parseInt(result.imdbVotes));
+      rating.setVoteCount(MetadataUtil.parseInt(result.imdbVotes));
       rating.setMaxValue(10);
       metadata.addRating(rating);
     }
@@ -218,6 +219,21 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
       metadata.addRating(rating);
     }
     catch (NumberFormatException ignored) {
+    }
+    // use rotten tomates from the Ratings block
+    for (MovieRating movieRating : ListUtils.nullSafe(result.ratings)) {
+      switch (movieRating.source) {
+        case "Rotten Tomatoes":
+          try {
+            MediaRating rating = new MediaRating("rottenTomatoes");
+            rating.setRating(Integer.parseInt(movieRating.value.replace("%", "")));
+            rating.setMaxValue(100);
+            metadata.addRating(rating);
+          }
+          catch (Exception ignored) {
+          }
+          break;
+      }
     }
 
     if (StringUtils.isNotBlank(result.poster)) {

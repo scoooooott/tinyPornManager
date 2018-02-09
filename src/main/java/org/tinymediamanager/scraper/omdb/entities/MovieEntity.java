@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.scraper.omdb.entities;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 public class MovieEntity {
@@ -62,5 +64,6 @@ public class MovieEntity {
   public String totalSeasons;
   @SerializedName("Response")
   public String response;
-
+  @SerializedName("Ratings")
+  public List<MovieRating> ratings;
 }
