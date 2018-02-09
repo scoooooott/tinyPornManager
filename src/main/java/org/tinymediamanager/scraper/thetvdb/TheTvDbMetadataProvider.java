@@ -531,7 +531,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         bannerList = banners.getFanartList();
         break;
 
-      case SEASON:
+      case SEASON_POSTER:
         bannerList = banners.getSeasonList();
         break;
 
@@ -571,7 +571,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             continue;
           }
 
-          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.SEASON);
+          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.SEASON_POSTER);
           ma.setSeason(banner.getSeason());
           break;
 
