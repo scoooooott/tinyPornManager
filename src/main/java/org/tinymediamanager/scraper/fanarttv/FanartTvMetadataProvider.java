@@ -262,9 +262,15 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         artworks.addAll(prepareArtwork(images.clearlogo, ImageType.CLEARLOGO));
         break;
 
-      case SEASON:
-        artworks.addAll(prepareArtwork(images.seasonbanner, ImageType.SEASONBANNER));
+      case SEASON_POSTER:
         artworks.addAll(prepareArtwork(images.seasonposter, ImageType.SEASONPOSTER));
+        break;
+
+      case SEASON_BANNER:
+        artworks.addAll(prepareArtwork(images.seasonbanner, ImageType.SEASONBANNER));
+        break;
+
+      case SEASON_THUMB:
         artworks.addAll(prepareArtwork(images.seasonthumb, ImageType.SEASONTHUMB));
         break;
 
@@ -349,16 +355,16 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     HDMOVIECLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()),
     HDCLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()),
     MOVIETHUMB(1000, 562, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
-    SEASONTHUMB(500, 281, MediaArtworkType.SEASON, FanartSizes.SMALL.getOrder()),
+    SEASONTHUMB(1000, 562, MediaArtworkType.SEASON_THUMB, FanartSizes.MEDIUM.getOrder()),
     TVTHUMB(500, 281, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
     MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
     SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
     MOVIEPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
     TVPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
-    SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON, MediaArtwork.PosterSizes.LARGE.getOrder()),
+    SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON_POSTER, MediaArtwork.PosterSizes.LARGE.getOrder()),
     TVBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
     MOVIEBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
-    SEASONBANNER(1000, 185, MediaArtworkType.SEASON, FanartSizes.MEDIUM.getOrder()),
+    SEASONBANNER(1000, 185, MediaArtworkType.SEASON_BANNER, FanartSizes.MEDIUM.getOrder()),
     HDMOVIELOGO(800, 310, MediaArtworkType.CLEARLOGO, FanartSizes.MEDIUM.getOrder()),
     HDTVLOGO(800, 310, MediaArtworkType.CLEARLOGO, FanartSizes.MEDIUM.getOrder()),
     CLEARLOGO(400, 155, MediaArtworkType.CLEARLOGO, FanartSizes.SMALL.getOrder()),
