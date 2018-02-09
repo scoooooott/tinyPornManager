@@ -31,7 +31,9 @@ import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
 import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
 import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.SEASON_BANNER;
 import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.SEASON_THUMB;
 import static org.tinymediamanager.core.Constants.TAG;
 import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
@@ -1124,10 +1126,25 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Event to trigger a season poster changed for the UI
+   * Event to trigger a season artwork changed for the UI
    */
-  void setPosterChanged() {
-    firePropertyChange(SEASON_POSTER, null, "");
+  void setSeasonArtworkChanged(MediaArtworkType type) {
+    switch (type) {
+      case SEASON_POSTER:
+        firePropertyChange(SEASON_POSTER, null, "");
+        break;
+
+      case SEASON_BANNER:
+        firePropertyChange(SEASON_BANNER, null, "");
+        break;
+
+      case SEASON_THUMB:
+        firePropertyChange(SEASON_THUMB, null, "");
+        break;
+
+      default:
+        break;
+    }
   }
 
   /**

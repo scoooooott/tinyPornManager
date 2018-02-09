@@ -500,7 +500,7 @@ public class ImageChooserDialog extends TmmDialog {
             art = new MediaArtwork("", MediaArtworkType.POSTER);
             break;
           case SEASON:
-            art = new MediaArtwork("", MediaArtworkType.SEASON);
+            art = new MediaArtwork("", MediaArtworkType.SEASON_POSTER);
             break;
           case THUMB:
             art = new MediaArtwork("", MediaArtworkType.THUMB);
@@ -734,7 +734,7 @@ public class ImageChooserDialog extends TmmDialog {
               break;
 
             case SEASON:
-              options.setArtworkType(MediaArtworkType.SEASON);
+              options.setArtworkType(MediaArtworkType.SEASON_POSTER);
               break;
 
             case CLEARART:

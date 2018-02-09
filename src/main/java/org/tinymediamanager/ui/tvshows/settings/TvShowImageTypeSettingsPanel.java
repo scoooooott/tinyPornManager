@@ -34,7 +34,9 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowFanartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowLogoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowPosterNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowThumbNaming;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -70,6 +72,12 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
   private JCheckBox                   chckbxClearlogo1;
   private JCheckBox                   chckbxSeasonPoster1;
   private JCheckBox                   chckbxSeasonPoster2;
+  private JLabel                      lblSeasonBannerT;
+  private JCheckBox                   chckbxSeasonBanner1;
+  private JCheckBox                   chckbxSeasonBanner2;
+  private JLabel                      lblSeasonThumbT;
+  private JCheckBox                   chckbxSeasonThumb1;
+  private JCheckBox                   chckbxSeasonThumb2;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -92,7 +100,8 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][][20lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]",
+        "[][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][10lp][][][20lp][]"));
     {
       JLabel lblExtraArtworkT = new JLabel(BUNDLE.getString("Settings.artwork.naming")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExtraArtworkT, 1.16667, Font.BOLD);
@@ -163,25 +172,43 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
       chckbxSeasonPoster2 = new JCheckBox("<season_folder>" + File.separator + "seasonXX.ext");
       add(chckbxSeasonPoster2, "cell 3 15");
     }
+
+    lblSeasonBannerT = new JLabel(BUNDLE.getString("mediafiletype.season_banner"));
+    add(lblSeasonBannerT, "cell 1 17");
+
+    chckbxSeasonBanner1 = new JCheckBox("seasonXX-banner.ext");
+    add(chckbxSeasonBanner1, "cell 2 17");
+
+    chckbxSeasonBanner2 = new JCheckBox("<season_folder>/seasonXX-banner.ext");
+    add(chckbxSeasonBanner2, "cell 3 17");
+
+    lblSeasonThumbT = new JLabel(BUNDLE.getString("mediafiletype.season_thumb"));
+    add(lblSeasonThumbT, "cell 1 19");
+
+    chckbxSeasonThumb1 = new JCheckBox("seasonXX-thumb.ext");
+    add(chckbxSeasonThumb1, "cell 2 19");
+
+    chckbxSeasonThumb2 = new JCheckBox("<season_folder>/seasonXX-thumb.ext");
+    add(chckbxSeasonThumb2, "cell 3 19");
     JLabel lblThumbNaming = new JLabel(BUNDLE.getString("mediafiletype.episode_thumb"));
-    add(lblThumbNaming, "cell 1 17");
+    add(lblThumbNaming, "cell 1 21");
 
     chckbxEpisodeThumb1 = new JCheckBox("<dynamic>-thumb.ext");
-    add(chckbxEpisodeThumb1, "cell 2 17");
+    add(chckbxEpisodeThumb1, "cell 2 21");
 
     chckbxEpisodeThumb2 = new JCheckBox("<dynamic>-landscape.ext");
-    add(chckbxEpisodeThumb2, "cell 3 17");
+    add(chckbxEpisodeThumb2, "cell 3 21");
 
     chckbxEpisodeThumb3 = new JCheckBox("<dynamic>.ext");
-    add(chckbxEpisodeThumb3, "cell 2 18");
+    add(chckbxEpisodeThumb3, "cell 2 22");
     {
 
       chckbxEpisodeThumb4 = new JCheckBox("<dynamic>.tbn");
-      add(chckbxEpisodeThumb4, "cell 3 18");
+      add(chckbxEpisodeThumb4, "cell 3 22");
     }
     {
       JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      add(tpFileNamingHint, "cell 1 20 3 1,growx");
+      add(tpFileNamingHint, "cell 1 24 3 1,growx");
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }
@@ -213,6 +240,14 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
     chckbxSeasonPoster1.removeItemListener(checkBoxListener);
     chckbxSeasonPoster2.removeItemListener(checkBoxListener);
     clearSelection(chckbxSeasonPoster1, chckbxSeasonPoster2);
+
+    chckbxSeasonBanner1.removeItemListener(checkBoxListener);
+    chckbxSeasonBanner2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxSeasonBanner1, chckbxSeasonBanner2);
+
+    chckbxSeasonThumb1.removeItemListener(checkBoxListener);
+    chckbxSeasonThumb2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxSeasonThumb1, chckbxSeasonThumb2);
 
     chckbxEpisodeThumb1.removeItemListener(checkBoxListener);
     chckbxEpisodeThumb2.removeItemListener(checkBoxListener);
@@ -296,6 +331,30 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
       }
     }
 
+    for (TvShowSeasonBannerNaming seasonBannerNaming : settings.getSeasonBannerFilenames()) {
+      switch (seasonBannerNaming) {
+        case SEASON_BANNER:
+          chckbxSeasonBanner1.setSelected(true);
+          break;
+
+        case SEASON_FOLDER:
+          chckbxSeasonBanner2.setSelected(true);
+          break;
+      }
+    }
+
+    for (TvShowSeasonThumbNaming seasonThumbNaming : settings.getSeasonThumbFilenames()) {
+      switch (seasonThumbNaming) {
+        case SEASON_THUMB:
+          chckbxSeasonThumb1.setSelected(true);
+          break;
+
+        case SEASON_FOLDER:
+          chckbxSeasonThumb2.setSelected(true);
+          break;
+      }
+    }
+
     for (TvShowEpisodeThumbNaming thumbNaming : settings.getEpisodeThumbFilenames()) {
       switch (thumbNaming) {
         case FILENAME_THUMB:
@@ -334,6 +393,12 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
 
     chckbxSeasonPoster1.addItemListener(checkBoxListener);
     chckbxSeasonPoster2.addItemListener(checkBoxListener);
+
+    chckbxSeasonBanner1.addItemListener(checkBoxListener);
+    chckbxSeasonBanner2.addItemListener(checkBoxListener);
+
+    chckbxSeasonThumb1.addItemListener(checkBoxListener);
+    chckbxSeasonThumb2.addItemListener(checkBoxListener);
 
     chckbxEpisodeThumb1.addItemListener(checkBoxListener);
     chckbxEpisodeThumb2.addItemListener(checkBoxListener);
@@ -398,6 +463,22 @@ public class TvShowImageTypeSettingsPanel extends JPanel {
     }
     if (chckbxSeasonPoster2.isSelected()) {
       settings.addSeasonPosterFilename(TvShowSeasonPosterNaming.SEASON_FOLDER);
+    }
+
+    settings.clearSeasonBannerFilenames();
+    if (chckbxSeasonBanner1.isSelected()) {
+      settings.addSeasonBannerFilename(TvShowSeasonBannerNaming.SEASON_BANNER);
+    }
+    if (chckbxSeasonBanner2.isSelected()) {
+      settings.addSeasonBannerFilename(TvShowSeasonBannerNaming.SEASON_FOLDER);
+    }
+
+    settings.clearSeasonThumbFilenames();
+    if (chckbxSeasonThumb1.isSelected()) {
+      settings.addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_THUMB);
+    }
+    if (chckbxSeasonThumb2.isSelected()) {
+      settings.addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_FOLDER);
     }
 
     settings.clearEpisodeThumbFilenames();

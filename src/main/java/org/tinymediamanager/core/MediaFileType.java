@@ -46,6 +46,8 @@ public enum MediaFileType {
   THUMB, // gfx
   LANDSCAPE, // gfx
   SEASON_POSTER, // gfx
+  SEASON_BANNER, // gfx
+  SEASON_THUMB, // gfx
   EXTRAFANART, // gfx
   EXTRATHUMB, // gfx
   GRAPHIC, // NO gfx (since not a searchable type)
@@ -73,8 +75,14 @@ public enum MediaFileType {
       case POSTER:
         return MediaFileType.POSTER;
 
-      case SEASON:
+      case SEASON_POSTER:
         return MediaFileType.SEASON_POSTER;
+
+      case SEASON_BANNER:
+        return MediaFileType.SEASON_BANNER;
+
+      case SEASON_THUMB:
+        return MediaFileType.SEASON_THUMB;
 
       case THUMB:
         return MediaFileType.THUMB;
@@ -115,7 +123,13 @@ public enum MediaFileType {
         return MediaArtworkType.POSTER;
 
       case SEASON_POSTER:
-        return MediaArtworkType.SEASON;
+        return MediaArtworkType.SEASON_POSTER;
+
+      case SEASON_BANNER:
+        return MediaArtworkType.SEASON_BANNER;
+
+      case SEASON_THUMB:
+        return MediaArtworkType.SEASON_THUMB;
 
       case THUMB:
         return MediaArtworkType.THUMB;

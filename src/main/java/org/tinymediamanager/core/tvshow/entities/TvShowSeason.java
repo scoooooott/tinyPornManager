@@ -16,10 +16,15 @@
 package org.tinymediamanager.core.tvshow.entities;
 
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.POSTER_URL;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -35,6 +40,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class TvShowSeason.
@@ -132,26 +138,76 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return episodes;
   }
 
-  public void setPoster(Path newValue) {
-    String oldValue = tvShow.getSeasonPoster(season);
-    tvShow.setSeasonPoster(season, newValue);
-    firePropertyChange(POSTER, oldValue, newValue);
+  public void setArtwork(Path newValue, MediaArtworkType artworkType) {
+    String oldValue;
+    switch (artworkType) {
+      case SEASON_POSTER:
+        oldValue = getPoster();
+        tvShow.setSeasonArtwork(season, artworkType, newValue);
+        firePropertyChange(POSTER, oldValue, newValue);
+        break;
+
+      case SEASON_BANNER:
+        oldValue = getBanner();
+        tvShow.setSeasonArtwork(season, artworkType, newValue);
+        firePropertyChange(BANNER, oldValue, newValue);
+        break;
+
+      case SEASON_THUMB:
+        oldValue = getThumb();
+        tvShow.setSeasonArtwork(season, artworkType, newValue);
+        firePropertyChange(THUMB, oldValue, newValue);
+        break;
+
+      default:
+        return;
+    }
+
     for (TvShowEpisode episode : episodes) {
-      episode.setPosterChanged();
+      episode.setSeasonArtworkChanged(artworkType);
     }
   }
 
-  public void clearPoster() {
-    tvShow.clearSeasonPoster(season);
-    firePropertyChange(POSTER, null, "");
+  public void clearArtwork(MediaArtworkType artworkType) {
+    tvShow.clearSeasonArtwork(season, artworkType);
+
+    switch (artworkType) {
+      case SEASON_POSTER:
+        firePropertyChange(POSTER, null, "");
+        break;
+
+      case SEASON_BANNER:
+        firePropertyChange(BANNER, null, "");
+        break;
+
+      case SEASON_THUMB:
+        firePropertyChange(THUMB, null, "");
+        break;
+    }
   }
 
   public String getPoster() {
-    return tvShow.getSeasonPoster(season);
+    return tvShow.getSeasonArtwork(season, SEASON_POSTER);
+  }
+
+  public String getBanner() {
+    return tvShow.getSeasonArtwork(season, SEASON_BANNER);
+  }
+
+  public String getThumb() {
+    return tvShow.getSeasonArtwork(season, SEASON_THUMB);
   }
 
   public Dimension getPosterSize() {
-    return tvShow.getSeasonPosterSize(season);
+    return tvShow.getSeasonArtworkSize(season, SEASON_POSTER);
+  }
+
+  public Dimension getBannerSize() {
+    return tvShow.getSeasonArtworkSize(season, SEASON_BANNER);
+  }
+
+  public Dimension getThumbSize() {
+    return tvShow.getSeasonArtworkSize(season, SEASON_THUMB);
   }
 
   public void setPosterUrl(String newValue) {

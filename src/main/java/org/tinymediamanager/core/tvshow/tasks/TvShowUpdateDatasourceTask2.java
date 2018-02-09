@@ -17,6 +17,9 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -75,27 +78,29 @@ import com.sun.jna.Platform;
  */
 
 public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER               = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
-  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control());                       //$NON-NLS-1$
+  private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
+  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String>   skipFolders          = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
-      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ");
+  private static final List<String>   skipFolders         = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipRegex            = "^[.][\\w@]+.*";
+  private static final String         skipRegex           = "^[.][\\w@]+.*";
 
-  private static final Pattern        seasonPosterPattern1 = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
-  private static final Pattern        seasonPosterPattern2 = Pattern.compile("(?i)season[0-9]{0,2}\\..{2,4}");
+  private static final Pattern        seasonPosterPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{2,4}");
+  private static final Pattern        seasonBannerPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{2,4}");
+  private static final Pattern        seasonThumbPattern  = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{2,4}");
+  // private static final Pattern seasonPosterPattern2 = Pattern.compile("(?i)season[0-9]{1,4}\\..{2,4}");
 
-  private static long                 preDir               = 0;
-  private static long                 postDir              = 0;
-  private static long                 visFile              = 0;
+  private static long                 preDir              = 0;
+  private static long                 postDir             = 0;
+  private static long                 visFile             = 0;
 
   private List<String>                dataSources;
-  private List<Path>                  tvShowFolders        = new ArrayList<>();
+  private List<Path>                  tvShowFolders       = new ArrayList<>();
   private TvShowList                  tvShowList;
-  private HashSet<Path>               filesFound           = new HashSet<>();
+  private HashSet<Path>               filesFound          = new HashSet<>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -801,7 +806,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         if (result.season > 0 && !result.episodes.isEmpty()) {
           for (int epnr : result.episodes) {
             TvShowEpisode ep = tvShow.getEpisode(result.season, epnr);
-            if (ep != null && mf.getType() != MediaFileType.SEASON_POSTER) {
+            if (ep != null && mf.getType() != MediaFileType.SEASON_POSTER && mf.getType() != MediaFileType.SEASON_BANNER
+                && mf.getType() != MediaFileType.SEASON_THUMB) {
               ep.addToMediaFiles(mf);
             }
           }
@@ -812,21 +818,52 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
       // fill season posters map
       for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_POSTER)) {
-        Matcher matcher = seasonPosterPattern1.matcher(mf.getFilename());
-        if (!matcher.matches()) {
-          matcher = seasonPosterPattern2.matcher(mf.getFilename());
-        }
+        Matcher matcher = seasonPosterPattern.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
-            int season = Integer.parseInt(matcher.group(1));
+            int season = -1;
+            if (!mf.getFilename().startsWith("season-specials-poster")) {
+              season = Integer.parseInt(matcher.group(1));
+            }
             LOGGER.debug("found season poster " + mf.getFileAsPath());
-            tvShow.setSeasonPoster(season, mf);
+            tvShow.setSeasonArtwork(season, SEASON_POSTER, mf);
           }
           catch (Exception e) {
-            if (mf.getFilename().startsWith("season-specials-poster")) {
-              LOGGER.debug("found season specials poster " + mf.getFileAsPath());
-              tvShow.setSeasonPoster(-1, mf);
+            LOGGER.warn("could not parse season number: " + e.getMessage());
+          }
+        }
+      }
+      // fill season banners map
+      for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_BANNER)) {
+        Matcher matcher = seasonBannerPattern.matcher(mf.getFilename());
+        if (matcher.matches()) {
+          try {
+            int season = -1;
+            if (!mf.getFilename().startsWith("season-specials-banner")) {
+              season = Integer.parseInt(matcher.group(1));
             }
+            LOGGER.debug("found season banner " + mf.getFileAsPath());
+            tvShow.setSeasonArtwork(season, SEASON_BANNER, mf);
+          }
+          catch (Exception e) {
+            LOGGER.warn("could not parse season number: " + e.getMessage());
+          }
+        }
+      }
+      // fill season thumbs map
+      for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_THUMB)) {
+        Matcher matcher = seasonThumbPattern.matcher(mf.getFilename());
+        if (matcher.matches()) {
+          try {
+            int season = -1;
+            if (!mf.getFilename().startsWith("season-specials-thumb")) {
+              season = Integer.parseInt(matcher.group(1));
+            }
+            LOGGER.debug("found season thumb " + mf.getFileAsPath());
+            tvShow.setSeasonArtwork(season, SEASON_THUMB, mf);
+          }
+          catch (Exception e) {
+            LOGGER.warn("could not parse season number: " + e.getMessage());
           }
         }
       }

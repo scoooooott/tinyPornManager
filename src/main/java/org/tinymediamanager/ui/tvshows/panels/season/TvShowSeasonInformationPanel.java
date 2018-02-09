@@ -16,9 +16,11 @@
 package org.tinymediamanager.ui.tvshows.panels.season;
 
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -71,6 +73,10 @@ public class TvShowSeasonInformationPanel extends JPanel {
   private TvShowSeasonSelectionModel            tvShowSeasonSelectionModel;
   private ImageLabel                            lblTvShowPoster;
   private JLabel                                lblPosterSize;
+  private ImageLabel                            lblTvShowBanner;
+  private JLabel                                lblBannerSize;
+  private ImageLabel                            lblTvShowThumb;
+  private JLabel                                lblThumbSize;
   private JLabel                                lblTvshowTitle;
   private JLabel                                lblSeason;
   private TmmTable                              tableEpisodes;
@@ -124,6 +130,14 @@ public class TvShowSeasonInformationPanel extends JPanel {
         TvShowSeason season = (TvShowSeason) source;
         setPoster(season);
       }
+      if ((source instanceof TvShowSeason && BANNER.equals(property))) {
+        TvShowSeason season = (TvShowSeason) source;
+        setBanner(season);
+      }
+      if ((source instanceof TvShowSeason && THUMB.equals(property))) {
+        TvShowSeason season = (TvShowSeason) source;
+        setThumb(season);
+      }
     };
     tvShowSeasonSelectionModel.addPropertyChangeListener(propertyChangeListener);
   }
@@ -142,6 +156,20 @@ public class TvShowSeasonInformationPanel extends JPanel {
       lblTvShowPoster.enableLightbox();
       lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
       panelLeft.add(lblPosterSize);
+
+      lblTvShowThumb = new ImageLabel(false, false, true);
+      lblTvShowThumb.setDesiredAspectRatio(16 / 9.0f);
+      panelLeft.add(lblTvShowThumb);
+      lblTvShowThumb.enableLightbox();
+      lblThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+      panelLeft.add(lblThumbSize);
+
+      lblTvShowBanner = new ImageLabel(false, false, true);
+      lblTvShowBanner.setDesiredAspectRatio(25 / 8.0f);
+      panelLeft.add(lblTvShowBanner);
+      lblTvShowBanner.enableLightbox();
+      lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+      panelLeft.add(lblBannerSize);
     }
     {
       JPanel panelRight = new JPanel();
@@ -189,6 +217,40 @@ public class TvShowSeasonInformationPanel extends JPanel {
     }
     else {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+    }
+  }
+
+  private void setBanner(TvShowSeason season) {
+    // only reset if there was a real change
+    if (season.getBanner().equals(lblTvShowBanner.getImagePath())) {
+      return;
+    }
+
+    lblTvShowBanner.clearImage();
+    lblTvShowBanner.setImagePath(season.getBanner());
+    Dimension bannerSize = season.getBannerSize();
+    if (bannerSize.width > 0 && bannerSize.height > 0) {
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+    }
+  }
+
+  private void setThumb(TvShowSeason season) {
+    // only reset if there was a real change
+    if (season.getThumb().equals(lblTvShowThumb.getImagePath())) {
+      return;
+    }
+
+    lblTvShowThumb.clearImage();
+    lblTvShowThumb.setImagePath(season.getThumb());
+    Dimension thumbSize = season.getThumbSize();
+    if (thumbSize.width > 0 && thumbSize.height > 0) {
+      lblThumbSize.setText(BUNDLE.getString("mediafiletype.thumb") + " - " + thumbSize.width + "x" + thumbSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblThumbSize.setText(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
     }
   }
 
