@@ -28,6 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -113,6 +114,8 @@ public class TvShowSeasonInformationPanel extends JPanel {
           selectedSeason = (TvShowSeason) source;
         }
         setPoster(selectedSeason);
+        setBanner(selectedSeason);
+        setThumb(selectedSeason);
 
         try {
           episodeEventList.getReadWriteLock().writeLock().lock();
@@ -156,6 +159,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
       lblTvShowPoster.enableLightbox();
       lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
       panelLeft.add(lblPosterSize);
+      panelLeft.add(Box.createVerticalStrut(20));
 
       lblTvShowThumb = new ImageLabel(false, false, true);
       lblTvShowThumb.setDesiredAspectRatio(16 / 9.0f);
@@ -163,6 +167,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
       lblTvShowThumb.enableLightbox();
       lblThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
       panelLeft.add(lblThumbSize);
+      panelLeft.add(Box.createVerticalStrut(20));
 
       lblTvShowBanner = new ImageLabel(false, false, true);
       lblTvShowBanner.setDesiredAspectRatio(25 / 8.0f);
