@@ -22,6 +22,8 @@ import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import okhttp3.Authenticator;
 import okhttp3.Cache;
@@ -31,6 +33,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
 
 /**
  * The class HttpClient. To construct our HTTP client for internet access
@@ -39,6 +43,7 @@ import okhttp3.Route;
  * @since 1.0
  */
 public class TmmHttpClient {
+  private static final Logger LOGGER    = LoggerFactory.getLogger(TmmHttpClient.class);
   public static final String  CACHE_DIR = "cache/http";
   private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 5 * 1024 * 1024);
   private static OkHttpClient client    = createHttpClient();
@@ -50,6 +55,16 @@ public class TmmHttpClient {
    */
   private static OkHttpClient createHttpClient() {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+    // default logging: just req/resp when TMM is on TRACE!
+    HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new okhttp3.logging.HttpLoggingInterceptor.Logger() {
+      @Override
+      public void log(String message) {
+        LOGGER.trace(message.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>"));
+      }
+    });
+    logging.setLevel(Level.BASIC);
+    builder.addInterceptor(logging);
 
     // pool
     builder.connectionPool(new ConnectionPool(5, 5000, TimeUnit.MILLISECONDS));
