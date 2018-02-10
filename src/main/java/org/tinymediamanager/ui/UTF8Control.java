@@ -15,9 +15,6 @@
  */
 package org.tinymediamanager.ui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,8 +27,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
-
-import org.tinymediamanager.core.Constants;
 
 /**
  * Utility class fo UTF8 resource bundles<br>
@@ -72,38 +67,27 @@ public class UTF8Control extends Control {
       final boolean reloadFlag = reload;
       InputStream stream = null;
       try {
-        stream = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
-          public InputStream run() throws IOException {
-            InputStream is = null;
-            if (reloadFlag) {
-              URL url = classLoader.getResource(resourceName);
-              if (url != null) {
-                URLConnection connection = url.openConnection();
-                if (connection != null) {
-                  // Disable caches to get fresh data for reloading.
-                  connection.setUseCaches(false);
-                  is = connection.getInputStream();
-                }
+        stream = AccessController.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> {
+          InputStream is = null;
+          if (reloadFlag) {
+            URL url = classLoader.getResource(resourceName);
+            if (url != null) {
+              URLConnection connection = url.openConnection();
+              if (connection != null) {
+                // Disable caches to get fresh data for reloading.
+                connection.setUseCaches(false);
+                is = connection.getInputStream();
               }
             }
-            else {
-              is = classLoader.getResourceAsStream(resourceName);
-            }
-            return is;
           }
+          else {
+            is = classLoader.getResourceAsStream(resourceName);
+          }
+          return is;
         });
       }
       catch (PrivilegedActionException e) {
         throw (IOException) e.getException();
-      }
-
-      if (stream == null) {
-        // still not in classpath? read from our file system directly
-        try {
-          stream = new FileInputStream(new File(Constants.LOCALE_FOLDER, resourceName));
-        }
-        catch (FileNotFoundException e) {
-        }
       }
 
       if (stream != null) {

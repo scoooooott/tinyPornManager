@@ -16,9 +16,11 @@
 package org.tinymediamanager.core;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -26,6 +28,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
@@ -41,6 +44,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.CodeSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +60,8 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FilenameUtils;
@@ -100,6 +106,8 @@ public class Utils {
   // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N> - must be last part
   private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})$",
       Pattern.CASE_INSENSITIVE);
+
+  private static List<Locale>  availableLocales      = new ArrayList<>();
 
   /**
    * gets the filename part, and returns last extension
@@ -1004,38 +1012,66 @@ public class Utils {
    * @return List of Locales
    */
   public static List<Locale> getLanguages() {
-    ArrayList<Locale> loc = new ArrayList<>();
-    loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
+    if (!availableLocales.isEmpty()) {
+      // do not return the original list to avoid external manipulation
+      return new ArrayList<>(availableLocales);
+    }
+
+    availableLocales.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
-      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Constants.LOCALE_FOLDER))) {
-        for (Path path : directoryStream) {
-          // String l = file.getName().substring(9, 11); // messages_XX.properties
-          Matcher matcher = localePattern.matcher(path.getFileName().toString());
-          if (matcher.matches()) {
-            Locale myloc = null;
-
-            String language = matcher.group(1);
-            String country = matcher.group(2);
-
-            if (country != null) {
-              // found language & country
-              myloc = new Locale(language, country);
+      // list all properties files from the classpath
+      InputStream is = Utils.class.getResourceAsStream("/");
+      if (is != null) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String resource;
+        while ((resource = br.readLine()) != null) {
+          parseLocaleFromFilename(resource);
+        }
+      }
+      else {
+        // we may be in a .jar file
+        CodeSource src = Utils.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+          URL jar = src.getLocation();
+          ZipInputStream zip = new ZipInputStream(jar.openStream());
+          while (true) {
+            ZipEntry e = zip.getNextEntry();
+            if (e == null) {
+              break;
             }
-            else {
-              // found only language
-              myloc = getLocaleFromLanguage(language);
-            }
-            if (myloc != null && !loc.contains(myloc)) {
-              loc.add(myloc);
-            }
+            parseLocaleFromFilename(e.getName());
           }
         }
       }
     }
     catch (Exception e) {
-      LOGGER.warn("could not read locales: " + e.getMessage());
+      LOGGER.warn("could not read locales: " + e.getMessage(), e);
     }
-    return loc;
+
+    // do not return the original list to avoid external manipulation
+    return new ArrayList<>(availableLocales);
+  }
+
+  private static void parseLocaleFromFilename(String filename) {
+    Matcher matcher = localePattern.matcher(filename);
+    if (matcher.matches()) {
+      Locale myloc;
+
+      String language = matcher.group(1);
+      String country = matcher.group(2);
+
+      if (country != null) {
+        // found language & country
+        myloc = new Locale(language, country);
+      }
+      else {
+        // found only language
+        myloc = getLocaleFromLanguage(language);
+      }
+      if (myloc != null && !availableLocales.contains(myloc)) {
+        availableLocales.add(myloc);
+      }
+    }
   }
 
   /**

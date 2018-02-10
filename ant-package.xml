@@ -45,87 +45,7 @@
 		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
 	</target>
 
-	<target name="downloadLocale">
-		<get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" dest="locale/messages_${lang}.properties" username="api" password="1/a04c0440e9b337680f9faf9466efaccc7e0358bd" ignoreerrors="true" />
-	</target>
-
-	<target name="downloadLocales">
-		<!--<antcall target="downloadLocale"><param name="lang" value="ar_SA" /></antcall>-->
-		<!--<antcall target="downloadLocale"><param name="lang" value="ca" /></antcall>-->
-		<antcall target="downloadLocale">
-			<param name="lang" value="cs" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="da" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="de" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="es" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="el" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="fa" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="fr" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="hu" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="it" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="ko" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="nl" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="no" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="pl" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="pt" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="pt_BR" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="ru" />
-		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="ro"/></antcall>-->
-		<antcall target="downloadLocale">
-			<param name="lang" value="sk" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="sr" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="sv" />
-		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="tk" /></antcall>-->
-		<antcall target="downloadLocale">
-			<param name="lang" value="tr" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="vi" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="uk" />
-		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="zh" />
-		</antcall>
-	</target>
-
-	<target name="package-app" description="builds the packages" depends="setNightly, setPreRelease, downloadLocales">
+    <target name="package-app" description="builds the packages" depends="setNightly, setPreRelease">
 		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
@@ -144,7 +64,6 @@
 			<entry key="date" value="${tmmTimestamp}" />
 		</propertyfile>
 
-
 		<!-- ===================================================== -->
 		<!-- default files, to include in DIST and GD -->
 		<!-- ===================================================== -->
@@ -162,9 +81,6 @@
 		</copy>
 		<copy todir="${build.dir}/templates">
 			<fileset dir="templates" />
-		</copy>
-		<copy todir="${build.dir}/locale">
-			<fileset dir="locale" />
 		</copy>
 		<copy todir="${build.dir}/lib">
 			<fileset dir="target/dependency" />
@@ -188,25 +104,6 @@
 		</pathconvert>
 		<!--echo message="${gd.code}" /-->
 		<replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}" />
-
-		<!-- ===================================================== -->
-		<!-- replace message properties -->
-		<!-- ===================================================== -->
-		<pathconvert property="gd.locale" pathsep="">
-			<mapper>
-				<chainedmapper>
-					<flattenmapper />
-					<globmapper from="*" to="resource = locale/*${line.separator}" />
-				</chainedmapper>
-			</mapper>
-			<path>
-				<fileset dir="locale">
-					<include name="**/*.properties" />
-				</fileset>
-			</path>
-		</pathconvert>
-		<!-- echo message="${gd.locale}" /-->
-		<replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}" />
 
 		<!-- ===================================================== -->
 		<!-- replace plugins -->

@@ -20,10 +20,6 @@ ui.hide_decorations = true
 code = tmm.jar
 %CODELIBS%
 
-# strings added 1:1 to classpath
-plugin = locale/*
-classpath = locale/*
-
 # plugins
 %PLUGINS%
 
