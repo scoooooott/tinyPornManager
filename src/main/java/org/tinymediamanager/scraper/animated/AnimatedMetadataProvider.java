@@ -69,12 +69,9 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   }
 
   public AnimatedMetadataProvider() {
-    if (json == null) {
-      this.json = loadJson();
-    }
   }
 
-  public Base getJson() {
+  Base getJson() {
     return json;
   }
 
@@ -86,6 +83,9 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getArtwork() " + options.toString());
+
+    // lazy loading of the json
+    initJson();
 
     List<MediaArtwork> artwork;
 
@@ -105,6 +105,12 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     }
 
     return artwork;
+  }
+
+  private synchronized void initJson() {
+    if (json == null) {
+      json = loadJson();
+    }
   }
 
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
