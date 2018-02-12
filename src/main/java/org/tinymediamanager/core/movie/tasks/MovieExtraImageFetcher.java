@@ -20,14 +20,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
@@ -135,7 +138,19 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // fetch and store images
       Url url1 = new Url(artworkUrl);
-      tempFile = movie.getPathNIO().resolve(filename + ".part");
+      try {
+        // create a temp file/folder inside the tmm folder
+        Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+        if (!Files.exists(tempFolder)) {
+          Files.createDirectory(tempFolder);
+        }
+        tempFile = tempFolder.resolve(filename + ".part"); // multi episode same file
+      }
+      catch (Exception e) {
+        // could not create the temp folder somehow - put the files into the entity dir
+        tempFile = movie.getPathNIO().resolve(filename + ".part"); // multi episode same file
+      }
+
       outputStream = new FileOutputStream(tempFile.toFile());
       is = url1.getInputStream();
       IOUtils.copy(is, outputStream);
@@ -158,6 +173,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // check if the file has been downloaded
       if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
+        FileUtils.deleteQuietly(tempFile.toFile());
         throw new Exception("0byte file downloaded: " + filename);
       }
 
