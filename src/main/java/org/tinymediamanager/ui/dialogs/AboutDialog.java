@@ -24,7 +24,6 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.LinkLabel;
-import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.images.Logo;
 
 import net.miginfocom.swing.MigLayout;
@@ -49,19 +47,13 @@ import net.miginfocom.swing.MigLayout;
 public class AboutDialog extends TmmDialog {
   private static final long   serialVersionUID = 2298570526828925319L;
   private static final Logger LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
-  private static final String TRANSLATORS      = "Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, Andrey Gorodnov, julienbloch, nerve, carlosmarchi, "
-      + "espiman, beonex, otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh, SeNmaN, Translador, Deleuze23, "
-      + "ShevAbam, abrupt_neurosis, lynxstrike, Spegni, carfesh, vekheoqf, keleniki, htrex, namuit, stickell, Voltinus, Zwanzig, vipkoza"
-      + "Amarante.pt_BR, TaniaC, maopequena, leandrofuscaldi, dukobpa3, bleuge";
-
-  private final JPanel        contentPanel     = new JPanel();
-  private final Action        action           = new SwingAction();
 
   public AboutDialog() {
     super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
 
+    JPanel contentPanel = new JPanel();
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new MigLayout("", "[][20lp:n][300lp,grow]", "[][10lp:n][][20lp:n][][10lp:n][][][][][][][][]"));
+    contentPanel.setLayout(new MigLayout("", "[][20lp:n][300lp,grow]", "[][10lp:n][][20lp:n][][10lp:n][][][10lp:n][][][][][]"));
     {
       JLabel lblLogo = new JLabel("");
       lblLogo.setIcon(new Logo(96));
@@ -104,32 +96,19 @@ public class AboutDialog extends TmmDialog {
     }
     {
       JLabel lblThanksTo = new JLabel(BUNDLE.getString("tmm.thanksto")); //$NON-NLS-1$
-      contentPanel.add(lblThanksTo, "cell 0 8,alignx right");
+      contentPanel.add(lblThanksTo, "cell 0 9,alignx right");
     }
     {
       JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, everything..."); //$NON-NLS-1$
-      contentPanel.add(lblMyronForHelping, "cell 2 8");
+      contentPanel.add(lblMyronForHelping, "cell 2 9");
     }
     {
-      JLabel lblXysm = new JLabel("xysm for excessive testing and lots of feedback"); //$NON-NLS-1$
-      contentPanel.add(lblXysm, "cell 2 9");
+      JLabel lblJoostzilla = new JLabel("Joostzilla for the UI design");
+      contentPanel.add(lblJoostzilla, "cell 2 10");
     }
     {
-      JLabel lblMatthewSandersFor = new JLabel("Matthew Sanders for the cool export templates"); //$NON-NLS-1$
-      contentPanel.add(lblMatthewSandersFor, "cell 2 10");
-    }
-    {
-      JPanel panelTranslators = new JPanel();
-      contentPanel.add(panelTranslators, "cell 2 11,grow");
-      panelTranslators.setLayout(new MigLayout("insets 0", "[][300px:300px,grow]", "[]"));
-      {
-        JLabel lblTranslatorsT = new JLabel(BUNDLE.getString("tmm.translators")); //$NON-NLS-1$
-        panelTranslators.add(lblTranslatorsT, "cell 0 0,alignx right,aligny top");
-      }
-      {
-        JTextArea tpTranslators = new ReadOnlyTextArea(TRANSLATORS);
-        panelTranslators.add(tpTranslators, "cell 1 0,growx,aligny top");
-      }
+      JLabel lblTranslators = new JLabel("All our translators");
+      contentPanel.add(lblTranslators, "cell 2 11");
     }
     {
       JLabel lblLibs = new JLabel("The creators of all libs we've used"); //$NON-NLS-1$
@@ -141,16 +120,16 @@ public class AboutDialog extends TmmDialog {
     }
     {
       JButton okButton = new JButton();
+      Action action = new CloseAction();
       okButton.setAction(action);
       addDefaultButton(okButton);
-
     }
   }
 
-  private class SwingAction extends AbstractAction {
+  private class CloseAction extends AbstractAction {
     private static final long serialVersionUID = 4652946848116365706L;
 
-    public SwingAction() {
+    CloseAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
