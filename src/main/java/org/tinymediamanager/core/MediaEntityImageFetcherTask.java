@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +95,18 @@ public class MediaEntityImageFetcherTask implements Runnable {
         // debug message
         LOGGER.debug("writing " + type + " " + filename);
         Path destFile = entity.getPathNIO().resolve(filename);
-        tempFile = entity.getPathNIO().resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        try {
+          // create a temp file/folder inside the tmm folder
+          Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+          if (!Files.exists(tempFolder)) {
+            Files.createDirectory(tempFolder);
+          }
+          tempFile = tempFolder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
+        catch (Exception e) {
+          // could not create the temp folder somehow - put the files into the entity dir
+          tempFile = entity.getPathNIO().resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
 
         // check if old and new file are the same (possible if you select it in the imagechooser)
         boolean sameFile = false;
@@ -131,6 +143,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
 
           // check if the file has been downloaded
           if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
+            // cleanup the file
+            FileUtils.deleteQuietly(tempFile.toFile());
             throw new Exception("0byte file downloaded: " + filename);
           }
 
