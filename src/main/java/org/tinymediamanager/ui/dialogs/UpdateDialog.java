@@ -34,6 +34,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -54,8 +55,7 @@ public class UpdateDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[][10lp:n][][400lp,grow]"));
 
-      JTextPane lblUpdateInfo = new JTextPane();
-      lblUpdateInfo.setOpaque(false);
+      JTextPane lblUpdateInfo = new ReadOnlyTextPane();
       lblUpdateInfo.setText(BUNDLE.getString("tmm.update.message")); //$NON-NLS-1$
       panelContent.add(lblUpdateInfo, "cell 0 0,growx");
 
