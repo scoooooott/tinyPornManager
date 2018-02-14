@@ -17,14 +17,13 @@ package org.tinymediamanager.core.tvshow.entities;
 
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.BANNER_URL;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.POSTER_URL;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 import static org.tinymediamanager.core.Constants.THUMB;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+import static org.tinymediamanager.core.Constants.THUMB_URL;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -139,23 +138,19 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   }
 
   public void setArtwork(Path newValue, MediaArtworkType artworkType) {
-    String oldValue;
+    String oldValue = getArtworkFilename(artworkType);
+    tvShow.setSeasonArtwork(season, artworkType, newValue);
+
     switch (artworkType) {
       case SEASON_POSTER:
-        oldValue = getPoster();
-        tvShow.setSeasonArtwork(season, artworkType, newValue);
         firePropertyChange(POSTER, oldValue, newValue);
         break;
 
       case SEASON_BANNER:
-        oldValue = getBanner();
-        tvShow.setSeasonArtwork(season, artworkType, newValue);
         firePropertyChange(BANNER, oldValue, newValue);
         break;
 
       case SEASON_THUMB:
-        oldValue = getThumb();
-        tvShow.setSeasonArtwork(season, artworkType, newValue);
         firePropertyChange(THUMB, oldValue, newValue);
         break;
 
@@ -186,38 +181,46 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
   }
 
-  public String getPoster() {
-    return tvShow.getSeasonArtwork(season, SEASON_POSTER);
+  public String getArtworkFilename(MediaArtworkType type) {
+    return tvShow.getSeasonArtwork(season, type);
   }
 
-  public String getBanner() {
-    return tvShow.getSeasonArtwork(season, SEASON_BANNER);
+  public Dimension getArtworkSize(MediaArtworkType type) {
+    return tvShow.getSeasonArtworkSize(season, type);
   }
 
-  public String getThumb() {
-    return tvShow.getSeasonArtwork(season, SEASON_THUMB);
+  public void setArtworkUrl(String newValue, MediaArtworkType artworkType) {
+    String oldValue = getArtworkUrl(artworkType);
+    tvShow.setSeasonArtworkUrl(season, newValue, artworkType);
+
+    switch (artworkType) {
+      case SEASON_POSTER:
+        firePropertyChange(POSTER_URL, oldValue, newValue);
+        break;
+
+      case SEASON_BANNER:
+        firePropertyChange(BANNER_URL, oldValue, newValue);
+        break;
+
+      case SEASON_THUMB:
+        firePropertyChange(THUMB_URL, oldValue, newValue);
+        break;
+
+      default:
+        return;
+    }
+
+    for (TvShowEpisode episode : episodes) {
+      episode.setSeasonArtworkChanged(artworkType);
+    }
   }
 
-  public Dimension getPosterSize() {
-    return tvShow.getSeasonArtworkSize(season, SEASON_POSTER);
+  public String getArtworkUrl(MediaArtworkType type) {
+    return tvShow.getSeasonArtworkUrl(season, type);
   }
 
-  public Dimension getBannerSize() {
-    return tvShow.getSeasonArtworkSize(season, SEASON_BANNER);
-  }
-
-  public Dimension getThumbSize() {
-    return tvShow.getSeasonArtworkSize(season, SEASON_THUMB);
-  }
-
-  public void setPosterUrl(String newValue) {
-    String oldValue = tvShow.getSeasonPosterUrl(season);
-    tvShow.setSeasonPosterUrl(season, newValue);
-    firePropertyChange(POSTER_URL, oldValue, newValue);
-  }
-
-  public String getPosterUrl() {
-    return tvShow.getSeasonPosterUrl(season);
+  public void downloadArtwork(MediaArtworkType artworkType) {
+    tvShow.downloadSeasonArtwork(season, artworkType);
   }
 
   public List<MediaFile> getMediaFiles() {

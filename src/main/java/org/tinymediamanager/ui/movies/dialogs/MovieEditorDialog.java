@@ -811,91 +811,6 @@ public class MovieEditorDialog extends TmmDialog {
     }
 
     /**********************************************************************************
-     * artwork and trailer urls
-     **********************************************************************************/
-    {
-      JPanel artworkAndTrailerPanel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("edit.artworkandtrailer"), null, artworkAndTrailerPanel, null);
-      artworkAndTrailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][20lp:n][250lp]"));
-      {
-        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblPosterT, "cell 0 0,alignx right");
-      }
-      {
-        tfPoster = new JTextField();
-        artworkAndTrailerPanel.add(tfPoster, "cell 1 0,growx");
-
-        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblFanartT, "cell 0 1,alignx right");
-
-        tfFanart = new JTextField();
-        artworkAndTrailerPanel.add(tfFanart, "cell 1 1,growx");
-      }
-      {
-        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblLogoT, "cell 0 2,alignx right");
-
-        tfLogo = new JTextField();
-        artworkAndTrailerPanel.add(tfLogo, "cell 1 2,growx");
-      }
-      {
-        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblClearLogoT, "cell 0 3,alignx right");
-
-        tfClearLogo = new JTextField();
-        artworkAndTrailerPanel.add(tfClearLogo, "cell 1 3,growx");
-      }
-      {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblBannerT, "cell 0 4,alignx right");
-
-        tfBanner = new JTextField();
-        artworkAndTrailerPanel.add(tfBanner, "cell 1 4,growx");
-      }
-      {
-        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblClearArtT, "cell 0 5,alignx right");
-
-        tfClearArt = new JTextField();
-        artworkAndTrailerPanel.add(tfClearArt, "cell 1 5,growx");
-      }
-      {
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblThumbT, "cell 0 6,alignx right");
-
-        tfThumb = new JTextField();
-        artworkAndTrailerPanel.add(tfThumb, "cell 1 6,growx");
-      }
-      {
-        JLabel lblDiscT = new TmmLabel(BUNDLE.getString("mediafiletype.disc")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblDiscT, "cell 0 7,alignx trailing");
-
-        tfDisc = new JTextField();
-        artworkAndTrailerPanel.add(tfDisc, "cell 1 7,growx");
-      }
-
-      {
-        JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblTrailer, "flowy,cell 0 9,alignx right,aligny top");
-
-        JButton btnAddTrailer = new JButton(new AddTrailerAction());
-        btnAddTrailer.setMargin(BUTTON_MARGIN);
-        artworkAndTrailerPanel.add(btnAddTrailer, "cell 0 9,alignx right,aligny top");
-
-        JButton btnRemoveTrailer = new JButton(new RemoveTrailerAction());
-        btnRemoveTrailer.setMargin(BUTTON_MARGIN);
-        artworkAndTrailerPanel.add(btnRemoveTrailer, "cell 0 9,alignx right,aligny top");
-
-        JScrollPane scrollPaneTrailer = new JScrollPane();
-        artworkAndTrailerPanel.add(scrollPaneTrailer, "cell 1 9 7 1,grow");
-        tableTrailer = new TmmTable();
-        tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        tableTrailer.configureScrollPane(scrollPaneTrailer);
-        scrollPaneTrailer.setViewportView(tableTrailer);
-      }
-    }
-
-    /**********************************************************************************
      * local artwork
      **********************************************************************************/
     {
@@ -1010,6 +925,91 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblDisc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblDisc, "cell 4 7,grow");
+      }
+    }
+
+    /**********************************************************************************
+     * artwork and trailer urls
+     **********************************************************************************/
+    {
+      JPanel artworkAndTrailerPanel = new JPanel();
+      tabbedPane.addTab(BUNDLE.getString("edit.artworkandtrailer"), null, artworkAndTrailerPanel, null);
+      artworkAndTrailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][20lp:n][250lp]"));
+      {
+        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblPosterT, "cell 0 0,alignx right");
+      }
+      {
+        tfPoster = new JTextField();
+        artworkAndTrailerPanel.add(tfPoster, "cell 1 0,growx");
+
+        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblFanartT, "cell 0 1,alignx right");
+
+        tfFanart = new JTextField();
+        artworkAndTrailerPanel.add(tfFanart, "cell 1 1,growx");
+      }
+      {
+        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblLogoT, "cell 0 2,alignx right");
+
+        tfLogo = new JTextField();
+        artworkAndTrailerPanel.add(tfLogo, "cell 1 2,growx");
+      }
+      {
+        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblClearLogoT, "cell 0 3,alignx right");
+
+        tfClearLogo = new JTextField();
+        artworkAndTrailerPanel.add(tfClearLogo, "cell 1 3,growx");
+      }
+      {
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblBannerT, "cell 0 4,alignx right");
+
+        tfBanner = new JTextField();
+        artworkAndTrailerPanel.add(tfBanner, "cell 1 4,growx");
+      }
+      {
+        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblClearArtT, "cell 0 5,alignx right");
+
+        tfClearArt = new JTextField();
+        artworkAndTrailerPanel.add(tfClearArt, "cell 1 5,growx");
+      }
+      {
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblThumbT, "cell 0 6,alignx right");
+
+        tfThumb = new JTextField();
+        artworkAndTrailerPanel.add(tfThumb, "cell 1 6,growx");
+      }
+      {
+        JLabel lblDiscT = new TmmLabel(BUNDLE.getString("mediafiletype.disc")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblDiscT, "cell 0 7,alignx trailing");
+
+        tfDisc = new JTextField();
+        artworkAndTrailerPanel.add(tfDisc, "cell 1 7,growx");
+      }
+
+      {
+        JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblTrailer, "flowy,cell 0 9,alignx right,aligny top");
+
+        JButton btnAddTrailer = new JButton(new AddTrailerAction());
+        btnAddTrailer.setMargin(BUTTON_MARGIN);
+        artworkAndTrailerPanel.add(btnAddTrailer, "cell 0 9,alignx right,aligny top");
+
+        JButton btnRemoveTrailer = new JButton(new RemoveTrailerAction());
+        btnRemoveTrailer.setMargin(BUTTON_MARGIN);
+        artworkAndTrailerPanel.add(btnRemoveTrailer, "cell 0 9,alignx right,aligny top");
+
+        JScrollPane scrollPaneTrailer = new JScrollPane();
+        artworkAndTrailerPanel.add(scrollPaneTrailer, "cell 1 9 7 1,grow");
+        tableTrailer = new TmmTable();
+        tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableTrailer.configureScrollPane(scrollPaneTrailer);
+        scrollPaneTrailer.setViewportView(tableTrailer);
       }
     }
 

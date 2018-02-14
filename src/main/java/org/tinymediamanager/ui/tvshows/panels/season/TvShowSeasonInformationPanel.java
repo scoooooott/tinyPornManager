@@ -21,6 +21,9 @@ import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -210,13 +213,13 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
   private void setPoster(TvShowSeason season) {
     // only reset if there was a real change
-    if (season.getPoster().equals(lblTvShowPoster.getImagePath())) {
+    if (season.getArtworkFilename(SEASON_POSTER).equals(lblTvShowPoster.getImagePath())) {
       return;
     }
 
     lblTvShowPoster.clearImage();
-    lblTvShowPoster.setImagePath(season.getPoster());
-    Dimension posterSize = season.getPosterSize();
+    lblTvShowPoster.setImagePath(season.getArtworkFilename(SEASON_POSTER));
+    Dimension posterSize = season.getArtworkSize(SEASON_POSTER);
     if (posterSize.width > 0 && posterSize.height > 0) {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }
@@ -227,13 +230,13 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
   private void setBanner(TvShowSeason season) {
     // only reset if there was a real change
-    if (season.getBanner().equals(lblTvShowBanner.getImagePath())) {
+    if (season.getArtworkFilename(SEASON_BANNER).equals(lblTvShowBanner.getImagePath())) {
       return;
     }
 
     lblTvShowBanner.clearImage();
-    lblTvShowBanner.setImagePath(season.getBanner());
-    Dimension bannerSize = season.getBannerSize();
+    lblTvShowBanner.setImagePath(season.getArtworkFilename(SEASON_BANNER));
+    Dimension bannerSize = season.getArtworkSize(SEASON_BANNER);
     if (bannerSize.width > 0 && bannerSize.height > 0) {
       lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height); //$NON-NLS-1$
     }
@@ -244,13 +247,13 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
   private void setThumb(TvShowSeason season) {
     // only reset if there was a real change
-    if (season.getThumb().equals(lblTvShowThumb.getImagePath())) {
+    if (season.getArtworkFilename(SEASON_THUMB).equals(lblTvShowThumb.getImagePath())) {
       return;
     }
 
     lblTvShowThumb.clearImage();
-    lblTvShowThumb.setImagePath(season.getThumb());
-    Dimension thumbSize = season.getThumbSize();
+    lblTvShowThumb.setImagePath(season.getArtworkFilename(SEASON_THUMB));
+    Dimension thumbSize = season.getArtworkSize(SEASON_THUMB);
     if (thumbSize.width > 0 && thumbSize.height > 0) {
       lblThumbSize.setText(BUNDLE.getString("mediafiletype.thumb") + " - " + thumbSize.width + "x" + thumbSize.height); //$NON-NLS-1$
     }

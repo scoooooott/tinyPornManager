@@ -16,6 +16,10 @@
 
 package org.tinymediamanager.core.tvshow.connector;
 
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -138,6 +142,8 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addRuntime();
         addPoster();
         addSeasonPoster();
+        addSeasonBanner();
+        addSeasonThumb();
         addFanart();
         addMpaa();
         addId();
@@ -296,7 +302,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * add the season posters in multiple <thumb aspect="poster" type="season" season="x">xxx</thumb> tags
    */
   protected void addSeasonPoster() {
-    for (Map.Entry<Integer, String> entry : tvShow.getSeasonPosterUrls().entrySet()) {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_POSTER).entrySet()) {
       Element thumb = document.createElement("thumb");
       String posterUrl = entry.getValue();
       if (StringUtils.isNotBlank(posterUrl)) {
@@ -304,6 +310,40 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         thumb.setAttribute("type", "season");
         thumb.setAttribute("season", String.valueOf(entry.getKey()));
         thumb.setTextContent(posterUrl);
+        root.appendChild(thumb);
+      }
+    }
+  }
+
+  /**
+   * add the season banners in multiple <thumb aspect="banner" type="season" season="x">xxx</thumb> tags
+   */
+  protected void addSeasonBanner() {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_BANNER).entrySet()) {
+      Element thumb = document.createElement("thumb");
+      String bannerUrl = entry.getValue();
+      if (StringUtils.isNotBlank(bannerUrl)) {
+        thumb.setAttribute("aspect", "banner");
+        thumb.setAttribute("type", "season");
+        thumb.setAttribute("season", String.valueOf(entry.getKey()));
+        thumb.setTextContent(bannerUrl);
+        root.appendChild(thumb);
+      }
+    }
+  }
+
+  /**
+   * add the season thumbs in multiple <thumb aspect="thumb" type="season" season="x">xxx</thumb> tags
+   */
+  protected void addSeasonThumb() {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_THUMB).entrySet()) {
+      Element thumb = document.createElement("thumb");
+      String thumbUrl = entry.getValue();
+      if (StringUtils.isNotBlank(thumbUrl)) {
+        thumb.setAttribute("aspect", "thumb");
+        thumb.setAttribute("type", "season");
+        thumb.setAttribute("season", String.valueOf(entry.getKey()));
+        thumb.setTextContent(thumbUrl);
         root.appendChild(thumb);
       }
     }

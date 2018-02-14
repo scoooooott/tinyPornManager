@@ -18,6 +18,9 @@ package org.tinymediamanager.core.tvshow.connector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -131,9 +134,17 @@ public class TvShowEpisodeToNfoConnectorTest {
     assertThat(newTvShow.getRuntime()).isEqualTo(tvShow.getRuntime());
     assertThat(newTvShow.getArtworkUrl(MediaFileType.POSTER)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.POSTER));
     assertThat(newTvShow.getArtworkUrl(MediaFileType.FANART)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.FANART));
-    for (Map.Entry<Integer, String> entry : tvShow.getSeasonPosterUrls().entrySet()) {
-      String seasonPoster = newTvShow.getSeasonPosterUrl(entry.getKey());
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_POSTER).entrySet()) {
+      String seasonPoster = newTvShow.getSeasonArtworkUrl(entry.getKey(), SEASON_POSTER);
       assertThat(seasonPoster).isEqualTo(entry.getValue());
+    }
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_BANNER).entrySet()) {
+      String seasonBanner = newTvShow.getSeasonArtworkUrl(entry.getKey(), SEASON_BANNER);
+      assertThat(seasonBanner).isEqualTo(entry.getValue());
+    }
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_THUMB).entrySet()) {
+      String seasonThumb = newTvShow.getSeasonArtworkUrl(entry.getKey(), SEASON_THUMB);
+      assertThat(seasonThumb).isEqualTo(entry.getValue());
     }
     assertThat(newTvShow.getImdbId()).isEqualTo(tvShow.getImdbId());
     assertThat(newTvShow.getTvdbId()).isEqualTo(tvShow.getTvdbId());
@@ -163,8 +174,12 @@ public class TvShowEpisodeToNfoConnectorTest {
     tvShow.setRuntime(45);
     tvShow.setArtworkUrl("http://poster", MediaFileType.POSTER);
     tvShow.setArtworkUrl("http://fanart", MediaFileType.FANART);
-    tvShow.setSeasonPosterUrl(1, "http://season1");
-    tvShow.setSeasonPosterUrl(2, "http://season2");
+    tvShow.setSeasonArtworkUrl(1, "http://season1", SEASON_POSTER);
+    tvShow.setSeasonArtworkUrl(2, "http://season2", SEASON_POSTER);
+    tvShow.setSeasonArtworkUrl(1, "http://season-banner1", SEASON_BANNER);
+    tvShow.setSeasonArtworkUrl(2, "http://season-banner2", SEASON_BANNER);
+    tvShow.setSeasonArtworkUrl(1, "http://season-thumb1", SEASON_THUMB);
+    tvShow.setSeasonArtworkUrl(2, "http://season-thumb2", SEASON_THUMB);
     tvShow.setImdbId("tt0103639");
     tvShow.setTvdbId("812");
     tvShow.setId("trakt", 655);

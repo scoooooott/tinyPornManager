@@ -16,6 +16,10 @@
 
 package org.tinymediamanager.core.tvshow.connector;
 
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -79,6 +83,8 @@ public class TvShowNfoParser {
 
   public List<String>               posters             = new ArrayList<>();
   public Map<Integer, List<String>> seasonPosters       = new HashMap<>();
+  public Map<Integer, List<String>> seasonBanners       = new HashMap<>();
+  public Map<Integer, List<String>> seasonThumbs        = new HashMap<>();
   public List<String>               banners             = new ArrayList<>();
   public List<String>               fanarts             = new ArrayList<>();
   public List<MediaGenres>          genres              = new ArrayList<>();
@@ -127,6 +133,7 @@ public class TvShowNfoParser {
     parseTag(TvShowNfoParser::parsePosters);
     parseTag(TvShowNfoParser::parseBanners);
     parseTag(TvShowNfoParser::parseFanarts);
+    parseTag(TvShowNfoParser::parseSeasonArtwork);
     parseTag(TvShowNfoParser::parseCertification);
     parseTag(TvShowNfoParser::parseIds);
     parseTag(TvShowNfoParser::parseReleaseDate);
@@ -471,31 +478,30 @@ public class TvShowNfoParser {
         }
 
         String posterUrl = element.ownText();
+        if (StringUtils.isBlank(posterUrl) || !posterUrl.matches("https?://.*")) {
+          continue;
+        }
         if (element.hasAttr("type") && element.attr("type").equals("season")) {
           // season poster
-          if (StringUtils.isNotBlank(posterUrl) && posterUrl.matches("https?://.*")) {
-            // parse out season number
-            try {
-              Integer season = Integer.parseInt(element.attr("season"));
-              List<String> seasonPosterList = seasonPosters.get(season);
-              if (seasonPosterList == null) {
-                seasonPosterList = new ArrayList<>();
-                seasonPosters.put(season, seasonPosterList);
-              }
-              if (!seasonPosterList.contains(posterUrl)) {
-                seasonPosterList.add(posterUrl);
-              }
+          // parse out season number
+          try {
+            Integer season = Integer.parseInt(element.attr("season"));
+            List<String> seasonPosterList = seasonPosters.get(season);
+            if (seasonPosterList == null) {
+              seasonPosterList = new ArrayList<>();
+              seasonPosters.put(season, seasonPosterList);
             }
-            catch (Exception ignored) {
+            if (!seasonPosterList.contains(posterUrl)) {
+              seasonPosterList.add(posterUrl);
             }
+          }
+          catch (Exception ignored) {
           }
         }
         else {
           // tv show poster
-          if (StringUtils.isNotBlank(posterUrl) && posterUrl.matches("https?://.*")) {
-            if (!posters.contains(posterUrl)) {
-              posters.add(posterUrl);
-            }
+          if (!posters.contains(posterUrl)) {
+            posters.add(posterUrl);
           }
         }
       }
@@ -558,6 +564,82 @@ public class TvShowNfoParser {
       }
       else if (StringUtils.isNotBlank(fanart.ownText()) && prefix.matches("https?://.*")) {
         fanarts.add(prefix + fanart.ownText());
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * posters are usually inside <thumb>xxx</thumb> tag with an type of "season"<br />
+   * but there are also season poster in this tag
+   */
+  private Void parseSeasonArtwork() {
+    // supportedElements.add("thumb"); //already registered with posters
+
+    // get all thumb elements
+    Elements thumbs = root.select(root.tagName() + " > thumb");
+    if (!thumbs.isEmpty()) {
+      for (Element element : thumbs) {
+        // there has to be the type of season
+        if (!element.hasAttr("aspect") || !element.hasAttr("type") || !element.attr("type").equals("season")) {
+          continue;
+        }
+
+        String artworkUrl = element.ownText();
+        if (StringUtils.isBlank(artworkUrl) || !artworkUrl.matches("https?://.*")) {
+          continue;
+        }
+
+        // parse out season number
+        Integer season = null;
+        try {
+          season = Integer.parseInt(element.attr("season"));
+        }
+        catch (Exception ignored) {
+        }
+
+        if (season == null) {
+          continue;
+        }
+
+        switch (element.attr("aspect")) {
+          case "poster":
+            List<String> seasonPosterList = seasonPosters.get(season);
+            if (seasonPosterList == null) {
+              seasonPosterList = new ArrayList<>();
+              seasonPosters.put(season, seasonPosterList);
+            }
+            if (!seasonPosterList.contains(artworkUrl)) {
+              seasonPosterList.add(artworkUrl);
+            }
+            break;
+
+          case "banner":
+            List<String> seasonBannerList = seasonBanners.get(season);
+            if (seasonBannerList == null) {
+              seasonBannerList = new ArrayList<>();
+              seasonBanners.put(season, seasonBannerList);
+            }
+            if (!seasonBannerList.contains(artworkUrl)) {
+              seasonBannerList.add(artworkUrl);
+            }
+            break;
+
+          case "thumb":
+            List<String> seasonThumbList = seasonThumbs.get(season);
+            if (seasonThumbList == null) {
+              seasonThumbList = new ArrayList<>();
+              seasonThumbs.put(season, seasonThumbList);
+            }
+            if (!seasonThumbList.contains(artworkUrl)) {
+              seasonThumbList.add(artworkUrl);
+            }
+            break;
+
+          default:
+            continue;
+        }
       }
     }
 
@@ -1000,7 +1082,19 @@ public class TvShowNfoParser {
 
     for (Map.Entry<Integer, List<String>> entry : seasonPosters.entrySet()) {
       if (!entry.getValue().isEmpty()) {
-        show.setSeasonPosterUrl(entry.getKey(), entry.getValue().get(0));
+        show.setSeasonArtworkUrl(entry.getKey(), entry.getValue().get(0), SEASON_POSTER);
+      }
+    }
+
+    for (Map.Entry<Integer, List<String>> entry : seasonBanners.entrySet()) {
+      if (!entry.getValue().isEmpty()) {
+        show.setSeasonArtworkUrl(entry.getKey(), entry.getValue().get(0), SEASON_BANNER);
+      }
+    }
+
+    for (Map.Entry<Integer, List<String>> entry : seasonThumbs.entrySet()) {
+      if (!entry.getValue().isEmpty()) {
+        show.setSeasonArtworkUrl(entry.getKey(), entry.getValue().get(0), SEASON_THUMB);
       }
     }
 
