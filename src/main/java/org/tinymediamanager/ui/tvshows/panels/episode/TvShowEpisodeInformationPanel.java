@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
-import static org.tinymediamanager.core.Constants.SEASON_POSTER;
 import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
@@ -36,11 +35,13 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -114,7 +115,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         TvShowEpisode episode = (TvShowEpisode) source;
         setEpisodeThumb(episode);
       }
-      if ((source.getClass() == TvShowEpisode.class && SEASON_POSTER.equals(property))) {
+      if ((source.getClass() == TvShowEpisode.class && Constants.SEASON_POSTER.equals(property))) {
         TvShowEpisode episode = (TvShowEpisode) source;
         setSeasonPoster(episode);
       }
@@ -229,13 +230,13 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
   private void setSeasonPoster(TvShowEpisode tvShowEpisode) {
     // only reset if there was a real change
-    if (tvShowEpisode.getTvShowSeason().getPoster().equals(lblSeasonPoster.getImagePath())) {
+    if (tvShowEpisode.getTvShowSeason().getArtworkFilename(MediaArtwork.MediaArtworkType.SEASON_POSTER).equals(lblSeasonPoster.getImagePath())) {
       return;
     }
 
     lblSeasonPoster.clearImage();
-    lblSeasonPoster.setImagePath(tvShowEpisode.getTvShowSeason().getPoster());
-    Dimension posterSize = tvShowEpisode.getTvShowSeason().getPosterSize();
+    lblSeasonPoster.setImagePath(tvShowEpisode.getTvShowSeason().getArtworkFilename(MediaArtwork.MediaArtworkType.SEASON_POSTER));
+    Dimension posterSize = tvShowEpisode.getTvShowSeason().getArtworkSize(MediaArtwork.MediaArtworkType.SEASON_POSTER);
     if (posterSize.width > 0 && posterSize.height > 0) {
       lblSeasonPosterSize.setText(BUNDLE.getString("mediafiletype.season_poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }

@@ -752,6 +752,7 @@ public class MovieArtworkHelper {
 
     // update DB
     movie.saveToDb();
+    movie.writeNFO(); // rewrite NFO to get the urls into the NFO
   }
 
   /*

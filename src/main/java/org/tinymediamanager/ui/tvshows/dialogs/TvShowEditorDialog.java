@@ -240,8 +240,6 @@ public class TvShowEditorDialog extends TmmDialog {
       for (Person origCast : tvShow.getActors()) {
         actors.add(new Person(origCast));
       }
-      lblBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
-      lblFanart.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
 
       genres.addAll(tvShow.getGenres());
       tags.addAll(tvShowToEdit.getTags());
@@ -570,64 +568,6 @@ public class TvShowEditorDialog extends TmmDialog {
     }
 
     /**********************************************************************************
-     * artwork urls
-     **********************************************************************************/
-    {
-      JPanel artworkPanel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("edit.artwork"), null, artworkPanel, null);
-      artworkPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
-      {
-        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
-        artworkPanel.add(lblPosterT, "cell 0 0,alignx right");
-      }
-      {
-        tfPoster = new JTextField();
-        artworkPanel.add(tfPoster, "cell 1 0,growx");
-
-        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
-        artworkPanel.add(lblFanartT, "cell 0 1,alignx right");
-
-        tfFanart = new JTextField();
-        artworkPanel.add(tfFanart, "cell 1 1,growx");
-      }
-      {
-        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
-        artworkPanel.add(lblLogoT, "cell 0 2,alignx right");
-
-        tfLogo = new JTextField();
-        artworkPanel.add(tfLogo, "cell 1 2,growx");
-      }
-      {
-        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
-        artworkPanel.add(lblClearLogoT, "cell 0 3,alignx right");
-
-        tfClearLogo = new JTextField();
-        artworkPanel.add(tfClearLogo, "cell 1 3,growx");
-      }
-      {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
-        artworkPanel.add(lblBannerT, "cell 0 4,alignx right");
-
-        tfBanner = new JTextField();
-        artworkPanel.add(tfBanner, "cell 1 4,growx");
-      }
-      {
-        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
-        artworkPanel.add(lblClearArtT, "cell 0 5,alignx right");
-
-        tfClearArt = new JTextField();
-        artworkPanel.add(tfClearArt, "cell 1 5,growx");
-      }
-      {
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-        artworkPanel.add(lblThumbT, "cell 0 6,alignx right");
-
-        tfThumb = new JTextField();
-        artworkPanel.add(tfThumb, "cell 1 6,growx");
-      }
-    }
-
-    /**********************************************************************************
      * local artwork pane
      **********************************************************************************/
     {
@@ -726,6 +666,64 @@ public class TvShowEditorDialog extends TmmDialog {
         });
 
         artworkPanel.add(lblThumb, "cell 2 7,grow");
+      }
+    }
+
+    /**********************************************************************************
+     * artwork urls
+     **********************************************************************************/
+    {
+      JPanel artworkPanel = new JPanel();
+      tabbedPane.addTab(BUNDLE.getString("edit.artwork"), null, artworkPanel, null);
+      artworkPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
+      {
+        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        artworkPanel.add(lblPosterT, "cell 0 0,alignx right");
+
+        tfPoster = new JTextField();
+        artworkPanel.add(tfPoster, "cell 1 0,growx");
+      }
+      {
+        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+        artworkPanel.add(lblFanartT, "cell 0 1,alignx right");
+
+        tfFanart = new JTextField();
+        artworkPanel.add(tfFanart, "cell 1 1,growx");
+      }
+      {
+        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+        artworkPanel.add(lblLogoT, "cell 0 2,alignx right");
+
+        tfLogo = new JTextField();
+        artworkPanel.add(tfLogo, "cell 1 2,growx");
+      }
+      {
+        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+        artworkPanel.add(lblClearLogoT, "cell 0 3,alignx right");
+
+        tfClearLogo = new JTextField();
+        artworkPanel.add(tfClearLogo, "cell 1 3,growx");
+      }
+      {
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        artworkPanel.add(lblBannerT, "cell 0 4,alignx right");
+
+        tfBanner = new JTextField();
+        artworkPanel.add(tfBanner, "cell 1 4,growx");
+      }
+      {
+        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+        artworkPanel.add(lblClearArtT, "cell 0 5,alignx right");
+
+        tfClearArt = new JTextField();
+        artworkPanel.add(tfClearArt, "cell 1 5,growx");
+      }
+      {
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        artworkPanel.add(lblThumbT, "cell 0 6,alignx right");
+
+        tfThumb = new JTextField();
+        artworkPanel.add(tfThumb, "cell 1 6,growx");
       }
     }
 

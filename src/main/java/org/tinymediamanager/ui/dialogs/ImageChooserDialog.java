@@ -95,7 +95,9 @@ public class ImageChooserDialog extends TmmDialog {
     POSTER,
     FANART,
     BANNER,
-    SEASON,
+    SEASON_POSTER,
+    SEASON_BANNER,
+    SEASON_THUMB,
     LOGO,
     CLEARLOGO,
     CLEARART,
@@ -114,10 +116,10 @@ public class ImageChooserDialog extends TmmDialog {
   private JScrollPane          scrollPane;
   private ImageType            type;
   private MediaType            mediaType;
-  private ButtonGroup          buttonGroup     = new ButtonGroup();
-  private List<JToggleButton>  buttons         = new ArrayList<>();
+  private ButtonGroup          buttonGroup    = new ButtonGroup();
+  private List<JToggleButton>  buttons        = new ArrayList<>();
 
-  private final ToggleButtonUI toggleButtonUI  = new ToggleButtonUI();
+  private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
   private JTextField           tfImageUrl;
 
   /**
@@ -160,7 +162,9 @@ public class ImageChooserDialog extends TmmDialog {
         setTitle(BUNDLE.getString("image.choose.banner")); //$NON-NLS-1$
         break;
 
-      case SEASON:
+      case SEASON_POSTER:
+      case SEASON_BANNER:
+      case SEASON_THUMB:
         Object season = ids.get("tvShowSeason");
         if (season != null) {
           setTitle(BUNDLE.getString("image.choose.season") + " - " + BUNDLE.getString("metatag.season") + " " + season); //$NON-NLS-1$
@@ -499,8 +503,14 @@ public class ImageChooserDialog extends TmmDialog {
           case POSTER:
             art = new MediaArtwork("", MediaArtworkType.POSTER);
             break;
-          case SEASON:
+          case SEASON_POSTER:
             art = new MediaArtwork("", MediaArtworkType.SEASON_POSTER);
+            break;
+          case SEASON_BANNER:
+            art = new MediaArtwork("", MediaArtworkType.SEASON_BANNER);
+            break;
+          case SEASON_THUMB:
+            art = new MediaArtwork("", MediaArtworkType.SEASON_THUMB);
             break;
           case THUMB:
             art = new MediaArtwork("", MediaArtworkType.THUMB);
@@ -733,8 +743,16 @@ public class ImageChooserDialog extends TmmDialog {
               options.setArtworkType(MediaArtworkType.BANNER);
               break;
 
-            case SEASON:
+            case SEASON_POSTER:
               options.setArtworkType(MediaArtworkType.SEASON_POSTER);
+              break;
+
+            case SEASON_BANNER:
+              options.setArtworkType(MediaArtworkType.SEASON_BANNER);
+              break;
+
+            case SEASON_THUMB:
+              options.setArtworkType(MediaArtworkType.SEASON_THUMB);
               break;
 
             case CLEARART:

@@ -17,36 +17,29 @@ package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
-import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowSeasonEditorDialog;
 
 /**
- * The Class TvShowChangeSeasonPosterAction. To change the season poster
+ * The Class TvShowChangeSeasonArtworkAction. To change the season artwork
  * 
  * @author Manuel Laggner
  */
-public class TvShowChangeSeasonPosterAction extends TmmAction {
+public class TvShowChangeSeasonArtworkAction extends TmmAction {
   private static final long           serialVersionUID = 8356413227405772558L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowChangeSeasonPosterAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
+  public TvShowChangeSeasonArtworkAction() {
+    putValue(NAME, BUNDLE.getString("tvshow.changeseasonartwork")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonartwork")); //$NON-NLS-1$
   }
 
   @Override
@@ -57,17 +50,9 @@ public class TvShowChangeSeasonPosterAction extends TmmAction {
       // display image chooser
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        ImageLabel imageLabel = new ImageLabel();
-        Map<String, Object> ids = season.getTvShow().getIds();
-        ids.put("tvShowSeason", season.getSeason());
-        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON, TvShowList.getInstance().getAvailableArtworkScrapers(), imageLabel,
-            null, null, MediaType.TV_SHOW);
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-
-        if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
-          season.setPosterUrl(imageLabel.getImageUrl());
-          season.getTvShow().downloadSeasonPoster(season.getSeason());
+        TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, selectedObjects.size() > 1 ? true : false);
+        if (!editor.showDialog()) {
+          break;
         }
       }
     }

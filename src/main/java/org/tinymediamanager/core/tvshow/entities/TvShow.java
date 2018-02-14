@@ -43,6 +43,9 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CLEARLOGO;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.LOGO;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 
 import java.awt.Dimension;
@@ -949,8 +952,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // check if there is already an artwork for this season
           String url = seasonPosters.get(art.getSeason());
           if (StringUtils.isBlank(url)) {
-            setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
-            TvShowArtworkHelper.downloadSeasonPoster(this, art.getSeason());
+            setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_POSTER);
+            TvShowArtworkHelper.downloadSeasonArtwork(this, art.getSeason(), SEASON_POSTER);
             seasonPosters.put(art.getSeason(), art.getDefaultUrl());
           }
         }
@@ -963,8 +966,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // check if there is already an artwork for this season
           String url = seasonBanners.get(art.getSeason());
           if (StringUtils.isBlank(url)) {
-            setSeasonBannerUrl(art.getSeason(), art.getDefaultUrl());
-            TvShowArtworkHelper.downloadSeasonBanner(this, art.getSeason());
+            setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_BANNER);
+            TvShowArtworkHelper.downloadSeasonArtwork(this, art.getSeason(), SEASON_BANNER);
             seasonBanners.put(art.getSeason(), art.getDefaultUrl());
           }
         }
@@ -977,8 +980,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // check if there is already an artwork for this season
           String url = seasonThumbs.get(art.getSeason());
           if (StringUtils.isBlank(url)) {
-            setSeasonThumbUrl(art.getSeason(), art.getDefaultUrl());
-            TvShowArtworkHelper.downloadSeasonThumb(this, art.getSeason());
+            setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_THUMB);
+            TvShowArtworkHelper.downloadSeasonArtwork(this, art.getSeason(), SEASON_THUMB);
             seasonThumbs.put(art.getSeason(), art.getDefaultUrl());
           }
         }
@@ -986,6 +989,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
       // update DB
       saveToDb();
+      writeNFO(); // to get the artwork urls into the NFO
     }
   }
 
@@ -1000,13 +1004,15 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * download season poster
+   * download season artwork
    * 
    * @param season
-   *          the season to download the poster for
+   *          the season to download the artwork for
+   * @param artworkType
+   *          the artwork type to download
    */
-  public void downloadSeasonPoster(int season) {
-    TvShowArtworkHelper.downloadSeasonPoster(this, season);
+  public void downloadSeasonArtwork(int season, MediaArtworkType artworkType) {
+    TvShowArtworkHelper.downloadSeasonArtwork(this, season, artworkType);
   }
 
   /**
@@ -1406,104 +1412,107 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * get all season poster urls
+   * Sets the season artwork url.
+   *
+   * @param season
+   *          the season
+   * @param url
+   *          the url
+   * @param artworkType
+   *          the artwork type
    */
-  public Map<Integer, String> getSeasonPosterUrls() {
-    Map<Integer, String> sortedPosterUrls = MapUtils.sortByKey(seasonPosterUrlMap);
-    return sortedPosterUrls;
+  public void setSeasonArtworkUrl(int season, String url, MediaArtworkType artworkType) {
+    switch (artworkType) {
+      case SEASON_POSTER:
+        seasonPosterUrlMap.put(season, url);
+        break;
+
+      case SEASON_BANNER:
+        seasonBannerUrlMap.put(season, url);
+        break;
+
+      case SEASON_THUMB:
+        seasonThumbUrlMap.put(season, url);
+        break;
+
+      default:
+        return;
+    }
   }
 
   /**
-   * Gets the season poster url.
+   * Gets the season artwork url.
+   *
+   * @param season
+   *          the season
+   * @param artworkType
+   *          the artwork type
+   * @return the season artwork url or an empty string
+   */
+  public String getSeasonArtworkUrl(int season, MediaArtworkType artworkType) {
+    String url = null;
+
+    switch (artworkType) {
+      case SEASON_POSTER:
+        url = seasonPosterUrlMap.get(season);
+        break;
+
+      case SEASON_BANNER:
+        url = seasonBannerUrlMap.get(season);
+        break;
+
+      case SEASON_THUMB:
+        url = seasonThumbUrlMap.get(season);
+        break;
+
+      default:
+        break;
+    }
+
+    if (StringUtils.isBlank(url)) {
+      return "";
+    }
+
+    return url;
+  }
+
+  /**
+   * get all season artwork urls
+   * 
+   * @param artworkType
+   *          the artwork type to get the poster for
+   * @return a map containing all available season artworks for the given type
+   *
+   */
+  public Map<Integer, String> getSeasonArtworkUrls(MediaArtworkType artworkType) {
+    switch (artworkType) {
+      case SEASON_POSTER:
+        return MapUtils.sortByKey(seasonPosterUrlMap);
+
+      case SEASON_BANNER:
+        return MapUtils.sortByKey(seasonBannerUrlMap);
+
+      case SEASON_THUMB:
+        return MapUtils.sortByKey(seasonThumbUrlMap);
+
+      default:
+        return new HashMap<>(0);
+    }
+  }
+
+  /**
+   * Gets the season artwork.
    * 
    * @param season
    *          the season
-   * @return the season poster url
-   */
-  public String getSeasonPosterUrl(int season) {
-    String url = seasonPosterUrlMap.get(season);
-    if (StringUtils.isBlank(url)) {
-      return "";
-    }
-    return url;
-  }
-
-  /**
-   * Sets the season poster url.
+   * @param artworkType
+   *          the artwork type
+   * @return the season artwork
    *
-   * @param season
-   *          the season
-   * @param url
-   *          the url
    */
-  public void setSeasonPosterUrl(int season, String url) {
-    seasonPosterUrlMap.put(season, url);
-  }
-
-  /**
-   * Gets the season banner url.
-   *
-   * @param season
-   *          the season
-   * @return the season banner url
-   */
-  public String getSeasonBannerUrl(int season) {
-    String url = seasonBannerUrlMap.get(season);
-    if (StringUtils.isBlank(url)) {
-      return "";
-    }
-    return url;
-  }
-
-  /**
-   * Sets the season banner url.
-   *
-   * @param season
-   *          the season
-   * @param url
-   *          the url
-   */
-  public void setSeasonBannerUrl(int season, String url) {
-    seasonBannerUrlMap.put(season, url);
-  }
-
-  /**
-   * Gets the season thumb url.
-   *
-   * @param season
-   *          the season
-   * @return the season thumb url
-   */
-  public String getSeasonThumbUrl(int season) {
-    String url = seasonThumbUrlMap.get(season);
-    if (StringUtils.isBlank(url)) {
-      return "";
-    }
-    return url;
-  }
-
-  /**
-   * Sets the season thumb url.
-   *
-   * @param season
-   *          the season
-   * @param url
-   *          the url
-   */
-  public void setSeasonThumbUrl(int season, String url) {
-    seasonThumbUrlMap.put(season, url);
-  }
-
-  /**
-   * Gets the season poster.
-   * 
-   * @param season
-   *          the season
-   * @return the season poster
-   */
-  public String getSeasonArtwork(int season, MediaArtworkType type) {
+  public String getSeasonArtwork(int season, MediaArtworkType artworkType) {
     MediaFile artworkFile = null;
-    switch (type) {
+    switch (artworkType) {
       case SEASON_POSTER:
         artworkFile = seasonPosters.get(season);
         break;
@@ -1570,7 +1579,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Sets the season poster.
+   * Sets the season artwork.
    * 
    * @param season
    *          the season

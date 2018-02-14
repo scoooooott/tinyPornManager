@@ -179,26 +179,26 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeason season : tvShow.getSeasons()) {
-      if (StringUtils.isBlank(season.getPoster())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_POSTER))) {
         for (MediaArtwork art : artwork) {
           if (art.getSeason() == season.getSeason()) {
-            tvShow.setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
+            tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_POSTER);
             downloadSeasonPoster(tvShow, art.getSeason());
           }
         }
       }
-      if (StringUtils.isBlank(season.getBanner())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_BANNER))) {
         for (MediaArtwork art : artwork) {
           if (art.getSeason() == season.getSeason()) {
-            tvShow.setSeasonBannerUrl(art.getSeason(), art.getDefaultUrl());
+            tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_BANNER);
             downloadSeasonBanner(tvShow, art.getSeason());
           }
         }
       }
-      if (StringUtils.isBlank(season.getThumb())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_THUMB))) {
         for (MediaArtwork art : artwork) {
           if (art.getSeason() == season.getSeason()) {
-            tvShow.setSeasonThumbUrl(art.getSeason(), art.getDefaultUrl());
+            tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_THUMB);
             downloadSeasonThumb(tvShow, art.getSeason());
           }
         }
@@ -262,13 +262,13 @@ public class TvShowArtworkHelper {
       return true;
     }
     for (TvShowSeason season : tvShow.getSeasons()) {
-      if (StringUtils.isBlank(season.getPoster())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_POSTER))) {
         return true;
       }
-      if (StringUtils.isBlank(season.getBanner())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_BANNER))) {
         return true;
       }
-      if (StringUtils.isBlank(season.getThumb())) {
+      if (StringUtils.isBlank(season.getArtworkFilename(SEASON_THUMB))) {
         return true;
       }
     }
@@ -287,6 +287,25 @@ public class TvShowArtworkHelper {
     return episode.getMediaFiles(MediaFileType.THUMB).isEmpty();
   }
 
+  public static void downloadSeasonArtwork(TvShow show, int season, MediaArtworkType artworkType) {
+    switch (artworkType) {
+      case SEASON_POSTER:
+        downloadSeasonPoster(show, season);
+        break;
+
+      case SEASON_BANNER:
+        downloadSeasonBanner(show, season);
+        break;
+
+      case SEASON_THUMB:
+        downloadSeasonThumb(show, season);
+        break;
+
+      default:
+        return;
+    }
+  }
+
   /**
    * Download the season poster
    * 
@@ -295,8 +314,8 @@ public class TvShowArtworkHelper {
    * @param season
    *          the season to download the poster for
    */
-  public static void downloadSeasonPoster(TvShow show, int season) {
-    String seasonPosterUrl = show.getSeasonPosterUrl(season);
+  private static void downloadSeasonPoster(TvShow show, int season) {
+    String seasonPosterUrl = show.getSeasonArtworkUrl(season, SEASON_POSTER);
 
     TvShowSeason tvShowSeason = null;
     // try to get a season instance
@@ -343,8 +362,8 @@ public class TvShowArtworkHelper {
    * @param season
    *          the season to download the banner for
    */
-  public static void downloadSeasonBanner(TvShow show, int season) {
-    String seasonBannerUrl = show.getSeasonBannerUrl(season);
+  private static void downloadSeasonBanner(TvShow show, int season) {
+    String seasonBannerUrl = show.getSeasonArtworkUrl(season, SEASON_BANNER);
 
     TvShowSeason tvShowSeason = null;
     // try to get a season instance
@@ -387,8 +406,8 @@ public class TvShowArtworkHelper {
    * @param season
    *          the season to download the thumb for
    */
-  public static void downloadSeasonThumb(TvShow show, int season) {
-    String seasonThumbUrl = show.getSeasonThumbUrl(season);
+  private static void downloadSeasonThumb(TvShow show, int season) {
+    String seasonThumbUrl = show.getSeasonArtworkUrl(season, SEASON_THUMB);
 
     TvShowSeason tvShowSeason = null;
     // try to get a season instance

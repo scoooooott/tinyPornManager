@@ -33,7 +33,7 @@ import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
@@ -256,7 +256,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
 
     popupMenu.add(createAndRegisterAction(TvShowEditAction.class));
-    popupMenu.add(createAndRegisterAction(TvShowChangeSeasonPosterAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
@@ -324,7 +324,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     // edit popupmenu
     editPopupMenu = new JPopupMenu();
     editPopupMenu.add(createAndRegisterAction(TvShowEditAction.class));
-    editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonPosterAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
