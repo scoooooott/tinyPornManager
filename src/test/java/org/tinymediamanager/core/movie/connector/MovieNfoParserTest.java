@@ -55,10 +55,10 @@ public class MovieNfoParserTest {
       assertThat(parser.sorttitle).isEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.4f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(4990);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(Rating.DEFAULT).id).isEqualTo(Rating.DEFAULT);
+      assertThat(parser.ratings.get(Rating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(Rating.DEFAULT).votes).isEqualTo(4990);
+      assertThat(parser.ratings.get(Rating.DEFAULT).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -528,11 +528,15 @@ public class MovieNfoParserTest {
       assertThat(parser.originaltitle).isNotEmpty();
       assertThat(parser.sorttitle).isNotEmpty();
 
-      assertThat(parser.ratings).hasSize(3);
+      assertThat(parser.ratings).hasSize(4);
       assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(5.8f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(2100);
+      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(846);
       assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(Rating.DEFAULT).id).isEqualTo(Rating.DEFAULT);
+      assertThat(parser.ratings.get(Rating.DEFAULT).rating).isEqualTo(5.8f);
+      assertThat(parser.ratings.get(Rating.DEFAULT).votes).isEqualTo(2100);
+      assertThat(parser.ratings.get(Rating.DEFAULT).maxValue).isEqualTo(10);
       assertThat(parser.ratings.get("imdb").id).isEqualTo("imdb");
       assertThat(parser.ratings.get("imdb").rating).isEqualTo(8.9f);
       assertThat(parser.ratings.get("imdb").votes).isEqualTo(12345);

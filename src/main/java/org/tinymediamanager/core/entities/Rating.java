@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Rating {
   public static final String NFO      = "NFO";
+  public static final String DEFAULT  = "default";
   public static final String USER     = "user";
 
   @JsonProperty

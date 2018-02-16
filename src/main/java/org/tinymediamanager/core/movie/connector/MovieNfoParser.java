@@ -1325,7 +1325,7 @@ public class MovieNfoParser {
   private Void findUnsupportedElements() {
     // get all children of the root
     for (Element element : root.children()) {
-      if (!supportedElements.contains(element.tagName())) {
+      if (!supportedElements.contains(element.tagName().toLowerCase(Locale.ROOT))) {
         String elementText = element.toString().replaceAll(">\\r?\\n\\s*<", "><");
         unsupportedElements.add(elementText);
       }
