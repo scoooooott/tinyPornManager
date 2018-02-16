@@ -23,8 +23,6 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -38,10 +36,12 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The class TvShowModuleManager. Used to manage the tv show module
@@ -146,16 +146,19 @@ public class TvShowModuleManager implements ITmmModule {
    */
   public void dump(TvShow tvshow) {
     try {
-      JSONObject show = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
-      JSONArray episodes = new JSONArray();
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectNode node = mapper.readValue(tvShowObjectWriter.writeValueAsString(tvshow), ObjectNode.class);
+
+      ArrayNode episodes = JsonNodeFactory.instance.arrayNode();
       for (TvShowEpisode ep : tvshow.getEpisodes()) {
-        JSONObject epJson = new JSONObject(episodeObjectWriter.writeValueAsString(ep));
-        episodes.put(epJson);
+        ObjectNode epNode = mapper.readValue(episodeObjectWriter.writeValueAsString(ep), ObjectNode.class);
+        episodes.add(epNode);
       }
-      show.put("episodes", episodes);
-      LOGGER.info("Dumping TvShow:\n" + show.toString(4));
+      node.set("episodes", episodes);
+
+      LOGGER.info("Dumping TvShow:\n" + node.toString());
     }
-    catch (JsonProcessingException e) {
+    catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
     }
   }

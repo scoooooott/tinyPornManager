@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.trakttv;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.OffsetDateTime;
+import org.threeten.bp.ZoneId;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
@@ -55,7 +58,6 @@ import com.uwetrottmann.trakt5.entities.SyncResponse;
 import com.uwetrottmann.trakt5.entities.SyncSeason;
 import com.uwetrottmann.trakt5.entities.SyncShow;
 import com.uwetrottmann.trakt5.entities.SyncStats;
-import com.uwetrottmann.trakt5.enums.Extended;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -189,11 +191,11 @@ public class TraktTv {
     try {
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-      Response<List<BaseMovie>> response = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseMovie>> response = TRAKT.sync().collectionMovies(null).execute();
       if (!response.isSuccessful() && response.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        response = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+        response = TRAKT.sync().collectionMovies(null).execute();
       }
       if (!response.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + response.message());
@@ -220,12 +222,16 @@ public class TraktTv {
           // update missing IDs (we get them for free :)
           boolean dirty = updateIDs(tmmMovie, traktMovie.movie.ids);
 
-          if (traktMovie.collected_at != null && !(traktMovie.collected_at.toDate().equals(tmmMovie.getDateAdded()))) {
-            // always set from trakt, if not matched (Trakt = master)
-            LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as collected on " + traktMovie.collected_at.toDate() + " (was "
-                + tmmMovie.getDateAddedAsString() + ")");
-            tmmMovie.setDateAdded(traktMovie.collected_at.toDate());
-            dirty = true;
+          if (traktMovie.collected_at != null) {
+            Date collectedAt = DateTimeUtils.toDate(traktMovie.collected_at.toInstant());
+            {
+              if (!collectedAt.equals(tmmMovie.getDateAdded()))
+                // always set from trakt, if not matched (Trakt = master)
+                LOGGER.trace(
+                    "Marking movie '" + tmmMovie.getTitle() + "' as collected on " + collectedAt + " (was " + tmmMovie.getDateAddedAsString() + ")");
+              tmmMovie.setDateAdded(collectedAt);
+              dirty = true;
+            }
           }
 
           if (dirty) {
@@ -311,11 +317,11 @@ public class TraktTv {
     List<BaseMovie> traktWatched;
     try {
       // collection
-      Response<List<BaseMovie>> traktCollectionResponse = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseMovie>> traktCollectionResponse = TRAKT.sync().collectionMovies(null).execute();
       if (!traktCollectionResponse.isSuccessful() && traktCollectionResponse.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        traktCollectionResponse = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+        traktCollectionResponse = TRAKT.sync().collectionMovies(null).execute();
       }
       if (!traktCollectionResponse.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
@@ -324,11 +330,11 @@ public class TraktTv {
       traktCollection = traktCollectionResponse.body();
 
       // watched
-      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+        traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
@@ -412,11 +418,11 @@ public class TraktTv {
     try {
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+        traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
@@ -446,12 +452,14 @@ public class TraktTv {
             tmmMovie.setWatched(true);
             dirty = true;
           }
-          if (traktWatched.last_watched_at != null && !(traktWatched.last_watched_at.toDate().equals(tmmMovie.getLastWatched()))) {
-            // always set from trakt, if not matched (Trakt = master)
-            LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + traktWatched.last_watched_at.toDate() + " (was "
-                + tmmMovie.getLastWatched() + ")");
-            tmmMovie.setLastWatched(traktWatched.last_watched_at.toDate());
-            dirty = true;
+          if (traktWatched.last_watched_at != null) {
+            Date lastWatchedAt = DateTimeUtils.toDate(traktWatched.last_watched_at.toInstant());
+            if (!lastWatchedAt.equals(tmmMovie.getLastWatched())) {
+              // always set from trakt, if not matched (Trakt = master)
+              LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmMovie.getLastWatched() + ")");
+              tmmMovie.setLastWatched(lastWatchedAt);
+              dirty = true;
+            }
           }
 
           if (dirty) {
@@ -569,11 +577,11 @@ public class TraktTv {
     try {
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-      Response<List<BaseShow>> response = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseShow>> response = TRAKT.sync().collectionShows(null).execute();
       if (!response.isSuccessful() && response.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        response = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+        response = TRAKT.sync().collectionShows(null).execute();
       }
       if (!response.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + response.message());
@@ -599,12 +607,15 @@ public class TraktTv {
           boolean dirty = updateIDs(tmmShow, traktShow.show.ids);
 
           // update collection date from trakt (show)
-          if (traktShow.last_collected_at != null && !(traktShow.last_collected_at.toDate().equals(tmmShow.getDateAdded()))) {
-            // always set from trakt, if not matched (Trakt = master)
-            LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as collected on " + traktShow.last_collected_at.toDate() + " (was "
-                + tmmShow.getDateAddedAsString() + ")");
-            tmmShow.setDateAdded(traktShow.last_collected_at.toDate());
-            dirty = true;
+          if (traktShow.last_collected_at != null) {
+            Date collectedAt = DateTimeUtils.toDate(traktShow.last_collected_at.toInstant());
+            if (!collectedAt.equals(tmmShow.getDateAdded())) {
+              // always set from trakt, if not matched (Trakt = master)
+              LOGGER.trace(
+                  "Marking TvShow '" + tmmShow.getTitle() + "' as collected on " + collectedAt + " (was " + tmmShow.getDateAddedAsString() + ")");
+              tmmShow.setDateAdded(collectedAt);
+              dirty = true;
+            }
           }
 
           // update collection date from trakt (episodes)
@@ -620,11 +631,14 @@ public class TraktTv {
               // update ep IDs - NOT YET POSSIBLE
               // boolean epDirty = updateIDs(tmmEP, be.ids);
 
-              if (be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
-                tmmEP.setDateAdded(be.collected_at.toDate());
-                tmmEP.writeNFO();
-                tmmEP.saveToDb();
-                // epDirty = true;
+              if (be.collected_at != null) {
+                Date collectedAt = DateTimeUtils.toDate(be.collected_at.toInstant());
+                if (!collectedAt.equals(tmmEP.getDateAdded())) {
+                  tmmEP.setDateAdded(collectedAt);
+                  tmmEP.writeNFO();
+                  tmmEP.saveToDb();
+                  // epDirty = true;
+                }
               }
             }
           }
@@ -688,11 +702,11 @@ public class TraktTv {
     try {
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-      Response<List<BaseShow>> response = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseShow>> response = TRAKT.sync().watchedShows(null).execute();
       if (!response.isSuccessful() && response.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        response = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+        response = TRAKT.sync().watchedShows(null).execute();
       }
       if (!response.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + response.message());
@@ -715,12 +729,14 @@ public class TraktTv {
           boolean dirty = updateIDs(tmmShow, traktShow.show.ids);
 
           // update watched date from trakt (show)
-          if (traktShow.last_watched_at != null && !(traktShow.last_watched_at.toDate().equals(tmmShow.getLastWatched()))) {
-            // always set from trakt, if not matched (Trakt = master)
-            LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + traktShow.last_watched_at.toDate() + " (was "
-                + tmmShow.getLastWatched() + ")");
-            tmmShow.setLastWatched(traktShow.last_watched_at.toDate());
-            dirty = true;
+          if (traktShow.last_watched_at != null) {
+            Date lastWatchedAt = DateTimeUtils.toDate(traktShow.last_watched_at.toInstant());
+            if (!lastWatchedAt.equals(tmmShow.getLastWatched())) {
+              // always set from trakt, if not matched (Trakt = master)
+              LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmShow.getLastWatched() + ")");
+              tmmShow.setLastWatched(lastWatchedAt);
+              dirty = true;
+            }
           }
 
           // update collection date from trakt (episodes)
@@ -730,12 +746,15 @@ public class TraktTv {
               // update ep IDs - NOT YET POSSIBLE
               // boolean epDirty = updateIDs(tmmEP, be.ids);
 
-              if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getLastWatched()))) {
-                tmmEP.setLastWatched(be.last_watched_at.toDate());
-                tmmEP.setWatched(true);
-                tmmEP.writeNFO();
-                tmmEP.saveToDb();
-                // epDirty = true;
+              if (tmmEP != null && be.last_watched_at != null) {
+                Date lastWatchedAt = DateTimeUtils.toDate(be.last_watched_at.toInstant());
+                if (!lastWatchedAt.equals(tmmEP.getLastWatched())) {
+                  tmmEP.setLastWatched(lastWatchedAt);
+                  tmmEP.setWatched(true);
+                  tmmEP.writeNFO();
+                  tmmEP.saveToDb();
+                  // epDirty = true;
+                }
               }
             }
           }
@@ -796,11 +815,11 @@ public class TraktTv {
     List<BaseShow> traktWatched;
     try {
       // collection
-      Response<List<BaseShow>> traktCollectionResponse = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseShow>> traktCollectionResponse = TRAKT.sync().collectionShows(null).execute();
       if (!traktCollectionResponse.isSuccessful() && traktCollectionResponse.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        traktCollectionResponse = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+        traktCollectionResponse = TRAKT.sync().collectionShows(null).execute();
       }
       if (!traktCollectionResponse.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
@@ -809,11 +828,11 @@ public class TraktTv {
       traktCollection = traktCollectionResponse.body();
 
       // watched
-      Response<List<BaseShow>> traktWatchedResponse = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+      Response<List<BaseShow>> traktWatchedResponse = TRAKT.sync().watchedShows(null).execute();
       if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
         // try to re-auth
         refreshAccessToken();
-        traktWatchedResponse = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+        traktWatchedResponse = TRAKT.sync().watchedShows(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
@@ -983,17 +1002,19 @@ public class TraktTv {
       return movie;
     }
 
-    // we have to decide what we send; trakt behaves differenty when sending data to sync collection and sync history.
+    // we have to decide what we send; trakt behaves differently when sending data to sync collection and sync history.
     if (watched) {
       // sync history
       if (tmmMovie.isWatched() && tmmMovie.getLastWatched() == null) {
         // watched in tmm and not in trakt -> sync
-        movie = new SyncMovie().id(ids).watchedAt(new DateTime(tmmMovie.getLastWatched()));
+        OffsetDateTime watchedAt = OffsetDateTime.ofInstant(DateTimeUtils.toInstant(new Date()), ZoneId.systemDefault());
+        movie = new SyncMovie().id(ids).watchedAt(watchedAt);
       }
     }
     else {
       // sync collection
-      movie = new SyncMovie().id(ids).collectedAt(new DateTime(tmmMovie.getDateAdded()));
+      OffsetDateTime collectedAt = OffsetDateTime.ofInstant(DateTimeUtils.toInstant(tmmMovie.getDateAdded()), ZoneId.systemDefault());
+      movie = new SyncMovie().id(ids).collectedAt(collectedAt);
     }
 
     return movie;
@@ -1047,14 +1068,16 @@ public class TraktTv {
           // sync history
           if (tmmEp.isWatched() && tmmEp.getLastWatched() == null) {
             // watched in tmm and not in trakt -> sync
-            se.add(new SyncEpisode().number(tmmEp.getEpisode()).watchedAt(new DateTime(tmmEp.getLastWatched())));
+            OffsetDateTime watchedAt = OffsetDateTime.ofInstant(DateTimeUtils.toInstant(new Date()), ZoneId.systemDefault());
+            se.add(new SyncEpisode().number(tmmEp.getEpisode()).watchedAt(watchedAt));
             foundEP = true;
           }
         }
         else {
           // sync collection
           if (!episodesInTrakt.contains(tmmEp)) {
-            se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())));
+            OffsetDateTime collectedAt = OffsetDateTime.ofInstant(DateTimeUtils.toInstant(tmmEp.getDateAdded()), ZoneId.systemDefault());
+            se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(collectedAt));
             foundEP = true;
           }
         }
@@ -1068,7 +1091,8 @@ public class TraktTv {
 
     if (foundS) {
       // we have at least one season/episode, so add it
-      show = new SyncShow().id(ids).collectedAt(new DateTime(tmmShow.getDateAdded())).seasons(ss);
+      OffsetDateTime collectedAt = OffsetDateTime.ofInstant(DateTimeUtils.toInstant(tmmShow.getDateAdded()), ZoneId.systemDefault());
+      show = new SyncShow().id(ids).collectedAt(collectedAt).seasons(ss);
     }
 
     // if nothing added, do NOT send an empty show (to add all)
@@ -1081,12 +1105,11 @@ public class TraktTv {
     for (BaseSeason baseSeason : baseShow.seasons) {
       ArrayList<SyncEpisode> se = new ArrayList<>();
       for (BaseEpisode baseEp : baseSeason.episodes) {
-        se.add(new SyncEpisode().number(baseEp.number).collectedAt(new DateTime(baseEp.collected_at)).watchedAt(new DateTime(baseEp.collected_at)));
+        se.add(new SyncEpisode().number(baseEp.number).collectedAt(baseEp.collected_at).watchedAt(baseEp.collected_at));
       }
       ss.add(new SyncSeason().number(baseSeason.number).episodes(se));
     }
-    SyncShow show = new SyncShow().id(baseShow.show.ids).collectedAt(new DateTime(baseShow.last_collected_at))
-        .watchedAt(new DateTime(baseShow.last_watched_at)).seasons(ss);
+    SyncShow show = new SyncShow().id(baseShow.show.ids).collectedAt(baseShow.last_collected_at).watchedAt(baseShow.last_watched_at).seasons(ss);
     return show;
   }
 
