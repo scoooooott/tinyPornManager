@@ -23,7 +23,6 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -37,10 +36,10 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The class MovieModuleManager. Used to manage the movies module
@@ -145,10 +144,11 @@ public class MovieModuleManager implements ITmmModule {
    */
   public void dump(Movie movie) {
     try {
-      JSONObject jsonObject = new JSONObject(movieObjectWriter.writeValueAsString(movie));
-      LOGGER.info("Dumping Movie:\n" + jsonObject.toString(4));
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectNode node = mapper.readValue(movieObjectWriter.writeValueAsString(movie), ObjectNode.class);
+      LOGGER.info("Dumping Movie:\n" + node);
     }
-    catch (JsonProcessingException e) {
+    catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
     }
   }
@@ -161,10 +161,11 @@ public class MovieModuleManager implements ITmmModule {
    */
   public void dump(MovieSet movieSet) {
     try {
-      JSONObject jsonObject = new JSONObject(movieSetObjectWriter.writeValueAsString(movieSet));
-      LOGGER.info("Dumping MovieSet:\n" + jsonObject.toString(4));
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectNode node = mapper.readValue(movieObjectWriter.writeValueAsString(movieSet), ObjectNode.class);
+      LOGGER.info("Dumping MovieSet:\n" + node);
     }
-    catch (JsonProcessingException e) {
+    catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
     }
   }

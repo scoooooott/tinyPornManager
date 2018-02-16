@@ -75,5 +75,4 @@ public class ITTraktTvTest {
   public void clearMovies() {
     t.clearTraktMovies();
   }
-
 }
