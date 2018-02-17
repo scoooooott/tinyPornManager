@@ -29,7 +29,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 
-public class MovieTrailerDownloadTest {
+public class ITMovieTrailerDownloadTest {
 
   @Test
   public void downloadDirectTrailerTest() {
