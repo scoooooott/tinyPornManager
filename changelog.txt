@@ -493,108 +493,7 @@
 [2017-04-03]
  * unit tests: fix remaining
 
-[2017-04-02]
- * lib: updated libmediainfo to 0.7.94
- * chore: updated pom.xml to release versions
- * feature: write media source to episode NFOs too
-
-[2017-03-31]
- * translation GIT update
- * feature: added spoken languages to MediaPortal NFO
-
-[2017-03-28]
- * wizard: start parsing directories at end
- * changelog
- * MovieComparator: order NULL values correctly, removed NPE
-
-[2017-03-26]
- * fix: changed svn version indicator to git
-
-[2017-03-25]
- * updated changelog
- * getHasImages() - performace tweak
-
-[2017-03-24]
- * another fix for tv shows w/o video files
- * fix naming episode NFO for bluray
- * fix detecting empty TV folders as show :p
- * renamer: improve handling for tv episodes w/o disc folder
- * fix disc style episode rename
-
-[2017-03-23]
- * unit tests: adapt TV UDS to reflect current changes
- * exporter: do not delete directory
- * episode thumb naming: fixate for disc style
-
-[2017-03-21]
- * UPNP: sort lists
- * finalize TvShow.merge()
- * TvShow merge()
- * wording update check
- * ISO MI: tweak sanity check a bit (10% instead of 1 fixed gig)
-
-[2017-03-19]
- * feature: added tmm.prop for storing temp. data
-
-[2017-03-18]
- * fix: subs search dialog: call close button close instead of done
- * fix: better visualization of the download button
- * fix: setting path in Persons
- * fix: fixed NPE when pressing play button
- * fix: fixed directory listing of UPnP
-
-[2017-03-16]
- * allow scraping episodes even with -1/-1, when firstAired date is set
- * fix NFO parsing exception
- * unit tests: add show (aired)
- * scrape: set firstAired (release date) for episode scraping
-
-[2017-03-15]
- * TvShow UDS: only do fallback detection when having no aired date!
- * tweak TV show episode parser
- * Movie images: hasImages changed to adhere settings
-
-[2017-03-12]
- * UPNP: fix settings writing (event firing missing)
- * UPNP: playFile without MediaEntity metadata
- * feature: added UPnP to the UI
-
-[2017-03-11]
- * UDS: update selected movies only - cleanup
- * UDS: update selected movies only (todo cleanup)
- * doc: fix document headers
- * fix: start playing files in linux
-
-[2017-03-10]
- * build: skip packaging on QA build - unneeded
- * unit tests: use forked JVMs per test class
- * unit tests: reduce logging, fix one
- * config: actual logback config; replaced SizeAndTimeBasedFNATP
- * fix: better initialization of lists in MovieList and TvShowList
-
-[2017-03-09]
- * UI: add renamer button for TV shows in topbar
- * unit tests: remove UDS1 variants - they will never pass anylonger
- * unit tests: fix Tv UDS and more
- * TvShow: fix EP/Season parsing of single files in multiple named folders
- * unit tests: fix more
- * unit test: extract templates on build server
- * unit tests: fix some impls
- * unit test: fix impl
- * unit tests: assertions
-
-[2017-03-08]
- * typo
- * unit tests: refactor
- * unit test: refactor/fix some
- * unit tests: fix some
- * unit tests: split ITs and skip em
-
 [2017-03-07]
- * unit test: country/language map
- * updated to trakt 5.5.1, for extended param used by scraper
- * fix Trakt.tv connection test good icon (no error ;)
- * fixed Trakt.tv syncing issues
  * feature: implemented double click for movie/tv show/episode choosers
  * fix: update changed tags in UI
  * fix: improved rendering of a LinkLabel
@@ -606,36 +505,19 @@
  * feature: added rename button
 
 [2017-03-04]
- * API 2.5 snapshot
- * feature: write movie edition to NFO
  * fix: write entity name of media edition to DB
 
 [2017-03-03]
- * corrected icon size, install4j said it must be correct square
- * Install4J project file
- * prepare for new GD - rename variable
- * fix Plex trailer detection
  * feature: also write the movie edition to the NFO
  * fix: removed a deprecated setting
-
-[2017-03-02]
- * MovieRenamer: $1/$2 use now first alpha-numeric character
 
 [2017-03-01]
  * fix: pom entry for jmte
 
 [2017-02-28]
  * fix: file headings
- * fix: cleanup of damaged DB entries
-
-[2017-02-26]
- * doc: updated copyright
- * fix: drop corrupt entries from db
- * fix: display of runtime
- * fix: deactivated unit test that don't pass on java7
 
 [2017-02-25]
- * feature: generate a list of ME properties for JMTE export
  * feature: activated new NFO reading/writing logic
  * fix: expand settings tree nodes
  * fix: forgotten test files
@@ -645,35 +527,25 @@
  * feature: refactored movie editor
 
 [2017-02-23]
- * logging; add global thread count
- * fixed stacking detection; only 1-9 are valid
- * logging; added global thread count to better search in logfile
- * some logging
  * feature: added TriStateCheckBox for exclusive filters
 
 [2017-02-22]
  * fix: several fixes for the movie NFO parser/connector
- * build: refactor QA plugins into own profile
  * feature: general overhaul of Persons
 
 [2017-02-21]
  * tweak GD splash screen ;)
- * MovieRenamer: replace trailing dots only for filename...
 
 [2017-02-20]
  * fix: popup with of MediaScraperComboBox
  * fix: refactored movie search dialog
 
 [2017-02-17]
- * TVDB: remove year from title
- * video resolution detection: blur values a bit
- * UPNP: sanitize WebServer for path traversal attacks
  * fix: drawing border of MediaScraperComboBox
  * feature: stripped out donator version
 
 [2017-02-16]
  * feature: implemented multiple filter values
- * UPNP: add play(MediaEntity, MediaFile) functionality
  * fix: removed unnecessary genresForAccess
 
 [2017-02-15]
@@ -687,8 +559,6 @@
 
 [2017-02-13]
  * feature: write thumb url to episode NFO
- * UPNP fixes
- * UPNP fixes
 
 [2017-02-12]
  * feature: added customizeable TV show artwork
@@ -696,15 +566,7 @@
 [2017-02-11]
  * chore: massive code reduction for movie artwork logic
 
-[2017-02-10]
- * changelog
- * update trakt
-
-[2017-02-09]
- * add UPNP stack
-
 [2017-02-07]
- * add lookupTvShow(UUID uuid) as we have for movies
  * chore: added some real kodi NFOs to the unit test
 
 [2017-02-06]
@@ -712,94 +574,17 @@
  * chore: added some unit tests for tv show renamer
 
 [2017-02-05]
- * fix: do not write null strings into DB
  * feature: refactored TV show renamer
 
 [2017-02-03]
  * fix: changed two way sync of lists to the new helper
 
-[2017-02-02]
- * lib: updated plugin versions
-
-[2017-02-01]
- * feature: changed display of runtime in media files tab
- * fix: search for
-
-[2017-01-30]
- * fix: do not set empty artwork
- * ability to specify/use another configuration XML in /data/ folder
- * bump version
-
-[2017-01-27]
- * lib: changed snapshot deps to release version
- * fix IMDB detection / update
-
-[2017-01-26]
- * fix: do not overwrite imdbId from other sources, if we already have one
- * feature: added moving of genres/tag in the movie editor
- * add -Dsun.java2d.d3d=false b/c of nvidia problems
-
-[2017-01-23]
- * fix: cleanup for old/unwanted trash folders
- * fix: localized artwork loading for brazilian users
- * fix: build right backup folder on windows
-
-[2017-01-22]
- * fix: cleaning old log files
- * fix: build right backup folder on windows
-
-[2017-01-20]
- * fix: do not automatically remove movie sets
- * fix: do not remove movie set artwork when removing movies
- * chore: no more settings.xml is needed for snapshots
- * doc: updated README.md
- * feature: added "download missing artwork"
- * fix: parsing of media source
- * update GIT languages
-
-[2017-01-18]
- * added movie test samples for movieset
- * added movie test samples for movieset
- * added movie test samples for movieset
-
-[2017-01-17]
- * fix: also clean extra movie set artwork on disconnect
-
-[2017-01-16]
- * upgrade MediaInfo to 0.7.91
- * fix vsmeta renamer filename
- * fix VSMETA, add 2 MI types, add to renamer (see desc)
- * fix: upgrade task: remove movie set artwork from movie mfs
- * feature: added $K token (first tag) to movie renamer
- * fix: increase max memory setting for 64bit jvm
-
 [2017-01-15]
  * feature: new NFO parser/writer - not active atm.
-
-[2017-01-13]
- * TvShow UDS: parse Synology VSMETA as additional nfo source
- * TvShow UDS: check remaining files for S/E and add correctly
- * add some workspace unit test (files)
- * Movie UDS: refactor MMD
-
-[2017-01-11]
- * added parsing of Synology VSMETA files as additional nfo source
- * Movie UDS: parse ALL nfos, and create a merged movie
- * refactor unneded exception throwing
 
 [2017-01-10]
  * chore: moved NFO settings to scraper screen
  * feature: added media center presets for movies
-
-[2017-01-07]
- * feature: added hdrip as an own media source
-
-[2017-01-05]
- * fix: detection/renaming of movieset artwork in movie folders
-
-[2017-01-04]
- * feature: get a list of video files for episodes
- * doc: updated changelog
 
 [2017-01-03]
  * fix: removed jgoodies forms from module managers
@@ -807,7 +592,6 @@
  * chore: refactored Tv show panels to miglayout
 
 [2017-01-02]
- * Improved user interaction for the genre and tag lists in MovieEditorDialog, TvShowEditorDialog and TvShowEpisodeEditorDialog
  * fix: suppress flickering of artwork at scrape
  * fix: paint scroll thumb on top
  * fix: draw grid in empty tables
@@ -816,26 +600,18 @@
  * fix: tree - draw selected vertical borders
  * feature: added double click listener for TV show tree
  * feature: added multiple file names for extra artwork
- * doc: updated changelog
 
 [2016-12-31]
  * chore: changed discart to disc
 
-[2016-12-29]
- * fix: MediaInfo XML parsing (ignore if mpls file stated)
- * fix: do not 'upgrade' movie if directory already exists
-
 [2016-12-27]
  * feature: added a left dot and middle dot renderer
  * fix: loading settings
- * Update README.md
 
 [2016-12-23]
- * Added shortcut (CTRL + F) to set the focus to the search field in the movie and tv show panel
  * chore: generalized saveSettings into TmmModuleManager
 
 [2016-12-22]
- * remove empty IDs, and do not let them create anylonger
  * feature: store sort order
 
 [2016-12-21]
@@ -855,52 +631,14 @@
 [2016-12-16]
  * chore: split module settings into their own file
 
-[2016-12-12]
- * chore: version bump
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.9.1
- * lib: changed scrapers to latest release
-
-[2016-12-08]
- * fix: respect renamer settings for subtitle language tag when downloading
- * fix: upgrade task for swedish subs
-
-[2016-12-03]
- * fix: loading plugins via unc and local
- * fix: fixed loading of plugins
-
 [2016-12-01]
  * fix: rearranged icons in the toolbar; fixed spinner colors
  * chore: updated material font and decreased header icon size
 
-[2016-11-29]
- * build: forbidden-api: even more checks
- * build: forbidden-api tweaks
- * unittest: Plex extras detection
- * unittest: movie connectors xbmc/kodi
- * fix: check if file exists before calling isSameFile
-
-[2016-11-27]
- * fix: do not abort UDS on windows if there is no file found
- * fix: changed toUpperCase/toLowerCase to use Locale.ROOT
-
-[2016-11-26]
- * fix: renaming in case insensitive systems
- * lib: updated libmediainfo to 0.7.90
-
-[2016-11-25]
- * Add the forbidden-api plugin
- * changelog
- * Fix certification key errors
-
 [2016-11-24]
  * chore: refactored movie panels to miglayout
 
-[2016-11-20]
- * fix: NFO writing for multi movie folders
-
 [2016-11-17]
- * feature: set sorttitle from tmm display title
  * chore: refactored actions and hotkeys for TV shows
 
 [2016-11-16]
@@ -908,43 +646,15 @@
  * chore: some smaller panel refactoring
  * feature: finished missing episodes feature
 
-[2016-11-15]
- * version bump
- * fix NPE
-
-[2016-11-14]
- * feature: added trakt.tv scraper
- * fix: escaping of urls in the movie exporter
- * fix: loading plugins from samba share
-
 [2016-11-13]
  * feature: missing episodes pt. 1
 
 [2016-11-10]
  * feature: storing of filter settings
- * fix: do not use caching with trakt sync
 
 [2016-11-09]
  * fix: fixed cleanup of bindings (prevent memory leak)
  * feature: added image as indicator for "no image available"
- * chore: migrated java-trakt to version 5
-
-[2016-11-08]
- * TV show UDS - fix message; only valid for type=video files
-
-[2016-11-03]
- * fix: added a connector for XBMC/Kodi < v16
-
-[2016-11-02]
- * fix: growing of the progress text in the choosers
- * fix: some UI scaling issues
-
-[2016-10-27]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.9
- * fix NPE
- * activate languages >0 translation
- * chore: prepare release 2.9
 
 [2016-10-25]
  * fix: layout of filter panels
@@ -952,422 +662,60 @@
  * feature: added video format column
 
 [2016-10-20]
- * upgrade task for *.strm files
- * fix: file *.strm detected as MediaSource.STREAM...
  * refactored TV show settings
-
-[2016-10-19]
- * fix: added hevc logo
-
-[2016-10-16]
- * feature: added theatrical to movie editions
- * fix: deleting first actor image on scrape
- * fix: don't load actor images when panel is not shown
- * fix: do not drop movies/TV shows of disconnected devices
-
-[2016-10-14]
- * fix: strip special characters from ep title matching
-
-[2016-10-13]
- * chore: prepare release
 
 [2016-10-12]
  * fix: fixed font detection at splash
- * fix: bound checkbox for cache import to settings
  * refactored TV show general settings/datasource settings
- * fix: compare case insensitive (preseletion - ep chooser)
- * doc: fixed typo in changelog
 
 [2016-10-11]
  * refactored subtitle scraper settings
- * fix: also preselect with ep file name
-
-[2016-10-10]
- * fix: enhance episode name detection for match
- * fix: enhance episode name detection
-
-[2016-10-08]
- * fix: do not preselect if a filter text exist
-
-[2016-10-07]
- * feature: set movie set plot from new NFO style
-
-[2016-10-06]
- * doc: updated changelog
- * feature: automatic download of movie set (extra) artwork
- * fix: added upgrade task for cleaning sort title of movie sets
- * feature: added support for clearlogo
-
-[2016-10-05]
- * fix: compare trimmed versions of the title
- * fix: better title detection from episode filename
- * fix: removed movie set order via sorttitle
- * fix: exporting/importing of new set NFO style
-
-[2016-10-03]
- * feature: scroll to the first match (ep chooser)
- * fix: changing the default scraper in the episode editor dialog
- * fix: detection of additional episode files
- * fix: update of offline data sources
-
-[2016-09-30]
- * fix: added connection throttling & caching for anidb
-
-[2016-09-28]
- * feature: added scraping of movie set artwork from fanart.tv
-
-[2016-09-26]
- * fix: response check at downloading images
 
 [2016-09-25]
  * refactored trailer settings panel
 
-[2016-09-23]
- * fix missing TvShow renamer description for $S
- * fix year in about dialog
-
 [2016-09-22]
- * replace Files.notExists() with !Files.exists()
  * refactored image settings panel
- * fix: improvements for actor image caching
 
 [2016-09-21]
  * refactored movie renamer settings
 
 [2016-09-20]
- * fix renaming TvShows on CMD line
  * created slider ui
- * fix: detection of additional EP files
 
 [2016-09-16]
  * refactored some more settings panels for movies
 
 [2016-09-15]
- * MI: close disc image on error (MemLeak)
  * fix: wrong layouting with many writers
 
 [2016-09-14]
  * removed resources.jar and moved icons to the project
- * fix: fixed scraping tags solely
  * removed some unused icons
  * refactored general settings panels
 
 [2016-09-13]
  * reverted default font back to Dialog
 
-[2016-09-12]
- * feature: added play button to the movie chooser
- * fix: added filter indicator for Tv shows too
- * feature: filtering for multiple datasources
- * fix: empty folder in renamer settings preview
-
 [2016-09-09]
  * feature: refactored settings dialog to display a tree
 
-[2016-09-08]
- * MI-XML: fix parsing the correct video if no filesize set
-
-[2016-09-05]
- * fix: some improvements to the TV show renamer
- * fix: subtitle downloading where language tag got stripped off
- * fix: at TV show uds only get MI of selected objects
-
 [2016-09-02]
- * refactor actor ;)
- * feature: filtering for multiple tags (movie & TV shows)
  * fix: enhance README.md with build instructions
- * fix: enhance README.md with build instructions
-
-[2016-09-01]
- * refactor: changed access to TV show settings via tvshowmodulemanager
-
-[2016-08-30]
- * MI-XML: use globally found language if not set on audio track
- * MI-XML: use globally found language if not set on audio track
- * refactor: changed access to movie settings via moviemodulemanager
- * fix: adhere graphic settings more for MMD / disc folders
 
 [2016-08-29]
- * fix: getting biggest mediafile only worked when filesize > 0
- * fix: sorting of episodes in Tv show editor
  * migrated AboutDialog to miglayout
 
 [2016-08-28]
  * feature: added a TreeTable (Tv shows)
  * Merge branch 'devel' into v3
 
-[2016-08-25]
- * UI: remove donation button...
-
-[2016-08-24]
- * fix: resetting artwork source in the movie set panel
- * fix: loading of online movie set artwork
- * debug: add MovieSet debug menu
-
-[2016-08-23]
- * fix resource filtering
- * fix: readd missing information message for TV files in root
- * feature: added column sorting for movie trailers
-
-[2016-08-19]
- * fix: fixed sorting of Java8 lists
-
-[2016-08-18]
- * translation / hint added
- * fix: added fallback for sorting CopyOnWriteArrayLists in Java7
- * scrape language/country names instead of ISO codes (scraper config)
- * fix: changed some ArrayList to CopyOnWriteArrayList
-
-[2016-08-17]
- * feature: added a html like date picker
-
-[2016-08-16]
- * fix: Exporter directory copy & error logging
- * fix: Kodi scraper detection on MacOS
- * bump version
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.8.3.1
- * correct version for hotfix release
- * fix AIOOB exception
- * add missing file
- * add: MediaInfo from XML
-
-[2016-08-15]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.8.3
-
-[2016-08-12]
- * fix: better MI language detection for audio & subtitle streams
-
-[2016-08-11]
- * plugin release versions
- * fix invalid part XX name as language detection
-
-[2016-08-10]
- * dist: attach binary distributions to central release
-
-[2016-08-09]
- * fix: more fixes for TvEspisode as Disc
- * fix: TvEpisode NFO writing for extracted DVDs
- * fix: cleanup on files was not done when movieDir was still existing
-
-[2016-08-08]
- * fixed line endings
- * fix: scrape best match - missing tags checkbox evaluation
-
-[2016-08-07]
- * fix NPE
-
-[2016-08-05]
- * fix: do not exit MediaInfo if we cannot parse the file sizes
- * code style: fix template for static imports and reformat code
-
-[2016-08-04]
- * add: do not write NFO when neither ticked in settings
-
-[2016-08-02]
- * dev: get correct version even for SVN builds
- * fix: more exceptions for title prefixes
- * ISO: ignore duration of invalid DVD ISOs
- * upgrade task: reset MI for all video files when no data
- * debug: add debug menu; able to set logger to TRACE
- * upgrade task: reset container format for videos to do MI parsing again
- * ISO: fix mediainfo crashing on some DVD ISO files
- * ISO: added more debug logs
- * ISO: fix mediainfo loop positioning
-
-[2016-08-01]
- * fix: better visualize WakeOnLan menu item (disable when none found)
- * fix: sort title was always reloaded as empty string
- * ISO: explicitly check disc files on ISO for MI
-
-[2016-07-28]
- * fix: TvShow import NPE when no production company set
- * rework unnamed Runable() to TmmTasks for better visualization
- * fix: update queue popup on cancel
- * fix: TaskManager: cancel unnamed, counting progress bar
- * feature: created an own column for available meta data
- * fix: rework isRegularFile() to our needs (deduplication)
- * fix: extraction of export templates
-
-[2016-07-27]
- * debug: added some fake tasks to debug menu
- * fix: trim certification on re-reading NFO, else not found
-
-[2016-07-26]
- * fix: adding/removing manual subtitle to media files
- * add: fixate max memory to 1536m (for now)
- * debug: MediaInfo ISO debug logs
- * fix: made MediaEntityImageFetcherTask multi threaded (kinda)
-
-[2016-07-25]
- * add: do not download movie poster/fanart, when none selected
- * fix: CMD line updating of TV show did not work!
- * revert upgrade task for MI
-
-[2016-07-22]
- * add: memory stats on status bar (testing)
- * lib: update to snapshot scrapers
-
-[2016-07-21]
- * fix: episodes as extracted disc folder have wrong path
-
-[2016-07-19]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.8.2
- * doc: language updates; comment missing/empty ones
- * lib: use release versions (prepare release)
- * iso: use normal MI as fallback on isos
- * doc: changelog for DVD ISO MI only
- * fix: do not move prefixes multiple times
-
-[2016-07-18]
- * fix: fixed behavior of info column (actors or producers)
- * fix: MovieRenamer: update new path after renaming
- * feature: IMDB scraper: option to scrape local/global release date
- * iso: use biggest file to copy MI info from
-
-[2016-07-15]
- * fix: parsing MI duration as Double
- * fix: change detectCleanMovienameAndYear to handle optional [] tags
- * fix: changed the NFO column to better indicate scraped/unscraped movie
- * fix: submit MI task per MF (not one task for a list of MF)
- * fix: changed the NFO column to better indicate scraped/unscraped movie
-
-[2016-07-14]
- * refactor: use biggest MediaFile for displaying MI info (not first)
- * lib: use own patched ISO lib
- * fix: BluRay didn't add all its mediafiles
- * style: use TimeUnit; add a minute if seconds>30 (round HH:MM style)
- * fix: changed default date to null (Date(0))
- * test: prettyfy unit test
- * wip: rework parser for clean title detection (not yet activated)
-
-[2016-07-13]
- * doc: fix wrong logger
- * fixed: TV episode detection for extracted disc files
- * upnp: delete extracted lib; unused
- * upnp: fix NPE
- * fix: changed default date to null (Date(0))
- * lib: added new scraper lib versions
- * changed API to 2.1
-
-[2016-07-12]
- * feature: add some Plex names for extras detection
- * doc: wrong logger class specified
- * fix: better parsing of locale
- * lib: workaround for same named retrofit dependencies
- * fix: rename idx files along with sub for TV shows
- * doc: updated changelog
- * fix: renaming into subfolders
-
-[2016-07-11]
- * fix: added some logging
- * doc: changed file headers
- * doc: changed file headers
- * feature: media source renamer token for TV shows
- * MediaInfo for ISO - now faster
- * disable MI for ISOs (for now) - tooo slow
- * fix: overwrite existing images in the exporter
-
-[2016-07-09]
- * style: better approach for 73a18c6903dcc5097c372012eba507b98e806d13
- * fix NPE
- * style: better approach for 73a18c6903dcc5097c372012eba507b98e806d13
-
-[2016-07-08]
- * fix NPE
- * add MediaInfo for ISOs
- * feature: support folder excluding in Kodi style (.nomedia)
-
 [2016-07-07]
- * fix: do not overwrite external Kodi NFO streamdetails
  * style: some refactoring of the new table
  * fixed more merge conflicts
 
 [2016-07-06]
  * feature: added new configurable JTable (part 1)
- * style: removed System.out.println from productive code
- * feature: added extra language setting for subtitle scraping
-
-[2016-07-05]
- * rework command line scraping logic
- * feature: added telecine, R5 and stream to media sources
-
-[2016-07-04]
- * fix: rename .idx along with .sub
-
-[2016-07-03]
- * fix: movie renamer dropping several image/NFO files
-
-[2016-07-02]
- * fix: improved access speed for subtitles and NFO files
- * feature: added persian to the scraper languages
- * feature: added select all/deselect all buttons for metadata scrape options
- * fix: reverted default of scrapeCollectionInfo and added a hint to the UI
-
-[2016-07-01]
- * style: added hint for scraping collection info
- * fix: updating of tags in the UI
- * updated pom.xml
-
-[2016-06-30]
- * bump version
- * fix: added tmm.png to getdown.txt
-
-[2016-06-29]
- * fix: paths in artwork exporter
- * updated changelog
- * fix: scraping of TMDB - TV shows w/o poster in result
- * fix: exporting of movies/TV shows
-
-[2016-06-27]
- * fix TvShow multifile episode detection
-
-[2016-06-22]
- * feature: enable portuguese certifications
-
-[2016-06-21]
- * fix MovieExporter - part1
-
-[2016-06-15]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.8.1
- * fix: create parent dir instead of the movie dir prior to moving
- * style: wording
- * fix: sort disc image files to the end of the VIDEO files
- * fix: typo in season-specials-poster
-
-[2016-06-14]
- * fix: follow symlinks with uds2
- * fixed renaming movies with colon
- * fix: UDS1 still used on movie single datasource update!!! -> UDS2
- * style: wording
- * fix: loading of TV show special season posters
- * fix: reading MI of Microsoft VC-1
- * fix: refactored handling of MI for stability
- * fix: removed setWorkUnits in TV show uds
- * bump version
- * fix: remove movies without VIDEO files after uds
- * fix: do not reset certification style to SHORT
-
-[2016-06-13]
- * removed kodi-json-rpc for release
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.8
- * removed kodi-json-rpc for release
- * updated changelog
- * fix: rename episodes after artwork download
-
-[2016-06-08]
- * fix: do not write file:// entries into the NFO
-
-[2016-06-07]
- * fix: NPE in Kodi connector
-
-[2016-06-06]
- * prepared pom.xml for release
- * fix: take TV show settings in the renamer (#10)
 
 [2016-06-04]
  * fix: fixed drop shadow of filter panels
@@ -1375,385 +723,44 @@
 [2016-06-03]
  * fix: fix merge issues
 
-[2016-06-02]
- * fix: double dot in subtitle file name when no language found
-
-[2016-06-01]
- * updated changelog (changed links)
- * updated changelog
- * fix: restricted double click events to the left mouse button
- * feature: more language styles
-
-[2016-05-31]
- * fix: fixed language detection & writing
- * fix: finalized vote count for episodes
-
-[2016-05-30]
- * feature: option for subtitle language style (TV show)
-
-[2016-05-28]
- * feature: option for subtitle language style
-
-[2016-05-24]
- * fix: movie UDS: do not increase date added with every UDS
-
-[2016-05-23]
- * fix: prevent NPE in MovieRenamerPreviewDialog
-
-[2016-05-19]
- * feature: customize certification string in NFO via templates
-
-[2016-05-18]
- * fix: optimized line height calculation of the status bar
-
-[2016-05-17]
- * fix: added back README.md
-
-[2016-05-13]
- * feature: added support for offline media
- * fix: check skip folders instead of the parent
- * javadoc: added @Deprecated to old movie uds
-
-[2016-05-12]
- * javadoc: javadoc cleanup
- * fix: catch NPE when encoding properties
-
-[2016-05-11]
- * fix: added exclude folders to the new UDS
- * fix: smaller cleanup in the filter panels
- * feature: added setting for TV show subtitle scraping
-
-[2016-05-10]
- * feature: implemented subtitle downloading for TV shows
- * fix: re-implemented AWT file chooser for OSX (it is still working)
- * fix: do not produce .jpeg; use .jpg instead
- * lib: upgraded libmediainfo to 0.7.85
-
-[2016-05-09]
- * dependency updates
-
-[2016-05-06]
- * switch to OkHttp3
- * fix: applied Java language level migration aids for Java7
- * feature: automatically rename after scrape
-
-[2016-05-03]
- * fix trim proxy port before parsing
- * fix proxy host empty check
-
-[2016-05-02]
- * fix: pre select default scraper
- * wording
- * wording
- * small ui cleanup in TV show settings
-
 [2016-05-01]
  * changes to tab drawing
 
-[2016-04-29]
- * fix: layouting of movie settings
- * refactor: removed useless popup class
-
-[2016-04-28]
- * fix: enable loading of plugins in a folder containing a + in the path
- * fix: set container format in MediaFile on errors (prevent getting MI on every UDS)
-
-[2016-04-27]
- * updated changelog
-
-[2016-04-25]
- * Movie settings: remove MultiMoviDir (from gui)
- * forgotten commit
-
-[2016-04-24]
- * added subtitle settings and automatic downloader
-
-[2016-04-23]
- * fix: use cre/mod date from file, to specify dateAdded
-
-[2016-04-22]
- * fix movie renamer when folder has directory separator with spaces around
-
-[2016-04-21]
- * initial support for subtitles scraping
-
-[2016-04-20]
- * fix NPEs
- * Movie UDS: treat same named graphics as posters
- * MF: detect ".jpeg" as valid graphic file.
-
-[2016-04-19]
- * treat detected episode graphics as THUMB MFs
- * respect white spaces when sorting movies
-
-[2016-04-18]
- * added .tbn for episode thumbs (boxee box)
- * layouting
- * add tags from the API
- * UDS: better filtering our skipped names, especially for data source root
- * use our httpclient with trakt.tv integration
-
-[2016-04-17]
- * changed register donator version connection to okhttp
- * API changes #2
-
-[2016-04-15]
- * more unit tests for movie editions
- * Tv UDS - more threads now :)
- * cross check TV show season node creation
- * removed message duplicates
- * added edition field for movies
- * fix: UDS finished while MediaInfo still runs
- * fix hasSubtitles() - also checking subtitle MFs directly
- * unit test partX
- * Do not CamelCase roman characters such as "Part Iv"
- * change code formatter settings for enums
-
-[2016-04-14]
- * TvShow UDS2: fill season poster map
- * TvShow UDS: fix cleanup
- * TvShow UDS2: set live for testing
- * removed unused class
- * added setting for our internal statistics
-
-[2016-04-12]
- * tvshow UDS: ignore dot files
- * fix movie UDS: better parsing of MMD
- * fix movie UDS: parsing only video files in data source root
- * UDS unit test: add some ignored resources...
-
-[2016-04-10]
- * feature: added bad words for TV shows
- * wording and linux line endings
- * detect Blu-Ray as BluRay source
-
-[2016-04-09]
- * updated dependencies of API v2
- * remove unused artifact
- * feature: start image/trailer download after choosing in separate task
- * API v2 changes
-
 [2016-04-08]
  * change default font effectively to dejavu sans
-
-[2016-04-07]
- * WIP - further work on TvShow UDS2
- * fix episode parser; check also foldername for multi EP
 
 [2016-04-06]
  * moved export/tools actions to the toolbar button
  * changed thetvdb artifact version
  * added accelerators for movie actions
- * WIP - TvShow UDS2
 
 [2016-04-05]
- * improve UDS unit test
- * fix NFO stacking
- * fix reEvaluateStacking for disc folders
- * fix upgrade task, save all movies
- * fix sizing of TvShowEpisodeChooserDialog
- * persist stacking information on movie level and add an upgrade task
  * added task overview and progress icon
-
-[2016-04-04]
- * fix UDS2
- * added Kodi JSON RPC methods
- * fix UDS
-
-[2016-04-01]
- * version bump
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.7.4
- * prepare for release, resources & tvdb plugins
 
 [2016-03-31]
  * added progress bar UI
 
 [2016-03-30]
  * adopted JSPinner to our style
- * fix: removed vote count from TvShow (now in MediaEntity)
- * feat: added vote count for Tv shows and episodes
- * added extra indicator (icon/tooltip) for active filters
-
-[2016-03-29]
- * fixed movie import with folder stacking
- * fixed movie import with folder stacking
- * updated changelog
- * added JTatto 1.6.12.1
- * fix do not add labels on opening github issues
- * TvShow renamer: fix multi token replacement looping
- * fix movie exporter: generate better file names for detail pages
- * fix writing of sets and genres
-
-[2016-03-24]
- * update changelog
- * TvShow renamer: fix looping over duplicate values
- * TvShow renamer: refactor + unit test
-
-[2016-03-23]
- * fix TV show renamer
-
-[2016-03-22]
- * fix renamer preview sorting order
- * unit test: more examples
- * fix unit test
- * Renamer: unit test for TV multifile pattern replacements
-
-[2016-03-21]
- * fix TMM restart (when resetting database)
- * Display information, why plugins cannot be loaded.
-
-[2016-03-20]
- * fix possible fix for JFX hang on OSX
-
-[2016-03-18]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.7.3.1
- * fall back to swing file chooser if any problem occurs in JFX
- * fixed register donation version dialog
 
 [2016-03-17]
- * RELEASE - bump version
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.7.3
  * added own implementation of CheckComboBox
- * update to release plugins
 
 [2016-03-16]
  * added new filter structure to the movie list
 
 [2016-03-15]
- * Trakt.tv: write correct episode NFOs
  * renamed package
 
 [2016-03-14]
  * a new implementation of the JTree (including sorting and filtering)
- * fix loading of the movie-duplicate filter at startup
-
-[2016-03-11]
- * legacy code for studio loading
-
-[2016-03-10]
- * git ignore plugin cache file
- * add missing call of interface
-
-[2016-03-09]
- * another ToStringStyle, to not display empty values
- * extend tv parser unit test
-
-[2016-03-08]
- * add some missing save points in movie sets
- * missed one file for scaling replacement
- * removed scaling lib
- * language updates for SVN users ;)
- * add scroll pane for tv artwork scraper settings
- * populate all IDs to TvShowChooser, not only selected
- * CMD: fix updateTvShows to only parse added episodes, not all
-
-[2016-03-07]
- * fixes for bug report dialog
- * d*mn windowbuilder destroyed messages.properties
- * reworked bug reporting action to provide more information
-
-[2016-03-04]
- * do not display empty years in searchResult
- * update zelluloid scraper
- * moved bug reports to GitHub and feedback to the forums
-
-[2016-03-03]
- * changelog
-
-[2016-02-25]
- * draft issue template :)
- * TvShows: fix studio editing/writing
- * Default settings: write config after plugins are resolved
-
-[2016-02-24]
- * OFDB snapshot
- * further work on UDS2
- * TvShow: fix resolution replacement
-
-[2016-02-22]
- * unit test
-
-[2016-02-21]
- * added translator
-
-[2016-02-17]
- * Movie performance: parse new directories first
- * TvShow performance: parse new directories first
-
-[2016-02-10]
- * improved TV show renamer for multi episode files
-
-[2016-02-09]
- * added media source to TV show section
- * write multiple <studio> tags, instead of one merged
-
-[2016-02-08]
- * wording
- * add scraper version to logfile
- * added scrape-unscraped to the popup menu
- * Kodi scrapers: fix some invalid XML headers
- * update kodi scraper
- * updated changelog
-
-[2016-02-06]
- * added image extracting to the movie/tv show exporter
- * fix fallback to JFileChooser
- * TV show uds: do the cleanup from a hashmap rather than File.exists
-
-[2016-02-05]
- * catch more exceptions in the TvShowTreeModel
- * fixed NEW indicator
-
-[2016-02-04]
- * Java 7 NIO refactor
 
 [2016-02-03]
  * merge work from old v3 branch #3
-
-[2016-02-02]
- * fanart.tv snapshot
- * adapt nightly version; same as prerelease
 
 [2016-01-30]
  * merge work from old v3 branch #2
  * merge work from old v3 branch #1 Conflicts: 	AppBundler/getdown-nightly.txt 	AppBundler/getdown-prerelease.txt 	AppBundler/getdown-v3.txt 	AppBundler/getdown.txt 	src/main/java/org/tinymediamanager/ui/movies/MoviePanel.java 	src/main/resources/messages.properties
 
-[2016-01-28]
- * moved fanart.tv client key to the scraper settings
- * fix typo in upgrade task
- * added upgrade task to search for lost movie set artwork
- * fixed searching for movie set artwork in movie folders
-
-[2016-01-27]
- * only write guests into episode NFO
-
-[2016-01-26]
- * set last directory in the JFX file/directory chooser
- * fix NPE in movie set editor
-
-[2016-01-22]
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.7.2.1
- * hotfix Kodi scraper
- * [maven-release-plugin] prepare for next development iteration
- * [maven-release-plugin] prepare release tinyMediaManager-2.7.2
- * fixtate plugin/api dependency
- * remove old test
- * prevent losing the sort title in the movie editor
-
-[2016-01-21]
- * Java 7 NIO refactor
- * Java 7 NIO refactor
- * Java 7 NIO refactor
- * prevent concurrentmodificationexceptions on tag/codec lists
- * update changelog
-
 [2016-01-20]
- * release renamer preview to all users
- * call google analytics via https
- * check for corrupted data at startup
- * TvShow: add missing layout
  * call google analytics via https
