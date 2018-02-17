@@ -728,8 +728,13 @@ public class TvShowRenamer {
       // VIDEO_EXTRA
       ////////////////////////////////////////////////////////////////////////
       case VIDEO_EXTRA:
-        // don't mess with extras - keep em 1:1
-        newFiles.add(new MediaFile(mf));
+        // this extra is for an episode -> move it at least to the season folder and try to replace the episode tokens
+        MediaFile extra = new MediaFile(mf);
+        // try to detect the title of the extra file
+        TvShowEpisodeAndSeasonParser.EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser
+            .detectEpisodeFromFilenameAlternative(mf.getFilename(), tvShow.getTitle());
+        extra.setFile(seasonFolder.resolve("extras/" + newFilename + "-" + result.cleanedName + "." + mf.getExtension()));
+        newFiles.add(extra);
         break;
 
       // missing enums
@@ -746,6 +751,8 @@ public class TvShowRenamer {
       case POSTER:
       case SAMPLE:
       case SEASON_POSTER:
+      case SEASON_BANNER:
+      case SEASON_THUMB:
       case TEXT:
       case UNKNOWN:
       default:
@@ -1055,8 +1062,9 @@ public class TvShowRenamer {
       destination = destination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
     }
 
-    // replace trailing dots and spaces
-    destination = destination.replaceAll("[ \\.]+$", "");
+    // replace all leading/trailing separators
+    destination = destination.replaceAll("^[ \\.\\-_]+", "");
+    destination = destination.replaceAll("[ \\.\\-_]+$", "");
 
     // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
     destination = destination.replaceAll(": ", " - "); // nicer

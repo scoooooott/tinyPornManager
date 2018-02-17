@@ -1328,9 +1328,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
       rating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
     }
 
-    // the NFO rating
+    // then the default one (either NFO or DEFAULT)
     if (rating == null) {
       rating = ratings.get(Rating.NFO);
+    }
+    if (rating == null) {
+      rating = ratings.get(Rating.DEFAULT);
     }
 
     // is there any rating?

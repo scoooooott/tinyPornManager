@@ -51,13 +51,6 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     check();
   }
 
-  // @Test
-  // public void udsOld() throws Exception {
-  // TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
-  // task.run();
-  // check();
-  // }
-
   private void check() {
     // do some checks before shutting down the database
     TvShowList tvShowList = TvShowList.getInstance();

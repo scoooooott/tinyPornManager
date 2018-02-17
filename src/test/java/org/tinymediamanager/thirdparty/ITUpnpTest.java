@@ -6,7 +6,7 @@ import org.fourthline.cling.model.meta.Device;
 import org.junit.Test;
 import org.tinymediamanager.thirdparty.upnp.Upnp;
 
-public class UpnpTest {
+public class ITUpnpTest {
 
   @Test
   public void detectKodi() throws InterruptedException {

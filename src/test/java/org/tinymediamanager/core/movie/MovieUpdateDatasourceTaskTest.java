@@ -25,7 +25,7 @@ import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
  */
 public class MovieUpdateDatasourceTaskTest extends BasicTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 51;
+  private static final int NUMBER_OF_EXPECTED_MOVIES = 54;
   private static final int NUMBER_OF_STACKED_MOVIES  = 12;
   private static final int NUMBER_OF_DISC_MOVIES     = 6;
 

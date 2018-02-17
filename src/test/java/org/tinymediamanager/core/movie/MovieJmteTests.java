@@ -89,7 +89,7 @@ public class MovieJmteTests {
       compare("${audioCodec}", "AC3");
       compare("${audioChannels}", "6");
 
-      compare("${mediaSource}", "Bluray");
+      compare("${mediaSource}", "Blu-ray");
       compare("${mediaSource.name}", "BLURAY");
       compare("${edition}", "Director's Cut");
       compare("${edition.name}", "DIRECTORS_CUT");

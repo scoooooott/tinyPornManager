@@ -18,6 +18,7 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.util.PluginManager;
 
 public class ITMovieSubtitleSearchTest {
 
@@ -26,6 +27,7 @@ public class ITMovieSubtitleSearchTest {
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
+    PluginManager.getInstance().loadClasspathPlugins();
   }
 
   @AfterClass

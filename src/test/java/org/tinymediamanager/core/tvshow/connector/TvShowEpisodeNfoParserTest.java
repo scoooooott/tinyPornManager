@@ -144,7 +144,7 @@ public class TvShowEpisodeNfoParserTest {
         assertThat(fanart).isNotEmpty();
       }
       assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
-      assertThat(episode.ids).isEmpty();
+      assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);
       assertThat(episode.playcount).isEqualTo(0);
@@ -223,7 +223,7 @@ public class TvShowEpisodeNfoParserTest {
         assertThat(fanart).isNotEmpty();
       }
       assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
-      assertThat(episode.ids).isEmpty();
+      assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);
       assertThat(episode.playcount).isEqualTo(0);
@@ -302,7 +302,7 @@ public class TvShowEpisodeNfoParserTest {
         assertThat(fanart).isNotEmpty();
       }
       assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
-      assertThat(episode.ids).isEmpty();
+      assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);
       assertThat(episode.playcount).isEqualTo(0);

@@ -110,7 +110,7 @@ public class TvShowJmteTests {
       compare("${audioCodec}", "AC3");
       compare("${audioChannels}", "6");
 
-      compare("${mediaSource}", "Bluray");
+      compare("${mediaSource}", "Blu-ray");
       compare("${mediaSource.name}", "BLURAY");
 
       // test combined tokens

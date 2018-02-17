@@ -141,6 +141,11 @@ public class MediaSource extends DynaEnum<MediaSource> {
     String fn = filename.toLowerCase(Locale.ROOT);
     String ext = FilenameUtils.getExtension(fn);
 
+    // make sure we try UHD_BLURAY first, since there could be false positives with BLURAY regexp
+    if (UHD_BLURAY.pattern.matcher(filename).find()) {
+      return UHD_BLURAY;
+    }
+
     for (MediaSource mediaSource : MediaSource.values()) {
       if (mediaSource.pattern != null && mediaSource.pattern.matcher(filename).find()) {
         return mediaSource;

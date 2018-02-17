@@ -299,9 +299,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     // the user rating
     rating = ratings.get(Rating.USER);
 
-    // then the default one
+    // then the default one (either NFO or DEFAULT)
     if (rating == null) {
       rating = ratings.get(Rating.NFO);
+    }
+    if (rating == null) {
+      rating = ratings.get(Rating.DEFAULT);
     }
 
     // is there any rating?

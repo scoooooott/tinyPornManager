@@ -90,7 +90,7 @@ public class MovieRenamer {
     tokenMap.put("year", "movie.year");
     tokenMap.put("releaseDate", "movie.releaseDate;date(yyyy-MM-dd)");
     tokenMap.put("titleSortable", "movie.titleSortable");
-    tokenMap.put("rating", "movie.rating");
+    tokenMap.put("rating", "movie.rating.rating");
     tokenMap.put("movieset", "movie.movieSet");
     tokenMap.put("imdb", "movie.imdbId");
     tokenMap.put("certification", "movie.certification");
