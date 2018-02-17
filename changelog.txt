@@ -1,5 +1,7 @@
 
 [2018-02-17]
+ * fix: reverted last changelog generation changes
+ * fix: automatic changelog generation
  * feature: automatic changelog generation for v3
  * fix: changed naming style for integration tests
  * fix: integrated VIDEO_EXTRAS in TV show renamer
@@ -484,14 +486,6 @@
 [2017-04-05]
  * fix: NFO loading
  * fix: tv show renamer test
-
-[2017-04-04]
- * bump version
- * prepare hotfix
- * MediaInfo: downgrade to 0.7.93, 0.7.94 does not work with ISO streams
-
-[2017-04-03]
- * unit tests: fix remaining
 
 [2017-03-07]
  * feature: implemented double click for movie/tv show/episode choosers
