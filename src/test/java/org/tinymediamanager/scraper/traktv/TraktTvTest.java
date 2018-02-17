@@ -8,7 +8,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.trakttv.TraktTv;
 
-public class ITTraktTvTest {
+public class TraktTvTest {
 
   private static final TraktTv t = TraktTv.getInstance();
 

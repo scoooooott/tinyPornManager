@@ -83,6 +83,7 @@ public class TvShowTest extends BasicTest {
     TvShowModuleManager.getInstance().startUp();
 
     TvShow show = new TvShow();
+    show.setPath("target/test-classes/");
     show.setTitle("showname");
 
     TvShowEpisode ep = new TvShowEpisode();

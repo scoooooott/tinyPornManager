@@ -13,8 +13,8 @@ import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiException;
 import org.tinymediamanager.thirdparty.KodiRPC.SplitUri;
 
-public class ITKodiRPCTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ITKodiRPCTest.class);
+public class KodiRPCTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(KodiRPCTest.class);
   // *************************************************************************************
   // you need to enable Kodi -> remote control from OTHER machines (to open TCP port 9090)
   // and you need to enable webserver -> some calls are POSTed (not async)

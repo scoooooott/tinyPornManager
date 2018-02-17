@@ -609,7 +609,7 @@ public class TvShowEpisodeNfoParser {
 
       // uniqueid
       element = getSingleElement(root, "uniqueid");
-      if (element != null) {
+      if (element != null && ids.get(MediaMetadata.TVDB) == null) {
         try {
           ids.put(MediaMetadata.TVDB, MetadataUtil.parseInt(element.ownText()));
         }
