@@ -674,16 +674,6 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               continue;
             }
           }
-          if (result.episodes.size() == 0 && result.date == null) {
-            // try to parse out episodes/season from parent directory (but only if we haven't detected an ared date!)
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(showDir.toFile(), tvShow.getPathNIO().toString());
-          }
-          if (result.season == -1) {
-            // did the search find a season?
-            // no -> search for it in the folder name (relative path between tv
-            // show root and the current dir)
-            result.season = TvShowEpisodeAndSeasonParser.detectSeason(relativePath);
-          }
           if (result.episodes.size() > 0) {
             // something found with the season detection?
             for (int ep : result.episodes) {

@@ -200,21 +200,14 @@ public class TvShowRenamerTest extends BasicTest {
     return Paths.get(path);
   }
 
-  @Test
-  public void testRename() {
-    // run with default settings
-    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
-
-    testSimpleEpisode();
-    testMultiEpisode();
-    testPartedEpisode();
-    testComplexEpisode();
-  }
-
   /**
    * just a test of a simple episode (one EP file with some extra files)
    */
-  private void testSimpleEpisode() {
+  @Test
+  public void testSimpleEpisode() {
+    // run with default settings
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
     // copy over the test files to a new folder
     Path source = Paths.get("target/test-classes/testtvshows/renamer_test/simple");
     Path destination = Paths.get("target/test-classes/tv_show_renamer_simple/ShowForRenamer");
@@ -275,9 +268,102 @@ public class TvShowRenamerTest extends BasicTest {
   }
 
   /**
+   * just a test of a simple episode with extras (one EP file with some extra files)
+   */
+  @Test
+  public void testSimpleEpisodeWithExtras() {
+    // run with default settings
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
+    // copy over the test files to a new folder
+    Path source = Paths.get("target/test-classes/testtvshows/renamer_test/extra");
+    Path destination = Paths.get("target/test-classes/tv_show_renamer_extra/ShowForRenamer");
+    try {
+      FileUtils.deleteDirectory(destination.getParent().toFile());
+      FileUtils.copyDirectory(source.toFile(), destination.toFile());
+    }
+    catch (Exception e) {
+      Assertions.fail(e.getMessage());
+    }
+
+    TvShow show = new TvShow();
+    show.setTitle("Breaking Bad");
+    show.setYear(2008);
+    show.setDataSource(destination.getParent().toAbsolutePath().toString());
+    show.setPath(destination.toAbsolutePath().toString());
+    MediaFile mf = new MediaFile(destination.resolve("extras/Show extra.avi").toAbsolutePath());
+    mf.gatherMediaInformation();
+    show.addToMediaFiles(mf);
+
+    // classical single file episodes with extras
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle("Pilot");
+    ep.setSeason(1);
+    ep.setEpisode(1);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(1);
+    ep.setPath(destination.toAbsolutePath().toString());
+    mf = new MediaFile(destination.resolve("S01E01.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    mf = new MediaFile(destination.resolve("extras/S01E01 - cut scenes.mkv").toAbsolutePath(), MediaFileType.VIDEO_EXTRA);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    ep = new TvShowEpisode();
+    ep.setTitle("Pilot 2");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(2);
+    ep.setPath(destination.toAbsolutePath().toString());
+    mf = new MediaFile(destination.resolve("Season 1/S01E02.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    mf = new MediaFile(destination.resolve("Season 1/extras/S01E02 - takeouts.mkv").toAbsolutePath(), MediaFileType.VIDEO_EXTRA);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    TvShowRenamer.renameTvShowRoot(show);
+    for (TvShowEpisode episode : show.getEpisodes()) {
+      TvShowRenamer.renameEpisode(episode);
+    }
+
+    Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
+    assertThat(showDir).exists();
+
+    Path seasonDir = showDir.resolve("Season 1");
+    assertThat(seasonDir).exists();
+
+    Path video1 = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.mkv");
+    assertThat(video1).exists();
+
+    Path extra1 = seasonDir.resolve("extras/Breaking Bad - S01E01 - Pilot-cut scenes.mkv");
+    assertThat(extra1).exists();
+
+    Path video2 = seasonDir.resolve("Breaking Bad - S01E02 - Pilot 2.mkv");
+    assertThat(video2).exists();
+
+    Path extra2 = seasonDir.resolve("extras/Breaking Bad - S01E02 - Pilot 2-takeouts.mkv");
+    assertThat(extra2).exists();
+  }
+
+  /**
    * multi episode file test
    */
-  private void testMultiEpisode() {
+  @Test
+  public void testMultiEpisode() {
+    // run with default settings
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
     // copy over the test files to a new folder
     Path source = Paths.get("target/test-classes/testtvshows/renamer_test/multi");
     Path destination = Paths.get("target/test-classes/tv_show_renamer_multi/ShowForRenamer");
@@ -362,7 +448,11 @@ public class TvShowRenamerTest extends BasicTest {
   /**
    * just a test of a parted episode (two EP files with some extra files)
    */
-  private void testPartedEpisode() {
+  @Test
+  public void testPartedEpisode() {
+    // run with default settings
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
     // copy over the test files to a new folder
     Path source = Paths.get("target/test-classes/testtvshows/renamer_test/parted");
     Path destination = Paths.get("target/test-classes/tv_show_renamer_parted/ShowForRenamer");
@@ -431,7 +521,11 @@ public class TvShowRenamerTest extends BasicTest {
   /**
    * this is a really sick test: a parted multi episode (two EP files containing two EPs with some extra files)
    */
-  private void testComplexEpisode() {
+  @Test
+  public void testComplexEpisode() {
+    // run with default settings
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
     // copy over the test files to a new folder
     Path source = Paths.get("target/test-classes/testtvshows/renamer_test/complex");
     Path destination = Paths.get("target/test-classes/tv_show_renamer_complex/ShowForRenamer");
@@ -503,7 +597,9 @@ public class TvShowRenamerTest extends BasicTest {
     show.addEpisode(ep);
 
     TvShowRenamer.renameTvShowRoot(show);
-    TvShowRenamer.renameEpisode(ep);
+    for (TvShowEpisode episode : show.getEpisodes()) {
+      TvShowRenamer.renameEpisode(episode);
+    }
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
