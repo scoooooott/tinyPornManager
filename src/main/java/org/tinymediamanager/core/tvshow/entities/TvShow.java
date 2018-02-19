@@ -1483,7 +1483,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * get all season artwork urls
    * 
    * @param artworkType
-   *          the artwork type to get the poster for
+   *          the artwork type to get the artwork for
    * @return a map containing all available season artworks for the given type
    *
    */
@@ -1539,6 +1539,30 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     return "";
   }
 
+  /**
+   * get all season artwork filenames
+   *
+   * @param artworkType
+   *          the artwork type to get the artwork for
+   * @return a map containing all available season artwork filenames for the given type
+   *
+   */
+  public Map<Integer, MediaFile> getSeasonArtworks(MediaArtworkType artworkType) {
+    switch (artworkType) {
+      case SEASON_POSTER:
+        return MapUtils.sortByKey(seasonPosters);
+
+      case SEASON_BANNER:
+        return MapUtils.sortByKey(seasonBanners);
+
+      case SEASON_THUMB:
+        return MapUtils.sortByKey(seasonThumbs);
+
+      default:
+        return new HashMap<>(0);
+    }
+  }
+
   Dimension getSeasonArtworkSize(int season, MediaArtworkType type) {
     MediaFile artworkFile = null;
     switch (type) {
@@ -1578,7 +1602,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public void setSeasonArtwork(int season, MediaArtworkType artworkType, Path file) {
     MediaFile mf = new MediaFile(file, MediaFileType.getMediaFileType(artworkType));
-    setSeasonArtwork(season, artworkType, mf);
+    setSeasonArtwork(season, mf);
   }
 
   /**
@@ -1586,13 +1610,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @param season
    *          the season
-   * @param artworkType
-   *          the artwork type
    * @param mf
    *          the media file
    */
-  public void setSeasonArtwork(int season, MediaArtworkType artworkType, MediaFile mf) {
+  public void setSeasonArtwork(int season, MediaFile mf) {
     MediaFile oldMf = null;
+
+    MediaArtworkType artworkType = MediaFileType.getMediaArtworkType(mf.getType());
 
     // check if that MF is already in our show
     switch (artworkType) {

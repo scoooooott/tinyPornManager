@@ -17,9 +17,6 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -816,7 +813,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season poster " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_POSTER, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());
@@ -833,7 +830,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season banner " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_BANNER, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());
@@ -850,7 +847,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season thumb " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_THUMB, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());

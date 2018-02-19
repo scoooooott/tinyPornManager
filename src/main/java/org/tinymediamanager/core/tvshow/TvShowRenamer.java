@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -22,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -53,6 +58,10 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonBannerNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -190,6 +199,16 @@ public class TvShowRenamer {
               episode.replacePathForRenamedFolder(srcDir, destDir);
               episode.updateMediaFilePath(srcDir, destDir);
             }
+
+            // ######################################################################
+            // ## invalidate image cache
+            // ######################################################################
+            for (MediaFile gfx : show.getMediaFiles()) {
+              if (gfx.isGraphic()) {
+                ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+              }
+            }
+
             show.saveToDb();
           }
         }
@@ -200,6 +219,122 @@ public class TvShowRenamer {
         }
       }
     }
+  }
+
+  /**
+   * rename the season artwork for this TV show
+   * 
+   * @param tvShow
+   *          the TV show to rename the season artwork for
+   */
+  public static void renameSeasonArtwork(TvShow tvShow) {
+    // all the good & needed mediafiles
+    ArrayList<MediaFile> needed = new ArrayList<>();
+    ArrayList<MediaFile> cleanup = new ArrayList<>();
+    cleanup.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
+
+    List<MediaArtworkType> types = Arrays.asList(SEASON_POSTER, SEASON_BANNER, SEASON_THUMB);
+
+    for (MediaArtworkType type : types) {
+      Map<Integer, MediaFile> artwork = tvShow.getSeasonArtworks(type);
+      for (Map.Entry<Integer, MediaFile> entry : artwork.entrySet()) {
+        Integer season = entry.getKey();
+        MediaFile mf = entry.getValue();
+
+        cleanup.add(mf);
+
+        String filename;
+        switch (type) {
+          case SEASON_POSTER:
+            for (TvShowSeasonPosterNaming naming : SETTINGS.getSeasonPosterFilenames()) {
+              filename = naming.getFilename(tvShow, season, mf.getExtension());
+              if (StringUtils.isNotBlank(filename)) {
+                MediaFile newMf = new MediaFile(mf);
+                newMf.setFile(Paths.get(tvShow.getPath(), filename));
+                boolean ok = copyFile(mf.getFileAsPath(), newMf.getFileAsPath());
+                if (ok) {
+                  needed.add(newMf);
+                }
+              }
+            }
+            break;
+
+          case SEASON_BANNER:
+            for (TvShowSeasonBannerNaming naming : SETTINGS.getSeasonBannerFilenames()) {
+              filename = naming.getFilename(tvShow, season, mf.getExtension());
+              if (StringUtils.isNotBlank(filename)) {
+                MediaFile newMf = new MediaFile(mf);
+                newMf.setFile(Paths.get(tvShow.getPath(), filename));
+                boolean ok = copyFile(mf.getFileAsPath(), newMf.getFileAsPath());
+                if (ok) {
+                  needed.add(newMf);
+                }
+              }
+            }
+            break;
+
+          case SEASON_THUMB:
+            for (TvShowSeasonThumbNaming naming : SETTINGS.getSeasonThumbFilenames()) {
+              filename = naming.getFilename(tvShow, season, mf.getExtension());
+              if (StringUtils.isNotBlank(filename)) {
+                MediaFile newMf = new MediaFile(mf);
+                newMf.setFile(Paths.get(tvShow.getPath(), filename));
+                boolean ok = copyFile(mf.getFileAsPath(), newMf.getFileAsPath());
+                if (ok) {
+                  needed.add(newMf);
+                }
+              }
+            }
+            break;
+
+          default:
+            continue;
+        }
+      }
+    }
+
+    // ######################################################################
+    // ## invalidate image cache
+    // ######################################################################
+    for (MediaFile gfx : tvShow.getMediaFiles()) {
+      if (gfx.isGraphic()) {
+        ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+      }
+    }
+
+    // remove duplicate MediaFiles
+    Set<MediaFile> newMFs = new LinkedHashSet<>(needed);
+    needed.clear();
+    needed.addAll(newMFs);
+
+    // ######################################################################
+    // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
+    // ######################################################################
+    LOGGER.info("Cleanup...");
+    for (int i = cleanup.size() - 1; i >= 0; i--) {
+      // cleanup files which are not needed
+      if (!needed.contains(cleanup.get(i))) {
+        MediaFile cl = cleanup.get(i);
+        if (Files.exists(cl.getFileAsPath())) { // unneeded, but for not displaying wrong deletes in logger...
+          LOGGER.debug("Deleting " + cl.getFileAsPath());
+          Utils.deleteFileWithBackup(cl.getFileAsPath(), tvShow.getDataSource());
+        }
+
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(cl.getFileAsPath().getParent())) {
+          if (!directoryStream.iterator().hasNext()) {
+            // no iterator = empty
+            LOGGER.debug("Deleting empty Directory " + cl.getFileAsPath().getParent());
+            Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
+          }
+        }
+        catch (IOException e) {
+          LOGGER.error("cleanup of " + cl.getFileAsPath().toString() + " : " + e.getMessage());
+        }
+      }
+    }
+
+    tvShow.addToMediaFiles(needed);
+    tvShow.saveToDb();
   }
 
   /**
@@ -351,7 +486,7 @@ public class TvShowRenamer {
     }
 
     // ######################################################################
-    // ## invalidade image cache
+    // ## invalidate image cache
     // ######################################################################
     for (MediaFile gfx : episode.getMediaFiles()) {
       if (gfx.isGraphic()) {
