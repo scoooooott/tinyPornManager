@@ -17,7 +17,7 @@ import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private static final String FOLDER                   = getSettingsFolder();
@@ -46,7 +46,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
 
   @Test
   public void udsNew() throws Exception {
-    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
+    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
     task.run();
     check();
   }

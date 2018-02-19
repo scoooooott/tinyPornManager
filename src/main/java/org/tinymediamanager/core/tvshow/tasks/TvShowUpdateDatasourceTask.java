@@ -74,8 +74,8 @@ import com.sun.jna.Platform;
  * @author Manuel Laggner
  */
 
-public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
+public class TvShowUpdateDatasourceTask extends TmmThreadPool {
+  private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
@@ -103,7 +103,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * Instantiates a new scrape task - to update all datasources
    * 
    */
-  public TvShowUpdateDatasourceTask2() {
+  public TvShowUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
@@ -115,7 +115,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @param datasource
    *          the data source to start the task for
    */
-  public TvShowUpdateDatasourceTask2(String datasource) {
+  public TvShowUpdateDatasourceTask(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(1);
@@ -128,7 +128,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @param tvShowFolders
    *          a list of TV show folders to start the task for
    */
-  public TvShowUpdateDatasourceTask2(List<Path> tvShowFolders) {
+  public TvShowUpdateDatasourceTask(List<Path> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(0);
