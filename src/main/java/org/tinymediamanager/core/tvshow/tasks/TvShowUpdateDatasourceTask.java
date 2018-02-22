@@ -17,9 +17,6 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -77,8 +74,8 @@ import com.sun.jna.Platform;
  * @author Manuel Laggner
  */
 
-public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
+public class TvShowUpdateDatasourceTask extends TmmThreadPool {
+  private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
@@ -106,7 +103,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * Instantiates a new scrape task - to update all datasources
    * 
    */
-  public TvShowUpdateDatasourceTask2() {
+  public TvShowUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
@@ -118,7 +115,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @param datasource
    *          the data source to start the task for
    */
-  public TvShowUpdateDatasourceTask2(String datasource) {
+  public TvShowUpdateDatasourceTask(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(1);
@@ -131,7 +128,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @param tvShowFolders
    *          a list of TV show folders to start the task for
    */
-  public TvShowUpdateDatasourceTask2(List<Path> tvShowFolders) {
+  public TvShowUpdateDatasourceTask(List<Path> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<>(0);
@@ -816,7 +813,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season poster " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_POSTER, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());
@@ -833,7 +830,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season banner " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_BANNER, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());
@@ -850,7 +847,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season thumb " + mf.getFileAsPath());
-            tvShow.setSeasonArtwork(season, SEASON_THUMB, mf);
+            tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
             LOGGER.warn("could not parse season number: " + e.getMessage());

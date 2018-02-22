@@ -58,6 +58,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
@@ -878,6 +879,11 @@ public abstract class MediaEntity extends AbstractModelObject {
     List<MediaFile> mfs = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
     for (MediaFile mf : mfs) {
+      // invalidate image cache
+      if (mf.isGraphic()) {
+        ImageCache.invalidateCachedImage(mf.getFileAsPath());
+      }
+
       mf.replacePathForRenamedFolder(oldPath, newPath);
     }
   }

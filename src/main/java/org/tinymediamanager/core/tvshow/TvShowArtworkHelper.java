@@ -327,27 +327,7 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonPosterNaming seasonPosterNaming : TvShowModuleManager.SETTINGS.getSeasonPosterFilenames()) {
-      String filename = "";
-      switch (seasonPosterNaming) {
-        case SEASON_POSTER:
-          if (season > 0) {
-            filename = String.format("season%02d-poster", season);
-          }
-          else {
-            filename = "season-specials-poster";
-          }
-          break;
-
-        case SEASON_FOLDER:
-          String seasonFoldername = TvShowRenamer.getSeasonFoldername(show, season);
-          if (StringUtils.isNotBlank(seasonFoldername)) {
-            filename = seasonFoldername + File.separator;
-          }
-          filename += String.format("season%02d", season);
-          break;
-      }
-
-      filename = show.getPathNIO() + File.separator + filename + "." + Utils.getArtworkExtension(seasonPosterUrl);
+      String filename = show.getPathNIO() + File.separator + seasonPosterNaming.getFilename(show, season, Utils.getArtworkExtension(seasonPosterUrl));
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -375,23 +355,7 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonBannerNaming seasonBannerNaming : TvShowModuleManager.SETTINGS.getSeasonBannerFilenames()) {
-      String filename;
-
-      if (season > 0) {
-        filename = String.format("season%02d-banner", season);
-      }
-      else {
-        filename = "season-specials-banner";
-      }
-
-      if (seasonBannerNaming == TvShowSeasonBannerNaming.SEASON_FOLDER) {
-        String seasonFoldername = TvShowRenamer.getSeasonFoldername(show, season);
-        if (StringUtils.isNotBlank(seasonFoldername)) {
-          filename = seasonFoldername + File.separator + filename;
-        }
-      }
-
-      filename = show.getPathNIO() + File.separator + filename + "." + Utils.getArtworkExtension(seasonBannerUrl);
+      String filename = show.getPathNIO() + File.separator + seasonBannerNaming.getFilename(show, season, Utils.getArtworkExtension(seasonBannerUrl));
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonBannerUrl, SEASON_BANNER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -419,23 +383,7 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonThumbNaming seasonThumbNaming : TvShowModuleManager.SETTINGS.getSeasonThumbFilenames()) {
-      String filename;
-
-      if (season > 0) {
-        filename = String.format("season%02d-thumb", season);
-      }
-      else {
-        filename = "season-specials-thumb";
-      }
-
-      if (seasonThumbNaming == TvShowSeasonThumbNaming.SEASON_FOLDER) {
-        String seasonFoldername = TvShowRenamer.getSeasonFoldername(show, season);
-        if (StringUtils.isNotBlank(seasonFoldername)) {
-          filename = seasonFoldername + File.separator + filename;
-        }
-      }
-
-      filename = show.getPathNIO() + File.separator + filename + "." + Utils.getArtworkExtension(seasonThumbUrl);
+      String filename = show.getPathNIO() + File.separator + seasonThumbNaming.getFilename(show, season, Utils.getArtworkExtension(seasonThumbUrl));
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
       TmmTaskManager.getInstance().addImageDownloadTask(task);

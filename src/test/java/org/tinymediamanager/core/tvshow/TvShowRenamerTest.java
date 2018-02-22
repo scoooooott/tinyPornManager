@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
@@ -19,6 +20,9 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonBannerNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
+import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 
 public class TvShowRenamerTest extends BasicTest {
 
@@ -190,12 +194,6 @@ public class TvShowRenamerTest extends BasicTest {
     return Paths.get(sh, se, ep);
   }
 
-  /**
-   * string to path for unix/linux comparison
-   *
-   * @param path
-   * @return
-   */
   private Path p(String path) {
     return Paths.get(path);
   }
@@ -248,8 +246,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(show);
     show.addEpisode(ep);
 
-    TvShowRenamer.renameTvShowRoot(show);
-    TvShowRenamer.renameEpisode(ep);
+    renameTvShow(show);
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
@@ -268,7 +265,7 @@ public class TvShowRenamerTest extends BasicTest {
   }
 
   /**
-   * just a test of a simple episode with extras (one EP file with some extra files)
+   * just a test of a simple episode with extras (two EP files with some extra files)
    */
   @Test
   public void testSimpleEpisodeWithExtras() {
@@ -332,10 +329,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(show);
     show.addEpisode(ep);
 
-    TvShowRenamer.renameTvShowRoot(show);
-    for (TvShowEpisode episode : show.getEpisodes()) {
-      TvShowRenamer.renameEpisode(episode);
-    }
+    renameTvShow(show);
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
@@ -426,8 +420,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(show);
     show.addEpisode(ep);
 
-    TvShowRenamer.renameTvShowRoot(show);
-    TvShowRenamer.renameEpisode(ep);
+    renameTvShow(show);
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
@@ -497,8 +490,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.reEvaluateStacking();
     show.addEpisode(ep);
 
-    TvShowRenamer.renameTvShowRoot(show);
-    TvShowRenamer.renameEpisode(ep);
+    renameTvShow(show);
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
@@ -596,10 +588,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.reEvaluateStacking();
     show.addEpisode(ep);
 
-    TvShowRenamer.renameTvShowRoot(show);
-    for (TvShowEpisode episode : show.getEpisodes()) {
-      TvShowRenamer.renameEpisode(episode);
-    }
+    renameTvShow(show);
 
     Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
     assertThat(showDir).exists();
@@ -617,5 +606,147 @@ public class TvShowRenamerTest extends BasicTest {
     assertThat(nfo).exists();
     Path sub = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.deu.srt");
     assertThat(sub).exists();
+  }
+
+  /**
+   * just a test of a simple episode (two EPs file with some season artwork)
+   */
+  @Test
+  public void testSimpleEpisodeWithSeasonArtwork() {
+    // run with default settings, except season poster filename
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+    settings.addSeasonPosterFilename(TvShowSeasonPosterNaming.SEASON_FOLDER);
+    settings.addSeasonBannerFilename(TvShowSeasonBannerNaming.SEASON_FOLDER);
+
+    // copy over the test files to a new folder
+    Path source = Paths.get("target/test-classes/testtvshows/renamer_test/season_artwork");
+    Path destination = Paths.get("target/test-classes/tv_show_renamer_season_artwork/ShowForRenamer");
+    try {
+      FileUtils.deleteDirectory(destination.getParent().toFile());
+      FileUtils.copyDirectory(source.toFile(), destination.toFile());
+    }
+    catch (Exception e) {
+      Assertions.fail(e.getMessage());
+    }
+
+    TvShow show = new TvShow();
+    show.setTitle("Breaking Bad");
+    show.setYear(2008);
+    show.setDataSource(destination.getParent().toAbsolutePath().toString());
+    show.setPath(destination.toAbsolutePath().toString());
+
+    // season artwork
+    MediaFile mf = new MediaFile(destination.resolve("season01-banner.jpg").toAbsolutePath(), MediaFileType.SEASON_BANNER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(1, mf);
+    mf = new MediaFile(destination.resolve("season01-poster.jpg").toAbsolutePath(), MediaFileType.SEASON_POSTER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(1, mf);
+    mf = new MediaFile(destination.resolve("season01-thumb.jpg").toAbsolutePath(), MediaFileType.SEASON_THUMB);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(1, mf);
+
+    mf = new MediaFile(destination.resolve("Season 2/season02-banner.jpg").toAbsolutePath(), MediaFileType.SEASON_BANNER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(2, mf);
+    mf = new MediaFile(destination.resolve("Season 2/season02.jpg").toAbsolutePath(), MediaFileType.SEASON_POSTER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(2, mf);
+    mf = new MediaFile(destination.resolve("Season 2/season02-thumb.jpg").toAbsolutePath(), MediaFileType.SEASON_THUMB);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(2, mf);
+
+    mf = new MediaFile(destination.resolve("season03-banner.jpg").toAbsolutePath(), MediaFileType.SEASON_BANNER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(3, mf);
+    mf = new MediaFile(destination.resolve("season03-poster.jpg").toAbsolutePath(), MediaFileType.SEASON_POSTER);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(3, mf);
+    mf = new MediaFile(destination.resolve("season03-thumb.jpg").toAbsolutePath(), MediaFileType.SEASON_THUMB);
+    mf.gatherMediaInformation();
+    show.setSeasonArtwork(3, mf);
+
+    // classical single file episode
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTvShow(show);
+    ep.setTitle("Pilot");
+    ep.setSeason(1);
+    ep.setEpisode(1);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(1);
+    ep.setPath(destination.toAbsolutePath().toString());
+    mf = new MediaFile(destination.resolve("S01E01.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    show.addEpisode(ep);
+
+    ep = new TvShowEpisode();
+    ep.setTvShow(show);
+    ep.setTitle("Pilot 2");
+    ep.setSeason(2);
+    ep.setEpisode(1);
+    ep.setDvdSeason(2);
+    ep.setDvdEpisode(1);
+    ep.setPath(destination.toAbsolutePath().toString());
+    mf = new MediaFile(destination.resolve("Season 2/S02E01.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    show.addEpisode(ep);
+
+    renameTvShow(show);
+
+    // check TV show dirs/files
+    Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
+    assertThat(showDir).exists();
+
+    Path season1Dir = showDir.resolve("Season 1");
+    assertThat(season1Dir).exists();
+    Path season2Dir = showDir.resolve("Season 2");
+    assertThat(season2Dir).exists();
+
+    // season 1 & 2 artwork in season folder and show folder
+    Path artwork = season1Dir.resolve("season01.jpg");
+    assertThat(artwork).exists();
+    artwork = season1Dir.resolve("season01-banner.jpg");
+    assertThat(artwork).exists();
+
+    artwork = showDir.resolve("season01-poster.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season01-banner.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season01-thumb.jpg");
+    assertThat(artwork).exists();
+
+    artwork = season2Dir.resolve("season02.jpg");
+    assertThat(artwork).exists();
+    artwork = season2Dir.resolve("season02-banner.jpg");
+    assertThat(artwork).exists();
+
+    artwork = showDir.resolve("season02-poster.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season02-banner.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season02-thumb.jpg");
+    assertThat(artwork).exists();
+
+    // season 3 artwork in TV show folder (won't create an own subfolder only for artwork)
+    // AND since the banner is not in a season folder, it will have the default name style applied
+    artwork = showDir.resolve("season03-poster.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season03-banner.jpg");
+    assertThat(artwork).exists();
+    artwork = showDir.resolve("season03-thumb.jpg");
+    assertThat(artwork).exists();
+
+    // check episode dirs/files
+    Path video = season1Dir.resolve("Breaking Bad - S01E01 - Pilot.mkv");
+    assertThat(video).exists();
+    video = season2Dir.resolve("Breaking Bad - S02E01 - Pilot 2.mkv");
+    assertThat(video).exists();
+  }
+
+  private void renameTvShow(TvShow tvShow) {
+    TvShowRenameTask task = new TvShowRenameTask(Arrays.asList(tvShow), null, true);
+    task.run(); // blocking
   }
 }

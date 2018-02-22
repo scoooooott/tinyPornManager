@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
@@ -52,7 +52,7 @@ public class MovieUpdateAction extends TmmAction {
       return;
     }
 
-    TmmThreadPool task = new MovieUpdateDatasourceTask2(selectedMovies);
+    TmmThreadPool task = new MovieUpdateDatasourceTask(selectedMovies);
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

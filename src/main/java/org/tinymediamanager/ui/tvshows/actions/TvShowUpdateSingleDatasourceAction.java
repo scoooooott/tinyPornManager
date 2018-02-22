@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
@@ -46,7 +46,7 @@ public class TvShowUpdateSingleDatasourceAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    TmmThreadPool task = new TvShowUpdateDatasourceTask2(datasource);
+    TmmThreadPool task = new TvShowUpdateDatasourceTask(datasource);
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

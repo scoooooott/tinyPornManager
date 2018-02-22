@@ -28,11 +28,11 @@ import javax.swing.JPanel;
 
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
@@ -168,11 +168,11 @@ public class TinyMediaManagerWizard extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       TinyMediaManagerWizard.this.setVisible(false);
       if (!MovieModuleManager.SETTINGS.getMovieDataSource().isEmpty()) {
-        TmmThreadPool task = new MovieUpdateDatasourceTask2();
+        TmmThreadPool task = new MovieUpdateDatasourceTask();
         TmmTaskManager.getInstance().addMainTask(task);
       }
       if (!TvShowModuleManager.SETTINGS.getTvShowDataSource().isEmpty()) {
-        TmmThreadPool task = new TvShowUpdateDatasourceTask2();
+        TmmThreadPool task = new TvShowUpdateDatasourceTask();
         TmmTaskManager.getInstance().addMainTask(task);
       }
     }
