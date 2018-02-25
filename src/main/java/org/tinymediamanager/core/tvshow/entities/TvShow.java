@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.ADDED_SEASON;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.DATA_SOURCE;
 import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
@@ -83,6 +82,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -92,6 +92,7 @@ import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
+import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcher;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaAiredStatus;
@@ -122,8 +123,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Pattern               seasonBannerPattern   = Pattern.compile("(?i)season([0-9]{1,4}|special)-banner\\..{2,4}");
   private static final Pattern               seasonThumbPattern    = Pattern.compile("(?i)season([0-9]{1,4}|special)-thumb\\..{2,4}");
 
-  @JsonProperty
-  private String                             dataSource            = "";
   @JsonProperty
   private int                                runtime               = 0;
   @JsonProperty
@@ -595,27 +594,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the data source.
-   * 
-   * @return the data source
-   */
-  public String getDataSource() {
-    return dataSource;
-  }
-
-  /**
-   * Sets the data source.
-   * 
-   * @param newValue
-   *          the new data source
-   */
-  public void setDataSource(String newValue) {
-    String oldValue = this.dataSource;
-    this.dataSource = newValue;
-    firePropertyChange(DATA_SOURCE, oldValue, newValue);
-  }
-
-  /**
    * remove all episodes from this tv show.
    */
   public void removeAllEpisodes() {
@@ -839,8 +817,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         }
       }
       setActors(actors);
-      // TODO write actor images for tv shows
-      // writeActorImages();
+      writeActorImages();
     }
 
     if (config.isCertification()) {
@@ -1796,6 +1773,19 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
     return scraped;
+  }
+
+  /**
+   * Write actor images.
+   */
+  public void writeActorImages() {
+    // check if actor images shall be written
+    if (!TvShowModuleManager.SETTINGS.isWriteActorImages()) {
+      return;
+    }
+
+    TvShowActorImageFetcher task = new TvShowActorImageFetcher(this);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**

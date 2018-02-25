@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Graphics;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -33,88 +34,61 @@ import org.tinymediamanager.core.entities.Person;
  */
 public class ActorImageLabel extends ImageLabel {
 
-  private static final long         serialVersionUID = -1768796209645569296L;
+  private static final long       serialVersionUID = -1768796209645569296L;
 
-  protected SwingWorker<Void, Void> actorWorker      = null;
-  protected MediaEntity             mediaEntity      = null;
-  protected Person                  actor            = null;
+  private SwingWorker<Void, Void> actorWorker      = null;
+  private Person                  actor            = null;
 
   public void setActor(MediaEntity mediaEntity, Person actor) {
     if (mediaEntity != null && actor != null && actor != this.actor) {
-      this.mediaEntity = mediaEntity;
-      this.actor = actor;
+      clearImage();
 
-      scaledImage = null;
-      this.repaint();
-    }
-  }
-
-  @Override
-  public void setImageUrl(String newValue) {
-    String oldValue = this.imageUrl;
-    this.imageUrl = newValue;
-    firePropertyChange("imageUrl", oldValue, newValue);
-
-    // stop previous worker
-    if (worker != null && !worker.isDone()) {
-      worker.cancel(true);
-    }
-
-    scaledImage = null;
-
-    if (StringUtils.isEmpty(newValue)) {
-      this.repaint();
-      return;
-    }
-
-    // fetch image in separate worker -> performance
-    // only do http fetches, if the label is visible
-    if (isShowing()) {
-      // stop previous worker
-      if (worker != null && !worker.isDone()) {
-        worker.cancel(true);
+      if (actorWorker != null && !actorWorker.isDone()) {
+        actorWorker.cancel(true);
       }
-
-      worker = new ImageFetcher(this.getSize());
-      worker.execute();
-      this.repaint();
-    }
-    else {
-      scaledImage = null;
+      actorWorker = new ActorImageLoader(actor, mediaEntity);
+      actorWorker.execute();
     }
   }
 
   @Override
   protected void paintComponent(Graphics g) {
     // refetch the image if its visible now
-    if (isShowing() && scaledImage == null && this.actor != null) {
-      // load actors async
-      if (actorWorker != null && !actorWorker.isDone()) {
-        actorWorker.cancel(false);
+    if (isShowing() && !isLoading() && scaledImage == null) {
+      if (StringUtils.isNotBlank(imagePath)) {
+        if (worker != null && !worker.isDone()) {
+          worker.cancel(true);
+        }
+        worker = new ImageLoader(this.imagePath, this.getSize());
+        worker.execute();
+        return;
       }
-
-      // load image in separate worker -> performance
-      actorWorker = new ActorImageLoader(actor);
-      actorWorker.execute();
-    }
-    else if (isShowing() && scaledImage == null && StringUtils.isNotBlank(imageUrl)) {
-      worker = new ImageFetcher(this.getSize());
-      worker.execute();
-      return;
+      else if (StringUtils.isNotBlank(imageUrl)) {
+        worker = new ImageFetcher(this.getSize());
+        worker.execute();
+        return;
+      }
     }
 
     super.paintComponent(g);
+  }
+
+  @Override
+  protected boolean isLoading() {
+    return (worker != null && !worker.isDone()) || (actorWorker != null && !actorWorker.isDone());
   }
 
   /*
    * inner class for loading the actor images
    */
   protected class ActorImageLoader extends SwingWorker<Void, Void> {
-    private Person actor;
-    private Path   imagePath = null;
+    private Person      actor;
+    private MediaEntity mediaEntity;
+    private Path        imagePath = null;
 
-    public ActorImageLoader(Person actor) {
+    private ActorImageLoader(Person actor, MediaEntity mediaEntity) {
       this.actor = actor;
+      this.mediaEntity = mediaEntity;
     }
 
     @Override
@@ -122,9 +96,26 @@ public class ActorImageLabel extends ImageLabel {
       // set file (or cached one) if existent
       String actorImageFilename = actor.getNameForStorage();
       if (StringUtils.isNotBlank(actorImageFilename)) {
-        Path p = ImageCache.getCachedFile(Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename));
-        if (p != null) {
-          imagePath = p;
+        Path file = null;
+
+        // we prefer reading it from the cache
+        if (preferCache) {
+          file = ImageCache.getCachedFile(Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename));
+        }
+
+        // not in the cache - read it from the path
+        if (file == null) {
+          file = Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename);
+        }
+
+        // not available in the path and not preferred from the cache..
+        // well just try to read it from the cache
+        if ((file == null || !Files.exists(file)) && !preferCache) {
+          file = ImageCache.getCachedFile(Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename));
+        }
+
+        if (file != null && Files.exists(file)) {
+          imagePath = file;
           return null;
         }
       }
@@ -150,8 +141,11 @@ public class ActorImageLabel extends ImageLabel {
       if (imagePath != null) {
         setImagePath(imagePath.toString());
       }
-      else if (StringUtils.isNotBlank(imageUrl)) {
+      else if (StringUtils.isNotBlank(actor.getThumbUrl())) {
         setImageUrl(actor.getThumbUrl());
+      }
+      else {
+        clearImage();
       }
     }
   }

@@ -29,7 +29,7 @@ import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -58,7 +58,7 @@ public class TvShowCastPanel extends JPanel {
    * UI elements
    */
   private TmmTable                    tableActors;
-  private ImageLabel                  lblActorImage;
+  private ActorImageLabel             lblActorImage;
 
   /**
    * Instantiates a new tv show cast panel.
@@ -87,9 +87,6 @@ public class TvShowCastPanel extends JPanel {
         if (actorEventList.size() > 0) {
           tableActors.getSelectionModel().setSelectionInterval(0, 0);
         }
-        else {
-          lblActorImage.setImageUrl("");
-        }
       }
     };
 
@@ -101,7 +98,10 @@ public class TvShowCastPanel extends JPanel {
         int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
         if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
           Person actor = actorEventList.get(selectedRow);
-          lblActorImage.setImageUrl(actor.getThumbUrl());
+          lblActorImage.setActor(selectionModel.getSelectedTvShow(), actor);
+        }
+        else {
+          lblActorImage.setImageUrl("");
         }
       }
     });
@@ -114,7 +114,7 @@ public class TvShowCastPanel extends JPanel {
       TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
       add(lblActorsT, "cell 0 0,aligny top");
 
-      lblActorImage = new ImageLabel();
+      lblActorImage = new ActorImageLabel();
       add(lblActorImage, "cell 2 0,grow");
 
       tableActors = new PersonTable(actorEventList);

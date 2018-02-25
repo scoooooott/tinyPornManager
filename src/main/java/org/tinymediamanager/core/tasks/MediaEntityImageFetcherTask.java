@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.tasks;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,7 +28,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;

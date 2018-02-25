@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.tasks;
 
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
@@ -23,7 +23,9 @@ import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -36,12 +38,12 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class MediaFileInformationFetcherTask implements Callable<Object> {
-  private final static Logger LOGGER      = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
   private List<MediaFile>     mediaFiles;
   private MediaEntity         mediaEntity;
   private long                uniqueId;
-  private boolean             forceUpdate = false;
+  private boolean             forceUpdate;
 
   /**
    * Instantiates a new media file information fetcher task.
@@ -54,7 +56,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
    *          force an update
    */
   public MediaFileInformationFetcherTask(MediaFile mediaFile, MediaEntity mediaEntity, boolean forceUpdate) {
-    this.mediaFiles = new ArrayList<MediaFile>();
+    this.mediaFiles = new ArrayList<>();
     this.mediaFiles.add(mediaFile);
     this.mediaEntity = mediaEntity;
     this.forceUpdate = forceUpdate;

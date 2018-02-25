@@ -91,7 +91,7 @@ public abstract class AbstractModelObject {
    * @param newValue
    *          the new value
    */
-  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+  public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     try {
       propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
@@ -105,7 +105,7 @@ public abstract class AbstractModelObject {
    * @param evt
    *          the evt
    */
-  protected void firePropertyChange(PropertyChangeEvent evt) {
+  public void firePropertyChange(PropertyChangeEvent evt) {
     propertyChangeSupport.firePropertyChange(evt);
   }
 }

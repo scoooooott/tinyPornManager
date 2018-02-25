@@ -18,7 +18,6 @@ package org.tinymediamanager.core.movie.entities;
 import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.COUNTRY;
-import static org.tinymediamanager.core.Constants.DATA_SOURCE;
 import static org.tinymediamanager.core.Constants.DIRECTORS;
 import static org.tinymediamanager.core.Constants.DIRECTORS_AS_STRING;
 import static org.tinymediamanager.core.Constants.EDITION;
@@ -138,8 +137,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   private String                                tagline                    = "";
   @JsonProperty
   private int                                   runtime                    = 0;
-  @JsonProperty
-  private String                                dataSource                 = "";
   @JsonProperty
   private boolean                               watched                    = false;
   @JsonProperty
@@ -538,27 +535,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public List<String> getTags() {
     return this.tags;
-  }
-
-  /**
-   * Gets the data source.
-   * 
-   * @return the data source
-   */
-  public String getDataSource() {
-    return dataSource;
-  }
-
-  /**
-   * Sets the data source.
-   * 
-   * @param newValue
-   *          the new data source
-   */
-  public void setDataSource(String newValue) {
-    String oldValue = this.dataSource;
-    this.dataSource = newValue;
-    firePropertyChange(DATA_SOURCE, oldValue, newValue);
   }
 
   /** has movie local (or any mediafile inline) subtitles? */

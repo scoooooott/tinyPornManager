@@ -135,6 +135,7 @@ public class TvShowSettings extends AbstractSettings {
   private MediaLanguages                       nfoLanguage                    = MediaLanguages.en;
   private boolean                              preferPersonalRating           = true;
   private String                               preferredRating                = "tvdb";
+  private boolean                              writeActorImages               = false;
 
   public TvShowSettings() {
     super();
@@ -778,6 +779,16 @@ public class TvShowSettings extends AbstractSettings {
     String oldValue = this.preferredRating;
     this.preferredRating = newValue;
     firePropertyChange("preferredRating", oldValue, newValue);
+  }
+
+  public boolean isWriteActorImages() {
+    return writeActorImages;
+  }
+
+  public void setWriteActorImages(boolean newValue) {
+    boolean oldValue = this.writeActorImages;
+    this.writeActorImages = newValue;
+    firePropertyChange("writeActorImages", oldValue, newValue);
   }
 
   /*****************************************************************

@@ -31,7 +31,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -60,7 +60,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
    * UI elements
    */
   private TmmTable                          tableActors;
-  private ImageLabel                        lblActorImage;
+  private ActorImageLabel                   lblActorImage;
   private JLabel                            lblDirector;
   private JLabel                            lblWriter;
 
@@ -92,9 +92,6 @@ public class TvShowEpisodeCastPanel extends JPanel {
         if (actorEventList.size() > 0) {
           tableActors.getSelectionModel().setSelectionInterval(0, 0);
         }
-        else {
-          lblActorImage.setImageUrl("");
-        }
       }
     };
 
@@ -106,7 +103,10 @@ public class TvShowEpisodeCastPanel extends JPanel {
         int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
         if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
           Person actor = actorEventList.get(selectedRow);
-          lblActorImage.setImageUrl(actor.getThumbUrl());
+          lblActorImage.setActor(selectionModel.getSelectedTvShowEpisode().getTvShow(), actor);
+        }
+        else {
+          lblActorImage.setImageUrl("");
         }
       }
     });
@@ -138,7 +138,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
       add(scrollPaneActors, "cell 1 2 1 2,grow");
     }
     {
-      lblActorImage = new ImageLabel();
+      lblActorImage = new ActorImageLabel();
       add(lblActorImage, "cell 2 2,grow");
     }
   }
