@@ -2161,9 +2161,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
       if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
         return mediaFile.getVideo3DFormat();
       }
-
     }
-    else if (isVideoIn3D()) { // no MI info, but flag set from user
+
+    if (isVideoIn3D()) { // no MI info, but flag set from user
       return "3D";
     }
 
