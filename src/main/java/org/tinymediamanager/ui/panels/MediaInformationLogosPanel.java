@@ -234,23 +234,30 @@ public class MediaInformationLogosPanel extends JPanel {
    * @return the icon or null
    */
   private Icon getAudioChannelsIcon() {
-    int audioChannels = mediaInformationSource.getMediaInfoAudioChannels();
+    String audioChannels = mediaInformationSource.getMediaInfoAudioChannels();
 
     // a) return null if there are no channels
-    if (audioChannels == 0) {
+    if (StringUtils.isBlank(audioChannels)) {
       return null;
+    }
+
+    int audioChannelsInt = 0;
+    try {
+      audioChannelsInt = Integer.parseInt(audioChannels.replace("ch", ""));
+    }
+    catch (NumberFormatException ignored) {
     }
 
     try {
       URL file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/" + audioChannels + ".png");
 
       // stereo?
-      if (audioChannels == 2) {
-        file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/2.0.png");
+      if (audioChannelsInt == 2) {
+        file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/2.0ch.png");
       }
 
-      if (file == null) {
-        String channels = audioChannels - 1 + ".1";
+      if (file == null && audioChannelsInt > 0) {
+        String channels = audioChannelsInt - 1 + ".1ch";
         file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/" + channels + ".png");
       }
 

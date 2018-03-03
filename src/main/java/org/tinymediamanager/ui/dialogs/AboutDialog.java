@@ -65,7 +65,7 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblTinymediamanager, "cell 2 0,alignx center");
     }
     {
-      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2015 by Manuel Laggner"); //$NON-NLS-1$
+      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2018 by Manuel Laggner"); //$NON-NLS-1$
       contentPanel.add(lblByManuel, "cell 2 2,alignx center");
     }
     {

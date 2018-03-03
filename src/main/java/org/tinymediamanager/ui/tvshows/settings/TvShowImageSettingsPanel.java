@@ -27,9 +27,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -78,6 +80,7 @@ public class TvShowImageSettingsPanel extends JPanel {
   private TmmTable                    tableArtworkScraper;
   private JTextPane                   tpArtworkScraperDescription;
   private JPanel                      panelArtworkScraperOptions;
+  private JCheckBox                   cbActorImages;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -151,7 +154,7 @@ public class TvShowImageSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][grow]", "[][200lp][20lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][grow]", "[][200lp][20lp,grow][20lp,shrink 0][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
@@ -183,6 +186,13 @@ public class TvShowImageSettingsPanel extends JPanel {
       panelArtworkScraperOptions = new JPanel();
       panelArtworkScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
       panelScraperDetails.add(panelArtworkScraperOptions, "cell 0 1,growx");
+    }
+    {
+      JSeparator separator = new JSeparator();
+      add(separator, "cell 1 3,growx");
+
+      cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
+      add(cbActorImages, "cell 1 4");
     }
   }
 
@@ -280,5 +290,11 @@ public class TvShowImageSettingsPanel extends JPanel {
     AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableArtworkScraper,
         jTableBeanProperty, tpArtworkScraperDescription, jTextPaneBeanProperty_1);
     autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("writeActorImages");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty, cbActorImages, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
 }

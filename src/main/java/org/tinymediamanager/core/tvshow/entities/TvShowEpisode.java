@@ -66,7 +66,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
-import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
@@ -74,6 +73,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -424,6 +424,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public UUID getTvShowDbId() {
     return tvShowId;
+  }
+
+  @Override
+  public String getDataSource() {
+    return tvShow.getDataSource();
   }
 
   public int getEpisode() {
@@ -1417,19 +1422,14 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
-  public int getMediaInfoAudioChannels() {
+  public String getMediaInfoAudioChannels() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (videos.size() > 0) {
       MediaFile mediaFile = videos.get(0);
-      try {
-        String channels = mediaFile.getAudioChannels().replace("ch", "");
-        return Integer.parseInt(channels);
-      }
-      catch (NumberFormatException ignored) {
-      }
+      return mediaFile.getAudioChannels();
     }
 
-    return 0;
+    return "";
   }
 
   @Override

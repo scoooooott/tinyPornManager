@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.entities;
 
 import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
 import static org.tinymediamanager.core.Constants.DATE_ADDED;
 import static org.tinymediamanager.core.Constants.DATE_ADDED_AS_STRING;
 import static org.tinymediamanager.core.Constants.FANART;
@@ -72,6 +73,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public abstract class MediaEntity extends AbstractModelObject {
   /** The id for the database. */
   protected UUID                       dbId              = UUID.randomUUID();
+
+  @JsonProperty
+  protected String                     dataSource        = "";
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
@@ -192,6 +196,27 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setDbId(UUID id) {
     this.dbId = id;
+  }
+
+  /**
+   * Gets the data source.
+   *
+   * @return the data source
+   */
+  public String getDataSource() {
+    return dataSource;
+  }
+
+  /**
+   * Sets the data source.
+   *
+   * @param newValue
+   *          the new data source
+   */
+  public void setDataSource(String newValue) {
+    String oldValue = this.dataSource;
+    this.dataSource = newValue;
+    firePropertyChange(DATA_SOURCE, oldValue, newValue);
   }
 
   /**

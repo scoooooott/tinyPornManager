@@ -148,7 +148,7 @@ public class ImageLabel extends JLabel {
     this.repaint();
   }
 
-  private void clearImageData() {
+  protected void clearImageData() {
     scaledImage = null;
     originalImageBytes = null;
     originalImageSize = EMPTY_SIZE;

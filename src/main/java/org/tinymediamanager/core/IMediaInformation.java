@@ -81,11 +81,11 @@ public interface IMediaInformation {
   public String getMediaInfoAudioCodec();
 
   /**
-   * gets the count of audio channels (e.g, 6 at 5.1 sound)
+   * gets the audio channels (e.g, 6 at 5.1 sound)
    * 
-   * @return count of audio channels
+   * @return the audio channels with a trailing ch
    */
-  public int getMediaInfoAudioChannels();
+  public String getMediaInfoAudioChannels();
 
   /**
    * gets the container format
