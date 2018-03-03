@@ -1832,8 +1832,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
-  public int getMediaInfoAudioChannels() {
-    return 0;
+  public String getMediaInfoAudioChannels() {
+    return "";
   }
 
   @Override

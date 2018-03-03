@@ -1422,19 +1422,14 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
-  public int getMediaInfoAudioChannels() {
+  public String getMediaInfoAudioChannels() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (videos.size() > 0) {
       MediaFile mediaFile = videos.get(0);
-      try {
-        String channels = mediaFile.getAudioChannels().replace("ch", "");
-        return Integer.parseInt(channels);
-      }
-      catch (NumberFormatException ignored) {
-      }
+      return mediaFile.getAudioChannels();
     }
 
-    return 0;
+    return "";
   }
 
   @Override
