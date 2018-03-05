@@ -197,6 +197,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     addColumn(col);
 
     /*
+     * 3D (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.3d"), "video3d", movie -> getCheckIcon(movie.isVideoIn3D()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.VIDEO_3D);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
      * NFO
      */
     col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", movie -> getCheckIcon(movie.getHasNfoFile()), ImageIcon.class);
