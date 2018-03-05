@@ -20,10 +20,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -152,6 +154,24 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1080p") * 1.2f));
+    addColumn(col);
+
+    /*
+     * audio codec and channels(hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.audio"), "audio", movie -> {
+      List<MediaFile> videos = movie.getMediaFiles(MediaFileType.VIDEO);
+      if (videos.size() > 0) {
+        MediaFile mediaFile = videos.get(0);
+        if (StringUtils.isNotBlank(mediaFile.getAudioCodec())) {
+          return mediaFile.getAudioCodec() + " " + mediaFile.getAudioChannels();
+        }
+      }
+      return "";
+    }, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.AUDIO);
+    col.setMinWidth((int) (fontMetrics.stringWidth("DTS 7ch") * 1.2f));
     addColumn(col);
 
     /*

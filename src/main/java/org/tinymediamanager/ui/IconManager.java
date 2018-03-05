@@ -116,6 +116,7 @@ public class IconManager {
   public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
 
   // font awesome icons - column headers
+  public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
