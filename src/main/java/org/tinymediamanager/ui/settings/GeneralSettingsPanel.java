@@ -22,7 +22,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -33,7 +32,6 @@ import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -51,7 +49,6 @@ public class GeneralSettingsPanel extends JPanel {
   private JComboBox                   cbImageCacheQuality;
   private JCheckBox                   chckbxImageCache;
   private JCheckBox                   chckbxDeleteTrash;
-  private JCheckBox                   chckbxAnalytics;
 
   /**
    * Instantiates a new general settings panel.
@@ -63,7 +60,7 @@ public class GeneralSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][20lp][200lp,grow]", "[][][][10lp][][20lp][][]"));
+    setLayout(new MigLayout("", "[25lp:n][20lp][200lp,grow]", "[][][][10lp][]"));
     {
       final JLabel lblMiscSettingsT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscSettingsT, 1.16667, Font.BOLD);
@@ -81,14 +78,7 @@ public class GeneralSettingsPanel extends JPanel {
 
       chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
       add(chckbxDeleteTrash, "cell 1 4 2 1");
-
-      JTextArea taAnalyticsDescription = new ReadOnlyTextArea();
-      add(taAnalyticsDescription, "flowx,cell 1 6 2 1,growx");
-      taAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
     }
-
-    chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));
-    add(chckbxAnalytics, "cell 1 7 2 1");
   }
 
   protected void initDataBindings() {
@@ -108,10 +98,5 @@ public class GeneralSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, chckbxDeleteTrash, jCheckBoxBeanProperty);
     autoBinding_10.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("enableAnalytics");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_4, chckbxAnalytics, jCheckBoxBeanProperty);
-    autoBinding_4.bind();
   }
 }

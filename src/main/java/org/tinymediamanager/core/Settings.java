@@ -96,7 +96,6 @@ public class Settings extends AbstractSettings {
   private boolean   storeWindowPreferences = true;
 
   private boolean   deleteTrashOnExit      = false;
-  private boolean   enableAnalytics        = false;
 
   private boolean   upnpShareLibrary       = false;
   private boolean   upnpRemotePlay         = false;
@@ -899,16 +898,6 @@ public class Settings extends AbstractSettings {
 
   public boolean isDeleteTrashOnExit() {
     return deleteTrashOnExit;
-  }
-
-  public boolean isEnableAnalytics() {
-    return enableAnalytics;
-  }
-
-  public void setEnableAnalytics(boolean newValue) {
-    boolean oldValue = this.enableAnalytics;
-    this.enableAnalytics = newValue;
-    firePropertyChange("enableAnalytics", oldValue, newValue);
   }
 
   public void setStoreWindowPreferences(boolean newValue) {

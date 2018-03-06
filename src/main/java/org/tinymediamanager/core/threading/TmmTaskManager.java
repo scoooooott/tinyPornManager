@@ -26,7 +26,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
 import org.tinymediamanager.core.threading.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.ui.UTF8Control;
@@ -65,14 +64,6 @@ public class TmmTaskManager implements TmmTaskListener {
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
-
-    // GA session keep-alive every 20 min
-    scheduler.scheduleWithFixedDelay(new Runnable() {
-      @Override
-      public void run() {
-        Utils.trackEvent("ping-pong");
-      }
-    }, 20, 20, TimeUnit.MINUTES);
   }
 
   public static TmmTaskManager getInstance() {
