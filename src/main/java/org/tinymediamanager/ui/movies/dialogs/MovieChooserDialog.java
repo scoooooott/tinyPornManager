@@ -810,35 +810,41 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false);
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_1, taMovieDescription, JTextAreaBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_2, lblMoviePoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
     BeanProperty<JLabel, String> jTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults, jTableBeanProperty,
         lblTagline, jTextAreaBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JLabel, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_3, lblTitle, jTextAreaBeanProperty_1);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_4 = BeanProperty.create("selectedElement.originalTitle");
     AutoBinding<JTable, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_4, lblOriginalTitle, jTextAreaBeanProperty);
+    bindings.add(autoBinding_4);
     autoBinding_4.bind();
   }
 }

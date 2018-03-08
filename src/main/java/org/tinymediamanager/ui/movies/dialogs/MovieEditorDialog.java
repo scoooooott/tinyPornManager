@@ -1953,6 +1953,7 @@ public class MovieEditorDialog extends TmmDialog {
 
   protected void initDataBindings() {
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    bindings.add(jListBinding);
     jListBinding.bind();
     //
     JTableBinding<MovieTrailer, List<MovieTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
@@ -1973,9 +1974,11 @@ public class MovieEditorDialog extends TmmDialog {
     BeanProperty<MovieTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
+    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    bindings.add(jListBinding_1);
     jListBinding_1.bind();
   }
 }
