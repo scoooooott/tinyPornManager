@@ -52,11 +52,13 @@ import com.uwetrottmann.tmdb2.entities.BaseTvShow;
 import com.uwetrottmann.tmdb2.entities.CastMember;
 import com.uwetrottmann.tmdb2.entities.ContentRating;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
+import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.entities.TvShow;
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
+import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
@@ -237,8 +239,23 @@ class TmdbTvShowMetadataProvider {
       tmdbId = options.getTmdbId();
     }
 
+    // imdbId from option
+    String imdbId = options.getImdbId();
+    if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
+      // try to get the tmdb id via imdb id
+      synchronized (api) {
+        try {
+          tmdbId = getTmdbIdFromImdbId(imdbId);
+        }
+        catch (Exception e) {
+          LOGGER.warn("Could not get tmdbid from imdbid: " + e.getMessage());
+        }
+      }
+    }
+
     // no tmdb id, no scrape..
     if (tmdbId == 0) {
+      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
       return md;
     }
 
@@ -397,8 +414,23 @@ class TmdbTvShowMetadataProvider {
       tmdbId = options.getTmdbId();
     }
 
+    // imdbId from option
+    String imdbId = options.getImdbId();
+    if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
+      // try to get the tmdb id via imdb id
+      synchronized (api) {
+        try {
+          tmdbId = getTmdbIdFromImdbId(imdbId);
+        }
+        catch (Exception e) {
+          LOGGER.warn("Could not get tmdbid from imdbid: " + e.getMessage());
+        }
+      }
+    }
+
     // no tmdb id, no scrape..
     if (tmdbId == 0) {
+      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
       return md;
     }
 
@@ -548,6 +580,35 @@ class TmdbTvShowMetadataProvider {
     }
 
     return md;
+  }
+
+  /**
+   * get the tmdbId via the imdbId
+   *
+   * @param imdbId
+   *          the imdbId
+   * @return the tmdbId or 0 if nothing has been found
+   * @throws Exception
+   *           any exception which can be thrown while scraping
+   */
+  int getTmdbIdFromImdbId(String imdbId) throws Exception {
+    try {
+      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
+      if (findResults != null) {
+        if (findResults.tv_results != null && !findResults.tv_results.isEmpty()) {
+          // and now get the full data
+          return findResults.tv_results.get(0).id;
+        }
+        else if (findResults.tv_episode_results != null && !findResults.tv_episode_results.isEmpty()) {
+          return findResults.tv_episode_results.get(0).id;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("failed to get tmdb id: " + e.getMessage());
+    }
+
+    return 0;
   }
 
   /**

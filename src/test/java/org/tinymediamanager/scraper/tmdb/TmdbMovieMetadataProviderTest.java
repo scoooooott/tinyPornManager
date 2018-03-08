@@ -1,6 +1,12 @@
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb2.entities.Movie;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
+
+import java.util.List;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -9,14 +15,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-
-import java.util.List;
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 /**
  * @author Nikolas Mavropoylos
@@ -41,8 +39,6 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
 
     assertNotNull(md.getCastMembers(MediaCastMember.CastType.ACTOR));
     assertEquals(65, md.getCastMembers(MediaCastMember.CastType.ACTOR).size());
-
-
   }
 
   @Test
