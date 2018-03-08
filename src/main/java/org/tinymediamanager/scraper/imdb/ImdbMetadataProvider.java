@@ -43,18 +43,16 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  */
 @PluginImplementation
 public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
-  private static final Logger    LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  private static final Logger    LOGGER                = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
-  static final MediaProviderInfo providerInfo  = createMediaProviderInfo();
+  public static final String     USE_TMDB_FOR_MOVIES   = "useTmdbForMovies";
+  public static final String     USE_TMDB_FOR_TV_SHOWS = "useTmdbForTvShows";
 
-  static final ExecutorService   executor      = Executors.newFixedThreadPool(4);
+  static final MediaProviderInfo providerInfo          = createMediaProviderInfo();
+  static final ExecutorService   executor              = Executors.newFixedThreadPool(4);
 
-  public static final String     CAT_ALL       = "&s=all";
-  public static final String     CAT_TITLE     = "&s=tt";
-  public static final String     CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
-  public static final String     CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
-  public static final String     CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
-  public static final String     CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
+  public static final String     CAT_TITLE             = "&s=tt";
+  public static final String     CAT_TV                = "&s=tt&ttype=tv&ref_=fn_tv";
 
   private ImdbSiteDefinition     imdbSite;
 
@@ -63,7 +61,8 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
 
     // configure/load settings
     providerInfo.getConfig().addBoolean("filterUnwantedCategories", true);
-    providerInfo.getConfig().addBoolean("useTmdb", false);
+    providerInfo.getConfig().addBoolean(USE_TMDB_FOR_MOVIES, false);
+    providerInfo.getConfig().addBoolean(USE_TMDB_FOR_TV_SHOWS, false);
     providerInfo.getConfig().addBoolean("scrapeCollectionInfo", false);
     providerInfo.getConfig().addBoolean("localReleaseDate", true);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);

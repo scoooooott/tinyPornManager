@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.USE_TMDB_FOR_MOVIES;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
@@ -51,10 +53,8 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -83,6 +83,33 @@ public abstract class ImdbParser {
   abstract protected MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   abstract protected String getSearchCategory();
+
+  /**
+   * scrape tmdb for movies too?
+   * 
+   * @return true/false
+   */
+  protected boolean isUseTmdbForMovies() {
+    return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool(USE_TMDB_FOR_MOVIES);
+  }
+
+  /**
+   * scrape tmdb for tv shows too?
+   * 
+   * @return true/false
+   */
+  protected boolean isUseTmdbForTvShows() {
+    return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool(USE_TMDB_FOR_TV_SHOWS);
+  }
+
+  /**
+   * should we scrape also the collection info
+   * 
+   * @return true/false
+   */
+  protected boolean isScrapeCollectionInfo() {
+    return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo");
+  }
 
   /**
    * do the search according to the type
@@ -344,10 +371,16 @@ public abstract class ImdbParser {
     return result;
   }
 
-  protected/*
-            * generates the accept-language http header for imdb
-            */
-  static String getAcceptLanguage(String language, String country) {
+  /**
+   * generates the accept-language http header for imdb
+   * 
+   * @param language
+   *          the language code to be used
+   * @param country
+   *          the country to be used
+   * @return the Accept-Language string
+   */
+  protected static String getAcceptLanguage(String language, String country) {
     List<String> languageString = new ArrayList<>();
 
     // first: take the preferred language from settings,
@@ -409,7 +442,7 @@ public abstract class ImdbParser {
     return languages.toString().toLowerCase(Locale.ROOT);
   }
 
-  protected MediaMetadata parseReferencePage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  protected void parseReferencePage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     /*
      * title and year have the following structure
      * 
@@ -534,7 +567,7 @@ public abstract class ImdbParser {
       String elementText = element.ownText();
 
       if (elementText.equals("Taglines")) {
-        if (!ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
+        if (!isUseTmdbForMovies()) {
           Element taglineElement = element.nextElementSibling();
           if (taglineElement != null) {
             String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
@@ -787,11 +820,9 @@ public abstract class ImdbParser {
         md.addProductionCompany(prodComp);
       }
     }
-
-    return md;
   }
 
-  protected MediaMetadata parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  protected void parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     // imdb.com has another site structure
     if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
 
@@ -843,8 +874,6 @@ public abstract class ImdbParser {
         md.setPlot(plot);
       }
     }
-
-    return md;
   }
 
   protected MediaCastMember parseCastMember(Element row) {
@@ -967,44 +996,6 @@ public abstract class ImdbParser {
         getLogger().debug("tried to fetch imdb page " + url, e);
       }
       return doc;
-    }
-  }
-
-  static class TmdbWorker implements Callable<MediaMetadata> {
-    private String      imdbId;
-    private Locale      language;
-    private CountryCode certificationCountry;
-
-    public TmdbWorker(String imdbId, Locale language, CountryCode certificationCountry) {
-      this.imdbId = imdbId;
-      this.language = language;
-      this.certificationCountry = certificationCountry;
-    }
-
-    @Override
-    public MediaMetadata call() throws Exception {
-      try {
-        IMovieMetadataProvider tmdb = null;
-        List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
-        for (IMovieMetadataProvider provider : providers) {
-          if ("tmdb".equals(provider.getProviderInfo().getId())) {
-            tmdb = provider;
-            break;
-          }
-        }
-        if (tmdb == null) {
-          return null;
-        }
-
-        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-        options.setLanguage(language);
-        options.setCountry(certificationCountry);
-        options.setImdbId(imdbId);
-        return tmdb.getMetadata(options);
-      }
-      catch (Exception e) {
-        return null;
-      }
     }
   }
 }

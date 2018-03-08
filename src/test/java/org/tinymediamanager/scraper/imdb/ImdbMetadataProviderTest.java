@@ -28,6 +28,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.PluginManager;
 
 public class ImdbMetadataProviderTest {
 
@@ -233,6 +234,39 @@ public class ImdbMetadataProviderTest {
   }
 
   @Test
+  public void testTvShowScrapeWithTmdb() {
+    ImdbMetadataProvider mp = null;
+    MediaScrapeOptions options = null;
+    MediaMetadata md = null;
+
+    PluginManager.getInstance().loadClasspathPlugins();
+
+    /*
+     * test on akas.imdb.com - Psych (tt0491738)
+     */
+    try {
+      mp = new ImdbMetadataProvider();
+      mp.getProviderInfo().getConfig().setValue(ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS, Boolean.TRUE);
+      options = new MediaScrapeOptions(MediaType.TV_SHOW);
+      options.setImdbId("tt0491738");
+      options.setCountry(CountryCode.US);
+      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      md = mp.getMetadata(options);
+
+      // did we get metadata?
+      assertNotNull("MediaMetadata", md);
+
+      assertEquals("Psych", md.getTitle());
+      assertThat(md.getIds().size()).isGreaterThan(1);
+      assertThat(md.getPlot()).startsWith("Shawn Spencer ist selbsternannter Detektiv");
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+
+  @Test
   public void testEpisodeScrape() {
     ImdbMetadataProvider mp = null;
     MediaScrapeOptions options = null;
@@ -293,6 +327,54 @@ public class ImdbMetadataProviderTest {
       assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.", md.getPlot());
       assertEquals("23 January 2009", sdf.format(md.getReleaseDate()));
 
+      assertThat(md.getRatings().size()).isEqualTo(1);
+      MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getMaxValue()).isEqualTo(10);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+
+  @Test
+  public void testEpisodeScrapeWithTmdb() {
+    ImdbMetadataProvider mp = null;
+    MediaScrapeOptions options = null;
+    MediaMetadata md = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+
+    PluginManager.getInstance().loadClasspathPlugins();
+
+    /*
+     * test on akas.imdb.com - Psych (tt0491738)
+     */
+    // S1E1
+    try {
+      mp = new ImdbMetadataProvider();
+      options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      mp.getProviderInfo().getConfig().setValue(ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS, Boolean.TRUE);
+      options.setImdbId("tt0491738");
+      options.setCountry(CountryCode.US);
+      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setId(MediaMetadata.SEASON_NR, "1");
+      options.setId(MediaMetadata.EPISODE_NR, "1");
+      md = mp.getMetadata(options);
+
+      // did we get metadata?
+      assertNotNull("MediaMetadata", md);
+
+      assertEquals("Mit einer Ausrede fängt es an", md.getTitle());
+      assertThat(md.getPlot()).startsWith("Shawn Spencer besitzt eine besondere Gabe: ");
+      assertEquals("30 October 2007", sdf.format(md.getReleaseDate()));
+      assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
+      assertEquals(1, md.getCastMembers(CastType.DIRECTOR).size());
+      assertEquals("Michael Engler", md.getCastMembers(CastType.DIRECTOR).get(0).getName());
+      assertEquals(1, md.getCastMembers(CastType.WRITER).size());
+      assertEquals("Steve Franks", md.getCastMembers(CastType.WRITER).get(0).getName());
+      assertThat(md.getIds().size()).isGreaterThan(1);
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);
       assertThat(mediaRating.getRating()).isGreaterThan(0);
@@ -543,8 +625,7 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93,
-          "Mark Andrews, Brenda Chapman, Steve Purcell",
-          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
+          "Mark Andrews, Brenda Chapman, Steve Purcell", "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
     }
     catch (Exception e) {
       e.printStackTrace();

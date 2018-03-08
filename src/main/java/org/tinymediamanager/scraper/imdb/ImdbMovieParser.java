@@ -21,6 +21,9 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
@@ -35,8 +38,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.PluginManager;
 
 /**
  * The class ImdbMovieParser is used to parse the movie sites at imdb.com
@@ -49,7 +55,7 @@ public class ImdbMovieParser extends ImdbParser {
 
   private ImdbSiteDefinition   imdbSite;
 
-  public ImdbMovieParser(ImdbSiteDefinition imdbSite) {
+  ImdbMovieParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.MOVIE);
     this.imdbSite = imdbSite;
   }
@@ -134,9 +140,8 @@ public class ImdbMovieParser extends ImdbParser {
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
-    if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
-        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo")) {
-      Callable<MediaMetadata> worker2 = new TmdbWorker(imdbId, options.getLanguage(), options.getCountry());
+    if (isUseTmdbForMovies() || isScrapeCollectionInfo()) {
+      Callable<MediaMetadata> worker2 = new TmdbMovieWorker(imdbId, options.getLanguage(), options.getCountry());
       futureTmdb = compSvcTmdb.submit(worker2);
     }
 
@@ -182,40 +187,42 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // get data from tmdb?
-    if (futureTmdb != null && (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
-        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
+    if (futureTmdb != null && (isUseTmdbForMovies() || isScrapeCollectionInfo())) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
-        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null) {
-          // tmdbid
-          md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
-          // title
-          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
-            md.setTitle(tmdbMd.getTitle());
+        if (tmdbMd != null) {
+          // provide all IDs
+          for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
+            md.setId(entry.getKey(), entry.getValue());
           }
-          // original title
-          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
-            md.setOriginalTitle(tmdbMd.getOriginalTitle());
+
+          if (isUseTmdbForMovies()) {
+            // title
+            if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+              md.setTitle(tmdbMd.getTitle());
+            }
+            // original title
+            if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+              md.setOriginalTitle(tmdbMd.getOriginalTitle());
+            }
+            // tagline
+            if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+              md.setTagline(tmdbMd.getTagline());
+            }
+            // plot
+            if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+              md.setPlot(tmdbMd.getPlot());
+            }
+            // collection info
+            if (StringUtils.isNotBlank(tmdbMd.getCollectionName())) {
+              md.setCollectionName(tmdbMd.getCollectionName());
+            }
           }
-          // tagline
-          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
-            md.setTagline(tmdbMd.getTagline());
-          }
-          // plot
-          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
-            md.setPlot(tmdbMd.getPlot());
-          }
-          // collection info
-          if (StringUtils.isNotBlank(tmdbMd.getCollectionName())) {
+
+          if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo")) {
             md.setCollectionName(tmdbMd.getCollectionName());
-            md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
           }
         }
-        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo") && tmdbMd != null) {
-          md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
-          md.setCollectionName(tmdbMd.getCollectionName());
-        }
-        md.setId(tmdbMd.getProviderId(), tmdbMd.getId(tmdbMd.getProviderId()));
       }
       catch (Exception ignored) {
       }
@@ -232,7 +239,7 @@ public class ImdbMovieParser extends ImdbParser {
     return md;
   }
 
-  private MediaMetadata parseReleaseinfoPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  private void parseReleaseinfoPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
     Date releaseDate = null;
     Pattern pattern = Pattern.compile("/calendar/\\?region=(.{2})");
 
@@ -266,7 +273,43 @@ public class ImdbMovieParser extends ImdbParser {
     if (releaseDate != null) {
       md.setReleaseDate(releaseDate);
     }
+  }
 
-    return md;
+  private static class TmdbMovieWorker implements Callable<MediaMetadata> {
+    private String      imdbId;
+    private Locale      language;
+    private CountryCode certificationCountry;
+
+    public TmdbMovieWorker(String imdbId, Locale language, CountryCode certificationCountry) {
+      this.imdbId = imdbId;
+      this.language = language;
+      this.certificationCountry = certificationCountry;
+    }
+
+    @Override
+    public MediaMetadata call() throws Exception {
+      try {
+        IMovieMetadataProvider tmdb = null;
+        List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
+        for (IMovieMetadataProvider provider : providers) {
+          if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
+            tmdb = provider;
+            break;
+          }
+        }
+        if (tmdb == null) {
+          return null;
+        }
+
+        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+        options.setLanguage(language);
+        options.setCountry(certificationCountry);
+        options.setImdbId(imdbId);
+        return tmdb.getMetadata(options);
+      }
+      catch (Exception e) {
+        return null;
+      }
+    }
   }
 }

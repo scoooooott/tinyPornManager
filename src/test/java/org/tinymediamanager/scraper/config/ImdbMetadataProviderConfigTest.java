@@ -26,7 +26,8 @@ public class ImdbMetadataProviderConfigTest {
   public void testConfig() {
     ImdbMetadataProvider mp = new ImdbMetadataProvider();
 
-    mp.getProviderInfo().getConfig().setValue("useTmdb", true);
+    mp.getProviderInfo().getConfig().setValue(ImdbMetadataProvider.USE_TMDB_FOR_MOVIES, true);
+    mp.getProviderInfo().getConfig().setValue(ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS, false);
     mp.getProviderInfo().getConfig().setValue("scrapeCollectionInfo", true);
     mp.getProviderInfo().getConfig().setValue("filterUnwantedCategories", false);
     mp.getProviderInfo().getConfig().saveToDir("target");
@@ -34,7 +35,8 @@ public class ImdbMetadataProviderConfigTest {
     mp = new ImdbMetadataProvider();
     // force loading from target
     mp.getProviderInfo().getConfig().loadFromDir("target");
-    Assert.assertTrue(mp.getProviderInfo().getConfig().getValueAsBool("useTmdb"));
+    Assert.assertTrue(mp.getProviderInfo().getConfig().getValueAsBool(ImdbMetadataProvider.USE_TMDB_FOR_MOVIES));
+    Assert.assertFalse(mp.getProviderInfo().getConfig().getValueAsBool(ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS));
     Assert.assertTrue(mp.getProviderInfo().getConfig().getValueAsBool("scrapeCollectionInfo"));
     Assert.assertFalse(mp.getProviderInfo().getConfig().getValueAsBool("filterUnwantedCategories"));
   }

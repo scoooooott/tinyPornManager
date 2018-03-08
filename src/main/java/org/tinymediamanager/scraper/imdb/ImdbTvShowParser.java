@@ -16,10 +16,16 @@
 package org.tinymediamanager.scraper.imdb;
 
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,13 +38,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.PluginManager;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
@@ -51,7 +60,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
   private ImdbSiteDefinition   imdbSite;
 
-  public ImdbTvShowParser(ImdbSiteDefinition imdbSite) {
+  ImdbTvShowParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.TV_SHOW);
     this.imdbSite = imdbSite;
   }
@@ -101,6 +110,7 @@ public class ImdbTvShowParser extends ImdbParser {
    *          the scrape options
    * @return the MediaMetadata
    * @throws Exception
+   *           any exception occurred
    */
   MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
@@ -123,6 +133,14 @@ public class ImdbTvShowParser extends ImdbParser {
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
 
+    // worker for tmdb request
+    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
+    Future<MediaMetadata> futureTmdb = null;
+    if (isUseTmdbForTvShows()) {
+      Callable<MediaMetadata> worker2 = new TmdbTvShowWorker(imdbId, options.getLanguage(), options.getCountry());
+      futureTmdb = compSvcTmdb.submit(worker2);
+    }
+
     // get reference data
     CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/reference");
     url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
@@ -139,6 +157,37 @@ public class ImdbTvShowParser extends ImdbParser {
     // populate id
     md.setId(ImdbMetadataProvider.providerInfo.getId(), imdbId);
 
+    // get data from tmdb?
+    if (futureTmdb != null) {
+      try {
+        MediaMetadata tmdbMd = futureTmdb.get();
+        if (tmdbMd != null) {
+          // provide all IDs
+          for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
+            md.setId(entry.getKey(), entry.getValue());
+          }
+          // title
+          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+            md.setTitle(tmdbMd.getTitle());
+          }
+          // original title
+          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+            md.setOriginalTitle(tmdbMd.getOriginalTitle());
+          }
+          // tagline
+          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+            md.setTagline(tmdbMd.getTagline());
+          }
+          // plot
+          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+            md.setPlot(tmdbMd.getPlot());
+          }
+        }
+      }
+      catch (Exception ignored) {
+      }
+    }
+
     return md;
   }
 
@@ -149,6 +198,7 @@ public class ImdbTvShowParser extends ImdbParser {
    *          the scrape options
    * @return the MediaMetaData
    * @throws Exception
+   *           any exception occurred
    */
   MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
@@ -181,6 +231,14 @@ public class ImdbTvShowParser extends ImdbParser {
     // we did not find the episode; return
     if (wantedEpisode == null) {
       return md;
+    }
+
+    // worker for tmdb request
+    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
+    Future<MediaMetadata> futureTmdb = null;
+    if (isUseTmdbForTvShows()) {
+      Callable<MediaMetadata> worker2 = new TmdbTvShowWorker(imdbId, seasonNr, episodeNr, options.getLanguage(), options.getCountry());
+      futureTmdb = compSvcTmdb.submit(worker2);
     }
 
     md.setId(providerInfo.getId(), wantedEpisode.getId(providerInfo.getId()));
@@ -258,6 +316,37 @@ public class ImdbTvShowParser extends ImdbParser {
             md.addCastMember(cm);
           }
         }
+      }
+    }
+
+    // get data from tmdb?
+    if (futureTmdb != null) {
+      try {
+        MediaMetadata tmdbMd = futureTmdb.get();
+        if (tmdbMd != null) {
+          // provide all IDs
+          for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
+            md.setId(entry.getKey(), entry.getValue());
+          }
+          // title
+          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+            md.setTitle(tmdbMd.getTitle());
+          }
+          // original title
+          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+            md.setOriginalTitle(tmdbMd.getOriginalTitle());
+          }
+          // tagline
+          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+            md.setTagline(tmdbMd.getTagline());
+          }
+          // plot
+          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+            md.setPlot(tmdbMd.getPlot());
+          }
+        }
+      }
+      catch (Exception ignored) {
       }
     }
 
@@ -418,5 +507,58 @@ public class ImdbTvShowParser extends ImdbParser {
       }
     }
     return true;
+  }
+
+  private static class TmdbTvShowWorker implements Callable<MediaMetadata> {
+    private String      imdbId;
+    private Locale      language;
+    private CountryCode certificationCountry;
+    private int         season  = -1;
+    private int         episode = -1;
+    private MediaType   mediaType;
+
+    public TmdbTvShowWorker(String imdbId, Locale language, CountryCode certificationCountry) {
+      this.imdbId = imdbId;
+      this.language = language;
+      this.certificationCountry = certificationCountry;
+      this.mediaType = MediaType.TV_SHOW;
+    }
+
+    public TmdbTvShowWorker(String imdbId, int season, int episode, Locale language, CountryCode certificationCountry) {
+      this.imdbId = imdbId;
+      this.season = season;
+      this.episode = episode;
+      this.language = language;
+      this.certificationCountry = certificationCountry;
+      this.mediaType = MediaType.TV_EPISODE;
+    }
+
+    @Override
+    public MediaMetadata call() throws Exception {
+      try {
+        IMovieMetadataProvider tmdb = null;
+        List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
+        for (IMovieMetadataProvider provider : providers) {
+          if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
+            tmdb = provider;
+            break;
+          }
+        }
+        if (tmdb == null) {
+          return null;
+        }
+
+        MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
+        options.setLanguage(language);
+        options.setCountry(certificationCountry);
+        options.setImdbId(imdbId);
+        options.setId(MediaMetadata.SEASON_NR, String.valueOf(season));
+        options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode));
+        return tmdb.getMetadata(options);
+      }
+      catch (Exception e) {
+        return null;
+      }
+    }
   }
 }
