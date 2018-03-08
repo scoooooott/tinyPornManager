@@ -41,7 +41,7 @@ public class MediaProviderConfigTest {
 
     // define defaults
     mpi.getConfig().addBoolean("filterUnwantedCategories", false);
-    mpi.getConfig().addBoolean("useTmdb", false);
+    mpi.getConfig().addBoolean("useTmdbForMovies", false);
     mpi.getConfig().addBoolean("scrapeCollectionInfo", true);
     mpi.getConfig().addBoolean("someBool", true);
     mpi.getConfig().addText("someInput", "none");
@@ -52,7 +52,7 @@ public class MediaProviderConfigTest {
 
     // check default settings
     assertEqual(false, mpi.getConfig().getValueAsBool("filterUnwantedCategories"));
-    assertEqual(false, mpi.getConfig().getValueAsBool("useTmdb"));
+    assertEqual(false, mpi.getConfig().getValueAsBool("useTmdbForMovies"));
     assertEqual(true, mpi.getConfig().getValueAsBool("scrapeCollectionInfo"));
     assertEqual("dd", mpi.getConfig().getValue("language"));
     assertEqual("5", mpi.getConfig().getValue("languageInt"));
@@ -75,7 +75,7 @@ public class MediaProviderConfigTest {
     assertEqual("5", mpi.getConfig().getValue("languageInt")); // value not in rage, should stay at last known
 
     assertEqual(null, mpi.getConfig().getValueAsBool("languageInt")); // not a bool value
-    assertEqual(true, mpi.getConfig().getValueAsBool("useTmdb"));
+    assertEqual(true, mpi.getConfig().getValueAsBool("useTmdbForMovies"));
     assertEqual("This is some encrypted text", mpi.getConfig().getValue("encrypted"));
 
     System.out.println("--- current settings ---");
