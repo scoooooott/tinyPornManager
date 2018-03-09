@@ -157,6 +157,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     }
     // @formatter:off
     else if (genre.equals("Action"))         { g = MediaGenres.ACTION; }
+    else if (genre.equals("Adult"))          { g = MediaGenres.EROTIC; }
     else if (genre.equals("Adventure"))      { g = MediaGenres.ADVENTURE; }
     else if (genre.equals("Animation"))      { g = MediaGenres.ANIMATION; }
     else if (genre.equals("Biography"))      { g = MediaGenres.BIOGRAPHY; }
@@ -177,6 +178,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     else if (genre.equals("Reality-TV"))     { g = MediaGenres.REALITY_TV; }
     else if (genre.equals("Romance"))        { g = MediaGenres.ROMANCE; }
     else if (genre.equals("Sci-Fi"))         { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Short"))          { g = MediaGenres.SHORT; }
     else if (genre.equals("Sport"))          { g = MediaGenres.SPORT; }
     else if (genre.equals("Talk-Show"))      { g = MediaGenres.TALK_SHOW; }
     else if (genre.equals("Thriller"))       { g = MediaGenres.THRILLER; }
