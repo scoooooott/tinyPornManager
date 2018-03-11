@@ -80,6 +80,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -255,9 +256,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(new JSeparator(), "cell 0 1,growx");
     }
     {
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
-      splitPane.setContinuousLayout(true);
       contentPanel.add(splitPane, "cell 0 2,grow");
       {
         JPanel panelSearchResults = new JPanel();
@@ -267,7 +267,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           {
             JScrollPane scrollPane = new JScrollPane();
             panelSearchResults.add(scrollPane, "cell 0 0,grow");
-            tableSearchResults = new JTable();
+            tableSearchResults = new TmmTable();
             scrollPane.setViewportView(tableSearchResults);
             tableSearchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             tableSearchResults.setBorder(new LineBorder(new Color(0, 0, 0)));

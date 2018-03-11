@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.plaf.light;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+package org.tinymediamanager.ui.components;
 
-import javax.swing.JComponent;
-import javax.swing.plaf.ComponentUI;
+import javax.swing.JSplitPane;
 
-import com.jtattoo.plaf.BaseRadioButtonUI;
+/**
+ * a JSplitPane with default opaque = true and continuousLayout = true
+ * 
+ * @author Manuel Laggner
+ */
+public class TmmSplitPane extends JSplitPane {
 
-public class TmmLightRadioButtonUI extends BaseRadioButtonUI {
-  private static TmmLightRadioButtonUI radioButtonUI = null;
-
-  public static ComponentUI createUI(JComponent c) {
-    if (radioButtonUI == null) {
-      radioButtonUI = new TmmLightRadioButtonUI();
-    }
-    return radioButtonUI;
-  }
-
-  @Override
-  protected void paintFocus(Graphics g, Rectangle t, Dimension d) {
-
+  public TmmSplitPane() {
+    super();
+    setOpaque(true);
+    setContinuousLayout(true);
   }
 }

@@ -90,6 +90,7 @@ public class Settings extends AbstractSettings {
   private String    language;
   private String    mediaPlayer            = "";
 
+  private String    theme                  = "Light";
   private int       fontSize               = 12;
   private String    fontFamily             = "Dialog";
 
@@ -868,6 +869,16 @@ public class Settings extends AbstractSettings {
 
   public String getMediaPlayer() {
     return mediaPlayer;
+  }
+
+  public String getTheme() {
+    return theme;
+  }
+
+  public void setTheme(String newValue) {
+    String oldValue = this.fontFamily;
+    this.theme = newValue;
+    firePropertyChange("theme", oldValue, newValue);
   }
 
   public void setFontSize(int newValue) {

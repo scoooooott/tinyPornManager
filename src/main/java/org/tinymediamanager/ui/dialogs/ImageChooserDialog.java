@@ -77,6 +77,7 @@ import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.WrapLayout;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -462,15 +463,13 @@ public class ImageChooserDialog extends TmmDialog {
     gbc.anchor = GridBagConstraints.LAST_LINE_START;
     gbc.gridwidth = 3;
     gbc.insets = new Insets(0, 0, 0, 0);
-    JButton btnShowImage = new JButton("<html><font color=\"#0000CF\"><u>" + BUNDLE.getString("image.showoriginal") + "</u></font></html>");
-    btnShowImage.setBorderPainted(false);
-    btnShowImage.setFocusPainted(false);
-    btnShowImage.setContentAreaFilled(false);
-    btnShowImage.addActionListener(e -> {
+
+    LinkLabel lblShowImage = new LinkLabel(BUNDLE.getString("image.showoriginal"));
+    lblShowImage.addActionListener(e -> {
       ImagePreviewDialog dialog = new ImagePreviewDialog(artwork.getDefaultUrl());
       dialog.setVisible(true);
     });
-    imagePanel.add(btnShowImage, gbc);
+    imagePanel.add(lblShowImage, gbc);
 
     panelImages.add(imagePanel);
     panelImages.validate();

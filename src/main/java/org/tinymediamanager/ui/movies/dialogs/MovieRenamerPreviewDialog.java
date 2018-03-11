@@ -44,6 +44,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieComparator;
@@ -90,8 +91,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[600lp,grow]"));
       {
-        JSplitPane splitPane = new JSplitPane();
-        splitPane.setContinuousLayout(true);
+        JSplitPane splitPane = new TmmSplitPane();
         splitPane.setResizeWeight(0.4);
         panelContent.add(splitPane, "cell 0 0,grow");
         {

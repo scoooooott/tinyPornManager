@@ -65,6 +65,8 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.TmmSplitPane;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
@@ -128,8 +130,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[500,grow]"));
 
-      JSplitPane splitPane = new JSplitPane();
-      splitPane.setContinuousLayout(true);
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
       panelContent.add(splitPane, "cell 0 0,grow");
       {
@@ -139,7 +140,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         panelResults.add(panelSearchResults, "cell 0 0,grow");
         splitPane.setLeftComponent(panelResults);
         {
-          tableMovieSets = new JTable();
+          tableMovieSets = new TmmTable();
           panelSearchResults.setViewportView(tableMovieSets);
           tableMovieSets.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
           tableMovieSets.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -200,7 +201,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           JScrollPane scrollPane = new JScrollPane();
           panelSearchDetail.add(scrollPane, "cell 0 2 2 1,grow");
 
-          tableMovies = new JTable();
+          tableMovies = new TmmTable();
           scrollPane.setViewportView(tableMovies);
         }
         {

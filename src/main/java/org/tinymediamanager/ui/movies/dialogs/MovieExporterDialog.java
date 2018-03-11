@@ -51,6 +51,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -89,7 +90,7 @@ public class MovieExporterDialog extends TmmDialog {
       getContentPane().add(panelContent);
       panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[300lp,grow][]"));
 
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.7);
       panelContent.add(splitPane, "cell 0 0,grow");
 

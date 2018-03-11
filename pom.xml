@@ -32,13 +32,9 @@
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <!-- own patched artifacts -->
-            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
-                -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
-                -DartifactId=JTattoo -Dversion=1.6.12.1 -->
             <groupId>org.tinymediamanager</groupId>
-            <artifactId>JTattoo</artifactId>
-            <version>1.6.12.1</version>
+            <artifactId>tinyMediaManager-LaF</artifactId>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
 
         <!-- our plugins - all provided for dependency resolution -->

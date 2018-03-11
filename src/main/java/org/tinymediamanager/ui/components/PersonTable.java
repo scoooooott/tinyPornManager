@@ -137,7 +137,7 @@ public class PersonTable extends TmmTable {
       if (edit) {
         col = new Column(BUNDLE.getString("Button.edit"), "edit", person -> IconManager.EDIT, ImageIcon.class);
         col.setColumnResizeable(false);
-        col.setHeaderIcon(IconManager.EDIT);
+        col.setHeaderIcon(IconManager.EDIT_HEADER);
         addColumn(col);
       }
     }

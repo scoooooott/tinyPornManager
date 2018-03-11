@@ -30,6 +30,8 @@ import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.tinymediamanager.ui.UIConstants;
+
 /**
  * The class DayPanel is used to display a panel for day choosing
  * 
@@ -67,7 +69,7 @@ class DayPanel extends JPanel implements ActionListener {
     dayPanel.setLayout(new GridLayout(7, 7));
 
     sundayForeground = new Color(164, 0, 0);
-    weekdayForeground = new Color(0, 90, 164);
+    weekdayForeground = UIConstants.LINK_COLOR;
     decorationBackgroundColor = new Color(210, 228, 238);
     selectedColor = new Color(160, 160, 160);
     transparentBackgroundColor = new Color(255, 255, 255, 0);

@@ -15,12 +15,6 @@
  */
 package org.tinymediamanager.ui.components.tree;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,8 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JTree;
-import javax.swing.border.AbstractBorder;
-import javax.swing.plaf.UIResource;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
@@ -223,30 +215,6 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
       }
 
       elements.remove(element);
-    }
-  }
-
-  /*
-   * helper classes
-   */
-  public static class BottomBorderBorder extends AbstractBorder implements UIResource {
-    private static final long  serialVersionUID = -1431631265848685069L;
-    public static final Color  COLOR            = new Color(211, 211, 211);
-    private static final Color COLOR2           = new Color(248, 248, 248);
-
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-      Graphics2D g2d = (Graphics2D) g;
-
-      g.setColor(COLOR);
-      g.drawLine(g.getClipBounds().x, height - 2, g.getClipBounds().width, height - 2);
-      g.setColor(COLOR2);
-
-      Composite savedComposite = g2d.getComposite();
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-      g.drawLine(g.getClipBounds().x, height - 1, g.getClipBounds().width, height - 1);
-
-      g2d.setComposite(savedComposite);
     }
   }
 }

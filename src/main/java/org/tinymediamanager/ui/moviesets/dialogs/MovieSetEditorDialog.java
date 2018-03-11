@@ -63,6 +63,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -190,7 +191,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       JScrollPane scrollPaneMovies = new JScrollPane();
       panelContent.add(scrollPaneMovies, "cell 1 4,grow");
 
-      tableMovies = new JTable();
+      tableMovies = new TmmTable();
       scrollPaneMovies.setViewportView(tableMovies);
 
       lblFanart = new ImageLabel();

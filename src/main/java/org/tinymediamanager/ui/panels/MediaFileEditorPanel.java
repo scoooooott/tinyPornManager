@@ -68,6 +68,7 @@ import org.tinymediamanager.ui.IntegerInputVerifier;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import net.miginfocom.swing.MigLayout;
@@ -125,7 +126,7 @@ public class MediaFileEditorPanel extends JPanel {
 
     setLayout(new MigLayout("", "[300lp:450lp,grow]", "[200lp:450lp,grow]"));
     {
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       add(splitPane, "cell 0 0,grow");
       {
         JPanel panelMediaFiles = new JPanel();

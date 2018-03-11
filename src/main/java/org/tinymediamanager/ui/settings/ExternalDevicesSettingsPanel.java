@@ -47,6 +47,7 @@ import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -130,7 +131,7 @@ public class ExternalDevicesSettingsPanel extends JPanel {
       JScrollPane spWolDevices = new JScrollPane();
       add(spWolDevices, "cell 1 1 2 1,grow");
 
-      tableWolDevices = new JTable();
+      tableWolDevices = new TmmTable();
       spWolDevices.setViewportView(tableWolDevices);
 
       btnAddWolDevice = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$

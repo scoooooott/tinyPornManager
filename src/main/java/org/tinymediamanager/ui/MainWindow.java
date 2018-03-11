@@ -55,6 +55,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.toolbar.ToolbarPanel;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.images.LogoCircle;
@@ -207,19 +208,7 @@ public class MainWindow extends JFrame {
     JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI());
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
-    JSplitPane splitPane = new JSplitPane() {
-      private static final long serialVersionUID = 9041548865608767661L;
-
-      @Override
-      public void updateUI() {
-        // putClientProperty("class", "rootPanel");
-        // putClientProperty("flatMode", Boolean.TRUE);
-
-        super.updateUI();
-      }
-    };
-    splitPane.setContinuousLayout(true);
-    splitPane.setOpaque(false);
+    JSplitPane splitPane = new TmmSplitPane();
     rootPanel.add(splitPane, "cell 0 0, grow");
 
     tabbedPane = new MainTabbedPane() {
