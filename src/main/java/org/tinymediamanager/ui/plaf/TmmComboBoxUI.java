@@ -35,8 +35,6 @@ import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseComboBoxUI;
 import com.jtattoo.plaf.NoFocusButton;
 
-import sun.swing.DefaultLookup;
-
 /**
  * @author Manuel Laggner
  * 
@@ -116,10 +114,12 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
   @Override
   public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
     Color t = g.getColor();
-    if (comboBox.isEnabled())
-      g.setColor(DefaultLookup.getColor(comboBox, this, "ComboBox.background", null));
-    else
-      g.setColor(DefaultLookup.getColor(comboBox, this, "ComboBox.disabledBackground", null));
+    if (comboBox.isEnabled()) {
+      g.setColor(UIManager.getColor("ComboBox.background", comboBox.getLocale()));
+    }
+    else {
+      g.setColor(UIManager.getColor("ComboBox.disabledBackground", comboBox.getLocale()));
+    }
     g.fillRect(0, 0, comboBox.getWidth(), comboBox.getHeight());
     g.setColor(t);
   }
