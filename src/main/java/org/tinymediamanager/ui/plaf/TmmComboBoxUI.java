@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.plaf;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,6 +34,8 @@ import javax.swing.plaf.ComponentUI;
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseComboBoxUI;
 import com.jtattoo.plaf.NoFocusButton;
+
+import sun.swing.DefaultLookup;
 
 /**
  * @author Manuel Laggner
@@ -108,6 +111,17 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
     }
 
     currentValuePane.paintComponent(g, c, comboBox, x, y, w, h, shouldValidate);
+  }
+
+  @Override
+  public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+    Color t = g.getColor();
+    if (comboBox.isEnabled())
+      g.setColor(DefaultLookup.getColor(comboBox, this, "ComboBox.background", null));
+    else
+      g.setColor(DefaultLookup.getColor(comboBox, this, "ComboBox.disabledBackground", null));
+    g.fillRect(0, 0, comboBox.getWidth(), comboBox.getHeight());
+    g.setColor(t);
   }
 
   @Override

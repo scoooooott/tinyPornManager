@@ -41,6 +41,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.UIResource;
@@ -55,7 +56,8 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TmmBorders extends BaseBorders {
-  protected static Border titledBorder = null;
+  protected static Border titledBorder   = null;
+  protected static Border treeNodeBorder = null;
 
   // ------------------------------------------------------------------------------------
   // Lazy access methods
@@ -145,6 +147,13 @@ public class TmmBorders extends BaseBorders {
     return titledBorder;
   }
 
+  public static Border getTreeNodeBorder() {
+    if (treeNodeBorder == null) {
+      treeNodeBorder = new CompoundBorder(new BottomBorderBorder(), new EmptyBorder(5, 0, 5, 0));
+    }
+    return treeNodeBorder;
+  }
+
   // ------------------------------------------------------------------------------------
   // Implementation of border classes
   // ------------------------------------------------------------------------------------
@@ -171,6 +180,9 @@ public class TmmBorders extends BaseBorders {
 
         Area corner = new Area(new Rectangle2D.Float(x, y, width, height));
         g2.setComposite(AlphaComposite.Src);
+        if (c instanceof JComboBox) {
+          int i = 1;
+        }
         if (parent.isOpaque()) {
           g2.setColor(parent.getBackground());
         }
@@ -364,7 +376,7 @@ public class TmmBorders extends BaseBorders {
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
-      Color borderColorLo = AbstractLookAndFeel.getGridColor();// getFrameColor();
+      Color borderColorLo = AbstractLookAndFeel.getGridColor();
 
       Graphics2D g2D = (Graphics2D) g;
       Object savedRederingHint = g2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
@@ -513,5 +525,26 @@ public class TmmBorders extends BaseBorders {
       return true;
     }
   } // class RolloverToolButtonBorder
+
+  public static class BottomBorderBorder extends AbstractBorder implements UIResource {
+    private static final long  serialVersionUID = -1431631265848685069L;
+    public static final Color  COLOR            = AbstractLookAndFeel.getTheme().getGridColors()[0];
+    private static final Color COLOR2           = AbstractLookAndFeel.getTheme().getGridColors()[1];
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+      Graphics2D g2d = (Graphics2D) g;
+
+      g.setColor(COLOR);
+      g.drawLine(g.getClipBounds().x, height - 2, g.getClipBounds().width, height - 2);
+      g.setColor(COLOR2);
+
+      Composite savedComposite = g2d.getComposite();
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+      g.drawLine(g.getClipBounds().x, height - 1, g.getClipBounds().width, height - 1);
+
+      g2d.setComposite(savedComposite);
+    }
+  } // class BottomBorderBorder
 
 } // class TmmBorders

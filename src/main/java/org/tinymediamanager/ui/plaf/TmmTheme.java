@@ -22,6 +22,6 @@ import com.jtattoo.plaf.AbstractTheme;
  * 
  * @author Manuel Laggner
  */
-public class TmmTheme extends AbstractTheme {
+abstract public class TmmTheme extends AbstractTheme {
   public static final String FONT = "Dialog";
 }

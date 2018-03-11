@@ -21,6 +21,8 @@ import javax.swing.plaf.ColorUIResource;
 
 import org.tinymediamanager.ui.plaf.TmmTheme;
 
+import com.jtattoo.plaf.AbstractBorderFactory;
+
 public class TmmDarkDefaultTheme extends TmmTheme {
 
   public TmmDarkDefaultTheme() {
@@ -43,22 +45,24 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     super.setUpColor();
 
     // Defaults for AbstractLookAndFeel
-    backgroundColor = new ColorUIResource(46, 46, 46);
-    backgroundColorLight = new ColorUIResource(63, 63, 63);
+    backgroundColor = new ColorUIResource(43, 43, 44);
+    backgroundColorLight = new ColorUIResource(53, 54, 56);
     backgroundColorDark = new ColorUIResource(35, 35, 35);
-    alterBackgroundColor = new ColorUIResource(63, 63, 63);
+    alterBackgroundColor = new ColorUIResource(60, 63, 65);
 
-    foregroundColor = new ColorUIResource(206, 206, 206);
-    disabledForegroundColor = new ColorUIResource(157, 157, 157);
+    foregroundColor = new ColorUIResource(243, 243, 245);
+    disabledForegroundColor = foregroundColor;
+    disabledBackgroundColor = backgroundColorLight;
 
     selectionForegroundColor = black;
     selectionBackgroundColor = new ColorUIResource(136, 153, 170);
+    // selectionBackgroundColor = new ColorUIResource(119, 153, 187);
 
     frameColor = new ColorUIResource(46, 46, 46);
     focusCellColor = new ColorUIResource(141, 165, 179);
-    focusColor = new ColorUIResource(85, 142, 239);
+    focusColor = new ColorUIResource(29, 181, 252);
 
-    buttonBackgroundColor = new ColorUIResource(76, 81, 83);
+    buttonBackgroundColor = alterBackgroundColor;
     buttonForegroundColor = foregroundColor;
     buttonColorDark = buttonBackgroundColor;
     buttonColorLight = buttonBackgroundColor;
@@ -66,11 +70,11 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     pressedBackgroundColor = buttonBackgroundColor;
     rolloverForegroundColor = foregroundColor;
 
-    inputBackgroundColor = new ColorUIResource(73, 73, 73);
+    inputBackgroundColor = alterBackgroundColor;
     inputForegroundColor = foregroundColor;
 
     controlForegroundColor = black;
-    controlBackgroundColor = new ColorUIResource(235, 235, 235);
+    controlBackgroundColor = alterBackgroundColor;
     controlColorLight = white;
     controlColorDark = new ColorUIResource(214, 208, 197);
 
@@ -81,10 +85,10 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     windowBorderColor = new ColorUIResource(41, 41, 41);
 
     windowInactiveTitleForegroundColor = white;
-    windowInactiveTitleBackgroundColor = new ColorUIResource(240, 238, 225); // new ColorUIResource(141, 186, 253);
-    windowInactiveTitleColorLight = new ColorUIResource(141, 186, 253);
-    windowInactiveTitleColorDark = new ColorUIResource(39, 106, 204);
-    windowInactiveBorderColor = new ColorUIResource(39, 106, 204);
+    windowInactiveTitleBackgroundColor = windowTitleBackgroundColor;
+    windowInactiveTitleColorLight = windowInactiveTitleBackgroundColor;
+    windowInactiveTitleColorDark = windowInactiveTitleBackgroundColor;
+    windowInactiveBorderColor = windowBorderColor;
 
     menuForegroundColor = foregroundColor;
     menuBackgroundColor = backgroundColorLight;
@@ -97,9 +101,11 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     toolbarColorLight = menuColorLight;
     toolbarColorDark = backgroundColor;
 
-    tabAreaBackgroundColor = new ColorUIResource(41, 41, 41);
+    // tabAreaBackgroundColor = new ColorUIResource(41, 41, 41);
+    tabAreaBackgroundColor = new ColorUIResource(38, 38, 38);
+    tabForegroundColor = new ColorUIResource(107, 107, 107);
     tabSelectionBackgroundColor = selectionBackgroundColor;
-    tabSelectionForegroundColor = selectionForegroundColor;
+    tabSelectionForegroundColor = new ColorUIResource(240, 240, 240);
     desktopColor = backgroundColor;
 
     gridColor = new ColorUIResource(85, 85, 85);
@@ -108,7 +114,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     textAntiAliasingMode = TEXT_ANTIALIAS_DEFAULT;
     textAntiAliasing = true;
 
-    linkForegroundColor = new ColorUIResource(40, 123, 222);
+    linkForegroundColor = new ColorUIResource(114, 161, 252);
   }
 
   public void setUpColorArrs() {
@@ -119,5 +125,10 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     TRACK_COLORS = new Color[] { alterBackgroundColor };
     SLIDER_COLORS = THUMB_COLORS;
     GRID_COLORS = new Color[] { new Color(85, 85, 85), new Color(46, 46, 46) };
+  }
+
+  @Override
+  public AbstractBorderFactory getBorderFactory() {
+    return TmmDarkBorderFactory.getInstance();
   }
 }

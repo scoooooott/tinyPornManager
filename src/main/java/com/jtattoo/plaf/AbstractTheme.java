@@ -155,6 +155,7 @@ public abstract class AbstractTheme extends MetalTheme {
   protected static ColorUIResource    toolbarColorLight                  = null;
   protected static ColorUIResource    toolbarColorDark                   = null;
   protected static ColorUIResource    tabAreaBackgroundColor             = null;
+  protected static ColorUIResource    tabForegroundColor                 = null;
   protected static ColorUIResource    tabSelectionForegroundColor        = null;
   protected static ColorUIResource    tabSelectionBackgroundColor        = null;
   protected static ColorUIResource    desktopColor                       = null;
@@ -326,6 +327,7 @@ public abstract class AbstractTheme extends MetalTheme {
     toolbarColorDark = lightGray;
 
     tabAreaBackgroundColor = backgroundColor;
+    tabForegroundColor = foregroundColor;
     tabSelectionForegroundColor = selectionForegroundColor;
     tabSelectionBackgroundColor = selectionForegroundColor;
 
@@ -1342,6 +1344,10 @@ public abstract class AbstractTheme extends MetalTheme {
     return tabAreaBackgroundColor;
   }
 
+  public ColorUIResource getTabForegroundColor() {
+    return tabForegroundColor;
+  }
+
   public ColorUIResource getTabSelectionForegroundColor() {
     return tabSelectionForegroundColor;
   }
@@ -1509,4 +1515,6 @@ public abstract class AbstractTheme extends MetalTheme {
   public Icon getMenubarTexture() {
     return menubarTexture;
   }
+
+  public abstract AbstractBorderFactory getBorderFactory();
 }

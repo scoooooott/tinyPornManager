@@ -21,6 +21,8 @@ import javax.swing.plaf.ColorUIResource;
 
 import org.tinymediamanager.ui.plaf.TmmTheme;
 
+import com.jtattoo.plaf.AbstractBorderFactory;
+
 public class TmmLightDefaultTheme extends TmmTheme {
 
   public TmmLightDefaultTheme() {
@@ -67,10 +69,11 @@ public class TmmLightDefaultTheme extends TmmTheme {
     pressedBackgroundColor = new ColorUIResource(141, 165, 179);
     rolloverForegroundColor = new ColorUIResource(204, 204, 204);
 
-    rolloverColor = lightOrange;
+    // inputBackgroundColor = alterBackgroundColor;
+    inputForegroundColor = foregroundColor;
 
     controlForegroundColor = black;
-    controlBackgroundColor = new ColorUIResource(235, 235, 235);
+    controlBackgroundColor = alterBackgroundColor;
     controlColorLight = white;
     controlColorDark = new ColorUIResource(214, 208, 197);
 
@@ -80,11 +83,11 @@ public class TmmLightDefaultTheme extends TmmTheme {
     windowTitleColorDark = new ColorUIResource(46, 46, 46);
     windowBorderColor = new ColorUIResource(41, 41, 41);
 
-    windowInactiveTitleForegroundColor = white;
-    windowInactiveTitleBackgroundColor = new ColorUIResource(240, 238, 225); // new ColorUIResource(141, 186, 253);
-    windowInactiveTitleColorLight = new ColorUIResource(141, 186, 253);
-    windowInactiveTitleColorDark = new ColorUIResource(39, 106, 204);
-    windowInactiveBorderColor = new ColorUIResource(39, 106, 204);
+    windowInactiveTitleForegroundColor = windowTitleForegroundColor;
+    windowInactiveTitleBackgroundColor = windowTitleBackgroundColor;
+    windowInactiveTitleColorLight = windowInactiveTitleBackgroundColor;
+    windowInactiveTitleColorDark = windowInactiveTitleBackgroundColor;
+    windowInactiveBorderColor = windowBorderColor;
 
     menuBackgroundColor = white;
     menuSelectionForegroundColor = white;
@@ -97,10 +100,12 @@ public class TmmLightDefaultTheme extends TmmTheme {
     toolbarColorDark = backgroundColor;
 
     tabAreaBackgroundColor = new ColorUIResource(41, 41, 41);
+    tabForegroundColor = foregroundColor;
     tabSelectionBackgroundColor = new ColorUIResource(141, 165, 179);
     tabSelectionForegroundColor = new ColorUIResource(240, 240, 240);
     desktopColor = backgroundColor;
 
+    gridColor = new ColorUIResource(206, 206, 206);
     selectedGridColor = new ColorUIResource(78, 107, 126);
 
     textAntiAliasingMode = TEXT_ANTIALIAS_DEFAULT;
@@ -117,5 +122,10 @@ public class TmmLightDefaultTheme extends TmmTheme {
     TRACK_COLORS = new Color[] { new Color(255, 255, 255) };
     SLIDER_COLORS = THUMB_COLORS;
     GRID_COLORS = new Color[] { new Color(206, 206, 206), new Color(248, 248, 248) };
+  }
+
+  @Override
+  public AbstractBorderFactory getBorderFactory() {
+    return TmmLightBorderFactory.getInstance();
   }
 }

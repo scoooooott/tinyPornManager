@@ -158,13 +158,11 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
     table.put("ScrollBar.incrementButtonGap", new Integer(-1));
     table.put("ScrollBar.decrementButtonGap", new Integer(-1));
     table.put("CheckBox.icon", getIconFactory().getCheckBoxIcon());
-    table.put("Tree.textForeground", getSelectionForegroundColor());
     table.put("TextPane.foreground", getForegroundColor());
-    table.put("TitledBorder.border", TmmDarkBorderFactory.getInstance().getTitledBorder());
+    table.put("TitledBorder.border", getTheme().getBorderFactory().getTitledBorder());
     table.put("Table.scrollPaneBorder", TmmDarkBorderFactory.getInstance().getScrollPaneBorder());
     table.put("TableHeader.foreground", getForegroundColor());
     table.put("Table.foreground", getForegroundColor());
-    table.put("Tree.textBackground", getBackgroundColor());
     table.put("ProgressBar.border", null);
     table.put("ProgressBar.background", getTheme().getBackgroundColorDark());
     table.put("ProgressBar.foreground", getFocusCellColor());
@@ -176,6 +174,7 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
     table.put("PasswordField.caretForeground", getForegroundColor());
     table.put("TextArea.caretForeground", getForegroundColor());
     table.put("Link.Foreground", getTheme().getLinkForegroundColor());
+    table.put("Tree.nodeBorder", getTheme().getBorderFactory().getTreeNodeBorder());
 
     // put some spacing between grid and cell content
     table.put("Table.cellNoFocusBorder", BorderFactory.createEmptyBorder(1, 3, 1, 3));

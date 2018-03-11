@@ -183,7 +183,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
         g.setColor(AbstractLookAndFeel.getTheme().getTabSelectionForegroundColor());
       }
       else {
-        g.setColor(AbstractLookAndFeel.getTheme().getForegroundColor());
+        g.setColor(AbstractLookAndFeel.getTheme().getTabForegroundColor());
       }
       JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
     }

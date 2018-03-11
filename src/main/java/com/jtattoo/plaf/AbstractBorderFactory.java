@@ -67,4 +67,8 @@ public interface AbstractBorderFactory {
   public Border getDesktopIconBorder();
 
   public Border getProgressBarBorder();
+
+  public Border getTreeNodeBorder();
+
+  public Border getTitledBorder();
 }

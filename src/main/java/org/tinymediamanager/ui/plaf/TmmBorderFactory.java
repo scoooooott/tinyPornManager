@@ -121,4 +121,8 @@ public abstract class TmmBorderFactory implements AbstractBorderFactory {
     return TmmBorders.getTitledBorder();
   }
 
+  public Border getTreeNodeBorder() {
+    return TmmBorders.getTreeNodeBorder();
+  }
+
 }
