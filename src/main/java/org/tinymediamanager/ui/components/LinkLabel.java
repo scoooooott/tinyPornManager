@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.components;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -27,6 +26,7 @@ import java.util.Map;
 import javax.swing.JLabel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.ui.UIConstants;
 
 /**
  * An extension of JLabel which looks like a link and responds appropriately when clicked. Note that this class will only work with Swing 1.1.1 and
@@ -53,7 +53,7 @@ public class LinkLabel extends JLabel {
     Font font = getFont();
     Map attributes = font.getAttributes();
     attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-    attributes.put(TextAttribute.FOREGROUND, Color.BLUE);
+    attributes.put(TextAttribute.FOREGROUND, UIConstants.LINK_COLOR);
     setFont(font.deriveFont(attributes));
 
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

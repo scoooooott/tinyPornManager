@@ -51,6 +51,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import net.miginfocom.swing.MigLayout;
@@ -89,7 +90,7 @@ public class MovieExporterDialog extends TmmDialog {
       getContentPane().add(panelContent);
       panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[300lp,grow][]"));
 
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.7);
       panelContent.add(splitPane, "cell 0 0,grow");
 
@@ -216,29 +217,34 @@ public class MovieExporterDialog extends TmmDialog {
     BeanProperty<ExportTemplate, String> exportTemplateBeanProperty = BeanProperty.create("name");
     jListBinding.setDetailBinding(exportTemplateBeanProperty);
     //
+    bindings.add(jListBinding);
     jListBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty, lblTemplateName,
         jLabelBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_1 = BeanProperty.create("selectedElement.url");
     AutoBinding<JList, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_1, lblUrl,
         jLabelBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_2 = BeanProperty.create("selectedElement.description");
     BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JTextArea, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
         taDescription, JTextAreaBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JList, Boolean> jListBeanProperty_3 = BeanProperty.create("selectedElement.detail");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<JList, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_3,
         chckbxTemplateWithDetail, jCheckBoxBeanProperty);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
   }
 }

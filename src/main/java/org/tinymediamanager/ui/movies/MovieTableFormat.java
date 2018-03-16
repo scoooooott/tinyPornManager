@@ -20,10 +20,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -155,6 +157,24 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     addColumn(col);
 
     /*
+     * audio codec and channels(hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.audio"), "audio", movie -> {
+      List<MediaFile> videos = movie.getMediaFiles(MediaFileType.VIDEO);
+      if (videos.size() > 0) {
+        MediaFile mediaFile = videos.get(0);
+        if (StringUtils.isNotBlank(mediaFile.getAudioCodec())) {
+          return mediaFile.getAudioCodec() + " " + mediaFile.getAudioChannels();
+        }
+      }
+      return "";
+    }, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.AUDIO);
+    col.setMinWidth((int) (fontMetrics.stringWidth("DTS 7ch") * 1.2f));
+    addColumn(col);
+
+    /*
      * main video file size (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", movie -> {
@@ -174,6 +194,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
+    addColumn(col);
+
+    /*
+     * 3D (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.3d"), "video3d", movie -> getCheckIcon(movie.isVideoIn3D()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.VIDEO_3D);
+    col.setColumnResizeable(false);
     addColumn(col);
 
     /*

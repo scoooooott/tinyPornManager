@@ -71,6 +71,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     listPanel = treePanel;
 
     detailPanel = new JPanel();
+    detailPanel.setOpaque(false);
     detailPanel.setLayout(new CardLayout());
 
     // layeredpane for displaying the filter dialog at the top

@@ -64,6 +64,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
 
@@ -206,7 +207,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       final JScrollPane scrollPaneSubs = new JScrollPane();
       panelContent.add(scrollPaneSubs, "cell 0 5 5 1,grow");
 
-      tableSubs = new JTable(subtitleTableModel);
+      tableSubs = new TmmTable(subtitleTableModel);
       tableSubs.setDefaultRenderer(ImageIcon.class, new Renderer());
       scrollPaneSubs.setViewportView(tableSubs);
     }

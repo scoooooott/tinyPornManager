@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.UpdaterTask;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
@@ -246,8 +245,6 @@ public class TinyMediaManagerCMD {
       if (scrapeNew || scrapeUnscraped || scrapeAll) {
         // only do an update check when we are scraping online
         // no need for a "forced" check for just updating the datasource
-        Utils.trackEvent("cmd");
-
         final SwingWorker<Boolean, Void> updateWorker = new UpdaterTask();
         updateWorker.run();
         updateAvailable = updateWorker.get(); // blocking

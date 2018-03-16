@@ -48,6 +48,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -74,6 +75,8 @@ public class UiSettingsPanel extends JPanel {
   private JComboBox                   cbFontFamily;
   private JLabel                      lblLanguageChangeHint;
   private JCheckBox                   chckbxStoreWindowPreferences;
+  private JComboBox                   cbTheme;
+  private JLabel                      lblThemeHint;
 
   public UiSettingsPanel() {
     LocaleComboBox actualLocale = null;
@@ -109,6 +112,11 @@ public class UiSettingsPanel extends JPanel {
     if (index < 0) {
       cbFontSize.setSelectedIndex(0);
     }
+    cbTheme.setSelectedItem(Globals.settings.getTheme());
+    index = cbTheme.getSelectedIndex();
+    if (index < 0) {
+      cbTheme.setSelectedIndex(0);
+    }
 
     lblLinkTransifex.addActionListener(arg0 -> {
       try {
@@ -125,14 +133,14 @@ public class UiSettingsPanel extends JPanel {
     cbLanguage.addActionListener(actionListener);
     cbFontFamily.addActionListener(actionListener);
     cbFontSize.addActionListener(actionListener);
+    cbTheme.addActionListener(actionListener);
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][][][20lp][][]"));
+    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][20lp][][][][][][20lp][][]"));
     {
-      final JLabel lblLanguageT = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblLanguageT, 1.16667, Font.BOLD);
+      final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), 1.16667); //$NON-NLS-1$
       add(lblLanguageT, "cell 0 0 3 1");
     }
     {
@@ -153,44 +161,55 @@ public class UiSettingsPanel extends JPanel {
       add(lblLanguageChangeHint, "cell 0 4 3 1");
     }
     {
-      final JLabel lblFontT = new JLabel(BUNDLE.getString("Settings.font")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblFontT, 1.16667, Font.BOLD);
-      add(lblFontT, "cell 0 6 3 1");
+      final JLabel lblTheme = new TmmLabel(BUNDLE.getString("Settings.uitheme"), 1.16667); //$NON-NLS-1$
+      add(lblTheme, "cell 0 6 3 1");
+    }
+    {
+      cbTheme = new JComboBox(new String[] { "Light", "Dark" });
+      add(cbTheme, "cell 1 7 2 1");
+    }
+    {
+      lblThemeHint = new JLabel("");
+      TmmFontHelper.changeFont(lblThemeHint, Font.BOLD);
+      add(lblThemeHint, "cell 0 8 3 1");
+    }
+    {
+      final JLabel lblFontT = new TmmLabel(BUNDLE.getString("Settings.font"), 1.16667); //$NON-NLS-1$
+      add(lblFontT, "cell 0 10 3 1");
     }
     {
       final JLabel lblFontFamilyT = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
-      add(lblFontFamilyT, "cell 1 7");
+      add(lblFontFamilyT, "cell 1 11");
     }
     {
       GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
       cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
-      add(cbFontFamily, "cell 2 7");
+      add(cbFontFamily, "cell 2 11");
     }
     {
       final JLabel lblFontSizeT = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
-      add(lblFontSizeT, "cell 1 8,alignx trailing");
+      add(lblFontSizeT, "cell 1 12");
     }
     {
       cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
-      add(cbFontSize, "cell 2 8");
+      add(cbFontSize, "cell 2 12");
     }
     {
       final JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-      add(tpFontHint, "cell 1 9 2 1,growx");
+      add(tpFontHint, "cell 1 13 2 1,growx");
     }
     {
       lblFontChangeHint = new JLabel("");
       TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-      add(lblFontChangeHint, "cell 0 10 3 1");
+      add(lblFontChangeHint, "cell 0 14 3 1");
     }
     {
-      final JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 12 3 1");
+      final JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), 1.16667); //$NON-NLS-1$
+      add(lblMiscT, "cell 0 16 3 1");
     }
     {
       chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
-      add(chckbxStoreWindowPreferences, "cell 1 13 2 1");
+      add(chckbxStoreWindowPreferences, "cell 1 17 2 1");
     }
   }
 
@@ -204,6 +223,13 @@ public class UiSettingsPanel extends JPanel {
     if (!locale.equals(actualLocale)) {
       Globals.settings.setLanguage(locale.toString());
       lblLanguageChangeHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+    }
+
+    // theme
+    String theme = (String) cbTheme.getSelectedItem();
+    if (!theme.equals(Globals.settings.getTheme())) {
+      Globals.settings.setTheme(theme);
+      lblThemeHint.setText(BUNDLE.getString("Settings.uitheme.hint")); //$NON-NLS-1$
     }
 
     // fonts

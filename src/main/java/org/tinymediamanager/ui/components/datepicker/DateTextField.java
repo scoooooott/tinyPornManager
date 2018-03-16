@@ -118,7 +118,7 @@ class DateTextField extends JFormattedTextField implements CaretListener, FocusL
         e.printStackTrace();
       }
     }
-    setForeground(Color.BLACK);
+    setForeground(UIManager.getColor("FormattedTextField.foreground"));
 
     if (firePropertyChange) {
       firePropertyChange("date", oldDate, date);

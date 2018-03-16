@@ -18,18 +18,12 @@ package org.tinymediamanager.ui.wizard;
 import java.awt.Font;
 import java.util.ResourceBundle;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -46,9 +40,6 @@ class DisclaimerPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final Settings              settings         = Settings.getInstance();
-  private JCheckBox                   chckbxAnalytics;
-
   public DisclaimerPanel() {
     initComponents();
   }
@@ -57,7 +48,7 @@ class DisclaimerPanel extends JPanel {
    * init UI components
    */
   private void initComponents() {
-    setLayout(new MigLayout("", "[400lp:400lp,grow]", "[][150lp:200lp,grow][20lp:20lp][][]"));
+    setLayout(new MigLayout("", "[400lp:400lp,grow]", "[][150lp:200lp,grow]"));
     {
       JLabel lblDisclaimer = new JLabel(BUNDLE.getString("wizard.disclaimer"));//$NON-NLS-1$
       TmmFontHelper.changeFont(lblDisclaimer, 1.3333, Font.BOLD);
@@ -71,23 +62,5 @@ class DisclaimerPanel extends JPanel {
       JTextArea taDisclaimer = new ReadOnlyTextArea(BUNDLE.getString("wizard.disclaimer.long"));//$NON-NLS-1$
       scrollPane.setViewportView(taDisclaimer);
     }
-    {
-      JTextArea taAnalytics = new ReadOnlyTextArea(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
-      add(taAnalytics, "cell 0 3,grow");
-
-      chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));//$NON-NLS-1$
-      add(chckbxAnalytics, "cell 0 4");
-    }
-    initDataBindings();
-
-    chckbxAnalytics.setSelected(true);
-  }
-
-  protected void initDataBindings() {
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("enableAnalytics");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty, chckbxAnalytics, jCheckBoxBeanProperty);
-    autoBinding.bind();
   }
 }

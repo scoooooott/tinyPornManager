@@ -78,7 +78,9 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -211,9 +213,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(separator, "cell 0 1,growx");
     }
     {
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
-      splitPane.setContinuousLayout(true);
       contentPanel.add(splitPane, "cell 0 2,grow");
       {
         JPanel panelSearchResults = new JPanel();
@@ -223,7 +224,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           {
             JScrollPane scrollPane = new JScrollPane();
             panelSearchResults.add(scrollPane, "cell 0 0,grow");
-            table = new JTable();
+            table = new TmmTable();
             scrollPane.setViewportView(table);
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.setBorder(new LineBorder(new Color(0, 0, 0)));

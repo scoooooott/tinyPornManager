@@ -80,6 +80,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -255,9 +256,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(new JSeparator(), "cell 0 1,growx");
     }
     {
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
-      splitPane.setContinuousLayout(true);
       contentPanel.add(splitPane, "cell 0 2,grow");
       {
         JPanel panelSearchResults = new JPanel();
@@ -267,7 +267,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           {
             JScrollPane scrollPane = new JScrollPane();
             panelSearchResults.add(scrollPane, "cell 0 0,grow");
-            tableSearchResults = new JTable();
+            tableSearchResults = new TmmTable();
             scrollPane.setViewportView(tableSearchResults);
             tableSearchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             tableSearchResults.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -810,35 +810,41 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false);
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_1, taMovieDescription, JTextAreaBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_2, lblMoviePoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
     BeanProperty<JLabel, String> jTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults, jTableBeanProperty,
         lblTagline, jTextAreaBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JLabel, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_3, lblTitle, jTextAreaBeanProperty_1);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_4 = BeanProperty.create("selectedElement.originalTitle");
     AutoBinding<JTable, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
         jTableBeanProperty_4, lblOriginalTitle, jTextAreaBeanProperty);
+    bindings.add(autoBinding_4);
     autoBinding_4.bind();
   }
 }

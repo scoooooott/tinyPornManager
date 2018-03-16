@@ -106,7 +106,6 @@ public class TmmTreeTable extends TmmTable {
     getTableHeader().setOpaque(false);
     setOpaque(false);
     // setRowHeight(22);
-    setGridColor(TABLE_GRID_COLOR);
     // setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint grid lines over the entire viewport.
     setShowGrid(false);

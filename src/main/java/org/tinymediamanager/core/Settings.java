@@ -90,13 +90,13 @@ public class Settings extends AbstractSettings {
   private String    language;
   private String    mediaPlayer            = "";
 
+  private String    theme                  = "Light";
   private int       fontSize               = 12;
   private String    fontFamily             = "Dialog";
 
   private boolean   storeWindowPreferences = true;
 
   private boolean   deleteTrashOnExit      = false;
-  private boolean   enableAnalytics        = false;
 
   private boolean   upnpShareLibrary       = false;
   private boolean   upnpRemotePlay         = false;
@@ -871,6 +871,16 @@ public class Settings extends AbstractSettings {
     return mediaPlayer;
   }
 
+  public String getTheme() {
+    return theme;
+  }
+
+  public void setTheme(String newValue) {
+    String oldValue = this.fontFamily;
+    this.theme = newValue;
+    firePropertyChange("theme", oldValue, newValue);
+  }
+
   public void setFontSize(int newValue) {
     int oldValue = this.fontSize;
     this.fontSize = newValue;
@@ -899,16 +909,6 @@ public class Settings extends AbstractSettings {
 
   public boolean isDeleteTrashOnExit() {
     return deleteTrashOnExit;
-  }
-
-  public boolean isEnableAnalytics() {
-    return enableAnalytics;
-  }
-
-  public void setEnableAnalytics(boolean newValue) {
-    boolean oldValue = this.enableAnalytics;
-    this.enableAnalytics = newValue;
-    firePropertyChange("enableAnalytics", oldValue, newValue);
   }
 
   public void setStoreWindowPreferences(boolean newValue) {

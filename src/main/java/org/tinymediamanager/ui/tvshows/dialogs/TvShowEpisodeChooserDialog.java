@@ -52,6 +52,8 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmSplitPane;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
 
@@ -116,7 +118,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     contentPanel.setLayout(new MigLayout("", "[700lp,grow]", "[500lp,grow]"));
 
     {
-      JSplitPane splitPane = new JSplitPane();
+      JSplitPane splitPane = new TmmSplitPane();
       contentPanel.add(splitPane, "cell 0 0,grow");
 
       JPanel panelLeft = new JPanel();
@@ -153,7 +155,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
         taPlot.setCaretPosition(0);
       });
 
-      table = new JTable(episodeTableModel);
+      table = new TmmTable(episodeTableModel);
       table.setSelectionModel(selectionModel);
       scrollPane.setViewportView(table);
 

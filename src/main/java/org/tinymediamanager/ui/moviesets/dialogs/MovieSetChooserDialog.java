@@ -65,6 +65,8 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.TmmSplitPane;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
@@ -128,8 +130,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[500,grow]"));
 
-      JSplitPane splitPane = new JSplitPane();
-      splitPane.setContinuousLayout(true);
+      JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
       panelContent.add(splitPane, "cell 0 0,grow");
       {
@@ -139,7 +140,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         panelResults.add(panelSearchResults, "cell 0 0,grow");
         splitPane.setLeftComponent(panelResults);
         {
-          tableMovieSets = new JTable();
+          tableMovieSets = new TmmTable();
           panelSearchResults.setViewportView(tableMovieSets);
           tableMovieSets.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
           tableMovieSets.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -200,7 +201,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           JScrollPane scrollPane = new JScrollPane();
           panelSearchDetail.add(scrollPane, "cell 0 2 2 1,grow");
 
-          tableMovies = new JTable();
+          tableMovies = new TmmTable();
           scrollPane.setViewportView(tableMovies);
         }
         {
@@ -446,6 +447,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false);
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, List<MovieInSet>> jTableBeanProperty = BeanProperty.create("selectedElement.movies");
@@ -458,24 +460,28 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.title");
     jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName("matched movie").setEditable(false);
     //
+    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
         lblMovieSetName, jLabelBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> readOnlyTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_3, tpPlot, readOnlyTextPaneBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
   }
 }

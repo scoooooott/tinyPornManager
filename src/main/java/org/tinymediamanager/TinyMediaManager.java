@@ -66,6 +66,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 import org.tinymediamanager.ui.plaf.TmmTheme;
+import org.tinymediamanager.ui.plaf.dark.TmmDarkLookAndFeel;
 import org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel;
 import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
@@ -350,10 +351,6 @@ public class TinyMediaManager {
               splash.update();
             }
 
-            // write a random number to file, to identify this instance (for
-            // updater, tracking, whatsoever)
-            Utils.trackEvent("startup");
-
             TmmWindowSaver.getInstance().loadSettings(window);
             window.setVisible(true);
 
@@ -368,7 +365,6 @@ public class TinyMediaManager {
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
               // special case nightly/git: if same snapshot version, do not display changelog
-              Utils.trackEvent("updated");
               showChangelog();
             }
           }
@@ -530,8 +526,16 @@ public class TinyMediaManager {
         // String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
 
         // Get the look and feel class name
-        TmmLightLookAndFeel.setTheme(props);
-        String laf = "org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel";
+        String themeName = Globals.settings.getTheme();
+        String laf = "";
+        if ("Dark".equals(themeName)) {
+          TmmDarkLookAndFeel.setTheme(props);
+          laf = "org.tinymediamanager.ui.plaf.dark.TmmDarkLookAndFeel";
+        }
+        else {
+          TmmLightLookAndFeel.setTheme(props);
+          laf = "org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel";
+        }
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);

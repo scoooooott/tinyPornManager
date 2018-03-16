@@ -48,6 +48,7 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel.TvShowScraper;
@@ -158,7 +159,7 @@ class TvShowScraperPanel extends JPanel {
     JScrollPane scrollPaneScraper = new JScrollPane();
     panelTvShowScrapers.add(scrollPaneScraper, "cell 0 0 2 1,grow");
 
-    tableScraper = new JTable();
+    tableScraper = new TmmTable();
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 

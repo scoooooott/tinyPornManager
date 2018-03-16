@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
@@ -32,7 +31,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.CompoundBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
@@ -41,8 +40,8 @@ import javax.swing.tree.TreePath;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.tree.TmmTree;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
@@ -123,7 +122,7 @@ public class SettingsDialog extends TmmDialog {
       contentPanel.setLayout(new MigLayout("", "[600lp:1000lp,grow]", "[600lp,grow]"));
       getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-      splitPane = new JSplitPane();
+      splitPane = new TmmSplitPane();
       contentPanel.add(splitPane, "cell 0 0, grow");
 
       JPanel panelLeft = new JPanel();
@@ -194,14 +193,21 @@ public class SettingsDialog extends TmmDialog {
 
     SettingsTreeCellRenderer() {
       label = new JLabel();
-      label.setForeground(UIManager.getColor("Tree.selectionForeground"));
-      TmmFontHelper.changeFont(label, Font.BOLD);
-      label.setBorder(new CompoundBorder(new TmmTree.BottomBorderBorder(), new EmptyBorder(5, 0, 5, 0)));
+      Object obj = UIManager.get("Tree.nodeBorder");
+      if (obj instanceof Border) {
+        label.setBorder((Border) obj);
+      }
     }
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
         boolean hasFocus) {
+      if (selected) {
+        label.setForeground(UIManager.getColor("Tree.selectionForeground"));
+      }
+      else {
+        label.setForeground(UIManager.getColor("Tree.textForeground"));
+      }
       label.setText(value.toString());
       label.invalidate();
       return label;

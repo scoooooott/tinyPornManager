@@ -31,7 +31,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
@@ -78,11 +77,6 @@ public class MovieCastPanel extends JPanel {
 
     lblActorThumb.enableLightbox();
     lblActorThumb.setCacheUrl(true);
-
-    tableProducer.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
-    tableProducer.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
-    tableActors.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
-    tableActors.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
 
     // selectionlistener for the selected actor
     tableActors.getSelectionModel().addListSelectionListener(arg0 -> {
