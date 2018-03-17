@@ -89,7 +89,9 @@ public class TmmTable extends JTable {
   @Override
   public void addColumn(TableColumn aColumn) {
     // disable grid in header
-    aColumn.setHeaderRenderer(new BottomBorderHeaderRenderer());
+    if (!(aColumn.getHeaderRenderer() instanceof BottomBorderHeaderRenderer)) {
+      aColumn.setHeaderRenderer(new BottomBorderHeaderRenderer());
+    }
 
     if (aColumn.getIdentifier() == null && getModel() instanceof TmmTableModel) {
       TmmTableModel tableModel = ((TmmTableModel) getModel());
