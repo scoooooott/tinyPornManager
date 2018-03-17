@@ -107,6 +107,12 @@ public class TmmWindowSaver implements AWTEventListener {
           frame.setLocationRelativeTo(null);
         }
       }
+
+      // splitpane divider
+      MainWindow mainWindow = (MainWindow) frame;
+      if (properties.getPropertyAsInteger("splitPaneDividerLocation") > 0) {
+        mainWindow.getSplitPane().setDividerLocation(properties.getPropertyAsInteger("splitPaneDividerLocation"));
+      }
     }
   }
 
@@ -148,6 +154,9 @@ public class TmmWindowSaver implements AWTEventListener {
     if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
       addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
       storeWindowBounds("mainWindow", frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
+
+      MainWindow mainWindow = (MainWindow) frame;
+      addParam("splitPaneDividerLocation", mainWindow.getSplitPane().getDividerLocation());
     }
   }
 

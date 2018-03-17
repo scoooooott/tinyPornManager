@@ -85,6 +85,7 @@ public class MainWindow extends JFrame {
   private ToolbarPanel                toolbarPanel;
   private JTabbedPane                 tabbedPane;
   private JPanel                      detailPanel;
+  private JSplitPane                  splitPane;
 
   /**
    * Create the application.
@@ -208,7 +209,7 @@ public class MainWindow extends JFrame {
     JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI());
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
-    JSplitPane splitPane = new TmmSplitPane();
+    splitPane = new TmmSplitPane();
     rootPanel.add(splitPane, "cell 0 0, grow");
 
     tabbedPane = new MainTabbedPane() {
@@ -318,6 +319,10 @@ public class MainWindow extends JFrame {
       shutdownLogger();
       System.exit(0); // calling the method is a must
     }
+  }
+
+  JSplitPane getSplitPane() {
+    return splitPane;
   }
 
   /**
