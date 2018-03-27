@@ -27,12 +27,14 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
+import org.tinymediamanager.ui.components.TmmListPanel;
+
 public abstract class AbstractTmmUIModule implements ITmmUIModule {
   protected final static ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   protected final Map<Class, Action>    actionMap    = new HashMap<>();
 
-  protected JPanel                      listPanel;
+  protected TmmListPanel                listPanel;
   protected JPanel                      detailPanel;
 
   protected Action                      searchAction = null;
