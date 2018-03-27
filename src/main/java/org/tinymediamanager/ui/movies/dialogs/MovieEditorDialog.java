@@ -264,6 +264,7 @@ public class MovieEditorDialog extends TmmDialog {
       lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISC));
       lblBanner.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.BANNER));
       cbEdition.setSelectedItem(movieToEdit.getEdition());
+      cbCertification.setSelectedItem(movieToEdit.getCertification());
       chckbxVideo3D.setSelected(movieToEdit.isVideoIn3D());
       cbSource.setSelectedItem(movieToEdit.getMediaSource());
       cbWatched.setSelected(movieToEdit.isWatched());
