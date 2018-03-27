@@ -151,8 +151,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
     createPopupMenu();
     registerAccelerators();
 
-    listPanel.setPopupMenu(popupMenu);
-
     // create settings node
     settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.datasourceandnfo"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
@@ -240,6 +238,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieRemoveAction.class));
     popupMenu.add(createAndRegisterAction(MovieDeleteAction.class));
+
+    listPanel.setPopupMenu(popupMenu);
 
     // update popup menu
     updatePopupMenu = new JPopupMenu();

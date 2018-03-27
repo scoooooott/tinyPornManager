@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.Action;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -46,6 +45,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
+import org.tinymediamanager.ui.components.TmmListPanel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.movies.MovieComparator;
@@ -69,7 +69,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Manuel Laggner
  */
-public class MovieListPanel extends JPanel implements ITmmTabItem {
+public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
   private static final long           serialVersionUID = -1681460428331929420L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -208,6 +208,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     return MovieUIModule.getInstance();
   }
 
+  @Override
   public void setPopupMenu(JPopupMenu popupMenu) {
     movieTable.addMouseListener(new MouseAdapter() {
       @Override
