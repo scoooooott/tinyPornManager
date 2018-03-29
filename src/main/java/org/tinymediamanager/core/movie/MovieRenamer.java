@@ -48,7 +48,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
-import org.tinymediamanager.core.jmte.TmmModelAdaptor;
+import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -1074,7 +1074,7 @@ public class MovieRenamer {
     try {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
-      engine.setModelAdaptor(new TmmModelAdaptor());
+      engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
       return engine.transform(morphTemplate(token), root);
@@ -1173,24 +1173,7 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("[ \\.]+$", "");
     }
 
-    // replace invalid characters
-    newDestination = replaceInvalidCharacters(newDestination);
-
     return newDestination.trim();
-  }
-
-  /**
-   * replaces all invalid/illegal characters for filenames with ""<br>
-   * except the colon, which will be changed to a dash
-   * 
-   * @param source
-   *          string to clean
-   * @return cleaned string
-   */
-  public static String replaceInvalidCharacters(String source) {
-    source = source.replaceAll(": ", " - "); // nicer
-    source = source.replaceAll(":", "-"); // nicer
-    return source.replaceAll("([\"\\\\:<>|/?*])", "");
   }
 
   /**

@@ -53,7 +53,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
-import org.tinymediamanager.core.jmte.TmmModelAdaptor;
+import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -990,7 +990,7 @@ public class TvShowRenamer {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedNumberRenderer());
-      engine.setModelAdaptor(new TmmModelAdaptor());
+      engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", show);
@@ -1201,10 +1201,11 @@ public class TvShowRenamer {
     destination = destination.replaceAll("^[ \\.\\-_]+", "");
     destination = destination.replaceAll("[ \\.\\-_]+$", "");
 
-    // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
-    destination = destination.replaceAll(": ", " - "); // nicer
-    destination = destination.replaceAll(":", "-"); // nicer
-    destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
+    // is now handled directly in JMTE
+    // // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
+    // destination = destination.replaceAll(": ", " - "); // nicer
+    // destination = destination.replaceAll(":", "-"); // nicer
+    // destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
 
     return destination.trim();
   }
