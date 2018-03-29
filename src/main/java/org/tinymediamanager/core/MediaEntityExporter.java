@@ -89,7 +89,7 @@ public abstract class MediaEntityExporter {
     }
 
     // set up engine
-    engine = Engine.createCachingEngine();
+    engine = Engine.createEngine();
 
     if (fileExtension.equalsIgnoreCase("html")) {
       engine.setEncoder(new HtmlEncoder()); // special char replacement

@@ -7,16 +7,17 @@ import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 public class MovieRenamerTest extends BasicTest {
   @Test
   public void special() {
-    assertEqual("jb - the bla", MovieRenamer.replaceInvalidCharacters("jb: the bla"));
-    assertEqual("jb  - the bla", MovieRenamer.replaceInvalidCharacters("jb : the bla"));
-    assertEqual("2-22", MovieRenamer.replaceInvalidCharacters("2:22"));
-    assertEqual("2 -22", MovieRenamer.replaceInvalidCharacters("2 :22"));
-    assertEqual("weird - movie", MovieRenamer.replaceInvalidCharacters("weird \"\\\\:<>|/?* movie"));
+    assertEqual("jb - the bla", TmmRenamerModelAdaptor.replaceInvalidCharacters("jb: the bla"));
+    assertEqual("jb  - the bla", TmmRenamerModelAdaptor.replaceInvalidCharacters("jb : the bla"));
+    assertEqual("2-22", TmmRenamerModelAdaptor.replaceInvalidCharacters("2:22"));
+    assertEqual("2 -22", TmmRenamerModelAdaptor.replaceInvalidCharacters("2 :22"));
+    assertEqual("weird - movie", TmmRenamerModelAdaptor.replaceInvalidCharacters("weird \"\\\\:<>|/?* movie"));
   }
 
   @Test

@@ -87,7 +87,7 @@ public class MovieJmteTests {
       compare("${videoFormat}", "720p");
       compare("${videoCodec}", "h264");
       compare("${audioCodec}", "AC3");
-      compare("${audioChannels}", "6");
+      compare("${audioChannels}", "6ch");
 
       compare("${mediaSource}", "Blu-ray");
       compare("${mediaSource.name}", "BLURAY");
