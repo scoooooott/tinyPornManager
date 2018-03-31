@@ -636,6 +636,7 @@ public class MovieRenamer {
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
+    List<Path> existingFiles = Utils.findFilesRecursive(movie.getPathNIO());
     for (int i = cleanup.size() - 1; i >= 0; i--) {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
@@ -651,7 +652,7 @@ public class MovieRenamer {
           continue;
         }
 
-        if (Files.exists(cl.getFileAsPath())) { // unneeded, but for not displaying wrong deletes in logger...
+        if (existingFiles.contains(cl.getFileAsPath())) {
           LOGGER.debug("Deleting " + cl.getFileAsPath());
           Utils.deleteFileWithBackup(cl.getFileAsPath(), movie.getDataSource());
         }
