@@ -63,11 +63,23 @@ public class TvShowChangeSeasonArtworkAction extends TmmAction {
       return;
     }
 
-    for (TvShowSeason season : selectTvShowSeasons) {
-      TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, selectedObjects.size() > 1 ? true : false);
-      if (!editor.showDialog()) {
+    int selectedCount = selectTvShowSeasons.size();
+    int index = 0;
+
+    do {
+      TvShowSeason season = selectTvShowSeasons.get(index);
+      TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, index, selectedCount);
+      editor.setVisible(true);
+      if (!editor.isContinueQueue()) {
         break;
       }
-    }
+
+      if (editor.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+    } while (index < selectedCount);
   }
 }

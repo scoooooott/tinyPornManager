@@ -56,38 +56,67 @@ public class TvShowEditAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
+    int selectedCount = selectedObjects.size();
+    int index = 0;
+
     if (selectedObjects.isEmpty()) {
       JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
       return;
     }
 
-    for (Object obj : selectedObjects) {
+    do {
+      Object obj = selectedObjects.get(index);
+
       // display tv show editor
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
-        TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, selectedObjects.size() > 1 ? true : false);
-        if (!editor.showDialog()) {
+        TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, index, selectedCount);
+        editor.setVisible(true);
+        if (!editor.isContinueQueue()) {
           break;
+        }
+
+        if (editor.isNavigateBack()) {
+          index -= 1;
+        }
+        else {
+          index += 1;
         }
       }
 
       // change season poster
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, selectedObjects.size() > 1 ? true : false);
-        if (!editor.showDialog()) {
+        TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, index, selectedCount);
+        editor.setVisible(true);
+        if (!editor.isContinueQueue()) {
           break;
+        }
+
+        if (editor.isNavigateBack()) {
+          index -= 1;
+        }
+        else {
+          index += 1;
         }
       }
 
       // display tv episode editor
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
-        TvShowEpisodeEditorDialog editor = new TvShowEpisodeEditorDialog(tvShowEpisode, selectedObjects.size() > 1 ? true : false);
-        if (!editor.showDialog()) {
+        TvShowEpisodeEditorDialog editor = new TvShowEpisodeEditorDialog(tvShowEpisode, index, selectedCount);
+        editor.setVisible(true);
+        if (!editor.isContinueQueue()) {
           break;
         }
+
+        if (editor.isNavigateBack()) {
+          index -= 1;
+        }
+        else {
+          index += 1;
+        }
       }
-    }
+    } while (index < selectedCount);
   }
 }
