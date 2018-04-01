@@ -19,10 +19,13 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -47,6 +50,11 @@ public class TvShowSubtitleSearchAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
+
+    if (episodes.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
 
     for (TvShowEpisode episode : episodes) {
       // no subtitle download for discs

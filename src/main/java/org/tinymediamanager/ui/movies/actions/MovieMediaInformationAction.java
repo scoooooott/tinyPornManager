@@ -29,6 +29,7 @@ import org.tinymediamanager.core.movie.tasks.MovieReloadMediaInformationTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -53,12 +54,15 @@ public class MovieMediaInformationAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
+    if (selectedMovies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     // get data of all files within all selected movies
-    if (selectedMovies.size() > 0) {
-      TmmThreadPool task = new MovieReloadMediaInformationTask(selectedMovies);
-      if (TmmTaskManager.getInstance().addMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+    TmmThreadPool task = new MovieReloadMediaInformationTask(selectedMovies);
+    if (TmmTaskManager.getInstance().addMainTask(task)) {
+      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }
 }

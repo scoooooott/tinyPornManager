@@ -19,11 +19,14 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -46,6 +49,11 @@ public class TvShowScrapeEpisodesAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
+
+    if (episodes.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
 
     TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, TvShowList.getInstance().getDefaultMediaScraper(), true);
     TmmTaskManager.getInstance().addUnnamedTask(task);

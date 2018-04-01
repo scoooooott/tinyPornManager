@@ -56,20 +56,22 @@ public class TvShowSelectedScrapeAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
-    if (selectedTvShows.size() > 0) {
-      // scrapeTask = new ScrapeTask(selectedMovies);
-      TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
-      // get options from dialog
-      TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
-      // do we want to scrape?
-      if (dialog.shouldStartScrape()) {
-        // scrape
-        TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
-        if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-        }
+    if (selectedTvShows.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
+    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
+    // get options from dialog
+    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+    // do we want to scrape?
+    if (dialog.shouldStartScrape()) {
+      // scrape
+      TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
     }
   }

@@ -20,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -50,11 +51,14 @@ public class TvShowExportAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
-    // export selected tv shows
-    if (selectedTvShows.size() > 0) {
-      TvShowExporterDialog dialog = new TvShowExporterDialog(selectedTvShows);
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
+    if (selectedTvShows.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
     }
+
+    // export selected tv shows
+    TvShowExporterDialog dialog = new TvShowExporterDialog(selectedTvShows);
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
   }
 }

@@ -27,6 +27,7 @@ import org.tinymediamanager.core.movie.tasks.MovieAssignMovieSetTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -51,11 +52,14 @@ public class MovieAssignMovieSetAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    if (selectedMovies.size() > 0) {
-      TmmThreadPool scrapeTask = new MovieAssignMovieSetTask(selectedMovies);
-      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+    if (selectedMovies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
+    TmmThreadPool scrapeTask = new MovieAssignMovieSetTask(selectedMovies);
+    if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
+      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }
 }

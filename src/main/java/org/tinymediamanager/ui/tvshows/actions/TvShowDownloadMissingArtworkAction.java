@@ -22,12 +22,15 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowMissingArtworkDownloadTask;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -47,11 +50,17 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
+    List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
     Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 
+    if (selectedObjects.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     // add all episodes which are not part of a selected tv show
-    for (Object obj : TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects()) {
+    for (Object obj : selectedObjects) {
       if (obj instanceof TvShow) {
         TvShow show = (TvShow) obj;
         for (TvShowEpisode episode : show.getEpisodes()) {

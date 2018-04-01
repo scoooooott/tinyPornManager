@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -51,11 +52,14 @@ public class MovieExportAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> movies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    // export selected movies
-    if (movies.size() > 0) {
-      MovieExporterDialog dialog = new MovieExporterDialog(movies);
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
+    if (movies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
     }
+
+    // export selected movies
+    MovieExporterDialog dialog = new MovieExporterDialog(movies);
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
   }
 }
