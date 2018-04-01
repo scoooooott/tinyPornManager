@@ -159,6 +159,8 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
     table.put("ScrollBar.decrementButtonGap", new Integer(-1));
     table.put("CheckBox.icon", getIconFactory().getCheckBoxIcon());
     table.put("TextPane.foreground", getForegroundColor());
+    table.put("OptionPane.foreground", getForegroundColor());
+    table.put("OptionPane.messageForeground", getForegroundColor());
     table.put("TitledBorder.border", getTheme().getBorderFactory().getTitledBorder());
     table.put("Table.scrollPaneBorder", TmmDarkBorderFactory.getInstance().getScrollPaneBorder());
     table.put("TableHeader.foreground", getForegroundColor());
