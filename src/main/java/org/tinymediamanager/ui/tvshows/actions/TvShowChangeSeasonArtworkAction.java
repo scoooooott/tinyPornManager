@@ -16,11 +16,15 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -45,16 +49,37 @@ public class TvShowChangeSeasonArtworkAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
+    List<TvShowSeason> selectTvShowSeasons = new ArrayList<>();
 
     for (Object obj : selectedObjects) {
       // display image chooser
       if (obj instanceof TvShowSeason) {
-        TvShowSeason season = (TvShowSeason) obj;
-        TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, selectedObjects.size() > 1 ? true : false);
-        if (!editor.showDialog()) {
-          break;
-        }
+        selectTvShowSeasons.add((TvShowSeason) obj);
       }
     }
+
+    if (selectTvShowSeasons.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
+    int selectedCount = selectTvShowSeasons.size();
+    int index = 0;
+
+    do {
+      TvShowSeason season = selectTvShowSeasons.get(index);
+      TvShowSeasonEditorDialog editor = new TvShowSeasonEditorDialog(season, index, selectedCount);
+      editor.setVisible(true);
+      if (!editor.isContinueQueue()) {
+        break;
+      }
+
+      if (editor.isNavigateBack()) {
+        index -= 1;
+      }
+      else {
+        index += 1;
+      }
+    } while (index < selectedCount);
   }
 }

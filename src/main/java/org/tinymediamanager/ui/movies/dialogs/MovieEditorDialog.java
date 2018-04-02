@@ -1031,7 +1031,7 @@ public class MovieEditorDialog extends TmmDialog {
         JButton btnAbort = new JButton(new AbortQueueAction());
         addButton(btnAbort);
         if (queueIndex > 0) {
-          JButton backButton = new JButton(new NavigateBackAction()); // $NON-NLS-1$
+          JButton backButton = new JButton(new NavigateBackAction());
           addButton(backButton);
         }
       }

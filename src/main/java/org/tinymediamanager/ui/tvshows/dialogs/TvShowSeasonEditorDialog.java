@@ -63,7 +63,9 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
   private TvShowList        tvShowList       = TvShowList.getInstance();
 
   private boolean           continueQueue    = true;
-  private boolean           inQueue;
+  private boolean           navigateBack     = false;
+  private int               queueIndex;
+  private int               queueSize;
 
   /**
    * UI elements
@@ -81,14 +83,17 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
    *
    * @param tvShowSeason
    *          the tv show season
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public TvShowSeasonEditorDialog(TvShowSeason tvShowSeason, boolean inQueue) {
-    super(BUNDLE.getString("tvshow.edit"), "tvShowSeasonEditor"); //$NON-NLS-1$
+  public TvShowSeasonEditorDialog(TvShowSeason tvShowSeason, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("tvshowseason.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowSeasonEditor"); //$NON-NLS-1$
 
     this.tvShowSeasonToEdit = tvShowSeason;
-    this.inQueue = inQueue;
+    this.queueIndex = queueIndex;
+    this.queueSize = queueSize;
 
     initComponents();
 
@@ -223,9 +228,13 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
      * button pane
      **********************************************************************************/
     {
-      if (inQueue) {
+      if (queueSize > 1) {
         JButton btnAbort = new JButton(new AbortAction());
         addButton(btnAbort);
+        if (queueIndex > 0) {
+          JButton backButton = new JButton(new NavigateBackAction());
+          addButton(backButton);
+        }
       }
 
       JButton cancelButton = new JButton(new CancelAction());
@@ -290,6 +299,21 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
     }
   }
 
+  private class NavigateBackAction extends AbstractAction {
+    private static final long serialVersionUID = -1652218154720642310L;
+
+    public NavigateBackAction() {
+      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.BACK_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      navigateBack = true;
+      setVisible(false);
+    }
+  }
+
   /**
    * Shows the dialog and returns whether the work on the queue should be continued.
    * 
@@ -298,6 +322,14 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
   public boolean showDialog() {
     setVisible(true);
     return continueQueue;
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 
   private class AbortAction extends AbstractAction {

@@ -19,10 +19,15 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
+import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
 
@@ -44,13 +49,50 @@ public class MovieSetEditAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();
+    List<Object> selectedObjects = MovieSetUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
-    for (MovieSet movieSet : selectedMovieSets) {
-      MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet, selectedMovieSets.size() > 1 ? true : false);
-      if (!editor.showDialog()) {
-        break;
-      }
+    int selectedCount = selectedObjects.size();
+    int index = 0;
+
+    if (selectedObjects.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
     }
+
+    do {
+      Object object = selectedObjects.get(index);
+
+      if (object instanceof MovieSet) {
+        MovieSet movieSet = (MovieSet) object;
+        MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet, index, selectedCount);
+        editor.setVisible(true);
+        if (!editor.isContinueQueue()) {
+          break;
+        }
+
+        if (editor.isNavigateBack()) {
+          index -= 1;
+        }
+        else {
+          index += 1;
+        }
+      }
+
+      if (object instanceof Movie) {
+        Movie movie = (Movie) object;
+        MovieEditorDialog editor = new MovieEditorDialog(movie, index, selectedCount);
+        editor.setVisible(true);
+        if (!editor.isContinueQueue()) {
+          break;
+        }
+
+        if (editor.isNavigateBack()) {
+          index -= 1;
+        }
+        else {
+          index += 1;
+        }
+      }
+    } while (index < selectedCount);
   }
 }

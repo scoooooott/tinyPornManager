@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -52,12 +53,15 @@ public class MovieBatchEditAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    // get data of all files within all selected movies
-    if (selectedMovies.size() > 0) {
-      MovieBulkEditorDialog editor = new MovieBulkEditorDialog(selectedMovies);
-      editor.setLocationRelativeTo(MainWindow.getActiveInstance());
-      editor.pack();
-      editor.setVisible(true);
+    if (selectedMovies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
     }
+
+    // get data of all files within all selected movies
+    MovieBulkEditorDialog editor = new MovieBulkEditorDialog(selectedMovies);
+    editor.setLocationRelativeTo(MainWindow.getActiveInstance());
+    editor.pack();
+    editor.setVisible(true);
   }
 }

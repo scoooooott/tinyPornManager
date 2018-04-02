@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowSubtitleSearchAndDownloadTask;
@@ -49,17 +51,20 @@ public class TvShowSubtitleDownloadAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
-    if (!episodes.isEmpty()) {
-      TvShowDownloadSubtitleDialog dialog = new TvShowDownloadSubtitleDialog(BUNDLE.getString("tvshow.download.subtitle")); //$NON-NLS-1$
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
+    if (episodes.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
 
-      // do we want to scrape?
-      if (dialog.shouldStartDownload()) {
-        TvShowSubtitleSearchAndDownloadTask task = new TvShowSubtitleSearchAndDownloadTask(episodes, dialog.getSubtitleScrapers(),
-            dialog.getLanguage());
-        TmmTaskManager.getInstance().addMainTask(task);
-      }
+    TvShowDownloadSubtitleDialog dialog = new TvShowDownloadSubtitleDialog(BUNDLE.getString("tvshow.download.subtitle")); //$NON-NLS-1$
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
+
+    // do we want to scrape?
+    if (dialog.shouldStartDownload()) {
+      TvShowSubtitleSearchAndDownloadTask task = new TvShowSubtitleSearchAndDownloadTask(episodes, dialog.getSubtitleScrapers(),
+          dialog.getLanguage());
+      TmmTaskManager.getInstance().addMainTask(task);
     }
   }
 }

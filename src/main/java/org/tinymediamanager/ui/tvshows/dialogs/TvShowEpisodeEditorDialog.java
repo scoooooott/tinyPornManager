@@ -122,7 +122,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private List<MediaFile>                         mediaFiles       = new ArrayList<>();
   private Rating                                  userRating;
   private boolean                                 continueQueue    = true;
-  private boolean                                 inQueue;
+  private boolean                                 navigateBack     = false;
+  private int                                     queueIndex;
+  private int                                     queueSize;
 
   private EventList<MediaRatingTable.MediaRating> ratings          = new BasicEventList<>();
   private EventList<Person>                       guests;
@@ -162,11 +164,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
    * 
    * @param episode
    *          the episode
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
-    super(BUNDLE.getString("tvshow.edit") + "  < " + episode.getFirstVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
+  public TvShowEpisodeEditorDialog(TvShowEpisode episode, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("tvshowepisode.edit") + "  < " + episode.getFirstVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
 
     // creation of lists
     guests = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -178,7 +182,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     }
 
     this.episodeToEdit = episode;
-    this.inQueue = inQueue;
+    this.queueIndex = queueIndex;
+    this.queueSize = queueSize;
     this.ratings = MediaRatingTable.convertRatingMapToEventList(episode.getRatings(), false);
     this.userRating = episodeToEdit.getRating(Rating.USER);
 
@@ -566,9 +571,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       setBottomInformationPanel(scrapePanel);
     }
     {
-      if (inQueue) {
+      if (queueSize > 1) {
         JButton abortButton = new JButton(new AbortQueueAction());
         addButton(abortButton);
+        if (queueIndex > 0) {
+          JButton backButton = new JButton(new NavigateBackAction());
+          addButton(backButton);
+        }
       }
 
       JButton cancelButton = new JButton(new DiscardAction());
@@ -1240,5 +1249,28 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         tableWriters.getSelectionModel().setSelectionInterval(row + 1, row + 1);
       }
     }
+  }
+
+  private class NavigateBackAction extends AbstractAction {
+    private static final long serialVersionUID = -1652218154720642310L;
+
+    public NavigateBackAction() {
+      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.BACK_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      navigateBack = true;
+      setVisible(false);
+    }
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 }

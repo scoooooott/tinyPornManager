@@ -526,7 +526,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         }
       }
 
-      if (tvShowsFound.size() == 1) { // only one result
+      if (!tvShowsFound.isEmpty()) {
         table.setRowSelectionInterval(0, 0); // select first row
       }
 

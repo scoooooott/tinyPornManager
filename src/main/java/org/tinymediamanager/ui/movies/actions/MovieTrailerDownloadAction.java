@@ -52,6 +52,11 @@ public class MovieTrailerDownloadAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
+    if (selectedMovies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     // first check if there is at least one movie containing a trailer mf
     boolean existingTrailer = false;
     for (Movie movie : selectedMovies) {

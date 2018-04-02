@@ -1516,6 +1516,34 @@ public class Utils {
     return ext.toLowerCase(Locale.ROOT);
   }
 
+  /**
+   * get all files from the given path recursive
+   *
+   * @param root
+   *          the root folder to search files for
+   * @return a list of all found files
+   */
+  public static List<Path> findFilesRecursive(Path root) {
+    final List<Path> filesFound = new ArrayList<>();
+    if (!Files.isDirectory(root)) {
+      return filesFound;
+    }
+    try {
+      Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+          filesFound.add(file);
+          return FileVisitResult.CONTINUE;
+        }
+      });
+    }
+    catch (Exception e) {
+      LOGGER.warn("could not get a file listing: " + e.getMessage());
+    }
+
+    return filesFound;
+  }
+
   /*
    * Visitor for copying a directory recursively<br> Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
    */

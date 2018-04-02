@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -66,6 +67,11 @@ public class TvShowBulkEditAction extends TmmAction {
         TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
         selectedEpisodes.add(tvShowEpisode);
       }
+    }
+
+    if (selectedTvShows.isEmpty() && selectedEpisodes.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
     }
 
     TvShowBatchEditorDialog dialog = new TvShowBatchEditorDialog(selectedTvShows, selectedEpisodes);

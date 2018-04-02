@@ -85,6 +85,9 @@ public class MovieSetEditorDialog extends TmmDialog {
   private List<Movie>         removedMovies    = new ArrayList<>();
   private List<MediaScraper>  artworkScrapers  = new ArrayList<>();
   private boolean             continueQueue    = true;
+  private boolean             navigateBack     = false;
+  private int                 queueIndex;
+  private int                 queueSize;
 
   /** UI components */
   private JTextField          tfName;
@@ -103,13 +106,18 @@ public class MovieSetEditorDialog extends TmmDialog {
    * 
    * @param movieSet
    *          the movie set
-   * @param inQueue
-   *          the in queue
+   * @param queueIndex
+   *          the actual index in the queue
+   * @param queueSize
+   *          the queue size
    */
-  public MovieSetEditorDialog(MovieSet movieSet, boolean inQueue) {
-    super(BUNDLE.getString("movieset.edit"), "movieSetEditor"); //$NON-NLS-1$
+  public MovieSetEditorDialog(MovieSet movieSet, int queueIndex, int queueSize) {
+    super(BUNDLE.getString("movieset.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "movieSetEditor"); //$NON-NLS-1$
 
     movieSetToEdit = movieSet;
+    this.queueIndex = queueIndex;
+    this.queueSize = queueSize;
+
     try {
       List<String> enabledScrapers = new ArrayList<>();
       if (MovieModuleManager.SETTINGS.getArtworkScrapers().contains(Constants.TMDB)) {
@@ -311,9 +319,13 @@ public class MovieSetEditorDialog extends TmmDialog {
      * Button pane
      */
     {
-      if (inQueue) {
-        JButton abortButton = new JButton(new AbortAction());
-        addButton(abortButton);
+      if (queueSize > 1) {
+        JButton btnAbort = new JButton(new AbortAction());
+        addButton(btnAbort);
+        if (queueIndex > 0) {
+          JButton backButton = new JButton(new NavigateBackAction());
+          addButton(backButton);
+        }
       }
 
       JButton btnCancel = new JButton(new CancelAction());
@@ -513,7 +525,21 @@ public class MovieSetEditorDialog extends TmmDialog {
       continueQueue = false;
       setVisible(false);
     }
+  }
 
+  private class NavigateBackAction extends AbstractAction {
+    private static final long serialVersionUID = -1652218154720642310L;
+
+    public NavigateBackAction() {
+      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.BACK_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      navigateBack = true;
+      setVisible(false);
+    }
   }
 
   /**
@@ -584,5 +610,13 @@ public class MovieSetEditorDialog extends TmmDialog {
   public boolean showDialog() {
     setVisible(true);
     return continueQueue;
+  }
+
+  public boolean isContinueQueue() {
+    return continueQueue;
+  }
+
+  public boolean isNavigateBack() {
+    return navigateBack;
   }
 }

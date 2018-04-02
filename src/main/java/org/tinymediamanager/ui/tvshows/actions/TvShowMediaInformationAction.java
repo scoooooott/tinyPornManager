@@ -30,6 +30,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -65,12 +66,15 @@ public class TvShowMediaInformationAction extends TmmAction {
       }
     }
 
+    if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     // get data of all files within all selected movies
-    if (selectedTvShows.size() > 0 || selectedEpisodes.size() > 0) {
-      TmmThreadPool task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
-      if (TmmTaskManager.getInstance().addMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+    TmmThreadPool task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
+    if (TmmTaskManager.getInstance().addMainTask(task)) {
+      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }
 }

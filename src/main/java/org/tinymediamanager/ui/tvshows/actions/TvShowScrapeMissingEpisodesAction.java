@@ -29,6 +29,7 @@ import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -52,18 +53,21 @@ public class TvShowScrapeMissingEpisodesAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
-    if (selectedTvShows.size() > 0) {
-      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
-      options.loadDefaults();
+    if (selectedTvShows.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
 
-      TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig(false);
-      scraperMetadataConfig.setEpisodeList(true);
-      options.setScraperMetadataConfig(scraperMetadataConfig);
+    TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+    options.loadDefaults();
 
-      TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
-      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+    TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig(false);
+    scraperMetadataConfig.setEpisodeList(true);
+    options.setScraperMetadataConfig(scraperMetadataConfig);
+
+    TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+    if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
+      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }
 }

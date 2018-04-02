@@ -61,6 +61,11 @@ public class TvShowDeleteAction extends TmmAction {
       return;
     }
 
+    if (selectedObjects.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     for (Object obj : selectedObjects) {
       // delete a whole TV show
       if (obj instanceof TvShow) {
