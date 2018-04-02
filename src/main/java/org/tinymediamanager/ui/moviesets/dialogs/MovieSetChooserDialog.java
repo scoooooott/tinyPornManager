@@ -296,6 +296,10 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
             }
           }
         }
+
+        if (!movieSetsFound.isEmpty()) {
+          tableMovieSets.setRowSelectionInterval(0, 0); // select first row
+        }
       }
       catch (Exception e1) {
         LOGGER.warn("SearchTask", e1);
