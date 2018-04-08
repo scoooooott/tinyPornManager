@@ -34,13 +34,15 @@ fi
 # By default Mac OS X LC_ALL is set to "C", which means files with special characters will not be found.
 export LC_ALL="en_US.UTF-8"
 
-# search for the right JVM - priority is java 7/8
-if [ -x "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java" ]; then
+# search for the right JVM - priority is java 8
+if [ -x /usr/libexec/java_home ]; then
+  JAVA_HOME="`/usr/libexec/java_home -v 1.8 -F`"
+  export JAVA_HOME
+fi
+
+if [ ! -f "$JAVA_HOME/bin/java" -a -x "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java" ]; then
   JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
   export JAVA_HOME
-elif [ -x /usr/libexec/java_home ]; then
-  JAVA_HOME="`/usr/libexec/java_home`"
-  export JAVA_HOME  
 fi
 JAVACMD="${JAVA_HOME}/bin/java"
 
