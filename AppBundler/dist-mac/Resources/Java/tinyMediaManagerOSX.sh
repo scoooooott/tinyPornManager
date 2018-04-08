@@ -11,6 +11,26 @@
 #
 #####################################################################################
 
+# find the path where to execute tmm
+PRG=$0
+while [ -h "$PRG" ]; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '^.*-> \(.*\)$' 2>/dev/null`
+    if expr "$link" : '^/' 2> /dev/null >/dev/null; then
+        PRG="$link"
+    else
+        PRG="`dirname "$PRG"`/$link"
+    fi
+done
+
+progdir=`dirname "$PRG"`
+
+# check if tmm has been executed in a read only environment
+if [ ! -w "$progdir" ]; then
+  osascript -e "tell application \"System Events\" to display dialog \"ERROR launching tinyMediaManager!\n\nYou need to execute tinyMediaManager from a writeable location (e.g. the Applications folder)\" with title \"tinyMediaManager\" buttons {\" OK \"} default button 1 with icon path to resource \"tmm.icns\" in bundle (path to me)"
+  exit 1
+fi
+
 # By default Mac OS X LC_ALL is set to "C", which means files with special characters will not be found.
 export LC_ALL="en_US.UTF-8"
 
