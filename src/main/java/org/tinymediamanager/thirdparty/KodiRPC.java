@@ -600,7 +600,7 @@ public class KodiRPC {
       if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
         return true;
       }
-      if (hostname != null && !hostname.isEmpty() && hostname.equals(other.hostname)) {
+      if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
         return true;
       }
 
