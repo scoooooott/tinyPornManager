@@ -849,11 +849,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
 
           // artwork
-          for (MediaArtwork ma : metadata.getFanart()) {
-            if (ma.getType() == MediaArtworkType.THUMB) {
-              lblThumb.setImageUrl(ma.getDefaultUrl());
-              break;
-            }
+          for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+            lblThumb.setImageUrl(ma.getDefaultUrl());
+            tfThumb.setText(ma.getDefaultUrl());
+            break;
           }
         }
       }
