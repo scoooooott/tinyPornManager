@@ -82,7 +82,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
   private static Pattern                             fanartPattern       = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             bannerPattern       = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern                             thumbPattern        = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+  private static Pattern                             thumbPattern        = Pattern
+      .compile("(?i)(.*-thumb|thumb|.*-landscape|landscape)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             seasonPosterPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
   private static Pattern                             seasonBannerPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
   private static Pattern                             seasonThumbPattern  = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
@@ -472,7 +473,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case EXTRAFANART:
       case EXTRATHUMB:
       case DISC:
-      case LANDSCAPE:
         return true;
 
       default:
@@ -1982,7 +1982,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case CLEARLOGO:
       case CLEARART:
       case DISC:
-      case LANDSCAPE:
       case EXTRATHUMB:
         fetchImageInformation();
         break;

@@ -44,7 +44,6 @@ public enum MediaFileType {
   LOGO, // gfx
   CLEARLOGO, // gfx
   THUMB, // gfx
-  LANDSCAPE, // gfx
   SEASON_POSTER, // gfx
   SEASON_BANNER, // gfx
   SEASON_THUMB, // gfx

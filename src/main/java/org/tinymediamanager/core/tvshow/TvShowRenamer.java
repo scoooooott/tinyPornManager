@@ -882,7 +882,6 @@ public class TvShowRenamer {
       case EXTRAFANART:
       case EXTRATHUMB:
       case GRAPHIC:
-      case LANDSCAPE:
       case LOGO:
       case POSTER:
       case SAMPLE:
