@@ -125,6 +125,25 @@ public class ImageChooserDialog extends TmmDialog {
 
   /**
    * Instantiates a new image chooser dialog.
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param imageLabel
+   *          the image label
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public ImageChooserDialog(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
+      MediaType mediaType) {
+    this(ids, type, artworkScrapers, imageLabel, new ArrayList<>(), new ArrayList<>(), mediaType);
+  }
+
+  /**
+   * Instantiates a new image chooser dialog with extrathumbs and extrafanart usage.
    * 
    * @param ids
    *          the ids
