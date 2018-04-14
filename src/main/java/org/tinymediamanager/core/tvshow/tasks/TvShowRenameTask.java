@@ -68,21 +68,21 @@ public class TvShowRenameTask extends TmmThreadPool {
       initThreadPool(1, "rename");
 
       // rename complete tv shows
-      for (int i = 0; i < tvShowsToRename.size(); i++) {
+      for (TvShow aTvShowsToRename1 : tvShowsToRename) {
         if (cancel) {
           break;
         }
-        TvShow show = tvShowsToRename.get(i);
+        TvShow show = aTvShowsToRename1;
         for (TvShowEpisode episode : new ArrayList<>(show.getEpisodes())) {
           submitTask(new RenameEpisodeTask(episode));
         }
       }
       // rename single episodes
-      for (int i = 0; i < episodesToRename.size(); i++) {
+      for (TvShowEpisode anEpisodesToRename1 : episodesToRename) {
         if (cancel) {
           break;
         }
-        TvShowEpisode episode = episodesToRename.get(i);
+        TvShowEpisode episode = anEpisodesToRename1;
         submitTask(new RenameEpisodeTask(episode));
       }
 
@@ -93,22 +93,22 @@ public class TvShowRenameTask extends TmmThreadPool {
 
       // rename TvShowRoot and update all MFs in DB to new path
       if (renameRoot) {
-        for (int i = 0; i < episodesToRename.size(); i++) {
+        for (TvShowEpisode anEpisodesToRename : episodesToRename) {
           if (cancel) {
             break;
           }
           // fill TvShowsToRename if we just rename an episodes list
-          TvShow show = episodesToRename.get(i).getTvShow();
+          TvShow show = anEpisodesToRename.getTvShow();
           if (!tvShowsToRename.contains(show)) {
             tvShowsToRename.add(show);
           }
         }
-        for (int i = 0; i < tvShowsToRename.size(); i++) {
+        for (TvShow aTvShowsToRename : tvShowsToRename) {
           if (cancel) {
             break;
           }
-          TvShowRenamer.renameTvShowRoot(tvShowsToRename.get(i)); // rename root and update ShowMFs
-          TvShowRenamer.renameSeasonArtwork(tvShowsToRename.get(i)); // rename TV show artwork
+          TvShowRenamer.renameTvShowRoot(aTvShowsToRename); // rename root and update ShowMFs
+          TvShowRenamer.renameSeasonArtwork(aTvShowsToRename); // rename TV show artwork
         }
       }
 
@@ -118,7 +118,6 @@ public class TvShowRenameTask extends TmmThreadPool {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Settings.renamer", "message.renamer.threadcrashed"));
     }
-    return;
   }
 
   /**
@@ -133,7 +132,7 @@ public class TvShowRenameTask extends TmmThreadPool {
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() {
       TvShowRenamer.renameEpisode(episode);
       return episode.getTitle();
     }

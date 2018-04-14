@@ -89,7 +89,7 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
       JLabel lblNfoFormatT = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
       add(lblNfoFormatT, "flowx,cell 1 1 2 1");
 
-      cbNfoFormat = new JComboBox(TvShowConnectors.values());
+      cbNfoFormat = new JComboBox<>(TvShowConnectors.values());
       add(cbNfoFormat, "cell 1 1 2 1");
 
       JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
@@ -101,14 +101,14 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
       JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
       add(lblCertificationFormatT, "flowx,cell 1 6 2 1");
 
-      cbCertificationStyle = new JComboBox();
+      cbCertificationStyle = new JComboBox<>();
       add(cbCertificationStyle, "cell 2 7");
 
       chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
       add(chckbxWriteCleanNfo, "cell 1 9 2 1");
     }
 
-    cbNfoLanguage = new JComboBox(MediaLanguages.values());
+    cbNfoLanguage = new JComboBox<>(MediaLanguages.values());
     add(cbNfoLanguage, "cell 1 3 2 1");
   }
 

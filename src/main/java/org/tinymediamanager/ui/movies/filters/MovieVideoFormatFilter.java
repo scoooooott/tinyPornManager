@@ -62,13 +62,13 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
       return false;
     }
 
-    if (videoFormat == MediaFile.VIDEO_FORMAT_HD && mf.isVideoDefinitionHD()) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_HD) && mf.isVideoDefinitionHD()) {
       return true;
     }
-    else if (videoFormat == MediaFile.VIDEO_FORMAT_SD && mf.isVideoDefinitionSD()) {
+    else if (videoFormat.equals(MediaFile.VIDEO_FORMAT_SD) && mf.isVideoDefinitionSD()) {
       return true;
     }
-    else if (videoFormat == MediaFile.VIDEO_FORMAT_LD && mf.isVideoDefinitionLD()) {
+    else if (videoFormat.equals(MediaFile.VIDEO_FORMAT_LD) && mf.isVideoDefinitionLD()) {
       return true;
     }
     else if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {

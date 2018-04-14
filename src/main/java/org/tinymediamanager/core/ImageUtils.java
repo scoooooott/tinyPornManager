@@ -49,9 +49,8 @@ public class ImageUtils {
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
-   * @throws InterruptedException
    */
-  public static InputStream scaleImage(String imageUrl, int width) throws IOException, InterruptedException {
+  public static InputStream scaleImage(String imageUrl, int width) throws IOException {
     Url url = new Url(imageUrl);
 
     BufferedImage originalImage = null;
@@ -123,9 +122,8 @@ public class ImageUtils {
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
-   * @throws InterruptedException
    */
-  public static InputStream scaleImage(Path file, int width) throws IOException, InterruptedException {
+  public static InputStream scaleImage(Path file, int width) throws IOException {
     BufferedImage originalImage = null;
     try {
       originalImage = createImage(file);
@@ -232,11 +230,11 @@ public class ImageUtils {
     return size;
   }
 
-  public static BufferedImage createImage(byte[] imageData) throws Exception {
+  public static BufferedImage createImage(byte[] imageData) {
     return createImage(Toolkit.getDefaultToolkit().createImage(imageData));
   }
 
-  public static BufferedImage createImage(Path file) throws Exception {
+  public static BufferedImage createImage(Path file) {
     return createImage(Toolkit.getDefaultToolkit().createImage(file.toFile().getAbsolutePath()));
   }
 

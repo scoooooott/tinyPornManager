@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,7 @@ public class TvShowToNfoConnectorTest {
       TvShow tvShow = createTvShow("target/test-classes/xbmc_nfo");
 
       // write it
-      List<TvShowNfoNaming> nfoNames = Arrays.asList(TvShowNfoNaming.TV_SHOW);
+      List<TvShowNfoNaming> nfoNames = Collections.singletonList(TvShowNfoNaming.TV_SHOW);
       TvShowToXbmcConnector connector = new TvShowToXbmcConnector(tvShow);
       connector.write(nfoNames);
 
@@ -97,7 +98,7 @@ public class TvShowToNfoConnectorTest {
       TvShow tvShow = createTvShow("target/test-classes/kodi_nfo");
 
       // write it
-      List<TvShowNfoNaming> nfoNames = Arrays.asList(TvShowNfoNaming.TV_SHOW);
+      List<TvShowNfoNaming> nfoNames = Collections.singletonList(TvShowNfoNaming.TV_SHOW);
       TvShowToKodiConnector connector = new TvShowToKodiConnector(tvShow);
       connector.write(nfoNames);
 

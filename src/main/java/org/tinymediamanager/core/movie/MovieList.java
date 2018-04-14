@@ -563,7 +563,7 @@ public class MovieList extends AbstractModelObject {
 
   public List<MediaScraper> getAvailableMediaScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE);
-    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    availableScrapers.sort(new MovieMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -587,7 +587,7 @@ public class MovieList extends AbstractModelObject {
   public List<MediaScraper> getAvailableArtworkScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK);
     // we can use the MovieMediaScraperComparator here too, since TMDB should also be first
-    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    availableScrapers.sort(new MovieMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -631,7 +631,7 @@ public class MovieList extends AbstractModelObject {
   public List<MediaScraper> getAvailableTrailerScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER);
     // we can use the MovieMediaScraperComparator here too, since TMDB should also be first
-    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    availableScrapers.sort(new MovieMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -674,7 +674,7 @@ public class MovieList extends AbstractModelObject {
    */
   public List<MediaScraper> getAvailableSubtitleScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.SUBTITLE);
-    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    availableScrapers.sort(new MovieMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -716,8 +716,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie count
    */
   public int getMovieCount() {
-    int size = movieList.size();
-    return size;
+    return movieList.size();
   }
 
   /**
@@ -968,7 +967,7 @@ public class MovieList extends AbstractModelObject {
    */
   public List<MovieSet> getSortedMovieSetList() {
     List<MovieSet> sortedMovieSets = new ArrayList<>(getMovieSetList());
-    Collections.sort(sortedMovieSets, movieSetComparator);
+    sortedMovieSets.sort(movieSetComparator);
     return sortedMovieSets;
   }
 

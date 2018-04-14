@@ -169,10 +169,7 @@ public class BugReportDialog extends TmmDialog {
       @Override
       public boolean accept(File directory, String filename) {
         Matcher matcher = logPattern.matcher(filename);
-        if (matcher.find()) {
-          return true;
-        }
-        return false;
+        return matcher.find();
       }
     });
     if (logs != null) {

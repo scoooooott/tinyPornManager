@@ -300,7 +300,7 @@ public class TinyMediaManagerCMD {
         }
       }
       else {
-        HashSet<Movie> scrape = new HashSet<Movie>(); // no dupes
+        HashSet<Movie> scrape = new HashSet<>(); // no dupes
         if (scrapeNew) {
           LOGGER.info("Commandline - scraping new movies...");
           List<Movie> newMovies = MovieList.getInstance().getNewMovies();
@@ -315,7 +315,7 @@ public class TinyMediaManagerCMD {
             scrape.addAll(unscrapedMovies);
           }
         }
-        moviesToScrape.addAll(new ArrayList<Movie>(scrape));
+        moviesToScrape.addAll(new ArrayList<>(scrape));
       }
 
       if (moviesToScrape.size() > 0) {

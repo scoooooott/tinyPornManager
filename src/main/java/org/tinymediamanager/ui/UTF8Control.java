@@ -55,7 +55,7 @@ public class UTF8Control extends Control {
           throw new ClassCastException(bundleClass.getName() + " cannot be cast to ResourceBundle");
         }
       }
-      catch (ClassNotFoundException e) {
+      catch (ClassNotFoundException ignored) {
       }
     }
     else if (format.equals("java.properties")) {

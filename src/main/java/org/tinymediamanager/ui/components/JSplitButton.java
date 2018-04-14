@@ -249,9 +249,9 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
       return image;
     }
     else {
-      Graphics2D g = null;
+      Graphics2D g;
       BufferedImage img = new BufferedImage(arrowSize, arrowSize, BufferedImage.TYPE_INT_RGB);
-      g = (Graphics2D) img.createGraphics();
+      g = img.createGraphics();
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, img.getWidth(), img.getHeight());
       g.setColor(popupMenu != null ? arrowColor : disabledArrowColor);
@@ -261,7 +261,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
       // rotate it to face downwards
       img = rotate(img, 90);
       BufferedImage dimg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-      g = (Graphics2D) dimg.createGraphics();
+      g = dimg.createGraphics();
       g.setComposite(AlphaComposite.Src);
       g.drawImage(img, null, 0, 0);
       g.dispose();
@@ -354,12 +354,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
 
   @Override
   public void mouseMoved(MouseEvent e) {
-    if (splitRectangle.contains(e.getPoint())) {
-      onSplit = true;
-    }
-    else {
-      onSplit = false;
-    }
+    onSplit = splitRectangle.contains(e.getPoint());
     repaint(splitRectangle);
   }
 
@@ -476,12 +471,12 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     /**
      * Invoked when the button part is clicked.
      */
-    public void buttonClicked(ActionEvent e);
+    void buttonClicked(ActionEvent e);
 
     /**
      * Invoked when split part is clicked.
      */
-    public void splitButtonClicked(ActionEvent e);
+    void splitButtonClicked(ActionEvent e);
 
   }
 

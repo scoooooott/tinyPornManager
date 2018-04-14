@@ -132,9 +132,9 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
     int visibleCount = 0;
     Dimension componentPreferredSize;
 
-    for (int i = 0, c = children.length; i < c; i++) {
-      if (children[i].isVisible()) {
-        componentPreferredSize = children[i].getPreferredSize();
+    for (Component aChildren : children) {
+      if (aChildren.isVisible()) {
+        componentPreferredSize = aChildren.getPreferredSize();
         maxWidth = Math.max(maxWidth, componentPreferredSize.width);
         maxHeight = Math.max(maxHeight, componentPreferredSize.height);
         visibleCount++;

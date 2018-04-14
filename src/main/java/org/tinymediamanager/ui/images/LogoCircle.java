@@ -90,7 +90,7 @@ public class LogoCircle implements javax.swing.Icon {
 
     float origAlpha = 1.0f;
 
-    java.util.LinkedList<AffineTransform> transformations = new java.util.LinkedList<AffineTransform>();
+    java.util.LinkedList<AffineTransform> transformations = new java.util.LinkedList<>();
 
     //
 

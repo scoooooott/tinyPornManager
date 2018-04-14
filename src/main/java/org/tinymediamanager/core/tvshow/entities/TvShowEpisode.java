@@ -49,7 +49,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -407,7 +407,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     try {
       setFirstAired(StrgUtils.parseDate(aired));
     }
-    catch (ParseException e) {
+    catch (ParseException ignored) {
     }
   }
 
@@ -712,7 +712,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     if (connector != null) {
-      connector.write(Arrays.asList(TvShowEpisodeNfoNaming.FILENAME));
+      connector.write(Collections.singletonList(TvShowEpisodeNfoNaming.FILENAME));
     }
 
     firePropertyChange(HAS_NFO_FILE, false, true);
@@ -725,10 +725,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    if (nfos != null && nfos.size() > 0) {
-      return true;
-    }
-    return false;
+    return nfos != null && nfos.size() > 0;
   }
 
   /**
@@ -737,10 +734,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB))) {
-      return true;
-    }
-    return false;
+    return StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB));
   }
 
   /**
@@ -1064,9 +1058,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     // get all extra audio streams
-    for (MediaFile audioFile : getMediaFiles(MediaFileType.AUDIO)) {
-      mediaFilesWithAudioStreams.add(audioFile);
-    }
+    mediaFilesWithAudioStreams.addAll(getMediaFiles(MediaFileType.AUDIO));
 
     return mediaFilesWithAudioStreams;
   }

@@ -61,7 +61,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
   @SuppressWarnings("unchecked")
   public TmmTreeDataProvider<E> getDataProvider() {
     final TreeModel model = getModel();
-    return model != null && model instanceof TmmTreeModel ? ((TmmTreeModel<E>) model).getDataProvider() : null;
+    return model instanceof TmmTreeModel ? ((TmmTreeModel<E>) model).getDataProvider() : null;
   }
 
   /**
@@ -142,7 +142,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
   @SuppressWarnings("unchecked")
   public void updateFiltering() {
     final TreeModel model = getModel();
-    if (model != null && model instanceof TmmTreeModel) {
+    if (model instanceof TmmTreeModel) {
       ((TmmTreeModel<E>) getModel()).updateSortingAndFiltering();
     }
   }

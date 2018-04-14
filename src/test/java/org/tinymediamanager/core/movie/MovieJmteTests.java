@@ -21,6 +21,7 @@ import static org.tinymediamanager.core.movie.MovieRenamer.morphTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -180,7 +181,7 @@ public class MovieJmteTests {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

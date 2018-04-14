@@ -57,15 +57,11 @@ public class TvShowChangeToDvdOrderAction extends TmmAction {
       // display tv show editor
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
-        for (TvShowEpisode ep : tvShow.getEpisodes()) {
-          selectedEpisodes.add(ep);
-        }
+        selectedEpisodes.addAll(tvShow.getEpisodes());
       }
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        for (TvShowEpisode ep : season.getEpisodes()) {
-          selectedEpisodes.add(ep);
-        }
+        selectedEpisodes.addAll(season.getEpisodes());
       }
       // display tv episode editor
       if (obj instanceof TvShowEpisode) {

@@ -19,6 +19,7 @@ package org.tinymediamanager.core.tvshow;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -175,7 +176,7 @@ public class TvShowJmteTests {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

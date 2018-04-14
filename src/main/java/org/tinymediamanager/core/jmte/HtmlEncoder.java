@@ -16,7 +16,7 @@
 
 package org.tinymediamanager.core.jmte;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import com.floreysoft.jmte.encoder.Encoder;
 

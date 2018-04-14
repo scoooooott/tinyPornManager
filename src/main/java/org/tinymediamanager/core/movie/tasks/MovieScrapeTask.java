@@ -83,10 +83,9 @@ public class MovieScrapeTask extends TmmThreadPool {
 
     smartScrapeList = new ArrayList<>(0);
 
-    for (int i = 0; i < moviesToScrape.size(); i++) {
-      Movie movie = moviesToScrape.get(i);
-      submitTask(new Worker(movie));
-    }
+      for (Movie movie : moviesToScrape) {
+          submitTask(new Worker(movie));
+      }
     waitForCompletionOrCancel();
 
     // initiate smart scrape

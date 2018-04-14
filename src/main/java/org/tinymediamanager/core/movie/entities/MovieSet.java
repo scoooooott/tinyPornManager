@@ -299,7 +299,7 @@ public class MovieSet extends MediaEntity {
    */
   public void sortMovies() {
     synchronized (movies) {
-      Utils.sortList(movies, MOVIE_SET_COMPARATOR);
+      movies.sort(MOVIE_SET_COMPARATOR);
       // rebuild the ID table the same way
       movieIds.clear();
       for (Movie movie : movies) {
@@ -383,10 +383,7 @@ public class MovieSet extends MediaEntity {
   }
 
   public Boolean getHasMetadata() {
-    if (StringUtils.isNotBlank(plot) && StringUtils.isNotBlank(title)) {
-      return true;
-    }
-    return false;
+    return StringUtils.isNotBlank(plot) && StringUtils.isNotBlank(title);
   }
 
   public Boolean isWatched() {

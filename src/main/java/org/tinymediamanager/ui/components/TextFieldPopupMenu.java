@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
@@ -36,12 +34,9 @@ public class TextFieldPopupMenu {
 
   private static JMenuItem getCutMenuItem(final JPopupMenu menu) {
     final JMenuItem mntmCut = new JMenuItem(BUNDLE.getString("menuitem.cut"));
-    mntmCut.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (menu.getInvoker() instanceof JTextComponent) {
-          ((JTextComponent) menu.getInvoker()).cut();
-        }
+    mntmCut.addActionListener(e -> {
+      if (menu.getInvoker() instanceof JTextComponent) {
+        ((JTextComponent) menu.getInvoker()).cut();
       }
     });
     return mntmCut;
@@ -49,12 +44,9 @@ public class TextFieldPopupMenu {
 
   private static JMenuItem getCopyMenuItem(final JPopupMenu menu) {
     JMenuItem mntmCopy = new JMenuItem(BUNDLE.getString("menuitem.copy"));
-    mntmCopy.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (menu.getInvoker() instanceof JTextComponent) {
-          ((JTextComponent) menu.getInvoker()).copy();
-        }
+    mntmCopy.addActionListener(e -> {
+      if (menu.getInvoker() instanceof JTextComponent) {
+        ((JTextComponent) menu.getInvoker()).copy();
       }
     });
     return mntmCopy;
@@ -62,12 +54,9 @@ public class TextFieldPopupMenu {
 
   private static JMenuItem getPasteMenuItem(final JPopupMenu menu) {
     JMenuItem mntmPaste = new JMenuItem(BUNDLE.getString("menuitem.paste"));
-    mntmPaste.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (menu.getInvoker() instanceof JTextComponent) {
-          ((JTextComponent) menu.getInvoker()).paste();
-        }
+    mntmPaste.addActionListener(e -> {
+      if (menu.getInvoker() instanceof JTextComponent) {
+        ((JTextComponent) menu.getInvoker()).paste();
       }
     });
     return mntmPaste;

@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -28,12 +27,8 @@ public class RecursiveToStringStyle extends ToStringStyle {
   private final String                tabs;
 
   // http://stackoverflow.com/a/16934373/603516
-  private ThreadLocal<MutableInteger> depth = new ThreadLocal<MutableInteger>() {
-                                              @Override
-                                              protected MutableInteger initialValue() {
-                                                return new MutableInteger(0);
-                                              }
-                                            };
+  private ThreadLocal<MutableInteger> depth = ThreadLocal.withInitial(() -> new MutableInteger(0));
+
 
   public RecursiveToStringStyle(int maxDepth) {
     this.maxDepth = maxDepth;
@@ -42,7 +37,7 @@ public class RecursiveToStringStyle extends ToStringStyle {
     setUseShortClassName(true);
     setUseIdentityHashCode(false);
     setContentStart(" {");
-    setFieldSeparator(SystemUtils.LINE_SEPARATOR);
+    setFieldSeparator(System.lineSeparator());
     setFieldSeparatorAtStart(true);
     setFieldNameValueSeparator(" = ");
     setContentEnd("}");
@@ -83,7 +78,7 @@ public class RecursiveToStringStyle extends ToStringStyle {
   public void appendEnd(StringBuffer buffer, Object object) {
     super.appendEnd(buffer, object);
     buffer.setLength(buffer.length() - getContentEnd().length());
-    buffer.append(SystemUtils.LINE_SEPARATOR);
+    buffer.append(System.lineSeparator());
     depth.get().decrement();
     padDepth(buffer);
     appendContentEnd(buffer);

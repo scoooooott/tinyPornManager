@@ -79,7 +79,7 @@ public class MovieModuleManager implements ITmmModule {
   }
 
   @Override
-  public void startUp() throws Exception {
+  public void startUp() {
     // do a DB backup, and keep last 15 copies
     Path db = Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB);
     Utils.createBackupFile(db);
@@ -180,7 +180,7 @@ public class MovieModuleManager implements ITmmModule {
     }
   }
 
-  void removeMovieFromDb(Movie movie) throws Exception {
+  void removeMovieFromDb(Movie movie) {
     movieMap.remove(movie.getDbId());
   }
 
@@ -192,17 +192,17 @@ public class MovieModuleManager implements ITmmModule {
     }
   }
 
-  void removeMovieSetFromDb(MovieSet movieSet) throws Exception {
+  void removeMovieSetFromDb(MovieSet movieSet) {
     movieSetMap.remove(movieSet.getDbId());
   }
 
   @Override
-  public void initializeDatabase() throws Exception {
+  public void initializeDatabase() {
     Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB));
   }
 
   @Override
-  public void saveSettings() throws Exception {
+  public void saveSettings() {
     SETTINGS.saveSettings();
   }
 }

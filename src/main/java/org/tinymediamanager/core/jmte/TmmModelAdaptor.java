@@ -124,12 +124,10 @@ public class TmmModelAdaptor extends DefaultModelAdaptor {
       if (o instanceof Map.Entry) {
         final Map.Entry entry = (Map.Entry) o;
         if (propertyName.equals("key")) {
-          final Object result = entry.getKey();
-          return result;
+          return entry.getKey();
         }
         else if (propertyName.equals("value")) {
-          final Object result = entry.getValue();
-          return result;
+          return entry.getValue();
         }
 
       }
@@ -139,7 +137,7 @@ public class TmmModelAdaptor extends DefaultModelAdaptor {
       final Class<?> clazz = o.getClass();
       Map<String, Member> members = cache.get(clazz);
       if (members == null) {
-        members = new HashMap<String, Member>();
+        members = new HashMap<>();
         cache.put(clazz, members);
       }
       else {

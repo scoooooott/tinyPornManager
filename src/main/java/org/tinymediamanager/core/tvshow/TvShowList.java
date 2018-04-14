@@ -252,10 +252,9 @@ public class TvShowList extends AbstractModelObject {
    */
   public int getEpisodeCount() {
     int count = 0;
-    for (int i = 0; i < tvShowList.size(); i++) {
-      TvShow tvShow = tvShowList.get(i);
-      count += tvShow.getEpisodeCount();
-    }
+      for (TvShow tvShow : tvShowList) {
+          count += tvShow.getEpisodeCount();
+      }
 
     return count;
   }
@@ -416,7 +415,7 @@ public class TvShowList extends AbstractModelObject {
 
   public List<MediaScraper> getAvailableMediaScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.TV_SHOW);
-    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    availableScrapers.sort(new TvShowMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -428,7 +427,7 @@ public class TvShowList extends AbstractModelObject {
   public List<MediaScraper> getAvailableArtworkScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK);
     // we can use the TvShowMediaScraperComparator here too, since TheTvDb should also be first
-    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    availableScrapers.sort(new TvShowMediaScraperComparator());
     return availableScrapers;
   }
 
@@ -835,17 +834,14 @@ public class TvShowList extends AbstractModelObject {
 
       // and push a message
       // also delay it so that the UI has time to start up
-      Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            Thread.sleep(15000);
-          }
-          catch (Exception ignored) {
-          }
-          Message message = new Message(MessageLevel.SEVERE, "tmm.tvshows", "message.database.corrupteddata");
-          MessageManager.instance.pushMessage(message);
+      Thread thread = new Thread(() -> {
+        try {
+          Thread.sleep(15000);
         }
+        catch (Exception ignored) {
+        }
+        Message message = new Message(MessageLevel.SEVERE, "tmm.tvshows", "message.database.corrupteddata");
+        MessageManager.instance.pushMessage(message);
       });
       thread.start();
     }
@@ -858,7 +854,7 @@ public class TvShowList extends AbstractModelObject {
    */
   public List<MediaScraper> getAvailableSubtitleScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.SUBTITLE);
-    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    availableScrapers.sort(new TvShowMediaScraperComparator());
     return availableScrapers;
   }
 

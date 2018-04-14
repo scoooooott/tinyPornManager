@@ -57,14 +57,14 @@ public class MovieRenameTask extends TmmThreadPool {
       initThreadPool(1, "rename");
       start();
       // rename movies
-      for (int i = 0; i < moviesToRename.size(); i++) {
-        if (cancel) {
-          break;
-        }
+        for (Movie aMoviesToRename : moviesToRename) {
+            if (cancel) {
+                break;
+            }
 
-        Movie movie = moviesToRename.get(i);
-        submitTask(new RenameMovieTask(movie));
-      }
+            Movie movie = aMoviesToRename;
+            submitTask(new RenameMovieTask(movie));
+        }
       waitForCompletionOrCancel();
       LOGGER.info("Done renaming movies)");
     }
@@ -89,7 +89,7 @@ public class MovieRenameTask extends TmmThreadPool {
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() {
       MovieRenamer.renameMovie(movie);
       return movie.getTitle();
     }

@@ -83,7 +83,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private static final Logger        LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
   private MovieSet                   movieSetToScrape;
-  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<>());
   private boolean                    continueQueue    = true;
 
   private JLabel                     lblProgressAction;

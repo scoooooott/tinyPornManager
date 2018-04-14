@@ -29,8 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -69,7 +67,7 @@ class TvShowScraperPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
 
   private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
-  private final List<TvShowScraper>   scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
+  private final List<TvShowScraper>   scrapers         = ObservableCollections.observableList(new ArrayList<>());
 
   private JTable                      tableScraper;
   private JComboBox<MediaLanguages>   cbScraperLanguage;
@@ -105,20 +103,17 @@ class TvShowScraperPanel extends JPanel {
     TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
     // implement listener to simulate button group
-    tableScraper.getModel().addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent arg0) {
-        // click on the checkbox
-        if (arg0.getColumn() == 0) {
-          int row = arg0.getFirstRow();
-          TvShowScraper changedScraper = scrapers.get(row);
-          // if flag default scraper was changed, change all other flags
-          if (changedScraper.getDefaultScraper()) {
-            settings.setScraper(changedScraper.getScraperId());
-            for (TvShowScraper scraper : scrapers) {
-              if (scraper != changedScraper) {
-                scraper.setDefaultScraper(Boolean.FALSE);
-              }
+    tableScraper.getModel().addTableModelListener(arg0 -> {
+      // click on the checkbox
+      if (arg0.getColumn() == 0) {
+        int row = arg0.getFirstRow();
+        TvShowScraper changedScraper = scrapers.get(row);
+        // if flag default scraper was changed, change all other flags
+        if (changedScraper.getDefaultScraper()) {
+          settings.setScraper(changedScraper.getScraperId());
+          for (TvShowScraper scraper : scrapers) {
+            if (scraper != changedScraper) {
+              scraper.setDefaultScraper(Boolean.FALSE);
             }
           }
         }

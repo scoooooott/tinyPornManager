@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
@@ -746,7 +747,7 @@ public class TvShowRenamerTest extends BasicTest {
   }
 
   private void renameTvShow(TvShow tvShow) {
-    TvShowRenameTask task = new TvShowRenameTask(Arrays.asList(tvShow), null, true);
+    TvShowRenameTask task = new TvShowRenameTask(Collections.singletonList(tvShow), null, true);
     task.run(); // blocking
   }
 }

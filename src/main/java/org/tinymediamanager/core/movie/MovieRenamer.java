@@ -228,7 +228,7 @@ public class MovieRenamer {
           if (sub.getFilename().endsWith(".sub")) {
             // when having a .sub, also rename .idx (don't care if error)
             try {
-              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().replaceFirst("sub$", "idx"));
               Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
               Utils.moveFileSafe(oldidx, newidx);
             }
@@ -575,9 +575,8 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>();
-    mfs.addAll(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
-        MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
+    mfs = new ArrayList<>(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+            MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
@@ -664,7 +663,7 @@ public class MovieRenamer {
             Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
           }
         }
-        catch (IOException ex) {
+        catch (IOException ignored) {
         }
       }
     }
@@ -698,12 +697,7 @@ public class MovieRenamer {
       // re-evaluate multiMovieDir based on renamer settings
       // folder MUST BE UNIQUE, so we need at least a T/E-Y combo or IMDBid
       // If renaming just to a fixed pattern (eg "$S"), movie will downgrade to a MMD
-      if (MovieRenamer.isFolderPatternUnique(pattern)) {
-        newDestIsMultiMovieDir = false;
-      }
-      else {
-        newDestIsMultiMovieDir = true;
-      }
+      newDestIsMultiMovieDir = !MovieRenamer.isFolderPatternUnique(pattern);
       newPathname = MovieRenamer.createDestinationForFoldername(pattern, movie);
     }
     else {
@@ -1252,11 +1246,8 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    if (((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
-        && pattern.contains("${year}")) || pattern.contains("${imdb}")) {
-      return true;
-    }
-    return false;
+    return ((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
+            && pattern.contains("${year}")) || pattern.contains("${imdb}");
   }
 
   /**
@@ -1269,9 +1260,6 @@ public class MovieRenamer {
   public static boolean isFilePatternValid() {
     String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
 
-    if (pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}")) {
-      return true;
-    }
-    return false;
+    return pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}");
   }
 }

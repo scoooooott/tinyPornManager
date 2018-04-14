@@ -29,5 +29,5 @@ public interface IFileNaming {
    *          the file extension
    * @return the file name or an empty string
    */
-  public String getFilename(String basename, String extension);
+  String getFilename(String basename, String extension);
 }

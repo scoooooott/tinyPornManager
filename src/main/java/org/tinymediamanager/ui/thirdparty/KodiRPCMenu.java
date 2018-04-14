@@ -30,21 +30,11 @@ public class KodiRPCMenu {
     JMenu m = new JMenu("Application");
 
     JMenuItem i = new JMenuItem("Quit");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().ApplicationQuit();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().ApplicationQuit());
     m.add(i);
 
     i = new JMenuItem("Mute / UnMute");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().ApplicationMute();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().ApplicationMute());
     m.add(i);
 
     m.add(Volume());
@@ -183,39 +173,19 @@ public class KodiRPCMenu {
     JMenu m = new JMenu("System");
 
     JMenuItem i = new JMenuItem("Hibernate");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().SystemHibernate();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().SystemHibernate());
     m.add(i);
 
     i = new JMenuItem("Reboot");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().SystemReboot();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().SystemReboot());
     m.add(i);
 
     i = new JMenuItem("Shutdown");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().SystemShutdown();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().SystemShutdown());
     m.add(i);
 
     i = new JMenuItem("Suspend");
-    i.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        KodiRPC.getInstance().SystemSuspend();
-      }
-    });
+    i.addActionListener(e -> KodiRPC.getInstance().SystemSuspend());
     m.add(i);
 
     return m;

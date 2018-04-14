@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -143,7 +142,7 @@ public class MovieSetArtworkHelper {
    */
   public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
 
     // poster
     setBestPoster(movieSet, artwork);
@@ -523,7 +522,7 @@ public class MovieSetArtworkHelper {
       }
     }
 
-    private void writeImage(byte[] bytes, Path pathAndFilename) throws IOException, InterruptedException {
+    private void writeImage(byte[] bytes, Path pathAndFilename) throws IOException {
       FileOutputStream outputStream = new FileOutputStream(pathAndFilename.toFile());
       InputStream is = new ByteArrayInputStream(bytes);
       IOUtils.copy(is, outputStream);

@@ -77,7 +77,7 @@ public class MovieImageSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
-  private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
+  private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<>());
 
   private JComboBox                   cbImagePosterSize;
   private JComboBox                   cbImageFanartSize;
@@ -200,13 +200,13 @@ public class MovieImageSettingsPanel extends JPanel {
       JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$
       add(lblImageTmdbPosterSize, "cell 1 4");
 
-      cbImagePosterSize = new JComboBox(PosterSizes.values());
+      cbImagePosterSize = new JComboBox<>(PosterSizes.values());
       add(cbImagePosterSize, "cell 2 4");
 
       JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size")); //$NON-NLS-1$
       add(lblImageTmdbFanartSize, "cell 1 5");
 
-      cbImageFanartSize = new JComboBox(FanartSizes.values());
+      cbImageFanartSize = new JComboBox<>(FanartSizes.values());
       add(cbImageFanartSize, "cell 2 5");
     }
   }

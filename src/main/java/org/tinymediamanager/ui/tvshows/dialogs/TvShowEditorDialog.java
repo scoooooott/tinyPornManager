@@ -26,7 +26,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -128,10 +127,10 @@ public class TvShowEditorDialog extends TmmDialog {
   private TvShow                            tvShowToEdit;
   private TvShowList                        tvShowList       = TvShowList.getInstance();
   private EventList<Person>                 actors;
-  private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<>());
   private EventList<MediaId>                ids              = new BasicEventList<>();
   private EventList<MediaRating>            ratings          = new BasicEventList<>();
-  private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer> episodes;
   private Rating                            userRating;
   private boolean                           continueQueue    = true;
@@ -155,7 +154,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres> cbGenres;
   private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
   private JSpinner                          spRating;
-  private JComboBox                         cbCertification;
+  private JComboBox<Certification>          cbCertification;
   private JComboBox<MediaAiredStatus>       cbStatus;
 
   private AutocompleteComboBox<String>      cbTags;
@@ -297,7 +296,7 @@ public class TvShowEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
+    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -394,14 +393,14 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblStatus = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
         details1Panel.add(lblStatus, "cell 3 6,alignx right");
 
-        cbStatus = new JComboBox(MediaAiredStatus.values());
+        cbStatus = new JComboBox<>(MediaAiredStatus.values());
         details1Panel.add(cbStatus, "cell 4 6,growx");
       }
       {
         JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
         details1Panel.add(lblCertification, "cell 0 7,alignx right");
 
-        cbCertification = new JComboBox();
+        cbCertification = new JComboBox<>();
         details1Panel.add(cbCertification, "cell 1 7,growx");
       }
       {
@@ -532,7 +531,7 @@ public class TvShowEditorDialog extends TmmDialog {
         btnMoveGenreDown.setMargin(BUTTON_MARGIN);
         details2Panel.add(btnMoveGenreDown, "cell 0 3,alignx right,aligny top");
 
-        cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
         cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
         InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
@@ -976,7 +975,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.saveToDb();
 
       if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
-        TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));
+        TmmTask task = new SyncTraktTvTask(null, Collections.singletonList(tvShowToEdit));
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

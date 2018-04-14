@@ -76,27 +76,27 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long               serialVersionUID = 5189531235704401313L;
+  private static final long                        serialVersionUID = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle              BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowSettings                  settings         = TvShowModuleManager.SETTINGS;
-  private List<String>                    spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private EventList<TvShowRenamerExample> exampleEventList = null;
+  private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
+  private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
+  private EventList<TvShowRenamerExample>          exampleEventList;
 
   /*
    * UI components
    */
-  private JLabel                          lblExample;
-  private JComboBox                       cbTvShowForPreview;
-  private JTextField                      tfSeasonFoldername;
-  private JCheckBox                       chckbxAsciiReplacement;
-  private JComboBox                       cbSpaceReplacement;
-  private JHintCheckBox                   chckbxSpaceReplacement;
-  private JComboBox                       cbEpisodeForPreview;
-  private TmmTable                        tableExamples;
-  private JTextField                      tfTvShowFolder;
-  private JTextField                      tfEpisodeFilename;
+  private JLabel                                   lblExample;
+  private JComboBox<TvShowPreviewContainer>        cbTvShowForPreview;
+  private JTextField                               tfSeasonFolderName;
+  private JCheckBox                                chckbxAsciiReplacement;
+  private JComboBox<String>                        cbSpaceReplacement;
+  private JHintCheckBox                            chckbxSpaceReplacement;
+  private JComboBox<TvShowEpisodePreviewContainer> cbEpisodeForPreview;
+  private TmmTable                                 tableExamples;
+  private JTextField                               tfTvShowFolder;
+  private JTextField                               tfEpisodeFilename;
 
   public TvShowRenamerSettingsPanel() {
 
@@ -131,7 +131,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     };
 
     tfTvShowFolder.getDocument().addDocumentListener(documentListener);
-    tfSeasonFoldername.getDocument().addDocumentListener(documentListener);
+    tfSeasonFolderName.getDocument().addDocumentListener(documentListener);
     tfEpisodeFilename.getDocument().addDocumentListener(documentListener);
 
     chckbxSpaceReplacement.addActionListener(renamerActionListener);
@@ -206,9 +206,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
       add(lblSeasonFolderName, "cell 1 3 2 1");
 
-      tfSeasonFoldername = new JTextField();
-      tfSeasonFoldername.setColumns(20);
-      add(tfSeasonFoldername, "cell 3 3,growx");
+      tfSeasonFolderName = new JTextField();
+      tfSeasonFolderName.setColumns(20);
+      add(tfSeasonFolderName, "cell 3 3,growx");
 
       JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
       add(lblDefault, "flowx,cell 1 4 2 1,alignx right");
@@ -310,7 +310,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private void buildAndInstallTvShowArray() {
     cbTvShowForPreview.removeAllItems();
     List<TvShow> allTvShows = new ArrayList<>(TvShowList.getInstance().getTvShows());
-    Collections.sort(allTvShows, new TvShowComparator());
+    allTvShows.sort(new TvShowComparator());
     for (TvShow tvShow : allTvShows) {
       TvShowPreviewContainer container = new TvShowPreviewContainer();
       container.tvShow = tvShow;
@@ -321,7 +321,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private void buildAndInstallEpisodeArray() {
     cbEpisodeForPreview.removeAllItems();
     Object obj = cbTvShowForPreview.getSelectedItem();
-    if (obj != null && obj instanceof TvShowPreviewContainer) {
+    if (obj instanceof TvShowPreviewContainer) {
       TvShowPreviewContainer c = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
       for (TvShowEpisode episode : c.tvShow.getEpisodes()) {
         TvShowEpisodePreviewContainer container = new TvShowEpisodePreviewContainer();
@@ -351,7 +351,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         String tvShowDir = TvShowRenamer.getTvShowFoldername(tfTvShowFolder.getText(), tvShow);
         String filename = TvShowRenamer
             .generateEpisodeFilenames(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0)).get(0).getFilename();
-        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFoldername.getText(), episode.getTvShow(), episode.getSeason());
+        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFolderName.getText(), episode.getTvShow(), episode.getSeason());
         if (StringUtils.isBlank(seasonDir)) {
           lblExample.setText(tvShowDir + File.separator + filename);
         }
@@ -365,7 +365,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         try {
           TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
       else {
@@ -445,7 +445,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         example = "";
       }
       else {
-        example = TvShowRenamer.createDestination(token, Arrays.asList(episode));
+        example = TvShowRenamer.createDestination(token, Collections.singletonList(episode));
       }
       firePropertyChange("example", oldValue, example);
     }
@@ -519,7 +519,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_3 = BeanProperty.create("renamerSeasonFoldername");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
     AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        tvShowSettingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
+        tvShowSettingsBeanProperty_3, tfSeasonFolderName, jTextFieldBeanProperty);
     autoBinding_2.bind();
   }
 }

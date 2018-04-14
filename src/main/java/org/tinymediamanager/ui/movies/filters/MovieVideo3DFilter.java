@@ -45,11 +45,7 @@ public class MovieVideo3DFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    if (movie.isVideoIn3D()) {
-      return true;
-    }
-
-    return false;
+    return movie.isVideoIn3D();
   }
 
   @Override

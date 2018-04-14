@@ -57,7 +57,7 @@ public class MovieSetSearchAction extends TmmAction {
     }
 
     for (MovieSet movieSet : selectedMovieSets) {
-      MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet, selectedMovieSets.size() > 1 ? true : false);
+      MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet, selectedMovieSets.size() > 1);
       if (!chooser.showDialog()) {
         break;
       }

@@ -55,7 +55,7 @@ public class NamedDateRenderer implements NamedRenderer {
           LOGGER.warn("cannot convert date format", e);
         }
       }
-      catch (ParseException e) {
+      catch (ParseException ignored) {
       }
     }
     return null;
@@ -78,11 +78,10 @@ public class NamedDateRenderer implements NamedRenderer {
       DateFormat dateFormat = new SimpleDateFormat(patternToUse);
       Date value = convert(o, dateFormat);
       if (value != null) {
-        String format = dateFormat.format(value);
-        return format;
+        return dateFormat.format(value);
       }
     }
-    catch (IllegalArgumentException | NullPointerException iae) {
+    catch (IllegalArgumentException | NullPointerException ignored) {
     }
     return null;
   }

@@ -159,7 +159,7 @@ public class ReleaseInfo {
    * @return true/false if nightly dev build
    */
   public static boolean isNightly() {
-    return getBuild().equalsIgnoreCase("nightly") ? true : false;
+    return getBuild().equalsIgnoreCase("nightly");
   }
 
   /**
@@ -168,7 +168,7 @@ public class ReleaseInfo {
    * @return true/false if nightly dev build
    */
   public static boolean isPreRelease() {
-    return getBuild().equalsIgnoreCase("prerelease") ? true : false;
+    return getBuild().equalsIgnoreCase("prerelease");
   }
 
   /**
@@ -177,7 +177,7 @@ public class ReleaseInfo {
    * @return true/false if GIT build
    */
   public static boolean isGitBuild() {
-    return getBuild().equalsIgnoreCase("git") ? true : false;
+    return getBuild().equalsIgnoreCase("git");
   }
 
   /**

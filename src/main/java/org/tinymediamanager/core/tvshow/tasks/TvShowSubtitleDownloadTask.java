@@ -92,7 +92,7 @@ public class TvShowSubtitleDownloadTask extends DownloadTask {
 
         Utils.deleteFileSafely(file);
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 

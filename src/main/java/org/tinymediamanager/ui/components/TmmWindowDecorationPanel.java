@@ -111,13 +111,13 @@ public class TmmWindowDecorationPanel extends JPanel {
     if (frame != null) {
       validateMaximizedBounds();
       PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-      for (int i = 0; i < pcl.length; i++) {
-        pcl[i].propertyChange(new PropertyChangeEvent(this, "windowMaximize", Boolean.FALSE, Boolean.FALSE));
-      }
+        for (PropertyChangeListener aPcl1 : pcl) {
+            aPcl1.propertyChange(new PropertyChangeEvent(this, "windowMaximize", Boolean.FALSE, Boolean.FALSE));
+        }
       DecorationHelper.setExtendedState(frame, state | BaseRootPaneUI.MAXIMIZED_BOTH);
-      for (int i = 0; i < pcl.length; i++) {
-        pcl[i].propertyChange(new PropertyChangeEvent(this, "windowMaximized", Boolean.FALSE, Boolean.FALSE));
-      }
+        for (PropertyChangeListener aPcl : pcl) {
+            aPcl.propertyChange(new PropertyChangeEvent(this, "windowMaximized", Boolean.FALSE, Boolean.FALSE));
+        }
 
     }
   }
@@ -127,18 +127,18 @@ public class TmmWindowDecorationPanel extends JPanel {
     if (frame != null) {
       wasMaximizeError = false;
       PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-      for (int i = 0; i < pcl.length; i++) {
-        pcl[i].propertyChange(new PropertyChangeEvent(this, "windowRestore", Boolean.FALSE, Boolean.FALSE));
-      }
+        for (PropertyChangeListener aPcl1 : pcl) {
+            aPcl1.propertyChange(new PropertyChangeEvent(this, "windowRestore", Boolean.FALSE, Boolean.FALSE));
+        }
       if ((state & Frame.ICONIFIED) != 0) {
         DecorationHelper.setExtendedState(frame, state & ~Frame.ICONIFIED);
       }
       else {
         DecorationHelper.setExtendedState(frame, state & ~BaseRootPaneUI.MAXIMIZED_BOTH);
       }
-      for (int i = 0; i < pcl.length; i++) {
-        pcl[i].propertyChange(new PropertyChangeEvent(this, "windowRestored", Boolean.FALSE, Boolean.FALSE));
-      }
+        for (PropertyChangeListener aPcl : pcl) {
+            aPcl.propertyChange(new PropertyChangeEvent(this, "windowRestored", Boolean.FALSE, Boolean.FALSE));
+        }
     }
   }
 
@@ -296,19 +296,17 @@ public class TmmWindowDecorationPanel extends JPanel {
         if ((state & BaseRootPaneUI.MAXIMIZED_BOTH) != 0) {
           validateMaximizedBounds();
           getRootPane().setBorder(null);
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              GraphicsConfiguration gc = frame.getGraphicsConfiguration();
-              Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
-              Rectangle maxBounds = gc.getBounds();
-              maxBounds.width -= (screenInsets.left + screenInsets.right);
-              maxBounds.height -= (screenInsets.top + screenInsets.bottom);
-              if ((frame.getWidth() != maxBounds.width) || (frame.getHeight() != maxBounds.height)) {
-                restore();
-                wasMaximizeError = true;
-                frame.setMaximizedBounds(null);
-                maximize();
-              }
+          SwingUtilities.invokeLater(() -> {
+            GraphicsConfiguration gc = frame.getGraphicsConfiguration();
+            Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+            Rectangle maxBounds = gc.getBounds();
+            maxBounds.width -= (screenInsets.left + screenInsets.right);
+            maxBounds.height -= (screenInsets.top + screenInsets.bottom);
+            if ((frame.getWidth() != maxBounds.width) || (frame.getHeight() != maxBounds.height)) {
+              restore();
+              wasMaximizeError = true;
+              frame.setMaximizedBounds(null);
+              maximize();
             }
           });
         }
@@ -436,13 +434,7 @@ public class TmmWindowDecorationPanel extends JPanel {
     @Override
     public void windowDeiconified(WindowEvent e) {
       if (JTattooUtilities.isMac() && JTattooUtilities.getJavaVersion() >= 1.7 && wasMaximized) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-          @Override
-          public void run() {
-            maximize();
-          }
-        });
+        SwingUtilities.invokeLater(TmmWindowDecorationPanel.this::maximize);
       }
     }
 

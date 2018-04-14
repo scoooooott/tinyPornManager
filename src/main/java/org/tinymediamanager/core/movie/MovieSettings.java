@@ -86,7 +86,7 @@ public class MovieSettings extends AbstractSettings {
   private final static String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
   private final static String              SKIP_FOLDER                         = "skipFolder";
 
-  private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<>());
   private final List<MovieNfoNaming>       nfoFilenames                        = new ArrayList<>();
   private final List<MoviePosterNaming>    posterFilenames                     = new ArrayList<>();
   private final List<MovieFanartNaming>    fanartFilenames                     = new ArrayList<>();
@@ -96,16 +96,16 @@ public class MovieSettings extends AbstractSettings {
   private final List<MovieClearlogoNaming> clearlogoFilenames                  = new ArrayList<>();
   private final List<MovieLogoNaming>      logoFilenames                       = new ArrayList<>();
   private final List<MovieDiscartNaming>   discartFilenames                    = new ArrayList<>();
-  private final List<String>               badWords                            = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>               artworkScrapers                     = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>               trailerScrapers                     = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>               subtitleScrapers                    = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>               skipFolders                         = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>               badWords                            = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>               artworkScrapers                     = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>               trailerScrapers                     = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>               subtitleScrapers                    = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>               skipFolders                         = ObservableCollections.observableList(new ArrayList<>());
 
   private final List<UIFilters>            uiFilters                           = new ArrayList<>();
-  private final List<String>               movieTableHiddenColumns             = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>               movieTableHiddenColumns             = ObservableCollections.observableList(new ArrayList<>());
   private final List<UIFilters>            movieSetUiFilters                   = new ArrayList<>();
-  private final List<String>               movieSetTableHiddenColumns          = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>               movieSetTableHiddenColumns          = ObservableCollections.observableList(new ArrayList<>());
 
   // data sources / NFO settings
   private boolean                          buildImageCacheOnImport             = false;

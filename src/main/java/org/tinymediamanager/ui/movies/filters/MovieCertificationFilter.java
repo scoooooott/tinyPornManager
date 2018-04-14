@@ -82,11 +82,7 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     Certification cert = (Certification) comboBox.getSelectedItem();
-    if (cert == movie.getCertification()) {
-      return true;
-    }
-
-    return false;
+    return cert == movie.getCertification();
   }
 
   @Override

@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -445,7 +444,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add studios in <studio>xxx</studio> tags (multiple)
    */
   protected void addStudios() {
-    List<String> studios = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    String[] studios = movie.getProductionCompany().split("\\s*[,\\/]\\s*"); // split on , or / and remove whitespace around
     for (String s : studios) {
       Element studio = document.createElement("studio");
       studio.setTextContent(s);

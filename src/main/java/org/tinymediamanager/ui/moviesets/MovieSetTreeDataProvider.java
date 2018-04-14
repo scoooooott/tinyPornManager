@@ -159,10 +159,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
   @Override
   public boolean isLeaf(TmmTreeNode node) {
-    if (node.getUserObject() instanceof Movie) {
-      return true;
-    }
-    return false;
+    return node.getUserObject() instanceof Movie;
   }
 
   @Override

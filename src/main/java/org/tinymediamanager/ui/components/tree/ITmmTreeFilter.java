@@ -25,7 +25,7 @@ import java.beans.PropertyChangeListener;
  * @param <E>
  */
 public interface ITmmTreeFilter<E extends TmmTreeNode> {
-  public final static String TREE_FILTER_CHANGED = "treeFilterChanged";
+  String TREE_FILTER_CHANGED = "treeFilterChanged";
 
   /**
    * Returns whether the specified object is accepted by this filter or not.
@@ -34,7 +34,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
    *          object to process
    * @return true if the specified object is accepted by this filter, false otherwise
    */
-  public boolean accept(E object);
+  boolean accept(E object);
 
   /**
    * Adds the property change listener.
@@ -42,7 +42,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
    * @param listener
    *          the listener
    */
-  public void addPropertyChangeListener(PropertyChangeListener listener);
+  void addPropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Adds the property change listener.
@@ -52,7 +52,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
    * @param listener
    *          the listener
    */
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+  void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
   /**
    * Removes the property change listener.
@@ -60,7 +60,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
    * @param listener
    *          the listener
    */
-  public void removePropertyChangeListener(PropertyChangeListener listener);
+  void removePropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Removes the property change listener.
@@ -70,5 +70,5 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
    * @param listener
    *          the listener
    */
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+  void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 }

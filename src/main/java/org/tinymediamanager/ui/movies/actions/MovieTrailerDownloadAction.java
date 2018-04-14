@@ -78,7 +78,7 @@ public class MovieTrailerDownloadAction extends TmmAction {
 
     // start tasks
     for (Movie movie : selectedMovies) {
-      if (!movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && overwriteTrailer == false) {
+      if (!movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !overwriteTrailer) {
         continue;
       }
       if (movie.getTrailer().isEmpty()) {

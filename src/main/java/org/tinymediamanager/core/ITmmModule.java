@@ -22,15 +22,15 @@ package org.tinymediamanager.core;
  */
 public interface ITmmModule {
 
-  public String getModuleTitle();
+  String getModuleTitle();
 
-  public boolean isEnabled();
+  boolean isEnabled();
 
-  public void startUp() throws Exception;
+  void startUp() throws Exception;
 
-  public void shutDown() throws Exception;
+  void shutDown() throws Exception;
 
-  public void initializeDatabase() throws Exception;
+  void initializeDatabase() throws Exception;
 
-  public void saveSettings() throws Exception;
+  void saveSettings() throws Exception;
 }

@@ -29,5 +29,5 @@ public interface IMovieConnector {
   /**
    * write a file containing the data from the movie
    */
-  public void write(List<MovieNfoNaming> nfoNames);
+  void write(List<MovieNfoNaming> nfoNames);
 }

@@ -61,12 +61,11 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
     initThreadPool(3, "scrapeMissingMovieArtwork");
     start();
 
-    for (int i = 0; i < moviesToScrape.size(); i++) {
-      Movie movie = moviesToScrape.get(i);
-      if (MovieArtworkHelper.hasMissingArtwork(movie)) {
-        submitTask(new Worker(movie));
+      for (Movie movie : moviesToScrape) {
+          if (MovieArtworkHelper.hasMissingArtwork(movie)) {
+              submitTask(new Worker(movie));
+          }
       }
-    }
     waitForCompletionOrCancel();
     LOGGER.info("Done getting missing artwork");
   }

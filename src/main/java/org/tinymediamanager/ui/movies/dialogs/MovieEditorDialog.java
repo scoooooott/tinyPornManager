@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -124,11 +123,11 @@ public class MovieEditorDialog extends TmmDialog {
   private Movie                              movieToEdit;
   private MovieList                          movieList        = MovieList.getInstance();
 
-  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
-  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private EventList<MediaId>                 ids              = new BasicEventList<>();
-  private EventList<MediaRating>             ratings          = new BasicEventList<>();
+  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<>());
+  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<>());
+  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<MediaId>                 ids;
+  private EventList<MediaRating>             ratings;
   private List<MediaFile>                    mediaFiles       = new ArrayList<>();
   private List<String>                       extrathumbs      = new ArrayList<>();
   private List<String>                       extrafanarts     = new ArrayList<>();
@@ -156,7 +155,7 @@ public class MovieEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres>  cbGenres;
   private AutoCompleteSupport<MediaGenres>   cbGenresAutoCompleteSupport;
   private JSpinner                           spRating;
-  private JComboBox                          cbCertification;
+  private JComboBox<Certification>           cbCertification;
   private JCheckBox                          cbWatched;
   private JTextField                         tfTagline;
 
@@ -166,7 +165,7 @@ public class MovieEditorDialog extends TmmDialog {
   private AutoCompleteSupport<String>        cbTagsAutoCompleteSupport;
   private JList<String>                      listTags;
   private JSpinner                           spDateAdded;
-  private JComboBox                          cbMovieSet;
+  private JComboBox<MovieSet>                cbMovieSet;
   private JTextField                         tfSorttitle;
   private JTextField                         tfSpokenLanguages;
   private JTextField                         tfCountry;
@@ -355,7 +354,7 @@ public class MovieEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
+    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -553,7 +552,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         details2Panel.add(lblSourceT, "cell 0 1,alignx right");
 
-        cbSource = new AutocompleteComboBox(MediaSource.values());
+        cbSource = new AutocompleteComboBox<>(MediaSource.values());
         details2Panel.add(cbSource, "cell 1 1,growx");
       }
       {
@@ -564,7 +563,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
         details2Panel.add(lblEditionT, "cell 0 2,alignx right");
 
-        cbEdition = new AutocompleteComboBox(MovieEdition.values());
+        cbEdition = new AutocompleteComboBox<>(MovieEdition.values());
         details2Panel.add(cbEdition, "cell 1 2 3 1");
       }
       {
@@ -581,8 +580,8 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblMovieSet = new TmmLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
         details2Panel.add(lblMovieSet, "cell 0 4,alignx right");
 
-        cbMovieSet = new JComboBox();
-        cbMovieSet.addItem("");
+        cbMovieSet = new JComboBox<>();
+        cbMovieSet.addItem(null);
         details2Panel.add(cbMovieSet, "cell 1 4 4 1,growx");
       }
       {
@@ -592,10 +591,10 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPaneGenres = new JScrollPane();
         details2Panel.add(scrollPaneGenres, "cell 1 7 4 1,grow");
 
-        listGenres = new JList();
+        listGenres = new JList<>();
         scrollPaneGenres.setViewportView(listGenres);
 
-        cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
         cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
         InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
@@ -609,7 +608,7 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPaneTags = new JScrollPane();
         details2Panel.add(scrollPaneTags, "cell 7 7,grow");
 
-        listTags = new JList();
+        listTags = new JList<>();
         scrollPaneTags.setViewportView(listTags);
 
         cbTags = new AutocompleteComboBox<>(movieList.getTagsInMovies());
@@ -1254,7 +1253,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       // if configured - sync with trakt.tv
       if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
-        TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToEdit), null);
+        TmmTask task = new SyncTraktTvTask(Collections.singletonList(movieToEdit), null);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

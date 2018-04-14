@@ -174,14 +174,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * "clones" a new media file.
    */
   public MediaFile(MediaFile clone) {
-    this.path = new String(clone.path);
-    this.filename = new String(clone.filename);
+    this.path = clone.path;
+    this.filename = clone.filename;
     this.filesize = clone.filesize;
     this.filedate = clone.filedate;
-    this.videoCodec = new String(clone.videoCodec);
-    this.containerFormat = new String(clone.containerFormat);
-    this.exactVideoFormat = new String(clone.exactVideoFormat);
-    this.video3DFormat = new String(clone.video3DFormat);
+    this.videoCodec = clone.videoCodec;
+    this.containerFormat = clone.containerFormat;
+    this.exactVideoFormat = clone.exactVideoFormat;
+    this.video3DFormat = clone.video3DFormat;
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
     this.aspectRatio = clone.aspectRatio;
@@ -1155,7 +1155,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.videoWidth == 0 || this.videoHeight == 0) {
       return false;
     }
-    return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f ? true : false;
+    return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f;
   }
 
   /**
@@ -1271,7 +1271,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionLD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_LD;
+    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_LD);
   }
 
   /**
@@ -1280,7 +1280,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionSD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_SD;
+    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_SD);
   }
 
   /**
@@ -1289,7 +1289,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionHD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_HD;
+    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_HD);
   }
 
   /**
@@ -1739,8 +1739,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (brMode.length > 1) {
           String[] brChunks = br.split("/");
           int brMult = 0;
-          for (int j = 0; j < brChunks.length; j++) {
-            brMult += parseToInt(brChunks[j].trim());
+          for (String brChunk : brChunks) {
+            brMult += parseToInt(brChunk.trim());
           }
           stream.setBitrate(brMult / 1000);
         }
@@ -2141,7 +2141,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   @Override
   public boolean equals(Object mf2) {
-    if ((mf2 != null) && (mf2 instanceof MediaFile)) {
+    if ((mf2 instanceof MediaFile)) {
       return compareTo((MediaFile) mf2) == 0;
     }
     return false;

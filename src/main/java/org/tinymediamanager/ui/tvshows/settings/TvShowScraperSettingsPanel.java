@@ -77,7 +77,7 @@ public class TvShowScraperSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
-  private List<TvShowScraper>         scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
+  private List<TvShowScraper>         scrapers         = ObservableCollections.observableList(new ArrayList<>());
 
   /** UI components */
   private JComboBox<MediaLanguages>   cbScraperLanguage;
@@ -215,14 +215,14 @@ public class TvShowScraperSettingsPanel extends JPanel {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); // $NON-NLS-1$
       add(lblScraperLanguage, "flowx,cell 1 4,growx");
 
-      cbScraperLanguage = new JComboBox(MediaLanguages.values());
+      cbScraperLanguage = new JComboBox<>(MediaLanguages.values());
       add(cbScraperLanguage, "cell 1 4");
     }
     {
       JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); // $NON-NLS-1$
       add(lblCountry, "flowx,cell 1 5");
 
-      cbCertificationCountry = new JComboBox(CountryCode.values());
+      cbCertificationCountry = new JComboBox<>(CountryCode.values());
       add(cbCertificationCountry, "cell 1 5");
     }
   }

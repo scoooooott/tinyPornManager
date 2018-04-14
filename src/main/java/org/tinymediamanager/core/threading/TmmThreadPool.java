@@ -59,7 +59,7 @@ public abstract class TmmThreadPool extends TmmTask {
     this.poolname = name;
     pool = new ThreadPoolExecutor(threads, threads, // max threads
         2, TimeUnit.SECONDS, // time to wait before closing idle workers
-        new LinkedBlockingQueue<Runnable>(), // our queue
+            new LinkedBlockingQueue<>(), // our queue
         new TmmThreadFactory(name) // our thread settings
     );
     pool.allowCoreThreadTimeOut(true);

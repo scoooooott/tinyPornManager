@@ -142,7 +142,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       for (MediaFile mediaFile : mediaFiles) {
         if (isShowing()) {
           if (isCancelled()) {

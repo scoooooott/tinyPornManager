@@ -46,7 +46,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * season count
      */
-    Column col = new Column(BUNDLE.getString("metatag.seasons"), "seasons", node -> getSeasons(node), String.class);
+    Column col = new Column(BUNDLE.getString("metatag.seasons"), "seasons", this::getSeasons, String.class);
     col.setHeaderIcon(IconManager.SEASONS);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
@@ -55,7 +55,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * episode count
      */
-    col = new Column(BUNDLE.getString("metatag.episodes"), "episodes", node -> getEpisodes(node), String.class);
+    col = new Column(BUNDLE.getString("metatag.episodes"), "episodes", this::getEpisodes, String.class);
     col.setHeaderIcon(IconManager.EPISODES);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
@@ -64,7 +64,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * rating
      */
-    col = new Column(BUNDLE.getString("metatag.rating"), "rating", node -> getRating(node), String.class);
+    col = new Column(BUNDLE.getString("metatag.rating"), "rating", this::getRating, String.class);
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
@@ -73,7 +73,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * video format
      */
-    col = new Column(BUNDLE.getString("metatag.format"), "format", node -> getFormat(node), String.class);
+    col = new Column(BUNDLE.getString("metatag.format"), "format", this::getFormat, String.class);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1080p") * 1.2f));
@@ -82,7 +82,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * main video file size
      */
-    col = new Column(BUNDLE.getString("metatag.size"), "fileSize", node -> getFileSize(node), String.class);
+    col = new Column(BUNDLE.getString("metatag.size"), "fileSize", this::getFileSize, String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
@@ -91,7 +91,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * NFO
      */
-    col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", node -> hasNfo(node), ImageIcon.class);
+    col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", this::hasNfo, ImageIcon.class);
     col.setHeaderIcon(IconManager.NFO);
     col.setColumnResizeable(false);
     addColumn(col);
@@ -99,7 +99,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * images
      */
-    col = new Column(BUNDLE.getString("tmm.images"), "images", node -> hasImages(node), ImageIcon.class);
+    col = new Column(BUNDLE.getString("tmm.images"), "images", this::hasImages, ImageIcon.class);
     col.setHeaderIcon(IconManager.IMAGES);
     col.setColumnResizeable(false);
     addColumn(col);
@@ -107,7 +107,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     /*
      * watched
      */
-    col = new Column(BUNDLE.getString("metatag.watched"), "watched", node -> isWatched(node), ImageIcon.class);
+    col = new Column(BUNDLE.getString("metatag.watched"), "watched", this::isWatched, ImageIcon.class);
     col.setHeaderIcon(IconManager.WATCHED);
     col.setColumnResizeable(false);
     addColumn(col);

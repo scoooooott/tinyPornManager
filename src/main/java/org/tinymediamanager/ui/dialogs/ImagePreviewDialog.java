@@ -84,7 +84,7 @@ public class ImagePreviewDialog extends TmmDialog {
    **************************************************************************/
   protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
     @Override
-    protected BufferedImage doInBackground() throws Exception {
+    protected BufferedImage doInBackground() {
       try {
         Url url = new Url(imageUrl);
         return ImageUtils.createImage(url.getBytes());

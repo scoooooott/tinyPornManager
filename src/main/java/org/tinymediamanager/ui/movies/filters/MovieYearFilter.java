@@ -63,7 +63,7 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
       try {
         year = Integer.parseInt(value.toString());
       }
-      catch (NumberFormatException e) {
+      catch (NumberFormatException ignored) {
 
       }
     }
@@ -76,11 +76,7 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     Integer year = (Integer) spinner.getValue();
-    if (movie.getYear() == year) {
-      return true;
-    }
-
-    return false;
+    return movie.getYear() == year;
   }
 
   @Override

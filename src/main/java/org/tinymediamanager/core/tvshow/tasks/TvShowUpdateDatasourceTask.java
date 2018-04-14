@@ -974,7 +974,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
     return fileNames;
   }
@@ -1001,7 +1001,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
     return fileNames;
   }
@@ -1037,7 +1037,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
       preDir++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null

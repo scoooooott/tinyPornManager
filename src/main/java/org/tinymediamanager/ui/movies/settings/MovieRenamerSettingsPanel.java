@@ -23,7 +23,6 @@ import java.awt.event.HierarchyListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -72,31 +71,31 @@ import net.miginfocom.swing.MigLayout;
  * The class MovieRenamerSettingsPanel.
  */
 public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long              serialVersionUID           = 5039498266207230875L;
+  private static final long                serialVersionUID           = 5039498266207230875L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle      BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                  settings                   = MovieModuleManager.SETTINGS;
-  private List<String>                   separators                 = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private EventList<MovieRenamerExample> exampleEventList           = null;
+  private MovieSettings                    settings                   = MovieModuleManager.SETTINGS;
+  private List<String>                     separators                 = new ArrayList<>(Arrays.asList("_", ".", "-"));
+  private EventList<MovieRenamerExample>   exampleEventList           = null;
 
   /**
    * UI components
    */
-  private JTextField                     tfMoviePath;
-  private JTextField                     tfMovieFilename;
-  private JLabel                         lblExample;
-  private JCheckBox                      chckbxAsciiReplacement;
+  private JTextField                       tfMoviePath;
+  private JTextField                       tfMovieFilename;
+  private JLabel                           lblExample;
+  private JCheckBox                        chckbxAsciiReplacement;
 
-  private JCheckBox                      chckbxSpaceSubstitution;
-  private JComboBox                      cbSeparator;
-  private JComboBox                      cbMovieForPreview;
-  private JCheckBox                      chckbxRemoveOtherNfos;
-  private JCheckBox                      chckbxMoviesetSingleMovie;
+  private JCheckBox                        chckbxSpaceSubstitution;
+  private JComboBox                        cbSeparator;
+  private JComboBox<MoviePreviewContainer> cbMovieForPreview;
+  private JCheckBox                        chckbxRemoveOtherNfos;
+  private JCheckBox                        chckbxMoviesetSingleMovie;
 
-  private ActionListener                 actionCreateRenamerExample = e -> createRenamerExample();
-  private TmmTable                       tableExamples;
-  private ReadOnlyTextArea               taMMDWarning;
+  private ActionListener                   actionCreateRenamerExample = e -> createRenamerExample();
+  private TmmTable                         tableExamples;
+  private ReadOnlyTextArea                 taMMDWarning;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -238,7 +237,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
       add(chckbxSpaceSubstitution, "flowx,cell 1 8 3 1");
 
-      cbSeparator = new JComboBox(separators.toArray());
+      cbSeparator = new JComboBox<>(separators.toArray());
       add(cbSeparator, "cell 1 8 3 1");
     }
     {
@@ -286,7 +285,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private void buildAndInstallMovieArray() {
     cbMovieForPreview.removeAllItems();
     List<Movie> allMovies = new ArrayList<>(MovieList.getInstance().getMovies());
-    Collections.sort(allMovies, new MovieComparator());
+    allMovies.sort(new MovieComparator());
     for (Movie movie : allMovies) {
       MoviePreviewContainer container = new MoviePreviewContainer();
       container.movie = movie;
@@ -341,7 +340,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       try {
         TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
     else {

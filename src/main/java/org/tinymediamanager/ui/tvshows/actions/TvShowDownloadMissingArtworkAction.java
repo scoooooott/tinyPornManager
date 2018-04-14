@@ -63,9 +63,7 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
     for (Object obj : selectedObjects) {
       if (obj instanceof TvShow) {
         TvShow show = (TvShow) obj;
-        for (TvShowEpisode episode : show.getEpisodes()) {
-          selectedEpisodes.add(episode);
-        }
+        selectedEpisodes.addAll(show.getEpisodes());
       }
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode episode = (TvShowEpisode) obj;
@@ -73,9 +71,7 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
       }
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        for (TvShowEpisode episode : season.getEpisodes()) {
-          selectedEpisodes.add(episode);
-        }
+        selectedEpisodes.addAll(season.getEpisodes());
       }
     }
 

@@ -18,7 +18,7 @@ package org.tinymediamanager.ui.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;

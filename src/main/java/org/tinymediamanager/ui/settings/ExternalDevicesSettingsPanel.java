@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -157,16 +155,14 @@ public class ExternalDevicesSettingsPanel extends JPanel {
       tfKodiHost.setColumns(20);
 
       JButton btnKodiConnect = new JButton(BUNDLE.getString("Settings.kodi.connect")); //$NON-NLS-1$
-      btnKodiConnect.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          HostConfig c = new HostConfig(tfKodiHost.getText(), tfKodiHttpPort.getText(), tfKodiTcpPort.getText(), tfKodiUsername.getText(),
-              new String(tfKodiPassword.getPassword()));
-          try {
-            KodiRPC.getInstance().connect(c);
-          }
-          catch (ApiException cex) {
-            LOGGER.error("Error connecting to Kodi instance!", e);
-          }
+      btnKodiConnect.addActionListener(e -> {
+        HostConfig c = new HostConfig(tfKodiHost.getText(), tfKodiHttpPort.getText(), tfKodiTcpPort.getText(), tfKodiUsername.getText(),
+            new String(tfKodiPassword.getPassword()));
+        try {
+          KodiRPC.getInstance().connect(c);
+        }
+        catch (ApiException cex) {
+          LOGGER.error("Error connecting to Kodi instance!", e);
         }
       });
       add(btnKodiConnect, "cell 3 4,growx");
@@ -179,11 +175,7 @@ public class ExternalDevicesSettingsPanel extends JPanel {
       tfKodiHttpPort.setColumns(20);
 
       JButton btnKodiDisconnect = new JButton(BUNDLE.getString("Settings.kodi.disconnect")); //$NON-NLS-1$
-      btnKodiDisconnect.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          KodiRPC.getInstance().disconnect();
-        }
-      });
+      btnKodiDisconnect.addActionListener(e -> KodiRPC.getInstance().disconnect());
       add(btnKodiDisconnect, "cell 3 5,growx");
 
       JLabel lblKodiTcpPortT = new JLabel(BUNDLE.getString("Settings.kodi.tcpport")); //$NON-NLS-1$

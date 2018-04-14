@@ -13,7 +13,7 @@ public class UpnpListener {
 
   public static RegistryListener getListener() {
 
-    RegistryListener listener = new RegistryListener() {
+    return new RegistryListener() {
 
       public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
         LOGGER.debug("Discovery started: " + device.getDisplayString());
@@ -52,6 +52,5 @@ public class UpnpListener {
         LOGGER.debug("Shutdown of registry complete!");
       }
     };
-    return listener;
   }
 }

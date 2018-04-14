@@ -73,7 +73,7 @@ public class GeneralSettingsPanel extends JPanel {
       JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
       add(lblImageCacheQuality, "flowx,cell 2 2");
 
-      cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
+      cbImageCacheQuality = new JComboBox<>(ImageCache.CacheType.values());
       add(cbImageCacheQuality, "cell 2 2");
 
       chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));

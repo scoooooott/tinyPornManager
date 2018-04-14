@@ -1,25 +1,25 @@
 package org.tinymediamanager.core.threading;
 
 public interface TmmTaskHandle {
-  public enum TaskType {
+  enum TaskType {
     MAIN_TASK, BACKGROUND_TASK
   }
 
-  public enum TaskState {
+  enum TaskState {
     CREATED, QUEUED, STARTED, CANCELLED, FINISHED
   }
 
-  public String getTaskName();
+  String getTaskName();
 
-  public int getWorkUnits();
+  int getWorkUnits();
 
-  public int getProgressDone();
+  int getProgressDone();
 
-  public String getTaskDescription();
+  String getTaskDescription();
 
-  public TaskState getState();
+  TaskState getState();
 
-  public TaskType getType();
+  TaskType getType();
 
-  public void cancel();
+  void cancel();
 }

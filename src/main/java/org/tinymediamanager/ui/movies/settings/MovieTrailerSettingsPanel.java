@@ -79,7 +79,7 @@ public class MovieTrailerSettingsPanel extends JPanel {
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
   private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
-  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
+  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<>());
   private TmmTable                       tableTrailerScraper;
   private JTextPane                      tpScraperDescription;
   private JComboBox<MovieTrailerSources> cbTrailerSource;

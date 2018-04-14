@@ -208,7 +208,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     public void actionPerformed(ActionEvent e) {
       SortColumn column = (SortColumn) cbSortColumn.getSelectedItem();
       SortOrder order = (SortOrder) cbSortOrder.getSelectedItem();
-      boolean ascending = order == SortOrder.ASCENDING ? true : false;
+      boolean ascending = order == SortOrder.ASCENDING;
 
       // sort
       movieSelectionModel.sortMovies(column, ascending);

@@ -78,7 +78,7 @@ public class MovieScraperSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
-  private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
+  private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<>());
 
   /**
    * UI Elements
@@ -206,13 +206,13 @@ public class MovieScraperSettingsPanel extends JPanel {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
       add(lblScraperLanguage, "cell 1 4 2 1");
 
-      cbScraperLanguage = new JComboBox(MediaLanguages.values());
+      cbScraperLanguage = new JComboBox<>(MediaLanguages.values());
       add(cbScraperLanguage, "cell 3 4");
 
       JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry"));
       add(lblCountry, "cell 1 5 2 1");
 
-      cbCertificationCountry = new JComboBox(CountryCode.values());
+      cbCertificationCountry = new JComboBox<>(CountryCode.values());
       add(cbCertificationCountry, "cell 3 5");
 
       chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback"));

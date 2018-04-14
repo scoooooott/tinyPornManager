@@ -81,7 +81,7 @@ public class TvShowModuleManager implements ITmmModule {
   }
 
   @Override
-  public void startUp() throws Exception {
+  public void startUp() {
     // do a DB backup, and keep last 15 copies
     Path db = Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB);
     Utils.createBackupFile(db);
@@ -173,7 +173,7 @@ public class TvShowModuleManager implements ITmmModule {
     }
   }
 
-  void removeTvShowFromDb(TvShow tvShow) throws Exception {
+  void removeTvShowFromDb(TvShow tvShow) {
     tvShowMap.remove(tvShow.getDbId());
   }
 
@@ -186,17 +186,17 @@ public class TvShowModuleManager implements ITmmModule {
     }
   }
 
-  void removeEpisodeFromDb(TvShowEpisode episode) throws Exception {
+  void removeEpisodeFromDb(TvShowEpisode episode) {
     episodeMap.remove(episode.getDbId());
   }
 
   @Override
-  public void initializeDatabase() throws Exception {
+  public void initializeDatabase() {
     Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB));
   }
 
   @Override
-  public void saveSettings() throws Exception {
+  public void saveSettings() {
     SETTINGS.saveSettings();
   }
 }

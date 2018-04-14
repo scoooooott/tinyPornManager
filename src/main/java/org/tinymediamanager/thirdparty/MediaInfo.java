@@ -52,7 +52,7 @@ public class MediaInfo implements Closeable {
    * @return true/false
    */
   public Boolean isLoaded() {
-    return handle != null ? true : false;
+    return handle != null;
   }
 
   /**
@@ -474,7 +474,7 @@ public class MediaInfo implements Closeable {
   }
 
   @Override
-  protected void finalize() throws Throwable {
+  protected void finalize() {
     if (isLoaded()) {
       dispose();
     }
@@ -494,7 +494,7 @@ public class MediaInfo implements Closeable {
     Image,
     Menu,
     @Deprecated
-    Chapters; // replaced by 'other'
+    Chapters // replaced by 'other'
   }
 
   /**
@@ -544,7 +544,7 @@ public class MediaInfo implements Closeable {
     /**
      * Domain of this piece of information.
      */
-    Domain;
+    Domain
   }
 
   public enum Status {
@@ -556,7 +556,7 @@ public class MediaInfo implements Closeable {
 
     private int value;
 
-    private Status(int value) {
+    Status(int value) {
       this.value = value;
     }
 
@@ -642,17 +642,12 @@ public class MediaInfo implements Closeable {
    *           Signals that an I/O exception has occurred.
    */
   public static Map<StreamKind, List<Map<String, String>>> snapshot(Path file) throws IOException {
-    MediaInfo mi = new MediaInfo();
-    try {
+    try (MediaInfo mi = new MediaInfo()) {
       if (mi.open(file)) {
         return mi.snapshot();
-      }
-      else {
+      } else {
         throw new IOException("Failed to open file: " + file);
       }
-    }
-    finally {
-      mi.close();
     }
   }
 }

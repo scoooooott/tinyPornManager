@@ -40,7 +40,7 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
   public MovieMediaSourceFilter() {
     super();
     buildAndInstallMediaSources();
-    MediaSource.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaSources()));
+    MediaSource.addListener(evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaSources));
   }
 
   @Override
@@ -84,11 +84,7 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     List<MediaSource> selectedItems = checkComboBox.getSelectedItems();
-    if (selectedItems.contains(movie.getMediaSource())) {
-      return true;
-    }
-
-    return false;
+    return selectedItems.contains(movie.getMediaSource());
   }
 
   @Override

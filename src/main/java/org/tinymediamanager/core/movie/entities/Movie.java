@@ -56,7 +56,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -347,11 +346,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> mf = getMediaFiles(MediaFileType.NFO);
-    if (mf != null && mf.size() > 0) {
-      return true;
-    }
 
-    return false;
+    return mf != null && mf.size() > 0;
   }
 
   /**
@@ -362,10 +358,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return true/false
    */
   public Boolean getHasMetadata() {
-    if (!plot.isEmpty() && !(year == 0)) {
-      return true;
-    }
-    return false;
+    return !plot.isEmpty() && !(year == 0);
   }
 
   /**
@@ -855,7 +848,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
               }
             }
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
         }
 
@@ -927,7 +920,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       // if not yet one has been found; sort by quality descending and take the first one which is lower or equal to the desired quality
       if (preferredTrailer == null) {
         List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
-        Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+        sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
         for (MovieTrailer trailer : sortedTrailers) {
           if (desiredQuality.ordinal() >= MovieTrailerQuality.getMovieTrailerQuality(trailer.getQuality()).ordinal()) {
             trailer.setInNfo(Boolean.TRUE);
@@ -941,7 +934,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // if not yet one has been found; sort by quality descending and take the first one
     if (preferredTrailer == null && !trailers.isEmpty()) {
       List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
-      Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+      sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
       preferredTrailer = sortedTrailers.get(0);
       preferredTrailer.setInNfo(Boolean.TRUE);
     }
@@ -1334,10 +1327,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the checks for rating
    */
   public boolean getHasRating() {
-    if (!ratings.isEmpty() || scraped) {
-      return true;
-    }
-    return false;
+    return !ratings.isEmpty() || scraped;
   }
 
   /**
@@ -1587,9 +1577,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // get all extra audio streams
-    for (MediaFile audioFile : getMediaFiles(MediaFileType.AUDIO)) {
-      mediaFilesWithAudioStreams.add(audioFile);
-    }
+    mediaFilesWithAudioStreams.addAll(getMediaFiles(MediaFileType.AUDIO));
 
     return mediaFilesWithAudioStreams;
   }
@@ -1658,7 +1646,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     try {
       setReleaseDate(StrgUtils.parseDate(dateAsString));
     }
-    catch (ParseException e) {
+    catch (ParseException ignored) {
     }
   }
 

@@ -65,7 +65,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
   private List<Movie>                 moviesToEdit;
   private boolean                     changed          = false;
 
-  private JComboBox                   cbMovieSet;
+  private JComboBox<MovieSet>         cbMovieSet;
 
   /**
    * Instantiates a new movie batch editor.
@@ -86,7 +86,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         panelContent.add(lblGenresT, "cell 0 0,alignx right");
 
         // cbGenres = new JComboBox(MediaGenres2.values());
-        JComboBox cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        JComboBox cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
         cbGenres.setEditable(true);
         panelContent.add(cbGenres, "cell 1 0,growx");
 
@@ -136,7 +136,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
         panelContent.add(lblTagsT, "cell 0 1,alignx right");
 
-        JComboBox cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
+        JComboBox cbTags = new AutocompleteComboBox<>(movieList.getTagsInMovies().toArray());
         cbTags.setEditable(true);
         panelContent.add(cbTags, "cell 1 1,growx");
 
@@ -176,7 +176,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
         panelContent.add(lblCertificationT, "cell 0 2,alignx right");
 
-        final JComboBox cbCertification = new JComboBox();
+        final JComboBox<Certification> cbCertification = new JComboBox<>();
         for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
           cbCertification.addItem(cert);
         }
@@ -191,7 +191,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
           Certification cert = (Certification) cbCertification.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.setCertification(cert);
-            ;
+
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
@@ -279,7 +279,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         JLabel lblMediasourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         panelContent.add(lblMediasourceT, "cell 0 6,alignx right");
 
-        final JComboBox cbMediaSource = new JComboBox(MediaSource.values());
+        final JComboBox cbMediaSource = new JComboBox<>(MediaSource.values());
         panelContent.add(cbMediaSource, "cell 1 6,growx");
 
         JButton btnMediaSource = new JButton("");
@@ -433,7 +433,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
 
     cbMovieSet.removeAllItems();
 
-    cbMovieSet.addItem("");
+    cbMovieSet.addItem(null);
 
     for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
       cbMovieSet.addItem(movieSet);

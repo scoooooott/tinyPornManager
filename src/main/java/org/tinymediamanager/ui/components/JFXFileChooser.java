@@ -58,13 +58,10 @@ public class JFXFileChooser {
   @SuppressWarnings("unchecked")
   public List<File> showOpenMultipleDialog() {
     try {
-      List<File> files = new ArrayList<>();
-
       Method method = clazz.getMethod("showOpenMultipleDialog", Class.forName("javafx.stage.Window"));
       Object objs = method.invoke(fileChooser, new Object[] { null });
       if (objs instanceof List) {
-        files.addAll((Collection<? extends File>) objs);
-        return files;
+        return new ArrayList<>((Collection<? extends File>) objs);
       }
       return null;
     }

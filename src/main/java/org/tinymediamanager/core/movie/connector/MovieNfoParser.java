@@ -208,7 +208,7 @@ public class MovieNfoParser {
    * @throws Exception
    *           any exception if parsing fails
    */
-  public static MovieNfoParser parseNfo(String content) throws Exception {
+  public static MovieNfoParser parseNfo(String content) {
     return new MovieNfoParser(Jsoup.parse(content, "", Parser.xmlParser()));
   }
 
@@ -219,15 +219,7 @@ public class MovieNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    if (StringUtils.isBlank(title)) {
-      return false;
-    }
-
-    if (year <= 0) {
-      return false;
-    }
-
-    return true;
+    return !(year <= 0 || StringUtils.isBlank(title));
   }
 
   private Element getSingleElement(Element parent, String tag) {
@@ -754,7 +746,7 @@ public class MovieNfoParser {
     if (element != null) {
       try {
         playcount = MetadataUtil.parseInt(element.ownText());
-        if (playcount > 0 && watched == false) {
+        if (playcount > 0 && !watched) {
           watched = true;
         }
       }
@@ -837,7 +829,7 @@ public class MovieNfoParser {
     if (elements.size() == 1) {
       try {
         // split on , or / and remove whitespace around)
-        List<String> creditsNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        String[] creditsNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
         for (String credit : creditsNames) {
           Person person = new Person();
           person.name = credit;
@@ -873,7 +865,7 @@ public class MovieNfoParser {
     if (elements.size() == 1) {
       try {
         // split on , or / and remove whitespace around)
-        List<String> directorNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        String[] directorNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
         for (String director : directorNames) {
           Person person = new Person();
           person.name = director;

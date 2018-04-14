@@ -70,11 +70,7 @@ public class MovieVideoCodecFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     String videoCodec = (String) comboBox.getSelectedItem();
-    if (videoCodec.equals(movie.getMediaInfoVideoCodec())) {
-      return true;
-    }
-
-    return false;
+    return videoCodec != null && videoCodec.equals(movie.getMediaInfoVideoCodec());
   }
 
   @Override

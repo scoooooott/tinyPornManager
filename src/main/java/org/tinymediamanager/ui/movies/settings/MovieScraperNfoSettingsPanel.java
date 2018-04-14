@@ -167,7 +167,7 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
       JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
       add(lblNfoFormat, "flowx,cell 1 1 2 1");
 
-      cbNfoFormat = new JComboBox(MovieConnectors.values());
+      cbNfoFormat = new JComboBox<>(MovieConnectors.values());
       add(cbNfoFormat, "cell 1 1 2 1");
 
       {
@@ -195,7 +195,7 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
         JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
         add(lblNfoLanguage, "flowx,cell 1 5 2 1");
 
-        cbNfoLanguage = new JComboBox(MediaLanguages.values());
+        cbNfoLanguage = new JComboBox<>(MediaLanguages.values());
         add(cbNfoLanguage, "cell 1 5 2 1");
 
         JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
@@ -205,7 +205,7 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
         JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
         add(lblCertificationStyle, "flowx,cell 1 8 2 1");
 
-        cbCertificationStyle = new JComboBox();
+        cbCertificationStyle = new JComboBox<>();
         add(cbCertificationStyle, "cell 1 8 2 1");
       }
     }

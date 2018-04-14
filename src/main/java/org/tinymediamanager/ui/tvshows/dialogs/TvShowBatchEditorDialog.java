@@ -99,7 +99,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     panelContent.add(lblGenres, "cell 1 1,alignx right");
 
-    cbGenres = new AutocompleteComboBox(MediaGenres.values());
+    cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
     panelContent.add(cbGenres, "cell 2 1,growx");
     cbGenres.setEditable(true);
     JButton btnAddGenre = new JButton("");
@@ -238,7 +238,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     JLabel lblMediasourceEpisode = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     panelContent.add(lblMediasourceEpisode, "cell 1 9,alignx right");
 
-    final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox(MediaSource.values());
+    final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox<>(MediaSource.values());
     panelContent.add(cbMediaSourceEpisode, "cell 2 9,growx");
 
     JButton btnMediaSourceEpisode = new JButton("");

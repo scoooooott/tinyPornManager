@@ -17,12 +17,9 @@ package org.tinymediamanager.thirdparty;
 
 import static java.util.Collections.singletonMap;
 
-import java.lang.reflect.Method;
-
 import com.sun.jna.FunctionMapper;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
@@ -37,17 +34,13 @@ interface MediaInfoLibrary extends Library {
   // libmediainfo for linux depends on libzen, so we need to load dependencies first, because we know where our native libs are (e.g. Java Web Start
   // Cache).
   // if we do not, the system will look for dependencies, but only in the library path
-  Library          LIB_ZEN  = Platform.isLinux() ? (Library) Native.loadLibrary("zen", Library.class) : null;
+  Library          LIB_ZEN  = Platform.isLinux() ? Native.loadLibrary("zen", Library.class) : null;
 
   MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
-      singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
-
-                                  @Override
-                                  public String getFunctionName(NativeLibrary lib, Method method) {
-                                    // MediaInfo_New(), MediaInfo_Open() ...
-                                    return "MediaInfo_" + method.getName();
-                                  }
-                                }));
+      singletonMap(OPTION_FUNCTION_MAPPER, (FunctionMapper) (lib, method) -> {
+        // MediaInfo_New(), MediaInfo_Open() ...
+        return "MediaInfo_" + method.getName();
+      }));
 
   /**
    * Create a new handle.
@@ -93,9 +86,11 @@ interface MediaInfoLibrary extends Library {
    * 
    * @param handle
    *          the handle
+   * @param reserved
+   *          reserved
    * @return All details about a file in one string
    */
-  WString Inform(Pointer Handle, int Reserved);
+  WString Inform(Pointer handle, int reserved);
 
   /**
    * Get a piece of information about a file (parameter is a string).

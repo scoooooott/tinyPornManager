@@ -65,10 +65,9 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
     initThreadPool(3, "searchAndDownloadSubtitles");
     start();
 
-    for (int i = 0; i < movies.size(); i++) {
-      Movie movie = movies.get(i);
-      submitTask(new Worker(movie));
-    }
+      for (Movie movie : movies) {
+          submitTask(new Worker(movie));
+      }
 
     waitForCompletionOrCancel();
 
