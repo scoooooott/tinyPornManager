@@ -65,11 +65,11 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
     }
 
     for (TvShowEpisode episode : episodes) {
-      if (videoFormat.equals(MediaFile.VIDEO_FORMAT_HD) || videoFormat.equals(MediaFile.VIDEO_FORMAT_SD)) {
-        if (videoFormat.equals(MediaFile.VIDEO_FORMAT_HD) && isVideoHD(episode.getMediaInfoVideoFormat())) {
+      if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
+        if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat())) {
           return true;
         }
-        if (videoFormat.equals(MediaFile.VIDEO_FORMAT_SD) && !isVideoHD(episode.getMediaInfoVideoFormat())) {
+        if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat())) {
           return true;
         }
       }

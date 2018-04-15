@@ -296,7 +296,7 @@ public class TvShowEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
+    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -393,14 +393,14 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblStatus = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
         details1Panel.add(lblStatus, "cell 3 6,alignx right");
 
-        cbStatus = new JComboBox<>(MediaAiredStatus.values());
+        cbStatus = new JComboBox(MediaAiredStatus.values());
         details1Panel.add(cbStatus, "cell 4 6,growx");
       }
       {
         JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
         details1Panel.add(lblCertification, "cell 0 7,alignx right");
 
-        cbCertification = new JComboBox<>();
+        cbCertification = new JComboBox();
         details1Panel.add(cbCertification, "cell 1 7,growx");
       }
       {
@@ -531,7 +531,7 @@ public class TvShowEditorDialog extends TmmDialog {
         btnMoveGenreDown.setMargin(BUTTON_MARGIN);
         details2Panel.add(btnMoveGenreDown, "cell 0 3,alignx right,aligny top");
 
-        cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
+        cbGenres = new AutocompleteComboBox(MediaGenres.values());
         cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
         InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
@@ -544,7 +544,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JScrollPane scrollPaneTags = new JScrollPane();
         details2Panel.add(scrollPaneTags, "cell 4 3,grow");
-        listTags = new JList<>();
+        listTags = new JList();
         scrollPaneTags.setViewportView(listTags);
 
         JButton btnAddTag = new JButton(new AddTagAction());

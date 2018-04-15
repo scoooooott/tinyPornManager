@@ -89,7 +89,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private JCheckBox                        chckbxSpaceSubstitution;
   private JComboBox                        cbSeparator;
-  private JComboBox<MoviePreviewContainer> cbMovieForPreview;
+  private JComboBox                        cbMovieForPreview;
   private JCheckBox                        chckbxRemoveOtherNfos;
   private JCheckBox                        chckbxMoviesetSingleMovie;
 
@@ -237,7 +237,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
       add(chckbxSpaceSubstitution, "flowx,cell 1 8 3 1");
 
-      cbSeparator = new JComboBox<>(separators.toArray());
+      cbSeparator = new JComboBox(separators.toArray());
       add(cbSeparator, "cell 1 8 3 1");
     }
     {

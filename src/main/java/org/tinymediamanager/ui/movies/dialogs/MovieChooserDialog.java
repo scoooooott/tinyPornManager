@@ -246,7 +246,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       {
         JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
         panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
-        cbLanguage = new JComboBox<>(MediaLanguages.values());
+        cbLanguage = new JComboBox(MediaLanguages.values());
         cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
         cbLanguage.addActionListener(e -> searchMovie(textFieldSearchString.getText(), null));
         panelSearchField.add(cbLanguage, "cell 1 1");

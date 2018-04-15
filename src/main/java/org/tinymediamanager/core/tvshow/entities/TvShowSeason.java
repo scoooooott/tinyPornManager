@@ -226,7 +226,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     ArrayList<MediaFile> mfs = new ArrayList<>();
     Set<MediaFile> unique = new LinkedHashSet<>(mfs);
       for (TvShowEpisode episode : episodes) {
-          unique.addAll(new ArrayList<>(episode.getMediaFiles()));
+          unique.addAll(episode.getMediaFiles());
       }
     mfs.addAll(unique);
     return mfs;

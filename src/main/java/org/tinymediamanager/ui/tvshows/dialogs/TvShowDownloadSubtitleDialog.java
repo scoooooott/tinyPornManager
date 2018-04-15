@@ -68,7 +68,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
       JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language"));
       panelCenter.add(lblLanguage, "cell 0 1");
 
-      cbLanguage = new JComboBox<>(MediaLanguages.values());
+      cbLanguage = new JComboBox(MediaLanguages.values());
       panelCenter.add(cbLanguage, "cell 1 1,growx");
 
       cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getSubtitleScraperLanguage());

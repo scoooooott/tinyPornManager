@@ -68,7 +68,7 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
       JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
       panelScraper.add(lblLanguage, "cell 0 1,alignx right");
 
-      cbLanguage = new JComboBox<>(MediaLanguages.values());
+      cbLanguage = new JComboBox(MediaLanguages.values());
       panelScraper.add(cbLanguage, "cell 1 1,growx");
 
       JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("movie.download.subtitles.hint")); //$NON-NLS-1$

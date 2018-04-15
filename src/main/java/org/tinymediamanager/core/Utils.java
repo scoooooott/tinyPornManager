@@ -1049,7 +1049,7 @@ public class Utils {
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
-      if (!Files.exists(backup) || !overwrite) {
+      if (!Files.exists(backup) || overwrite) {
         // v1 - just copy
         // FileUtils.copyFile(f, backup, true);
 

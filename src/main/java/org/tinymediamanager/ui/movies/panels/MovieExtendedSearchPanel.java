@@ -151,7 +151,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblSortBy);
     add(lblSortBy, "cell 0 3,growx,aligny top");
 
-    cbSortColumn = new JComboBox<>();
+    cbSortColumn = new JComboBox();
     for (SortColumn column : SortColumn.values()) {
       cbSortColumn.addItem(column);
     }
@@ -159,7 +159,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     cbSortColumn.setAction(actionSort);
     add(cbSortColumn, "cell 0 4,growx,aligny top");
 
-    cbSortOrder = new JComboBox<>();
+    cbSortOrder = new JComboBox();
     for (SortOrder order : SortOrder.values()) {
       cbSortOrder.addItem(order);
     }

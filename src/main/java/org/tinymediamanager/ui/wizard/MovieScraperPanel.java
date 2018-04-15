@@ -207,14 +207,14 @@ class MovieScraperPanel extends JPanel {
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "cell 0 1");
 
-    cbScraperLanguage = new JComboBox<>(MediaLanguages.values());
+    cbScraperLanguage = new JComboBox(MediaLanguages.values());
     cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
     panelMovieScrapers.add(cbScraperLanguage, "cell 1 1");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
     panelMovieScrapers.add(lblCountry, "cell 0 2");
 
-    cbCertificationCountry = new JComboBox<>(CountryCode.values());
+    cbCertificationCountry = new JComboBox(CountryCode.values());
     cbCertificationCountry.setModel(new DefaultComboBoxModel<>(CountryCode.values()));
     panelMovieScrapers.add(cbCertificationCountry, "cell 1 2");
 
@@ -242,7 +242,7 @@ class MovieScraperPanel extends JPanel {
       panel.add(cbMovieNfoFilename3, "cell 1 2");
     }
     {
-      cbNfoFormat = new JComboBox<>(MovieConnectors.values());
+      cbNfoFormat = new JComboBox(MovieConnectors.values());
       panelMovieScrapers.add(cbNfoFormat, "cell 0 5 2 1");
 
       JTextPane textPane = new JTextPane();

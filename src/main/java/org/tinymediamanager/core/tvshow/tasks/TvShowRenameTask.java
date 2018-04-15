@@ -68,22 +68,20 @@ public class TvShowRenameTask extends TmmThreadPool {
       initThreadPool(1, "rename");
 
       // rename complete tv shows
-      for (TvShow aTvShowsToRename1 : tvShowsToRename) {
+      for (TvShow tvShowToRename : tvShowsToRename) {
         if (cancel) {
           break;
         }
-        TvShow show = aTvShowsToRename1;
-        for (TvShowEpisode episode : new ArrayList<>(show.getEpisodes())) {
+        for (TvShowEpisode episode : new ArrayList<>(tvShowToRename.getEpisodes())) {
           submitTask(new RenameEpisodeTask(episode));
         }
       }
       // rename single episodes
-      for (TvShowEpisode anEpisodesToRename1 : episodesToRename) {
+      for (TvShowEpisode tvEpisodesToRename : episodesToRename) {
         if (cancel) {
           break;
         }
-        TvShowEpisode episode = anEpisodesToRename1;
-        submitTask(new RenameEpisodeTask(episode));
+        submitTask(new RenameEpisodeTask(tvEpisodesToRename));
       }
 
       waitForCompletionOrCancel();

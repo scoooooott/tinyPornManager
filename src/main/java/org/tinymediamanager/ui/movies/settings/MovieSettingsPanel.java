@@ -110,7 +110,7 @@ public class MovieSettingsPanel extends JPanel {
       JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
       add(lblRating, "flowx,cell 1 3 4 1");
 
-      cbRating = new AutocompleteComboBox<>(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
+      cbRating = new AutocompleteComboBox(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
       add(cbRating, "cell 1 3 4 1");
     }
     {

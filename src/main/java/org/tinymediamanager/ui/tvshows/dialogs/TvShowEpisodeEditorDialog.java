@@ -231,7 +231,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     };
 
     // to draw the shadow beneath window frame, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer<>(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
+    JLayer<JComponent> rootLayer = new JLayer(tabbedPane, new ShadowLayerUI()); // removed <> because this leads WBP to crash
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     /**********************************************************************************
@@ -392,7 +392,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         JLabel lblMediasource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         details2Panel.add(lblMediasource, "cell 0 2,alignx right");
 
-        cbMediaSource = new AutocompleteComboBox<>(MediaSource.values());
+        cbMediaSource = new AutocompleteComboBox(MediaSource.values());
         details2Panel.add(cbMediaSource, "cell 1 2,growx");
       }
 
@@ -411,7 +411,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         JScrollPane scrollPaneTags = new JScrollPane();
         details2Panel.add(scrollPaneTags, "cell 1 6 2 1,grow");
 
-        listTags = new JList<>();
+        listTags = new JList();
         scrollPaneTags.setViewportView(listTags);
 
         JButton btnAddTag = new JButton(new AddTagAction());

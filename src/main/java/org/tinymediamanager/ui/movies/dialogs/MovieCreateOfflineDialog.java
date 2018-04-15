@@ -61,7 +61,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     JLabel lblMediaSource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     panelContent.add(lblMediaSource, "cell 0 1,alignx right");
 
-    final JComboBox<MediaSource> cbMediaSource = new JComboBox<>();
+    final JComboBox<MediaSource> cbMediaSource = new JComboBox();
     cbMediaSource.addItem(MediaSource.UNKNOWN);
     cbMediaSource.addItem(MediaSource.DVD);
     cbMediaSource.addItem(MediaSource.BLURAY);
@@ -72,7 +72,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     JLabel lblDatasource = new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
     panelContent.add(lblDatasource, "cell 0 2,alignx right");
 
-    final JComboBox<String> cbDatasource = new JComboBox<>();
+    final JComboBox<String> cbDatasource = new JComboBox();
     panelContent.add(cbDatasource, "cell 1 2,growx");
 
     JButton btnAdd = new JButton(IconManager.ADD_INV);

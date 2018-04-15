@@ -187,7 +187,7 @@ public class MediaFileEditorPanel extends JPanel {
           JLabel lblAspectT = new TmmLabel(BUNDLE.getString("metatag.aspect"));
           panelDetails.add(lblAspectT, "cell 6 2,alignx right");
 
-          cbAspectRatio = new JComboBox<>(aspectRatios);
+          cbAspectRatio = new JComboBox(aspectRatios);
           cbAspectRatio.setEditable(true);
           cbAspectRatio.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -214,7 +214,7 @@ public class MediaFileEditorPanel extends JPanel {
           JLabel lbld = new TmmLabel("3D Format");
           panelDetails.add(lbld, "cell 3 3,alignx right");
 
-          cb3dFormat = new JComboBox<>(threeDFormats);
+          cb3dFormat = new JComboBox(threeDFormats);
           panelDetails.add(cb3dFormat, "cell 4 3,growx,aligny top");
         }
         {

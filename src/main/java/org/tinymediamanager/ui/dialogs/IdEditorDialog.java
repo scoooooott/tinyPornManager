@@ -73,7 +73,7 @@ public class IdEditorDialog extends TmmDialog {
         JLabel lblProviderIdT = new JLabel(BUNDLE.getString("metatag.id.source"));
         panelContent.add(lblProviderIdT, "cell 0 0,alignx trailing");
 
-        cbProviderId = new AutocompleteComboBox<>(providerIds);
+        cbProviderId = new AutocompleteComboBox(providerIds);
         panelContent.add(cbProviderId, "cell 1 0,growx");
       }
       {

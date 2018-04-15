@@ -166,7 +166,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   @Override
   public boolean equals(Object mt2) {
-    if ((mt2 instanceof MovieTrailer)) {
+    if (mt2 instanceof MovieTrailer) {
       return compareTo((MovieTrailer) mt2) == 0;
     }
     return false;

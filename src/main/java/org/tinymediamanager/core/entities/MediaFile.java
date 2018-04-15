@@ -1271,7 +1271,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionLD() {
-    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_LD);
+    return VIDEO_FORMAT_LD.equals(getVideoDefinitionCategory());
   }
 
   /**
@@ -1280,7 +1280,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionSD() {
-    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_SD);
+    return VIDEO_FORMAT_SD.equals(getVideoDefinitionCategory());
   }
 
   /**
@@ -1289,7 +1289,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionHD() {
-    return getVideoDefinitionCategory().equals(VIDEO_FORMAT_HD);
+    return VIDEO_FORMAT_HD.equals(getVideoDefinitionCategory());
   }
 
   /**
