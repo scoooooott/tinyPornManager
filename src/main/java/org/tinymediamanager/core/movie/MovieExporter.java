@@ -238,29 +238,30 @@ public class MovieExporter extends MediaEntityExporter {
       Map<String, Object> parameterMap = new HashMap<>();
 
       String[] details = parameters.split(",");
-        for (String detail : details) {
-            String key = "";
-            String value = "";
-            try {
-                String[] d = detail.split("=");
-                key = d[0].trim();
-                value = d[1].trim();
-            } catch (Exception ignored) {
-            }
-
-            if (StringUtils.isAnyBlank(key, value)) {
-                continue;
-            }
-
-            switch (key.toLowerCase(Locale.ROOT)) {
-                case "escape":
-                    parameterMap.put(key, Boolean.parseBoolean(value));
-                    break;
-
-                default:
-                    break;
-            }
+      for (String detail : details) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = detail.split("=");
+          key = d[0].trim();
+          value = d[1].trim();
         }
+        catch (Exception ignored) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase(Locale.ROOT)) {
+          case "escape":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          default:
+            break;
+        }
+      }
 
       return parameterMap;
     }
@@ -374,55 +375,57 @@ public class MovieExporter extends MediaEntityExporter {
       parameterMap.put("destination", "images");
 
       String[] details = parameters.split(",");
-        for (String detail : details) {
-            String key = "";
-            String value = "";
-            try {
-                String[] d = detail.split("=");
-                key = d[0].trim();
-                value = d[1].trim();
-            } catch (Exception ignored) {
-            }
-
-            if (StringUtils.isAnyBlank(key, value)) {
-                continue;
-            }
-
-            switch (key.toLowerCase(Locale.ROOT)) {
-                case "type":
-                    MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
-                    if (type != null) {
-                        parameterMap.put(key, type);
-                    }
-                    break;
-
-                case "destination":
-                    parameterMap.put(key, value);
-                    break;
-
-                case "thumb":
-                    parameterMap.put(key, Boolean.parseBoolean(value));
-                    break;
-
-                case "width":
-                    try {
-                        parameterMap.put(key, Integer.parseInt(value));
-                    } catch (Exception ignored) {
-                    }
-                    break;
-
-                case "escape":
-                    parameterMap.put(key, Boolean.parseBoolean(value));
-                    break;
-
-                case "default":
-                    parameterMap.put(key, value);
-                    break;
-
-                default:
-                    break;
-            }
+      for (String detail : details) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = detail.split("=");
+          key = d[0].trim();
+          value = d[1].trim();
         }
+        catch (Exception ignored) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase(Locale.ROOT)) {
+          case "type":
+            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
+            if (type != null) {
+              parameterMap.put(key, type);
+            }
+            break;
+
+          case "destination":
+            parameterMap.put(key, value);
+            break;
+
+          case "thumb":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          case "width":
+            try {
+              parameterMap.put(key, Integer.parseInt(value));
+            }
+            catch (Exception ignored) {
+            }
+            break;
+
+          case "escape":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          case "default":
+            parameterMap.put(key, value);
+            break;
+
+          default:
+            break;
+        }
+      }
 
       return parameterMap;
     }
