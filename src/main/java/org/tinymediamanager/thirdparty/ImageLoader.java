@@ -212,15 +212,13 @@ public class ImageLoader {
   protected void fireChangeListeners() {
     if (listeners == null)
       return;
-    for (int a = 0; a < listeners.size(); a++) {
-      ChangeListener l = listeners.get(a);
-      try {
-        l.stateChanged(new ChangeEvent(this));
+      for (ChangeListener l : listeners) {
+          try {
+              l.stateChanged(new ChangeEvent(this));
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
       }
-      catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   /**
@@ -296,10 +294,9 @@ public class ImageLoader {
         waitingThread.interrupt();
       }
       if (waitingThreads != null) {
-        for (int a = 0; a < waitingThreads.size(); a++) {
-          Thread t = waitingThreads.get(a);
-          t.interrupt();
-        }
+          for (Thread t : waitingThreads) {
+              t.interrupt();
+          }
       }
     }
   }

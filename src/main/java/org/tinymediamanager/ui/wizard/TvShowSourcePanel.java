@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.wizard;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -101,14 +99,12 @@ class TvShowSourcePanel extends JPanel {
     panelTvShowDataSources.add(btnAdd, "flowy,cell 1 1,aligny top");
     btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
-    btnAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path");
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
-        if (file != null && Files.isDirectory(file)) {
-          settings.addTvShowDataSources(file.toAbsolutePath().toString());
-          TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
-        }
+    btnAdd.addActionListener(arg0 -> {
+      String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path");
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
+      if (file != null && Files.isDirectory(file)) {
+        settings.addTvShowDataSources(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
       }
     });
 
@@ -116,21 +112,18 @@ class TvShowSourcePanel extends JPanel {
     panelTvShowDataSources.add(btnRemove, "cell 1 1");
     btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemove.setMargin(new Insets(2, 2, 2, 2));
-    btnRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listDataSources.getSelectedIndex();
-        if (row != -1) { // nothing selected
-          String path = settings.getTvShowDataSource().get(row);
-          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
-              BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
-              BUNDLE.getString("Button.abort")); //$NON-NLS-1$
-          if (decision == 0) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            settings.removeTvShowDataSources(path);
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          }
+    btnRemove.addActionListener(arg0 -> {
+      int row = listDataSources.getSelectedIndex();
+      if (row != -1) { // nothing selected
+        String path = settings.getTvShowDataSource().get(row);
+        String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+        int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
+            BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
+            BUNDLE.getString("Button.abort")); //$NON-NLS-1$
+        if (decision == 0) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          settings.removeTvShowDataSources(path);
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
       }
     });

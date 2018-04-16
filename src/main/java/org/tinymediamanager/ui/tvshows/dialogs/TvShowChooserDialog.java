@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -100,7 +100,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
   private TvShowList                  tvShowList            = TvShowList.getInstance();
   private TvShow                      tvShowToScrape;
-  private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
+  private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<>());
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
   private MediaScraper                mediaScraper;
   private List<MediaScraper>          artworkScrapers;
@@ -416,7 +416,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
           if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
-            TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToScrape));
+            TmmTask task = new SyncTraktTvTask(null, Collections.singletonList(tvShowToScrape));
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 

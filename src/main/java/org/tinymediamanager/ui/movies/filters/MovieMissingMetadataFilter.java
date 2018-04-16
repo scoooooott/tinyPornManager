@@ -45,11 +45,7 @@ public class MovieMissingMetadataFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    if (!movie.isScraped()) {
-      return true;
-    }
-
-    return false;
+    return !movie.isScraped();
   }
 
   @Override

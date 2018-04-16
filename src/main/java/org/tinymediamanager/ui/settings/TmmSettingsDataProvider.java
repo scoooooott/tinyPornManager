@@ -99,10 +99,7 @@ public class TmmSettingsDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       return false;
     }
 
-    if (node.getUserObject() instanceof TmmSettingsNode && ((TmmSettingsNode) node.getUserObject()).getChildren().isEmpty()) {
-      return true;
-    }
+    return node.getUserObject() instanceof TmmSettingsNode && ((TmmSettingsNode) node.getUserObject()).getChildren().isEmpty();
 
-    return false;
   }
 }

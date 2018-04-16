@@ -21,6 +21,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -93,22 +94,19 @@ public class NativeFileChooser extends JFileChooser {
     if (JAVAFX_AVAILABLE) {
       try {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
-        Runnable runnable = new Runnable() {
-          @Override
-          public void run() {
-            if (isDirectorySelectionEnabled()) {
-              currentFile = directoryChooser.showDialog();
+        Runnable runnable = () -> {
+          if (isDirectorySelectionEnabled()) {
+            currentFile = directoryChooser.showDialog();
+          }
+          else {
+            if (isMultiSelectionEnabled()) {
+              currentFiles = fileChooser.showOpenMultipleDialog();
             }
             else {
-              if (isMultiSelectionEnabled()) {
-                currentFiles = fileChooser.showOpenMultipleDialog();
-              }
-              else {
-                currentFile = fileChooser.showOpenDialog();
-              }
+              currentFile = fileChooser.showOpenDialog();
             }
-            countDownLatch.countDown();
           }
+          countDownLatch.countDown();
         };
 
         Class<?> clazz = Class.forName("javafx.application.Platform");
@@ -133,7 +131,7 @@ public class NativeFileChooser extends JFileChooser {
           }
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 
@@ -148,20 +146,16 @@ public class NativeFileChooser extends JFileChooser {
     }
 
     final CountDownLatch countDownLatch = new CountDownLatch(1);
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        // parent.setEnabled(false);
-        if (isDirectorySelectionEnabled()) {
-          currentFile = directoryChooser.showDialog();
-        }
-        else {
-          currentFile = fileChooser.showSaveDialog();
-        }
-        countDownLatch.countDown();
-        // parent.setEnabled(true);
+    Runnable runnable = () -> {
+      // parent.setEnabled(false);
+      if (isDirectorySelectionEnabled()) {
+        currentFile = directoryChooser.showDialog();
       }
-
+      else {
+        currentFile = fileChooser.showSaveDialog();
+      }
+      countDownLatch.countDown();
+      // parent.setEnabled(true);
     };
 
     try {
@@ -340,7 +334,7 @@ public class NativeFileChooser extends JFileChooser {
     }
     if (differs) {
       if (bool) {
-        fileChooser.addExtensionFilter("All files", Arrays.asList("*.*"));
+        fileChooser.addExtensionFilter("All files", Collections.singletonList("*.*"));
       }
       else {
         // ToDo
@@ -365,7 +359,7 @@ public class NativeFileChooser extends JFileChooser {
     else {
       super.setCurrentDirectory(dir);
     }
-  };
+  }
 
   private void initFxFileChooser(File currentFile) {
     if (JAVAFX_AVAILABLE) {

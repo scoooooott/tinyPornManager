@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -117,7 +116,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
 
       try {
         boolean first = true;
-        String xmlString = "";
+        StringBuilder xmlString = new StringBuilder();
 
         // add well known tags
         for (TvShowEpisode episode : episodes) {
@@ -191,12 +190,12 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           }
           transformer.transform(new DOMSource(document), new StreamResult(out));
 
-          xmlString += out.toString().replaceAll("(?<!\r)\n", "\r\n"); // windows conform line endings
+          xmlString.append(out.toString().replaceAll("(?<!\r)\n", "\r\n")); // windows conform line endings
         }
 
         // write to file
         Path f = firstEpisode.getPathNIO().resolve(nfoFilename);
-        Utils.writeStringToFile(f, xmlString);
+        Utils.writeStringToFile(f, xmlString.toString());
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
@@ -406,7 +405,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    * add studios in <studio>xxx</studio> tags (multiple)
    */
   protected void addStudios(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
-    List<String> studios = Arrays.asList(episode.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    String[] studios = episode.getProductionCompany().split("\\s*[,\\/]\\s*"); // split on , or / and remove whitespace around
     for (String s : studios) {
       Element studio = document.createElement("studio");
       studio.setTextContent(s);

@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public class TvShowEpisodeToNfoConnectorTest {
       List<TvShowEpisode> episodes = createEpisodes(tvShow, true);
 
       // write it
-      List<TvShowEpisodeNfoNaming> nfoNames = Arrays.asList(TvShowEpisodeNfoNaming.FILENAME);
+      List<TvShowEpisodeNfoNaming> nfoNames = Collections.singletonList(TvShowEpisodeNfoNaming.FILENAME);
       TvShowEpisodeToXbmcConnector connector = new TvShowEpisodeToXbmcConnector(episodes);
       connector.write(nfoNames);
 
@@ -106,7 +107,7 @@ public class TvShowEpisodeToNfoConnectorTest {
       List<TvShowEpisode> episodes = createEpisodes(tvShow, true);
 
       // write it
-      List<TvShowEpisodeNfoNaming> nfoNames = Arrays.asList(TvShowEpisodeNfoNaming.FILENAME);
+      List<TvShowEpisodeNfoNaming> nfoNames = Collections.singletonList(TvShowEpisodeNfoNaming.FILENAME);
       TvShowEpisodeToXbmcConnector connector = new TvShowEpisodeToXbmcConnector(episodes);
       connector.write(nfoNames);
 
@@ -273,7 +274,7 @@ public class TvShowEpisodeToNfoConnectorTest {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");
@@ -320,7 +321,7 @@ public class TvShowEpisodeToNfoConnectorTest {
       audio.setCodec("AC3");
       audio.setLanguage("en");
       audio.setChannels("6");
-      mf.setAudioStreams(Arrays.asList(audio));
+      mf.setAudioStreams(Collections.singletonList(audio));
 
       sub = new MediaFileSubtitle();
       sub.setLanguage("de");

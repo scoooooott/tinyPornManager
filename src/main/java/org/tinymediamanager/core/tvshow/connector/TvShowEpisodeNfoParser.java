@@ -105,7 +105,7 @@ public class TvShowEpisodeNfoParser {
    * @throws Exception
    *           any exception if parsing fails
    */
-  public static TvShowEpisodeNfoParser parseNfo(String content) throws Exception {
+  public static TvShowEpisodeNfoParser parseNfo(String content) {
     return new TvShowEpisodeNfoParser(Jsoup.parse(content, "", Parser.xmlParser()));
   }
 
@@ -735,7 +735,7 @@ public class TvShowEpisodeNfoParser {
       if (element != null) {
         try {
           playcount = MetadataUtil.parseInt(element.ownText());
-          if (playcount > 0 && watched == false) {
+          if (playcount > 0 && !watched) {
             watched = true;
           }
         }
@@ -818,7 +818,7 @@ public class TvShowEpisodeNfoParser {
       if (elements.size() == 1) {
         try {
           // split on , or / and remove whitespace around)
-          List<String> creditsNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+          String[] creditsNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
           for (String credit : creditsNames) {
             Person person = new Person();
             person.name = credit;
@@ -854,7 +854,7 @@ public class TvShowEpisodeNfoParser {
       if (elements.size() == 1) {
         try {
           // split on , or / and remove whitespace around)
-          List<String> directorNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+          String[] directorNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
           for (String director : directorNames) {
             Person person = new Person();
             person.name = director;

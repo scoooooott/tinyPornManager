@@ -35,7 +35,7 @@ public class MovieInMovieSetFilter extends AbstractMovieUIFilter {
 
     private String title;
 
-    private MovieInMovieSet(String title) {
+    MovieInMovieSet(String title) {
       this.title = title;
     }
 
@@ -80,11 +80,7 @@ public class MovieInMovieSetFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    if ((movie.getMovieSet() != null) && combobox.getSelectedItem() == MovieInMovieSet.IN_MOVIESET) {
-      return true;
-    }
-
-    return false;
+    return (movie.getMovieSet() != null) && combobox.getSelectedItem() == MovieInMovieSet.IN_MOVIESET;
   }
 
   @Override

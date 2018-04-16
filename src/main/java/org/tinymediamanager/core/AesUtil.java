@@ -83,8 +83,7 @@ public class AesUtil {
     try {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), hex(salt), iterationCount, keySize);
-      SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-      return key;
+      return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
     catch (Exception e) {
       throw fail(e);

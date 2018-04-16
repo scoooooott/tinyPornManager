@@ -118,7 +118,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
   private TvShowList                              tvShowList       = TvShowList.getInstance();
   private TvShowEpisode                           episodeToEdit;
-  private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<>());
   private List<MediaFile>                         mediaFiles       = new ArrayList<>();
   private Rating                                  userRating;
   private boolean                                 continueQueue    = true;
@@ -784,7 +784,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));

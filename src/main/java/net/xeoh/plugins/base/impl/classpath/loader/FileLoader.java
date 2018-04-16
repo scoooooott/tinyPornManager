@@ -59,9 +59,7 @@ public class FileLoader extends AbstractLoader {
 
   @Override
   public boolean handlesURI(URI uri) {
-    if (uri != null && "file".equals(uri.getScheme()))
-      return true;
-    return false;
+    return uri != null && "file".equals(uri.getScheme());
   }
 
   @Override
@@ -81,7 +79,6 @@ public class FileLoader extends AbstractLoader {
 
         // Here we go
         locateAllPluginsAt(root);
-        return;
       }
       catch (Exception e) {
         LOGGER.error("could not load plugins: " + e.getMessage());
@@ -94,7 +91,7 @@ public class FileLoader extends AbstractLoader {
    */
   private static String ensureUNCPath(String path) {
     int len = path.length();
-    StringBuffer result = new StringBuffer(len);
+    StringBuilder result = new StringBuilder(len);
     for (int i = 0; i < 4; i++) {
       // if we have hit the first non-slash character, add another leading slash
       if (i >= len || result.length() > 0 || path.charAt(i) != '/') {

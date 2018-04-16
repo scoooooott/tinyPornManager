@@ -76,11 +76,7 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     List<String> tags = checkComboBox.getSelectedItems();
-    if (movie.getTags().containsAll(tags)) {
-      return true;
-    }
-
-    return false;
+    return movie.getTags().containsAll(tags);
   }
 
   @Override

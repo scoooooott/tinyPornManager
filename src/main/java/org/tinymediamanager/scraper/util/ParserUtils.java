@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
@@ -146,9 +146,9 @@ public class ParserUtils {
     }
 
     // rebuild string, respecting bad words
-    String name = "";
+    StringBuilder name = new StringBuilder();
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
-      if (!s[i].isEmpty()) {
+      if (!(s[i] != null && s[i].isEmpty())) {
         // check for bad words
         if (!MovieModuleManager.SETTINGS.getBadWord().contains(s[i].toLowerCase(Locale.ROOT))) {
           String word = s[i];
@@ -164,23 +164,23 @@ public class ParserUtils {
             case "VIII":
             case "IX":
             case "X":
-              name = name + word.toUpperCase(Locale.ROOT) + " ";
+              name.append(word.toUpperCase(Locale.ROOT)).append(" ");
               break;
 
             default:
-              name = name + WordUtils.capitalizeFully(word) + " "; // make CamelCase
+              name.append(WordUtils.capitalizeFully(word)).append(" "); // make CamelCase
               break;
           }
         }
       }
     }
 
-    if (name.isEmpty()) {
+    if (name.length() == 0) {
       // started with a badword - return name unchanged
       ret[0] = fname;
     }
     else {
-      ret[0] = name.trim();
+      ret[0] = name.toString().trim();
     }
     ret[1] = year.trim();
     LOGGER.trace("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
@@ -221,7 +221,7 @@ public class ParserUtils {
     LOGGER.trace("IN:  " + fname);
 
     // Get [optionals] delimited
-    List<String> opt = new ArrayList<String>();
+    List<String> opt = new ArrayList<>();
     Pattern p = Pattern.compile("\\[(.*?)\\]");
     Matcher m = p.matcher(fname);
     while (m.find()) {
@@ -294,7 +294,7 @@ public class ParserUtils {
     }
 
     // rebuild string, respecting bad words
-    String name = "";
+    StringBuilder name = new StringBuilder();
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
@@ -312,23 +312,23 @@ public class ParserUtils {
             case "VIII":
             case "IX":
             case "X":
-              name = name + word.toUpperCase(Locale.ROOT) + " ";
+              name.append(word.toUpperCase(Locale.ROOT)).append(" ");
               break;
 
             default:
-              name = name + WordUtils.capitalizeFully(word) + " "; // make CamelCase
+              name.append(WordUtils.capitalizeFully(word)).append(" "); // make CamelCase
               break;
           }
         }
       }
     }
 
-    if (name.isEmpty()) {
+    if (name.length() == 0) {
       // started with a badword - return name unchanged
       ret[0] = fname;
     }
     else {
-      ret[0] = name.trim();
+      ret[0] = name.toString().trim();
     }
     ret[1] = year.trim();
     LOGGER.trace("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
@@ -463,7 +463,7 @@ public class ParserUtils {
 
       return out.toString();
     }
-    catch (Exception e) {
+    catch (Exception ignored) {
     }
     return sourceNfoContent;
   }

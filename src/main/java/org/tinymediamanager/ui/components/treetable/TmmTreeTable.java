@@ -485,7 +485,7 @@ public class TmmTreeTable extends TmmTable {
   @SuppressWarnings("unchecked")
   void updateFiltering() {
     final TreeModel model = treeTableModel.getTreeModel();
-    if (model != null && model instanceof TmmTreeModel) {
+    if (model instanceof TmmTreeModel) {
       ((TmmTreeModel) model).updateSortingAndFiltering();
     }
 

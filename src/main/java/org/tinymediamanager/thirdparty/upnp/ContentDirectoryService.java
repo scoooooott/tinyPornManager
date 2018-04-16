@@ -2,7 +2,6 @@ package org.tinymediamanager.thirdparty.upnp;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -123,7 +122,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
         else if (path[0].equals(Upnp.ID_MOVIES)) {
           // create MOVIE folder structure -> items
           List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = MovieList.getInstance().getMovies();
-          Collections.sort(tmmMovies, new DynaComparator(orderMovie));
+          tmmMovies.sort(new DynaComparator(orderMovie));
           for (org.tinymediamanager.core.movie.entities.Movie m : tmmMovies) {
             didl.addItem(Metadata.getUpnpMovie(m, false));
           }
@@ -134,7 +133,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
             // create TVSHOW folder structure -> container
             StorageFolder cont;
             List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = TvShowList.getInstance().getTvShows();
-            Collections.sort(tmmShows, new DynaComparator(orderShow));
+            tmmShows.sort(new DynaComparator(orderShow));
             for (org.tinymediamanager.core.tvshow.entities.TvShow t : tmmShows) {
               cont = new StorageFolder();
               cont.setId(Upnp.ID_TVSHOWS + "/" + t.getDbId());

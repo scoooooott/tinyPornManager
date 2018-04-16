@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -124,11 +123,11 @@ public class MovieEditorDialog extends TmmDialog {
   private Movie                              movieToEdit;
   private MovieList                          movieList        = MovieList.getInstance();
 
-  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
-  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private EventList<MediaId>                 ids              = new BasicEventList<>();
-  private EventList<MediaRating>             ratings          = new BasicEventList<>();
+  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<>());
+  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<>());
+  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<MediaId>                 ids;
+  private EventList<MediaRating>             ratings;
   private List<MediaFile>                    mediaFiles       = new ArrayList<>();
   private List<String>                       extrathumbs      = new ArrayList<>();
   private List<String>                       extrafanarts     = new ArrayList<>();
@@ -156,7 +155,7 @@ public class MovieEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres>  cbGenres;
   private AutoCompleteSupport<MediaGenres>   cbGenresAutoCompleteSupport;
   private JSpinner                           spRating;
-  private JComboBox                          cbCertification;
+  private JComboBox<Certification>           cbCertification;
   private JCheckBox                          cbWatched;
   private JTextField                         tfTagline;
 
@@ -1254,7 +1253,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       // if configured - sync with trakt.tv
       if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
-        TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToEdit), null);
+        TmmTask task = new SyncTraktTvTask(Collections.singletonList(movieToEdit), null);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

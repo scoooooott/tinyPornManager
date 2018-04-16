@@ -83,8 +83,8 @@ public class TvShowEpisodeAndSeasonParser {
   }
 
   private static String removeEpisodeVariantsFromTitle(String title) {
-    String backup = title;
-    String ret = "";
+    StringBuilder backup = new StringBuilder(title);
+    StringBuilder ret = new StringBuilder();
 
     // quite same patters as above, minus the last ()
     title = title.replaceAll("[Ss]([0-9]+)[\\]\\[ _.-]*[Ee]([0-9]+)", "");
@@ -103,22 +103,22 @@ public class TvShowEpisodeAndSeasonParser {
     // split and reassemble
     String[] splitted = StringUtils.split(title, "[\\[\\]() _,.-]");
     for (String s : splitted) {
-      ret = ret + " " + s;
+      ret.append(" ").append(s);
     }
-    ret = ret.trim();
+    ret = new StringBuilder(ret.toString().trim());
 
     // uh-oh - we removed too much
     // also split and reassemble backup
-    if (StringUtils.isEmpty(ret)) {
-      String[] b = StringUtils.split(backup, "[\\[\\]() _,.-]");
-      backup = "";
+    if (StringUtils.isEmpty(ret.toString())) {
+      String[] b = StringUtils.split(backup.toString(), "[\\[\\]() _,.-]");
+      backup = new StringBuilder();
       for (String s : b) {
-        backup = backup + " " + s;
+        backup.append(" ").append(s);
       }
       // System.out.println("****** empty string - setting back to " + backup);
-      ret = backup.trim();
+      ret = new StringBuilder(backup.toString().trim());
     }
-    return ret;
+    return ret.toString();
   }
 
   /**
@@ -198,7 +198,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     basename = basename + " ";
 
-    result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
+    result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty();
     result.name = basename.trim();
 
     // season detection

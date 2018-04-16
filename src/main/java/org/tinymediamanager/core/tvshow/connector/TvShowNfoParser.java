@@ -192,7 +192,7 @@ public class TvShowNfoParser {
    * @throws Exception
    *           any exception if parsing fails
    */
-  public static TvShowNfoParser parseNfo(String content) throws Exception {
+  public static TvShowNfoParser parseNfo(String content) {
     return new TvShowNfoParser(Jsoup.parse(content, "", Parser.xmlParser()));
   }
 
@@ -203,15 +203,7 @@ public class TvShowNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    if (StringUtils.isBlank(title)) {
-      return false;
-    }
-
-    if (year <= 0) {
-      return false;
-    }
-
-    return true;
+    return !(year <= 0 || StringUtils.isBlank(title));
   }
 
   private Element getSingleElement(Element parent, String tag) {

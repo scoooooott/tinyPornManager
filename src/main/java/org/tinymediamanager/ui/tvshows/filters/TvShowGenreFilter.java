@@ -41,7 +41,7 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
   public TvShowGenreFilter() {
     super();
     buildAndInstallMediaGenres();
-    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaGenres()));
+    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaGenres));
   }
 
   @Override
@@ -85,11 +85,7 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
-    if (tvShow.getGenres().containsAll(selectedItems)) {
-      return true;
-    }
-
-    return false;
+    return tvShow.getGenres().containsAll(selectedItems);
   }
 
   @Override

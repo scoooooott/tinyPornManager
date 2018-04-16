@@ -199,22 +199,22 @@ class DateTextField extends JFormattedTextField implements CaretListener, FocusL
 
   private String createMaskFromDatePattern(String datePattern) {
     String symbols = "GyMdkHmsSEDFwWahKzZ";
-    String mask = "";
+    StringBuilder mask = new StringBuilder();
     for (int i = 0; i < datePattern.length(); i++) {
       char ch = datePattern.charAt(i);
       boolean symbolFound = false;
       for (int n = 0; n < symbols.length(); n++) {
         if (symbols.charAt(n) == ch) {
-          mask += "#";
+          mask.append("#");
           symbolFound = true;
           break;
         }
       }
       if (!symbolFound) {
-        mask += ch;
+        mask.append(ch);
       }
     }
-    return mask;
+    return mask.toString();
   }
 
   @Override

@@ -75,7 +75,7 @@ public class TvShowImageSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
-  private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
+  private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<>());
 
   private TmmTable                    tableArtworkScraper;
   private JTextPane                   tpArtworkScraperDescription;

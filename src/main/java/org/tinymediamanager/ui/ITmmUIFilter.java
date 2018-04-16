@@ -27,12 +27,12 @@ import javax.swing.JLabel;
  * @author Manuel Laggner
  */
 public interface ITmmUIFilter<E> {
-  public final static String FILTER_CHANGED = "filterChanged";
+  String FILTER_CHANGED = "filterChanged";
 
   /**
    * the filter state
    */
-  public enum FilterState {
+  enum FilterState {
     ACTIVE,
     ACTIVE_NEGATIVE,
     INACTIVE
@@ -43,47 +43,47 @@ public interface ITmmUIFilter<E> {
    * 
    * @return the id of this filter
    */
-  public String getId();
+  String getId();
 
   /**
    * Get the JCheckBox for enabling/disabling the filter
    * 
    * @return the JCheckBox to enable/disable the filter
    */
-  public JCheckBox getCheckBox();
+  JCheckBox getCheckBox();
 
   /**
    * Get the JLabel for the filter name
    * 
    * @return the JLabel with the filter name
    */
-  public JLabel getLabel();
+  JLabel getLabel();
 
   /**
    * Get the filter component for extended filtering or null if it is not needed
    * 
    * @return the component for extended filtering (e.g. JComboBox for JTextfield) or null
    */
-  public JComponent getFilterComponent();
+  JComponent getFilterComponent();
 
   /**
    * get the filter value
    * 
    * @return the filter value
    */
-  public String getFilterValueAsString();
+  String getFilterValueAsString();
 
   /**
    * set the filter value
    */
-  public void setFilterValue(Object value);
+  void setFilterValue(Object value);
 
   /**
    * get the filter state
    * 
    * @return the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
    */
-  public FilterState getFilterState();
+  FilterState getFilterState();
 
   /**
    * set the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
@@ -91,7 +91,7 @@ public interface ITmmUIFilter<E> {
    * @param state
    *          the state
    */
-  public void setFilterState(FilterState state);
+  void setFilterState(FilterState state);
 
   /**
    * Returns whether the specified object is accepted by this filter or not.
@@ -100,7 +100,7 @@ public interface ITmmUIFilter<E> {
    *          object to process
    * @return true if the specified object is accepted by this filter, false otherwise
    */
-  public boolean accept(E object);
+  boolean accept(E object);
 
   /**
    * Adds the property change listener.
@@ -108,7 +108,7 @@ public interface ITmmUIFilter<E> {
    * @param listener
    *          the listener
    */
-  public void addPropertyChangeListener(PropertyChangeListener listener);
+  void addPropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Adds the property change listener.
@@ -118,7 +118,7 @@ public interface ITmmUIFilter<E> {
    * @param listener
    *          the listener
    */
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+  void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
   /**
    * Removes the property change listener.
@@ -126,7 +126,7 @@ public interface ITmmUIFilter<E> {
    * @param listener
    *          the listener
    */
-  public void removePropertyChangeListener(PropertyChangeListener listener);
+  void removePropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Removes the property change listener.
@@ -136,5 +136,5 @@ public interface ITmmUIFilter<E> {
    * @param listener
    *          the listener
    */
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+  void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 }

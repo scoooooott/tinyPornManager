@@ -288,7 +288,7 @@ public class VSMeta {
                   float f = Float.parseFloat(value);
                   rating = f;
                 }
-                catch (NumberFormatException e) {
+                catch (NumberFormatException ignored) {
                 }
               }
               reader.endObject();
@@ -312,7 +312,7 @@ public class VSMeta {
                       int t = Integer.parseInt(value);
                       ids.put(Constants.TMDB, t);
                     }
-                    catch (NumberFormatException e) {
+                    catch (NumberFormatException ignored) {
                     }
                     break;
 
@@ -336,7 +336,7 @@ public class VSMeta {
                       movieSet = new MovieSet();
                       movieSet.setTmdbId(t);
                     }
-                    catch (NumberFormatException e) {
+                    catch (NumberFormatException ignored) {
                     }
                     break;
 

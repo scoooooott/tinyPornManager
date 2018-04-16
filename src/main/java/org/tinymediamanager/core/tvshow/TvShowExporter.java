@@ -215,7 +215,7 @@ public class TvShowExporter extends MediaEntityExporter {
 
     @Override
     public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
-      Map<String, Object> parameters = new HashMap<String, Object>();
+      Map<String, Object> parameters = new HashMap<>();
       if (pattern != null) {
         parameters = parseParameters(pattern);
       }
@@ -245,30 +245,29 @@ public class TvShowExporter extends MediaEntityExporter {
       Map<String, Object> parameterMap = new HashMap<>();
 
       String[] details = parameters.split(",");
-      for (int x = 0; x < details.length; x++) {
-        String key = "";
-        String value = "";
-        try {
-          String[] d = details[x].split("=");
-          key = d[0].trim();
-          value = d[1].trim();
-        }
-        catch (Exception e) {
-        }
+        for (String detail : details) {
+            String key = "";
+            String value = "";
+            try {
+                String[] d = detail.split("=");
+                key = d[0].trim();
+                value = d[1].trim();
+            } catch (Exception ignored) {
+            }
 
-        if (StringUtils.isAnyBlank(key, value)) {
-          continue;
-        }
+            if (StringUtils.isAnyBlank(key, value)) {
+                continue;
+            }
 
-        switch (key.toLowerCase(Locale.ROOT)) {
-          case "escape":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
+            switch (key.toLowerCase(Locale.ROOT)) {
+                case "escape":
+                    parameterMap.put(key, Boolean.parseBoolean(value));
+                    break;
 
-          default:
-            break;
+                default:
+                    break;
+            }
         }
-      }
 
       return parameterMap;
 
@@ -306,7 +305,7 @@ public class TvShowExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
       if (o instanceof TvShow || o instanceof TvShowEpisode) {
         MediaEntity entity = (MediaEntity) o;
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         if (pattern != null) {
           parameters = parseParameters(pattern);
         }
@@ -386,57 +385,55 @@ public class TvShowExporter extends MediaEntityExporter {
       parameterMap.put("destination", "images");
 
       String[] details = parameters.split(",");
-      for (int x = 0; x < details.length; x++) {
-        String key = "";
-        String value = "";
-        try {
-          String[] d = details[x].split("=");
-          key = d[0].trim();
-          value = d[1].trim();
-        }
-        catch (Exception e) {
-        }
-
-        if (StringUtils.isAnyBlank(key, value)) {
-          continue;
-        }
-
-        switch (key.toLowerCase(Locale.ROOT)) {
-          case "type":
-            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
-            if (type != null) {
-              parameterMap.put(key, type);
-            }
-            break;
-
-          case "destination":
-            parameterMap.put(key, value);
-            break;
-
-          case "thumb":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
-
-          case "width":
+        for (String detail : details) {
+            String key = "";
+            String value = "";
             try {
-              parameterMap.put(key, Integer.parseInt(value));
+                String[] d = detail.split("=");
+                key = d[0].trim();
+                value = d[1].trim();
+            } catch (Exception ignored) {
             }
-            catch (Exception e) {
+
+            if (StringUtils.isAnyBlank(key, value)) {
+                continue;
             }
-            break;
 
-          case "escape":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
+            switch (key.toLowerCase(Locale.ROOT)) {
+                case "type":
+                    MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
+                    if (type != null) {
+                        parameterMap.put(key, type);
+                    }
+                    break;
 
-          case "default":
-            parameterMap.put(key, value);
-            break;
+                case "destination":
+                    parameterMap.put(key, value);
+                    break;
 
-          default:
-            break;
+                case "thumb":
+                    parameterMap.put(key, Boolean.parseBoolean(value));
+                    break;
+
+                case "width":
+                    try {
+                        parameterMap.put(key, Integer.parseInt(value));
+                    } catch (Exception ignored) {
+                    }
+                    break;
+
+                case "escape":
+                    parameterMap.put(key, Boolean.parseBoolean(value));
+                    break;
+
+                case "default":
+                    parameterMap.put(key, value);
+                    break;
+
+                default:
+                    break;
+            }
         }
-      }
 
       return parameterMap;
     }

@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -52,12 +50,9 @@ public class TableSpinnerEditor extends DefaultCellEditor {
     textField.addFocusListener(new FocusListener() {
       @Override
       public void focusGained(FocusEvent fe) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            if (valueSet) {
-              textField.setCaretPosition(1);
-            }
+        SwingUtilities.invokeLater(() -> {
+          if (valueSet) {
+            textField.setCaretPosition(1);
           }
         });
       }
@@ -67,12 +62,7 @@ public class TableSpinnerEditor extends DefaultCellEditor {
         stopCellEditing();
       }
     });
-    textField.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent ae) {
-        stopCellEditing();
-      }
-    });
+    textField.addActionListener(ae -> stopCellEditing());
   }
 
   // Prepares the spinner component and returns it.
@@ -81,12 +71,7 @@ public class TableSpinnerEditor extends DefaultCellEditor {
     if (!valueSet) {
       spinner.setValue(value);
     }
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        textField.requestFocus();
-      }
-    });
+    SwingUtilities.invokeLater(() -> textField.requestFocus());
     return spinner;
   }
 

@@ -65,7 +65,7 @@ public class TmmUIHelper {
     return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, initialPath, true, null, null);
   }
 
-  private static Path openDirectoryDialog(String title, String initialPath) throws Exception, Error {
+  private static Path openDirectoryDialog(String title, String initialPath) throws Error {
     // set system property to choose directories
     System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
@@ -136,10 +136,7 @@ public class TmmUIHelper {
         // open file chooser
         return openFileDialog(title, initialPath, FileDialog.LOAD, null);
       }
-      catch (Exception e) {
-        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
-      }
-      catch (Error e) {
+      catch (Exception | Error e) {
         LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
       }
     }
@@ -148,7 +145,7 @@ public class TmmUIHelper {
     return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, true, null, null);
   }
 
-  private static Path openFileDialog(String title, String initialPath, int mode, String filename) throws Exception, Error {
+  private static Path openFileDialog(String title, String initialPath, int mode, String filename) throws Error {
     FileDialog chooser = new FileDialog(MainWindow.getFrame(), title, mode);
     if (StringUtils.isNotBlank(initialPath)) {
       Path path = Paths.get(initialPath);
@@ -211,7 +208,7 @@ public class TmmUIHelper {
         Runtime.getRuntime().exec(new String[] { "xdg-open", abs });
         started = true;
       }
-      catch (IOException e) {
+      catch (IOException ignored) {
       }
 
       if (!started) {
@@ -219,7 +216,7 @@ public class TmmUIHelper {
           Runtime.getRuntime().exec(new String[] { "kde-open", abs });
           started = true;
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
 
@@ -228,7 +225,7 @@ public class TmmUIHelper {
           Runtime.getRuntime().exec(new String[] { "gnome-open", abs });
           started = true;
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
 
@@ -256,7 +253,7 @@ public class TmmUIHelper {
         Runtime.getRuntime().exec(new String[] { "gnome-open", url });
         started = true;
       }
-      catch (IOException e) {
+      catch (IOException ignored) {
       }
 
       if (!started) {
@@ -264,7 +261,7 @@ public class TmmUIHelper {
           Runtime.getRuntime().exec(new String[] { "kde-open", url });
           started = true;
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
 
@@ -273,7 +270,7 @@ public class TmmUIHelper {
           Runtime.getRuntime().exec(new String[] { "xdg-open", url });
           started = true;
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
     }

@@ -56,10 +56,9 @@ public class MovieSetRemoveAction extends TmmAction {
       return;
     }
 
-    for (int i = 0; i < selectedMovieSets.size(); i++) {
-      MovieSet movieSet = selectedMovieSets.get(i);
-      MovieList.getInstance().removeMovieSet(movieSet);
-    }
+      for (MovieSet movieSet : selectedMovieSets) {
+          MovieList.getInstance().removeMovieSet(movieSet);
+      }
 
   }
 }

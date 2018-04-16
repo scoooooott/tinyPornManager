@@ -178,7 +178,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected void sortMediaFiles() {
     Comparator<MediaFile> mediaFileComparator = getMediaFileComparator();
     if (mediaFileComparator != null) {
-      Collections.sort(mediaFiles, mediaFileComparator);
+      mediaFiles.sort(mediaFileComparator);
     }
     else {
       Collections.sort(mediaFiles);
@@ -320,10 +320,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the main (preferred) rating
    */
   public Rating getRating() {
-    Rating rating = null;
-
-    // the user rating
-    rating = ratings.get(Rating.USER);
+    Rating rating = ratings.get(Rating.USER);
 
     // then the default one (either NFO or DEFAULT)
     if (rating == null) {
@@ -532,7 +529,7 @@ public abstract class MediaEntity extends AbstractModelObject {
         setDateAdded(modDat);
       }
     }
-    catch (Exception e) {
+    catch (Exception ignored) {
     }
   }
 

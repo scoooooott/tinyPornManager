@@ -103,7 +103,7 @@ public class ImageChooserDialog extends TmmDialog {
     CLEARLOGO,
     CLEARART,
     DISC,
-    THUMB;
+    THUMB
   }
 
   private DownloadTask         task;
@@ -858,7 +858,7 @@ public class ImageChooserDialog extends TmmDialog {
         panelImages.validate();
         panelImages.getParent().validate();
       }
-      SwingUtilities.invokeLater(() -> stopProgressBar());
+      SwingUtilities.invokeLater(ImageChooserDialog.this::stopProgressBar);
     }
   }
 

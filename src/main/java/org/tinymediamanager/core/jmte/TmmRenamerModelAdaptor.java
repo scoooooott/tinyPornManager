@@ -47,7 +47,7 @@ public class TmmRenamerModelAdaptor extends TmmModelAdaptor {
   public Object getValue(Map<String, Object> model, String expression) {
     Object value = super.getValue(model, expression);
 
-    if (value != null && value instanceof String) {
+    if (value instanceof String) {
       value = replaceInvalidCharacters((String) value);
     }
 
@@ -58,7 +58,7 @@ public class TmmRenamerModelAdaptor extends TmmModelAdaptor {
   public Object getValue(TemplateContext context, Token token, List<String> segments, String expression) {
     Object value = super.getValue(context, token, segments, expression);
 
-    if (value != null && value instanceof String) {
+    if (value instanceof String) {
       value = replaceInvalidCharacters((String) value);
     }
 

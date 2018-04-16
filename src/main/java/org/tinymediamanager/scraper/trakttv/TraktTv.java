@@ -265,7 +265,6 @@ public class TraktTv {
       else {
         // do not add to Trakt if we do not have at least one ID
         nosync++;
-        continue;
       }
     }
     if (nosync > 0) {
@@ -290,7 +289,6 @@ public class TraktTv {
     }
     catch (Exception e) {
       LOGGER.error("failed syncing trakt: " + e.getMessage());
-      return;
     }
   }
 
@@ -392,7 +390,6 @@ public class TraktTv {
       }
       catch (Exception e) {
         LOGGER.error("failed syncing trakt: " + e.getMessage());
-        return;
       }
     }
 
@@ -509,7 +506,6 @@ public class TraktTv {
       else {
         // do not add to Trakt if we do not have at least one ID
         nosync++;
-        continue;
       }
     }
     if (nosync > 0) {
@@ -534,7 +530,6 @@ public class TraktTv {
     }
     catch (Exception e) {
       LOGGER.error("failed syncing trakt: " + e.getMessage());
-      return;
     }
   }
 
@@ -774,7 +769,7 @@ public class TraktTv {
     // send show per show; sending all together may result too often in a timeout
     for (TvShow show : tvShows) {
       // get items to sync
-      SyncShow sync = toSyncShow(show, true, new HashSet<TvShowEpisode>());
+      SyncShow sync = toSyncShow(show, true, new HashSet<>());
       if (sync == null) {
         continue;
       }
@@ -889,7 +884,6 @@ public class TraktTv {
       }
       catch (Exception e) {
         LOGGER.error("failed syncing trakt: " + e.getMessage());
-        return;
       }
     }
   }
@@ -1021,8 +1015,7 @@ public class TraktTv {
   }
 
   private SyncMovie toSyncMovie(BaseMovie baseMovie) {
-    SyncMovie movie = new SyncMovie().id(baseMovie.movie.ids).collectedAt(baseMovie.collected_at).watchedAt(baseMovie.last_watched_at);
-    return movie;
+    return new SyncMovie().id(baseMovie.movie.ids).collectedAt(baseMovie.collected_at).watchedAt(baseMovie.last_watched_at);
   }
 
   private SyncShow toSyncShow(TvShow tmmShow, boolean watched, Set<TvShowEpisode> episodesInTrakt) {
@@ -1109,8 +1102,7 @@ public class TraktTv {
       }
       ss.add(new SyncSeason().number(baseSeason.number).episodes(se));
     }
-    SyncShow show = new SyncShow().id(baseShow.show.ids).collectedAt(baseShow.last_collected_at).watchedAt(baseShow.last_watched_at).seasons(ss);
-    return show;
+    return new SyncShow().id(baseShow.show.ids).collectedAt(baseShow.last_collected_at).watchedAt(baseShow.last_watched_at).seasons(ss);
   }
 
   /**

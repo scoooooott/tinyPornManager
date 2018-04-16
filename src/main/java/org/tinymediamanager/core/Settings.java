@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -55,11 +55,11 @@ public class Settings extends AbstractSettings {
   private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
   private final static String   WOL_DEVICES            = "wolDevices";
 
-  private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<WolDevice> wolDevices             = ObservableCollections.observableList(new ArrayList<WolDevice>());
+  private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<>());
+  private final List<WolDevice> wolDevices             = ObservableCollections.observableList(new ArrayList<>());
 
   private String                version                = "";
 
@@ -646,10 +646,7 @@ public class Settings extends AbstractSettings {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (StringUtils.isNotBlank(getProxyHost())) {
-      return true;
-    }
-    return false;
+    return StringUtils.isNotBlank(getProxyHost());
   }
 
   /**

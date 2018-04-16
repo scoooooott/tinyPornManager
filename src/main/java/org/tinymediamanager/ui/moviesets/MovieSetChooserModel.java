@@ -60,7 +60,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
   private int                              tmdbId      = 0;
   private MediaSearchResult                result      = null;
   private MediaMetadata                    metadata    = null;
-  private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
+  private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<>());
   private MediaScraper                     scraper;
 
   private boolean                          scraped;
@@ -287,7 +287,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
 

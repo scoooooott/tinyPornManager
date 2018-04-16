@@ -29,75 +29,75 @@ public interface IMediaInformation {
    * 
    * @return the certification
    */
-  public Certification getCertification();
+  Certification getCertification();
 
   /**
    * gets the video format (e.g. 720p).
    * 
    * @return the video format
    */
-  public String getMediaInfoVideoFormat();
+  String getMediaInfoVideoFormat();
 
   /**
    * get the video resolution (e.g. 1920x1080)
    *
    * @return the video resolution
    */
-  public String getMediaInfoVideoResolution();
+  String getMediaInfoVideoResolution();
 
   /**
    * gets the aspect ratio (e.g. 1.33).
    * 
    * @return the aspect ratio
    */
-  public float getMediaInfoAspectRatio();
+  float getMediaInfoAspectRatio();
 
   /**
    * gets the media info video codec (e.g. divx)
    * 
    * @return the video codec
    */
-  public String getMediaInfoVideoCodec();
+  String getMediaInfoVideoCodec();
 
   /**
    * get the media info frame rate (e.g. 25.0)
    *
    * @return the frame rate
    */
-  public double getMediaInfoFrameRate();
+  double getMediaInfoFrameRate();
 
   /**
    * is the video in 3D
    * 
    * @return true if the video is in 3D
    */
-  public boolean isVideoIn3D();
+  boolean isVideoIn3D();
 
   /**
    * gets the audio codec (e.g. mp3)
    * 
    * @return the audio codec
    */
-  public String getMediaInfoAudioCodec();
+  String getMediaInfoAudioCodec();
 
   /**
    * gets the audio channels (e.g, 6 at 5.1 sound)
    * 
    * @return the audio channels with a trailing ch
    */
-  public String getMediaInfoAudioChannels();
+  String getMediaInfoAudioChannels();
 
   /**
    * gets the container format
    * 
    * @return the container format
    */
-  public String getMediaInfoContainerFormat();
+  String getMediaInfoContainerFormat();
 
   /**
    * gets the media source
    * 
    * @return the media source
    */
-  public MediaSource getMediaInfoSource();
+  MediaSource getMediaInfoSource();
 }

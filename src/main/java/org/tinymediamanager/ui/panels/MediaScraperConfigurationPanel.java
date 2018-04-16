@@ -204,7 +204,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
         }
 
         Object param = ((JComponent) comp).getClientProperty(entry.getKey());
-        if (param == null || !entry.getKey().equals(param)) {
+        if (!entry.getKey().equals(param)) {
           continue;
         }
 

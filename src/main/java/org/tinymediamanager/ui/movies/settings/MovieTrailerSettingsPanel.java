@@ -79,7 +79,7 @@ public class MovieTrailerSettingsPanel extends JPanel {
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
   private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
-  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
+  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<>());
   private TmmTable                       tableTrailerScraper;
   private JTextPane                      tpScraperDescription;
   private JComboBox<MovieTrailerSources> cbTrailerSource;
@@ -204,14 +204,14 @@ public class MovieTrailerSettingsPanel extends JPanel {
       JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
       add(lblTrailerSource, "flowx,cell 2 5");
 
-      cbTrailerSource = new JComboBox<>();
+      cbTrailerSource = new JComboBox();
       add(cbTrailerSource, "cell 2 5");
       cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
 
       JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
       add(lblTrailerQuality, "flowx,cell 2 6");
 
-      cbTrailerQuality = new JComboBox<>();
+      cbTrailerQuality = new JComboBox();
       add(cbTrailerQuality, "cell 2 6");
       cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
     }

@@ -27,5 +27,5 @@ public interface ITvShowEpisodeConnector {
   /**
    * write a file containing the data from the episode
    */
-  public void write(List<TvShowEpisodeNfoNaming> nfoNames);
+  void write(List<TvShowEpisodeNfoNaming> nfoNames);
 }

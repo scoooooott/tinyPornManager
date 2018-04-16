@@ -61,7 +61,7 @@ public class MediaFileSubtitle extends AbstractModelObject implements Comparable
 
   @Override
   public boolean equals(Object mf2) {
-    if ((mf2 != null) && (mf2 instanceof MediaFileSubtitle)) {
+    if ((mf2 instanceof MediaFileSubtitle)) {
       return compareTo((MediaFileSubtitle) mf2) == 0;
     }
     return false;

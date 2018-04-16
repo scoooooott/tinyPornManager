@@ -463,9 +463,7 @@ public class TvShowRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>();
-    mfs.addAll(
-        episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+    mfs = new ArrayList<>(episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
             MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
@@ -1111,15 +1109,15 @@ public class TvShowRenamer {
       loopNumbers = loopNumbers.trim();
 
       // foreach episode, replace and append pattern:
-      String episodeParts = "";
+      StringBuilder episodeParts = new StringBuilder();
       for (TvShowEpisode episode : episodes) {
         String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
-        episodeParts += " " + episodePart;
+        episodeParts.append(" ").append(episodePart);
       }
 
       // replace original pattern, with our combined
       if (!loopNumbers.isEmpty()) {
-        newDestination = newDestination.replace(loopNumbers, episodeParts);
+        newDestination = newDestination.replace(loopNumbers, episodeParts.toString());
       }
 
       // *******************
@@ -1137,19 +1135,19 @@ public class TvShowRenamer {
       loopTitles = loopTitles.trim();
 
       // foreach episode, replace and append pattern:
-      episodeParts = "";
+      episodeParts = new StringBuilder();
       for (TvShowEpisode episode : episodes) {
         String episodePart = getTokenValue(episode.getTvShow(), episode, loopTitles);
 
         // separate multiple titles via -
-        if (StringUtils.isNotBlank(episodeParts)) {
-          episodeParts += " -";
+        if (StringUtils.isNotBlank(episodeParts.toString())) {
+          episodeParts.append(" -");
         }
-        episodeParts += " " + episodePart;
+        episodeParts.append(" ").append(episodePart);
       }
       // replace original pattern, with our combined
       if (StringUtils.isNotBlank(loopTitles)) {
-        newDestination = newDestination.replace(loopTitles, episodeParts);
+        newDestination = newDestination.replace(loopTitles, episodeParts.toString());
       }
 
       newDestination = getTokenValue(firstEp.getTvShow(), firstEp, newDestination);

@@ -77,7 +77,7 @@ public abstract class AbstractModelObject {
     try {
       propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
     }
-    catch (AssertionError e) {
+    catch (AssertionError ignored) {
     }
   }
 
@@ -95,7 +95,7 @@ public abstract class AbstractModelObject {
     try {
       propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
-    catch (AssertionError e) {
+    catch (AssertionError ignored) {
     }
   }
 

@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,15 +28,15 @@ import org.apache.commons.lang3.StringUtils;
 public enum MovieTrailerSources {
 
   //@formatter:off
-  YOUTUBE("Youtube", Arrays.asList("youtube")), 
-  APPLE("Apple", Arrays.asList("apple")), 
-  AOL("Aol", Arrays.asList("aol")),
-  HDTRAILERS("HD Trailers", Arrays.asList("hdtrailers"));  // @formatter:on
+  YOUTUBE("Youtube", Collections.singletonList("youtube")),
+  APPLE("Apple", Collections.singletonList("apple")),
+  AOL("Aol", Collections.singletonList("aol")),
+  HDTRAILERS("HD Trailers", Collections.singletonList("hdtrailers"));  // @formatter:on
 
   private String       displayText;
   private List<String> possibleSources;
 
-  private MovieTrailerSources(String text, List<String> sources) {
+  MovieTrailerSources(String text, List<String> sources) {
     this.displayText = text;
     this.possibleSources = sources;
   }

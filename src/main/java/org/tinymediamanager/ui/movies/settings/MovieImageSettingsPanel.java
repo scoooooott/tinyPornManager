@@ -77,7 +77,7 @@ public class MovieImageSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
-  private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
+  private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<>());
 
   private JComboBox                   cbImagePosterSize;
   private JComboBox                   cbImageFanartSize;

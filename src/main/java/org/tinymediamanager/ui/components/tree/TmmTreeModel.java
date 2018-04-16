@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.components.tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -326,7 +325,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
 
     // sort
     if (comparator != null) {
-      Collections.sort(filteredAndSorted, comparator);
+      filteredAndSorted.sort(comparator);
     }
 
     return filteredAndSorted;
@@ -347,7 +346,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
       return;
     }
 
-    addChildNodes(parent, Arrays.asList(child));
+    addChildNodes(parent, Collections.singletonList(child));
   }
 
   /**
@@ -368,7 +367,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
     readWriteLock.writeLock().lock();
     List<E> cachedChildren = rawNodeChildrenCache.get(parent.getId());
     if (cachedChildren == null) {
-      cachedChildren = new ArrayList<E>(children.size());
+      cachedChildren = new ArrayList<>(children.size());
       rawNodeChildrenCache.put(parent.getId(), cachedChildren);
     }
     cachedChildren.addAll(children);

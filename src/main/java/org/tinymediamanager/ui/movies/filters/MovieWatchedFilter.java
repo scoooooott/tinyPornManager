@@ -35,7 +35,7 @@ public class MovieWatchedFilter extends AbstractMovieUIFilter {
 
     private String title;
 
-    private WatchedFlag(String title) {
+    WatchedFlag(String title) {
       this.title = title;
     }
 

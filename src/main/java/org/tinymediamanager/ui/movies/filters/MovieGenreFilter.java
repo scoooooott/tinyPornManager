@@ -40,7 +40,7 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
   public MovieGenreFilter() {
     super();
     buildAndInstallMediaGenres();
-    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaGenres()));
+    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaGenres));
   }
 
   @Override
@@ -84,11 +84,7 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
-    if (movie.getGenres().containsAll(selectedItems)) {
-      return true;
-    }
-
-    return false;
+    return movie.getGenres().containsAll(selectedItems);
   }
 
   @Override

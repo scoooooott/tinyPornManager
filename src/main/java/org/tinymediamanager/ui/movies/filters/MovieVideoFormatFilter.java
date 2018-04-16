@@ -58,17 +58,17 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   public boolean accept(Movie movie) {
     String videoFormat = (String) comboBox.getSelectedItem();
     MediaFile mf = movie.getFirstVideoFile();
-    if (mf == null) {
+    if (mf == null || videoFormat == null) {
       return false;
     }
 
-    if (videoFormat == MediaFile.VIDEO_FORMAT_HD && mf.isVideoDefinitionHD()) {
+    if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && mf.isVideoDefinitionHD()) {
       return true;
     }
-    else if (videoFormat == MediaFile.VIDEO_FORMAT_SD && mf.isVideoDefinitionSD()) {
+    else if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && mf.isVideoDefinitionSD()) {
       return true;
     }
-    else if (videoFormat == MediaFile.VIDEO_FORMAT_LD && mf.isVideoDefinitionLD()) {
+    else if (MediaFile.VIDEO_FORMAT_LD.equals(videoFormat) && mf.isVideoDefinitionLD()) {
       return true;
     }
     else if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {

@@ -25,7 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -110,7 +110,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
   private MovieList                  movieList             = MovieList.getInstance();
   private Movie                      movieToScrape;
-  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<>());
   private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
   private MediaScraper               mediaScraper;
   private List<MediaScraper>         artworkScrapers;
@@ -593,7 +593,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
           // if configured - sync with trakt.tv
           if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
-            TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToScrape), null);
+            TmmTask task = new SyncTraktTvTask(Collections.singletonList(movieToScrape), null);
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 

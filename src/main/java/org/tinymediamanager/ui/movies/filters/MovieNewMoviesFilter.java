@@ -45,11 +45,7 @@ public class MovieNewMoviesFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    if (movie.isNewlyAdded()) {
-      return true;
-    }
-
-    return false;
+    return movie.isNewlyAdded();
   }
 
   @Override

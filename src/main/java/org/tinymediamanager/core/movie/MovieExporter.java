@@ -208,7 +208,7 @@ public class MovieExporter extends MediaEntityExporter {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         if (pattern != null) {
           parameters = parseParameters(pattern);
         }
@@ -238,15 +238,15 @@ public class MovieExporter extends MediaEntityExporter {
       Map<String, Object> parameterMap = new HashMap<>();
 
       String[] details = parameters.split(",");
-      for (int x = 0; x < details.length; x++) {
+      for (String detail : details) {
         String key = "";
         String value = "";
         try {
-          String[] d = details[x].split("=");
+          String[] d = detail.split("=");
           key = d[0].trim();
           value = d[1].trim();
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
 
         if (StringUtils.isAnyBlank(key, value)) {
@@ -375,15 +375,15 @@ public class MovieExporter extends MediaEntityExporter {
       parameterMap.put("destination", "images");
 
       String[] details = parameters.split(",");
-      for (int x = 0; x < details.length; x++) {
+      for (String detail : details) {
         String key = "";
         String value = "";
         try {
-          String[] d = details[x].split("=");
+          String[] d = detail.split("=");
           key = d[0].trim();
           value = d[1].trim();
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
 
         if (StringUtils.isAnyBlank(key, value)) {
@@ -410,7 +410,7 @@ public class MovieExporter extends MediaEntityExporter {
             try {
               parameterMap.put(key, Integer.parseInt(value));
             }
-            catch (Exception e) {
+            catch (Exception ignored) {
             }
             break;
 

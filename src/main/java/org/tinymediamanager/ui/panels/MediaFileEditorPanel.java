@@ -106,14 +106,13 @@ public class MediaFileEditorPanel extends JPanel {
   private JTextField                      tfFrameRate;
 
   public MediaFileEditorPanel(List<MediaFile> mediaFiles) {
-    this.mediaFiles = ObservableCollections.observableList(new ArrayList<MediaFileContainer>());
+    this.mediaFiles = ObservableCollections.observableList(new ArrayList<>());
     for (MediaFile mediaFile : mediaFiles) {
       MediaFileContainer container = new MediaFileContainer(mediaFile);
       this.mediaFiles.add(container);
     }
 
-    Vector<Float> aspectRatios = new Vector<>();
-    aspectRatios.addAll(ASPECT_RATIOS.keySet());
+    Vector<Float> aspectRatios = new Vector<>(ASPECT_RATIOS.keySet());
 
     // predefined 3D Formats
     Vector<String> threeDFormats = new Vector<>();
@@ -215,7 +214,7 @@ public class MediaFileEditorPanel extends JPanel {
           JLabel lbld = new TmmLabel("3D Format");
           panelDetails.add(lbld, "cell 3 3,alignx right");
 
-          cb3dFormat = new JComboBox<>(threeDFormats);
+          cb3dFormat = new JComboBox(threeDFormats);
           panelDetails.add(cb3dFormat, "cell 4 3,growx,aligny top");
         }
         {

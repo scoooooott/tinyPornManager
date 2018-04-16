@@ -47,7 +47,7 @@ public class MovieLanguageFilter extends AbstractMovieUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    if (value != null && value instanceof String) {
+    if (value instanceof String) {
       textField.setText((String) value);
     }
   }
