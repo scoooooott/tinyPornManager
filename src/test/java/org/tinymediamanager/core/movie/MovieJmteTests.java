@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.tinymediamanager.core.movie.MovieRenamer.morphTemplate;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,7 +88,14 @@ public class MovieJmteTests {
       compare("${videoFormat}", "720p");
       compare("${videoCodec}", "h264");
       compare("${audioCodec}", "AC3");
+      compare("${audioCodecList[1]}", "MP3");
+      compare("${audioCodecList[2]}", "");
       compare("${audioChannels}", "6ch");
+      compare("${audioChannelList[1]}", "2ch");
+      compare("${audioChannelList[2]}", "");
+      compare("${audioLanguage}", "en");
+      compare("${audioLanguageList[1]}", "de");
+      compare("${audioLanguageList[2]}", "");
 
       compare("${mediaSource}", "Blu-ray");
       compare("${mediaSource.name}", "BLURAY");
@@ -177,11 +184,20 @@ public class MovieJmteTests {
     mf.setOverallBitRate(3500);
     mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
 
+    ArrayList<MediaFileAudioStream> audl = new ArrayList<>();
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Collections.singletonList(audio));
+    audl.add(audio);
+
+    audio = new MediaFileAudioStream();
+    audio.setCodec("MP3");
+    audio.setLanguage("de");
+    audio.setChannels("2ch");
+    audl.add(audio);
+
+    mf.setAudioStreams(audl);
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

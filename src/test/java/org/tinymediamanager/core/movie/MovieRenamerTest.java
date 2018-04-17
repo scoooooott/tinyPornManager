@@ -37,13 +37,21 @@ public class MovieRenamerTest extends BasicTest {
     MediaFileAudioStream aud = new MediaFileAudioStream();
     aud.setChannels("6ch");
     aud.setCodec("AC3");
+    aud.setLanguage("en");
+    audl.add(aud);
+    mf.setAudioStreams(audl);
+
+    aud = new MediaFileAudioStream();
+    aud.setChannels("2ch");
+    aud.setCodec("MP3");
+    aud.setLanguage("de");
     audl.add(aud);
     mf.setAudioStreams(audl);
 
     m.addToMediaFiles(mf);
 
     assertEqual("The Dish (2000) MPEG-480p AC3-6ch",
-        MovieRenamer.createDestinationForFilename("${title} (${year}) ${videoCodec}-${videoFormat} ${audioCodec}-${audioChannels}ch", m));
+        MovieRenamer.createDestinationForFilename("${title} (${year}) ${videoCodec}-${videoFormat} ${audioCodec}-${audioChannels}", m));
     assertEqual("The Dish (2000)", MovieRenamer.createDestinationForFoldername("${title} (${year})", m));
   }
 

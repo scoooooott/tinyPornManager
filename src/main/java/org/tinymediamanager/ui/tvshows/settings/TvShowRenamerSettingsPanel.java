@@ -175,6 +175,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
     exampleEventList.add(new TvShowRenamerExample("${audioCodec}"));
     exampleEventList.add(new TvShowRenamerExample("${audioChannels}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioLanguage}"));
     exampleEventList.add(new TvShowRenamerExample("${mediaSource}"));
   }
 

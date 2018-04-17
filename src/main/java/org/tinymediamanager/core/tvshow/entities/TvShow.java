@@ -1791,6 +1791,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public MediaFile getMainVideoFile() {
+    return new MediaFile();
+  }
+
+  @Override
   public String getMediaInfoVideoFormat() {
     return "";
   }
@@ -1826,8 +1831,28 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public List<String> getMediaInfoAudioCodecList() {
+    return new ArrayList<>();
+  }
+
+  @Override
   public String getMediaInfoAudioChannels() {
     return "";
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioChannelList() {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public String getMediaInfoAudioLanguage() {
+    return "";
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioLanguageList() {
+    return new ArrayList<>();
   }
 
   @Override

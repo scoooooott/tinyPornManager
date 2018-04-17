@@ -2021,91 +2021,72 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   @Override
-  public String getMediaInfoVideoResolution() {
+  public MediaFile getMainVideoFile() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoResolution();
+    if (!videos.isEmpty()) {
+      return videos.get(0);
     }
+    return new MediaFile();
+  }
 
-    return "";
+  @Override
+  public String getMediaInfoVideoResolution() {
+    return getFirstVideoFile().getVideoResolution();
   }
 
   @Override
   public String getMediaInfoVideoFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoFormat();
-    }
-
-    return "";
+    return getFirstVideoFile().getVideoFormat();
   }
 
   @Override
   public String getMediaInfoVideoCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoCodec();
-    }
-
-    return "";
+    return getFirstVideoFile().getVideoCodec();
   }
 
   @Override
   public double getMediaInfoFrameRate() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getFrameRate();
-    }
-
-    return 0;
+    return getFirstVideoFile().getFrameRate();
   }
 
   @Override
   public float getMediaInfoAspectRatio() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAspectRatio();
-    }
-
-    return 0;
+    return getFirstVideoFile().getAspectRatio();
   }
 
   @Override
   public String getMediaInfoAudioCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioCodec();
-    }
+    return getFirstVideoFile().getAudioCodec();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioCodecList() {
+    return getFirstVideoFile().getAudioCodecList();
   }
 
   @Override
   public String getMediaInfoAudioChannels() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioChannels();
-    }
+    return getFirstVideoFile().getAudioChannels();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioChannelList() {
+    return getFirstVideoFile().getAudioChannelsList();
+  }
+
+  @Override
+  public String getMediaInfoAudioLanguage() {
+    return getFirstVideoFile().getAudioLanguage();
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioLanguageList() {
+    return getFirstVideoFile().getAudioLanguagesList();
   }
 
   @Override
   public String getMediaInfoContainerFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getContainerFormat();
-    }
-
-    return "";
+    return getFirstVideoFile().getContainerFormat();
   }
 
   @Override
@@ -2114,12 +2095,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public String getVideo3DFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
-        return mediaFile.getVideo3DFormat();
-      }
+    MediaFile mediaFile = getFirstVideoFile();
+    if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
+      return mediaFile.getVideo3DFormat();
     }
 
     if (isVideoIn3D()) { // no MI info, but flag set from user

@@ -107,7 +107,11 @@ public class MovieRenamer {
     tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
     tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
+    tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList");
     tokenMap.put("audioChannels", "movie.mediaInfoAudioChannels");
+    tokenMap.put("audioChannelList", "movie.mediaInfoAudioChannelList");
+    tokenMap.put("audioLanguage", "movie.mediaInfoAudioLanguage");
+    tokenMap.put("audioLanguageList", "movie.mediaInfoAudioLanguageList");
     tokenMap.put("3Dformat", "movie.video3DFormat");
 
     tokenMap.put("mediaSource", "movie.mediaSource");
@@ -1070,12 +1074,12 @@ public class MovieRenamer {
   }
 
   /**
-   * gets the token value ($x) from specified movie object
+   * gets the token value (${x}) from specified movie object
    * 
    * @param movie
    *          our movie
    * @param token
-   *          the $x token
+   *          the ${x} token
    * @return value or empty string
    */
   public static String getTokenValue(Movie movie, String token) {

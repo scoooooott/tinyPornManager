@@ -878,7 +878,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * gets the audio codec<br>
+   * gets the audio codec from the main<br>
    * (w/o punctuation; eg AC-3 => AC3).
    *
    * @return the audio codec
@@ -895,6 +895,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return codec;
   }
 
+  /**
+   * gets the audio codecs from all streams as List<br>
+   * (w/o punctuation; eg AC-3 => AC3).
+   *
+   * @return the audio codecs as List
+   */
+  public List<String> getAudioCodecList() {
+    List<String> audioCodecs = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioCodecs.add(stream.getCodec());
+    }
+    return audioCodecs;
+  }
+
   private MediaFileAudioStream getBestAudioStream() {
     MediaFileAudioStream highestStream = null;
     for (MediaFileAudioStream stream : audioStreams) {
@@ -908,6 +922,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return highestStream;
   }
 
+  /**
+   * gets the audio language from the main stream
+   *
+   * @return the audio language
+   */
   public String getAudioLanguage() {
     String language = "";
 
@@ -918,6 +937,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return language;
+  }
+
+  /**
+   * gets the audio language from all streams as List
+   *
+   * @return the audio languages as List
+   */
+  public List<String> getAudioLanguagesList() {
+    List<String> audioLanguages = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioLanguages.add(stream.getLanguage());
+    }
+    return audioLanguages;
   }
 
   /**
@@ -1100,6 +1132,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange("exactVideoFormat", oldValue, newValue);
   }
 
+  /**
+   * gets the audio channels (with trailing ch) from the main stream<br>
+   *
+   * @return the audio channels
+   */
   public String getAudioChannels() {
     String channels = "";
 
@@ -1110,6 +1147,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return channels;
+  }
+
+  public List<String> getAudioChannelsList() {
+    List<String> audioChannels = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioChannels.add(stream.getChannelsAsInt() + "ch");
+    }
+    return audioChannels;
   }
 
   /**
