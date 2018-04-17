@@ -224,22 +224,29 @@ public class MovieExtraImageFetcher implements Runnable {
       return;
     }
 
-    FileOutputStream outputStream = null;
-    InputStream is = null;
+    // create an empty extrafanarts folder
+    Path folder = movie.getPathNIO().resolve("extrafanart");
     try {
-      Path folder = movie.getPathNIO().resolve("extrafanart");
       if (Files.isDirectory(folder)) {
         Utils.deleteDirectoryRecursive(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRAFANART);
       }
       Files.createDirectory(folder);
+    }
+    catch (IOException e) {
+      LOGGER.error("could not create extrafanarts folder: " + e.getMessage());
+      return;
+    }
 
-      // fetch and store images
-      for (int i = 0; i < fanarts.size(); i++) {
-        String urlAsString = fanarts.get(i);
+    // fetch and store images
+    int i = 1;
+    for (String urlAsString : fanarts) {
+      FileOutputStream outputStream = null;
+      InputStream is = null;
+      try {
         String providedFiletype = FilenameUtils.getExtension(urlAsString);
         Url url = new Url(urlAsString);
-        Path file = folder.resolve("fanart" + (i + 1) + "." + providedFiletype);
+        Path file = folder.resolve("fanart" + i + "." + providedFiletype);
         outputStream = new FileOutputStream(file.toFile());
         is = url.getInputStream();
         IOUtils.copy(is, outputStream);
@@ -258,17 +265,22 @@ public class MovieExtraImageFetcher implements Runnable {
         MediaFile mf = new MediaFile(file, MediaFileType.EXTRAFANART);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
+
+        i++;
       }
-    }
-    catch (InterruptedException e) {
-      LOGGER.warn("interrupted download extrafanarts");
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
-    }
-    catch (Exception e) {
-      LOGGER.warn("download extrafanarts", e);
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
+      catch (InterruptedException e) {
+        LOGGER.warn("interrupted download extrafanarts");
+        IOUtils.closeQuietly(is);
+        IOUtils.closeQuietly(outputStream);
+
+        // leave the loop
+        break;
+      }
+      catch (Exception e) {
+        LOGGER.warn("problem downloading extrafanarts: " + e.getMessage());
+        IOUtils.closeQuietly(is);
+        IOUtils.closeQuietly(outputStream);
+      }
     }
   }
 
@@ -280,24 +292,31 @@ public class MovieExtraImageFetcher implements Runnable {
       return;
     }
 
-    FileOutputStream outputStream = null;
-    InputStream is = null;
+    Path folder = movie.getPathNIO().resolve("extrathumbs");
     try {
-      Path folder = movie.getPathNIO().resolve("extrathumbs");
       if (Files.isDirectory(folder)) {
         Utils.deleteDirectoryRecursive(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRATHUMB);
       }
       Files.createDirectory(folder);
+    }
+    catch (IOException e) {
+      LOGGER.error("could not create extrathumbs folder: " + e.getMessage());
+      return;
+    }
 
-      // fetch and store images
-      for (int i = 0; i < thumbs.size(); i++) {
-        String url = thumbs.get(i);
+    // fetch and store images
+    int i = 1;
+    for (String url : thumbs) {
+      FileOutputStream outputStream = null;
+      InputStream is = null;
+
+      try {
         String providedFiletype = FilenameUtils.getExtension(url);
 
-        Path file = null;
+        Path file;
         if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.SETTINGS.getImageExtraThumbsSize() > 0) {
-          file = folder.resolve("thumb" + (i + 1) + ".jpg");
+          file = folder.resolve("thumb" + i + ".jpg");
           outputStream = new FileOutputStream(file.toFile());
           try {
             is = ImageUtils.scaleImage(url, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
@@ -328,17 +347,22 @@ public class MovieExtraImageFetcher implements Runnable {
         MediaFile mf = new MediaFile(file, MediaFileType.EXTRATHUMB);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
+
+        i++;
       }
-    }
-    catch (IOException e) {
-      LOGGER.warn("download extrathumbs", e);
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
-    }
-    catch (Exception e) {
-      LOGGER.error(e.getMessage());
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
+      catch (InterruptedException e) {
+        LOGGER.warn("interrupted download extrathumbs");
+        IOUtils.closeQuietly(is);
+        IOUtils.closeQuietly(outputStream);
+
+        // leave the loop
+        break;
+      }
+      catch (Exception e) {
+        LOGGER.warn("problem downloading extrathumbs: " + e.getMessage());
+        IOUtils.closeQuietly(is);
+        IOUtils.closeQuietly(outputStream);
+      }
     }
   }
 }
