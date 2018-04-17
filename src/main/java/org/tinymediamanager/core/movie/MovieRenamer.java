@@ -575,7 +575,8 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+    mfs = new ArrayList<>(
+        movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
             MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
@@ -635,11 +636,23 @@ public class MovieRenamer {
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
-    List<Path> existingFiles = Utils.findFilesRecursive(movie.getPathNIO());
+
+    // get all existing files in the movie dir, since Files.exist is not reliable in OSX
+    List<Path> existingFiles;
+    if (movie.isMultiMovieDir()) {
+      // no recursive search in MMD needed
+      existingFiles = Utils.listFiles(movie.getPathNIO());
+    }
+    else {
+      // search all files recursive for deeper cleanup
+      existingFiles = Utils.listFilesRecursive(movie.getPathNIO());
+    }
+
     for (int i = cleanup.size() - 1; i >= 0; i--) {
+      MediaFile cl = cleanup.get(i);
+
       // cleanup files which are not needed
-      if (!needed.contains(cleanup.get(i))) {
-        MediaFile cl = cleanup.get(i);
+      if (!needed.contains(cl)) {
         if (cl.getFileAsPath().equals(Paths.get(movie.getDataSource())) || cl.getFileAsPath().equals(movie.getPathNIO())
             || cl.getFileAsPath().equals(Paths.get(oldPathname))) {
           LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": " + cl.getFileAsPath());
@@ -1247,7 +1260,7 @@ public class MovieRenamer {
    */
   public static boolean isFolderPatternUnique(String pattern) {
     return ((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
-            && pattern.contains("${year}")) || pattern.contains("${imdb}");
+        && pattern.contains("${year}")) || pattern.contains("${imdb}");
   }
 
   /**

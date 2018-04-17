@@ -311,7 +311,7 @@ public class TvShowRenamer {
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
-    List<Path> existingFiles = Utils.findFilesRecursive(tvShow.getPathNIO());
+    List<Path> existingFiles = Utils.listFilesRecursive(tvShow.getPathNIO());
     for (int i = cleanup.size() - 1; i >= 0; i--) {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {

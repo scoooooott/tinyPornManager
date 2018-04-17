@@ -62,9 +62,9 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.LaunchUtil;
@@ -1475,13 +1475,39 @@ public class Utils {
   }
 
   /**
+   * get all files from the given path
+   *
+   * @param root
+   *          the root folder to search files for
+   * @return a list of all found files
+   */
+  public static List<Path> listFiles(Path root) {
+    final List<Path> filesFound = new ArrayList<>();
+    if (!Files.isDirectory(root)) {
+      return filesFound;
+    }
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(root)) {
+      for (Path path : directoryStream) {
+        if (Files.isRegularFile(path)) {
+          filesFound.add(path);
+        }
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not get a file listing: " + e.getMessage());
+    }
+
+    return filesFound;
+  }
+
+  /**
    * get all files from the given path recursive
    *
    * @param root
    *          the root folder to search files for
    * @return a list of all found files
    */
-  public static List<Path> findFilesRecursive(Path root) {
+  public static List<Path> listFilesRecursive(Path root) {
     final List<Path> filesFound = new ArrayList<>();
     if (!Files.isDirectory(root)) {
       return filesFound;
@@ -1490,7 +1516,9 @@ public class Utils {
       Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-          filesFound.add(file);
+          if (Files.isRegularFile(file)) {
+            filesFound.add(file);
+          }
           return FileVisitResult.CONTINUE;
         }
       });
