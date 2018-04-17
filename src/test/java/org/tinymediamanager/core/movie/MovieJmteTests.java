@@ -36,6 +36,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -63,6 +64,7 @@ public class MovieJmteTests {
 
       engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.setModelAdaptor(new TmmModelAdaptor());
       root = new HashMap<>();
       root.put("movie", movie);
@@ -95,6 +97,7 @@ public class MovieJmteTests {
       compare("${audioChannelList[2]}", "");
       compare("${audioLanguage}", "en");
       compare("${audioLanguageList[1]}", "de");
+      compare("${audioLanguageList[1];upper}", "DE");
       compare("${audioLanguageList[2]}", "");
 
       compare("${mediaSource}", "Blu-ray");

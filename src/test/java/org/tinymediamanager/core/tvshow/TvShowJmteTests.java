@@ -33,6 +33,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -85,6 +86,7 @@ public class TvShowJmteTests {
       engine.setModelAdaptor(new TmmModelAdaptor());
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", episode.getTvShow());
@@ -116,6 +118,7 @@ public class TvShowJmteTests {
       compare("${audioChannelList[2]}", "");
       compare("${audioLanguage}", "en");
       compare("${audioLanguageList[1]}", "de");
+      compare("${audioLanguageList[1];upper}", "DE");
       compare("${audioLanguageList[2]}", "");
 
       compare("${mediaSource}", "Blu-ray");

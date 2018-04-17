@@ -53,6 +53,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -992,6 +993,7 @@ public class TvShowRenamer {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("episode", episode);
