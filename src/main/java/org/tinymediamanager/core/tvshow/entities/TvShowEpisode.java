@@ -979,21 +979,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * get the first video file for this episode
-   *
-   * @return the first video file
-   */
-  public MediaFile getFirstVideoFile() {
-    List<MediaFile> videoFiles = getVideoFiles();
-    if (!videoFiles.isEmpty()) {
-      return videoFiles.get(0);
-    }
-
-    // just return a dummy MF to prevent NPE
-    return new MediaFile();
-  }
-
-  /**
    * Gets the images to cache.
    * 
    * @return the images to cache
@@ -1358,57 +1343,57 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public String getMediaInfoVideoResolution() {
-    return getFirstVideoFile().getVideoResolution();
+    return getMainVideoFile().getVideoResolution();
   }
 
   @Override
   public String getMediaInfoVideoFormat() {
-    return getFirstVideoFile().getVideoFormat();
+    return getMainVideoFile().getVideoFormat();
   }
 
   @Override
   public String getMediaInfoVideoCodec() {
-    return getFirstVideoFile().getVideoCodec();
+    return getMainVideoFile().getVideoCodec();
   }
 
   @Override
   public float getMediaInfoAspectRatio() {
-    return getFirstVideoFile().getAspectRatio();
+    return getMainVideoFile().getAspectRatio();
   }
 
   @Override
   public String getMediaInfoAudioCodec() {
-    return getFirstVideoFile().getAudioCodec();
+    return getMainVideoFile().getAudioCodec();
   }
 
   @Override
   public List<String> getMediaInfoAudioCodecList() {
-    return getFirstVideoFile().getAudioCodecList();
+    return getMainVideoFile().getAudioCodecList();
   }
 
   @Override
   public double getMediaInfoFrameRate() {
-    return getFirstVideoFile().getFrameRate();
+    return getMainVideoFile().getFrameRate();
   }
 
   @Override
   public String getMediaInfoAudioChannels() {
-    return getFirstVideoFile().getAudioChannels();
+    return getMainVideoFile().getAudioChannels();
   }
 
   @Override
   public List<String> getMediaInfoAudioChannelList() {
-    return getFirstVideoFile().getAudioChannelsList();
+    return getMainVideoFile().getAudioChannelsList();
   }
 
   @Override
   public String getMediaInfoAudioLanguage() {
-    return getFirstVideoFile().getAudioLanguage();
+    return getMainVideoFile().getAudioLanguage();
   }
 
   @Override
   public List<String> getMediaInfoAudioLanguageList() {
-    return getFirstVideoFile().getAudioLanguagesList();
+    return getMainVideoFile().getAudioLanguagesList();
   }
 
   @Override

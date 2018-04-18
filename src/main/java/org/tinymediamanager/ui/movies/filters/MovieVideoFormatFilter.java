@@ -57,7 +57,7 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     String videoFormat = (String) comboBox.getSelectedItem();
-    MediaFile mf = movie.getFirstVideoFile();
+    MediaFile mf = movie.getMainVideoFile();
     if (mf == null || videoFormat == null) {
       return false;
     }

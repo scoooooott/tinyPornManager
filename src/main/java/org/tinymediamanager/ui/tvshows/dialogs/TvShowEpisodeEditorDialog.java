@@ -170,7 +170,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
    *          the queue size
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("tvshowepisode.edit") + "  < " + episode.getFirstVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowepisode.edit") + "  < " + episode.getMainVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
 
     // creation of lists
     guests = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));

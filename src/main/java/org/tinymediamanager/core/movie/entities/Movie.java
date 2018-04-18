@@ -1687,19 +1687,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * get the first video file for this entity
-   *
-   * @return the first video file
-   */
-  public MediaFile getFirstVideoFile() {
-    List<MediaFile> videoFiles = getVideoFiles();
-    if (!videoFiles.isEmpty()) {
-      return videoFiles.get(0);
-    }
-    return null;
-  }
-
-  /**
    * gets the basename (without stacking)
    * 
    * @return the video base name (without stacking)
@@ -2031,62 +2018,62 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public String getMediaInfoVideoResolution() {
-    return getFirstVideoFile().getVideoResolution();
+    return getMainVideoFile().getVideoResolution();
   }
 
   @Override
   public String getMediaInfoVideoFormat() {
-    return getFirstVideoFile().getVideoFormat();
+    return getMainVideoFile().getVideoFormat();
   }
 
   @Override
   public String getMediaInfoVideoCodec() {
-    return getFirstVideoFile().getVideoCodec();
+    return getMainVideoFile().getVideoCodec();
   }
 
   @Override
   public double getMediaInfoFrameRate() {
-    return getFirstVideoFile().getFrameRate();
+    return getMainVideoFile().getFrameRate();
   }
 
   @Override
   public float getMediaInfoAspectRatio() {
-    return getFirstVideoFile().getAspectRatio();
+    return getMainVideoFile().getAspectRatio();
   }
 
   @Override
   public String getMediaInfoAudioCodec() {
-    return getFirstVideoFile().getAudioCodec();
+    return getMainVideoFile().getAudioCodec();
   }
 
   @Override
   public List<String> getMediaInfoAudioCodecList() {
-    return getFirstVideoFile().getAudioCodecList();
+    return getMainVideoFile().getAudioCodecList();
   }
 
   @Override
   public String getMediaInfoAudioChannels() {
-    return getFirstVideoFile().getAudioChannels();
+    return getMainVideoFile().getAudioChannels();
   }
 
   @Override
   public List<String> getMediaInfoAudioChannelList() {
-    return getFirstVideoFile().getAudioChannelsList();
+    return getMainVideoFile().getAudioChannelsList();
   }
 
   @Override
   public String getMediaInfoAudioLanguage() {
-    return getFirstVideoFile().getAudioLanguage();
+    return getMainVideoFile().getAudioLanguage();
   }
 
   @Override
   public List<String> getMediaInfoAudioLanguageList() {
-    return getFirstVideoFile().getAudioLanguagesList();
+    return getMainVideoFile().getAudioLanguagesList();
   }
 
   @Override
   public String getMediaInfoContainerFormat() {
-    return getFirstVideoFile().getContainerFormat();
+    return getMainVideoFile().getContainerFormat();
   }
 
   @Override
@@ -2095,7 +2082,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public String getVideo3DFormat() {
-    MediaFile mediaFile = getFirstVideoFile();
+    MediaFile mediaFile = getMainVideoFile();
     if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
       return mediaFile.getVideo3DFormat();
     }
