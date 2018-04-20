@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -34,18 +36,18 @@ import org.tinymediamanager.scraper.util.AesUtil;
 /**
  * This class is used to provide a configuration interface for scrapers
  * 
- * @author Myron Boyle
+ * @author Myron Boyle, Manuel Laggner
  */
 public class MediaProviderConfig {
-  private static final Logger                        LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
-  private static final String                        CONFIG_FOLDER = "data";
-  private static final String                        SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
-  private static final String                        IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
+  private static final Logger                              LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
+  private static final String                              CONFIG_FOLDER = "data";
+  private static final String                              SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String                              IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
 
-  private static final AesUtil                       AES_UTIL      = new AesUtil(128, 100);
+  private static final AesUtil                             AES_UTIL      = new AesUtil(128, 100);
 
-  private TreeMap<String, MediaProviderConfigObject> settings      = new TreeMap<>();
-  private String                                     id            = "";
+  private final TreeMap<String, MediaProviderConfigObject> settings      = new TreeMap<>();
+  private final String                                     id;
 
   public MediaProviderConfig(MediaProviderInfo mpi) {
     this.id = mpi.getId();
@@ -127,7 +129,7 @@ public class MediaProviderConfig {
   /**
    * convenient method, to return a key=value map of all config entries
    * 
-   * @return
+   * @return a map containing all config values
    */
   public Map<String, String> getConfigKeyValuePairs() {
     Map<String, String> result = new HashMap<>();
@@ -141,13 +143,14 @@ public class MediaProviderConfig {
    * returns a config object (or an empty one if not found)
    * 
    * @param key
-   * @return
+   *          the key to get the config object
+   * @return the config object or an empty one if not found
    */
   public MediaProviderConfigObject getConfigObject(String key) {
     MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
       LOGGER.warn("Could not get confiuguration object for key '" + key + "' - key not defined!");
-      return new MediaProviderConfigObject(); // FIXME: better NULL than empty?
+      return new MediaProviderConfigObject();
     }
     return co;
   }
@@ -159,7 +162,8 @@ public class MediaProviderConfig {
    * might return an empty string!
    * 
    * @param key
-   * @return
+   *          the key for the config value to get
+   * @return the value or an empty string
    */
   public String getValue(String key) {
     return getConfigObject(key).getValue();
@@ -171,7 +175,8 @@ public class MediaProviderConfig {
    * might return NULL if not found/parseable
    * 
    * @param key
-   * @return
+   *          the key for the config value to get
+   * @return the index
    */
   public Integer getValueIndex(String key) {
     return getConfigObject(key).getValueIndex();
@@ -182,12 +187,21 @@ public class MediaProviderConfig {
    * will return NULL if it cannot be parsed as boolean
    * 
    * @param key
+   *          the key for the config value to get
    * @return true|false or NULL
    */
   public Boolean getValueAsBool(String key) {
     return getConfigObject(key).getValueAsBool();
   }
 
+  /**
+   * set the given value to the config (String variant)
+   * 
+   * @param key
+   *          the to set the value for
+   * @param value
+   *          the value to be set
+   */
   public void setValue(String key, String value) {
     MediaProviderConfigObject co = getConfigObject(key);
     if (co.isEmpty()) {
@@ -196,6 +210,14 @@ public class MediaProviderConfig {
     co.setValue(value);
   }
 
+  /**
+   * set the given value to the config (boolean variant)
+   *
+   * @param key
+   *          the to set the value for
+   * @param value
+   *          the value to be set
+   */
   public void setValue(String key, boolean value) {
     MediaProviderConfigObject co = getConfigObject(key);
     if (co.isEmpty()) {
@@ -204,6 +226,14 @@ public class MediaProviderConfig {
     co.setValue(value);
   }
 
+  /**
+   * adds a boolean parameter to the configuration
+   * 
+   * @param key
+   *          the config key
+   * @param defaultValue
+   *          the default value
+   */
   public void addBoolean(String key, boolean defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.BOOL);
@@ -213,10 +243,28 @@ public class MediaProviderConfig {
     settings.put(key, co);
   }
 
+  /**
+   * adds a text parameter to the configuration
+   * 
+   * @param key
+   *          the config key
+   * @param defaultValue
+   *          the default value
+   */
   public void addText(String key, String defaultValue) {
     addText(key, defaultValue, false);
   }
 
+  /**
+   * adds an encryptes text parameter to the configuration (useful for sensitive information)
+   *
+   * @param key
+   *          the config key
+   * @param defaultValue
+   *          the default value
+   * @param encrypt
+   *          enable/disable encryption
+   */
   public void addText(String key, String defaultValue, boolean encrypt) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.TEXT);
@@ -227,7 +275,31 @@ public class MediaProviderConfig {
     settings.put(key, co);
   }
 
+  /**
+   * adds a value selection to the configuration (Array version)
+   * 
+   * @param key
+   *          the config key
+   * @param possibleValues
+   *          an array of possible values
+   * @param defaultValue
+   *          the default value
+   */
   public void addSelect(String key, String[] possibleValues, String defaultValue) {
+    addSelect(key, Arrays.asList(possibleValues), defaultValue);
+  }
+
+  /**
+   * adds a value selection to the configuration (List version)
+   *
+   * @param key
+   *          the config key
+   * @param possibleValues
+   *          a list of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelect(String key, List<String> possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.SELECT);
     co.setKey(key);
@@ -239,7 +311,31 @@ public class MediaProviderConfig {
     settings.put(key, co);
   }
 
+  /**
+   * adds a value selection (via index) to the configuration (Array version)
+   *
+   * @param key
+   *          the config key
+   * @param possibleValues
+   *          an array of possible values
+   * @param defaultValue
+   *          the default value
+   */
   public void addSelectIndex(String key, String[] possibleValues, String defaultValue) {
+    addSelectIndex(key, Arrays.asList(possibleValues), defaultValue);
+  }
+
+  /**
+   * adds a value selection (via index) to the configuration (List version)
+   *
+   * @param key
+   *          the config key
+   * @param possibleValues
+   *          a list of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelectIndex(String key, List<String> possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.SELECT_INDEX);
     co.setKey(key);
