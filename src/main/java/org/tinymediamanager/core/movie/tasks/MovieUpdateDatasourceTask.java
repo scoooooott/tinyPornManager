@@ -45,8 +45,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -457,16 +457,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.warn("problem parsing NFO: " + e.getMessage());
         }
 
-        // take first nfo 1:1
         if (movie == null) {
-          movie = nfo;
+          movie = new Movie();
         }
-        else {
-          movie.merge(nfo);
-        }
+        movie.merge(nfo);
 
         // was NFO, but parsing exception. try to find at least imdb id within
-        if (movie != null && movie.getImdbId().isEmpty()) {
+        if (movie.getImdbId().isEmpty()) {
           try {
             String imdb = Utils.readFileToString(mf.getFileAsPath());
             imdb = ParserUtils.detectImdbId(imdb);
