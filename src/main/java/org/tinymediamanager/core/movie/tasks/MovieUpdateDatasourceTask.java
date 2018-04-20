@@ -442,7 +442,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    * @param mfs
    * @return Movie or NULL
    */
-  private Movie parseNFOs(List<MediaFile> mfs) {
+  protected Movie parseNFOs(List<MediaFile> mfs) {
     Movie movie = null;
     for (MediaFile mf : mfs) {
 
