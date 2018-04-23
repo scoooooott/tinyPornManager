@@ -78,6 +78,7 @@ public class MovieNfoParserTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
+      assertThat(parser.ids).contains(entry("tmdb", 272));
       assertThat(parser.country).isNotEmpty();
       assertThat(parser.releaseDate).isEqualTo("2005-06-14");
       assertThat(parser.watched).isEqualTo(false);
@@ -107,9 +108,8 @@ public class MovieNfoParserTest {
       }
 
       assertThat(parser.fileinfo).isNull();
-      assertThat(parser.unsupportedElements).hasSize(2);
-      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<uniqueid type=\"unknown\" default=\"true\">tt0372784</uniqueid>");
-      assertThat(parser.unsupportedElements.get(1)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
+      assertThat(parser.unsupportedElements).hasSize(1);
+      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
       assertThat(parser.trailer).isNotEmpty();
 
       // xbmc tags

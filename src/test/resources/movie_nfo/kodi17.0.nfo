@@ -62,7 +62,8 @@
     <playcount>0</playcount>
     <lastplayed></lastplayed>
     <id>tt0372784</id>
-    <uniqueid type="unknown" default="true">tt0372784</uniqueid>
+    <uniqueid type="imdb" default="true">tt0372784</uniqueid>
+    <uniqueid type="tmdb" default="false">272</uniqueid>
     <genre>Action</genre>
     <genre>Crime</genre>
     <genre>Drama</genre>

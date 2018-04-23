@@ -602,7 +602,8 @@ public class MovieNfoParser {
    * ids can be stored either in the<br />
    * - id tag (imdbID) or<br />
    * - imdb tag (imdbId) or<br />
-   * - tmdbId tag (tmdb Id> or<br />
+   * - tmdbid tag (tmdb Id> or<br />
+   * - uniqueid tag (new kodi style multiple ids) or<br />
    * - in a special nested tag (tmm store)
    */
   private Void parseIds() {
@@ -610,6 +611,7 @@ public class MovieNfoParser {
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
+    supportedElements.add("uniqueid");
 
     // id tag & check against imdb pattern (otherwise we cannot say for which provider this id is)
     Element element = getSingleElement(root, "id");
@@ -620,6 +622,7 @@ public class MovieNfoParser {
     if (element != null && MetadataUtil.isValidImdbId(element.ownText())) {
       ids.put(MediaMetadata.IMDB, element.ownText());
     }
+
     // tmdbId tag
     element = getSingleElement(root, "tmdbId");
     if (element != null) {
@@ -629,6 +632,28 @@ public class MovieNfoParser {
       catch (NumberFormatException ignored) {
       }
     }
+
+    // uniqueid tag
+    Elements elements = root.select(root.tagName() + " > uniqueid");
+    for (Element id : elements) {
+      try {
+        String key = id.attr("type");
+        String value = id.ownText();
+        if (StringUtils.isNoneBlank(key, value)) {
+          // check whether the id is an integer
+          try {
+            ids.put(key, MetadataUtil.parseInt(value));
+          }
+          catch (Exception e) {
+            // store as string
+            ids.put(key, value);
+          }
+        }
+      }
+      catch (Exception ignored) {
+      }
+    }
+
     // iterate over our internal id store (old JAXB style)
     element = getSingleElement(root, "ids");
     if (element != null) {
@@ -653,6 +678,7 @@ public class MovieNfoParser {
         }
       }
     }
+
     // iterate over our internal id store (new style)
     element = getSingleElement(root, "ids");
     if (element != null) {
