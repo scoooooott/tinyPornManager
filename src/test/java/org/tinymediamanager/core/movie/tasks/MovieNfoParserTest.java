@@ -14,37 +14,47 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.core.movie.connector;
+package org.tinymediamanager.core.movie.tasks;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.movie.connector.MovieNfoParser;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
-public class MovieNfoParserTest {
+public class MovieNfoParserTest extends BasicTest {
 
-  @Test
-  public void testMovieParser() {
-    // prepared NFOs with test data
-    testKodi1();
-    testKodi2();
-
-    testMediaPortal();
-
-    // live NFOs from different Kodi versions
-    testKodi14_2();
-    testKodi15_2();
-    testKodi16_1();
-    testKodi17_0();
+  @BeforeClass
+  public static void init() throws Exception {
+    deleteSettingsFolder();
+    Settings.getInstance(getSettingsFolder());
   }
 
-  private void testKodi17_0() {
+  @Test
+  public void testImdbUrl() {
+    MovieUpdateDatasourceTask uds = new MovieUpdateDatasourceTask();
+    List<MediaFile> mfs = new ArrayList<>();
+    mfs.add(new MediaFile(Paths.get("target/test-classes/movie_nfo/justImdbUrl.nfo")));
+
+    Movie m = uds.parseNFOs(mfs);
+    assertThat(m.getImdbId().equals("tt0499549"));
+  }
+
+  @Test
+  public void testKodi17_0() {
     // Kodi version 17.0
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi17.0.nfo"));
@@ -123,7 +133,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testKodi16_1() {
+  @Test
+  public void testKodi16_1() {
     // Kodi version 16.1
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi16.1.nfo"));
@@ -201,7 +212,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testKodi15_2() {
+  @Test
+  public void testKodi15_2() {
     // Kodi version 15.2
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi15.2.nfo"));
@@ -279,7 +291,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testKodi14_2() {
+  @Test
+  public void testKodi14_2() {
     // Kodi version 14.2
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi14.2.nfo"));
@@ -357,7 +370,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testMediaPortal() {
+  @Test
+  public void testMediaPortal() {
     // MediaPortal
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
@@ -428,7 +442,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testKodi1() {
+  @Test
+  public void testKodi1() {
     // Kodi 1
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi.nfo"));
@@ -518,7 +533,8 @@ public class MovieNfoParserTest {
     }
   }
 
-  private void testKodi2() {
+  @Test
+  public void testKodi2() {
     // Kodi 2
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi2.nfo"));
