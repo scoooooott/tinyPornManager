@@ -134,9 +134,17 @@ public class ImdbMovieParser extends ImdbParser {
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/plotsummary");
-
     worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     futurePlotsummary = compSvcImdb.submit(worker);
+
+    // worker for imdb request (/releaseinfo)
+    Future<Document> futureReleaseinfo;
+    sb = new StringBuilder(imdbSite.getSite());
+    sb.append("title/");
+    sb.append(imdbId);
+    sb.append("/releaseinfo");
+    worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    futureReleaseinfo = compSvcImdb.submit(worker);
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
@@ -171,19 +179,15 @@ public class ImdbMovieParser extends ImdbParser {
       }
     }
 
+    // get the release info page
+    Document releaseinfoDoc = futureReleaseinfo.get();
+    // parse original title here!!
+    parseReleaseinfoPageAKAs(releaseinfoDoc, options, md);
+
     // did we get a release date?
     if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
       // get the date from the releaseinfo page
-      Future<Document> futureReleaseinfo;
-      sb = new StringBuilder(imdbSite.getSite());
-      sb.append("title/");
-      sb.append(imdbId);
-      sb.append("/releaseinfo");
-
-      worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
-      futureReleaseinfo = compSvcImdb.submit(worker);
-      doc = futureReleaseinfo.get();
-      parseReleaseinfoPage(doc, options, md);
+      parseReleaseinfoPage(releaseinfoDoc, options, md);
     }
 
     // get data from tmdb?
@@ -273,6 +277,32 @@ public class ImdbMovieParser extends ImdbParser {
     if (releaseDate != null) {
       md.setReleaseDate(releaseDate);
     }
+  }
+
+  // AKAs and original title
+  private MediaMetadata parseReleaseinfoPageAKAs(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+    // <table id="akas" class="subpage_data spEven2Col">
+    // <tr class="even">
+    // <td>(original title)</td>
+    // <td>Intouchables</td>
+    // </tr>
+
+    // need to search all tables for correct ID, since the UNIQUE id is used multiple times - thanks for nothing :p
+    for (Element table : doc.getElementsByTag("table")) {
+      if (table.id().equalsIgnoreCase("akas")) {
+        Elements rows = table.getElementsByTag("tr");
+        for (Element row : rows) {
+          Element c1 = row.getElementsByTag("td").get(0);
+          Element c2 = row.getElementsByTag("td").get(1);
+          if (c1 != null && c1.text().toLowerCase(Locale.ROOT).contains("original title")) {
+            md.setOriginalTitle(c2.text());
+            break;
+          }
+        }
+      }
+    }
+
+    return md;
   }
 
   private static class TmdbMovieWorker implements Callable<MediaMetadata> {

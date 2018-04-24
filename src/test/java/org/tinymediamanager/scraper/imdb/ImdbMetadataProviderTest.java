@@ -434,6 +434,7 @@ public class ImdbMetadataProviderTest {
       genres.add(MediaGenres.SCIENCE_FICTION);
       genres.add(MediaGenres.THRILLER);
       genres.add(MediaGenres.DRAMA);
+      genres.add(MediaGenres.FAMILY);
       checkGenres(genres, md);
 
       // check plot
@@ -573,7 +574,6 @@ public class ImdbMetadataProviderTest {
       genres.add(MediaGenres.COMEDY);
       genres.add(MediaGenres.FAMILY);
       genres.add(MediaGenres.FANTASY);
-      genres.add(MediaGenres.THRILLER);
       checkGenres(genres, md);
 
       // check plot
