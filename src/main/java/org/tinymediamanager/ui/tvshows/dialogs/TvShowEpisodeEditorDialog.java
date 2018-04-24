@@ -63,6 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -248,7 +251,22 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         detailsPanel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
-        detailsPanel.add(tfTitle, "cell 1 0 7 1,growx");
+        detailsPanel.add(tfTitle, "flowx,cell 1 0 7 1,growx");
+
+        final JButton btnPlay = new JButton(IconManager.PLAY_INV);
+        btnPlay.setFocusable(false);
+        btnPlay.addActionListener(e -> {
+          MediaFile mf = episodeToEdit.getMainVideoFile();
+          try {
+            TmmUIHelper.openFile(mf.getFileAsPath());
+          }
+          catch (Exception ex) {
+            LOGGER.error("open file", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+          }
+        });
+        detailsPanel.add(btnPlay, "cell 1 0");
       }
       {
         JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
