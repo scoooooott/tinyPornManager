@@ -38,6 +38,7 @@ import javax.swing.ButtonModel;
 import javax.swing.JComboBox;
 import javax.swing.JMenuBar;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
@@ -167,7 +168,7 @@ public class TmmBorders extends BaseBorders {
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
       int r = 10;
       Container parent = c.getParent();
-      if (parent != null) {
+      if (parent != null && !(parent.getParent() instanceof JScrollPane)) {
         RoundRectangle2D round = new RoundRectangle2D.Float(x + focusWidth, y + focusWidth, width - 2 * focusWidth, height - 2 * focusWidth, r, r);
         RoundRectangle2D shadow = new RoundRectangle2D.Float(x + focusWidth + 1, y + focusWidth + 1, width - 2 * focusWidth, height - 2 * focusWidth,
             r, r);
