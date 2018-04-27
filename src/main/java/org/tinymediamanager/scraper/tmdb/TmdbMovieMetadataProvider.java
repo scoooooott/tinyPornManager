@@ -445,6 +445,11 @@ class TmdbMovieMetadataProvider {
 
     md = morphMovieToMediaMetadata(movie, options);
 
+    // we may scraped with imdb id, get the tmdb id from the result
+    if (tmdbId == 0) {
+      tmdbId = movie.id;
+    }
+
     // add some special keywords as tags
     // see http://forum.kodi.tv/showthread.php?tid=254004
     try {
