@@ -33,6 +33,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
@@ -48,7 +49,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * @author Myron Boyle (myron0815@gmx.net)
  */
 @PluginImplementation
-public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
+public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(MovieMeterMetadataProvider.class);
   private static final String      TMM_API_KEY  = ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM");
 
