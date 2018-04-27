@@ -60,31 +60,6 @@ public class MediaMetadata {
 
   // this map contains all set ids
   private final HashMap<String, Object> ids                  = new HashMap<>();
-
-  // general media entity
-  private String                        title                = "";
-  private String                        originalTitle        = "";
-  private String                        originalLanguage     = "";
-  private int                           year                 = 0;
-  private Date                          releaseDate          = null;
-  private String                        plot                 = "";
-  private String                        tagline              = "";
-  private int                           runtime              = 0;
-
-  // movie
-  private String                        collectionName       = "";
-  private int                           top250               = 0;
-
-  // tv show
-  private int                           episodeNumber        = -1;
-  private int                           seasonNumber         = -1;
-  private int                           dvdEpisodeNumber     = -1;
-  private int                           dvdSeasonNumber      = -1;
-  private int                           displayEpisodeNumber = -1;
-  private int                           displaySeasonNumber  = -1;
-  private int                           absoluteNumber       = -1;
-  private MediaAiredStatus              status               = MediaAiredStatus.UNKNOWN;
-
   // multi value
   private final List<MediaRating>       ratings              = new ArrayList<>();
   private final List<MediaCastMember>   castMembers          = new ArrayList<>();
@@ -97,7 +72,27 @@ public class MediaMetadata {
   private final List<MediaTrailer>      trailers             = new ArrayList<>();
   private final List<MediaMetadata>     subItems             = new ArrayList<>();
   private final List<String>            tags                 = new ArrayList<>();
-
+  // general media entity
+  private String                        title                = "";
+  private String                        originalTitle        = "";
+  private String                        originalLanguage     = "";
+  private int                           year                 = 0;
+  private Date                          releaseDate          = null;
+  private String                        plot                 = "";
+  private String                        tagline              = "";
+  private int                           runtime              = 0;
+  // movie
+  private String                        collectionName       = "";
+  private int                           top250               = 0;
+  // tv show
+  private int                           episodeNumber        = -1;
+  private int                           seasonNumber         = -1;
+  private int                           dvdEpisodeNumber     = -1;
+  private int                           dvdSeasonNumber      = -1;
+  private int                           displayEpisodeNumber = -1;
+  private int                           displaySeasonNumber  = -1;
+  private int                           absoluteNumber       = -1;
+  private MediaAiredStatus              status               = MediaAiredStatus.UNKNOWN;
   private HashMap<String, Object>       extraData            = new HashMap<>();
 
   /**
@@ -224,7 +219,20 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the cast members.
+   * Sets all given genres
+   * 
+   * @param genres
+   *          a list of all genres to be set
+   */
+  public void setGenres(List<MediaGenres> genres) {
+    this.genres.clear();
+    if (genres != null) {
+      this.genres.addAll(genres);
+    }
+  }
+
+  /**
+   * Gets the cast members for a given type.
    * 
    * @param type
    *          the type
@@ -235,7 +243,7 @@ public class MediaMetadata {
       return castMembers;
     }
 
-    // get all castmember for the given type
+    // get all cast members for the given type
     List<MediaCastMember> l = new ArrayList<>(castMembers.size());
     for (MediaCastMember cm : castMembers) {
       if (cm.getType() == type) {
@@ -295,6 +303,28 @@ public class MediaMetadata {
   }
 
   /**
+   * get all set artwork
+   * 
+   * @return a list of all artworks
+   */
+  public List<MediaArtwork> getMediaArt() {
+    return artwork;
+  }
+
+  /**
+   * set all given artwork
+   * 
+   * @param artwork
+   *          a list of all artwork to set
+   */
+  public void setMediaArt(List<MediaArtwork> artwork) {
+    this.artwork.clear();
+    if (artwork != null) {
+      this.artwork.addAll(artwork);
+    }
+  }
+
+  /**
    * Adds the media art.
    * 
    * @param ma
@@ -324,12 +354,25 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the cast members.
+   * Get all cast members.
    * 
    * @return the cast members
    */
   public List<MediaCastMember> getCastMembers() {
     return castMembers;
+  }
+
+  /**
+   * set all given cast members
+   * 
+   * @param castMembers
+   *          a list of cast members to be set
+   */
+  public void setCastMembers(List<MediaCastMember> castMembers) {
+    this.castMembers.clear();
+    if (castMembers != null) {
+      this.castMembers.addAll(castMembers);
+    }
   }
 
   /**
@@ -403,6 +446,19 @@ public class MediaMetadata {
   }
 
   /**
+   * set the given certifications
+   * 
+   * @param certifications
+   *          a list of all certifications to set
+   */
+  public void setCertifications(List<Certification> certifications) {
+    this.certifications.clear();
+    if (certifications != null) {
+      this.certifications.addAll(certifications);
+    }
+  }
+
+  /**
    * Adds the trailer. To use only when scraping the metadata also provides the trailers
    * 
    * @param trailer
@@ -421,6 +477,19 @@ public class MediaMetadata {
    */
   public List<MediaTrailer> getTrailers() {
     return trailers;
+  }
+
+  /**
+   * set all given trailers
+   * 
+   * @param trailers
+   *          a list of all trailers to be set
+   */
+  public void setTrailers(List<MediaTrailer> trailers) {
+    this.trailers.clear();
+    if (trailers != null) {
+      this.trailers.addAll(trailers);
+    }
   }
 
   /**
@@ -656,7 +725,7 @@ public class MediaMetadata {
    * Set the original title's language
    *
    * @param originalLanguage
-   *          the origial title to be set
+   *          the original title to be set
    */
   public void setOriginalLanguage(String originalLanguage) {
     this.originalLanguage = StrgUtils.getNonNullString(originalLanguage);
@@ -673,7 +742,7 @@ public class MediaMetadata {
 
   /**
    * Set the year
-   * 
+   *
    * @param year
    *          the year to be set
    */
@@ -704,7 +773,7 @@ public class MediaMetadata {
 
   /**
    * Set the release date
-   * 
+   *
    * @param releaseDate
    *          the release date to be set
    */
@@ -792,7 +861,7 @@ public class MediaMetadata {
 
   /**
    * Set the runtime in minutes (full minutes)
-   * 
+   *
    * @param runtime
    *          the runtime in minutes to be set
    */
@@ -856,7 +925,7 @@ public class MediaMetadata {
 
   /**
    * Set the place in the top 250
-   * 
+   *
    * @param top250
    *          the place to be set
    */
@@ -887,7 +956,7 @@ public class MediaMetadata {
 
   /**
    * Set the episode number
-   * 
+   *
    * @param episodeNumber
    *          the episode number to be set
    */
@@ -918,7 +987,7 @@ public class MediaMetadata {
 
   /**
    * Set the season number
-   * 
+   *
    * @param seasonNumber
    *          the season number to be set
    */
@@ -949,7 +1018,7 @@ public class MediaMetadata {
 
   /**
    * Set the DVD episode number
-   * 
+   *
    * @param dvdEpisodeNumber
    *          the DVD episode number to be set
    */
@@ -980,7 +1049,7 @@ public class MediaMetadata {
 
   /**
    * Set the DVD season number
-   * 
+   *
    * @param dvdSeasonNumber
    *          the DVD season number to be set
    */
@@ -1011,7 +1080,7 @@ public class MediaMetadata {
 
   /**
    * Set the display-episode number
-   * 
+   *
    * @param displayEpisodeNumber
    *          the display-episode number to be set
    */
@@ -1042,7 +1111,7 @@ public class MediaMetadata {
 
   /**
    * Set the display-season number
-   * 
+   *
    * @param displaySeasonNumber
    *          the display-season number to be set
    */
@@ -1073,7 +1142,7 @@ public class MediaMetadata {
 
   /**
    * Set the absolute number
-   * 
+   *
    * @param absoluteNumber
    *          the absolute number to be set
    */
@@ -1104,7 +1173,7 @@ public class MediaMetadata {
 
   /**
    * Set the airing status
-   * 
+   *
    * @param status
    *          the airing status to be set
    */

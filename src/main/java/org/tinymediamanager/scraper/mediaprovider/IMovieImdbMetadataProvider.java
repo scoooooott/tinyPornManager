@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.tinymediamanager.scraper.mediaprovider;
 
-import org.tinymediamanager.scraper.MediaProviderInfo;
-
-import net.xeoh.plugins.base.Plugin;
-
 /**
- * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces You should not implement this
- * interface by a class, since plugin examination relies on the concrete interface
+ * The Interface IMovieImdbMetadataProvider. All scrapers providing movie meta data by IMDB id must implement this interface
  *
  * @author Manuel Laggner
- * @since 1.0
+ * @since 3.0
  */
-public interface IMediaProvider extends Plugin {
-  /**
-   * Gets a general information about the metadata provider
-   * 
-   * @return the provider info containing metadata of the provider
-   */
-  MediaProviderInfo getProviderInfo();
+public interface IMovieImdbMetadataProvider {
 }

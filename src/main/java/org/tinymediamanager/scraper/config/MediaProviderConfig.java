@@ -21,10 +21,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -39,15 +39,15 @@ import org.tinymediamanager.scraper.util.AesUtil;
  * @author Myron Boyle, Manuel Laggner
  */
 public class MediaProviderConfig {
-  private static final Logger                              LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
-  private static final String                              CONFIG_FOLDER = "data";
-  private static final String                              SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
-  private static final String                              IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
+  private static final Logger                          LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
+  private static final String                          CONFIG_FOLDER = "data";
+  private static final String                          SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String                          IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
 
-  private static final AesUtil                             AES_UTIL      = new AesUtil(128, 100);
+  private static final AesUtil                         AES_UTIL      = new AesUtil(128, 100);
 
-  private final TreeMap<String, MediaProviderConfigObject> settings      = new TreeMap<>();
-  private final String                                     id;
+  private final Map<String, MediaProviderConfigObject> settings      = new LinkedHashMap<>();
+  private final String                                 id;
 
   public MediaProviderConfig(MediaProviderInfo mpi) {
     this.id = mpi.getId();

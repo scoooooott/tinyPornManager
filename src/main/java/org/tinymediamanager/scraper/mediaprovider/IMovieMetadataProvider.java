@@ -31,6 +31,17 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 public interface IMovieMetadataProvider extends IMediaProvider {
 
   /**
+   * Search for media.
+   *
+   * @param options
+   *          the options
+   * @return the list
+   * @throws Exception
+   *           the exception
+   */
+  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+
+  /**
    * Gets the meta data.
    * 
    * @param options
@@ -40,15 +51,4 @@ public interface IMovieMetadataProvider extends IMediaProvider {
    *           the exception
    */
   MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
-
-  /**
-   * Search for media.
-   * 
-   * @param options
-   *          the options
-   * @return the list
-   * @throws Exception
-   *           the exception
-   */
-  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
 }
