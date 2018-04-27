@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
@@ -42,7 +43,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
+public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger    LOGGER                = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
   public static final String     USE_TMDB_FOR_MOVIES   = "useTmdbForMovies";
