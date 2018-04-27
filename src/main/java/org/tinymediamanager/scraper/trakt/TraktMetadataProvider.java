@@ -25,6 +25,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
@@ -35,7 +36,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
 
 @PluginImplementation
-public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
+public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
   private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -58,7 +59,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   }
 
   // thread safe initialization of the API
-  private static synchronized void initAPI() throws Exception {
+  private static synchronized void initAPI() {
     String apiKey = CLIENT_ID;
     String userApiKey = providerInfo.getConfig().getValue("apiKey");
 
@@ -74,7 +75,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
       apiKey = CLIENT_ID;
     }
 
-    // create a new instance of the tmdb api
+    // create a new instance of the trakt api
     if (api == null) {
       api = new TraktV2(apiKey) {
         // tell the trakt api to use our OkHttp client
