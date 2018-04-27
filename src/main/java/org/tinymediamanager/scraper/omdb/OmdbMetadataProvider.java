@@ -38,6 +38,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
 import org.tinymediamanager.scraper.omdb.entities.MovieRating;
@@ -55,14 +56,14 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * @author Wolfgang Janes
  */
 @PluginImplementation
-public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvShowMetadataProvider {
+public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbMetadataProvider { // , ITvShowMetadataProvider {
   private static final Logger            LOGGER       = LoggerFactory.getLogger(OmdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
   private static final String            API_KEY      = ApiKey.decryptApikey("Isuaab2ym89iI1hOtF94nQ==");
 
   private Controller                     controller;
 
-  public OmdbMetadataProvider() throws Exception {
+  public OmdbMetadataProvider() {
     this.controller = new Controller(false);
   }
 
@@ -93,7 +94,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions query) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions query) {
     LOGGER.debug("scrape()" + query.toString());
 
     MediaMetadata metadata = new MediaMetadata(OmdbMetadataProvider.providerInfo.getId());
@@ -247,7 +248,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider { // , ITvSh
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions query) {
     LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> mediaResult = new ArrayList<>();
 
