@@ -29,6 +29,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -69,32 +70,34 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
       }
     }
 
-    providerInfo.getConfig().addSelect(SEARCH, compatibleScraperIds, UNDEFINED);
+    MediaProviderConfig config = providerInfo.getConfig();
+
+    config.addSelect(SEARCH, compatibleScraperIds, UNDEFINED);
     // use the right key to let reflection work
     // getter in MediaMetadata must be get + Key (first letter upper case)
-    providerInfo.getConfig().addSelect("title", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("originalTitle", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("tagline", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("year", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("releaseDate", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("plot", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("runtime", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("ratings", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("top250",
+    config.addSelect("title", "metatag.title", compatibleScraperIds, UNDEFINED);
+    config.addSelect("originalTitle", "metatag.originaltitle", compatibleScraperIds, UNDEFINED);
+    config.addSelect("tagline", "metatag.tagline", compatibleScraperIds, UNDEFINED);
+    config.addSelect("year", "metatag.year", compatibleScraperIds, UNDEFINED);
+    config.addSelect("releaseDate", "metatag.releasedate", compatibleScraperIds, UNDEFINED);
+    config.addSelect("plot", "metatag.plot", compatibleScraperIds, UNDEFINED);
+    config.addSelect("runtime", "metatag.runtime", compatibleScraperIds, UNDEFINED);
+    config.addSelect("ratings", "metatag.rating", compatibleScraperIds, UNDEFINED);
+    config.addSelect("top250", "metatag.top250",
         compatibleScraperIds.contains(MediaMetadata.IMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.IMDB) : Collections.singletonList(UNDEFINED),
         UNDEFINED);
-    providerInfo.getConfig().addSelect("genres", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("certifications", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("productionCompanies", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("castMembers", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("spokenLanguages", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("countries", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("tags", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("mediaArt", compatibleScraperIds, UNDEFINED);
-    providerInfo.getConfig().addSelect("collectionName",
+    config.addSelect("genres", "metatag.genre", compatibleScraperIds, UNDEFINED);
+    config.addSelect("certifications", "metatag.certification", compatibleScraperIds, UNDEFINED);
+    config.addSelect("productionCompanies", "metatag.production", compatibleScraperIds, UNDEFINED);
+    config.addSelect("castMembers", "metatag.cast", compatibleScraperIds, UNDEFINED);
+    config.addSelect("spokenLanguages", "metatag.spokenlanguages", compatibleScraperIds, UNDEFINED);
+    config.addSelect("countries", "metatag.country", compatibleScraperIds, UNDEFINED);
+    config.addSelect("tags", "metatag.tags", compatibleScraperIds, UNDEFINED);
+    config.addSelect("mediaArt", "metatag.artwork", compatibleScraperIds, UNDEFINED);
+    config.addSelect("collectionName", "metatag.movieset",
         compatibleScraperIds.contains(MediaMetadata.TMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.TMDB) : Collections.singletonList(UNDEFINED),
         UNDEFINED);
-    providerInfo.getConfig().load();
+    config.load();
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
