@@ -235,9 +235,24 @@ public class MediaProviderConfig {
    *          the default value
    */
   public void addBoolean(String key, boolean defaultValue) {
+    addBoolean(key, "", defaultValue);
+  }
+
+  /**
+   * adds a boolean parameter to the configuration
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param defaultValue
+   *          the default value
+   */
+  public void addBoolean(String key, String keyDescription, boolean defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.BOOL);
     co.setKey(key);
+    co.setKeyDescription(keyDescription);
     co.setDefaultValue(String.valueOf(defaultValue));
     co.setValue(String.valueOf(defaultValue));
     settings.put(key, co);
@@ -256,7 +271,21 @@ public class MediaProviderConfig {
   }
 
   /**
-   * adds an encryptes text parameter to the configuration (useful for sensitive information)
+   * adds a text parameter to the configuration
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param defaultValue
+   *          the default value
+   */
+  public void addText(String key, String keyDescription, String defaultValue) {
+    addText(key, keyDescription, defaultValue, false);
+  }
+
+  /**
+   * adds an encrypts text parameter to the configuration (useful for sensitive information)
    *
    * @param key
    *          the config key
@@ -266,9 +295,26 @@ public class MediaProviderConfig {
    *          enable/disable encryption
    */
   public void addText(String key, String defaultValue, boolean encrypt) {
+    addText(key, "", defaultValue, encrypt);
+  }
+
+  /**
+   * adds an encrypts text parameter to the configuration (useful for sensitive information)
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param defaultValue
+   *          the default value
+   * @param encrypt
+   *          enable/disable encryption
+   */
+  public void addText(String key, String keyDescription, String defaultValue, boolean encrypt) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.TEXT);
     co.setKey(key);
+    co.setKeyDescription(keyDescription);
     co.setDefaultValue(defaultValue);
     co.setValue(defaultValue);
     co.setEncrypt(encrypt);
@@ -286,7 +332,23 @@ public class MediaProviderConfig {
    *          the default value
    */
   public void addSelect(String key, String[] possibleValues, String defaultValue) {
-    addSelect(key, Arrays.asList(possibleValues), defaultValue);
+    addSelect(key, "", possibleValues, defaultValue);
+  }
+
+  /**
+   * adds a value selection to the configuration (Array version)
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param possibleValues
+   *          an array of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelect(String key, String keyDescription, String[] possibleValues, String defaultValue) {
+    addSelect(key, keyDescription, Arrays.asList(possibleValues), defaultValue);
   }
 
   /**
@@ -300,9 +362,26 @@ public class MediaProviderConfig {
    *          the default value
    */
   public void addSelect(String key, List<String> possibleValues, String defaultValue) {
+    addSelect(key, "", possibleValues, defaultValue);
+  }
+
+  /**
+   * adds a value selection to the configuration (List version)
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param possibleValues
+   *          a list of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelect(String key, String keyDescription, List<String> possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.SELECT);
     co.setKey(key);
+    co.setKeyDescription(keyDescription);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
     }
@@ -322,7 +401,23 @@ public class MediaProviderConfig {
    *          the default value
    */
   public void addSelectIndex(String key, String[] possibleValues, String defaultValue) {
-    addSelectIndex(key, Arrays.asList(possibleValues), defaultValue);
+    addSelectIndex(key, "", possibleValues, defaultValue);
+  }
+
+  /**
+   * adds a value selection (via index) to the configuration (Array version)
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param possibleValues
+   *          an array of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelectIndex(String key, String keyDescription, String[] possibleValues, String defaultValue) {
+    addSelectIndex(key, keyDescription, Arrays.asList(possibleValues), defaultValue);
   }
 
   /**
@@ -336,9 +431,26 @@ public class MediaProviderConfig {
    *          the default value
    */
   public void addSelectIndex(String key, List<String> possibleValues, String defaultValue) {
+    addSelectIndex(key, "", possibleValues, defaultValue);
+  }
+
+  /**
+   * adds a value selection (via index) to the configuration (List version)
+   *
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param possibleValues
+   *          a list of possible values
+   * @param defaultValue
+   *          the default value
+   */
+  public void addSelectIndex(String key, String keyDescription, List<String> possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setType(MediaProviderConfigObject.ConfigType.SELECT_INDEX);
     co.setKey(key);
+    co.setKeyDescription(keyDescription);
     co.setReturnListAsInt(true);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
