@@ -500,6 +500,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       image = baseUrl + image;
     }
     processMediaArt(md, type, label, image);
+
+    // Some scrapers respond with multiple <thumb> tags.
+    // since we do not know what is a poster, or a fanart, lets add them to both ;)
+    if (type == MediaArtworkType.POSTER) {
+      processMediaArt(md, MediaArtworkType.BACKGROUND, label, image);
+    }
   }
 
   private void processMediaArt(MediaMetadata md, MediaArtworkType type, String label, String image) {

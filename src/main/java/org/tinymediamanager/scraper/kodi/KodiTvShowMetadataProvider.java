@@ -25,8 +25,10 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -39,7 +41,7 @@ import org.w3c.dom.NodeList;
  * 
  * @author Manuel Laggner
  */
-public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider implements ITvShowMetadataProvider {
+public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
   private static final Logger LOGGER       = LoggerFactory.getLogger(KodiTvShowMetadataProvider.class);
   private static final String EPISODEGUIDE = "episodeguide";
 
@@ -276,5 +278,16 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
     return null;
+  }
+
+  @Override
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws Exception {
+    LOGGER.debug("******* BEGIN ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    List<MediaArtwork> mas = new ArrayList<MediaArtwork>();
+    // scrape again to get Kodi XML (thank god we have a mem cachedUrl)
+    MediaMetadata md = getMetadata(arg0);
+    mas.addAll(md.getMediaArt(arg0.getArtworkType()));
+    LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    return mas;
   }
 }

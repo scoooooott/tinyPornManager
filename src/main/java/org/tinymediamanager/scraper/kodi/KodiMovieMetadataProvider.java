@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +25,10 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.w3c.dom.Document;
 
@@ -34,7 +37,7 @@ import org.w3c.dom.Document;
  * 
  * @author Manuel Laggner
  */
-public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider implements IMovieMetadataProvider {
+public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider implements IMovieMetadataProvider, IMovieArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(KodiMovieMetadataProvider.class);
 
   public KodiMovieMetadataProvider(KodiScraper scraper) {
@@ -73,5 +76,16 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
     return null;
+  }
+
+  @Override
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws Exception {
+    LOGGER.debug("******* BEGIN ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    List<MediaArtwork> mas = new ArrayList<MediaArtwork>();
+    // scrape again to get Kodi XML (thank god we have a mem cachedUrl)
+    MediaMetadata md = getMetadata(arg0);
+    mas.addAll(md.getMediaArt(arg0.getArtworkType()));
+    LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    return mas;
   }
 }
