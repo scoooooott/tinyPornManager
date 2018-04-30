@@ -117,7 +117,15 @@ public class MediaScraperConfigurationPanel extends JPanel {
       constraints.ipadx = 20;
 
       // label
-      JLabel label = new JLabel(entry.getValue().getKeyDescription());
+      // try different ways to get a meaningful key description
+      String keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
+      if (StringUtils.isBlank(keyDescription)) {
+        keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
+      }
+      if (StringUtils.isBlank(keyDescription)) {
+        keyDescription = entry.getValue().getKeyDescription();
+      }
+      JLabel label = new JLabel(keyDescription);
       constraints.gridx = 0;
       panel.add(label, constraints);
 
@@ -178,7 +186,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       // add a hint if a long text has been found
       try {
-        String desc = BUNDLE.getString("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey() + ".desc"); //$NON-NLS-1$
+        String desc = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey() + ".desc"); //$NON-NLS-1$
         if (StringUtils.isNotBlank(desc)) {
           JLabel lblHint = new JLabel(IconManager.HINT);
           lblHint.setToolTipText(desc);
@@ -191,6 +199,22 @@ public class MediaScraperConfigurationPanel extends JPanel {
       constraints.gridy++;
     }
     return panel;
+  }
+
+  /**
+   * get the String from the bundle w/o throwing an exception
+   * 
+   * @param key
+   *          the key to get the String for
+   * @return the desired String or an empty String
+   */
+  private String getStringFromBundle(String key) {
+    try {
+      return BUNDLE.getString(key);
+    }
+    catch (Exception ignored) {
+    }
+    return "";
   }
 
   private void saveSettings() {
