@@ -307,12 +307,50 @@ public class Url {
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
+      cleanup();
       LOGGER.error("proxy or host not found/reachable; " + e.getMessage());
     }
     catch (Exception e) {
+      cleanup();
       LOGGER.error("Exception getting url " + logUrl + " ; " + e.getMessage(), e);
     }
     return is;
+  }
+
+  /**
+   * gets the url with the given amount of retries
+   * 
+   * @param retries
+   *          the amount of retries (>0)
+   * @return the InputStream or null
+   */
+  public InputStream getInputStreamWithRetry(int retries) {
+    if (retries <= 0) {
+      return null;
+    }
+
+    InputStream is = null;
+
+    int counter = 0;
+    do {
+      counter++;
+      try {
+        is = getInputStream();
+      }
+      catch (Exception ignored) {
+      }
+      if (is != null || (is == null && getStatusCode() > 0 && getStatusCode() < 500)) {
+        // we either got a response or a permanent failure
+        return is;
+      }
+      // has this thread been interrupted?
+      if (Thread.interrupted()) {
+        return null;
+      }
+      LOGGER.info("could not fetch: " + url + " - retrying");
+    } while (counter <= retries);
+
+    return null;
   }
 
   /**
@@ -360,8 +398,27 @@ public class Url {
   public byte[] getBytes() throws IOException, InterruptedException {
     InputStream is = getInputStream();
     byte[] bytes = IOUtils.toByteArray(is);
-    is.close();
+    IOUtils.closeQuietly(is);
     return bytes;
+  }
+
+  /**
+   * Gets the bytes with the given amount of retries
+   *
+   * @param retries
+   *          the amount of retries (>0)
+   * @return the bytes or an empty array
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  public byte[] getBytesWithRetry(int retries) throws IOException {
+    InputStream is = getInputStreamWithRetry(retries);
+    if (is != null) {
+      byte[] bytes = IOUtils.toByteArray(is);
+      IOUtils.closeQuietly(is);
+      return bytes;
+    }
+    return new byte[0];
   }
 
   /**
