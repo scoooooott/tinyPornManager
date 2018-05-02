@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,12 +23,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
@@ -44,17 +43,17 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
 
 /**
- * The class MovieExtraImageFetcher. To fetch extrafanarts and extrathumbs
+ * The class MovieExtraImageFetcherTask. To fetch extrafanarts and extrathumbs
  * 
  * @author Manuel Laggner
  */
-public class MovieExtraImageFetcher implements Runnable {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcher.class);
+public class MovieExtraImageFetcherTask implements Runnable {
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcherTask.class);
 
   private Movie               movie;
   private MediaFileType       type;
 
-  public MovieExtraImageFetcher(Movie movie, MediaFileType type) {
+  public MovieExtraImageFetcherTask(Movie movie, MediaFileType type) {
     this.movie = movie;
     this.type = type;
   }
@@ -63,24 +62,6 @@ public class MovieExtraImageFetcher implements Runnable {
   public void run() {
     // try/catch block in the root of the thread to log crashes
     try {
-      String base = ""; // single movie dir - no prefix
-      if (movie.isMultiMovieDir()) {
-        base = movie.getVideoBasenameWithoutStacking();
-      }
-
-      switch (type) {
-        case LOGO:
-        case CLEARLOGO:
-        case BANNER:
-        case CLEARART:
-        case THUMB:
-        case DISC:
-          downloadArtwork(type, base);
-          break;
-        default:
-          break;
-      }
-
       // just for single movies
       if (!movie.isMultiMovieDir()) {
         switch (type) {
@@ -110,110 +91,6 @@ public class MovieExtraImageFetcher implements Runnable {
       LOGGER.error("Thread crashed: ", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.extraimage.threadcrashed"));
     }
-
-  }
-
-  private void downloadArtwork(MediaFileType type, String basename) {
-    String artworkUrl = movie.getArtworkUrl(type);
-    if (StringUtils.isBlank(artworkUrl)) {
-      return;
-    }
-
-    String filename = basename;
-    if (!filename.isEmpty()) {
-      filename += "-";
-    }
-
-    FileOutputStream outputStream = null;
-    InputStream is = null;
-    Path tempFile = null;
-    try {
-      String oldFilename = movie.getArtworkFilename(type);
-      // we are lucky and have chosen our enums wisely
-      filename += type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(artworkUrl);
-      movie.removeAllMediaFiles(type);
-
-      // debug message
-      LOGGER.debug("writing " + type + " " + filename);
-
-      // fetch and store images
-      Url url1 = new Url(artworkUrl);
-      try {
-        // create a temp file/folder inside the tmm folder
-        Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
-        if (!Files.exists(tempFolder)) {
-          Files.createDirectory(tempFolder);
-        }
-        tempFile = tempFolder.resolve(filename + ".part"); // multi episode same file
-      }
-      catch (Exception e) {
-        // could not create the temp folder somehow - put the files into the entity dir
-        tempFile = movie.getPathNIO().resolve(filename + ".part"); // multi episode same file
-      }
-
-      outputStream = new FileOutputStream(tempFile.toFile());
-      is = url1.getInputStream();
-      IOUtils.copy(is, outputStream);
-      outputStream.flush();
-      try {
-        outputStream.getFD().sync(); // wait until file has been completely written
-        // give it a few milliseconds
-        Thread.sleep(150);
-      }
-      catch (Exception e) {
-        // empty here -> just not let the thread crash
-      }
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
-
-      // has tmm been shut down?
-      if (Thread.interrupted()) {
-        return;
-      }
-
-      // check if the file has been downloaded
-      if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
-        FileUtils.deleteQuietly(tempFile.toFile());
-        throw new Exception("0byte file downloaded: " + filename);
-      }
-
-      // delete the old one if exisiting
-      if (StringUtils.isNotBlank(oldFilename)) {
-        Path oldFile = movie.getPathNIO().resolve(oldFilename);
-        Utils.deleteFileSafely(oldFile);
-      }
-
-      // delete new destination if existing
-      Path destinationFile = movie.getPathNIO().resolve(filename);
-      Utils.deleteFileSafely(destinationFile);
-
-      // move the temp file to the expected filename
-      if (!Utils.moveFileSafe(tempFile, destinationFile)) {
-        throw new Exception("renaming temp file failed: " + filename);
-      }
-
-      movie.setArtwork(destinationFile, type);
-      movie.callbackForWrittenArtwork(MediaFileType.getMediaArtworkType(type));
-      movie.saveToDb();
-    }
-    catch (Exception e) {
-      if (e instanceof InterruptedException) {
-        // only warning
-        LOGGER.warn("interrupted image download");
-      }
-      else {
-        LOGGER.error("fetch image: " + e.getMessage());
-      }
-    }
-    finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(outputStream);
-      // remove temp file
-      // Path tempFile = movie.getPathNIO().resolve(filename + ".part");
-      if (tempFile != null && Files.exists(tempFile)) {
-        Utils.deleteFileSafely(tempFile);
-      }
-    }
   }
 
   private void downloadExtraFanart() {
@@ -241,14 +118,44 @@ public class MovieExtraImageFetcher implements Runnable {
     // fetch and store images
     int i = 1;
     for (String urlAsString : fanarts) {
+      long timestamp = System.currentTimeMillis();
       FileOutputStream outputStream = null;
       InputStream is = null;
       try {
-        String providedFiletype = FilenameUtils.getExtension(urlAsString);
+        String filename = "fanart" + i + "." + FilenameUtils.getExtension(urlAsString);
+
+        // don't write jpeg -> write jpg
+        if (FilenameUtils.getExtension(filename).equalsIgnoreCase("JPEG")) {
+          filename = FilenameUtils.getBaseName(filename) + ".jpg";
+        }
+
+        // debug message
+        LOGGER.debug("writing " + type + " " + filename);
+        Path destFile = folder.resolve(filename);
+        Path tempFile = null;
+        try {
+          // create a temp file/folder inside the tmm folder
+          Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+          if (!Files.exists(tempFolder)) {
+            Files.createDirectory(tempFolder);
+          }
+          tempFile = tempFolder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
+        catch (Exception e) {
+          // could not create the temp folder somehow - put the files into the entity dir
+          tempFile = folder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
+
+        // fetch and store images
         Url url = new Url(urlAsString);
-        Path file = folder.resolve("fanart" + i + "." + providedFiletype);
-        outputStream = new FileOutputStream(file.toFile());
+        outputStream = new FileOutputStream(tempFile.toFile());
         is = url.getInputStream();
+        if (is == null) {
+          // 404 et all
+          IOUtils.closeQuietly(outputStream);
+          throw new FileNotFoundException("Error accessing url: " + url.getStatusLine());
+        }
+
         IOUtils.copy(is, outputStream);
         outputStream.flush();
         try {
@@ -256,15 +163,32 @@ public class MovieExtraImageFetcher implements Runnable {
           // give it a few milliseconds
           Thread.sleep(150);
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
           // empty here -> just not let the thread crash
         }
         IOUtils.closeQuietly(is);
         IOUtils.closeQuietly(outputStream);
 
-        MediaFile mf = new MediaFile(file, MediaFileType.EXTRAFANART);
+        // check if the file has been downloaded
+        if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
+          // cleanup the file
+          FileUtils.deleteQuietly(tempFile.toFile());
+          throw new Exception("0byte file downloaded: " + filename);
+        }
+
+        // move the temp file to the expected filename
+        if (!Utils.moveFileSafe(tempFile, destFile)) {
+          throw new Exception("renaming temp file failed: " + filename);
+        }
+
+        MediaFile mf = new MediaFile(destFile, MediaFileType.EXTRAFANART);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
+
+        // has tmm been shut down?
+        if (Thread.interrupted()) {
+          return;
+        }
 
         i++;
       }
@@ -307,19 +231,45 @@ public class MovieExtraImageFetcher implements Runnable {
 
     // fetch and store images
     int i = 1;
-    for (String url : thumbs) {
+    for (String urlAsString : thumbs) {
+      long timestamp = System.currentTimeMillis();
       FileOutputStream outputStream = null;
       InputStream is = null;
-
       try {
-        String providedFiletype = FilenameUtils.getExtension(url);
+        String filename = "thumb" + i + ".";
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize()) {
+          filename += "jpg";
+        }
+        else {
+          filename += FilenameUtils.getExtension(urlAsString);
+        }
 
-        Path file;
-        if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.SETTINGS.getImageExtraThumbsSize() > 0) {
-          file = folder.resolve("thumb" + i + ".jpg");
-          outputStream = new FileOutputStream(file.toFile());
+        // don't write jpeg -> write jpg
+        if (FilenameUtils.getExtension(filename).equalsIgnoreCase("JPEG")) {
+          filename = FilenameUtils.getBaseName(filename) + ".jpg";
+        }
+
+        // debug message
+        LOGGER.debug("writing " + type + " " + filename);
+        Path destFile = folder.resolve(filename);
+        Path tempFile = null;
+        try {
+          // create a temp file/folder inside the tmm folder
+          Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+          if (!Files.exists(tempFolder)) {
+            Files.createDirectory(tempFolder);
+          }
+          tempFile = tempFolder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
+        catch (Exception e) {
+          // could not create the temp folder somehow - put the files into the entity dir
+          tempFile = folder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        }
+
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize()) {
+          outputStream = new FileOutputStream(tempFile.toFile());
           try {
-            is = ImageUtils.scaleImage(url, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
+            is = ImageUtils.scaleImage(urlAsString, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
           }
           catch (Exception e) {
             LOGGER.warn("problem with rescaling: " + e.getMessage());
@@ -327,10 +277,15 @@ public class MovieExtraImageFetcher implements Runnable {
           }
         }
         else {
-          file = folder.resolve("thumb" + (i + 1) + "." + providedFiletype);
-          outputStream = new FileOutputStream(file.toFile());
-          Url url1 = new Url(url);
-          is = url1.getInputStream();
+          outputStream = new FileOutputStream(tempFile.toFile());
+          Url url = new Url(urlAsString);
+          is = url.getInputStream();
+
+          if (is == null) {
+            // 404 et all
+            IOUtils.closeQuietly(outputStream);
+            throw new FileNotFoundException("Error accessing url: " + url.getStatusLine());
+          }
         }
 
         IOUtils.copy(is, outputStream);
@@ -338,15 +293,32 @@ public class MovieExtraImageFetcher implements Runnable {
         try {
           outputStream.getFD().sync();
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
           // empty here -> just not let the thread crash
         }
         IOUtils.closeQuietly(is);
         IOUtils.closeQuietly(outputStream);
 
-        MediaFile mf = new MediaFile(file, MediaFileType.EXTRATHUMB);
+        // check if the file has been downloaded
+        if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
+          // cleanup the file
+          FileUtils.deleteQuietly(tempFile.toFile());
+          throw new Exception("0byte file downloaded: " + filename);
+        }
+
+        // move the temp file to the expected filename
+        if (!Utils.moveFileSafe(tempFile, destFile)) {
+          throw new Exception("renaming temp file failed: " + filename);
+        }
+
+        MediaFile mf = new MediaFile(destFile, MediaFileType.EXTRATHUMB);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
+
+        // has tmm been shut down?
+        if (Thread.interrupted()) {
+          return;
+        }
 
         i++;
       }

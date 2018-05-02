@@ -141,7 +141,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             // give it a few milliseconds
             Thread.sleep(150);
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
             // empty here -> just not let the thread crash
           }
           IOUtils.closeQuietly(outputStream);

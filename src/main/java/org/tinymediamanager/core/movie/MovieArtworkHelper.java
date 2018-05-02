@@ -32,7 +32,7 @@ import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
-import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
+import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcherTask;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -680,7 +680,7 @@ public class MovieArtworkHelper {
 
   private static void downloadExtraArtwork(Movie movie, MediaFileType type) {
     // get images in thread
-    MovieExtraImageFetcher task = new MovieExtraImageFetcher(movie, type);
+    MovieExtraImageFetcherTask task = new MovieExtraImageFetcherTask(movie, type);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
