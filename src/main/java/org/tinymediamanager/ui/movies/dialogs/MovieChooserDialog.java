@@ -599,7 +599,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         return;
     }
 
-    String imageUrl = ImageChooserDialog.chooseImage(movieToScrape.getIds(), imageType, artworkScrapers, MediaType.MOVIE);
+    String imageUrl = ImageChooserDialog.chooseImage(movieToScrape.getIds(), imageType, artworkScrapers, extrathumbs, extrafanarts, MediaType.MOVIE);
 
     movieToScrape.setArtworkUrl(imageUrl, mediaFileType);
     if (StringUtils.isNotBlank(imageUrl)) {
