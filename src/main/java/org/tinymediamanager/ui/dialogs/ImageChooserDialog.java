@@ -70,6 +70,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.ToggleButtonUI;
@@ -556,6 +557,53 @@ public class ImageChooserDialog extends TmmDialog {
       }
     };
     task.run();
+  }
+
+  /**
+   * call a new image chooser dialog without extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, MediaType mediaType) {
+    return chooseImage(ids, type, artworkScrapers, null, null, mediaType);
+  }
+
+  /**
+   * call a new image chooser dialog with extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param extraThumbs
+   *          the extra thumbs
+   * @param extraFanarts
+   *          the extra fanarts
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, List<String> extraThumbs,
+      List<String> extraFanarts, MediaType mediaType) {
+    if (ids.isEmpty()) {
+      return "";
+    }
+
+    ImageLabel lblImage = new ImageLabel();
+    ImageChooserDialog dialog = new ImageChooserDialog(ids, type, artworkScrapers, lblImage, extraThumbs, extraFanarts, mediaType);
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
+    return lblImage.getImageUrl();
   }
 
   private class OkAction extends AbstractAction {

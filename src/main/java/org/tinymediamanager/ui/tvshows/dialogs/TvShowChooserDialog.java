@@ -45,6 +45,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -73,7 +74,6 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -393,7 +393,6 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               chooseArtwork(MediaFileType.LOGO);
               chooseArtwork(MediaFileType.CLEARLOGO);
               chooseArtwork(MediaFileType.CLEARART);
-              chooseArtwork(MediaFileType.DISC);
               chooseArtwork(MediaFileType.THUMB);
             }
             else {
@@ -448,34 +447,51 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     switch (mediaFileType) {
       case POSTER:
+        if (TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.POSTER;
         break;
 
       case FANART:
+        if (TvShowModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.FANART;
         break;
 
       case BANNER:
+        if (TvShowModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.BANNER;
         break;
 
       case LOGO:
+        if (TvShowModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.LOGO;
         break;
 
       case CLEARLOGO:
+        if (TvShowModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.CLEARLOGO;
         break;
 
       case CLEARART:
+        if (TvShowModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.CLEARART;
         break;
 
-      case DISC:
-        imageType = ImageType.DISC;
-        break;
-
       case THUMB:
+        if (TvShowModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
+          return;
+        }
         imageType = ImageType.THUMB;
         break;
 
@@ -483,12 +499,12 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         return;
     }
 
-    ImageLabel lblImage = new ImageLabel();
-    ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), imageType, artworkScrapers, lblImage, MediaType.TV_SHOW);
-    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-    dialog.setVisible(true);
-    tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), mediaFileType);
-    tvShowToScrape.downloadArtwork(mediaFileType);
+    String imageUrl = ImageChooserDialog.chooseImage(tvShowToScrape.getIds(), imageType, artworkScrapers, MediaType.TV_SHOW);
+
+    tvShowToScrape.setArtworkUrl(imageUrl, mediaFileType);
+    if (StringUtils.isNotBlank(imageUrl)) {
+      tvShowToScrape.downloadArtwork(mediaFileType);
+    }
   }
 
   public boolean isContinueQueue() {
