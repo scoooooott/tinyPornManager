@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -149,7 +150,9 @@ public class MovieExtraImageFetcherTask implements Runnable {
         // fetch and store images
         Url url = new Url(urlAsString);
         outputStream = new FileOutputStream(tempFile.toFile());
-        is = url.getInputStream();
+        // fetch the images with at max 5 retries
+        is = url.getInputStreamWithRetry(5);
+
         if (is == null) {
           // 404 et all
           IOUtils.closeQuietly(outputStream);
@@ -192,7 +195,7 @@ public class MovieExtraImageFetcherTask implements Runnable {
 
         i++;
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         LOGGER.warn("interrupted download extrafanarts");
         IOUtils.closeQuietly(is);
         IOUtils.closeQuietly(outputStream);
@@ -266,27 +269,30 @@ public class MovieExtraImageFetcherTask implements Runnable {
           tempFile = folder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
         }
 
+        Url url = new Url(urlAsString);
+        // fetch the images with at max 5 retries
+        is = url.getInputStreamWithRetry(5);
+
+        if (is == null) {
+          // 404 et all
+          IOUtils.closeQuietly(outputStream);
+          throw new FileNotFoundException("Error accessing url: " + url.getStatusLine());
+        }
+
+        // rescale?
         if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize()) {
-          outputStream = new FileOutputStream(tempFile.toFile());
           try {
-            is = ImageUtils.scaleImage(urlAsString, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
+            InputStream oldIs = is;
+            is = ImageUtils.scaleImage(IOUtils.toByteArray(oldIs), MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
+            IOUtils.closeQuietly(oldIs);
           }
           catch (Exception e) {
             LOGGER.warn("problem with rescaling: " + e.getMessage());
             continue;
           }
         }
-        else {
-          outputStream = new FileOutputStream(tempFile.toFile());
-          Url url = new Url(urlAsString);
-          is = url.getInputStream();
 
-          if (is == null) {
-            // 404 et all
-            IOUtils.closeQuietly(outputStream);
-            throw new FileNotFoundException("Error accessing url: " + url.getStatusLine());
-          }
-        }
+        outputStream = new FileOutputStream(tempFile.toFile());
 
         IOUtils.copy(is, outputStream);
         outputStream.flush();
@@ -322,7 +328,7 @@ public class MovieExtraImageFetcherTask implements Runnable {
 
         i++;
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         LOGGER.warn("interrupted download extrathumbs");
         IOUtils.closeQuietly(is);
         IOUtils.closeQuietly(outputStream);

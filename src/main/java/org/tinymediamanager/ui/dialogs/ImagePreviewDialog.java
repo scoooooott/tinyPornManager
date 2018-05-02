@@ -87,7 +87,7 @@ public class ImagePreviewDialog extends TmmDialog {
     protected BufferedImage doInBackground() {
       try {
         Url url = new Url(imageUrl);
-        return ImageUtils.createImage(url.getBytes());
+        return ImageUtils.createImage(url.getBytesWithRetry(5));
       }
       catch (Exception e) {
         LOGGER.warn("fetch image: " + e.getMessage());

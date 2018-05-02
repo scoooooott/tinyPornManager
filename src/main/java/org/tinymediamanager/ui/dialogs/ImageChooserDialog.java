@@ -541,7 +541,7 @@ public class ImageChooserDialog extends TmmDialog {
         art.setPreviewUrl(url);
 
         Url url1 = new Url(art.getPreviewUrl());
-        final BufferedImage bufferedImage = ImageUtils.createImage(url1.getBytes());
+        final BufferedImage bufferedImage = ImageUtils.createImage(url1.getBytesWithRetry(5));
 
         SwingUtilities.invokeLater(() -> {
           addImage(bufferedImage, art);
@@ -865,7 +865,7 @@ public class ImageChooserDialog extends TmmDialog {
             Url url = null;
             try {
               url = new Url(art.getPreviewUrl());
-              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytes());
+              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
 
               DownloadChunk chunk = new DownloadChunk();
               chunk.artwork = art;
@@ -873,8 +873,6 @@ public class ImageChooserDialog extends TmmDialog {
               publish(chunk);
               imagesFound = true;
               // addImage(bufferedImage, art);
-            }
-            catch (InterruptedException ignored) {
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask displaying", e.getMessage());

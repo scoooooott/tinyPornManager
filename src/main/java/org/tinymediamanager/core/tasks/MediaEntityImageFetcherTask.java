@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tasks;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -128,7 +129,9 @@ public class MediaEntityImageFetcherTask implements Runnable {
         if (!sameFile) {
           Url url1 = new Url(url);
           FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
-          InputStream is = url1.getInputStream();
+          // fetch the images with at max 5 retries
+          InputStream is = url1.getInputStreamWithRetry(5);
+
           if (is == null) {
             // 404 et all
             IOUtils.closeQuietly(outputStream);
@@ -204,7 +207,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
       }
 
       catch (Exception e) {
-        if (e instanceof InterruptedException) {
+        if (e instanceof InterruptedException || e instanceof InterruptedIOException) {
           // only warning
           LOGGER.warn("interrupted image download");
         }

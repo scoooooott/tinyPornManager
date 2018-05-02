@@ -35,27 +35,24 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.imgscalr.Scalr;
-import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.thirdparty.ImageLoader;
 
 public class ImageUtils {
   /**
    * Scale image to fit in the given width.
    *
-   * @param imageUrl
-   *          the image url
+   * @param imageBytes
+   *          the image bytes
    * @param width
    *          the width
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static InputStream scaleImage(String imageUrl, int width) throws IOException {
-    Url url = new Url(imageUrl);
-
-    BufferedImage originalImage = null;
+  public static InputStream scaleImage(byte[] imageBytes, int width) throws IOException {
+    BufferedImage originalImage;
     try {
-      originalImage = createImage(url.getBytes());
+      originalImage = createImage(imageBytes);
     }
     catch (Exception e) {
       throw new IOException(e.getMessage());
@@ -124,7 +121,7 @@ public class ImageUtils {
    *           Signals that an I/O exception has occurred.
    */
   public static InputStream scaleImage(Path file, int width) throws IOException {
-    BufferedImage originalImage = null;
+    BufferedImage originalImage;
     try {
       originalImage = createImage(file);
     }
