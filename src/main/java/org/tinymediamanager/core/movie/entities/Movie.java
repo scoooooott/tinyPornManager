@@ -96,7 +96,7 @@ import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
-import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
+import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -1171,7 +1171,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    MovieActorImageFetcher task = new MovieActorImageFetcher(this);
+    MovieActorImageFetcherTask task = new MovieActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 

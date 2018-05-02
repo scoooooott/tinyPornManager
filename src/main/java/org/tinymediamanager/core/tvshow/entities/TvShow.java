@@ -92,7 +92,7 @@ import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
-import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcher;
+import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaAiredStatus;
@@ -1778,7 +1778,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    TvShowActorImageFetcher task = new TvShowActorImageFetcher(this);
+    TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 

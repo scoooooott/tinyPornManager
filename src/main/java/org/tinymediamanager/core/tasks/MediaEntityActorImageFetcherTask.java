@@ -33,13 +33,13 @@ import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
- * The class MediaEntityActorImageFetcher.
+ * The class MediaEntityActorImageFetcherTask.
  * 
  * @author Manuel Laggner
  */
-public abstract class MediaEntityActorImageFetcher implements Runnable {
+public abstract class MediaEntityActorImageFetcherTask implements Runnable {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityActorImageFetcher.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityActorImageFetcherTask.class);
 
   protected MediaEntity       mediaEntity;
   protected Set<Person>       persons;
