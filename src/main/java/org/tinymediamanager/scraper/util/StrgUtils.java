@@ -54,6 +54,8 @@ public class StrgUtils {
     replacements.put(0x153, new Replacement("oe"));
     replacements.put(0x166, new Replacement("T"));
     replacements.put(0x167, new Replacement("t"));
+    replacements.put(0x141, new Replacement("L"));
+    replacements.put(0x142, new Replacement("l"));
     return replacements;
   }
 
