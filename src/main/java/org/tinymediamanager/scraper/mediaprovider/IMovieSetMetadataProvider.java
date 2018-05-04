@@ -39,7 +39,7 @@ public interface IMovieSetMetadataProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   /**
    * Search for media.
@@ -50,5 +50,5 @@ public interface IMovieSetMetadataProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
 }

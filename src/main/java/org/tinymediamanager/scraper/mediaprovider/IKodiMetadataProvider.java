@@ -33,5 +33,5 @@ public interface IKodiMetadataProvider extends IMediaProvider {
    *          the desired media type
    * @return all found plugins
    */
-  public List<IMediaProvider> getPluginsForType(MediaType type);
+  List<IMediaProvider> getPluginsForType(MediaType type);
 }

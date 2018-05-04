@@ -38,6 +38,6 @@ public interface IMediaArtworkProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception;
+  List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception;
 
 }

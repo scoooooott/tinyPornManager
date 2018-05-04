@@ -40,7 +40,7 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * @throws Exception
    * 
    */
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   /**
    * Search for a TV show
@@ -51,7 +51,7 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
 
   /**
    * Gets an episode list for the given TV show
@@ -61,5 +61,5 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * @return a list of episodes
    * @throws Exception
    */
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception;
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception;
 }

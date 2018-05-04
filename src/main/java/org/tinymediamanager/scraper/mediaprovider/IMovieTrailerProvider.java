@@ -38,6 +38,5 @@ public interface IMovieTrailerProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception;
-
+  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception;
 }

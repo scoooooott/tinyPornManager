@@ -37,5 +37,5 @@ public interface IMediaSubtitleProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws Exception;
+  List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws Exception;
 }
