@@ -28,7 +28,10 @@ public class LanguageUtilsTest {
 
     assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "USA", "en_US", "US"));
     assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "Vereinigte Staaten von Amerika", "Vereinigte Staaten"));
-    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage("fr", "USA", "en_US", "US"));
+
+    // Java 8: Etats-Unis
+    // Java 9: États-Unis
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage("fr", "USA", "en_US", "US")).matches("(E|É)tats\\-Unis");
     assertEqual("West Germany", LanguageUtils.getLocalizedCountryForLanguage("de", "West Germany", "XWG"));
   }
 
