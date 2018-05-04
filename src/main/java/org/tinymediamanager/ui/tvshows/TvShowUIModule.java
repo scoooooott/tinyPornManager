@@ -190,9 +190,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
   private void init() {
     // re-set filters
     if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
-      SwingUtilities.invokeLater(() -> {
-        listPanel.getTreeTable().setFilterValues(TvShowModuleManager.SETTINGS.getUiFilters());
-      });
+      SwingUtilities.invokeLater(() -> listPanel.getTreeTable().setFilterValues(TvShowModuleManager.SETTINGS.getUiFilters()));
     }
   }
 

@@ -38,7 +38,6 @@ import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 
-;
 
 /**
  * The Class TvShowScrapeMetadataDialog.

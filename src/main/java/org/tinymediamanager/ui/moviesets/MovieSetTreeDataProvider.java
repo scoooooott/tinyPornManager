@@ -159,10 +159,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
   @Override
   public boolean isLeaf(TmmTreeNode node) {
-    if (node.getUserObject() instanceof Movie) {
-      return true;
-    }
-    return false;
+    return node.getUserObject() instanceof Movie;
   }
 
   @Override
@@ -253,8 +250,10 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       }
 
       if (userObject1 instanceof Movie && userObject2 instanceof Movie) {
-        List<Movie> moviesInSet = ((Movie) userObject1).getMovieSet().getMovies();
-        return moviesInSet.indexOf(userObject1) - moviesInSet.indexOf(userObject2);
+        if (((Movie) userObject1).getMovieSet() != null) {
+          List<Movie> moviesInSet = ((Movie) userObject1).getMovieSet().getMovies();
+          return moviesInSet.indexOf(userObject1) - moviesInSet.indexOf(userObject2);
+        }
       }
 
       return o1.toString().compareToIgnoreCase(o2.toString());

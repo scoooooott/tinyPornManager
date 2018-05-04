@@ -38,7 +38,7 @@ public class TvShowWatchedFilter extends AbstractTvShowUIFilter {
 
     private String title;
 
-    private WatchedFlag(String title) {
+    WatchedFlag(String title) {
       this.title = title;
     }
 

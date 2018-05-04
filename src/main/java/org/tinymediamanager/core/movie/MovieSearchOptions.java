@@ -61,7 +61,7 @@ public enum MovieSearchOptions {
    */
   public static class MovieSearchOptionsAdapter extends XmlAdapter<MovieSearchOptionsMapType, Map<MovieSearchOptions, Object>> {
     @Override
-    public Map<MovieSearchOptions, Object> unmarshal(MovieSearchOptionsMapType v) throws Exception {
+    public Map<MovieSearchOptions, Object> unmarshal(MovieSearchOptionsMapType v) {
       Map<MovieSearchOptions, Object> options = new HashMap<>();
       if (v == null || v.entries == null) {
         return options;
@@ -115,7 +115,7 @@ public enum MovieSearchOptions {
     }
 
     @Override
-    public MovieSearchOptionsMapType marshal(Map<MovieSearchOptions, Object> v) throws Exception {
+    public MovieSearchOptionsMapType marshal(Map<MovieSearchOptions, Object> v) {
       MovieSearchOptionsMapType output = new MovieSearchOptionsMapType();
 
       for (Entry<MovieSearchOptions, Object> entry : v.entrySet()) {

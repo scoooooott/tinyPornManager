@@ -29,7 +29,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.TableModel;
 import javax.swing.tree.AbstractLayoutCache;
-import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
@@ -225,14 +224,14 @@ final class TmmTreeTableEventBroadcaster implements TableModelListener, TreeMode
   }
 
   @Override
-  public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
+  public void treeWillCollapse(TreeExpansionEvent event) {
     assert SwingUtilities.isEventDispatchThread();
 
     pendingExpansionEvent = translateEvent(event, false);
   }
 
   @Override
-  public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+  public void treeWillExpand(TreeExpansionEvent event) {
     assert SwingUtilities.isEventDispatchThread();
 
     pendingExpansionEvent = translateEvent(event, true);

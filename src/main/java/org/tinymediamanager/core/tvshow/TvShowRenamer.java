@@ -53,6 +53,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -117,7 +118,11 @@ public class TvShowRenamer {
     tokenMap.put("videoFormat", "episode.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "episode.mediaInfoVideoResolution");
     tokenMap.put("audioCodec", "episode.mediaInfoAudioCodec");
+    tokenMap.put("audioCodecList", "episode.mediaInfoAudioCodecList");
     tokenMap.put("audioChannels", "episode.mediaInfoAudioChannels");
+    tokenMap.put("audioChannelList", "episode.mediaInfoAudioChannelList");
+    tokenMap.put("audioLanguage", "episode.mediaInfoAudioLanguage");
+    tokenMap.put("audioLanguageList", "episode.mediaInfoAudioLanguageList");
     tokenMap.put("3Dformat", "episode.video3DFormat");
 
     tokenMap.put("mediaSource", "episode.mediaSource");
@@ -311,7 +316,7 @@ public class TvShowRenamer {
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
-    List<Path> existingFiles = Utils.findFilesRecursive(tvShow.getPathNIO());
+    List<Path> existingFiles = Utils.listFilesRecursive(tvShow.getPathNIO());
     for (int i = cleanup.size() - 1; i >= 0; i--) {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
@@ -463,9 +468,7 @@ public class TvShowRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>();
-    mfs.addAll(
-        episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+    mfs = new ArrayList<>(episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
             MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
@@ -882,7 +885,6 @@ public class TvShowRenamer {
       case EXTRAFANART:
       case EXTRATHUMB:
       case GRAPHIC:
-      case LANDSCAPE:
       case LOGO:
       case POSTER:
       case SAMPLE:
@@ -991,6 +993,7 @@ public class TvShowRenamer {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("episode", episode);
@@ -1112,15 +1115,15 @@ public class TvShowRenamer {
       loopNumbers = loopNumbers.trim();
 
       // foreach episode, replace and append pattern:
-      String episodeParts = "";
+      StringBuilder episodeParts = new StringBuilder();
       for (TvShowEpisode episode : episodes) {
         String episodePart = getTokenValue(episode.getTvShow(), episode, loopNumbers);
-        episodeParts += " " + episodePart;
+        episodeParts.append(" ").append(episodePart);
       }
 
       // replace original pattern, with our combined
       if (!loopNumbers.isEmpty()) {
-        newDestination = newDestination.replace(loopNumbers, episodeParts);
+        newDestination = newDestination.replace(loopNumbers, episodeParts.toString());
       }
 
       // *******************
@@ -1138,19 +1141,19 @@ public class TvShowRenamer {
       loopTitles = loopTitles.trim();
 
       // foreach episode, replace and append pattern:
-      episodeParts = "";
+      episodeParts = new StringBuilder();
       for (TvShowEpisode episode : episodes) {
         String episodePart = getTokenValue(episode.getTvShow(), episode, loopTitles);
 
         // separate multiple titles via -
-        if (StringUtils.isNotBlank(episodeParts)) {
-          episodeParts += " -";
+        if (StringUtils.isNotBlank(episodeParts.toString())) {
+          episodeParts.append(" -");
         }
-        episodeParts += " " + episodePart;
+        episodeParts.append(" ").append(episodePart);
       }
       // replace original pattern, with our combined
       if (StringUtils.isNotBlank(loopTitles)) {
-        newDestination = newDestination.replace(loopTitles, episodeParts);
+        newDestination = newDestination.replace(loopTitles, episodeParts.toString());
       }
 
       newDestination = getTokenValue(firstEp.getTvShow(), firstEp, newDestination);

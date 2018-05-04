@@ -48,6 +48,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -107,7 +108,11 @@ public class MovieRenamer {
     tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
     tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
+    tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList");
     tokenMap.put("audioChannels", "movie.mediaInfoAudioChannels");
+    tokenMap.put("audioChannelList", "movie.mediaInfoAudioChannelList");
+    tokenMap.put("audioLanguage", "movie.mediaInfoAudioLanguage");
+    tokenMap.put("audioLanguageList", "movie.mediaInfoAudioLanguageList");
     tokenMap.put("3Dformat", "movie.video3DFormat");
 
     tokenMap.put("mediaSource", "movie.mediaSource");
@@ -228,7 +233,7 @@ public class MovieRenamer {
           if (sub.getFilename().endsWith(".sub")) {
             // when having a .sub, also rename .idx (don't care if error)
             try {
-              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().replaceFirst("sub$", "idx"));
               Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
               Utils.moveFileSafe(oldidx, newidx);
             }
@@ -575,9 +580,9 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>();
-    mfs.addAll(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
-        MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
+    mfs = new ArrayList<>(
+        movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+            MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
@@ -636,11 +641,23 @@ public class MovieRenamer {
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
-    List<Path> existingFiles = Utils.findFilesRecursive(movie.getPathNIO());
+
+    // get all existing files in the movie dir, since Files.exist is not reliable in OSX
+    List<Path> existingFiles;
+    if (movie.isMultiMovieDir()) {
+      // no recursive search in MMD needed
+      existingFiles = Utils.listFiles(movie.getPathNIO());
+    }
+    else {
+      // search all files recursive for deeper cleanup
+      existingFiles = Utils.listFilesRecursive(movie.getPathNIO());
+    }
+
     for (int i = cleanup.size() - 1; i >= 0; i--) {
+      MediaFile cl = cleanup.get(i);
+
       // cleanup files which are not needed
-      if (!needed.contains(cleanup.get(i))) {
-        MediaFile cl = cleanup.get(i);
+      if (!needed.contains(cl)) {
         if (cl.getFileAsPath().equals(Paths.get(movie.getDataSource())) || cl.getFileAsPath().equals(movie.getPathNIO())
             || cl.getFileAsPath().equals(Paths.get(oldPathname))) {
           LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": " + cl.getFileAsPath());
@@ -664,7 +681,7 @@ public class MovieRenamer {
             Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
           }
         }
-        catch (IOException ex) {
+        catch (IOException ignored) {
         }
       }
     }
@@ -698,12 +715,7 @@ public class MovieRenamer {
       // re-evaluate multiMovieDir based on renamer settings
       // folder MUST BE UNIQUE, so we need at least a T/E-Y combo or IMDBid
       // If renaming just to a fixed pattern (eg "$S"), movie will downgrade to a MMD
-      if (MovieRenamer.isFolderPatternUnique(pattern)) {
-        newDestIsMultiMovieDir = false;
-      }
-      else {
-        newDestIsMultiMovieDir = true;
-      }
+      newDestIsMultiMovieDir = !MovieRenamer.isFolderPatternUnique(pattern);
       newPathname = MovieRenamer.createDestinationForFoldername(pattern, movie);
     }
     else {
@@ -1063,18 +1075,19 @@ public class MovieRenamer {
   }
 
   /**
-   * gets the token value ($x) from specified movie object
+   * gets the token value (${x}) from specified movie object
    * 
    * @param movie
    *          our movie
    * @param token
-   *          the $x token
+   *          the ${x} token
    * @return value or empty string
    */
   public static String getTokenValue(Movie movie, String token) {
     try {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
@@ -1252,11 +1265,8 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    if (((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
-        && pattern.contains("${year}")) || pattern.contains("${imdb}")) {
-      return true;
-    }
-    return false;
+    return ((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
+        && pattern.contains("${year}")) || pattern.contains("${imdb}");
   }
 
   /**
@@ -1269,9 +1279,6 @@ public class MovieRenamer {
   public static boolean isFilePatternValid() {
     String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
 
-    if (pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}")) {
-      return true;
-    }
-    return false;
+    return pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}");
   }
 }

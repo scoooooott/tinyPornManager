@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.List;
+
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.entities.Certification;
 
 /**
@@ -29,75 +32,110 @@ public interface IMediaInformation {
    * 
    * @return the certification
    */
-  public Certification getCertification();
+  Certification getCertification();
+
+  /**
+   * gets the main video file
+   *
+   * @return a MediaFile representing the main video file or an empty MediaFile
+   */
+  MediaFile getMainVideoFile();
 
   /**
    * gets the video format (e.g. 720p).
    * 
    * @return the video format
    */
-  public String getMediaInfoVideoFormat();
+  String getMediaInfoVideoFormat();
 
   /**
    * get the video resolution (e.g. 1920x1080)
    *
    * @return the video resolution
    */
-  public String getMediaInfoVideoResolution();
+  String getMediaInfoVideoResolution();
 
   /**
    * gets the aspect ratio (e.g. 1.33).
    * 
    * @return the aspect ratio
    */
-  public float getMediaInfoAspectRatio();
+  float getMediaInfoAspectRatio();
 
   /**
    * gets the media info video codec (e.g. divx)
    * 
    * @return the video codec
    */
-  public String getMediaInfoVideoCodec();
+  String getMediaInfoVideoCodec();
 
   /**
    * get the media info frame rate (e.g. 25.0)
    *
    * @return the frame rate
    */
-  public double getMediaInfoFrameRate();
+  double getMediaInfoFrameRate();
 
   /**
    * is the video in 3D
    * 
    * @return true if the video is in 3D
    */
-  public boolean isVideoIn3D();
+  boolean isVideoIn3D();
 
   /**
-   * gets the audio codec (e.g. mp3)
+   * gets the audio codec (e.g. mp3) from the main audio stream
    * 
    * @return the audio codec
    */
-  public String getMediaInfoAudioCodec();
+  String getMediaInfoAudioCodec();
 
   /**
-   * gets the audio channels (e.g, 6 at 5.1 sound)
+   * gets the audio codec (e.g. mp3) from all audio streams as List
+   *
+   * @return the audio codecs as List
+   */
+  List<String> getMediaInfoAudioCodecList();
+
+  /**
+   * gets the audio channels (e.g, 6 at 5.1 sound) from the main audio stream
    * 
    * @return the audio channels with a trailing ch
    */
-  public String getMediaInfoAudioChannels();
+  String getMediaInfoAudioChannels();
+
+  /**
+   * gets the audio channels (e.g, 6 at 5.1 sound) from all audio streams as List
+   *
+   * @return the audio channels from all streams with a trailing ch as List
+   */
+  List<String> getMediaInfoAudioChannelList();
+
+  /**
+   * gets the audio language (e.g, de) from the main audio stream
+   *
+   * @return the audio language
+   */
+  String getMediaInfoAudioLanguage();
+
+  /**
+   * gets the audio language (e.g, de) from the all audio streams as List
+   *
+   * @return the audio language from all streams with a trailing ch as List
+   */
+  List<String> getMediaInfoAudioLanguageList();
 
   /**
    * gets the container format
    * 
    * @return the container format
    */
-  public String getMediaInfoContainerFormat();
+  String getMediaInfoContainerFormat();
 
   /**
    * gets the media source
    * 
    * @return the media source
    */
-  public MediaSource getMediaInfoSource();
+  MediaSource getMediaInfoSource();
 }

@@ -116,12 +116,8 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
    * @return the selected subtitle scrapers
    */
   public List<MediaScraper> getSubtitleScrapers() {
-    List<MediaScraper> scrapers = new ArrayList<>();
-
     // scrapers
-    scrapers.addAll(cbSubtitleScraper.getSelectedItems());
-
-    return scrapers;
+    return new ArrayList<>(cbSubtitleScraper.getSelectedItems());
   }
 
   /**

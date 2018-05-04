@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,8 +62,13 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
@@ -84,6 +88,7 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.ShadowLayerUI;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -119,16 +124,17 @@ import net.miginfocom.swing.MigLayout;
  */
 public class MovieEditorDialog extends TmmDialog {
   private static final long                  serialVersionUID = -286251957529920347L;
+  private static final Logger                LOGGER           = LoggerFactory.getLogger(MovieEditorDialog.class);
   private static final Insets                BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
 
   private Movie                              movieToEdit;
   private MovieList                          movieList        = MovieList.getInstance();
 
-  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
-  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private EventList<MediaId>                 ids              = new BasicEventList<>();
-  private EventList<MediaRating>             ratings          = new BasicEventList<>();
+  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<>());
+  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<>());
+  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<MediaId>                 ids;
+  private EventList<MediaRating>             ratings;
   private List<MediaFile>                    mediaFiles       = new ArrayList<>();
   private List<String>                       extrathumbs      = new ArrayList<>();
   private List<String>                       extrafanarts     = new ArrayList<>();
@@ -156,7 +162,7 @@ public class MovieEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres>  cbGenres;
   private AutoCompleteSupport<MediaGenres>   cbGenresAutoCompleteSupport;
   private JSpinner                           spRating;
-  private JComboBox                          cbCertification;
+  private JComboBox<Certification>           cbCertification;
   private JCheckBox                          cbWatched;
   private JTextField                         tfTagline;
 
@@ -372,7 +378,7 @@ public class MovieEditorDialog extends TmmDialog {
         details1Panel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
-        details1Panel.add(tfTitle, "cell 1 0 6 1,growx,wmin 0");
+        details1Panel.add(tfTitle, "flowx,cell 1 0 6 1,growx,wmin 0");
       }
       {
         lblPoster = new ImageLabel();
@@ -516,6 +522,22 @@ public class MovieEditorDialog extends TmmDialog {
       JButton btnRemoveRating = new JButton(new RemoveRatingAction());
       btnRemoveRating.setMargin(BUTTON_MARGIN);
       details1Panel.add(btnRemoveRating, "cell 0 11,alignx right,aligny top");
+      {
+        final JButton btnPlay = new JButton(IconManager.PLAY_INV);
+        btnPlay.setFocusable(false);
+        btnPlay.addActionListener(e -> {
+          MediaFile mf = movieToEdit.getMainVideoFile();
+          try {
+            TmmUIHelper.openFile(mf.getFileAsPath());
+          }
+          catch (Exception ex) {
+            LOGGER.error("open file", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+          }
+        });
+        details1Panel.add(btnPlay, "cell 1 0");
+      }
     }
 
     /**********************************************************************************
@@ -1254,7 +1276,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       // if configured - sync with trakt.tv
       if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
-        TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToEdit), null);
+        TmmTask task = new SyncTraktTvTask(Collections.singletonList(movieToEdit), null);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

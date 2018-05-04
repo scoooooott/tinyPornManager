@@ -67,9 +67,7 @@ public class TvShowRenameAction extends TmmAction {
       }
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        for (TvShowEpisode episode : season.getEpisodes()) {
-          selectedEpisodes.add(episode);
-        }
+        selectedEpisodes.addAll(season.getEpisodes());
       }
     }
 

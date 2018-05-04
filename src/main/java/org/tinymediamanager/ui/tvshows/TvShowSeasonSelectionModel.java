@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
@@ -36,12 +35,7 @@ public class TvShowSeasonSelectionModel extends AbstractModelObject {
    * Instantiates a new tv show season selection model. Usage in TvShowPanel
    */
   public TvShowSeasonSelectionModel() {
-    propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        firePropertyChange(evt);
-      }
-    };
+    propertyChangeListener = this::firePropertyChange;
   }
 
   /**

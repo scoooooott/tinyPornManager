@@ -16,7 +16,7 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -64,10 +64,10 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) userObject;
       if (getFilterState() == FilterState.ACTIVE) {
-        return accept(episode.getTvShow(), Arrays.asList(episode));
+        return accept(episode.getTvShow(), Collections.singletonList(episode));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(episode.getTvShow(), Arrays.asList(episode));
+        return !accept(episode.getTvShow(), Collections.singletonList(episode));
       }
     }
 
@@ -82,6 +82,7 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
    * @param episodes
    *          all episodes of this node
    * @return
+   *          whether we should or not accept it.
    */
   protected abstract boolean accept(TvShow tvShow, List<TvShowEpisode> episodes);
 

@@ -33,5 +33,5 @@ public interface ITvShowSeasonFileNaming {
    *          the file extension
    * @return the file name or an empty string
    */
-  public String getFilename(TvShow tvShow, int season, String extension);
+  String getFilename(TvShow tvShow, int season, String extension);
 }

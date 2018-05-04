@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.tvshow.tasks;
+package org.tinymediamanager.core.movie.tasks;
 
 import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.tasks.MediaEntityActorImageFetcher;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tasks.MediaEntityActorImageFetcherTask;
 
 /**
- * The class TvShowActorImageFetcher.
+ * The Class MovieActorImageFetcherTask.
  * 
  * @author Manuel Laggner
  */
-public class TvShowActorImageFetcher extends MediaEntityActorImageFetcher {
-  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowActorImageFetcher.class);
+public class MovieActorImageFetcherTask extends MediaEntityActorImageFetcherTask {
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcherTask.class);
 
-  public TvShowActorImageFetcher(TvShow tvShow) {
-    this.mediaEntity = tvShow;
+  public MovieActorImageFetcherTask(Movie movie) {
+    this.mediaEntity = movie;
 
-    // create a set of all actors and guests
-    persons = new HashSet<>(tvShow.getActors());
-    for (TvShowEpisode episode : tvShow.getEpisodes()) {
-      persons.addAll(episode.getGuests());
-    }
+    persons = new HashSet<>(movie.getActors());
   }
 
   @Override

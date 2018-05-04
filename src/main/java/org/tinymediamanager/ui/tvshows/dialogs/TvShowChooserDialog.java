@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -45,6 +45,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -73,7 +74,6 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -100,7 +100,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
   private TvShowList                  tvShowList            = TvShowList.getInstance();
   private TvShow                      tvShowToScrape;
-  private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
+  private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<>());
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
   private MediaScraper                mediaScraper;
   private List<MediaScraper>          artworkScrapers;
@@ -387,38 +387,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
             if (!TvShowModuleManager.SETTINGS.isScrapeBestImage()) {
-              // poster
-              {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.POSTER, artworkScrapers, lblImage, null, null,
-                    MediaType.TV_SHOW);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.POSTER);
-                tvShowToScrape.downloadArtwork(MediaFileType.POSTER);
-              }
-
-              // fanart
-              {
-                ImageLabel lblImage = new ImageLabel();
-                List<String> extrathumbs = new ArrayList<>();
-                List<String> extrafanarts = new ArrayList<>();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
-                    extrafanarts, MediaType.TV_SHOW);
-                dialog.setVisible(true);
-                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.FANART);
-                tvShowToScrape.downloadArtwork(MediaFileType.FANART);
-              }
-
-              // banner
-              {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
-                    MediaType.TV_SHOW);
-                dialog.setVisible(true);
-                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.BANNER);
-                tvShowToScrape.downloadArtwork(MediaFileType.BANNER);
-              }
+              chooseArtwork(MediaFileType.POSTER);
+              chooseArtwork(MediaFileType.FANART);
+              chooseArtwork(MediaFileType.BANNER);
+              chooseArtwork(MediaFileType.LOGO);
+              chooseArtwork(MediaFileType.CLEARLOGO);
+              chooseArtwork(MediaFileType.CLEARART);
+              chooseArtwork(MediaFileType.THUMB);
             }
             else {
               // get artwork asynchronous
@@ -440,7 +415,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
           if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
-            TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToScrape));
+            TmmTask task = new SyncTraktTvTask(null, Collections.singletonList(tvShowToScrape));
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 
@@ -464,6 +439,71 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     if ("Back".equals(e.getActionCommand())) {
       navigateBack = true;
       setVisible(false);
+    }
+  }
+
+  private void chooseArtwork(MediaFileType mediaFileType) {
+    ImageType imageType;
+
+    switch (mediaFileType) {
+      case POSTER:
+        if (TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.POSTER;
+        break;
+
+      case FANART:
+        if (TvShowModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.FANART;
+        break;
+
+      case BANNER:
+        if (TvShowModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.BANNER;
+        break;
+
+      case LOGO:
+        if (TvShowModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.LOGO;
+        break;
+
+      case CLEARLOGO:
+        if (TvShowModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CLEARLOGO;
+        break;
+
+      case CLEARART:
+        if (TvShowModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CLEARART;
+        break;
+
+      case THUMB:
+        if (TvShowModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.THUMB;
+        break;
+
+      default:
+        return;
+    }
+
+    String imageUrl = ImageChooserDialog.chooseImage(tvShowToScrape.getIds(), imageType, artworkScrapers, MediaType.TV_SHOW);
+
+    tvShowToScrape.setArtworkUrl(imageUrl, mediaFileType);
+    if (StringUtils.isNotBlank(imageUrl)) {
+      tvShowToScrape.downloadArtwork(mediaFileType);
     }
   }
 

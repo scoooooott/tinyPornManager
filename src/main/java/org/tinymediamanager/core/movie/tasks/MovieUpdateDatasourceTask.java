@@ -31,8 +31,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -47,8 +45,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -251,7 +249,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         publishState();
 
         // update per movie folder
-        Map<Path, String> folder = new HashMap<Path, String>(movieFolders.size());
+        Map<Path, String> folder = new HashMap<>(movieFolders.size());
         // no dupes b/c of possible MMD movies with same path
         for (Movie m : movieFolders) {
           folder.put(m.getPathNIO(), m.getDataSource());
@@ -444,7 +442,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    * @param mfs
    * @return Movie or NULL
    */
-  private Movie parseNFOs(List<MediaFile> mfs) {
+  protected Movie parseNFOs(List<MediaFile> mfs) {
     Movie movie = null;
     for (MediaFile mf : mfs) {
 
@@ -459,16 +457,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.warn("problem parsing NFO: " + e.getMessage());
         }
 
-        // take first nfo 1:1
         if (movie == null) {
-          movie = nfo;
+          movie = new Movie();
         }
-        else {
-          movie.merge(nfo);
-        }
+        movie.merge(nfo);
 
         // was NFO, but parsing exception. try to find at least imdb id within
-        if (movie != null && movie.getImdbId().isEmpty()) {
+        if (movie.getImdbId().isEmpty()) {
           try {
             String imdb = Utils.readFileToString(mf.getFileAsPath());
             imdb = ParserUtils.detectImdbId(imdb);
@@ -709,12 +704,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     // allFiles.clear(); // might come handy
 
     // just compare filename length, start with longest b/c of overlapping names
-    Collections.sort(mfs, new Comparator<MediaFile>() {
-      @Override
-      public int compare(MediaFile file1, MediaFile file2) {
-        return file2.getFileAsPath().getFileName().toString().length() - file1.getFileAsPath().getFileName().toString().length();
-      }
-    });
+    mfs.sort((file1, file2) -> file2.getFileAsPath().getFileName().toString().length() - file1.getFileAsPath().getFileName().toString().length());
 
     for (MediaFile mf : getMediaFiles(mfs, MediaFileType.VIDEO)) {
 
@@ -1220,7 +1210,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
     return fileNames;
   }
@@ -1247,7 +1237,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
     return fileNames;
   }
@@ -1283,7 +1273,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
       preDirAll++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
@@ -1363,7 +1353,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase(Locale.ROOT);
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))

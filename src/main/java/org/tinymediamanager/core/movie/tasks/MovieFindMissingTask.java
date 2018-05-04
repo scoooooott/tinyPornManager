@@ -143,7 +143,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
       // getFilename returns null on DS root!
       if (dir.getFileName() != null && dir.getFileName().toString().equals(Constants.BACKUP_FOLDER)) {
         LOGGER.debug("Skipping backup folder: " + dir);

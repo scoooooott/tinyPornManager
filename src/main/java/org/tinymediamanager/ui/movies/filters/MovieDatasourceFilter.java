@@ -77,11 +77,7 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     List<String> datasources = checkComboBox.getSelectedItems();
-    if (datasources.contains(movie.getDataSource())) {
-      return true;
-    }
-
-    return false;
+    return datasources.contains(movie.getDataSource());
   }
 
   @Override

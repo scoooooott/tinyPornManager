@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +112,7 @@ public class YoutubeLinkExtractor {
     this.youtubeUrl = youtubeUrl;
   }
 
-  public String extractVideoUrl() throws IOException, InterruptedException {
+  public String extractVideoUrl() throws IOException {
     id = extractId(youtubeUrl);
     if (StringUtils.isBlank(id)) {
       return "";
@@ -182,7 +181,7 @@ public class YoutubeLinkExtractor {
   public static String extractId(String url) {
     {
       Pattern u = Pattern.compile("youtube.com/watch?.*v=([^&]*)");
-      Matcher um = u.matcher(url.toString());
+      Matcher um = u.matcher(url);
       if (um.find()) {
         return um.group(1);
       }
@@ -190,7 +189,7 @@ public class YoutubeLinkExtractor {
 
     {
       Pattern u = Pattern.compile("youtube.com/v/([^&]*)");
-      Matcher um = u.matcher(url.toString());
+      Matcher um = u.matcher(url);
       if (um.find()) {
         return um.group(1);
       }
@@ -209,24 +208,24 @@ public class YoutubeLinkExtractor {
   public static int extractQuality(String url) {
     {
       Pattern u = Pattern.compile("youtube.com/watch?.*fmt=([^&]*)");
-      Matcher um = u.matcher(url.toString());
+      Matcher um = u.matcher(url);
       if (um.find()) {
         try {
           return Integer.parseInt(um.group(1));
         }
-        catch (NumberFormatException e) {
+        catch (NumberFormatException ignored) {
         }
       }
     }
 
     {
       Pattern u = Pattern.compile("youtube.com/v/.*fmt=([^&]*)");
-      Matcher um = u.matcher(url.toString());
+      Matcher um = u.matcher(url);
       if (um.find()) {
         try {
           return Integer.parseInt(um.group(1));
         }
-        catch (NumberFormatException e) {
+        catch (NumberFormatException ignored) {
         }
       }
     }
@@ -304,7 +303,7 @@ public class YoutubeLinkExtractor {
     // }
     // }
 
-    Collections.sort(sNextVideoURL, new VideoUrlComparator());
+    sNextVideoURL.sort(new VideoUrlComparator());
 
     return sNextVideoURL;
   }
@@ -371,7 +370,6 @@ public class YoutubeLinkExtractor {
             url += "&signature=" + sig;
 
             addVideo(sNextVideoURL, itag, new URL(url));
-            continue;
           }
           catch (MalformedURLException e) {
             // ignore bad urls
@@ -419,9 +417,8 @@ public class YoutubeLinkExtractor {
         Invocable inv = (Invocable) engine;
 
         // invoke the function to decrypt the signature
-        String result = (String) inv.invokeFunction(decryptFunction, encryptedSignature);
 
-        return result;
+        return (String) inv.invokeFunction(decryptFunction, encryptedSignature);
       }
     }
     return "";
@@ -429,11 +426,11 @@ public class YoutubeLinkExtractor {
 
   private String extractJavascriptCode(String fullSource, String functionName) {
     // get function body
-    String functionSource = getMethodBody(fullSource, functionName);
+    StringBuilder functionSource = new StringBuilder(getMethodBody(fullSource, functionName));
 
     // and extract all subfunctions
-    if (StringUtils.isNotBlank(functionSource)) {
-      List<JSObjectMethod> subfunctions = getSubfunctions(functionSource);
+    if (StringUtils.isNotBlank(functionSource.toString())) {
+      List<JSObjectMethod> subfunctions = getSubfunctions(functionSource.toString());
       for (JSObjectMethod function : subfunctions) {
         // remove string functions
         if (function.method.equals("split") || function.method.equals("join")) {
@@ -441,7 +438,7 @@ public class YoutubeLinkExtractor {
         }
         // look if the object already have been found
         if (function.object != null) {
-          if (functionSource.contains(function.object + "={")) {
+          if (functionSource.toString().contains(function.object + "={")) {
             // the whole object has already been added -> continue
             continue;
           }
@@ -449,16 +446,16 @@ public class YoutubeLinkExtractor {
           Pattern pattern = Pattern.compile("(" + function.object + "=\\{.*?\\});");
           Matcher matcher = pattern.matcher(fullSource);
           if (matcher.find()) {
-            functionSource += matcher.group(1);
+            functionSource.append(matcher.group(1));
           }
         }
         else {
-          functionSource += getMethodBody(fullSource, function.method);
+          functionSource.append(getMethodBody(fullSource, function.method));
         }
       }
     }
 
-    return functionSource;
+    return functionSource.toString();
   }
 
   private String getMethodBody(String fullSource, String functionName) {

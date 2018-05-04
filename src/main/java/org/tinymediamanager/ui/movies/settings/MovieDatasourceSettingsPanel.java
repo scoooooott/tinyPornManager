@@ -146,7 +146,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       JScrollPane scrollPaneDataSources = new JScrollPane();
       add(scrollPaneDataSources, "flowx,cell 1 1,grow");
 
-      listDataSources = new JList<>();
+      listDataSources = new JList();
       scrollPaneDataSources.setViewportView(listDataSources);
     }
     {
@@ -183,7 +183,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       JScrollPane scrollPaneIgnore = new JScrollPane();
       add(scrollPaneIgnore, "flowx,cell 1 4,grow");
 
-      listIgnore = new JList<>();
+      listIgnore = new JList();
       scrollPaneIgnore.setViewportView(listIgnore);
 
       JPanel panelIgnoreButtons = new JPanel();
@@ -208,7 +208,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       JScrollPane scrollPaneBadWords = new JScrollPane();
       panelBadWords.add(scrollPaneBadWords, "cell 0 0,grow");
 
-      listBadWords = new JList<>();
+      listBadWords = new JList();
       scrollPaneBadWords.setViewportView(listBadWords);
 
       btnRemoveBadWord = new JButton(IconManager.REMOVE_INV);

@@ -92,23 +92,20 @@ public class TaskListPopup extends JPopupMenu implements TmmTaskListener {
 
   @Override
   public void processTaskEvent(final TmmTaskHandle task) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (task.getState() == TaskState.CREATED || task.getState() == TaskState.QUEUED) {
+    SwingUtilities.invokeLater(() -> {
+      if (task.getState() == TaskState.CREATED || task.getState() == TaskState.QUEUED) {
+        addListItem(task);
+      }
+      else if (task.getState() == TaskState.STARTED) {
+        TaskListComponent comp = taskMap.get(task);
+        if (comp == null) {
           addListItem(task);
+          comp = taskMap.get(task);
         }
-        else if (task.getState() == TaskState.STARTED) {
-          TaskListComponent comp = taskMap.get(task);
-          if (comp == null) {
-            addListItem(task);
-            comp = taskMap.get(task);
-          }
-          comp.updateTaskInformation();
-        }
-        else if (task.getState() == TaskState.CANCELLED || task.getState() == TaskState.FINISHED) {
-          removeListItem(task);
-        }
+        comp.updateTaskInformation();
+      }
+      else if (task.getState() == TaskState.CANCELLED || task.getState() == TaskState.FINISHED) {
+        removeListItem(task);
       }
     });
   }

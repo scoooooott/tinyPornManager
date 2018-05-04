@@ -266,7 +266,7 @@ public class Upnp {
     try {
       this.upnpService.getRegistry().addDevice(MediaServer.createDevice());
     }
-    catch (RegistrationException | LocalServiceBindingException | ValidationException | IOException e) {
+    catch (RegistrationException | LocalServiceBindingException | ValidationException e) {
       LOGGER.warn("could not start UPNP MediaServer!", e);
     }
   }

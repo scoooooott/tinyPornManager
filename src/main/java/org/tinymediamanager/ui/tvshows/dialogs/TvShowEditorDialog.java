@@ -26,7 +26,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -128,10 +127,10 @@ public class TvShowEditorDialog extends TmmDialog {
   private TvShow                            tvShowToEdit;
   private TvShowList                        tvShowList       = TvShowList.getInstance();
   private EventList<Person>                 actors;
-  private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<>());
   private EventList<MediaId>                ids              = new BasicEventList<>();
   private EventList<MediaRating>            ratings          = new BasicEventList<>();
-  private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer> episodes;
   private Rating                            userRating;
   private boolean                           continueQueue    = true;
@@ -155,7 +154,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres> cbGenres;
   private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
   private JSpinner                          spRating;
-  private JComboBox                         cbCertification;
+  private JComboBox<Certification>          cbCertification;
   private JComboBox<MediaAiredStatus>       cbStatus;
 
   private AutocompleteComboBox<String>      cbTags;
@@ -545,7 +544,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JScrollPane scrollPaneTags = new JScrollPane();
         details2Panel.add(scrollPaneTags, "cell 4 3,grow");
-        listTags = new JList<>();
+        listTags = new JList();
         scrollPaneTags.setViewportView(listTags);
 
         JButton btnAddTag = new JButton(new AddTagAction());
@@ -976,7 +975,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.saveToDb();
 
       if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
-        TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));
+        TmmTask task = new SyncTraktTvTask(null, Collections.singletonList(tvShowToEdit));
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

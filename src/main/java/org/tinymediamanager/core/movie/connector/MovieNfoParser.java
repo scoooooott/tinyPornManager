@@ -208,7 +208,7 @@ public class MovieNfoParser {
    * @throws Exception
    *           any exception if parsing fails
    */
-  public static MovieNfoParser parseNfo(String content) throws Exception {
+  public static MovieNfoParser parseNfo(String content) {
     return new MovieNfoParser(Jsoup.parse(content, "", Parser.xmlParser()));
   }
 
@@ -219,15 +219,7 @@ public class MovieNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    if (StringUtils.isBlank(title)) {
-      return false;
-    }
-
-    if (year <= 0) {
-      return false;
-    }
-
-    return true;
+    return !(year <= 0 || StringUtils.isBlank(title));
   }
 
   private Element getSingleElement(Element parent, String tag) {
@@ -610,7 +602,8 @@ public class MovieNfoParser {
    * ids can be stored either in the<br />
    * - id tag (imdbID) or<br />
    * - imdb tag (imdbId) or<br />
-   * - tmdbId tag (tmdb Id> or<br />
+   * - tmdbid tag (tmdb Id> or<br />
+   * - uniqueid tag (new kodi style multiple ids) or<br />
    * - in a special nested tag (tmm store)
    */
   private Void parseIds() {
@@ -618,6 +611,7 @@ public class MovieNfoParser {
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
+    supportedElements.add("uniqueid");
 
     // id tag & check against imdb pattern (otherwise we cannot say for which provider this id is)
     Element element = getSingleElement(root, "id");
@@ -628,6 +622,7 @@ public class MovieNfoParser {
     if (element != null && MetadataUtil.isValidImdbId(element.ownText())) {
       ids.put(MediaMetadata.IMDB, element.ownText());
     }
+
     // tmdbId tag
     element = getSingleElement(root, "tmdbId");
     if (element != null) {
@@ -637,6 +632,28 @@ public class MovieNfoParser {
       catch (NumberFormatException ignored) {
       }
     }
+
+    // uniqueid tag
+    Elements elements = root.select(root.tagName() + " > uniqueid");
+    for (Element id : elements) {
+      try {
+        String key = id.attr("type");
+        String value = id.ownText();
+        if (StringUtils.isNoneBlank(key, value)) {
+          // check whether the id is an integer
+          try {
+            ids.put(key, MetadataUtil.parseInt(value));
+          }
+          catch (Exception e) {
+            // store as string
+            ids.put(key, value);
+          }
+        }
+      }
+      catch (Exception ignored) {
+      }
+    }
+
     // iterate over our internal id store (old JAXB style)
     element = getSingleElement(root, "ids");
     if (element != null) {
@@ -661,6 +678,7 @@ public class MovieNfoParser {
         }
       }
     }
+
     // iterate over our internal id store (new style)
     element = getSingleElement(root, "ids");
     if (element != null) {
@@ -754,7 +772,7 @@ public class MovieNfoParser {
     if (element != null) {
       try {
         playcount = MetadataUtil.parseInt(element.ownText());
-        if (playcount > 0 && watched == false) {
+        if (playcount > 0 && !watched) {
           watched = true;
         }
       }
@@ -837,7 +855,7 @@ public class MovieNfoParser {
     if (elements.size() == 1) {
       try {
         // split on , or / and remove whitespace around)
-        List<String> creditsNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        String[] creditsNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
         for (String credit : creditsNames) {
           Person person = new Person();
           person.name = credit;
@@ -873,7 +891,7 @@ public class MovieNfoParser {
     if (elements.size() == 1) {
       try {
         // split on , or / and remove whitespace around)
-        List<String> directorNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        String[] directorNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
         for (String director : directorNames) {
           Person person = new Person();
           person.name = director;

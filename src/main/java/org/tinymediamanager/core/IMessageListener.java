@@ -22,5 +22,5 @@ package org.tinymediamanager.core;
  */
 public interface IMessageListener {
 
-  public void pushMessage(Message message);
+  void pushMessage(Message message);
 }

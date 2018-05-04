@@ -39,7 +39,7 @@ public class MovieInMovieSetTableFormat extends TmmTableFormat<Movie> {
     /*
      * title
      */
-    Column col = new Column(BUNDLE.getString("metatag.title"), "title", movie -> movie.getTitleSortable(), String.class);
+    Column col = new Column(BUNDLE.getString("metatag.title"), "title", Movie::getTitleSortable, String.class);
     addColumn(col);
 
     /*

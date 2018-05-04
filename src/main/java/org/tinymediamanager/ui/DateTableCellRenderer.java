@@ -35,7 +35,7 @@ public class DateTableCellRenderer extends DefaultTableCellRenderer {
   /**
    * Create a new DateTableCellRenderer that renders Dates as formatted Strings.
    *
-   * @param DateFormat
+   * @param dateFormat
    *          a String specifying how to format the date, in the format specified by {@link DateFormat}.
    */
   public DateTableCellRenderer(DateFormat dateFormat) {

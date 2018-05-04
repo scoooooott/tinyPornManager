@@ -135,9 +135,7 @@ public class DatePicker extends JPanel implements PropertyChangeListener {
           MenuElement[] menuElements = MenuSelectionManager.defaultManager().getSelectedPath();
           MenuElement[] newMenuElements = new MenuElement[menuElements.length + 1];
           newMenuElements[0] = popup;
-          for (int i = 0; i < menuElements.length; i++) {
-            newMenuElements[i + 1] = menuElements[i];
-          }
+          System.arraycopy(menuElements, 0, newMenuElements, 1, menuElements.length);
           hasListened = true;
           MenuSelectionManager.defaultManager().setSelectedPath(newMenuElements);
         }

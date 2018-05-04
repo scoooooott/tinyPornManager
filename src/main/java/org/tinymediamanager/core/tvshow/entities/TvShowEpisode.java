@@ -49,7 +49,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -407,7 +407,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     try {
       setFirstAired(StrgUtils.parseDate(aired));
     }
-    catch (ParseException e) {
+    catch (ParseException ignored) {
     }
   }
 
@@ -712,7 +712,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     if (connector != null) {
-      connector.write(Arrays.asList(TvShowEpisodeNfoNaming.FILENAME));
+      connector.write(Collections.singletonList(TvShowEpisodeNfoNaming.FILENAME));
     }
 
     firePropertyChange(HAS_NFO_FILE, false, true);
@@ -725,10 +725,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    if (nfos != null && nfos.size() > 0) {
-      return true;
-    }
-    return false;
+    return nfos != null && nfos.size() > 0;
   }
 
   /**
@@ -737,10 +734,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB))) {
-      return true;
-    }
-    return false;
+    return StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB));
   }
 
   /**
@@ -985,21 +979,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * get the first video file for this episode
-   *
-   * @return the first video file
-   */
-  public MediaFile getFirstVideoFile() {
-    List<MediaFile> videoFiles = getVideoFiles();
-    if (!videoFiles.isEmpty()) {
-      return videoFiles.get(0);
-    }
-
-    // just return a dummy MF to prevent NPE
-    return new MediaFile();
-  }
-
-  /**
    * Gets the images to cache.
    * 
    * @return the images to cache
@@ -1064,9 +1043,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     // get all extra audio streams
-    for (MediaFile audioFile : getMediaFiles(MediaFileType.AUDIO)) {
-      mediaFilesWithAudioStreams.add(audioFile);
-    }
+    mediaFilesWithAudioStreams.addAll(getMediaFiles(MediaFileType.AUDIO));
 
     return mediaFilesWithAudioStreams;
   }
@@ -1356,80 +1333,67 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
-  public String getMediaInfoVideoResolution() {
+  public MediaFile getMainVideoFile() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoResolution();
+    if (!videos.isEmpty()) {
+      return videos.get(0);
     }
+    return new MediaFile();
+  }
 
-    return "";
+  @Override
+  public String getMediaInfoVideoResolution() {
+    return getMainVideoFile().getVideoResolution();
   }
 
   @Override
   public String getMediaInfoVideoFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoFormat();
-    }
-
-    return "";
+    return getMainVideoFile().getVideoFormat();
   }
 
   @Override
   public String getMediaInfoVideoCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoCodec();
-    }
-
-    return "";
+    return getMainVideoFile().getVideoCodec();
   }
 
   @Override
   public float getMediaInfoAspectRatio() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAspectRatio();
-    }
-
-    return 0;
+    return getMainVideoFile().getAspectRatio();
   }
 
   @Override
   public String getMediaInfoAudioCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioCodec();
-    }
+    return getMainVideoFile().getAudioCodec();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioCodecList() {
+    return getMainVideoFile().getAudioCodecList();
   }
 
   @Override
   public double getMediaInfoFrameRate() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getFrameRate();
-    }
-
-    return 0;
+    return getMainVideoFile().getFrameRate();
   }
 
   @Override
   public String getMediaInfoAudioChannels() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioChannels();
-    }
+    return getMainVideoFile().getAudioChannels();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioChannelList() {
+    return getMainVideoFile().getAudioChannelsList();
+  }
+
+  @Override
+  public String getMediaInfoAudioLanguage() {
+    return getMainVideoFile().getAudioLanguage();
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioLanguageList() {
+    return getMainVideoFile().getAudioLanguagesList();
   }
 
   @Override

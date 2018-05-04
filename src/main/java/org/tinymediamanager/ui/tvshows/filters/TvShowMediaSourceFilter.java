@@ -41,7 +41,7 @@ public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
   public TvShowMediaSourceFilter() {
     super();
     buildAndInstallMediaSources();
-    MediaSource.addListener(evt -> SwingUtilities.invokeLater(() -> buildAndInstallMediaSources()));
+    MediaSource.addListener(evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaSources));
   }
 
   @Override

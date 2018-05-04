@@ -191,7 +191,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
           Certification cert = (Certification) cbCertification.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.setCertification(cert);
-            ;
+
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });

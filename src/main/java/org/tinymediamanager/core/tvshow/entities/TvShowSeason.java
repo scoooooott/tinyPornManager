@@ -37,7 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
@@ -85,7 +84,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
 
     episodes.add(episode);
-    Utils.sortList(episodes);
+    episodes.sort(TvShowEpisode::compareTo);
     episode.addPropertyChangeListener(listener);
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
@@ -226,9 +225,9 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   public List<MediaFile> getMediaFiles() {
     ArrayList<MediaFile> mfs = new ArrayList<>();
     Set<MediaFile> unique = new LinkedHashSet<>(mfs);
-    for (int i = 0; i < episodes.size(); i++) {
-      unique.addAll(new ArrayList<>(episodes.get(i).getMediaFiles()));
-    }
+      for (TvShowEpisode episode : episodes) {
+          unique.addAll(episode.getMediaFiles());
+      }
     mfs.addAll(unique);
     return mfs;
   }
@@ -236,9 +235,9 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     ArrayList<MediaFile> mfs = new ArrayList<>();
     Set<MediaFile> unique = new LinkedHashSet<>(mfs);
-    for (int i = 0; i < episodes.size(); i++) {
-      unique.addAll(episodes.get(i).getMediaFiles(type));
-    }
+      for (TvShowEpisode episode : episodes) {
+          unique.addAll(episode.getMediaFiles(type));
+      }
     mfs.addAll(unique);
     return mfs;
   }
@@ -265,6 +264,6 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     if (getTvShow() != o.getTvShow()) {
       return getTvShow().getTitle().compareTo(o.getTvShow().getTitle());
     }
-    return getSeason() > o.getSeason() ? +1 : getSeason() < o.getSeason() ? -1 : 0;
+    return Integer.compare(getSeason(), o.getSeason());
   }
 }

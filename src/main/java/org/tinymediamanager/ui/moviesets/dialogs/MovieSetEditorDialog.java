@@ -81,7 +81,7 @@ public class MovieSetEditorDialog extends TmmDialog {
 
   private MovieList           movieList        = MovieList.getInstance();
   private MovieSet            movieSetToEdit;
-  private List<Movie>         moviesInSet      = ObservableCollections.observableList(new ArrayList<Movie>());
+  private List<Movie>         moviesInSet      = ObservableCollections.observableList(new ArrayList<>());
   private List<Movie>         removedMovies    = new ArrayList<>();
   private List<MediaScraper>  artworkScrapers  = new ArrayList<>();
   private boolean             continueQueue    = true;
@@ -459,11 +459,10 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
 
       // sort movies in the right order
-      for (int i = 0; i < moviesInSet.size(); i++) {
-        Movie movie = moviesInSet.get(i);
-        movie.saveToDb();
-        movie.writeNFO();
-      }
+        for (Movie movie : moviesInSet) {
+            movie.saveToDb();
+            movie.writeNFO();
+        }
 
       // remove removed movies
       for (Movie movie : removedMovies) {

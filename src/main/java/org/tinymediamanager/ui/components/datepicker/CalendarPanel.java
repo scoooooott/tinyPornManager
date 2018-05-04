@@ -18,10 +18,7 @@ package org.tinymediamanager.ui.components.datepicker;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
@@ -33,8 +30,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -80,29 +75,23 @@ class CalendarPanel extends JPanel implements PropertyChangeListener {
     dayPanel.addPropertyChangeListener(this);
     dayPanel.setLocale(this.locale);
 
-    monthComboBox.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-          int index = monthComboBox.getSelectedIndex();
-          Calendar c = (Calendar) calendar.clone();
-          c.set(Calendar.MONTH, index);
-          setCalendar(c, false);
-          dayPanel.setMonth(index);
-        }
+    monthComboBox.addItemListener(e -> {
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+        int index = monthComboBox.getSelectedIndex();
+        Calendar c = (Calendar) calendar.clone();
+        c.set(Calendar.MONTH, index);
+        setCalendar(c, false);
+        dayPanel.setMonth(index);
       }
     });
 
-    yearSpinner.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        SpinnerNumberModel model = (SpinnerNumberModel) yearSpinner.getModel();
-        int value = model.getNumber().intValue();
-        Calendar c = (Calendar) calendar.clone();
-        c.set(Calendar.YEAR, value);
-        setCalendar(c, false);
-        dayPanel.setYear(value);
-      }
+    yearSpinner.addChangeListener(e -> {
+      SpinnerNumberModel model = (SpinnerNumberModel) yearSpinner.getModel();
+      int value = model.getNumber().intValue();
+      Calendar c = (Calendar) calendar.clone();
+      c.set(Calendar.YEAR, value);
+      setCalendar(c, false);
+      dayPanel.setYear(value);
     });
     add(monthYearPanel, BorderLayout.NORTH);
     add(dayPanel, BorderLayout.CENTER);
@@ -110,20 +99,10 @@ class CalendarPanel extends JPanel implements PropertyChangeListener {
     JPanel specialButtonPanel = new JPanel();
 
     JButton todayButton = new JButton();
-    todayButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setDate(new Date());
-      }
-    });
+    todayButton.addActionListener(e -> setDate(new Date()));
 
     JButton noDateButton = new JButton();
-    noDateButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        firePropertyChange("day", 0, -1);
-      }
-    });
+    noDateButton.addActionListener(e -> firePropertyChange("day", 0, -1));
 
     specialButtonPanel.setLayout(new GridLayout(1, 2));
     todayButton.setText(BUNDLE.getString("Button.today"));

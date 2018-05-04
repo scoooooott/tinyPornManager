@@ -25,7 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -74,7 +75,6 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -110,7 +110,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
   private MovieList                  movieList             = MovieList.getInstance();
   private Movie                      movieToScrape;
-  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<>());
   private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
   private MediaScraper               mediaScraper;
   private List<MediaScraper>         artworkScrapers;
@@ -480,105 +480,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
             if (!MovieModuleManager.SETTINGS.isScrapeBestImage()) {
-              // poster
-              {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.POSTER, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.POSTER);
-                movieToScrape.downloadArtwork(MediaFileType.POSTER);
-              }
-
-              // fanart
-              {
-                ImageLabel lblImage = new ImageLabel();
-                List<String> extrathumbs = new ArrayList<>();
-                List<String> extrafanarts = new ArrayList<>();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
-                    extrafanarts, MediaType.MOVIE);
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.FANART);
-                movieToScrape.downloadArtwork(MediaFileType.FANART);
-
-                // set extrathumbs and extrafanarts
-                movieToScrape.setExtraThumbs(extrathumbs);
-                movieToScrape.setExtraFanarts(extrafanarts);
-                if (extrafanarts.size() > 0) {
-                  movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
-                }
-
-                if (extrathumbs.size() > 0) {
-                  movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
-                }
-              }
-
-              // banner
-              if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.BANNER);
-                movieToScrape.downloadArtwork(MediaFileType.BANNER);
-              }
-
-              // logo
-              if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.LOGO, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.LOGO);
-                movieToScrape.downloadArtwork(MediaFileType.LOGO);
-              }
-
-              // clearlogo
-              if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARLOGO, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.CLEARLOGO);
-                movieToScrape.downloadArtwork(MediaFileType.CLEARLOGO);
-              }
-
-              // clearart
-              if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARART, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.CLEARART);
-                movieToScrape.downloadArtwork(MediaFileType.CLEARART);
-              }
-
-              // discart
-              if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.DISC, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.DISC);
-                movieToScrape.downloadArtwork(MediaFileType.DISC);
-              }
-
-              // thumb
-              if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
-                ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.THUMB, artworkScrapers, lblImage, null, null,
-                    MediaType.MOVIE);
-                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.THUMB);
-                movieToScrape.downloadArtwork(MediaFileType.THUMB);
-              }
+              chooseArtwork(MediaFileType.POSTER);
+              chooseArtwork(MediaFileType.FANART);
+              chooseArtwork(MediaFileType.BANNER);
+              chooseArtwork(MediaFileType.LOGO);
+              chooseArtwork(MediaFileType.CLEARLOGO);
+              chooseArtwork(MediaFileType.CLEARART);
+              chooseArtwork(MediaFileType.DISC);
+              chooseArtwork(MediaFileType.THUMB);
             }
             else {
               // get artwork asynchronous
@@ -593,7 +502,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
           // if configured - sync with trakt.tv
           if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
-            TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToScrape), null);
+            TmmTask task = new SyncTraktTvTask(Collections.singletonList(movieToScrape), null);
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 
@@ -619,6 +528,95 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     if ("Back".equals(e.getActionCommand())) {
       navigateBack = true;
       setVisible(false);
+    }
+  }
+
+  private void chooseArtwork(MediaFileType mediaFileType) {
+    ImageType imageType;
+    List<String> extrathumbs = null;
+    List<String> extrafanarts = null;
+
+    switch (mediaFileType) {
+      case POSTER:
+        if (MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.POSTER;
+        break;
+
+      case FANART:
+        if (MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.FANART;
+        extrathumbs = new ArrayList<>();
+        extrafanarts = new ArrayList<>();
+        break;
+
+      case BANNER:
+        if (MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.BANNER;
+        break;
+
+      case LOGO:
+        if (MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.LOGO;
+        break;
+
+      case CLEARLOGO:
+        if (MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CLEARLOGO;
+        break;
+
+      case CLEARART:
+        if (MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CLEARART;
+        break;
+
+      case DISC:
+        if (MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.DISC;
+        break;
+
+      case THUMB:
+        if (MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.THUMB;
+        break;
+
+      default:
+        return;
+    }
+
+    String imageUrl = ImageChooserDialog.chooseImage(movieToScrape.getIds(), imageType, artworkScrapers, extrathumbs, extrafanarts, MediaType.MOVIE);
+
+    movieToScrape.setArtworkUrl(imageUrl, mediaFileType);
+    if (StringUtils.isNotBlank(imageUrl)) {
+      movieToScrape.downloadArtwork(mediaFileType);
+    }
+
+    // set extrathumbs and extrafanarts
+    if (mediaFileType == MediaFileType.FANART) {
+      movieToScrape.setExtraThumbs(extrathumbs);
+      movieToScrape.setExtraFanarts(extrafanarts);
+      if (extrafanarts.size() > 0) {
+        movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
+      }
+
+      if (extrathumbs.size() > 0) {
+        movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
+      }
     }
   }
 

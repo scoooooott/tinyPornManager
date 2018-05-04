@@ -63,6 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -118,7 +121,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
   private TvShowList                              tvShowList       = TvShowList.getInstance();
   private TvShowEpisode                           episodeToEdit;
-  private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<>());
   private List<MediaFile>                         mediaFiles       = new ArrayList<>();
   private Rating                                  userRating;
   private boolean                                 continueQueue    = true;
@@ -170,7 +173,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
    *          the queue size
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("tvshowepisode.edit") + "  < " + episode.getFirstVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowepisode.edit") + "  < " + episode.getMainVideoFile().getFilename() + " >", DIALOG_ID); //$NON-NLS-1$
 
     // creation of lists
     guests = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -248,7 +251,22 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         detailsPanel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
-        detailsPanel.add(tfTitle, "cell 1 0 7 1,growx");
+        detailsPanel.add(tfTitle, "flowx,cell 1 0 7 1,growx");
+
+        final JButton btnPlay = new JButton(IconManager.PLAY_INV);
+        btnPlay.setFocusable(false);
+        btnPlay.addActionListener(e -> {
+          MediaFile mf = episodeToEdit.getMainVideoFile();
+          try {
+            TmmUIHelper.openFile(mf.getFileAsPath());
+          }
+          catch (Exception ex) {
+            LOGGER.error("open file", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+          }
+        });
+        detailsPanel.add(btnPlay, "cell 1 0");
       }
       {
         JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -784,7 +802,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
@@ -849,11 +867,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
 
           // artwork
-          for (MediaArtwork ma : metadata.getFanart()) {
-            if (ma.getType() == MediaArtworkType.THUMB) {
-              lblThumb.setImageUrl(ma.getDefaultUrl());
-              break;
-            }
+          for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+            lblThumb.setImageUrl(ma.getDefaultUrl());
+            tfThumb.setText(ma.getDefaultUrl());
+            break;
           }
         }
       }

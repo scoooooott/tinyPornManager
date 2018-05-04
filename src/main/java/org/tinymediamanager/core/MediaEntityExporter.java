@@ -171,7 +171,7 @@ public abstract class MediaEntityExporter {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
 
     return templatesFound;

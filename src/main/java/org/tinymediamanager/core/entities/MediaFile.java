@@ -82,7 +82,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
   private static Pattern                             fanartPattern       = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             bannerPattern       = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern                             thumbPattern        = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+  private static Pattern                             thumbPattern        = Pattern
+      .compile("(?i)(.*-thumb|thumb|.*-landscape|landscape)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             seasonPosterPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
   private static Pattern                             seasonBannerPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
   private static Pattern                             seasonThumbPattern  = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
@@ -173,14 +174,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * "clones" a new media file.
    */
   public MediaFile(MediaFile clone) {
-    this.path = new String(clone.path);
-    this.filename = new String(clone.filename);
+    this.path = clone.path;
+    this.filename = clone.filename;
     this.filesize = clone.filesize;
     this.filedate = clone.filedate;
-    this.videoCodec = new String(clone.videoCodec);
-    this.containerFormat = new String(clone.containerFormat);
-    this.exactVideoFormat = new String(clone.exactVideoFormat);
-    this.video3DFormat = new String(clone.video3DFormat);
+    this.videoCodec = clone.videoCodec;
+    this.containerFormat = clone.containerFormat;
+    this.exactVideoFormat = clone.exactVideoFormat;
+    this.video3DFormat = clone.video3DFormat;
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
     this.aspectRatio = clone.aspectRatio;
@@ -472,7 +473,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case EXTRAFANART:
       case EXTRATHUMB:
       case DISC:
-      case LANDSCAPE:
         return true;
 
       default:
@@ -878,7 +878,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * gets the audio codec<br>
+   * gets the audio codec from the main<br>
    * (w/o punctuation; eg AC-3 => AC3).
    *
    * @return the audio codec
@@ -895,6 +895,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return codec;
   }
 
+  /**
+   * gets the audio codecs from all streams as List<br>
+   * (w/o punctuation; eg AC-3 => AC3).
+   *
+   * @return the audio codecs as List
+   */
+  public List<String> getAudioCodecList() {
+    List<String> audioCodecs = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioCodecs.add(stream.getCodec());
+    }
+    return audioCodecs;
+  }
+
   private MediaFileAudioStream getBestAudioStream() {
     MediaFileAudioStream highestStream = null;
     for (MediaFileAudioStream stream : audioStreams) {
@@ -908,6 +922,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return highestStream;
   }
 
+  /**
+   * gets the audio language from the main stream
+   *
+   * @return the audio language
+   */
   public String getAudioLanguage() {
     String language = "";
 
@@ -918,6 +937,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return language;
+  }
+
+  /**
+   * gets the audio language from all streams as List
+   *
+   * @return the audio languages as List
+   */
+  public List<String> getAudioLanguagesList() {
+    List<String> audioLanguages = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioLanguages.add(stream.getLanguage());
+    }
+    return audioLanguages;
   }
 
   /**
@@ -1100,6 +1132,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange("exactVideoFormat", oldValue, newValue);
   }
 
+  /**
+   * gets the audio channels (with trailing ch) from the main stream<br>
+   *
+   * @return the audio channels
+   */
   public String getAudioChannels() {
     String channels = "";
 
@@ -1110,6 +1147,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return channels;
+  }
+
+  public List<String> getAudioChannelsList() {
+    List<String> audioChannels = new ArrayList<>();
+    for (MediaFileAudioStream stream : audioStreams) {
+      audioChannels.add(stream.getChannelsAsInt() + "ch");
+    }
+    return audioChannels;
   }
 
   /**
@@ -1155,7 +1200,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.videoWidth == 0 || this.videoHeight == 0) {
       return false;
     }
-    return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f ? true : false;
+    return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f;
   }
 
   /**
@@ -1271,7 +1316,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionLD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_LD;
+    return VIDEO_FORMAT_LD.equals(getVideoDefinitionCategory());
   }
 
   /**
@@ -1280,7 +1325,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionSD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_SD;
+    return VIDEO_FORMAT_SD.equals(getVideoDefinitionCategory());
   }
 
   /**
@@ -1289,7 +1334,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideoDefinitionHD() {
-    return getVideoDefinitionCategory() == VIDEO_FORMAT_HD;
+    return VIDEO_FORMAT_HD.equals(getVideoDefinitionCategory());
   }
 
   /**
@@ -1739,8 +1784,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (brMode.length > 1) {
           String[] brChunks = br.split("/");
           int brMult = 0;
-          for (int j = 0; j < brChunks.length; j++) {
-            brMult += parseToInt(brChunks[j].trim());
+          for (String brChunk : brChunks) {
+            brMult += parseToInt(brChunk.trim());
           }
           stream.setBitrate(brMult / 1000);
         }
@@ -1982,7 +2027,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case CLEARLOGO:
       case CLEARART:
       case DISC:
-      case LANDSCAPE:
       case EXTRATHUMB:
         fetchImageInformation();
         break;
@@ -2142,7 +2186,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   @Override
   public boolean equals(Object mf2) {
-    if ((mf2 != null) && (mf2 instanceof MediaFile)) {
+    if ((mf2 instanceof MediaFile)) {
       return compareTo((MediaFile) mf2) == 0;
     }
     return false;

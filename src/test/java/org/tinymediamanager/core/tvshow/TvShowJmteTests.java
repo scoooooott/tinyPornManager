@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -84,6 +86,7 @@ public class TvShowJmteTests {
       engine.setModelAdaptor(new TmmModelAdaptor());
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", episode.getTvShow());
@@ -108,7 +111,15 @@ public class TvShowJmteTests {
       compare("${videoFormat}", "720p");
       compare("${videoCodec}", "h264");
       compare("${audioCodec}", "AC3");
-      compare("${audioChannels}", "6");
+      compare("${audioCodecList[1]}", "MP3");
+      compare("${audioCodecList[2]}", "");
+      compare("${audioChannels}", "6ch");
+      compare("${audioChannelList[1]}", "2ch");
+      compare("${audioChannelList[2]}", "");
+      compare("${audioLanguage}", "en");
+      compare("${audioLanguageList[1]}", "de");
+      compare("${audioLanguageList[1];upper}", "DE");
+      compare("${audioLanguageList[2]}", "");
 
       compare("${mediaSource}", "Blu-ray");
       compare("${mediaSource.name}", "BLURAY");
@@ -171,11 +182,20 @@ public class TvShowJmteTests {
     mf.setOverallBitRate(3500);
     mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
 
+    ArrayList<MediaFileAudioStream> audl = new ArrayList<>();
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    audl.add(audio);
+
+    audio = new MediaFileAudioStream();
+    audio.setCodec("MP3");
+    audio.setLanguage("de");
+    audio.setChannels("2ch");
+    audl.add(audio);
+
+    mf.setAudioStreams(audl);
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

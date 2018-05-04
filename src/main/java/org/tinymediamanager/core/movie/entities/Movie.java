@@ -56,7 +56,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -97,7 +96,7 @@ import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
-import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
+import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -347,11 +346,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> mf = getMediaFiles(MediaFileType.NFO);
-    if (mf != null && mf.size() > 0) {
-      return true;
-    }
 
-    return false;
+    return mf != null && mf.size() > 0;
   }
 
   /**
@@ -362,10 +358,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return true/false
    */
   public Boolean getHasMetadata() {
-    if (!plot.isEmpty() && !(year == 0)) {
-      return true;
-    }
-    return false;
+    return !plot.isEmpty() && !(year == 0);
   }
 
   /**
@@ -855,7 +848,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
               }
             }
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
         }
 
@@ -927,7 +920,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       // if not yet one has been found; sort by quality descending and take the first one which is lower or equal to the desired quality
       if (preferredTrailer == null) {
         List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
-        Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+        sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
         for (MovieTrailer trailer : sortedTrailers) {
           if (desiredQuality.ordinal() >= MovieTrailerQuality.getMovieTrailerQuality(trailer.getQuality()).ordinal()) {
             trailer.setInNfo(Boolean.TRUE);
@@ -941,7 +934,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // if not yet one has been found; sort by quality descending and take the first one
     if (preferredTrailer == null && !trailers.isEmpty()) {
       List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
-      Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+      sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
       preferredTrailer = sortedTrailers.get(0);
       preferredTrailer.setInNfo(Boolean.TRUE);
     }
@@ -1178,7 +1171,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    MovieActorImageFetcher task = new MovieActorImageFetcher(this);
+    MovieActorImageFetcherTask task = new MovieActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
@@ -1334,10 +1327,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the checks for rating
    */
   public boolean getHasRating() {
-    if (!ratings.isEmpty() || scraped) {
-      return true;
-    }
-    return false;
+    return !ratings.isEmpty() || scraped;
   }
 
   /**
@@ -1587,9 +1577,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // get all extra audio streams
-    for (MediaFile audioFile : getMediaFiles(MediaFileType.AUDIO)) {
-      mediaFilesWithAudioStreams.add(audioFile);
-    }
+    mediaFilesWithAudioStreams.addAll(getMediaFiles(MediaFileType.AUDIO));
 
     return mediaFilesWithAudioStreams;
   }
@@ -1658,7 +1646,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     try {
       setReleaseDate(StrgUtils.parseDate(dateAsString));
     }
-    catch (ParseException e) {
+    catch (ParseException ignored) {
     }
   }
 
@@ -1696,19 +1684,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public List<MediaFile> getVideoFiles() {
     return getMediaFiles(MediaFileType.VIDEO);
-  }
-
-  /**
-   * get the first video file for this entity
-   *
-   * @return the first video file
-   */
-  public MediaFile getFirstVideoFile() {
-    List<MediaFile> videoFiles = getVideoFiles();
-    if (!videoFiles.isEmpty()) {
-      return videoFiles.get(0);
-    }
-    return null;
   }
 
   /**
@@ -2033,91 +2008,72 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   @Override
-  public String getMediaInfoVideoResolution() {
+  public MediaFile getMainVideoFile() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoResolution();
+    if (!videos.isEmpty()) {
+      return videos.get(0);
     }
+    return new MediaFile();
+  }
 
-    return "";
+  @Override
+  public String getMediaInfoVideoResolution() {
+    return getMainVideoFile().getVideoResolution();
   }
 
   @Override
   public String getMediaInfoVideoFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoFormat();
-    }
-
-    return "";
+    return getMainVideoFile().getVideoFormat();
   }
 
   @Override
   public String getMediaInfoVideoCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoCodec();
-    }
-
-    return "";
+    return getMainVideoFile().getVideoCodec();
   }
 
   @Override
   public double getMediaInfoFrameRate() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getFrameRate();
-    }
-
-    return 0;
+    return getMainVideoFile().getFrameRate();
   }
 
   @Override
   public float getMediaInfoAspectRatio() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAspectRatio();
-    }
-
-    return 0;
+    return getMainVideoFile().getAspectRatio();
   }
 
   @Override
   public String getMediaInfoAudioCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioCodec();
-    }
+    return getMainVideoFile().getAudioCodec();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioCodecList() {
+    return getMainVideoFile().getAudioCodecList();
   }
 
   @Override
   public String getMediaInfoAudioChannels() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioChannels();
-    }
+    return getMainVideoFile().getAudioChannels();
+  }
 
-    return "";
+  @Override
+  public List<String> getMediaInfoAudioChannelList() {
+    return getMainVideoFile().getAudioChannelsList();
+  }
+
+  @Override
+  public String getMediaInfoAudioLanguage() {
+    return getMainVideoFile().getAudioLanguage();
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioLanguageList() {
+    return getMainVideoFile().getAudioLanguagesList();
   }
 
   @Override
   public String getMediaInfoContainerFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getContainerFormat();
-    }
-
-    return "";
+    return getMainVideoFile().getContainerFormat();
   }
 
   @Override
@@ -2126,12 +2082,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public String getVideo3DFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
-        return mediaFile.getVideo3DFormat();
-      }
+    MediaFile mediaFile = getMainVideoFile();
+    if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
+      return mediaFile.getVideo3DFormat();
     }
 
     if (isVideoIn3D()) { // no MI info, but flag set from user

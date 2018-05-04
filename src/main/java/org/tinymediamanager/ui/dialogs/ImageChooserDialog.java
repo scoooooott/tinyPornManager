@@ -70,6 +70,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.ToggleButtonUI;
@@ -103,7 +104,7 @@ public class ImageChooserDialog extends TmmDialog {
     CLEARLOGO,
     CLEARART,
     DISC,
-    THUMB;
+    THUMB
   }
 
   private DownloadTask         task;
@@ -125,6 +126,25 @@ public class ImageChooserDialog extends TmmDialog {
 
   /**
    * Instantiates a new image chooser dialog.
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param imageLabel
+   *          the image label
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public ImageChooserDialog(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
+      MediaType mediaType) {
+    this(ids, type, artworkScrapers, imageLabel, new ArrayList<>(), new ArrayList<>(), mediaType);
+  }
+
+  /**
+   * Instantiates a new image chooser dialog with extrathumbs and extrafanart usage.
    * 
    * @param ids
    *          the ids
@@ -521,7 +541,7 @@ public class ImageChooserDialog extends TmmDialog {
         art.setPreviewUrl(url);
 
         Url url1 = new Url(art.getPreviewUrl());
-        final BufferedImage bufferedImage = ImageUtils.createImage(url1.getBytes());
+        final BufferedImage bufferedImage = ImageUtils.createImage(url1.getBytesWithRetry(5));
 
         SwingUtilities.invokeLater(() -> {
           addImage(bufferedImage, art);
@@ -537,6 +557,53 @@ public class ImageChooserDialog extends TmmDialog {
       }
     };
     task.run();
+  }
+
+  /**
+   * call a new image chooser dialog without extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, MediaType mediaType) {
+    return chooseImage(ids, type, artworkScrapers, null, null, mediaType);
+  }
+
+  /**
+   * call a new image chooser dialog with extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param extraThumbs
+   *          the extra thumbs
+   * @param extraFanarts
+   *          the extra fanarts
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, List<String> extraThumbs,
+      List<String> extraFanarts, MediaType mediaType) {
+    if (ids.isEmpty()) {
+      return "";
+    }
+
+    ImageLabel lblImage = new ImageLabel();
+    ImageChooserDialog dialog = new ImageChooserDialog(ids, type, artworkScrapers, lblImage, extraThumbs, extraFanarts, mediaType);
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
+    return lblImage.getImageUrl();
   }
 
   private class OkAction extends AbstractAction {
@@ -798,7 +865,7 @@ public class ImageChooserDialog extends TmmDialog {
             Url url = null;
             try {
               url = new Url(art.getPreviewUrl());
-              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytes());
+              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
 
               DownloadChunk chunk = new DownloadChunk();
               chunk.artwork = art;
@@ -806,8 +873,6 @@ public class ImageChooserDialog extends TmmDialog {
               publish(chunk);
               imagesFound = true;
               // addImage(bufferedImage, art);
-            }
-            catch (InterruptedException ignored) {
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask displaying", e.getMessage());
@@ -839,7 +904,7 @@ public class ImageChooserDialog extends TmmDialog {
         panelImages.validate();
         panelImages.getParent().validate();
       }
-      SwingUtilities.invokeLater(() -> stopProgressBar());
+      SwingUtilities.invokeLater(ImageChooserDialog.this::stopProgressBar);
     }
   }
 

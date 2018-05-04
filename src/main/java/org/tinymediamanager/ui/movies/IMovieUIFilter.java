@@ -32,5 +32,5 @@ public interface IMovieUIFilter extends ITmmUIFilter<Movie> {
    *          the movie to check
    * @return true or false
    */
-  public boolean accept(Movie movie);
+  boolean accept(Movie movie);
 }

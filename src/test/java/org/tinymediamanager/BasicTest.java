@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.slf4j.LoggerFactory;
@@ -130,7 +131,7 @@ public class BasicTest {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");
@@ -220,7 +221,7 @@ public class BasicTest {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

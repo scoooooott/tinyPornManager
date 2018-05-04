@@ -201,10 +201,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
   @Override
   public boolean isLeaf(TmmTreeNode node) {
-    if (node.getUserObject() instanceof TvShowEpisode) {
-      return true;
-    }
-    return false;
+    return node.getUserObject() instanceof TvShowEpisode;
   }
 
   @Override

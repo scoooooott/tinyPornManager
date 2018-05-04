@@ -75,10 +75,7 @@ public class TvShowDeleteAction extends TmmAction {
       // delete a season
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        List<TvShowEpisode> episodes = new ArrayList<>();
-        for (TvShowEpisode episode : season.getEpisodes()) {
-          episodes.add(episode);
-        }
+        List<TvShowEpisode> episodes = new ArrayList<>(season.getEpisodes());
         for (TvShowEpisode episode : episodes) {
           season.getTvShow().deleteEpisode(episode);
         }

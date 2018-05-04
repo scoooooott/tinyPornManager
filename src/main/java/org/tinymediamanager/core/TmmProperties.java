@@ -47,24 +47,13 @@ public class TmmProperties {
   private TmmProperties() {
     properties = new Properties();
 
-    InputStream input = null;
-    try {
-      input = new FileInputStream(new File(Globals.settings.getSettingsFolder(), PROPERTIES_FILE));
+    properties = new Properties();
+
+    try (InputStream input = new FileInputStream(new File(Globals.settings.getSettingsFolder(), PROPERTIES_FILE))) {
       properties.load(input);
-    }
-    catch (FileNotFoundException ignored) {
-    }
-    catch (Exception e) {
+    } catch (FileNotFoundException ignored) {
+    } catch (Exception e) {
       LOGGER.warn("unable to read properties file: " + e.getMessage());
-    }
-    finally {
-      if (input != null) {
-        try {
-          input.close();
-        }
-        catch (IOException ignored) {
-        }
-      }
     }
   }
 

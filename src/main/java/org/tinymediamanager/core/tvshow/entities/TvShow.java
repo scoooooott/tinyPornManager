@@ -54,7 +54,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,7 +92,7 @@ import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
-import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcher;
+import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaAiredStatus;
@@ -441,7 +441,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     episode.addPropertyChangeListener(propertyChangeListener);
     addToSeason(episode);
 
-    Utils.sortList(episodes);
+    episodes.sort(TvShowEpisode::compareTo);
 
     firePropertyChange(ADDED_EPISODE, null, episode);
     firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
@@ -475,7 +475,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
 
-    Utils.sortList(this.dummyEpisodes);
+    this.dummyEpisodes.sort(TvShowEpisode::compareTo);
 
     firePropertyChange("dummyEpisodes", null, dummyEpisodes);
     firePropertyChange(EPISODE_COUNT, 0, episodes.size());
@@ -1012,7 +1012,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         break;
     }
 
-    connector.write(Arrays.asList(TvShowNfoNaming.TV_SHOW));
+    connector.write(Collections.singletonList(TvShowNfoNaming.TV_SHOW));
 
     firePropertyChange(HAS_NFO_FILE, false, true);
   }
@@ -1024,10 +1024,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    if (nfos != null && nfos.size() > 0) {
-      return true;
-    }
-    return false;
+    return nfos != null && nfos.size() > 0;
   }
 
   /**
@@ -1036,10 +1033,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER)) && !StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      return true;
-    }
-    return false;
+    return !StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER)) && !StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART));
   }
 
   /**
@@ -1784,7 +1778,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    TvShowActorImageFetcher task = new TvShowActorImageFetcher(this);
+    TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
@@ -1794,6 +1788,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public boolean deleteFilesSafely() {
     return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
+  }
+
+  @Override
+  public MediaFile getMainVideoFile() {
+    return new MediaFile();
   }
 
   @Override
@@ -1832,8 +1831,28 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public List<String> getMediaInfoAudioCodecList() {
+    return new ArrayList<>();
+  }
+
+  @Override
   public String getMediaInfoAudioChannels() {
     return "";
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioChannelList() {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public String getMediaInfoAudioLanguage() {
+    return "";
+  }
+
+  @Override
+  public List<String> getMediaInfoAudioLanguageList() {
+    return new ArrayList<>();
   }
 
   @Override

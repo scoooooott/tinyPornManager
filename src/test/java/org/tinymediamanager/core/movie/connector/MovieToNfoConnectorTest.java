@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -69,7 +70,7 @@ public class MovieToNfoConnectorTest {
       Movie movie = createMovie("target/test-classes/xbmc_nfo/");
 
       // write it
-      List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
+      List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.MOVIE_NFO);
       MovieToXbmcConnector connector = new MovieToXbmcConnector(movie);
       connector.write(nfoNames);
 
@@ -100,7 +101,7 @@ public class MovieToNfoConnectorTest {
       Movie movie = createMovie("target/test-classes/kodi_nfo/");
 
       // write it
-      List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
+      List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.MOVIE_NFO);
       MovieToKodiConnector connector = new MovieToKodiConnector(movie);
       connector.write(nfoNames);
 
@@ -134,7 +135,7 @@ public class MovieToNfoConnectorTest {
       movie.setTop250(0);
 
       // write it
-      List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.FILENAME_NFO);
+      List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.FILENAME_NFO);
       MovieToMediaportalConnector connector = new MovieToMediaportalConnector(movie);
       connector.write(nfoNames);
 
@@ -242,7 +243,7 @@ public class MovieToNfoConnectorTest {
     audio.setCodec("AC3");
     audio.setLanguage("en");
     audio.setChannels("6");
-    mf.setAudioStreams(Arrays.asList(audio));
+    mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");

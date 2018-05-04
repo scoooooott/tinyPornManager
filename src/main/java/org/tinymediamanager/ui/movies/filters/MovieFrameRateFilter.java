@@ -83,11 +83,7 @@ public class MovieFrameRateFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     Double frameRate = (Double) comboBox.getSelectedItem();
-    if (frameRate == movie.getMediaInfoFrameRate()) {
-      return true;
-    }
-
-    return false;
+    return frameRate != null && frameRate == movie.getMediaInfoFrameRate();
   }
 
   @Override

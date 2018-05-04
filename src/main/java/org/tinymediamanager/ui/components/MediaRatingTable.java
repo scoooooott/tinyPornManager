@@ -126,7 +126,7 @@ public class MediaRatingTable extends TmmTable {
 
     @Override
     public boolean equals(Object obj) {
-      if (obj == null || !(obj instanceof MediaRating)) {
+      if (!(obj instanceof MediaRating)) {
         return false;
       }
       if (obj == this) {

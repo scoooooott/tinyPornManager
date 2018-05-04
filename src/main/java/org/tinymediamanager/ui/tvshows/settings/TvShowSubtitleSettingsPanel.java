@@ -77,7 +77,7 @@ public class TvShowSubtitleSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
-  private List<SubtitleScraper>       scrapers         = ObservableCollections.observableList(new ArrayList<SubtitleScraper>());
+  private List<SubtitleScraper>       scrapers         = ObservableCollections.observableList(new ArrayList<>());
   private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;

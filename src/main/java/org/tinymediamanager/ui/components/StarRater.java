@@ -157,9 +157,9 @@ public class StarRater extends JPanel {
           rollover = 0;
           done = true;
           StarRater.this.selection = 1 + (event.getX() / STAR_FOREGROUND_IMAGE.getWidth(null));
-          for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).handleSelection(StarRater.this.selection);
-          }
+            for (StarListener listener : listeners) {
+                listener.handleSelection(StarRater.this.selection);
+            }
           repaint();
         }
       }

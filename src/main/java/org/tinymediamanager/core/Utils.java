@@ -49,13 +49,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -64,10 +62,9 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.LaunchUtil;
@@ -421,8 +418,7 @@ public class Utils {
         }
 
         try {
-          int s = Integer.parseInt(stack.replaceAll("[^0-9]", "")); // remove all non numbers
-          return s;
+          return Integer.parseInt(stack.replaceAll("[^0-9]", ""));
         }
         catch (Exception e) {
           return 0;
@@ -1029,7 +1025,7 @@ public class Utils {
    * @param file
    *          the file to backup
    */
-  public static final void createBackupFile(Path file) {
+  public static void createBackupFile(Path file) {
     createBackupFile(file, true);
   }
 
@@ -1041,7 +1037,7 @@ public class Utils {
    * @param overwrite
    *          if file is already there, ignore that and overwrite with new copy
    */
-  public static final void createBackupFile(Path file, boolean overwrite) {
+  public static void createBackupFile(Path file, boolean overwrite) {
     Path backup = Paths.get("backup");
     try {
       if (!Files.exists(backup)) {
@@ -1053,7 +1049,7 @@ public class Utils {
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
-      if (!Files.exists(backup) || overwrite == true) {
+      if (!Files.exists(backup) || overwrite) {
         // v1 - just copy
         // FileUtils.copyFile(f, backup, true);
 
@@ -1098,7 +1094,7 @@ public class Utils {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
 
     for (int i = 0; i < al.size() - keep; i++) {
@@ -1114,7 +1110,7 @@ public class Utils {
    * @param macAddr
    *          the mac address to 'wake up'
    */
-  public static final void sendWakeOnLanPacket(String macAddr) {
+  public static void sendWakeOnLanPacket(String macAddr) {
     // Broadcast IP address
     final String IP = "255.255.255.255";
     final int port = 7;
@@ -1233,7 +1229,7 @@ public class Utils {
       }
 
       @Override
-      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
       }
 
@@ -1244,7 +1240,7 @@ public class Utils {
       }
 
       @Override
-      public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+      public FileVisitResult visitFileFailed(Path file, IOException exc) {
         LOGGER.warn("Could not delete " + file + "; " + exc.getMessage());
         return FileVisitResult.CONTINUE;
       }
@@ -1361,14 +1357,14 @@ public class Utils {
   /**
    * extract our templates (only if non existing)
    */
-  public static final void extractTemplates() {
+  public static void extractTemplates() {
     extractTemplates(false);
   }
 
   /**
    * extract our templates (use force to overwrite)
    */
-  public static final void extractTemplates(boolean force) {
+  public static void extractTemplates(boolean force) {
     Path dest = Paths.get("templates");
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dest)) {
       for (Path path : directoryStream) {
@@ -1438,44 +1434,6 @@ public class Utils {
   }
 
   /**
-   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
-   *
-   * @param list
-   *          the list to be sorted
-   */
-  public static void sortList(List list) {
-    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
-      List tempList = new ArrayList(list);
-      Collections.sort(tempList);
-      list.clear();
-      list.addAll(tempList);
-    }
-    else {
-      Collections.sort(list);
-    }
-  }
-
-  /**
-   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
-   *
-   * @param list
-   *          the list to be sorted
-   * @param comparator
-   *          the comparator used for sorting
-   */
-  public static void sortList(List list, Comparator comparator) {
-    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
-      List tempList = new ArrayList(list);
-      Collections.sort(tempList, comparator);
-      list.clear();
-      list.addAll(tempList);
-    }
-    else {
-      Collections.sort(list, comparator);
-    }
-  }
-
-  /**
    * logback does not clean older log files than 32 days in the past. We have to clean the log files too
    */
   public static void cleanOldLogs() {
@@ -1500,7 +1458,7 @@ public class Utils {
         }
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
   }
 
@@ -1517,13 +1475,39 @@ public class Utils {
   }
 
   /**
+   * get all files from the given path
+   *
+   * @param root
+   *          the root folder to search files for
+   * @return a list of all found files
+   */
+  public static List<Path> listFiles(Path root) {
+    final List<Path> filesFound = new ArrayList<>();
+    if (!Files.isDirectory(root)) {
+      return filesFound;
+    }
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(root)) {
+      for (Path path : directoryStream) {
+        if (Files.isRegularFile(path)) {
+          filesFound.add(path);
+        }
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not get a file listing: " + e.getMessage());
+    }
+
+    return filesFound;
+  }
+
+  /**
    * get all files from the given path recursive
    *
    * @param root
    *          the root folder to search files for
    * @return a list of all found files
    */
-  public static List<Path> findFilesRecursive(Path root) {
+  public static List<Path> listFilesRecursive(Path root) {
     final List<Path> filesFound = new ArrayList<>();
     if (!Files.isDirectory(root)) {
       return filesFound;
@@ -1531,8 +1515,10 @@ public class Utils {
     try {
       Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-          filesFound.add(file);
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+          if (Files.isRegularFile(file)) {
+            filesFound.add(file);
+          }
           return FileVisitResult.CONTINUE;
         }
       });
@@ -1556,7 +1542,7 @@ public class Utils {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
       if (sourcePath == null) {
         sourcePath = dir;
       }

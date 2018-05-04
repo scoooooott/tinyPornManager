@@ -45,7 +45,7 @@ public class TvShowSelectionModel extends AbstractModelObject {
    */
   public TvShowSelectionModel() {
     selectedTvShow = initalTvShow;
-    propertyChangeListener = evt -> firePropertyChange(evt);
+    propertyChangeListener = this::firePropertyChange;
   }
 
   public void setTreeTable(TmmTreeTable treeTable) {

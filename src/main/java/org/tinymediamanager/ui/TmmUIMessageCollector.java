@@ -44,46 +44,40 @@ public class TmmUIMessageCollector extends AbstractModelObject implements IMessa
   private int                               newMessages = 0;
 
   private TmmUIMessageCollector() {
-    messages = GlazedLists.threadSafeList(new BasicEventList<Message>());
+    messages = GlazedLists.threadSafeList(new BasicEventList<>());
   }
 
   @Override
   public void pushMessage(final Message message) {
     // display severe messages in a popup directly!
     if (message.getMessageLevel() == MessageLevel.SEVERE) {
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          String sender = "";
-          try {
-            sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
-          }
-          catch (Exception e) {
-            sender = String.valueOf(message.getMessageSender());
-          }
-
-          String text = "";
-          try {
-            text = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageId()), message.getIdParams());
-          }
-          catch (Exception e) {
-            text = String.valueOf(message.getMessageId());
-          }
-
-          JOptionPane.showMessageDialog(null, text, sender, JOptionPane.ERROR_MESSAGE);
+      SwingUtilities.invokeLater(() -> {
+        String sender = "";
+        try {
+          sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
         }
+        catch (Exception e) {
+          sender = String.valueOf(message.getMessageSender());
+        }
+
+        String text = "";
+        try {
+          text = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageId()), message.getIdParams());
+        }
+        catch (Exception e) {
+          text = String.valueOf(message.getMessageId());
+        }
+
+        JOptionPane.showMessageDialog(null, text, sender, JOptionPane.ERROR_MESSAGE);
       });
     }
     else {
       // otherwise push it to the list
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          messages.add(message);
-          int oldValue = newMessages;
-          newMessages++;
-          firePropertyChange("messages", oldValue, newMessages);
-        }
+      SwingUtilities.invokeLater(() -> {
+        messages.add(message);
+        int oldValue = newMessages;
+        newMessages++;
+        firePropertyChange("messages", oldValue, newMessages);
       });
     }
   }

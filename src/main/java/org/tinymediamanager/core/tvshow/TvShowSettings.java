@@ -90,11 +90,11 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  SEASON_THUMB_FILENAME          = "seasonThumbFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
 
-  private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>                   artworkScrapers                = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>                   skipFolders                    = ObservableCollections.observableList(new ArrayList<String>());
-  private final List<String>                   subtitleScrapers               = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                   artworkScrapers                = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                   skipFolders                    = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                   subtitleScrapers               = ObservableCollections.observableList(new ArrayList<>());
   private final List<TvShowNfoNaming>          nfoFilenames                   = new ArrayList<>();
   private final List<TvShowPosterNaming>       posterFilenames                = new ArrayList<>();
   private final List<TvShowFanartNaming>       fanartFilenames                = new ArrayList<>();
@@ -109,7 +109,7 @@ public class TvShowSettings extends AbstractSettings {
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
-  private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
 
   private String                               scraper                        = Constants.TVDB;
   private boolean                              scrapeBestImage                = true;

@@ -92,7 +92,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     setOpaque(false);
 
     movieList = MovieList.getInstance();
-    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
+    SortedList<Movie> sortedMovies = new SortedList<Movie>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
@@ -106,7 +106,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     FilterList<Movie> extendedFilteredMovies = new FilterList<>(sortedMovies, movieMatcherEditor);
     FilterList<Movie> textFilteredMovies = new FilterList<>(extendedFilteredMovies, textMatcherEditor);
     selectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<>(textFilteredMovies, new MovieTableFormat());
+    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
 
     // build the table
     movieTable = new TmmTable(movieTableModel);

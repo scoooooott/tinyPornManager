@@ -106,11 +106,11 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
 
       if (doShift) {
         int n = hiddenColumnsPosition.size();
-        for (int i = 0; i < n; i++) {
-          if (hiddenColumnsPosition.get(i) <= columnIndex) {
-            columnIndex++;
+          for (Integer aHiddenColumnsPosition : hiddenColumnsPosition) {
+              if (aHiddenColumnsPosition <= columnIndex) {
+                  columnIndex++;
+              }
           }
-        }
         for (int i = 0; i < n; i++) {
           int index = hiddenColumnsPosition.get(i);
           if (index > columnIndex) {

@@ -38,7 +38,7 @@ public class TvShowEpisodeSelectionModel extends AbstractModelObject {
   public TvShowEpisodeSelectionModel() {
     selectedTvShowEpisode = initalTvShowEpisode;
 
-    propertyChangeListener = evt -> firePropertyChange(evt);
+    propertyChangeListener = this::firePropertyChange;
   }
 
   /**

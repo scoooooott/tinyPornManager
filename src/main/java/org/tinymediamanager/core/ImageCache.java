@@ -103,7 +103,7 @@ public class ImageCache {
   /**
    * Cache image.
    * 
-   * @param mf
+   * @param originalFile
    *          the media file
    * @return the file the cached file
    * @throws Exception
@@ -345,11 +345,8 @@ public class ImageCache {
     }
 
     Path cachedFile = CACHE_DIR.resolve(ImageCache.getMD5(path.toString()) + "." + Utils.getExtension(path));
-    if (Files.exists(cachedFile)) {
-      return true;
-    }
 
-    return false;
+    return Files.exists(cachedFile);
   }
 
   /**

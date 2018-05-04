@@ -36,7 +36,7 @@ public enum MovieTrailerQuality {
   private String       displayText;
   private List<String> possibleQualities;
 
-  private MovieTrailerQuality(String text, List<String> qualities) {
+  MovieTrailerQuality(String text, List<String> qualities) {
     this.displayText = text;
     this.possibleQualities = qualities;
   }

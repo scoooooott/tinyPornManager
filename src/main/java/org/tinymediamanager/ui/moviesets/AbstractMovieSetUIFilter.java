@@ -16,7 +16,7 @@
 package org.tinymediamanager.ui.moviesets;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -54,10 +54,10 @@ public abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTr
     else if (userObject instanceof Movie) {
       Movie movie = (Movie) userObject;
       if (getFilterState() == FilterState.ACTIVE) {
-        return accept(movie.getMovieSet(), Arrays.asList(movie));
+        return accept(movie.getMovieSet(), Collections.singletonList(movie));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(movie.getMovieSet(), Arrays.asList(movie));
+        return !accept(movie.getMovieSet(), Collections.singletonList(movie));
       }
     }
 
@@ -72,6 +72,7 @@ public abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTr
    * @param movies
    *          all movies of this node
    * @return
+   *          whether we should or not accept it.
    */
   protected abstract boolean accept(MovieSet movieSet, List<Movie> movies);
 

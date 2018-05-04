@@ -159,8 +159,6 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
       catch (IOException e) {
         LOGGER.error("Error extracting Youtube url: " + e.getMessage());
       }
-      catch (InterruptedException e) {
-      }
     }
 
     return url;
@@ -168,7 +166,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   @Override
   public boolean equals(Object mt2) {
-    if ((mt2 != null) && (mt2 instanceof MovieTrailer)) {
+    if (mt2 instanceof MovieTrailer) {
       return compareTo((MovieTrailer) mt2) == 0;
     }
     return false;
@@ -195,12 +193,12 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
       try {
         quality1 = Integer.parseInt(o1.quality.replace("p", ""));
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
       try {
         quality2 = Integer.parseInt(o2.quality.replace("p", ""));
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
       return quality2 - quality1;
     }

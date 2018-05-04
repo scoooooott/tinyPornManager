@@ -28,5 +28,5 @@ public interface TmmCheckComboBoxSelectionListener extends EventListener {
    * 
    * @param index
    */
-  public void selectionChanged(int index);
+  void selectionChanged(int index);
 }

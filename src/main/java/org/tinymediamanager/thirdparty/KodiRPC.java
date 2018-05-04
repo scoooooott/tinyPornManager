@@ -55,10 +55,10 @@ public class KodiRPC {
   private static JavaConnectionManager cm               = new JavaConnectionManager();
 
   private String                       kodiVersion      = "";
-  private ArrayList<SplitUri>          videodatasources = new ArrayList<SplitUri>();
-  private ArrayList<SplitUri>          audiodatasources = new ArrayList<SplitUri>();
+  private ArrayList<SplitUri>          videodatasources = new ArrayList<>();
+  private ArrayList<SplitUri>          audiodatasources = new ArrayList<>();
 
-  private HashMap<String, Integer>     moviemappings    = new HashMap();
+  private HashMap<String, Integer>     moviemappings    = new HashMap<>();
 
   private KodiRPC() {
     cm.registerConnectionListener(new ConnectionListener() {
@@ -136,7 +136,7 @@ public class KodiRPC {
 
   private void getAndSetVideoDataSources() {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.VIDEO); // movies + tv !!!
-    this.videodatasources = new ArrayList<SplitUri>();
+    this.videodatasources = new ArrayList<>();
     send(call);
     for (ListModel.SourceItem res : call.getResults()) {
       this.videodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
@@ -199,7 +199,7 @@ public class KodiRPC {
 
   private void getAndSetAudioDataSources() {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.MUSIC);
-    this.audiodatasources = new ArrayList<SplitUri>();
+    this.audiodatasources = new ArrayList<>();
     send(call);
     for (ListModel.SourceItem res : call.getResults()) {
       this.audiodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
@@ -289,11 +289,10 @@ public class KodiRPC {
   /**
    * Connect to Kodi with specified TCP port
    * 
-   * @param hostname
-   *          hostname or IP address
-   * @param tcpPort
-   *          TCP port used in Kodi (defaults to 9090; can only be configured via advancedsettings.xml)
+   * @param config
+   *          Host configuration
    * @throws ApiException
+   *          Throws ApiException when something goes wrong with the initialization of the API.
    */
   public void connect(HostConfig config) throws ApiException {
     if (cm.isConnected()) {
@@ -600,7 +599,7 @@ public class KodiRPC {
       if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
         return true;
       }
-      if (hostname != null && !hostname.isEmpty() && hostname.equals(other.hostname)) {
+      if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
         return true;
       }
 

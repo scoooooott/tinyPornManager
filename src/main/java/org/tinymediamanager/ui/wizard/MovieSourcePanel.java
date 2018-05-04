@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.wizard;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -102,32 +100,26 @@ class MovieSourcePanel extends JPanel {
       panelMovieDataSources.add(btnRemove, "cell 1 1");
       btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
       btnRemove.setMargin(new Insets(2, 2, 2, 2));
-      btnRemove.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          int row = listDataSources.getSelectedIndex();
-          if (row != -1) { // nothing selected
-            String path = MovieModuleManager.SETTINGS.getMovieDataSource().get(row);
-            String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-            int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
-                BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
-                BUNDLE.getString("Button.abort")); //$NON-NLS-1$
-            if (decision == 0) {
-              setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-              MovieModuleManager.SETTINGS.removeMovieDataSources(path);
-              setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
+      btnRemove.addActionListener(arg0 -> {
+        int row = listDataSources.getSelectedIndex();
+        if (row != -1) { // nothing selected
+          String path = MovieModuleManager.SETTINGS.getMovieDataSource().get(row);
+          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
+              BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
+              BUNDLE.getString("Button.abort")); //$NON-NLS-1$
+          if (decision == 0) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            MovieModuleManager.SETTINGS.removeMovieDataSources(path);
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
         }
       });
-      btnAdd.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          String path = TmmProperties.getInstance().getProperty("movie.datasource.path");
-          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
-          if (file != null && Files.isDirectory(file)) {
-            MovieModuleManager.SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
-          }
+      btnAdd.addActionListener(arg0 -> {
+        String path = TmmProperties.getInstance().getProperty("movie.datasource.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          MovieModuleManager.SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
         }
       });
     }

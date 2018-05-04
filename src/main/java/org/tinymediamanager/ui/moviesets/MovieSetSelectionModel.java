@@ -44,7 +44,7 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    */
   public MovieSetSelectionModel() {
     selectedMovieSet = initalMovieSet;
-    propertyChangeListener = evt -> firePropertyChange(evt);
+    propertyChangeListener = this::firePropertyChange;
   }
 
   public void setTreeTable(TmmTreeTable treeTable) {

@@ -421,7 +421,7 @@ public class ImageLabel extends JLabel {
         else {
           url = new Url(imageUrl);
         }
-        originalImageBytes = url.getBytes();
+        originalImageBytes = url.getBytesWithRetry(5);
         BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
         originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
         return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);

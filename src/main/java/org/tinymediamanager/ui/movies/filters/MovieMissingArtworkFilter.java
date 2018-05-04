@@ -45,11 +45,7 @@ public class MovieMissingArtworkFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    if (!movie.getHasImages()) {
-      return true;
-    }
-
-    return false;
+    return !movie.getHasImages();
   }
 
   @Override

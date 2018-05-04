@@ -65,11 +65,11 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
     }
 
     for (TvShowEpisode episode : episodes) {
-      if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {
-        if (videoFormat == MediaFile.VIDEO_FORMAT_HD && isVideoHD(episode.getMediaInfoVideoFormat())) {
+      if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
+        if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat())) {
           return true;
         }
-        if (videoFormat == MediaFile.VIDEO_FORMAT_SD && !isVideoHD(episode.getMediaInfoVideoFormat())) {
+        if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat())) {
           return true;
         }
       }
@@ -99,16 +99,16 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
   }
 
   private boolean isVideoHD(String videoFormat) {
-    if (videoFormat == MediaFile.VIDEO_FORMAT_720P) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_720P)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_1080P) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_1080P)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_4K) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_4K)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_8K)) {
       return true;
     }
     return false;

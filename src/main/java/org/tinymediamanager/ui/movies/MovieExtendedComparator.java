@@ -69,7 +69,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
     private String title;
 
-    private WatchedFlag(String title) {
+    WatchedFlag(String title) {
       this.title = title;
     }
 
@@ -85,7 +85,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
     private String title;
 
-    private SortOrder(String title) {
+    SortOrder(String title) {
       this.title = title;
     }
 
@@ -101,7 +101,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
     private String title;
 
-    private MovieInMovieSet(String title) {
+    MovieInMovieSet(String title) {
       this.title = title;
     }
 
@@ -117,7 +117,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
     private String title;
 
-    private OfflineMovie(String title) {
+    OfflineMovie(String title) {
       this.title = title;
     }
 

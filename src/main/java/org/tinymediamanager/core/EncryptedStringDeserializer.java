@@ -19,7 +19,6 @@ package org.tinymediamanager.core;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -29,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 public class EncryptedStringDeserializer extends JsonDeserializer<String> {
 
   @Override
-  public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+  public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
     return AesUtil.DEFAULT_INSTANCE.decrypt(AesUtil.DEFAULT_SALT, AesUtil.DEFAULT_VECTOR, AesUtil.DEFAULT_VECTOR, jsonParser.getText());
   }
 }

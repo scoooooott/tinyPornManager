@@ -1,7 +1,5 @@
 package org.tinymediamanager.thirdparty.upnp;
 
-import java.io.IOException;
-
 import org.fourthline.cling.binding.LocalServiceBindingException;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.model.DefaultServiceManager;
@@ -25,7 +23,7 @@ public class MediaServer {
   private static final Logger LOGGER = LoggerFactory.getLogger(MediaServer.class);
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public static LocalDevice createDevice() throws ValidationException, LocalServiceBindingException, IOException {
+  public static LocalDevice createDevice() throws ValidationException, LocalServiceBindingException {
     DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("tinyMediaManager"));
     DeviceType type = new UDADeviceType("MediaServer", 1);
     String hostname = NetworkUtil.getMachineHostname();

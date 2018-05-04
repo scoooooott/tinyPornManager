@@ -142,7 +142,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       for (MediaFile mediaFile : mediaFiles) {
         if (isShowing()) {
           if (isCancelled()) {
@@ -153,7 +153,6 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             if (file == null) {
               file = mediaFile.getFileAsPath();
             }
-            LOGGER.debug("loading " + file);
             BufferedImage bufferedImage = ImageUtils.createImage(file);
             Point size = ImageUtils.calculateSize(maxWidth, maxHeight, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
             // BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);

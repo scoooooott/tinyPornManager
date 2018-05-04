@@ -66,7 +66,7 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
 
     this.checkBox.addActionListener(actionListener);
 
-    if (this.filterComponent != null && this.filterComponent instanceof JTextComponent) {
+    if (this.filterComponent instanceof JTextComponent) {
       ((JTextComponent) this.filterComponent).getDocument().addDocumentListener(new DocumentListener() {
         @Override
         public void removeUpdate(DocumentEvent e) {
@@ -84,13 +84,13 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
         }
       });
     }
-    else if (this.filterComponent != null && this.filterComponent instanceof AbstractButton) {
+    else if (this.filterComponent instanceof AbstractButton) {
       ((AbstractButton) this.filterComponent).addActionListener(actionListener);
     }
-    else if (this.filterComponent != null && this.filterComponent instanceof JComboBox) {
+    else if (this.filterComponent instanceof JComboBox) {
       ((JComboBox<?>) this.filterComponent).addActionListener(actionListener);
     }
-    else if (this.filterComponent != null && this.filterComponent instanceof JSpinner) {
+    else if (this.filterComponent instanceof JSpinner) {
       ((JSpinner) this.filterComponent).addChangeListener(changeListener);
     }
   }

@@ -82,10 +82,10 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
 
-    oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
-    newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
+    oldMediaFileEventList = GlazedLists.eventList(new ArrayList<>());
+    newMediaFileEventList = GlazedLists.eventList(new ArrayList<>());
 
-    results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<MovieRenamerPreviewContainer>()));
+    results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<>()));
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
@@ -303,7 +303,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
       // sort movies
       moviesToProcess.sort(new MovieComparator());
       // rename them
