@@ -3,9 +3,15 @@ package org.tinymediamanager.scraper.util;
 import java.util.Locale;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class LanguageUtilsTest {
+
+  @BeforeClass
+  public static void setUp() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   public void localizedCountries() {
@@ -16,6 +22,7 @@ public class LanguageUtilsTest {
     assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage(Locale.GERMANY, "USA", "en_US", "US"));
     assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "USA", "en_US", "US"));
     assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "USA", "en_US", "US"));
+    assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "Vereinigte Staaten von Amerika"));
     assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage("fr", "USA", "en_US", "US"));
     assertEqual("West Germany", LanguageUtils.getLocalizedCountryForLanguage("de", "West Germany", "XWG"));
   }

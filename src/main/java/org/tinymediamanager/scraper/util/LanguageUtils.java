@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.util;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -77,30 +76,40 @@ public class LanguageUtils {
     // all possible variants of language/prefixes/non-iso style
     for (String langu : Locale.getISOLanguages()) {
       Locale base = new Locale(langu); // from all, create only the base languages
-      langArray.put(base.getDisplayLanguage(intl), base);
-      langArray.put(base.getDisplayLanguage(), base);
+
+      // first put the name in the default locale
+      langArray.putIfAbsent(base.getDisplayLanguage(), base);
+      // second in english
+      langArray.putIfAbsent(base.getDisplayLanguage(intl), base);
       try {
-        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
+        langArray.putIfAbsent(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
       }
       catch (Exception ignore) {
-        // ignore
       }
+
+      // and afterwards in all other languages
+      for (String displayLangu : Locale.getISOLanguages()) {
+        try {
+          String alternativeLanguage = base.getDisplayLanguage(new Locale(displayLangu));
+          if (!alternativeLanguage.isEmpty()) {
+            langArray.putIfAbsent(alternativeLanguage, base);
+          }
+        }
+        catch (Exception ignored) {
+        }
+      }
+
       // ISO-639-2/T
-      langArray.put(base.getISO3Language(), base);
+      langArray.putIfAbsent(base.getISO3Language(), base);
       // ISO-639-2/B
-      langArray.put(LanguageUtils.getISO3BLanguage(base), base);
+      langArray.putIfAbsent(LanguageUtils.getISO3BLanguage(base), base);
       // ISO 639-1
-      langArray.put(langu, base);
+      langArray.putIfAbsent(langu, base);
     }
 
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
-    Collections.sort(keys, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        return s2.length() - s1.length();
-      }
-    });
+    Collections.sort(keys, (s1, s2) -> s2.length() - s1.length());
 
     // all lowercase (!)
     for (String key : keys) {
@@ -119,20 +128,28 @@ public class LanguageUtils {
 
     for (String cc : Locale.getISOCountries()) {
       Locale l = new Locale("", cc);
-      langArray.put(l.getDisplayCountry(intl), l); // english name
       langArray.put(l.getDisplayCountry(), l); // localized name
+      langArray.put(l.getDisplayCountry(intl), l); // english name
+
+      // and afterwards in all other languages
+      for (String displayLangu : Locale.getISOLanguages()) {
+        try {
+          String alternativeLanguage = l.getDisplayCountry(new Locale(displayLangu));
+          if (!alternativeLanguage.isEmpty()) {
+            langArray.putIfAbsent(alternativeLanguage, l);
+          }
+        }
+        catch (Exception ignored) {
+        }
+      }
+
       langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code 2 char - lowercase to overwrite possible language key (!)
       langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code 3 char - lowercase to overwrite possible language key (!)
     }
 
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
-    Collections.sort(keys, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        return s2.length() - s1.length();
-      }
-    });
+    Collections.sort(keys, (s1, s2) -> s2.length() - s1.length());
 
     // all lowercase (!)
     for (String key : keys) {
