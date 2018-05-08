@@ -40,6 +40,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -359,7 +360,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       lblClearart.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.CLEARART));
     }
 
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     // adjust table columns
     // name column
@@ -459,10 +460,10 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
 
       // sort movies in the right order
-        for (Movie movie : moviesInSet) {
-            movie.saveToDb();
-            movie.writeNFO();
-        }
+      for (Movie movie : moviesInSet) {
+        movie.saveToDb();
+        movie.writeNFO();
+      }
 
       // remove removed movies
       for (Movie movie : removedMovies) {
@@ -541,26 +542,6 @@ public class MovieSetEditorDialog extends TmmDialog {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
-    JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
-    //
-    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("title");
-    jTableBinding.addColumnBinding(movieBeanProperty).setEditable(false); // $NON-NLS-1$
-    //
-    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setEditable(false); // $NON-NLS-1$
-    //
-    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
-    jTableBinding.addColumnBinding(movieBeanProperty_2).setEditable(false).setColumnClass(Boolean.class); // $NON-NLS-1$
-    //
-    jTableBinding.setEditable(false);
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-  }
-
   private class SearchIdAction extends AbstractAction {
     private static final long serialVersionUID = -8980803676368394987L;
 
@@ -617,5 +598,26 @@ public class MovieSetEditorDialog extends TmmDialog {
 
   public boolean isNavigateBack() {
     return navigateBack;
+  }
+
+  protected BindingGroup initDataBindings() {
+    JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
+    //
+    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("title");
+    jTableBinding.addColumnBinding(movieBeanProperty).setEditable(false);
+    //
+    BeanProperty<Movie, Integer> movieBeanProperty_1 = BeanProperty.create("year");
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setEditable(false);
+    //
+    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
+    jTableBinding.addColumnBinding(movieBeanProperty_2).setEditable(false).setColumnClass(Boolean.class);
+    //
+    jTableBinding.setEditable(false);
+    jTableBinding.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jTableBinding);
+    return bindingGroup;
   }
 }

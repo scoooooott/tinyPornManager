@@ -46,6 +46,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -249,7 +250,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       addDefaultButton(btnOk);
     }
 
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     // adjust table columns
     tableMovies.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -444,14 +445,13 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     return continueQueue;
   }
 
-  protected void initDataBindings() {
+  protected BindingGroup initDataBindings() {
     JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         movieSetsFound, tableMovieSets);
     //
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false);
     //
-    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, List<MovieInSet>> jTableBeanProperty = BeanProperty.create("selectedElement.movies");
@@ -464,28 +464,33 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.title");
     jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName("matched movie").setEditable(false);
     //
-    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
         lblMovieSetName, jLabelBeanProperty);
-    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
-    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> readOnlyTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_3, tpPlot, readOnlyTextPaneBeanProperty);
-    bindings.add(autoBinding_2);
     autoBinding_2.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jTableBinding);
+    bindingGroup.addBinding(jTableBinding_1);
+    bindingGroup.addBinding(autoBinding);
+    bindingGroup.addBinding(autoBinding_1);
+    bindingGroup.addBinding(autoBinding_2);
+    return bindingGroup;
   }
 }

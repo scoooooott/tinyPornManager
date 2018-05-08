@@ -18,9 +18,7 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.util.HashSet;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -35,7 +33,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import org.jdesktop.beansbinding.Binding;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -53,7 +51,7 @@ public abstract class TmmDialog extends JDialog {
   /** @wbp.nls.resourceBundle messages */
   protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  protected Set<Binding<?, ?, ?, ?>>    bindings         = new HashSet<>();
+  protected BindingGroup                bindingGroup     = null;
 
   protected JPanel                      topPanel         = null;
   protected JPanel                      bottomPanel      = null;
@@ -257,10 +255,8 @@ public abstract class TmmDialog extends JDialog {
    * unbind bound bindings (reduce memory consumption)
    */
   protected void unbind() {
-    for (Binding<?, ?, ?, ?> binding : bindings) {
-      if (binding != null && binding.isBound()) {
-        binding.unbind();
-      }
+    if (bindingGroup != null) {
+      bindingGroup.unbind();
     }
   }
 }

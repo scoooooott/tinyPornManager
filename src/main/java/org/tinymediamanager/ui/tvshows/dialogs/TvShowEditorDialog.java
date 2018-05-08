@@ -57,6 +57,7 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -209,7 +210,7 @@ public class TvShowEditorDialog extends TmmDialog {
         GlazedLists.beanConnector(EpisodeEditorContainer.class));
 
     initComponents();
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     {
       tfTitle.setText(tvShow.getTitle());
@@ -1454,16 +1455,6 @@ public class TvShowEditorDialog extends TmmDialog {
     }
   }
 
-  protected void initDataBindings() {
-    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
-    bindings.add(jListBinding);
-    jListBinding.bind();
-    //
-    JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
-    bindings.add(jListBinding_1);
-    jListBinding_1.bind();
-  }
-
   @Override
   public void dispose() {
     super.dispose();
@@ -1593,5 +1584,19 @@ public class TvShowEditorDialog extends TmmDialog {
       }
       return episodeEditorContainer;
     }
+  }
+
+  protected BindingGroup initDataBindings() {
+    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    jListBinding.bind();
+    //
+    JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    jListBinding_1.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jListBinding);
+    bindingGroup.addBinding(jListBinding_1);
+    return bindingGroup;
   }
 }

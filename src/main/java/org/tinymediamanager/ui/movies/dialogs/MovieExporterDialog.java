@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -198,7 +199,7 @@ public class MovieExporterDialog extends TmmDialog {
 
     movies = moviesToExport;
     templatesFound = MovieExporter.findTemplates(TemplateType.MOVIE);
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     // set the last used template as default
     String lastTemplateName = TmmProperties.getInstance().getProperty(DIALOG_ID + ".template"); //$NON-NLS-1$
@@ -207,44 +208,45 @@ public class MovieExporterDialog extends TmmDialog {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
+  protected BindingGroup initDataBindings() {
     JListBinding<ExportTemplate, List<ExportTemplate>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, templatesFound,
         list);
     //
     BeanProperty<ExportTemplate, String> exportTemplateBeanProperty = BeanProperty.create("name");
     jListBinding.setDetailBinding(exportTemplateBeanProperty);
     //
-    bindings.add(jListBinding);
     jListBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty, lblTemplateName,
         jLabelBeanProperty);
-    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_1 = BeanProperty.create("selectedElement.url");
     AutoBinding<JList, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_1, lblUrl,
         jLabelBeanProperty);
-    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_2 = BeanProperty.create("selectedElement.description");
     BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JTextArea, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
         taDescription, JTextAreaBeanProperty);
-    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JList, Boolean> jListBeanProperty_3 = BeanProperty.create("selectedElement.detail");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<JList, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_3,
         chckbxTemplateWithDetail, jCheckBoxBeanProperty);
-    bindings.add(autoBinding_3);
     autoBinding_3.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jListBinding);
+    bindingGroup.addBinding(autoBinding);
+    bindingGroup.addBinding(autoBinding_1);
+    bindingGroup.addBinding(autoBinding_2);
+    bindingGroup.addBinding(autoBinding_3);
+    return bindingGroup;
   }
 }

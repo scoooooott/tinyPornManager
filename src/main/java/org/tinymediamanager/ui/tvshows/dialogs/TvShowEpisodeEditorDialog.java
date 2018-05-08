@@ -56,6 +56,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -191,7 +192,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     this.userRating = episodeToEdit.getRating(Rating.USER);
 
     initComponents();
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     // fill data
     {
@@ -883,11 +884,15 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     }
   }
 
-  protected void initDataBindings() {
+  protected BindingGroup initDataBindings() {
     JListBinding<String, List<String>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
-    bindings.add(jListBinding);
     jListBinding.bind();
     //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jListBinding);
+    //
+    return bindingGroup;
   }
 
   @Override

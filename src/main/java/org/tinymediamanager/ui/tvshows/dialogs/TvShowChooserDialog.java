@@ -49,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -341,7 +342,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     {
       tvShowToScrape = tvShow;
       progressBar.setVisible(false);
-      initDataBindings();
+      bindingGroup = initDataBindings();
 
       // set column name - windowbuilder pro crashes otherwise
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult")); //$NON-NLS-1$
@@ -605,41 +606,6 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   }
 
   /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
-    JTableBinding<TvShowChooserModel, List<TvShowChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        tvShowsFound, table);
-    //
-    BeanProperty<TvShowChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);
-    //
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
-        tpTvShowOverview, JTextAreaBeanProperty);
-    bindings.add(autoBinding_1);
-    autoBinding_1.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
-        lblTvShowPoster, imageLabelBeanProperty);
-    bindings.add(autoBinding_2);
-    autoBinding_2.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
-    BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
-        lblTvShowName, jLabelBeanProperty_1);
-    bindings.add(autoBinding_3);
-    autoBinding_3.bind();
-  }
-
-  /**
    * Shows the dialog and returns whether the work on the queue should be continued.
    * 
    * @return true, if successful
@@ -660,5 +626,41 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       mediaScraper = (MediaScraper) cbScraper.getSelectedItem();
       searchTvShow(textFieldSearchString.getText(), tvShowToScrape);
     }
+  }
+
+  protected BindingGroup initDataBindings() {
+    JTableBinding<TvShowChooserModel, List<TvShowChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        tvShowsFound, table);
+    //
+    BeanProperty<TvShowChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("combinedName");
+    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);
+    //
+    jTableBinding.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
+    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
+        tpTvShowOverview, JTextAreaBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
+        lblTvShowPoster, imageLabelBeanProperty);
+    autoBinding_2.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
+    BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
+        lblTvShowName, jLabelBeanProperty_1);
+    autoBinding_3.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jTableBinding);
+    bindingGroup.addBinding(autoBinding_1);
+    bindingGroup.addBinding(autoBinding_2);
+    bindingGroup.addBinding(autoBinding_3);
+    return bindingGroup;
   }
 }

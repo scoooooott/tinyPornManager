@@ -58,6 +58,7 @@ import javax.swing.UIManager;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -238,7 +239,7 @@ public class MovieEditorDialog extends TmmDialog {
     }
 
     initComponents();
-    initDataBindings();
+    bindingGroup = initDataBindings();
 
     {
       int year = movieToEdit.getYear();
@@ -1974,9 +1975,8 @@ public class MovieEditorDialog extends TmmDialog {
     dpReleaseDate.cleanup();
   }
 
-  protected void initDataBindings() {
+  protected BindingGroup initDataBindings() {
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
-    bindings.add(jListBinding);
     jListBinding.bind();
     //
     JTableBinding<MovieTrailer, List<MovieTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
@@ -1997,11 +1997,16 @@ public class MovieEditorDialog extends TmmDialog {
     BeanProperty<MovieTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
-    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
-    bindings.add(jListBinding_1);
     jListBinding_1.bind();
+    //
+    BindingGroup bindingGroup = new BindingGroup();
+    //
+    bindingGroup.addBinding(jListBinding);
+    bindingGroup.addBinding(jTableBinding_1);
+    bindingGroup.addBinding(jListBinding_1);
+    return bindingGroup;
   }
 }
