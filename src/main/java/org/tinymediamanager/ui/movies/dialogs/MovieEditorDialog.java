@@ -606,7 +606,7 @@ public class MovieEditorDialog extends TmmDialog {
 
         cbMovieSet = new JComboBox();
         cbMovieSet.addItem("");
-        details2Panel.add(cbMovieSet, "cell 1 4 4 1,growx");
+        details2Panel.add(cbMovieSet, "cell 1 4 4 1, growx, wmin 0");
       }
       {
         JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
@@ -623,7 +623,7 @@ public class MovieEditorDialog extends TmmDialog {
         InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         cbGenres.getActionMap().put(enterAction, new AddGenreAction());
-        details2Panel.add(cbGenres, "cell 1 8 4 1,growx");
+        details2Panel.add(cbGenres, "cell 1 8 4 1, growx, wmin 0");
       }
       {
         JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -640,7 +640,7 @@ public class MovieEditorDialog extends TmmDialog {
         InputMap im = cbTags.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         cbTags.getActionMap().put(enterAction, new AddTagAction());
-        details2Panel.add(cbTags, "cell 7 8,growx");
+        details2Panel.add(cbTags, "cell 7 8, growx, wmin 0");
       }
 
       {

@@ -88,7 +88,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         // cbGenres = new JComboBox(MediaGenres2.values());
         JComboBox cbGenres = new AutocompleteComboBox(MediaGenres.values());
         cbGenres.setEditable(true);
-        panelContent.add(cbGenres, "cell 1 0,growx");
+        panelContent.add(cbGenres, "cell 1 0, growx, wmin 0");
 
         JButton btnAddGenre = new JButton("");
         btnAddGenre.setIcon(IconManager.ADD_INV);
@@ -138,7 +138,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
 
         JComboBox cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
         cbTags.setEditable(true);
-        panelContent.add(cbTags, "cell 1 1,growx");
+        panelContent.add(cbTags, "cell 1 1, growx, wmin 0");
 
         JButton btnAddTag = new JButton("");
         btnAddTag.setIcon(IconManager.ADD_INV);
@@ -202,7 +202,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         panelContent.add(lblMovieSetT, "cell 0 3,alignx right");
 
         cbMovieSet = new JComboBox();
-        panelContent.add(cbMovieSet, "cell 1 3,growx");
+        panelContent.add(cbMovieSet, "cell 1 3, growx, wmin 0");
 
         JButton btnSetMovieSet = new JButton("");
         btnSetMovieSet.setMargin(new Insets(2, 2, 2, 2));
