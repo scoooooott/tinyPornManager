@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -75,7 +76,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieScraperSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -98,15 +99,21 @@ public class MovieScraperSettingsPanel extends JPanel {
     // pre-init
     MediaScraper defaultMediaScraper = MovieList.getInstance().getDefaultMediaScraper();
     int selectedIndex = 0;
-    int counter = 0;
+
     for (MediaScraper scraper : MovieList.getInstance().getAvailableMediaScrapers()) {
       MovieScraper movieScraper = new MovieScraper(scraper);
-      if (scraper.equals(defaultMediaScraper)) {
-        movieScraper.defaultScraper = true;
-        selectedIndex = counter;
-      }
       scrapers.add(movieScraper);
-      counter++;
+    }
+
+    Collections.sort(scrapers);
+
+    for (int i = 0; i < scrapers.size(); i++) {
+      MovieScraper scraper = scrapers.get(i);
+      if (scraper.getMediaScraper().equals(defaultMediaScraper)) {
+        scraper.defaultScraper = true;
+        selectedIndex = i;
+        break;
+      }
     }
 
     // UI init
@@ -160,7 +167,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     });
 
     // select default movie scraper
-    if (counter > 0) {
+    if (!scrapers.isEmpty()) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
   }
@@ -223,7 +230,7 @@ public class MovieScraperSettingsPanel extends JPanel {
   /*****************************************************************************************************
    * helper classes
    ****************************************************************************************************/
-  public static class MovieScraper extends AbstractModelObject {
+  public static class MovieScraper extends AbstractModelObject implements Comparable<MovieScraper> {
     private MediaScraper scraper;
     private Icon         scraperLogo;
     private boolean      defaultScraper;
@@ -287,6 +294,10 @@ public class MovieScraperSettingsPanel extends JPanel {
       return scraperLogo;
     }
 
+    public boolean isKodiScraper() {
+      return scraper.getName().startsWith("Kodi");
+    }
+
     public Boolean getDefaultScraper() {
       return defaultScraper;
     }
@@ -301,6 +312,21 @@ public class MovieScraperSettingsPanel extends JPanel {
 
     public IMediaProvider getMediaProvider() {
       return scraper.getMediaProvider();
+    }
+
+    public MediaScraper getMediaScraper() {
+      return scraper;
+    }
+
+    @Override
+    public int compareTo(MovieScraper o) {
+      if (isKodiScraper() && !o.isKodiScraper()) {
+        return 1;
+      }
+      if (!isKodiScraper() && o.isKodiScraper()) {
+        return -1;
+      }
+      return scraper.getName().compareTo(o.scraper.getName());
     }
   }
 
