@@ -19,6 +19,8 @@ import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -190,22 +192,22 @@ public class TmmUIHelper {
 
     if (StringUtils.isNotBlank(Globals.settings.getMediaPlayer()) && Globals.settings.getAllSupportedFileTypes().contains(fileType)) {
       if (SystemUtils.IS_OS_MAC_OSX) {
-        Runtime.getRuntime().exec(new String[] { "open", Globals.settings.getMediaPlayer(), "--args", abs });
+        exec(new String[] { "open", Globals.settings.getMediaPlayer(), "--args", abs });
       }
       else {
-        Runtime.getRuntime().exec(new String[] { Globals.settings.getMediaPlayer(), abs });
+        exec(new String[] { Globals.settings.getMediaPlayer(), abs });
       }
     }
     else if (SystemUtils.IS_OS_WINDOWS) {
       // use explorer directly - ship around access exceptions and the unresolved network bug
       // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
-      Runtime.getRuntime().exec(new String[] { "explorer", abs });
+      exec(new String[] { "explorer", abs });
     }
     else if (SystemUtils.IS_OS_LINUX) {
       // try all different starters
       boolean started = false;
       try {
-        Runtime.getRuntime().exec(new String[] { "xdg-open", abs });
+        exec(new String[] { "xdg-open", abs });
         started = true;
       }
       catch (IOException ignored) {
@@ -213,7 +215,7 @@ public class TmmUIHelper {
 
       if (!started) {
         try {
-          Runtime.getRuntime().exec(new String[] { "kde-open", abs });
+          exec(new String[] { "kde-open", abs });
           started = true;
         }
         catch (IOException ignored) {
@@ -222,7 +224,7 @@ public class TmmUIHelper {
 
       if (!started) {
         try {
-          Runtime.getRuntime().exec(new String[] { "gnome-open", abs });
+          exec(new String[] { "gnome-open", abs });
           started = true;
         }
         catch (IOException ignored) {
@@ -250,7 +252,7 @@ public class TmmUIHelper {
       // try all different starters
       boolean started = false;
       try {
-        Runtime.getRuntime().exec(new String[] { "gnome-open", url });
+        exec(new String[] { "gnome-open", url });
         started = true;
       }
       catch (IOException ignored) {
@@ -258,7 +260,7 @@ public class TmmUIHelper {
 
       if (!started) {
         try {
-          Runtime.getRuntime().exec(new String[] { "kde-open", url });
+          exec(new String[] { "kde-open", url });
           started = true;
         }
         catch (IOException ignored) {
@@ -267,7 +269,7 @@ public class TmmUIHelper {
 
       if (!started) {
         try {
-          Runtime.getRuntime().exec(new String[] { "xdg-open", url });
+          exec(new String[] { "xdg-open", url });
           started = true;
         }
         catch (IOException ignored) {
@@ -281,7 +283,7 @@ public class TmmUIHelper {
 
   /**
    * get the column width for a column containing the given icon (icon width + 10%)
-   * 
+   *
    * @param icon
    *          the given icon
    * @return the desired column width
@@ -291,5 +293,62 @@ public class TmmUIHelper {
       return 0;
     }
     return (int) (icon.getIconWidth() * 1.1);
+  }
+
+  /**
+   * Executes a command line and discards the stdout and stderr of the spawned process.
+   *
+   * @param cmdline
+   *          the command including all parameters
+   * @throws IOException
+   * @see {@link Runtime#exec(String[])}
+   */
+  private static void exec(String[] cmdline) throws IOException {
+    Process p = Runtime.getRuntime().exec(cmdline);
+
+    // The purpose of the following to threads is to read stdout and stderr from the processes, which are spawned in this class.
+    // On some platforms (for sure on Linux) the process might block otherwise, because the internal buffers fill up.
+    // MPV for example is quite verbose and blocks up after about 1 min.
+    StreamRedirectThread stdoutReader = new StreamRedirectThread(p.getInputStream(), new NirvanaOutputStream());
+    StreamRedirectThread stderrReader = new StreamRedirectThread(p.getErrorStream(), new NirvanaOutputStream());
+    new Thread(stdoutReader).start();
+    new Thread(stderrReader).start();
+  }
+
+  /**
+   * This OutputStream discards all bytes written to it.
+   */
+  private static class NirvanaOutputStream extends OutputStream {
+    @Override
+    public void write(int b) throws IOException {
+    }
+  }
+
+  /**
+   * Reads from an InputStream and writes the contents directly to an OutputStream
+   */
+  private static class StreamRedirectThread implements Runnable {
+    private InputStream  in;
+    private OutputStream out;
+
+    public StreamRedirectThread(InputStream in, OutputStream out) {
+      super();
+      this.in = in;
+      this.out = out;
+    }
+
+    @Override
+    public void run() {
+      try {
+        int length = -1;
+        byte[] buffer = new byte[1024 * 1024];
+        while (in != null && (length = in.read(buffer)) >= 0) {
+          out.write(buffer, 0, length);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("Couldn't redirect stream: {}", e.getLocalizedMessage());
+      }
+    }
   }
 }
