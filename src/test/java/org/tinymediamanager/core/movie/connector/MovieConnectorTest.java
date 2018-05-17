@@ -21,18 +21,25 @@ import java.nio.file.Paths;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 
-public class MovieConnectorTest {
+public class MovieConnectorTest extends BasicTest {
+  @BeforeClass
+  public static void setup() {
+    Settings.getInstance(getSettingsFolder());
+  }
 
   @Test
-  public void testMovieToXbmcConnector() {
+  public void testMovieToXbmcConnectorKodi() {
     try {
-      Files.createDirectories(Paths.get("target/test-classes/movie_nfo_out/"));
+      Files.createDirectories(Paths.get(getSettingsFolder(), "movie_nfo_out"));
     }
     catch (Exception e) {
       Assertions.fail(e.getMessage());
@@ -41,8 +48,8 @@ public class MovieConnectorTest {
       // load data from a given NFO (with unsupported tags)
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi.nfo"));
       Movie movie = parser.toMovie();
-      movie.setPath("target/test-classes/movie_nfo_out/");
-      movie.addToMediaFiles(new MediaFile(Paths.get("target/test-classes/movie_nfo/kodi.nfo"), MediaFileType.NFO));
+      movie.setPath(Paths.get(getSettingsFolder(), "movie_nfo_out").toString());
+      movie.addToMediaFiles(new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo/kodi.nfo"), MediaFileType.NFO));
 
       // and write it again
       IMovieConnector connector = new MovieToXbmcConnector(movie);
@@ -52,15 +59,18 @@ public class MovieConnectorTest {
       e.printStackTrace();
       Assertions.fail(e.getMessage());
     }
+  }
 
+  @Test
+  public void testMovieToXbmcConnectorKodi2() {
     try {
       // load data from a given NFO (with unsupported tags)
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi2.nfo"));
       Movie movie = parser.toMovie();
-      MediaFile video = new MediaFile(Paths.get("target/test-classes/movie_nfo_out/test2.avi"));
+      MediaFile video = new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo_out/test2.avi"));
       movie.addToMediaFiles(video);
-      movie.setPath("target/test-classes/movie_nfo_out/");
-      movie.addToMediaFiles(new MediaFile(Paths.get("target/test-classes/movie_nfo/kodi2.nfo"), MediaFileType.NFO));
+      movie.setPath(Paths.get(getSettingsFolder(), "movie_nfo_out").toString());
+      movie.addToMediaFiles(new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo/kodi2.nfo"), MediaFileType.NFO));
 
       // and write it again
       IMovieConnector connector = new MovieToKodiConnector(movie);
@@ -70,15 +80,18 @@ public class MovieConnectorTest {
       e.printStackTrace();
       Assertions.fail(e.getMessage());
     }
+  }
 
+  @Test
+  public void testMovieToXbmcConnectorMediaPortal() {
     try {
       // load data from a given NFO (with unsupported tags)
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
       Movie movie = parser.toMovie();
-      MediaFile video = new MediaFile(Paths.get("target/test-classes/movie_nfo_out/test3.avi"));
+      MediaFile video = new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo_out/test3.avi"));
       movie.addToMediaFiles(video);
-      movie.setPath("target/test-classes/movie_nfo_out/");
-      movie.addToMediaFiles(new MediaFile(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"), MediaFileType.NFO));
+      movie.setPath(Paths.get(getSettingsFolder(), "movie_nfo_out").toString());
+      movie.addToMediaFiles(new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo/mediaportal.nfo"), MediaFileType.NFO));
 
       // and write it again
       IMovieConnector connector = new MovieToMediaportalConnector(movie);

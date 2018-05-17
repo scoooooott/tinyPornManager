@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.Person;
@@ -46,32 +46,33 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
-public class TvShowToNfoConnectorTest {
+public class TvShowToNfoConnectorTest extends BasicTest {
+
   @BeforeClass
   public static void setup() {
     // create a default config file for config access
-    Settings.getInstance("target/test-classes/");
+    Settings.getInstance(getSettingsFolder());
   }
 
   @Test
   public void testXbmcNfo() {
-    FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));
+    FileUtils.deleteQuietly(new File(getSettingsFolder(), "xbmc_nfo"));
     try {
-      Files.createDirectories(Paths.get("target/test-classes/xbmc_nfo/"));
+      Files.createDirectories(Paths.get(getSettingsFolder(), "xbmc_nfo"));
     }
     catch (Exception e) {
       Assertions.fail(e.getMessage());
     }
 
     try {
-      TvShow tvShow = createTvShow("target/test-classes/xbmc_nfo");
+      TvShow tvShow = createTvShow("xbmc_nfo");
 
       // write it
       List<TvShowNfoNaming> nfoNames = Collections.singletonList(TvShowNfoNaming.TV_SHOW);
       TvShowToXbmcConnector connector = new TvShowToXbmcConnector(tvShow);
       connector.write(nfoNames);
 
-      Path nfoFile = Paths.get("target/test-classes/xbmc_nfo/tvshow.nfo");
+      Path nfoFile = Paths.get(getSettingsFolder(), "xbmc_nfo/tvshow.nfo");
       assertThat(Files.exists(nfoFile)).isTrue();
 
       // unmarshal it
@@ -86,23 +87,23 @@ public class TvShowToNfoConnectorTest {
 
   @Test
   public void testKodiNfo() {
-    FileUtils.deleteQuietly(new File("target/test-classes/kodi_nfo/"));
+    FileUtils.deleteQuietly(new File(getSettingsFolder(), "kodi_nfo"));
     try {
-      Files.createDirectories(Paths.get("target/test-classes/kodi_nfo/"));
+      Files.createDirectories(Paths.get(getSettingsFolder(), "kodi_nfo"));
     }
     catch (Exception e) {
       Assertions.fail(e.getMessage());
     }
 
     try {
-      TvShow tvShow = createTvShow("target/test-classes/kodi_nfo");
+      TvShow tvShow = createTvShow("kodi_nfo");
 
       // write it
       List<TvShowNfoNaming> nfoNames = Collections.singletonList(TvShowNfoNaming.TV_SHOW);
       TvShowToKodiConnector connector = new TvShowToKodiConnector(tvShow);
       connector.write(nfoNames);
 
-      Path nfoFile = Paths.get("target/test-classes/kodi_nfo/tvshow.nfo");
+      Path nfoFile = Paths.get(getSettingsFolder(), "kodi_nfo/tvshow.nfo");
       assertThat(Files.exists(nfoFile)).isTrue();
 
       // unmarshal it
@@ -157,7 +158,7 @@ public class TvShowToNfoConnectorTest {
 
   private TvShow createTvShow(String path) throws Exception {
     TvShow tvShow = new TvShow();
-    tvShow.setPath(path);
+    tvShow.setPath(Paths.get(getSettingsFolder(), path).toString());
     tvShow.setTitle("21 Jump Street");
     tvShow.setRating(new Rating(Rating.NFO, 9.0f, 8));
     tvShow.setYear(1987);
