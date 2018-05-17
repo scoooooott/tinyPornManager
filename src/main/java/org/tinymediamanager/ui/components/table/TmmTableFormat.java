@@ -3,6 +3,7 @@ package org.tinymediamanager.ui.components.table;
 import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -149,6 +150,19 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
         return 1;
       }
       return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+    }
+  }
+
+  public class PathComparator implements Comparator<Path> {
+    @Override
+    public int compare(Path arg0, Path arg1) {
+      if (arg0 == null) {
+        return -1;
+      }
+      if (arg1 == null) {
+        return 1;
+      }
+      return arg0.toAbsolutePath().compareTo(arg1.toAbsolutePath());
     }
   }
 

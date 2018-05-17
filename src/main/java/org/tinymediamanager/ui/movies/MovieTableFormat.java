@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.FontMetrics;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -48,6 +49,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
   public MovieTableFormat() {
 
     Comparator<Movie> movieComparator = new MovieComparator();
+    Comparator<Path> pathComparator = new PathComparator();
     Comparator<String> stringComparator = new StringComparator();
     Comparator<Float> floatComparator = new FloatComparator();
     Comparator<ImageIcon> imageComparator = new ImageComparator();
@@ -101,7 +103,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      * folder name (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.path"), "path", MediaEntity::getPathNIO, String.class);
-    col.setColumnComparator(stringComparator);
+    col.setColumnComparator(pathComparator);
     col.setColumnResizeable(true);
     addColumn(col);
 

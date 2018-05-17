@@ -76,6 +76,9 @@ public class ITKodiRPCTest {
     else {
       LOGGER.info("found " + movies.size() + " movies");
       for (MovieDetail res : movies) {
+        for (String c : res.country) {
+          System.out.println(c);
+        }
         LOGGER.debug(res.toString());
       }
     }
@@ -112,10 +115,11 @@ public class ITKodiRPCTest {
     // Upnp.getInstance().createUpnpService();
     // Upnp.getInstance().sendPlayerSearchRequest();
     try {
-      HostConfig config = new HostConfig("127.0.0.1");
+      HostConfig config = new HostConfig("127.0.0.1", 80);
       KodiRPC.getInstance().connect(config);
     }
     catch (ApiException e) {
+      System.err.println(e.getMessage());
       Assert.fail(e.getMessage());
     }
   }
