@@ -17,19 +17,36 @@
 package org.tinymediamanager.core.movie;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.nio.file.Paths;
 
 import org.assertj.core.api.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
 
-public class MovieSettingsTest {
+public class MovieSettingsTest extends BasicTest {
+
+  @BeforeClass
+  public static void beforeClass() {
+    deleteSettingsFolder();
+    Settings.getInstance(getSettingsFolder());
+  }
 
   @Test
   public void testMovieSettings() {
     try {
-      MovieSettings settings = MovieSettings.getInstance("target/movieSettings");
+      MovieSettings settings = MovieSettings.getInstance(getSettingsFolder());
       assertThat(settings).isNotNull();
       settings.setAsciiReplacement(true);
       settings.saveSettings();
+
+      // cannot re-instantiate settings - need to check plain file
+      String config = Utils.readFileToString(Paths.get(getSettingsFolder(), MovieSettings.getInstance().getConfigFilename()));
+      assertTrue(config.contains("\"asciiReplacement\" : true"));
     }
     catch (Exception e) {
       Assertions.fail(e.getMessage());
