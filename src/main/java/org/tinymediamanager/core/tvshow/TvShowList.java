@@ -726,7 +726,7 @@ public class TvShowList extends AbstractModelObject {
    *          the file
    * @return the tv episodes by file
    */
-  public List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, Path file) {
+  public static List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, Path file) {
     List<TvShowEpisode> episodes = new ArrayList<>(1);
     // validy check
     if (file == null) {
@@ -741,15 +741,7 @@ public class TvShowList extends AbstractModelObject {
         }
       }
     }
-    // for (int j = 0; j < tvShow.getEpisodes().size(); j++) {
-    // TvShowEpisode episode = tvShow.getEpisodes().get(j);
-    // for (int k = 0; k < episode.getMediaFiles().size(); k++) {
-    // MediaFile mediaFile = episode.getMediaFiles().get(k);
-    // if (file.equals(mediaFile.getFile())) {
-    // episodes.add(episode);
-    // }
-    // }
-    // }
+
     return episodes;
   }
 

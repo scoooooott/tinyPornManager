@@ -353,6 +353,7 @@ public class TvShowRenamer {
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
+    MediaFile originalVideoMediaFile = new MediaFile(episode.getMainVideoFile());
     // test for valid season/episode number
     if (episode.getSeason() < 0 || episode.getEpisode() < 0) {
       LOGGER.warn(
@@ -533,9 +534,12 @@ public class TvShowRenamer {
       }
     }
 
-    // get the first MF of this episode
-    MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(episode.getTvShow(), mf.getFile());
+    // update paths/mfs for the episode
+    List<TvShowEpisode> eps = new ArrayList<>();
+    eps.add(episode);
+
+    // if the files are multi EP files, change all other episodes too
+    eps.addAll(TvShowList.getTvEpisodesByFile(episode.getTvShow(), originalVideoMediaFile.getFile()));
     for (TvShowEpisode e : eps) {
       e.removeAllMediaFiles();
       e.addToMediaFiles(needed);
@@ -553,8 +557,8 @@ public class TvShowRenamer {
    */
   private static void renameEpisodeAsDisc(TvShowEpisode episode) {
     // get the first MF of this episode
-    MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(episode.getTvShow(), mf.getFile());
+    MediaFile mf = episode.getMainVideoFile();
+    List<TvShowEpisode> eps = TvShowList.getTvEpisodesByFile(episode.getTvShow(), mf.getFile());
 
     // and do some checks
     if (!episode.isDisc() || !mf.isDiscFile()) {
@@ -663,7 +667,7 @@ public class TvShowRenamer {
    * @return the file name for media file
    */
   public static String generateFoldername(TvShow tvShow, MediaFile mf) {
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
+    List<TvShowEpisode> eps = TvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
     if (ListUtils.isEmpty(eps)) {
       return "";
     }
@@ -699,7 +703,7 @@ public class TvShowRenamer {
     // return list of all generated MFs
     ArrayList<MediaFile> newFiles = new ArrayList<>();
 
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
+    List<TvShowEpisode> eps = TvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
     if (ListUtils.isEmpty(eps)) {
       return newFiles;
     }

@@ -587,7 +587,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // ******************************
         // STEP 2.1 - is this file already assigned to another episode?
         // ******************************
-        List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
+        List<TvShowEpisode> episodes = TvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
         if (episodes.size() == 0) {
 
           // ******************************

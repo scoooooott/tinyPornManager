@@ -696,7 +696,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // worst case: multi episode in multiple files
     // e.g. warehouse13.s01e01e02.Part1.avi/warehouse13.s01e01e02.Part2.avi
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-      List<TvShowEpisode> eps = new ArrayList<>(TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile()));
+      List<TvShowEpisode> eps = new ArrayList<>(TvShowList.getTvEpisodesByFile(tvShow, mf.getFile()));
       for (TvShowEpisode ep : eps) {
         if (!episodesInNfo.contains(ep)) {
           episodesInNfo.add(ep);
