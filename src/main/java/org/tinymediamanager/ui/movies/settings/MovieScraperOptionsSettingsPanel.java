@@ -116,7 +116,7 @@ public class MovieScraperOptionsSettingsPanel extends JPanel {
 
       JTextArea tpScraperThresholdHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
       TmmFontHelper.changeFont(tpScraperThresholdHint, 0.833);
-      add(tpScraperThresholdHint, "cell 1 9 3 1");
+      add(tpScraperThresholdHint, "cell 1 9 3 1,growx");
     }
   }
 
