@@ -78,6 +78,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.connector.ITvShowEpisodeConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcConnector;
@@ -673,6 +674,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // update DB
     writeNFO();
     saveToDb();
+
+    // rename the episode if that has been chosen in the settings
+    if (TvShowModuleManager.SETTINGS.isRenameAfterScrape()) {
+      TvShowRenamer.renameEpisode(this);
+    }
 
     // should we write a new thumb?
     if (writeNewThumb) {

@@ -111,31 +111,44 @@ public class TvShowSettings extends AbstractSettings {
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
   private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
 
-  private String                               scraper                        = Constants.TVDB;
-  private boolean                              scrapeBestImage                = true;
-  private MediaLanguages                       scraperLanguage                = MediaLanguages.en;
-  private MediaLanguages                       subtitleScraperLanguage        = MediaLanguages.en;
-  private CountryCode                          certificationCountry           = CountryCode.US;
-  private String                               renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
-  private String                               renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
-  private String                               renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
+  // data sources / NFO settings
   private boolean                              buildImageCacheOnImport        = false;
-  private boolean                              asciiReplacement               = false;
-  private boolean                              renamerSpaceSubstitution       = false;
-  private String                               renamerSpaceReplacement        = "_";
-  private LanguageStyle                        subtitleLanguageStyle          = LanguageStyle.ISO3T;
-  private boolean                              syncTrakt                      = false;
-  private boolean                              dvdOrder                       = false;
-  private boolean                              storeUiFilters                 = false;
-  private boolean                              displayMissingEpisodes         = false;
-  private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
   private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
   private boolean                              writeCleanNfo                  = false;
   private MediaLanguages                       nfoLanguage                    = MediaLanguages.en;
+
+  // renamer
+  private boolean                              renameAfterScrape              = false;
+  private String                               renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
+  private String                               renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
+  private String                               renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
+  private boolean                              renamerSpaceSubstitution       = false;
+  private String                               renamerSpaceReplacement        = "_";
+  private boolean                              asciiReplacement               = false;
+
+  // meta data scraper
+  private String                               scraper                        = Constants.TVDB;
+  private MediaLanguages                       scraperLanguage                = MediaLanguages.en;
+  private CountryCode                          certificationCountry           = CountryCode.US;
+  private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
+
+  // artwork scraper
+  private boolean                              scrapeBestImage                = true;
+  private boolean                              writeActorImages               = false;
+
+  // subtitle scraper
+  private MediaLanguages                       subtitleScraperLanguage        = MediaLanguages.en;
+  private LanguageStyle                        subtitleLanguageStyle          = LanguageStyle.ISO3T;
+
+  // misc
+  private boolean                              syncTrakt                      = false;
+  private boolean                              dvdOrder                       = false;
   private boolean                              preferPersonalRating           = true;
   private String                               preferredRating                = "tvdb";
-  private boolean                              writeActorImages               = false;
+
+  private boolean                              storeUiFilters                 = false;
+  private boolean                              displayMissingEpisodes         = false;
 
   public TvShowSettings() {
     super();
@@ -789,6 +802,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.writeActorImages;
     this.writeActorImages = newValue;
     firePropertyChange("writeActorImages", oldValue, newValue);
+  }
+
+  public void setRenameAfterScrape(boolean newValue) {
+    boolean oldValue = this.renameAfterScrape;
+    this.renameAfterScrape = newValue;
+    firePropertyChange("renameAfterScrape", oldValue, newValue);
+  }
+
+  public boolean isRenameAfterScrape() {
+    return this.renameAfterScrape;
   }
 
   /*****************************************************************

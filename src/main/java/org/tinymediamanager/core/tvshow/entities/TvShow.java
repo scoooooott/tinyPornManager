@@ -87,6 +87,7 @@ import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
@@ -836,6 +837,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // update DB
     writeNFO();
     saveToDb();
+
+    // rename the TV show if that has been chosen in the settings
+    if (TvShowModuleManager.SETTINGS.isRenameAfterScrape()) {
+      TvShowRenamer.renameTvShowRoot(this); // rename root and season artwork and update ShowMFs
+    }
   }
 
   /**

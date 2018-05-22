@@ -64,6 +64,7 @@ public class TvShowSettingsPanel extends JPanel {
   private JButton                      btnPresetPlex;
   private JCheckBox                    chckbxPersonalRatingFirst;
   private AutocompleteComboBox<String> cbRating;
+  private JCheckBox                    chckbxRenameAfterScrape;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -91,7 +92,7 @@ public class TvShowSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][20lp][][][]", "[][][][][][20lp][][][20lp][][][20lp][][][][][][]"));
+    setLayout(new MigLayout("", "[25lp][20lp][][][]", "[][][][][][20lp][][][][20lp][][][20lp][][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
@@ -110,7 +111,7 @@ public class TvShowSettingsPanel extends JPanel {
       add(lblRating, "flowx,cell 1 3 4 1");
 
       cbRating = new AutocompleteComboBox(Arrays.asList("tvdb", "tmdb"));
-      add(cbRating, "cell 1 3");
+      add(cbRating, "cell 1 3 4 1");
     }
     {
       chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
@@ -121,55 +122,63 @@ public class TvShowSettingsPanel extends JPanel {
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
       add(lblAutomaticTasksT, "cell 0 6 5 1");
     }
+    {
+      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.tvshow.automaticrename")); //$NON-NLS-1$
+      add(chckbxRenameAfterScrape, "flowx,cell 1 7 4 1");
+
+      JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
+      lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.tvshow.automaticrename.desc")); //$NON-NLS-1$
+      add(lblAutomaticRenameHint, "cell 1 7");
+    }
 
     {
       chckbxTraktTv = new JCheckBox(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-      add(chckbxTraktTv, "flowx,cell 1 7 4 1");
+      add(chckbxTraktTv, "flowx,cell 1 8 4 1");
 
       btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
-      add(btnClearTraktTvShows, "cell 1 7");
+      add(btnClearTraktTvShows, "cell 1 8 4 1");
     }
 
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 9 5 1");
+      add(lblMiscT, "cell 0 10 5 1");
     }
     {
       chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxImageCache, "flowx,cell 1 10 4 1");
+      add(chckbxImageCache, "flowx,cell 1 11 4 1");
     }
     {
       JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 12 5 1");
+      add(lblPresetT, "cell 0 13 5 1");
     }
     {
       JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 13 4 1");
+      add(lblPresetHintT, "cell 1 14 4 1");
     }
     {
       btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 2 14,growx");
+      add(btnPresetKodi, "flowx,cell 2 15,growx");
 
       btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 3 14,growx");
+      add(btnPresetXbmc, "cell 3 15,growx");
     }
     {
       btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 2 15,growx");
+      add(btnPresetMediaPortal1, "flowx,cell 2 16,growx");
 
       btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 3 15,growx");
+      add(btnPresetMediaPortal2, "cell 3 16,growx");
     }
     {
       btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 2 16,growx");
+      add(btnPresetPlex, "cell 2 17,growx");
     }
     {
       JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 10");
+      add(lblBuildImageCacheHint, "cell 1 11 4 1");
     }
   }
 
@@ -205,5 +214,10 @@ public class TvShowSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_4, chckbxPersonalRatingFirst, jCheckBoxBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_5 = BeanProperty.create("renameAfterScrape");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_5, chckbxRenameAfterScrape, jCheckBoxBeanProperty);
+    autoBinding_6.bind();
   }
 }
