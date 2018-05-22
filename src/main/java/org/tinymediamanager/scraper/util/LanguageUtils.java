@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * This is a helper class for language related tasks
@@ -342,5 +343,18 @@ public class LanguageUtils {
       ret = countries[0]; // cannot translate - just take first param 1:1
     }
     return ret;
+  }
+
+  /**
+   * checks whether the given string matches or ends with the given language
+   * 
+   * @param string
+   *          the string to check
+   * @param language
+   *          the language to check
+   * @return true/false
+   */
+  public static boolean doesStringEndWithLanguage(String string, String language) {
+    return string.equalsIgnoreCase(language) || string.matches("(?i).*[ _.-]+" + Pattern.quote(language) + "$");
   }
 }
