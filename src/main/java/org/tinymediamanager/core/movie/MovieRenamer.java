@@ -186,7 +186,7 @@ public class MovieRenamer {
         // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
 
         for (String s : langArray) {
-          if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
+          if (LanguageUtils.doesStringEndWithLanguage(shortname, s)) {
             originalLang = s;
             // lang = Utils.getIso3LanguageFromLocalizedString(s);
             // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");

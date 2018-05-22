@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
@@ -559,6 +558,12 @@ public class TvShowRenamerTest extends BasicTest {
     mf = new MediaFile(destination.resolve("S01E01E02.de.srt").toAbsolutePath());
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.sub").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.idx").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
     ep.setTvShow(show);
     ep.reEvaluateStacking();
     show.addEpisode(ep);
@@ -585,6 +590,12 @@ public class TvShowRenamerTest extends BasicTest {
     mf = new MediaFile(destination.resolve("S01E01E02.de.srt").toAbsolutePath());
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.sub").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.idx").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
     ep.setTvShow(show);
     ep.reEvaluateStacking();
     show.addEpisode(ep);
@@ -607,6 +618,10 @@ public class TvShowRenamerTest extends BasicTest {
     assertThat(nfo).exists();
     Path sub = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.deu.srt");
     assertThat(sub).exists();
+    Path sub2 = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.sub");
+    assertThat(sub2).exists();
+    Path other = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.idx");
+    assertThat(other).exists();
   }
 
   /**

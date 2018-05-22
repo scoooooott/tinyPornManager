@@ -224,6 +224,9 @@ public class TvShowRenamer {
         }
       }
     }
+
+    // also rename the season artwork
+    renameSeasonArtwork(show);
   }
 
   /**
@@ -232,7 +235,7 @@ public class TvShowRenamer {
    * @param tvShow
    *          the TV show to rename the season artwork for
    */
-  public static void renameSeasonArtwork(TvShow tvShow) {
+  private static void renameSeasonArtwork(TvShow tvShow) {
     // all the good & needed mediafiles
     ArrayList<MediaFile> needed = new ArrayList<>();
     ArrayList<MediaFile> cleanup = new ArrayList<>();
@@ -468,7 +471,8 @@ public class TvShowRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>(episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+    mfs = new ArrayList<>(
+        episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
             MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
@@ -784,8 +788,9 @@ public class TvShowRenamer {
             }
           }
         }
-        else {
-          // detect from filename, if we don't have a MediaFileSubtitle entry!
+
+        if (StringUtils.isBlank(subtitleFilename)) {
+          // detect from filename, if we don't have a MediaFileSubtitle entry or could not create a file name out of it!
           // remove the filename of episode from subtitle, to ease parsing
           String shortname = mf.getBasename().toLowerCase(Locale.ROOT).replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
           String originalLang = "";
@@ -799,13 +804,18 @@ public class TvShowRenamer {
           }
           // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
 
-          for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
-            if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
-              originalLang = s;
-              // lang = Utils.getIso3LanguageFromLocalizedString(s);
-              // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
-              break;
+          try {
+            for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
+              if (LanguageUtils.doesStringEndWithLanguage(shortname, s)) {
+                originalLang = s;
+                // lang = Utils.getIso3LanguageFromLocalizedString(s);
+                // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+                break;
+              }
             }
+          }
+          catch (Exception e) {
+            e.printStackTrace();
           }
           lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.SETTINGS.getSubtitleLanguageStyle());
           if (StringUtils.isBlank(lang)) {
@@ -818,6 +828,12 @@ public class TvShowRenamer {
             subtitleFilename += forced;
           }
         }
+
+        // still no subtitle filename? take at least the whole filename
+        if (StringUtils.isBlank(subtitleFilename)) {
+          subtitleFilename = newFilename;
+        }
+
         if (StringUtils.isNotBlank(subtitleFilename)) {
           MediaFile subtitle = new MediaFile(mf);
           subtitle.setFile(seasonFolder.resolve(subtitleFilename + "." + mf.getExtension()));
@@ -876,8 +892,20 @@ public class TvShowRenamer {
         newFiles.add(extra);
         break;
 
-      // missing enums
+      ////////////////////////////////////////////////////////////////////////
+      // SAMPLE / TEXT / UNKNOWN
+      // take the unknown part of the file name and attach it to the new file name
+      ////////////////////////////////////////////////////////////////////////
       case AUDIO:
+      case SAMPLE:
+      case TEXT:
+      case UNKNOWN:
+        MediaFile other = new MediaFile(mf);
+        other.setFile(seasonFolder.resolve(newFilename + "." + mf.getExtension()));
+        newFiles.add(other);
+        break;
+
+      // missing enums
       case BANNER:
       case CLEARART:
       case CLEARLOGO:
@@ -887,12 +915,9 @@ public class TvShowRenamer {
       case GRAPHIC:
       case LOGO:
       case POSTER:
-      case SAMPLE:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:
-      case TEXT:
-      case UNKNOWN:
       default:
         break;
     }
