@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -107,22 +108,24 @@ public class ImageChooserDialog extends TmmDialog {
     THUMB
   }
 
-  private DownloadTask         task;
-  private List<String>         extraThumbs;
-  private List<String>         extraFanarts;
+  private Map<String, Object> ids;
+  private ImageType           type;
+  private MediaType           mediaType;
+  private ImageLabel          imageLabel;
+  private List<String>        extraThumbs;
+  private List<String>        extraFanarts;
+  private List<MediaScraper>  artworkScrapers;
 
-  private JProgressBar         progressBar;
-  private JLabel               lblProgressAction;
-  private JPanel               panelImages;
-  private ImageLabel           imageLabel;
-  private JScrollPane          scrollPane;
-  private ImageType            type;
-  private MediaType            mediaType;
-  private ButtonGroup          buttonGroup    = new ButtonGroup();
-  private List<JToggleButton>  buttons        = new ArrayList<>();
+  private JProgressBar        progressBar;
+  private JLabel              lblProgressAction;
+  private JPanel              panelImages;
+  private JScrollPane         scrollPane;
+  private ButtonGroup         buttonGroup    = new ButtonGroup();
+  private List<JToggleButton> buttons        = new ArrayList<>();
+  private JTextField          tfImageUrl;
+  private ToggleButtonUI      toggleButtonUI = new ToggleButtonUI();
 
-  private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
-  private JTextField           tfImageUrl;
+  private DownloadTask        task;
 
   /**
    * Instantiates a new image chooser dialog.
@@ -169,7 +172,66 @@ public class ImageChooserDialog extends TmmDialog {
     this.mediaType = mediaType;
     this.extraThumbs = extraThumbs;
     this.extraFanarts = extraFanarts;
+    this.ids = ids;
+    this.artworkScrapers = artworkScrapers;
+    init();
+  }
 
+  /**
+   * Instantiates a new image chooser dialog.
+   *
+   * @param parent
+   *          the parent of this dialog
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param imageLabel
+   *          the image label
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public ImageChooserDialog(JDialog parent, final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
+      MediaType mediaType) {
+    this(parent, ids, type, artworkScrapers, imageLabel, new ArrayList<>(), new ArrayList<>(), mediaType);
+  }
+
+  /**
+   * Instantiates a new image chooser dialog with extrathumbs and extrafanart usage.
+   *
+   * @param parent
+   *          the parent of this dialog
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param imageLabel
+   *          the image label
+   * @param extraThumbs
+   *          the extra thumbs
+   * @param extraFanarts
+   *          the extra fanarts
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public ImageChooserDialog(JDialog parent, final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
+      List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
+    super(parent, "", DIALOG_ID);
+    this.imageLabel = imageLabel;
+    this.type = type;
+    this.mediaType = mediaType;
+    this.extraThumbs = extraThumbs;
+    this.extraFanarts = extraFanarts;
+    this.ids = ids;
+    this.artworkScrapers = artworkScrapers;
+    init();
+  }
+
+  private void init() {
     switch (type) {
       case FANART:
         setTitle(BUNDLE.getString("image.choose.fanart")); //$NON-NLS-1$
@@ -563,6 +625,26 @@ public class ImageChooserDialog extends TmmDialog {
    * call a new image chooser dialog without extrathumbs and extrafanart usage.<br />
    * this method also checks if there are valid IDs for scraping
    *
+   * @param parent
+   *          the parent of this dialog
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(JDialog parent, final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers,
+      MediaType mediaType) {
+    return chooseImage(parent, ids, type, artworkScrapers, null, null, mediaType);
+  }
+
+  /**
+   * call a new image chooser dialog without extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
    * @param ids
    *          the ids
    * @param type
@@ -574,6 +656,38 @@ public class ImageChooserDialog extends TmmDialog {
    */
   public static String chooseImage(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, MediaType mediaType) {
     return chooseImage(ids, type, artworkScrapers, null, null, mediaType);
+  }
+
+  /**
+   * call a new image chooser dialog with extrathumbs and extrafanart usage.<br />
+   * this method also checks if there are valid IDs for scraping
+   *
+   * @param parent
+   *          the parent of this dialog
+   * @param ids
+   *          the ids
+   * @param type
+   *          the type
+   * @param artworkScrapers
+   *          the artwork providers
+   * @param extraThumbs
+   *          the extra thumbs
+   * @param extraFanarts
+   *          the extra fanarts
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
+   */
+  public static String chooseImage(JDialog parent, final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers,
+      List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
+    if (ids.isEmpty()) {
+      return "";
+    }
+
+    ImageLabel lblImage = new ImageLabel();
+    ImageChooserDialog dialog = new ImageChooserDialog(parent, ids, type, artworkScrapers, lblImage, extraThumbs, extraFanarts, mediaType);
+    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+    dialog.setVisible(true);
+    return lblImage.getImageUrl();
   }
 
   /**

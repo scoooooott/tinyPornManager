@@ -141,8 +141,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
           public void mouseClicked(MouseEvent e) {
             Map<String, Object> ids = tvShowSeasonToEdit.getTvShow().getIds();
             ids.put("tvShowSeason", tvShowSeasonToEdit.getSeason());
-            ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON_POSTER, tvShowList.getAvailableArtworkScrapers(), lblPoster,
-                null, null, MediaType.TV_SHOW);
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowSeasonEditorDialog.this, ids, ImageType.SEASON_POSTER,
+                tvShowList.getAvailableArtworkScrapers(), lblPoster, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
             updateArtworkUrl(lblPoster, tfPoster);
@@ -162,8 +162,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
           public void mouseClicked(MouseEvent e) {
             Map<String, Object> ids = tvShowSeasonToEdit.getTvShow().getIds();
             ids.put("tvShowSeason", tvShowSeasonToEdit.getSeason());
-            ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON_THUMB, tvShowList.getAvailableArtworkScrapers(), lblThumb, null,
-                null, MediaType.TV_SHOW);
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowSeasonEditorDialog.this, ids, ImageType.SEASON_THUMB,
+                tvShowList.getAvailableArtworkScrapers(), lblThumb, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
             updateArtworkUrl(lblThumb, tfThumb);
@@ -183,8 +183,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
           public void mouseClicked(MouseEvent e) {
             Map<String, Object> ids = tvShowSeasonToEdit.getTvShow().getIds();
             ids.put("tvShowSeason", tvShowSeasonToEdit.getSeason());
-            ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON_BANNER, tvShowList.getAvailableArtworkScrapers(), lblBanner,
-                null, null, MediaType.TV_SHOW);
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowSeasonEditorDialog.this, ids, ImageType.SEASON_BANNER,
+                tvShowList.getAvailableArtworkScrapers(), lblBanner, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
             updateArtworkUrl(lblBanner, tfBanner);
