@@ -88,21 +88,38 @@ import okhttp3.OkHttpClient;
  */
 @PluginImplementation
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
-  private static final Logger     LOGGER     = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
+  private static final Logger     LOGGER      = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static List<Language>   tvdbLanguages;
-  private static String           artworkUrl = "http://thetvdb.com/banners/";
+  private static String           artworkUrl  = "http://thetvdb.com/banners/";
+  private static final String     TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
 
   private final MediaProviderInfo providerInfo;
-  private final TheTvdb           tvdb;
+  private TheTvdb                 tvdb;
 
-  public TheTvDbMetadataProvider() throws Exception {
+  public TheTvDbMetadataProvider() {
     // create the providerinfo
     providerInfo = createMediaProviderInfo();
+  }
 
-    // init the API
-    try {
-      tvdb = new TheTvdb(ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=")) {
-        // tell the tmdb api to use our OkHttp client
+  private synchronized void initAPI() throws Exception {
+    String apiKey = TMM_API_KEY;
+    String userApiKey = providerInfo.getConfig().getValue("apiKey");
+
+    // check if the API should change from current key to user key
+    if (StringUtils.isNotBlank(userApiKey) && tvdb != null && !userApiKey.equals(tvdb.apiKey())) {
+      tvdb = null;
+      apiKey = userApiKey;
+    }
+
+    // check if the API should change from current key to tmm key
+    if (StringUtils.isBlank(userApiKey) && tvdb != null && !TMM_API_KEY.equals(tvdb.apiKey())) {
+      tvdb = null;
+      apiKey = TMM_API_KEY;
+    }
+
+    if (tvdb == null) {
+      tvdb = new TheTvdb(apiKey) {
+        // tell the tvdb api to use our OkHttp client
         private OkHttpClient okHttpClient;
 
         @Override
@@ -117,11 +134,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         }
       };
       LanguagesResponse response = tvdb.languages().allAvailable().execute().body();
+      if (response == null) {
+        throw new Exception("Could not connect to TVDB");
+      }
       tvdbLanguages = response.data;
-    }
-    catch (Exception e) {
-      LOGGER.error("init of TheTvDbMetadataProvider: ", e);
-      throw e;
     }
   }
 
@@ -130,6 +146,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork",
         TheTvDbMetadataProvider.class.getResource("/thetvdb_com.png"));
     providerInfo.setVersion(TheTvDbMetadataProvider.class);
+
+    providerInfo.getConfig().addText("apiKey", "", true);
 
     ArrayList<String> fallbackLanguages = new ArrayList<>();
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
@@ -148,6 +166,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     LOGGER.debug("getting metadata: " + mediaScrapeOptions);
     switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
@@ -163,6 +184,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     LOGGER.debug("search() " + options.toString());
     List<MediaSearchResult> results = new ArrayList<>();
 
@@ -538,7 +562,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     LOGGER.debug("getting artwork: " + options);
     List<MediaArtwork> artwork = new ArrayList<>();
     Integer id = 0;
@@ -707,7 +734,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     LOGGER.debug("getting episode list: " + options);
     List<MediaMetadata> episodes = new ArrayList<>();
     Integer id = 0;
