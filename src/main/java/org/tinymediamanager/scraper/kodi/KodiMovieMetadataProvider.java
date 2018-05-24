@@ -65,12 +65,13 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
       return;
     }
 
-    LOGGER.trace("******* BEGIN XML ***********");
-    LOGGER.trace(xmlDetails);
-    LOGGER.trace("******* END XML ***********");
+    LOGGER.debug("******* BEGIN XML ***********");
+    LOGGER.debug(xmlDetails);
+    LOGGER.debug("******* END XML ***********");
 
     Document xml = parseXmlString(xmlDetails);
     addMetadata(md, xml.getDocumentElement());
+    LOGGER.debug("MetaData: " + md.toString());
   }
 
   @Override

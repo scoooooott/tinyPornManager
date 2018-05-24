@@ -43,12 +43,14 @@ class KodiScraperParser {
   private static final Logger LOGGER = LoggerFactory.getLogger(KodiScraperParser.class);
 
   public KodiScraper parseScraper(KodiScraper scraper, List<File> common) throws Exception {
+    LOGGER.debug("Preparing Kodi scraper: " + scraper.getProviderInfo().getName());
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
 
     File scraperFile = new File(scraper.getFolder(), scraper.getScraperXml());
     String xmlFile = FileUtils.readFileToString(scraperFile, "UTF-8");
     xmlFile = KodiUtil.fixXmlHeader(xmlFile);
+    xmlFile = KodiUtil.fixXmlAttributes(xmlFile);
 
     Document xml;
     try {

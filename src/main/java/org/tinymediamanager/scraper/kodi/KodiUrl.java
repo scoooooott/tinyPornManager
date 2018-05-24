@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -58,7 +59,9 @@ class KodiUrl {
     }
 
     if (url.trim().contains("<url")) {
-      // parse <url>url</url> syntax
+      // parse FIRST <url>url</url> syntax (could be multiple!)
+      url = StrgUtils.substr(url, "(<url.*?>.*?</url>)").trim();
+
       try {
         url = StringEscapeUtils.unescapeHtml4(url);
         url = StringEscapeUtils.unescapeXml(url);

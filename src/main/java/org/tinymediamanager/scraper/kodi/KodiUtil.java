@@ -85,6 +85,27 @@ class KodiUtil {
   }
 
   /**
+   * tries to fix invalid XML structure
+   * 
+   * @param xml
+   * @return
+   */
+  public static String fixXmlAttributes(String xml) {
+    String ret = xml;
+    Pattern attr = Pattern.compile("=\"(.*?)\""); // name="value"
+    Matcher m = attr.matcher(xml);
+    while (m.find()) {
+      String g = m.group(1);
+      if (g.contains("<") || g.contains(">")) {
+        LOGGER.warn("Fixing invalid XML entities: {}", g);
+        String fixed = m.group(1).replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        ret = ret.replace(g, fixed); // use string replace
+      }
+    }
+    return ret;
+  }
+
+  /**
    * fixes document.write("<sc" + "ript") XML validation
    * 
    * @param xml

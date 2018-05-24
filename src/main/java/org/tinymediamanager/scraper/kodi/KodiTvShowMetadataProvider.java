@@ -99,7 +99,9 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     addMetadata(md, xml.getDocumentElement());
 
     String showId = md.getId(scraper.getProviderInfo().getId()).toString();
-    String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), EPISODEGUIDE);
+    // String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), EPISODEGUIDE);
+    // might be multiple!!
+    String episodeUrl = innerXml(DOMUtils.getElementByTagName(xml.getDocumentElement(), EPISODEGUIDE));
     if (StringUtils.isEmpty(episodeUrl)) {
       LOGGER.error("No Episode Data!");
     }
@@ -108,6 +110,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       md.addExtraData(EPISODEGUIDE, episodeUrl);
       result.setMetadata(md);
     }
+    LOGGER.debug("MetaData: " + md.toString());
     KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), xmlDetails);
   }
 
@@ -163,8 +166,6 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       KodiUrl epUrl = new KodiUrl(DOMUtils.getElementValue(el, "url"));
 
       LOGGER.info("Getting episode details S" + lz(season) + " E" + lz(ep) + " - " + title);
-      KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
-      processor = new KodiAddonProcessor(scraper);
       String xmlDetails = processor.getEpisodeDetails(epUrl, id);
       LOGGER.debug("******** BEGIN EPISODE DETAILS XML ***********");
       LOGGER.debug(xmlDetails);
@@ -177,6 +178,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       addMetadata(md, epXmlEl);
       md.setEpisodeNumber(ep);
       md.setSeasonNumber(season);
+      LOGGER.debug("MetaData: " + md.toString());
 
       // cache EPISODE MetaData as provideId_S00_E00
       KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep) + "_DETAIL",
@@ -222,7 +224,6 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     String epListXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE);
     if (epListXml == null) {
       KodiUrl url = new KodiUrl(episodeguide);
-      KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
       epListXml = processor.getEpisodeList(url);
       KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE, epListXml);
     }

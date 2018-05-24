@@ -87,7 +87,8 @@ class KodiScraperProcessor {
     int i = 0;
     for (RegExp r : regExps) {
       i++;
-      LOGGER.trace("Executing " + i + "/" + regExps.length + " - " + r.getExpression());
+      LOGGER.trace(String.format("Executing Regex " + i + "/" + regExps.length + ": %s; Dest: %s; Input: %s; Output: %s", r.getExpression(),
+          r.getDest(), r.getInput(), r.getOutput()));
       executeRegexp(r);
     }
   }
@@ -117,8 +118,7 @@ class KodiScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    LOGGER.trace(
-        String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression(), r.getDest(), r.getInput(), r.getOutput()));
+    // logCurrentBuffers(); // DEBUG
     Expression exp = r.getExpression();
 
     String in = getBuffer(r.getInput());
@@ -138,11 +138,18 @@ class KodiScraperProcessor {
       return;
     }
 
-    LOGGER.trace("Expression: " + expr);
-    expr = processOutputBuffersForInputBufferReferences(expr);
-    LOGGER.trace("Expression: " + expr);
+    LOGGER.trace("Expression: <" + expr);
+    expr = processOutputBuffersForPropertyReferences(processOutputBuffersForInputBufferReferences(expr));
+    LOGGER.trace("Expression: >" + expr);
     LOGGER.trace("     Input: " + logBuffer(in));
-    Pattern p = Pattern.compile(expr, PATTERN_OPTIONS);
+    Pattern p = null;
+    try {
+      p = Pattern.compile(expr, PATTERN_OPTIONS);
+    }
+    catch (Exception e) {
+      LOGGER.trace("Could not compile regex: " + e.getMessage() + " - trying quoted instead");
+      p = Pattern.compile(Pattern.quote(expr), PATTERN_OPTIONS);
+    }
     Matcher m = p.matcher(in);
     if (m.find()) {
       LOGGER.trace("Matched: Group Count: " + m.groupCount());
@@ -181,7 +188,7 @@ class KodiScraperProcessor {
     String g[] = new String[c + 1];
     for (int i = 0; i <= c; i++) {
       if (noCleanArray != null && noCleanArray[i] != null) {
-        // don clean
+        // don't clean
         g[i] = groups.group(i);
       }
       else {
@@ -208,13 +215,14 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffers(String output, String groups[]) {
-    LOGGER.trace("Processing output buffer replacement.");
     Pattern p = Pattern.compile("\\\\([0-9])");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
 
     int lastStart = 0;
     while (m.find()) {
+      LOGGER.trace("Processing output buffer replacement ");
+
       sb.append(output.substring(lastStart, m.start()));
       lastStart = m.end();
       int g = Integer.parseInt(m.group(1));
@@ -231,6 +239,7 @@ class KodiScraperProcessor {
       }
       if (val == null)
         val = "";
+      LOGGER.trace("Replace '\\" + m.group(1) + "' with '" + val + "'");
       sb.append(val);
     }
 
@@ -240,7 +249,6 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForInputBufferReferences(String output) {
-    LOGGER.trace("Processing buffer for input buffer references.");
     Pattern p = Pattern.compile("\\$\\$([0-9]+)");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -249,6 +257,7 @@ class KodiScraperProcessor {
     while (m.find()) {
       sb.append(output.substring(lastStart, m.start()));
       lastStart = m.end();
+      LOGGER.trace("replacing input reference '" + m.group(1) + "' with '" + getBuffer(Integer.parseInt(m.group(1))) + "'");
       sb.append(getBuffer(Integer.parseInt(m.group(1))));
     }
 
@@ -258,7 +267,6 @@ class KodiScraperProcessor {
   }
 
   private String processOutputBuffersForPropertyReferences(String output) {
-    LOGGER.trace("Processing buffer for property references.");
     Pattern p = Pattern.compile("\\$INFO\\[([^\\]]+)\\]");
     Matcher m = p.matcher(output);
     StringBuffer sb = new StringBuffer();
@@ -267,6 +275,7 @@ class KodiScraperProcessor {
     while (m.find()) {
       sb.append(output.substring(lastStart, m.start()));
       lastStart = m.end();
+      LOGGER.trace("replacing property reference '" + m.group(1) + "' with '" + scraper.getProviderInfo().getConfig().getValue(m.group(1)) + "'");
       sb.append(scraper.getProviderInfo().getConfig().getValue(m.group(1)));
     }
 
@@ -274,29 +283,6 @@ class KodiScraperProcessor {
 
     return sb.toString();
   }
-
-  // private String processOutputBuffersForChaining(String output) {
-  // log.debug("Processing output buffers for chaining.");
-  // Pattern p = Pattern.compile("<chain function=\"(.*)\">(.*)</chain>");
-  // Matcher m = p.matcher(output);
-  // StringBuffer sb = new StringBuffer();
-  //
-  // int lastStart = 0;
-  // while (m.find()) {
-  // String function = m.group(1);
-  // String buffer = m.group(2);
-  // XbmcScraperProcessor proc = new XbmcScraperProcessor(scraper);
-  // // sb.append("<" + function + ">" + proc.executeFunction(function, new
-  // // String[] { "", buffer }) + "</" + function + ">");
-  // sb.append(proc.executeFunction(function, new String[] { "", buffer }));
-  // }
-  //
-  // if (sb.length() == 0) {
-  // sb.append(output);
-  // }
-  //
-  // return sb.toString();
-  // }
 
   private String getBuffer(int buffer) {
     String text = buffers[buffer];
@@ -377,7 +363,7 @@ class KodiScraperProcessor {
         }
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
-        // call the set buffer again with this result
+        // call the set buffer again with this result (why wrap function tag name???)
         text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</" + m.group(1) + ">";
         append = true; // always append sub functions!
       }
@@ -390,8 +376,8 @@ class KodiScraperProcessor {
     if (append) {
       String s = buffers[buffer];
       if (s != null) {
-        LOGGER.trace("Appending to buffer: " + buffer);
         text = s + text;
+        LOGGER.trace("Appending to buffer {}: {}", buffer, text);
       }
     }
     buffers[buffer] = text;
@@ -401,6 +387,14 @@ class KodiScraperProcessor {
     for (int i = 0; i < buffers.length; i++) {
       setBuffer(i, "", false);
     }
+  }
+
+  public void logCurrentBuffers() {
+    LOGGER.trace("============================================================");
+    for (int i = 0; i < buffers.length; i++) {
+      LOGGER.trace("===  " + i + ":  " + buffers[i]);
+    }
+    LOGGER.trace("============================================================");
   }
 
   private void setBuffers(String[] input) {

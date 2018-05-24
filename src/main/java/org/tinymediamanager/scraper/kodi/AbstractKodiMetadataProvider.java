@@ -64,6 +64,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   private final DocumentBuilderFactory factory;
 
   public KodiScraper                   scraper;
+  protected KodiAddonProcessor         processor    = null;
   private String                       baseImageUrl = "";
 
   public AbstractKodiMetadataProvider(KodiScraper scraper) {
@@ -85,6 +86,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   }
 
   protected List<MediaSearchResult> _search(MediaSearchOptions options) throws Exception {
+    // always reset/instantiate on search
+    processor = new KodiAddonProcessor(scraper);
+
     List<MediaSearchResult> l = new ArrayList<>();
     String arg = options.getQuery();
 
@@ -101,7 +105,6 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       year = options.getYear();
     }
 
-    KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     KodiUrl url = processor.getSearchUrl(title, year > 0 ? String.valueOf(year) : "");
     if (url == null) {
       return l; // error processing XML, nothing found
@@ -110,7 +113,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
 
     LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
     LOGGER.debug(xmlString);
-    LOGGER.debug("========= End Kodi Scraper Search Xml Results: Url: " + url);
+    LOGGER.debug("========= END Kodi Scraper Search Xml Results: Url: " + url);
 
     Document xml = parseXmlString(xmlString);
 
@@ -186,7 +189,6 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       md.setId(MediaMetadata.IMDB, result.getIMDBId());
     }
 
-    KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     String xmlDetails = processor.getDetails(new KodiUrl(result.getUrl()), result.getId());
 
     // save scraper ID
@@ -215,6 +217,24 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       return m.group(1);
     }
     return "";
+  }
+
+  /**
+   * W3C no easy method to get complete string out of node/element
+   * 
+   * @param node
+   * @return String
+   */
+  protected String innerXml(Node node) {
+    DOMImplementationLS lsImpl = (DOMImplementationLS) node.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+    LSSerializer lsSerializer = lsImpl.createLSSerializer();
+    lsSerializer.getDomConfig().setParameter("xml-declaration", false);
+    NodeList childNodes = node.getChildNodes();
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < childNodes.getLength(); i++) {
+      sb.append(lsSerializer.writeToString(childNodes.item(i)));
+    }
+    return sb.toString();
   }
 
   protected Document parseXmlString(String xmlString) throws Exception {
@@ -300,6 +320,16 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     if (StringUtils.isNotBlank(tagline)) {
       md.setTagline(tagline);
     }
+
+    // TODO: better parsing of (sub) elements
+    // <rating>8.0</rating>
+    // or
+    // <ratings>
+    // <rating name="themoviedb" default="true">
+    // <value>5.7,</value>
+    // <votes>661</votes>
+    // </rating>
+    // </ratings>
 
     String rating = getInfoFromScraperFunctionOrBase("rating", details, subDetails);
     MediaRating rat = new MediaRating(getProviderInfo().getId());
@@ -408,7 +438,6 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       MediaCastMember cm = new MediaCastMember();
       cm.setType(MediaCastMember.CastType.DIRECTOR);
       cm.setName(StringUtils.trim(el.getTextContent()));
-      LOGGER.debug("Adding Director: " + cm.getName());
       cm.setPart("Director");
       String pic = DOMUtils.getElementValue(el, "thumb");
       if (pic != null && !pic.isEmpty()) {
@@ -499,6 +528,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       baseUrl = baseUrl.trim();
       image = baseUrl + image;
     }
+
     processMediaArt(md, type, label, image);
 
     // Some scrapers respond with multiple <thumb> tags.
