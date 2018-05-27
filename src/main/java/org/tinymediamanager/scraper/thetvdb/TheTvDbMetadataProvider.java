@@ -396,7 +396,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       member.setId(providerInfo.getId(), actor.id);
       member.setName(actor.name);
       member.setCharacter(actor.role);
-      member.setImageUrl(actor.image);
+      if (StringUtils.isNotBlank(actor.image)) {
+        member.setImageUrl(artworkUrl + actor.image);
+      }
 
       md.addCastMember(member);
     }
