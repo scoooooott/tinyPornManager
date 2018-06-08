@@ -1,3 +1,5 @@
+### Java ###
+# Compiled class file
 *.class
 
 # Package Files #
@@ -8,12 +10,29 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-#Maven
-target
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
 release.properties
-pom.xml.*
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
 
-#TMM
+### Intellij ###
+# User-specific stuff:
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+
+### Eclipse ###
+# User-specific stuff:
+.classpath
+
+### tinyMediaManager ###
 jspf.cache
 /cache/
 /data/
+/ignore/
