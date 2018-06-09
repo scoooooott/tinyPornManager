@@ -38,12 +38,15 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -87,7 +90,8 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
    * src="http://www.ofdb.de/jscripts/vn/immer_oben.js" type="text/javascript"></script>
    */
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getMetadata() " + options.toString());
 
     if (options.getType() != MediaType.MOVIE) {
@@ -136,7 +140,8 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
 
     // we can only work further if we got a search result on ofdb.de
     if (StringUtils.isBlank(detailUrl)) {
-      throw new Exception("We did not get any useful movie url");
+      LOGGER.warn("We did not get any useful movie url");
+      throw new MissingIdException(MediaMetadata.IMDB, providerInfo.getId());
     }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
@@ -156,7 +161,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       in.close();
 
       if (doc.getAllElements().size() < 10) {
-        throw new Exception("meh - we did not receive a valid web page");
+        throw new ScrapeException(new Exception("we did not receive a valid web page"));
       }
 
       // parse details
@@ -285,7 +290,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     }
     catch (Exception e) {
       LOGGER.error("Error parsing " + detailUrl);
-      throw e;
+      throw new ScrapeException(e);
     }
 
     return md;
@@ -510,7 +515,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("search() " + options.toString());
 
     if (options.getMediaType() != MediaType.MOVIE) {
@@ -524,6 +529,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     Elements filme = null;
     int myear = options.getYear();
 
+    Exception savedException = null;
     /*
      * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
      * http://www.ofdb.de//view.php?page=suchergebnis &Kat=xxxxxxxxx&SText=yyyyyyyyyyy
@@ -545,6 +551,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
       catch (Exception e) {
         LOGGER.error("failed to search for imdb Id " + imdb + ": " + e.getMessage());
+        savedException = e;
       }
     }
 
@@ -567,7 +574,13 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
       catch (Exception e) {
         LOGGER.error("failed to search for " + searchQuery + ": " + e.getMessage());
+        savedException = e;
       }
+    }
+
+    // if there has been a saved exception and we did not find anything - throw the exception
+    if ((filme == null || filme.isEmpty()) && savedException != null) {
+      throw new ScrapeException(savedException);
     }
 
     if (filme == null || filme.isEmpty()) {
@@ -639,12 +652,12 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   }
 
   @Override
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<>();
     if (!MetadataUtil.isValidImdbId(options.getImdbId())) {
       LOGGER.debug("IMDB id not found");
-      return trailers;
+      throw new MissingIdException(MediaMetadata.IMDB);
     }
     /*
      * function getTrailerData(ci) { switch (ci) { case 'http://de.clip-1.filmtrailer.com/9507_31566_a_1.flv?log_var=72|491100001 -1|-' : return
@@ -833,7 +846,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         LOGGER.error("Error parsing {}", searchString);
       }
 
-      throw e;
+      throw new ScrapeException(e);
     }
     return trailers;
   }
