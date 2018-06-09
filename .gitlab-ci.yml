@@ -17,7 +17,7 @@ build:
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -Dmaven.test.failure.ignore=false test
 
 deploy_snapshot:
   stage: deploy
