@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,6 +36,7 @@ import org.tinymediamanager.scraper.animated.entities.Entry;
 import org.tinymediamanager.scraper.animated.entities.Movie;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -72,6 +72,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   }
 
   Base getJson() {
+    initJson();
     return json;
   }
 
@@ -81,7 +82,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws MissingIdException {
     LOGGER.debug("getArtwork() " + options.toString());
 
     // lazy loading of the json
@@ -113,7 +114,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     }
   }
 
-  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
+  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws MissingIdException {
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
     MediaArtworkType artworkType = options.getArtworkType();
@@ -125,8 +126,9 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     String imdbId = options.getImdbId();
     if (StringUtils.isBlank(imdbId)) {
       LOGGER.info("no IMDB id set - returning");
-      return returnArtwork;
+      throw new MissingIdException(MediaMetadata.IMDB);
     }
+
     LOGGER.info("getArtwork for IMDB id: " + imdbId);
 
     if (json == null) {
@@ -142,7 +144,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     returnArtwork = prepareArtwork(m, artworkType);
 
     String language = options.getLanguage().getLanguage();
-    Collections.sort(returnArtwork, new MediaArtwork.MediaArtworkComparator(language));
+    returnArtwork.sort(new MediaArtwork.MediaArtworkComparator(language));
     return returnArtwork;
   }
 
@@ -222,17 +224,15 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   }
 
   private Base readJsonFile() {
-    Base b = null;
     Gson gson = new Gson();
     try {
       String jsonStr = readFileToString(JSON_FILE);
-      Base json = gson.fromJson(jsonStr, Base.class);
-      return json;
+      return gson.fromJson(jsonStr, Base.class);
     }
     catch (Exception e) {
       LOGGER.warn("Error reading json", e.getMessage());
     }
-    return b;
+    return null;
   }
 
   public static String readFileToString(Path file) throws IOException {
