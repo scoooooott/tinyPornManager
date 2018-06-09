@@ -38,9 +38,11 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTmdbMetadataProvider;
@@ -123,7 +125,7 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("search() " + options.toString());
     if (options.getMediaType() != MediaType.MOVIE) {
       throw new UnsupportedMediaTypeException(options.getMediaType());
@@ -139,15 +141,16 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     try {
       resultList.addAll(mp.search(options));
     }
-    catch (Exception e) {
+    catch (ScrapeException | UnsupportedMediaTypeException e) {
       LOGGER.warn("Could not call search method of " + mp.getProviderInfo().getId() + " : " + e.getMessage());
+      throw e;
     }
 
     return resultList;
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws UnsupportedMediaTypeException, NothingFoundException {
     LOGGER.debug("getMetadata() " + options.toString());
     if (options.getType() != MediaType.MOVIE) {
       throw new UnsupportedMediaTypeException(options.getType());
@@ -166,6 +169,10 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
 
     // and now assign the values per reflection
     assignResults(md, metadataMap);
+
+    if (md.getIds().isEmpty()) {
+      throw new NothingFoundException();
+    }
 
     return md;
   }
@@ -307,7 +314,7 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     private final IMovieMetadataProvider metadataProvider;
     private final MediaScrapeOptions     mediaScrapeOptions;
 
-    public MetadataProviderWorker(IMovieMetadataProvider metadataProvider, MediaScrapeOptions mediaScrapeOptions) {
+    MetadataProviderWorker(IMovieMetadataProvider metadataProvider, MediaScrapeOptions mediaScrapeOptions) {
       this.metadataProvider = metadataProvider;
       this.mediaScrapeOptions = mediaScrapeOptions;
     }
