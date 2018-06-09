@@ -38,6 +38,9 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.omdb.entities.MovieEntity;
@@ -94,7 +97,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions query) {
+  public MediaMetadata getMetadata(MediaScrapeOptions query) throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("scrape()" + query.toString());
 
     MediaMetadata metadata = new MediaMetadata(OmdbMetadataProvider.providerInfo.getId());
@@ -125,7 +128,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
     // imdbid check
     if (!MetadataUtil.isValidImdbId(imdbId)) {
       LOGGER.warn("no imdb id found");
-      return metadata;
+      throw new MissingIdException(MediaMetadata.IMDB);
     }
 
     DateFormat format = new SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH);
@@ -140,11 +143,12 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
     }
     catch (Exception e) {
       LOGGER.error("error searching: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     if (result == null) {
       LOGGER.warn("no result found");
-      return metadata;
+      throw new NothingFoundException();
     }
 
     metadata.setTitle(result.title);
@@ -248,7 +252,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) {
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
     LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> mediaResult = new ArrayList<>();
 
@@ -268,7 +272,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
     }
     catch (Exception e) {
       LOGGER.error("error searching: " + e.getMessage());
-      return mediaResult;
+      throw new ScrapeException(e);
     }
 
     if (resultList == null) {
