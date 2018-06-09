@@ -33,6 +33,10 @@ import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
@@ -74,7 +78,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
   }
 
   // thread safe initialization of the API
-  private static synchronized void initAPI() throws Exception {
+  private static synchronized void initAPI() throws ScrapeException {
     if (api == null) {
       try {
         api = new MovieMeter();
@@ -82,7 +86,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
       }
       catch (Exception e) {
         LOGGER.error("MoviemeterMetadataProvider", e);
-        throw e;
+        throw new ScrapeException(e);
       }
     }
 
@@ -105,7 +109,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     // lazy loading of the api
     initAPI();
 
@@ -140,11 +144,12 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
 
     if (StringUtils.isBlank(imdbId) && mmId == 0) {
       LOGGER.warn("not possible to scrape from Moviemeter.bl - no mmId/imdbId found");
-      return md;
+      throw new MissingIdException(MediaMetadata.IMDB, providerInfo.getId());
     }
 
     // scrape
     MMFilm fd = null;
+    Exception savedException = null;
     synchronized (api) {
       if (mmId != 0) {
         LOGGER.debug("MovieMeter: getMetadata(mmId): " + mmId);
@@ -153,6 +158,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
         }
         catch (Exception e) {
           LOGGER.warn("Error getting movie via MovieMeter id: " + e.getMessage());
+          savedException = e;
         }
       }
       else if (StringUtils.isNotBlank(imdbId)) {
@@ -162,12 +168,19 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
         }
         catch (Exception e) {
           LOGGER.warn("Error getting movie via IMDB id: " + e.getMessage());
+          savedException = e;
         }
       }
     }
 
+    // if there has been a saved exception and we did not find anything - throw the exception
+    if (fd == null && savedException != null) {
+      throw new ScrapeException(savedException);
+    }
+
     if (fd == null) {
-      return md;
+      LOGGER.warn("did not find anything");
+      throw new NothingFoundException();
     }
 
     md.setId(MediaMetadata.IMDB, fd.imdb);
@@ -233,7 +246,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException, UnsupportedMediaTypeException {
     // lazy loading of the api
     initAPI();
 
@@ -245,7 +258,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
 
     // check type
     if (query.getMediaType() != MediaType.MOVIE) {
-      throw new Exception("wrong media type for this scraper");
+      throw new UnsupportedMediaTypeException(query.getMediaType());
     }
 
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
@@ -267,6 +280,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
     List<MMFilm> moviesFound = new ArrayList<>();
     MMFilm fd = null;
 
+    Exception savedException = null;
     synchronized (api) {
       // 1. "search" with IMDBid (get details, well)
       if (StringUtils.isNotEmpty(imdb)) {
@@ -276,6 +290,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
         }
         catch (Exception e) {
           LOGGER.warn("Error searching by IMDB id: " + e.getMessage());
+          savedException = e;
         }
       }
 
@@ -287,8 +302,14 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
         }
         catch (Exception e) {
           LOGGER.warn("Error searching: " + e.getMessage());
+          savedException = e;
         }
       }
+    }
+
+    // if there has been a saved exception and we did not find anything - throw the exception
+    if (fd == null && savedException != null) {
+      throw new ScrapeException(savedException);
     }
 
     if (fd != null) { // imdb film detail page
