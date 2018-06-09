@@ -37,6 +37,9 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -61,14 +64,16 @@ import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 /**
- * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
+ * The class {@link TmdbMovieMetadataProvider} is used to provide metadata for movies from tmdb
+ * 
+ * @author Manuel Laggner
  */
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
   private final Tmdb          api;
 
-  public TmdbMovieMetadataProvider(Tmdb api) {
+  TmdbMovieMetadataProvider(Tmdb api) {
     this.api = api;
   }
 
@@ -78,21 +83,17 @@ class TmdbMovieMetadataProvider {
    * @param query
    *          the query parameters
    * @return a list of found movies
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while searching
    */
-  List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
+    Exception savedException = null;
     LOGGER.debug("search() " + query.toString());
 
     List<MediaSearchResult> resultList = new ArrayList<>();
 
     String searchString = "";
     Integer year = null;
-
-    // check type
-    if (query.getMediaType() != MediaType.MOVIE) {
-      throw new Exception("wrong media type for this scraper");
-    }
 
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
       searchString = query.getQuery();
@@ -130,11 +131,12 @@ class TmdbMovieMetadataProvider {
           verifyMovieTitleLanguage(query, movie);
           MediaSearchResult result = morphMovieToSearchResult(movie);
           resultList.add(result);
+          LOGGER.debug("found " + resultList.size() + " results with TMDB id");
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
-        LOGGER.debug("found " + resultList.size() + " results with TMDB id");
       }
 
       // 2. try with IMDBid
@@ -145,17 +147,18 @@ class TmdbMovieMetadataProvider {
           FindResults findResults = api.findService().find(imdbId, null, language).execute().body();
           if (findResults != null && findResults.movie_results != null) {
             for (Movie movie : findResults.movie_results) {
-              if (verifyMovieTitleLanguage(query, new ArrayList<BaseMovie>(findResults.movie_results), resultList, true)) {
+              if (verifyMovieTitleLanguage(query, new ArrayList<>(findResults.movie_results), resultList, true)) {
                 break;
               }
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          LOGGER.debug("found " + resultList.size() + " results with IMDB id");
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
-        LOGGER.debug("found " + resultList.size() + " results with IMDB id");
       }
 
       // 3. try with search string and year
@@ -171,11 +174,12 @@ class TmdbMovieMetadataProvider {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          LOGGER.debug("found " + resultList.size() + " results with search string");
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
-        LOGGER.debug("found " + resultList.size() + " results with search string");
       }
 
       // 4. if the last token in search string seems to be a year, try without :)
@@ -193,15 +197,19 @@ class TmdbMovieMetadataProvider {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
+          LOGGER.debug("found " + resultList.size() + " results with search string without year");
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
-        LOGGER.debug("found " + resultList.size() + " results with search string without year");
       }
     }
 
-    LOGGER.info("found " + resultList.size() + " results");
+    // if we have not found anything and there is a saved Exception, throw it to indicate a problem
+    if (resultList.isEmpty() && savedException != null) {
+      throw new ScrapeException(savedException);
+    }
 
     if (resultList.isEmpty()) {
       return resultList;
@@ -217,8 +225,8 @@ class TmdbMovieMetadataProvider {
       else {
         float score = MetadataUtil.calculateScore(searchString, result.getTitle());
 
-        if (year != null && yearDiffers(year.intValue(), result.getYear())) {
-          float diff = (float) Math.abs(year.intValue() - result.getYear()) / 100;
+        if (year != null && yearDiffers(year, result.getYear())) {
+          float diff = (float) Math.abs(year - result.getYear()) / 100;
           LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
           score -= diff;
         }
@@ -266,7 +274,6 @@ class TmdbMovieMetadataProvider {
           }
         }
         catch (Exception ignored) {
-          return;
         }
       }
     }
@@ -308,7 +315,7 @@ class TmdbMovieMetadataProvider {
                 return false;
               }
 
-              fallback = new ArrayList<BaseMovie>(findResults.movie_results);
+              fallback = new ArrayList<>(findResults.movie_results);
             }
             else {
               MovieResultsPage movieResultsPage = api.searchService()
@@ -356,10 +363,14 @@ class TmdbMovieMetadataProvider {
    * @param options
    *          the options for scraping
    * @return the metadata (never null)
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     return getMetadata(options, false, null);
   }
 
@@ -373,10 +384,16 @@ class TmdbMovieMetadataProvider {
    * @param metadata
    *          the original metadata from the original result before callback.
    * @return the metadata (never null)
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicated that there was no usable id to scrape
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options, boolean fallback, MediaMetadata metadata) throws Exception {
+  MediaMetadata getMetadata(MediaScrapeOptions options, boolean fallback, MediaMetadata metadata)
+      throws ScrapeException, MissingIdException, NothingFoundException {
+    Exception savedException = null;
     LOGGER.debug("getMetadata() " + options.toString());
 
     Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
@@ -400,7 +417,7 @@ class TmdbMovieMetadataProvider {
     String imdbId = options.getImdbId();
     if (tmdbId == 0 && !MetadataUtil.isValidImdbId(imdbId)) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId/imdbId found");
-      return md;
+      throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -426,6 +443,7 @@ class TmdbMovieMetadataProvider {
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
       }
       if (movie == null && tmdbId != 0) {
@@ -435,12 +453,19 @@ class TmdbMovieMetadataProvider {
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          savedException = e;
         }
       }
     }
+
+    // if there is no result, but a saved exception, propagate it
+    if (movie == null && savedException != null) {
+      throw new ScrapeException(savedException);
+    }
+
     if (movie == null) {
       LOGGER.warn("no result found");
-      return md;
+      throw new NothingFoundException();
     }
 
     md = morphMovieToMediaMetadata(movie, options);
@@ -515,10 +540,8 @@ class TmdbMovieMetadataProvider {
    * @param imdbId
    *          the imdbId
    * @return the tmdbId or 0 if nothing has been found
-   * @throws Exception
-   *           any exception which can be thrown while scraping
    */
-  int getTmdbIdFromImdbId(String imdbId) throws Exception {
+  int getTmdbIdFromImdbId(String imdbId) {
     try {
       FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
       if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {

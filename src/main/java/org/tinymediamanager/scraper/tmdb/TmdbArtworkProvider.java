@@ -27,6 +27,8 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import com.uwetrottmann.tmdb2.Tmdb;
@@ -39,7 +41,7 @@ import com.uwetrottmann.tmdb2.entities.Images;
 class TmdbArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbArtworkProvider.class);
 
-  private Tmdb                api;
+  private final Tmdb          api;
 
   public TmdbArtworkProvider(Tmdb api) {
     this.api = api;
@@ -51,10 +53,10 @@ class TmdbArtworkProvider {
    * @param options
    *          the options for getting the artwork
    * @return a list of all found artworks
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while scraping
    */
-  List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+  List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getArtwork() " + options.toString());
     MediaArtwork.MediaArtworkType artworkType = options.getArtworkType();
 
@@ -67,39 +69,45 @@ class TmdbArtworkProvider {
     }
 
     if (tmdbId == 0) {
-      LOGGER.debug("Cannot get artwork - neither imdb/tmdb set");
-      return new ArrayList<>(0);
+      LOGGER.warn("Cannot get artwork - neither imdb/tmdb set");
+      throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
     Images images = null;
     synchronized (api) {
-      // posters and fanart
-      switch (options.getType()) {
-        case MOVIE:
-          images = api.moviesService().images(tmdbId, null).execute().body();
-          break;
+      try {
+        // posters and fanart
+        switch (options.getType()) {
+          case MOVIE:
+            images = api.moviesService().images(tmdbId, null).execute().body();
+            break;
 
-        case MOVIE_SET:
-          images = api.collectionService().images(tmdbId, null).execute().body();
-          break;
+          case MOVIE_SET:
+            images = api.collectionService().images(tmdbId, null).execute().body();
+            break;
 
-        case TV_SHOW:
-          images = api.tvService().images(tmdbId, null).execute().body();
-          break;
+          case TV_SHOW:
+            images = api.tvService().images(tmdbId, null).execute().body();
+            break;
 
-        case TV_EPISODE:
-          int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
-          int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
+          case TV_EPISODE:
+            int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+            int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
-          if (seasonNr > -1 && episodeNr > -1) {
-            images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
-          }
-          break;
+            if (seasonNr > -1 && episodeNr > -1) {
+              images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
+            }
+            break;
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("could not get data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (images == null) {
-      return new ArrayList<>(0);
+      return new ArrayList<>();
     }
 
     List<MediaArtwork> artwork = prepareArtwork(images, artworkType, tmdbId, options);

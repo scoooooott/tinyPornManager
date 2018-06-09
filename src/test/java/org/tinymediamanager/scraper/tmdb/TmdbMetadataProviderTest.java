@@ -17,6 +17,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
@@ -421,7 +422,7 @@ public class TmdbMetadataProviderTest {
       assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(10);
 
-      assertEquals("Ended", md.getStatus());
+      assertEquals(MediaAiredStatus.ENDED, md.getStatus());
       assertThat(md.getProductionCompanies()).isNotEmpty();
       assertEquals(Certification.US_TVPG, md.getCertifications().get(0));
     }
@@ -459,7 +460,7 @@ public class TmdbMetadataProviderTest {
           "When Shawn Spencer is arrested for calling in an accurate tip to the police because only the perpetrator would know the details, his only way out is pretending to be a psychic. It turns out Santa Barbara PD isn't done with him. They ask him to consult on a kidnapping case, and a business is born.",
           md.getPlot());
       assertEquals("07-07-2006", sdf.format(md.getReleaseDate()));
-      assertEquals(7, md.getCastMembers(CastType.ACTOR).size());
+      assertThat(md.getCastMembers(CastType.ACTOR).size()).isGreaterThanOrEqualTo(7);
     }
     catch (Exception e) {
       e.printStackTrace();

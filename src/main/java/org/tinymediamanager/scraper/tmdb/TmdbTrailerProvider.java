@@ -21,8 +21,11 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import com.uwetrottmann.tmdb2.Tmdb;
@@ -35,9 +38,9 @@ import com.uwetrottmann.tmdb2.entities.Videos.Video;
 class TmdbTrailerProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTrailerProvider.class);
 
-  private Tmdb                api;
+  private final Tmdb          api;
 
-  public TmdbTrailerProvider(Tmdb api) {
+  TmdbTrailerProvider(Tmdb api) {
     this.api = api;
   }
 
@@ -47,10 +50,12 @@ class TmdbTrailerProvider {
    * @param options
    *          the options for getting the trailers
    * @return a list of all found trailers
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
    */
-  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<>();
 
@@ -64,7 +69,7 @@ class TmdbTrailerProvider {
 
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
-      return trailers;
+      throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -86,6 +91,7 @@ class TmdbTrailerProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get trailer: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 

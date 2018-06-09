@@ -40,6 +40,10 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.TvUtils;
@@ -65,7 +69,7 @@ class TmdbTvShowMetadataProvider {
 
   private final Tmdb          api;
 
-  public TmdbTvShowMetadataProvider(Tmdb api) {
+  TmdbTvShowMetadataProvider(Tmdb api) {
     this.api = api;
   }
 
@@ -75,20 +79,14 @@ class TmdbTvShowMetadataProvider {
    * @param query
    *          the query parameters
    * @return a list of found TV shows
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while searching
    */
-  List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
     LOGGER.debug("search() " + query.toString());
 
     List<MediaSearchResult> resultList = new ArrayList<>();
-
     String searchString = "";
-
-    // check type
-    if (query.getMediaType() != MediaType.TV_SHOW) {
-      throw new Exception("wrong media type for this scraper");
-    }
 
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
       searchString = query.getQuery();
@@ -121,6 +119,7 @@ class TmdbTvShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to search: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -134,10 +133,12 @@ class TmdbTvShowMetadataProvider {
    * @param options
    *          the scrape options for getting the episode list
    * @return the episode list
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while searching
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
    */
-  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getEpisodeList() " + options.toString());
     List<MediaMetadata> episodes = new ArrayList<>();
 
@@ -154,7 +155,7 @@ class TmdbTvShowMetadataProvider {
 
     // no tmdb id, no search..
     if (tmdbId == 0) {
-      return episodes;
+      throw new MissingIdException(MediaMetadata.TMDB);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -187,6 +188,7 @@ class TmdbTvShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get episode list: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -199,10 +201,17 @@ class TmdbTvShowMetadataProvider {
    * @param options
    *          the scrape options
    * @return the meta data
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while searching
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
+   * @throws UnsupportedMediaTypeException
+   *           unsupported media type
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException {
     switch (options.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(options);
@@ -211,15 +220,16 @@ class TmdbTvShowMetadataProvider {
         return getEpisodeMetadata(options);
 
       default:
-        throw new Exception("unsupported media type");
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     return getTvShowMetadata(options, false, null);
   }
 
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options, Boolean fallback, MediaMetadata metadata) throws Exception {
+  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options, Boolean fallback, MediaMetadata metadata)
+      throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getTvShowMetadata() " + options.toString());
 
     Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
@@ -243,20 +253,13 @@ class TmdbTvShowMetadataProvider {
     String imdbId = options.getImdbId();
     if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
       // try to get the tmdb id via imdb id
-      synchronized (api) {
-        try {
-          tmdbId = getTmdbIdFromImdbId(imdbId);
-        }
-        catch (Exception e) {
-          LOGGER.warn("Could not get tmdbid from imdbid: " + e.getMessage());
-        }
-      }
+      tmdbId = getTmdbIdFromImdbId(imdbId);
     }
 
     // no tmdb id, no scrape..
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
-      return md;
+      throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -274,11 +277,12 @@ class TmdbTvShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (complete == null) {
-      return md;
+      throw new NothingFoundException();
     }
 
     md.setId(TmdbMetadataProvider.providerInfo.getId(), tmdbId);
@@ -399,7 +403,7 @@ class TmdbTvShowMetadataProvider {
     return md;
   }
 
-  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getEpisodeMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
@@ -418,20 +422,13 @@ class TmdbTvShowMetadataProvider {
     String imdbId = options.getImdbId();
     if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
       // try to get the tmdb id via imdb id
-      synchronized (api) {
-        try {
-          tmdbId = getTmdbIdFromImdbId(imdbId);
-        }
-        catch (Exception e) {
-          LOGGER.warn("Could not get tmdbid from imdbid: " + e.getMessage());
-        }
-      }
+      tmdbId = getTmdbIdFromImdbId(imdbId);
     }
 
     // no tmdb id, no scrape..
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
-      return md;
+      throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
     // get episode number and season number
@@ -448,7 +445,7 @@ class TmdbTvShowMetadataProvider {
     // if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
     if (seasonNr == -1 || episodeNr == -1) {
       LOGGER.warn("season number/episode number found");
-      return md; // not even date set? return
+      throw new MissingIdException(MediaMetadata.SEASON_NR, MediaMetadata.EPISODE_NR);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -488,11 +485,12 @@ class TmdbTvShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (episode == null) {
-      return md;
+      throw new NothingFoundException();
     }
 
     md.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.episode_number));
@@ -588,10 +586,8 @@ class TmdbTvShowMetadataProvider {
    * @param imdbId
    *          the imdbId
    * @return the tmdbId or 0 if nothing has been found
-   * @throws Exception
-   *           any exception which can be thrown while scraping
    */
-  int getTmdbIdFromImdbId(String imdbId) throws Exception {
+  private int getTmdbIdFromImdbId(String imdbId) {
     try {
       FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
       if (findResults != null) {

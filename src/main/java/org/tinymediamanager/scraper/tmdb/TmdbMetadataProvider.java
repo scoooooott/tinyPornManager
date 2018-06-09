@@ -27,11 +27,14 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
@@ -68,7 +71,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   static MediaProviderInfo    providerInfo = createMediaProviderInfo();
   static Configuration        configuration;
 
-  public TmdbMetadataProvider() throws Exception {
+  public TmdbMetadataProvider() {
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
@@ -93,7 +96,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   // thread safe initialization of the API
-  private static synchronized void initAPI() throws Exception {
+  private static synchronized void initAPI() throws ScrapeException {
     String apiKey = TMM_API_KEY;
     String userApiKey = providerInfo.getConfig().getValue("apiKey");
 
@@ -111,28 +114,34 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
     // create a new instance of the tmdb api
     if (api == null) {
-      api = new Tmdb(apiKey) {
-        // tell the tmdb api to use our OkHttp client
+      try {
+        api = new Tmdb(apiKey) {
+          // tell the tmdb api to use our OkHttp client
 
-        @Override
-        protected synchronized OkHttpClient okHttpClient() {
-          OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
+          @Override
+          protected synchronized OkHttpClient okHttpClient() {
+            OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
 
-          // log http calls
-          if (LOGGER.isTraceEnabled()) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(Level.BASIC);
-            builder.addInterceptor(logging);
+            // log http calls
+            if (LOGGER.isTraceEnabled()) {
+              HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+              logging.setLevel(Level.BASIC);
+              builder.addInterceptor(logging);
+            }
+
+            builder.addInterceptor(new TmdbInterceptor(this));
+            return builder.build();
           }
+        };
 
-          builder.addInterceptor(new TmdbInterceptor(this));
-          return builder.build();
+        configuration = api.configurationService().configuration().execute().body();
+        if (configuration == null) {
+          throw new Exception("Invalid TMDB API key");
         }
-      };
-
-      configuration = api.configurationService().configuration().execute().body();
-      if (configuration == null) {
-        throw new Exception("Invalid TMDB API key");
+      }
+      catch (Exception e) {
+        LOGGER.error("could not initialize the API: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
   }
@@ -143,7 +152,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException, UnsupportedMediaTypeException {
     // lazy initialization of the api
     initAPI();
 
@@ -172,7 +181,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 
@@ -182,12 +191,13 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         return new TmdbTvShowMetadataProvider(api).getEpisodeList(options);
 
       default:
-        throw new Exception("unsupported media type");
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
     // lazy initialization of the api
     initAPI();
 
@@ -208,7 +218,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 
@@ -216,7 +226,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 
@@ -225,11 +235,11 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         return new TmdbTrailerProvider(api).getTrailers(options);
 
       default:
-        throw new Exception("unsupported media type");
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
-  public int getTmdbIdFromImdbId(String imdbId) throws Exception {
+  public int getTmdbIdFromImdbId(String imdbId) throws ScrapeException {
     // lazy initialization of the api
     initAPI();
 

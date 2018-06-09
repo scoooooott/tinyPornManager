@@ -30,6 +30,9 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -47,7 +50,7 @@ class TmdbMovieSetMetadataProvider {
 
   private final Tmdb          api;
 
-  public TmdbMovieSetMetadataProvider(Tmdb api) {
+  TmdbMovieSetMetadataProvider(Tmdb api) {
     this.api = api;
   }
 
@@ -57,10 +60,10 @@ class TmdbMovieSetMetadataProvider {
    * @param query
    *          the query parameters
    * @return a list of found movie sets
-   * @throws Exception
+   * @throws ScrapeException
    *           any exception which can be thrown while searching
    */
-  List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
     LOGGER.debug("search() " + query.toString());
 
     List<MediaSearchResult> movieSetsFound = new ArrayList<>();
@@ -101,6 +104,7 @@ class TmdbMovieSetMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to search: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -162,10 +166,10 @@ class TmdbMovieSetMetadataProvider {
    * @param options
    *          the options for scraping
    * @return the metadata (never null)
-   * @throws Exception
-   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  MediaMetadata getMetadata(MediaScrapeOptions options) throws MissingIdException, ScrapeException, NothingFoundException {
     LOGGER.debug("getMetadata() " + options.toString());
 
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
@@ -175,7 +179,7 @@ class TmdbMovieSetMetadataProvider {
 
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
-      return md;
+      throw new MissingIdException(MediaMetadata.TMDB_SET);
     }
 
     String language = options.getLanguage().getLanguage();
@@ -236,11 +240,12 @@ class TmdbMovieSetMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (collection == null) {
-      return md;
+      throw new NothingFoundException();
     }
 
     md.setId(MediaMetadata.TMDB_SET, collection.id);
