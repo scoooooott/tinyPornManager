@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.opensubtitles.model.Info;
 import org.tinymediamanager.scraper.util.LanguageUtils;
@@ -51,7 +51,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 /**
  * OpensubtitlesMetadataProvider provides subtitle scraping from OpenSubtitles.org
  * 
- * @author Myron Boyle, Manuel LAggner
+ * @author Myron Boyle, Manuel Laggner
  */
 @PluginImplementation
 public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
@@ -101,8 +101,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  public List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws Exception {
+  public List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws UnsupportedMediaTypeException {
     List<SubtitleSearchResult> results = new ArrayList<>();
 
     if (options.getMediaType() != MediaType.SUBTITLE) {
