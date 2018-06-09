@@ -20,12 +20,15 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface IMovieTrailerProvider. All scrapers providing movie trailers must implement this interface
+ * The Interface {@link IMovieTrailerProvider}. All scrapers providing movie trailers must implement this interface
  * 
  * @author Manuel Laggner
- * @since 1.0
+ * @since 3.0
  */
 public interface IMovieTrailerProvider extends IMediaProvider {
 
@@ -35,8 +38,12 @@ public interface IMovieTrailerProvider extends IMediaProvider {
    * @param options
    *          the options
    * @return the trailers
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
    */
-  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception;
+  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException;
 }

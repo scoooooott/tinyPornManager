@@ -23,7 +23,7 @@ package org.tinymediamanager.scraper.entities;
  */
 public enum MediaAiredStatus {
   UNKNOWN("Unknown", new String[] { "" }),
-  CONTINUING("Continuing", new String[] { "Continuing" }),
+  CONTINUING("Continuing", new String[] { "Continuing", "returning series" }),
   ENDED("Ended", new String[] { "Ended" });
 
   private String   name;

@@ -19,12 +19,15 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface IMediaSubtitleProvider.
+ * The Interface {@link IMediaSubtitleProvider}. All scrapers providing subtitles must implement this interface
  * 
- * @author Myron Boyle
- * @since 1.0
+ * @author Myron Boyle, Manuel Laggner
+ * @since 3.0
  */
 public interface IMediaSubtitleProvider extends IMediaProvider {
 
@@ -34,8 +37,12 @@ public interface IMediaSubtitleProvider extends IMediaProvider {
    * @param options
    *          the options for searching the subtitles
    * @return the MediaSearchResults
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
    */
-  List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws Exception;
+  List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException;
 }

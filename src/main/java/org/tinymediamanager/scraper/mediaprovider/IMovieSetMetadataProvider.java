@@ -21,12 +21,16 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface IMovieSetMetadataProvider. All scrapers providing movieset meta data must implement this interface
+ * The Interface {@link IMovieSetMetadataProvider}. All scrapers providing movie set meta data must implement this interface
  * 
- * @author Myron Boyle
- * @since 1.0
+ * @author Myron Boyle, Manuel Laggner
+ * @since 3.0
  */
 public interface IMovieSetMetadataProvider extends IMediaProvider {
 
@@ -36,10 +40,17 @@ public interface IMovieSetMetadataProvider extends IMediaProvider {
    * @param options
    *          the options
    * @return the meta data
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException;
 
   /**
    * Search for media.
@@ -47,8 +58,10 @@ public interface IMovieSetMetadataProvider extends IMediaProvider {
    * @param options
    *          the options
    * @return the list
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
    */
-  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException;
 }

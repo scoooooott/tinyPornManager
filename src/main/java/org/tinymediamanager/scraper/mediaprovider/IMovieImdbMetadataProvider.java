@@ -17,7 +17,7 @@
 package org.tinymediamanager.scraper.mediaprovider;
 
 /**
- * The Interface IMovieImdbMetadataProvider. All scrapers providing movie meta data by IMDB id must implement this interface
+ * The Interface {@link IMovieImdbMetadataProvider}. All scrapers providing movie meta data by IMDB id must implement this interface
  *
  * @author Manuel Laggner
  * @since 3.0

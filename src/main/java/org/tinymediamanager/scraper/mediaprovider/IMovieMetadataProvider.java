@@ -21,12 +21,16 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface IMovieMetadataProvider. All scrapers providing movie meta data must implement this interface
+ * The Interface {@link IMovieMetadataProvider}. All scrapers providing movie meta data must implement this interface
  * 
  * @author Manuel Laggner
- * @since 1.0
+ * @since 3.0
  */
 public interface IMovieMetadataProvider extends IMediaProvider {
 
@@ -36,10 +40,12 @@ public interface IMovieMetadataProvider extends IMediaProvider {
    * @param options
    *          the options
    * @return the list
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
    */
-  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException;
 
   /**
    * Gets the meta data.
@@ -47,8 +53,15 @@ public interface IMovieMetadataProvider extends IMediaProvider {
    * @param options
    *          the options
    * @return the meta data
-   * @throws Exception
-   *           the exception
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws UnsupportedMediaTypeException
+   *           indicates that the requested media type is not supported
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException;
 }

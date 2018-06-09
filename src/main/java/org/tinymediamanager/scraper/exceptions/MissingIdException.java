@@ -13,25 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
 
-import java.util.List;
-
-import org.tinymediamanager.scraper.entities.MediaType;
+package org.tinymediamanager.scraper.exceptions;
 
 /**
- * just a dedicated interface, for JSPF to find all "special" Kodi impls.<br>
- * 
- * @author Myron Boyle
+ * the class {@link MissingIdException} indicates that there was no matching ID for the scrape
+ *
+ * @author Manuel Laggner
  * @since 3.0
  */
-public interface IKodiMetadataProvider extends IMediaProvider {
+public class MissingIdException extends Exception {
+  private static final long serialVersionUID = 1682582702692312793L;
+
+  private final String[]    ids;
+
   /**
-   * get all Kodi scraper-plugins for the desired type
+   * the following ids are supported with this scraper, but no one has been given
    * 
-   * @param type
-   *          the desired media type
-   * @return all found plugins
+   * @param ids
+   *          an array of supported ids
    */
-  List<IMediaProvider> getPluginsForType(MediaType type);
+  public MissingIdException(String... ids) {
+    super();
+    this.ids = ids;
+  }
+
+  public String[] getIds() {
+    return ids;
+  }
 }

@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
 
-import java.util.List;
-
-import org.tinymediamanager.scraper.entities.MediaType;
+package org.tinymediamanager.scraper.exceptions;
 
 /**
- * just a dedicated interface, for JSPF to find all "special" Kodi impls.<br>
- * 
- * @author Myron Boyle
+ * the class {@link NothingFoundException} indicates that nothing has been found with this operation
+ *
+ * @author Manuel Laggner
  * @since 3.0
  */
-public interface IKodiMetadataProvider extends IMediaProvider {
+public class NothingFoundException extends Exception {
+  private static final long serialVersionUID = 2861692682692312793L;
+
   /**
-   * get all Kodi scraper-plugins for the desired type
-   * 
-   * @param type
-   *          the desired media type
-   * @return all found plugins
+   * default constructor
    */
-  List<IMediaProvider> getPluginsForType(MediaType type);
+  public NothingFoundException() {
+    super();
+  }
 }

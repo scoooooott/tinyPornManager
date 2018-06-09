@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
-
-import java.util.List;
+package org.tinymediamanager.scraper.exceptions;
 
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * just a dedicated interface, for JSPF to find all "special" Kodi impls.<br>
+ * The UnsupportedMediaTypeException is used to indicate that the given media type cannot be used for the chosen meta data provider
  * 
- * @author Myron Boyle
- * @since 3.0
+ * @author Manuel Laggner
+ * @since 1.0
  */
-public interface IKodiMetadataProvider extends IMediaProvider {
-  /**
-   * get all Kodi scraper-plugins for the desired type
-   * 
-   * @param type
-   *          the desired media type
-   * @return all found plugins
-   */
-  List<IMediaProvider> getPluginsForType(MediaType type);
+public class UnsupportedMediaTypeException extends Exception {
+  private static final long serialVersionUID = 2860692702692312793L;
+  private MediaType         type;
+
+  public UnsupportedMediaTypeException(MediaType type) {
+    this.type = type;
+  }
+
+  @Override
+  public String toString() {
+    return "The media type " + type.name() + " is not supported by this meta data provider";
+  }
 }
