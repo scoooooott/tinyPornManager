@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.fanarttv;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +28,15 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.fanarttv.entities.Image;
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit2.Response;
@@ -66,18 +68,18 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     return providerInfo;
   }
 
-  public FanartTvMetadataProvider() throws Exception {
+  public FanartTvMetadataProvider() {
   }
 
   // thread safe initialization of the API
-  private static synchronized void initAPI() throws Exception {
+  private static synchronized void initAPI() throws ScrapeException {
     if (api == null) {
       try {
         api = new FanartTv();
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
-        throw e;
+        throw new ScrapeException(e);
       }
     }
 
@@ -106,11 +108,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getArtwork() " + options.toString());
+
     // lazy initialization of the api
     initAPI();
-
-    LOGGER.debug("getArtwork() " + options.toString());
 
     List<MediaArtwork> artwork;
 
@@ -138,7 +140,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   // http://webservice.fanart.tv/v3/movies/559
-  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
+  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
     String language = options.getLanguage().getLanguage();
     if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
@@ -151,6 +153,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     String imdbId = options.getImdbId();
     int tmdbId = options.getTmdbId();
 
+    if (tmdbId == 0 && !MetadataUtil.isValidImdbId(imdbId)) {
+      throw new MissingIdException(MediaMetadata.IMDB, MediaMetadata.TMDB);
+    }
+
+    Exception savedException = null;
+
     if (StringUtils.isNotBlank(imdbId)) {
       try {
         LOGGER.debug("getArtwork with IMDB id: " + imdbId);
@@ -158,6 +166,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: " + e.getMessage());
+        savedException = e;
       }
     }
 
@@ -168,7 +177,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: " + e.getMessage());
+        savedException = e;
       }
+    }
+
+    // if there has been an exception and nothing has been found, throw this exception
+    if ((images == null || !images.isSuccessful()) && savedException != null) {
+      throw new ScrapeException(savedException);
     }
 
     if (images == null || !images.isSuccessful()) {
@@ -177,13 +192,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     }
 
     returnArtwork = getArtwork(images.body(), artworkType);
-    Collections.sort(returnArtwork, new MediaArtwork.MediaArtworkComparator(language));
+    returnArtwork.sort(new MediaArtwork.MediaArtworkComparator(language));
 
     return returnArtwork;
   }
 
   // http://webservice.fanart.tv/v3/tv/79349
-  private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
+  private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
     String language = options.getLanguage().getLanguage();
     if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
@@ -192,7 +207,6 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     List<MediaArtwork> returnArtwork = new ArrayList<>();
 
-    Response<Images> images = null;
     int tvdbId = options.getIdAsInt(MediaMetadata.TVDB);
 
     // no ID found? try the old one
@@ -200,26 +214,27 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       tvdbId = options.getIdAsInt("tvdb");
     }
 
-    if (tvdbId > 0) {
-      try {
-        LOGGER.debug("getArtwork with TVDB id: " + tvdbId);
-        images = api.getTvShowService().getTvShowImages(tvdbId).execute();
-      }
-      catch (Exception e) {
-        LOGGER.debug("failed to get artwork: " + e.getMessage());
-      }
+    if (tvdbId == 0) {
+      throw new MissingIdException(MediaMetadata.TVDB);
     }
-    else {
-      LOGGER.warn("not tvdbId set");
-      return returnArtwork;
+
+    Response<Images> images = null;
+    try {
+      LOGGER.debug("getArtwork with TVDB id: " + tvdbId);
+      images = api.getTvShowService().getTvShowImages(tvdbId).execute();
+    }
+    catch (Exception e) {
+      LOGGER.debug("failed to get artwork: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     if (images == null || !images.isSuccessful()) {
       LOGGER.info("got no result");
       return returnArtwork;
     }
+
     returnArtwork = getArtwork(images.body(), artworkType);
-    Collections.sort(returnArtwork, new MediaArtwork.MediaArtworkComparator(language));
+    returnArtwork.sort(new MediaArtwork.MediaArtworkComparator(language));
 
     return returnArtwork;
   }
