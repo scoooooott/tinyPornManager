@@ -31,6 +31,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -59,22 +62,17 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   }
 
   @Override
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
     LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<>();
     MediaMetadata md = options.getMetadata();
 
     if (md == null || StringUtils.isEmpty(md.getOriginalTitle())) {
       LOGGER.warn("no originalTitle served");
-      return trailers;
+      throw new MissingIdException("originalTitle");
     }
 
     String ot = md.getOriginalTitle();
-
-    // check if the original title is not empty
-    if (StringUtils.isEmpty(ot)) {
-      return trailers;
-    }
 
     // best guess
     String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase(Locale.ROOT) + "/";
@@ -156,9 +154,9 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     }
     catch (Exception e) {
       LOGGER.error("cannot parse HD-Trailers movie: " + ot, e);
+      throw new ScrapeException(e);
     }
-    finally {
-    }
+
     return trailers;
   }
 
