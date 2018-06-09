@@ -42,6 +42,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -85,7 +86,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return scraper.getProviderInfo();
   }
 
-  protected List<MediaSearchResult> _search(MediaSearchOptions options) throws Exception {
+  protected List<MediaSearchResult> _search(MediaSearchOptions options) throws ScrapeException {
     // always reset/instantiate on search
     processor = new KodiAddonProcessor(scraper);
 
@@ -105,73 +106,79 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       year = options.getYear();
     }
 
-    KodiUrl url = processor.getSearchUrl(title, year > 0 ? String.valueOf(year) : "");
-    if (url == null) {
-      return l; // error processing XML, nothing found
-    }
-    String xmlString = processor.getSearchResults(url);
+    try {
+      KodiUrl url = processor.getSearchUrl(title, year > 0 ? String.valueOf(year) : "");
+      if (url == null) {
+        return l; // error processing XML, nothing found
+      }
+      String xmlString = processor.getSearchResults(url);
 
-    LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
-    LOGGER.debug(xmlString);
-    LOGGER.debug("========= END Kodi Scraper Search Xml Results: Url: " + url);
+      LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
+      LOGGER.debug(xmlString);
+      LOGGER.debug("========= END Kodi Scraper Search Xml Results: Url: " + url);
 
-    Document xml = parseXmlString(xmlString);
+      Document xml = parseXmlString(xmlString);
 
-    NodeList nl = xml.getElementsByTagName("entity");
-    for (int i = 0; i < nl.getLength(); i++) {
-      try {
-        Element el = (Element) nl.item(i);
-        NodeList titleList = el.getElementsByTagName("title");
-        String t = titleList.item(0).getTextContent();
-        NodeList yearList = el.getElementsByTagName("year");
-        String y = yearList == null || yearList.getLength() == 0 ? "" : yearList.item(0).getTextContent();
-        NodeList urlList = el.getElementsByTagName("url");
-        KodiUrl u = new KodiUrl((Element) urlList.item(0));
-
-        MediaSearchResult sr = new MediaSearchResult(scraper.getProviderInfo().getId(), options.getMediaType());
-        String id = DOMUtils.getElementValue(el, "id");
-        sr.setId(id);
-        sr.setUrl(u.toExternalForm());
-        sr.setProviderId(scraper.getProviderInfo().getId());
-
-        if (u.toExternalForm().contains("imdb")) {
-          sr.setIMDBId(id);
-        }
-
-        // String v[] = ParserUtils.parseTitle(t);
-        // sr.setTitle(v[0]);
-        // sr.setYear(v[1]);
-        sr.setTitle(t);
+      NodeList nl = xml.getElementsByTagName("entity");
+      for (int i = 0; i < nl.getLength(); i++) {
         try {
-          sr.setYear(Integer.parseInt(y));
-        }
-        catch (Exception ignored) {
-        }
-        float score = MetadataUtil.calculateScore(arg, t);
-        // if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
-        // getLogger().debug("no poster - downgrading score by 0.01");
-        // score = score - 0.01f;
-        // }
-        if (yearDiffers(sr.getYear(), year)) {
-          float diff = (float) Math.abs(year - sr.getYear()) / 100;
-          LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
-          score -= diff;
-        }
-        sr.setScore(score);
+          Element el = (Element) nl.item(i);
+          NodeList titleList = el.getElementsByTagName("title");
+          String t = titleList.item(0).getTextContent();
+          NodeList yearList = el.getElementsByTagName("year");
+          String y = yearList == null || yearList.getLength() == 0 ? "" : yearList.item(0).getTextContent();
+          NodeList urlList = el.getElementsByTagName("url");
+          KodiUrl u = new KodiUrl((Element) urlList.item(0));
 
-        if (!l.contains(sr)) {
-          l.add(sr);
+          MediaSearchResult sr = new MediaSearchResult(scraper.getProviderInfo().getId(), options.getMediaType());
+          String id = DOMUtils.getElementValue(el, "id");
+          sr.setId(id);
+          sr.setUrl(u.toExternalForm());
+          sr.setProviderId(scraper.getProviderInfo().getId());
+
+          if (u.toExternalForm().contains("imdb")) {
+            sr.setIMDBId(id);
+          }
+
+          // String v[] = ParserUtils.parseTitle(t);
+          // sr.setTitle(v[0]);
+          // sr.setYear(v[1]);
+          sr.setTitle(t);
+          try {
+            sr.setYear(Integer.parseInt(y));
+          }
+          catch (Exception ignored) {
+          }
+          float score = MetadataUtil.calculateScore(arg, t);
+          // if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
+          // getLogger().debug("no poster - downgrading score by 0.01");
+          // score = score - 0.01f;
+          // }
+          if (yearDiffers(sr.getYear(), year)) {
+            float diff = (float) Math.abs(year - sr.getYear()) / 100;
+            LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+            score -= diff;
+          }
+          sr.setScore(score);
+
+          if (!l.contains(sr)) {
+            l.add(sr);
+          }
+        }
+        catch (Exception e) {
+          LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
         }
       }
-      catch (Exception e) {
-        LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
-      }
+
+      Collections.sort(l);
+      Collections.reverse(l);
+
+      return l;
     }
-
-    Collections.sort(l);
-    Collections.reverse(l);
-
-    return l;
+    catch (Exception e) {
+      LOGGER.error("problem searching: " + e.getMessage());
+      throw new ScrapeException(e);
+    }
   }
 
   /**
@@ -181,31 +188,37 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return i1 > 0 && i2 > 0 && i1 != i2;
   }
 
-  protected MediaMetadata _getMetadata(MediaScrapeOptions options) throws Exception {
-    MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
-    MediaSearchResult result = options.getResult();
+  protected MediaMetadata _getMetadata(MediaScrapeOptions options) throws ScrapeException {
+    try {
+      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
+      MediaSearchResult result = options.getResult();
 
-    if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {
-      md.setId(MediaMetadata.IMDB, result.getIMDBId());
+      if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {
+        md.setId(MediaMetadata.IMDB, result.getIMDBId());
+      }
+
+      String xmlDetails = processor.getDetails(new KodiUrl(result.getUrl()), result.getId());
+
+      // save scraper ID
+      if (!StringUtils.isEmpty(result.getId())) {
+        md.setId(scraper.getProviderInfo().getId(), result.getId());
+      }
+
+      // workaround: replace problematic sequences
+      xmlDetails = xmlDetails.replace("&nbsp;", " ");
+      processXmlContent(xmlDetails, md, result);
+
+      // try to parse an imdb id from the url
+      if (!StringUtils.isEmpty(result.getUrl()) && md.getId(MediaMetadata.IMDB) != null) {
+        md.setId(MediaMetadata.IMDB, parseIMDBID(result.getUrl()));
+      }
+
+      return md;
     }
-
-    String xmlDetails = processor.getDetails(new KodiUrl(result.getUrl()), result.getId());
-
-    // save scraper ID
-    if (!StringUtils.isEmpty(result.getId())) {
-      md.setId(scraper.getProviderInfo().getId(), result.getId());
+    catch (Exception e) {
+      LOGGER.error("problem scraping: " + e.getMessage());
+      throw new ScrapeException(e);
     }
-
-    // workaround: replace problematic sequences
-    xmlDetails = xmlDetails.replace("&nbsp;", " ");
-    processXmlContent(xmlDetails, md, result);
-
-    // try to parse an imdb id from the url
-    if (!StringUtils.isEmpty(result.getUrl()) && md.getId(MediaMetadata.IMDB) != null) {
-      md.setId(MediaMetadata.IMDB, parseIMDBID(result.getUrl()));
-    }
-
-    return md;
   }
 
   private String parseIMDBID(String url) {

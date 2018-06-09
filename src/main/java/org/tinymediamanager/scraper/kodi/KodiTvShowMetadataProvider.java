@@ -27,6 +27,9 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -50,7 +53,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException {
     List<MediaSearchResult> results = _search(options);
     if (results.isEmpty() && options.getYear() > 0) {
       // nothing found, try w/o year
@@ -62,22 +65,22 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("Kodi: getMetadata(): " + options);
     // if (options.getResult() == null || !scraper.getProviderInfo().getId().equals(options.getResult().getProviderId())) {
     // throw new Exception("scraping with Kodi scrapers only with a prior result possible");
     // }
 
-    if (options.getType().equals(MediaType.TV_SHOW)) {
-      return _getMetadata(options);
-    }
-    else if (options.getType().equals(MediaType.TV_EPISODE)) {
-      // called for every single episode, S/E in options...
-      return getEpisodeMetadata(options);
-    }
-    else {
-      LOGGER.error("Whoops, cannot get MetaData - wrong Type: " + options.getType());
-      return null;
+    switch (options.getType()) {
+      case TV_SHOW:
+        return _getMetadata(options);
+
+      case TV_EPISODE:
+        // called for every single episode, S/E in options...
+        return getEpisodeMetadata(options);
+
+      default:
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
@@ -193,7 +196,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     List<MediaMetadata> episodeList = new ArrayList<>();
 
     String showId = options.getIdAsString(scraper.getProviderInfo().getId());
@@ -202,7 +205,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     }
     if (showId == null) {
       LOGGER.error("Could not find showId - please scrape show first!");
-      return episodeList;
+      throw new MissingIdException("Could not find showId - please scrape show first!");
     }
 
     String episodeguide = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + "EPISODEGUIDE_URL");
@@ -220,54 +223,60 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       }
     }
 
-    // get XML - either from cache, or fetched
-    String epListXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE);
-    if (epListXml == null) {
-      KodiUrl url = new KodiUrl(episodeguide);
-      epListXml = processor.getEpisodeList(url);
-      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE, epListXml);
+    try {
+      // get XML - either from cache, or fetched
+      String epListXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE);
+      if (epListXml == null) {
+        KodiUrl url = new KodiUrl(episodeguide);
+        epListXml = processor.getEpisodeList(url);
+        KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + EPISODEGUIDE, epListXml);
+      }
+      LOGGER.debug("******** BEGIN EPISODE LIST XML ***********");
+      LOGGER.debug(epListXml);
+      LOGGER.debug("******** END EPISODE LIST XML ***********");
+      Document epListDoc = parseXmlString(epListXml);
+
+      // <episode>
+      // <title>Bender's Big Score</title>
+      // <aired>2008-03-23</aired>
+      // <epnum>1</epnum>
+      // <season>0</season>
+      // <url
+      // cache="tmdb-615-en-episode-s0e1.json">http://api.themoviedb.org/3/tv/615/season/0/episode/1?api_key=6889f6089877fd092454d00edb44a84d&amp;language=en&amp;append_to_response=credits,external_ids,images&amp;include_image_language=en,en,null</url>
+      // <id>615|0|1</id>
+      // </episode>
+
+      NodeList nl = epListDoc.getElementsByTagName("episode");
+      for (int i = 0; i < nl.getLength(); i++) {
+        Element el = (Element) nl.item(i);
+
+        int season = DOMUtils.getElementIntValue(el, "season");
+        int ep = DOMUtils.getElementIntValue(el, "epnum");
+
+        // cache episode XML for later details parsing
+        String epXml = elementToString(el);
+        if (epXml != null) {
+          KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), epXml);
+        }
+
+        MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
+        md.setEpisodeNumber(ep);
+        md.setSeasonNumber(season);
+        md.setTitle(DOMUtils.getElementValue(el, "title"));
+        md.setId(scraper.getProviderInfo().getId(), DOMUtils.getElementValue(el, "id"));
+        // String epUrl = DOMUtils.getElementValue(el, "url"); // cannot save in ME!!!
+        try {
+          md.setReleaseDate(StrgUtils.parseDate(DOMUtils.getElementValue(el, "aired")));
+        }
+        catch (Exception ignored) {
+        }
+
+        episodeList.add(md);
+      }
     }
-    LOGGER.debug("******** BEGIN EPISODE LIST XML ***********");
-    LOGGER.debug(epListXml);
-    LOGGER.debug("******** END EPISODE LIST XML ***********");
-    Document epListDoc = parseXmlString(epListXml);
-
-    // <episode>
-    // <title>Bender's Big Score</title>
-    // <aired>2008-03-23</aired>
-    // <epnum>1</epnum>
-    // <season>0</season>
-    // <url
-    // cache="tmdb-615-en-episode-s0e1.json">http://api.themoviedb.org/3/tv/615/season/0/episode/1?api_key=6889f6089877fd092454d00edb44a84d&amp;language=en&amp;append_to_response=credits,external_ids,images&amp;include_image_language=en,en,null</url>
-    // <id>615|0|1</id>
-    // </episode>
-
-    NodeList nl = epListDoc.getElementsByTagName("episode");
-    for (int i = 0; i < nl.getLength(); i++) {
-      Element el = (Element) nl.item(i);
-
-      int season = DOMUtils.getElementIntValue(el, "season");
-      int ep = DOMUtils.getElementIntValue(el, "epnum");
-
-      // cache episode XML for later details parsing
-      String epXml = elementToString(el);
-      if (epXml != null) {
-        KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep), epXml);
-      }
-
-      MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
-      md.setEpisodeNumber(ep);
-      md.setSeasonNumber(season);
-      md.setTitle(DOMUtils.getElementValue(el, "title"));
-      md.setId(scraper.getProviderInfo().getId(), DOMUtils.getElementValue(el, "id"));
-      // String epUrl = DOMUtils.getElementValue(el, "url"); // cannot save in ME!!!
-      try {
-        md.setReleaseDate(StrgUtils.parseDate(DOMUtils.getElementValue(el, "aired")));
-      }
-      catch (Exception ignored) {
-      }
-
-      episodeList.add(md);
+    catch (Exception e) {
+      LOGGER.error("problem scraping: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     if (episodeList.isEmpty()) {
@@ -282,13 +291,19 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws Exception {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws ScrapeException {
     LOGGER.debug("******* BEGIN ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
-    List<MediaArtwork> mas = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> mas = new ArrayList<>();
     // scrape again to get Kodi XML (thank god we have a mem cachedUrl)
-    MediaMetadata md = getMetadata(arg0);
-    mas.addAll(md.getMediaArt(arg0.getArtworkType()));
-    LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    try {
+      MediaMetadata md = getMetadata(arg0);
+      mas.addAll(md.getMediaArt(arg0.getArtworkType()));
+      LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting artwork: " + e.getMessage());
+      throw new ScrapeException(e);
+    }
     return mas;
   }
 }
