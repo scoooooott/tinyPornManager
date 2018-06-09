@@ -40,6 +40,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.PluginManager;
@@ -79,7 +82,7 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   @Override
-  protected MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  protected MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     return getMovieMetadata(options);
   }
 
@@ -88,7 +91,7 @@ public class ImdbMovieParser extends ImdbParser {
     return CAT_TITLE;
   }
 
-  MediaMetadata getMovieMetadata(MediaScrapeOptions options) throws Exception {
+  MediaMetadata getMovieMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     // check if there is a md in the result
@@ -110,7 +113,8 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     if (!MetadataUtil.isValidImdbId(imdbId)) {
-      return md;
+      LOGGER.warn("not possible to scrape from IMDB - imdbId found");
+      throw new MissingIdException(MediaMetadata.IMDB);
     }
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
@@ -119,31 +123,21 @@ public class ImdbMovieParser extends ImdbParser {
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
 
-    // worker for imdb request (/reference) (everytime from www.imdb.com)
-    // StringBuilder sb = new StringBuilder(imdbSite.getSite());
-    StringBuilder sb = new StringBuilder(ImdbSiteDefinition.IMDB_COM.getSite());
-    sb.append("title/");
-    sb.append(imdbId);
-    sb.append("/reference");
-    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    // worker for imdb request (/reference)
+    String url = imdbSite.getSite() + "title/" + imdbId + "/reference";
+    Callable<Document> worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     Future<Document> futureReference = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary;
-    sb = new StringBuilder(imdbSite.getSite());
-    sb.append("title/");
-    sb.append(imdbId);
-    sb.append("/plotsummary");
-    worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    url = imdbSite.getSite() + "title/" + imdbId + "/plotsummary";
+    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     futurePlotsummary = compSvcImdb.submit(worker);
 
     // worker for imdb request (/releaseinfo)
     Future<Document> futureReleaseinfo;
-    sb = new StringBuilder(imdbSite.getSite());
-    sb.append("title/");
-    sb.append(imdbId);
-    sb.append("/releaseinfo");
-    worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    url = imdbSite.getSite() + "title/" + imdbId + "/releaseinfo";
+    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     futureReleaseinfo = compSvcImdb.submit(worker);
 
     // worker for tmdb request
@@ -154,40 +148,48 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     Document doc;
-    doc = futureReference.get();
-    parseReferencePage(doc, options, md);
+    try {
+      doc = futureReference.get();
+      parseReferencePage(doc, options, md);
 
-    /*
-     * plot from /plotsummary
-     */
-    // build the url
-    doc = futurePlotsummary.get();
-    parsePlotsummaryPage(doc, options, md);
+      doc = futurePlotsummary.get();
+      parsePlotsummaryPage(doc, options, md);
 
-    // title also from chosen site if we are not scraping akas.imdb.com
-    if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
-      Element title = doc.getElementById("tn15title");
-      if (title != null) {
-        Element element;
-        // title
-        Elements elements = title.getElementsByClass("main");
-        if (elements.size() > 0) {
-          element = elements.first();
-          String movieTitle = cleanString(element.ownText());
-          md.setTitle(movieTitle);
+      // title also from chosen site if we are not scraping akas.imdb.com
+      if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
+        Element title = doc.getElementById("tn15title");
+        if (title != null) {
+          Element element;
+          // title
+          Elements elements = title.getElementsByClass("main");
+          if (elements.size() > 0) {
+            element = elements.first();
+            String movieTitle = cleanString(element.ownText());
+            md.setTitle(movieTitle);
+          }
         }
       }
+
+      // get the release info page
+      Document releaseinfoDoc = futureReleaseinfo.get();
+      // parse original title here!!
+      parseReleaseinfoPageAKAs(releaseinfoDoc, options, md);
+
+      // did we get a release date?
+      if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
+        // get the date from the releaseinfo page
+        parseReleaseinfoPage(releaseinfoDoc, options, md);
+      }
+
+    }
+    catch (Exception e) {
+      LOGGER.error("problem while scraping: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
-    // get the release info page
-    Document releaseinfoDoc = futureReleaseinfo.get();
-    // parse original title here!!
-    parseReleaseinfoPageAKAs(releaseinfoDoc, options, md);
-
-    // did we get a release date?
-    if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
-      // get the date from the releaseinfo page
-      parseReleaseinfoPage(releaseinfoDoc, options, md);
+    if (md.getIds().isEmpty()) {
+      LOGGER.warn("nothing found");
+      throw new NothingFoundException();
     }
 
     // get data from tmdb?

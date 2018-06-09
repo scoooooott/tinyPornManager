@@ -27,10 +27,13 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -52,8 +55,8 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   static final MediaProviderInfo providerInfo          = createMediaProviderInfo();
   static final ExecutorService   executor              = Executors.newFixedThreadPool(4);
 
-  public static final String     CAT_TITLE             = "&s=tt";
-  public static final String     CAT_TV                = "&s=tt&ttype=tv&ref_=fn_tv";
+  static final String            CAT_TITLE             = "&s=tt";
+  static final String            CAT_TV                = "&s=tt&ttype=tv&ref_=fn_tv";
 
   private ImdbSiteDefinition     imdbSite;
 
@@ -85,7 +88,8 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException {
     LOGGER.debug("getMetadata() " + options.toString());
 
     switch (options.getType()) {
@@ -104,7 +108,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("search() " + query.toString());
 
     switch (query.getMediaType()) {
@@ -120,9 +124,16 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
     LOGGER.debug("getEpisodeList() " + options.toString());
-    return new ImdbTvShowParser(imdbSite).getEpisodeList(options);
+    switch (options.getType()) {
+      case TV_SHOW:
+      case TV_EPISODE:
+        return new ImdbTvShowParser(imdbSite).getEpisodeList(options);
+
+      default:
+        throw new UnsupportedMediaTypeException(options.getType());
+    }
   }
 
   static void processMediaArt(MediaMetadata md, MediaArtworkType type, String image) {

@@ -52,6 +52,10 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -80,7 +84,7 @@ public abstract class ImdbParser {
 
   abstract protected ImdbSiteDefinition getImdbSite();
 
-  abstract protected MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  abstract protected MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException;
 
   abstract protected String getSearchCategory();
 
@@ -111,14 +115,7 @@ public abstract class ImdbParser {
     return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo");
   }
 
-  /**
-   * do the search according to the type
-   * 
-   * @param query
-   *          the search params
-   * @return the found results
-   */
-  protected List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+  protected List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
     List<MediaSearchResult> result = new ArrayList<>();
 
     /*
@@ -178,7 +175,7 @@ public abstract class ImdbParser {
     }
     catch (Exception e) {
       getLogger().debug("tried to fetch search response", e);
-      return result;
+      throw new ScrapeException(e);
     }
 
     // check if it was directly redirected to the site
@@ -203,9 +200,13 @@ public abstract class ImdbParser {
         options.setImdbId(movieId);
         options.setLanguage(query.getLanguage());
         options.setCountry(CountryCode.valueOf(country));
-        md = getMetadata(options);
-        if (!StringUtils.isEmpty(md.getTitle())) {
-          movieName = md.getTitle();
+        try {
+          md = getMetadata(options);
+          if (!StringUtils.isEmpty(md.getTitle())) {
+            movieName = md.getTitle();
+          }
+        }
+        catch (Exception ignored) {
         }
       }
 
@@ -976,24 +977,37 @@ public abstract class ImdbParser {
     private String             country;
     private ImdbSiteDefinition imdbSite;
     private Document           doc = null;
+    private boolean            useCachedUrl;
 
-    public ImdbWorker(String url, String language, String country, ImdbSiteDefinition imdbSite) {
+    ImdbWorker(String url, String language, String country, ImdbSiteDefinition imdbSite) {
+      this(url, language, country, imdbSite, false);
+    }
+
+    ImdbWorker(String url, String language, String country, ImdbSiteDefinition imdbSite, boolean useCachedUrl) {
       this.url = url;
       this.language = language;
       this.country = country;
       this.imdbSite = imdbSite;
+      this.useCachedUrl = useCachedUrl;
     }
 
     @Override
     public Document call() throws Exception {
       doc = null;
       try {
-        Url url = new Url(this.url);
+        Url url;
+        url = new CachedUrl(this.url);
+        if (useCachedUrl) {
+        }
+        else {
+          url = new Url(this.url);
+        }
         url.addHeader("Accept-Language", getAcceptLanguage(language, country));
         doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
       }
       catch (Exception e) {
         getLogger().debug("tried to fetch imdb page " + url, e);
+        throw e;
       }
       return doc;
     }
