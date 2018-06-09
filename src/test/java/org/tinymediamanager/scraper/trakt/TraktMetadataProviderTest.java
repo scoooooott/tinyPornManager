@@ -15,6 +15,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -151,7 +152,7 @@ public class TraktMetadataProviderTest {
       assertThat(md.getProductionCompanies()).containsOnly("HBO");
       assertThat(md.getCertifications()).containsOnly(Certification.US_TVMA);
       assertThat(md.getCountries()).containsOnly("us");
-      assertThat(md.getStatus()).isEqualTo("returning series");
+      assertThat(md.getStatus()).isEqualTo(MediaAiredStatus.CONTINUING);
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);
       assertThat(mediaRating.getRating()).isGreaterThan(0);

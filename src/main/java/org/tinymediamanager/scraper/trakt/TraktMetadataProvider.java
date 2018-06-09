@@ -23,7 +23,10 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -98,7 +101,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
 
   // Searching
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     // lazy initialization of the api
     initAPI();
 
@@ -116,7 +119,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
 
   // Scraping Movie
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options)
+      throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
     // lazy initialization of the api
     initAPI();
 
@@ -136,7 +140,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions mediaScrapeOptions)
+      throws ScrapeException, UnsupportedMediaTypeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 

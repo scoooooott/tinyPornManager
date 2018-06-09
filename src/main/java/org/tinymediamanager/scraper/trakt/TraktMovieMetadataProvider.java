@@ -28,12 +28,15 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -61,7 +64,7 @@ class TraktMovieMetadataProvider {
     this.api = api;
   }
 
-  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("search() " + options.toString());
 
     if (options.getMediaType() != MediaType.MOVIE) {
@@ -102,6 +105,7 @@ class TraktMovieMetadataProvider {
     }
     catch (Exception e) {
       LOGGER.error("Problem scraping for " + searchString + "; " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     if (searchResults == null || searchResults.isEmpty()) {
@@ -126,7 +130,7 @@ class TraktMovieMetadataProvider {
     return results;
   }
 
-  MediaMetadata scrape(MediaScrapeOptions options) throws Exception {
+  MediaMetadata scrape(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
@@ -144,7 +148,8 @@ class TraktMovieMetadataProvider {
       id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
-      return md;
+      LOGGER.warn("no id available");
+      throw new MissingIdException(MediaMetadata.IMDB, TraktMetadataProvider.providerInfo.getId());
     }
 
     // scrape
@@ -166,11 +171,13 @@ class TraktMovieMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (movie == null) {
-      return md;
+      LOGGER.warn("nothing found");
+      throw new NothingFoundException();
     }
 
     // if foreign language, get new values and overwrite

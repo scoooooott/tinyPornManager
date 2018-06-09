@@ -31,12 +31,15 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.TvUtils;
@@ -66,7 +69,7 @@ class TraktTVShowMetadataProvider {
   }
 
   // Search
-  List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
     LOGGER.debug("search() " + options.toString());
 
     if (options.getMediaType() != MediaType.TV_SHOW) {
@@ -108,6 +111,7 @@ class TraktTVShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to search: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -134,7 +138,7 @@ class TraktTVShowMetadataProvider {
   }
 
   // Episode List
-  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getEpisodeList() " + options.toString());
     List<MediaMetadata> episodes = new ArrayList<>();
 
@@ -144,7 +148,8 @@ class TraktTVShowMetadataProvider {
       id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
-      return episodes;
+      LOGGER.warn("no id available");
+      throw new MissingIdException(MediaMetadata.IMDB, TraktMetadataProvider.providerInfo.getId());
     }
 
     // the API does not provide a complete access to all episodes, so we have to
@@ -156,6 +161,7 @@ class TraktTVShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get episode list: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -201,7 +207,7 @@ class TraktTVShowMetadataProvider {
     return episodes;
   }
 
-  MediaMetadata scrape(MediaScrapeOptions options) throws Exception {
+  MediaMetadata scrape(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
     switch (options.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(options);
@@ -210,11 +216,11 @@ class TraktTVShowMetadataProvider {
         return getEpisodeMetadata(options);
 
       default:
-        throw new Exception("unsupported media type");
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getTvShowMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
@@ -228,7 +234,8 @@ class TraktTVShowMetadataProvider {
       id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
-      return md;
+      LOGGER.warn("no id available");
+      throw new MissingIdException(MediaMetadata.IMDB, TraktMetadataProvider.providerInfo.getId());
     }
 
     String lang = options.getLanguage().getLanguage();
@@ -246,11 +253,13 @@ class TraktTVShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
     if (show == null) {
-      return md;
+      LOGGER.warn("nothing found");
+      throw new NothingFoundException();
     }
 
     // show meta data
@@ -427,7 +436,7 @@ class TraktTVShowMetadataProvider {
     return md;
   }
 
-  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getEpisodeMetadata() " + options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
@@ -437,7 +446,8 @@ class TraktTVShowMetadataProvider {
       id = options.getIdAsString(IMDB);
     }
     if (StringUtils.isBlank(id)) {
-      return md;
+      LOGGER.warn("no id available");
+      throw new MissingIdException(MediaMetadata.IMDB, TraktMetadataProvider.providerInfo.getId());
     }
 
     // get episode number and season number
@@ -451,7 +461,7 @@ class TraktTVShowMetadataProvider {
       aired = formatter.format(options.getMetadata().getReleaseDate());
     }
     if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
-      return md; // not even date set? return
+      throw new MissingIdException(MediaMetadata.SEASON_NR, MediaMetadata.EPISODE_NR); // not even date set? return
     }
 
     // fetch all episode data - this results in less connections, but the initial connection is _bigger_
@@ -463,6 +473,7 @@ class TraktTVShowMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
+        throw new ScrapeException(e);
       }
     }
 
@@ -492,7 +503,8 @@ class TraktTVShowMetadataProvider {
     }
 
     if (episode == null) {
-      return md;
+      LOGGER.warn("nothing found");
+      throw new NothingFoundException();
     }
 
     md.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.number));
