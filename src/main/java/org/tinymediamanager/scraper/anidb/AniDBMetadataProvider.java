@@ -41,13 +41,16 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -88,7 +91,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException {
     switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(mediaScrapeOptions);
@@ -101,7 +105,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
     String langu = options.getLanguage().getLanguage();
@@ -117,7 +121,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     if (StringUtils.isEmpty(id)) {
-      return md;
+      throw new MissingIdException("anidb");
     }
 
     // call API
@@ -132,10 +136,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
     catch (Exception e) {
       LOGGER.error("failed to get TV show metadata: " + e.getMessage());
+      // pass the original exception to the caller
+      throw new ScrapeException(e);
     }
 
     if (doc == null || doc.children().size() == 0) {
-      return md;
+      throw new NothingFoundException();
     }
 
     md.setId(providerInfo.getId(), id);
@@ -259,15 +265,16 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
-    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException {
+    MediaMetadata md = null;
 
     // get episode number and season number
     int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
     int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
     if (seasonNr == -1 || episodeNr == -1) {
-      return md;
+      throw new MissingIdException(MediaMetadata.SEASON_NR, MediaMetadata.EPISODE_NR);
     }
 
     // get full episode listing
@@ -279,6 +286,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         md = episode;
         break;
       }
+    }
+
+    if (md == null) {
+      throw new NothingFoundException();
     }
 
     return md;
@@ -381,7 +392,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws UnsupportedMediaTypeException {
     LOGGER.debug("search() " + options.toString());
 
     if (options.getMediaType() != MediaType.TV_SHOW) {
@@ -434,8 +445,18 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
     List<MediaMetadata> episodes = new ArrayList<>();
+
+    // check the supported media types
+    switch (options.getType()) {
+      case TV_SHOW:
+      case TV_EPISODE:
+        break;
+
+      default:
+        throw new UnsupportedMediaTypeException(options.getType());
+    }
 
     String id = "";
     String langu = options.getLanguage().getLanguage();
@@ -451,7 +472,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     if (StringUtils.isEmpty(id)) {
-      return episodes;
+      throw new MissingIdException(providerInfo.getId());
     }
 
     Document doc = null;
@@ -464,6 +485,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
     catch (Exception e) {
       LOGGER.error("error getting episode list: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     if (doc == null || doc.children().size() == 0) {
@@ -580,7 +602,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     List<MediaArtwork> artwork = new ArrayList<>();
     String id = "";
 
@@ -595,7 +617,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     if (StringUtils.isEmpty(id)) {
-      return artwork;
+      throw new MissingIdException(providerInfo.getId());
     }
 
     switch (options.getArtworkType()) {
@@ -607,11 +629,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
           md = getTvShowMetadata(options);
         }
         catch (Exception e) {
-          return artwork;
+          LOGGER.error("could not get artwork: " + e.getMessage());
+          throw new ScrapeException(e);
         }
 
         artwork.addAll(md.getMediaArt(options.getArtworkType()));
-
         break;
 
       default:
