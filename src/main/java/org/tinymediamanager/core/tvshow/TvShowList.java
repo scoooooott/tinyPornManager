@@ -59,6 +59,8 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -538,8 +540,12 @@ public class TvShowList extends AbstractModelObject {
       // }
       // }
     }
-    catch (Exception e) {
+    catch (ScrapeException e) {
       LOGGER.error("searchTvShow", e);
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, this, "message.tvshow.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+    }
+    catch (UnsupportedMediaTypeException ignored) {
     }
 
     return searchResult;

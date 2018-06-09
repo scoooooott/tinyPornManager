@@ -82,6 +82,10 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.ShadowLayerUI;
@@ -875,8 +879,17 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
         }
       }
-      catch (Exception e) {
-        LOGGER.warn("Error getting metadata " + e.getMessage());
+      catch (ScrapeException e) {
+        LOGGER.error("getMetadata", e);
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, TvShowEpisodeEditorDialog.this.episodeToEdit,
+            "message.scrape.metadataepisodefailed", new String[] { ":", e.getLocalizedMessage() }));
+      }
+      catch (MissingIdException e) {
+        LOGGER.warn("missing id for scrape");
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, TvShowEpisodeEditorDialog.this.episodeToEdit, "scraper.error.missingid"));
+      }
+      catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
       }
 
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

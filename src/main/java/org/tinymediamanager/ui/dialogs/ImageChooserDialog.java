@@ -68,6 +68,8 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.IconManager;
@@ -994,8 +996,11 @@ public class ImageChooserDialog extends TmmDialog {
 
           }
         }
-        catch (Exception e) {
-          LOGGER.error("DownloadTask", e);
+        catch (ScrapeException e) {
+          LOGGER.error("getArtwork", e);
+          MessageDialog.showExceptionWindow(e);
+        }
+        catch (MissingIdException ignored) {
         }
       } // end foreach scraper
 

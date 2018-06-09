@@ -24,7 +24,11 @@ import java.util.Date;
  */
 public class Message {
   public enum MessageLevel {
-    DEBUG, INFO, WARN, ERROR, SEVERE
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+    SEVERE
   }
 
   private MessageLevel messageLevel;
@@ -33,6 +37,7 @@ public class Message {
   private Object       messageSender;
   private String[]     messageSenderParams;
   private Date         messageDate;
+  private Throwable    throwable;
 
   /**
    * Instantiates a new message.

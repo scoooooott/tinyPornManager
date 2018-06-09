@@ -43,6 +43,8 @@ import javax.swing.SwingWorker;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -54,6 +56,9 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -61,6 +66,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowSubtitleChooserModel;
 
@@ -79,18 +85,19 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowSubtitleChooserDialog extends TmmDialog {
-  private static final long                                  serialVersionUID   = -3104541519073924724L;
+  private static final long                                  serialVersionUID = -3104541519073924724L;
+  private static final Logger                                LOGGER           = LoggerFactory.getLogger(TvShowSubtitleChooserDialog.class);
 
-  private final TvShowList                                   tvShowList         = TvShowList.getInstance();
+  private final TvShowList                                   tvShowList       = TvShowList.getInstance();
   private final TvShowEpisode                                episodeToScrape;
   private final MediaFile                                    fileToScrape;
-  private SearchTask                                         activeSearchTask   = null;
+  private SearchTask                                         activeSearchTask = null;
 
-  private EventList<TvShowSubtitleChooserModel>              subtitleEventList  = null;
-  private DefaultEventTableModel<TvShowSubtitleChooserModel> subtitleTableModel = null;
+  private EventList<TvShowSubtitleChooserModel>              subtitleEventList;
+  private DefaultEventTableModel<TvShowSubtitleChooserModel> subtitleTableModel;
 
   private final boolean                                      inQueue;
-  private boolean                                            continueQueue      = true;
+  private boolean                                            continueQueue    = true;
 
   // UI components
   private JTable                                             tableSubs;
@@ -310,7 +317,11 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
           options.setEpisode(episode);
           searchResults.addAll(subtitleProvider.search(options));
         }
-        catch (Exception ignored) {
+        catch (ScrapeException e) {
+          LOGGER.error("getSubtitles", e);
+          MessageDialog.showExceptionWindow(e);
+        }
+        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
         }
       }
 

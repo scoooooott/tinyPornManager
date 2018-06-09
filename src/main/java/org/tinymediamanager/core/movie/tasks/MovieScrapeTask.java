@@ -48,6 +48,9 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -83,9 +86,9 @@ public class MovieScrapeTask extends TmmThreadPool {
 
     smartScrapeList = new ArrayList<>(0);
 
-      for (Movie movie : moviesToScrape) {
-          submitTask(new Worker(movie));
-      }
+    for (Movie movie : moviesToScrape) {
+      submitTask(new Worker(movie));
+    }
     waitForCompletionOrCancel();
 
     // initiate smart scrape
@@ -169,55 +172,63 @@ public class MovieScrapeTask extends TmmThreadPool {
 
         // get metadata, artwork and trailers
         if ((doSearch && result1 != null) || !doSearch) {
-          try {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-            options.setResult(result1);
-            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
-            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
-            options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
-            options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
+          MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+          options.setResult(result1);
+          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+          options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+          options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+          options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
-            // we didn't do a search - pass imdbid and tmdbid from movie object
-            if (!doSearch) {
-              for (Entry<String, Object> entry : movie.getIds().entrySet()) {
-                options.setId(entry.getKey(), entry.getValue().toString());
-              }
-            }
-            else {
-              // override scraper with one from search result
-              mediaMetadataScraper = movieList.getMediaScraperById(result1.getProviderId());
-            }
-
-            // scrape metadata if wanted
-            MediaMetadata md = null;
-
-            if (mediaMetadataScraper != null && mediaMetadataScraper.getMediaProvider() != null) {
-              LOGGER.info("=====================================================");
-              LOGGER.info("Scraper metadata with scraper: " + mediaMetadataScraper.getMediaProvider().getProviderInfo().getId() + ", "
-                  + mediaMetadataScraper.getMediaProvider().getProviderInfo().getVersion());
-              LOGGER.info(options.toString());
-              LOGGER.info("=====================================================");
-              md = ((IMovieMetadataProvider) mediaMetadataScraper.getMediaProvider()).getMetadata(options);
-
-              if (scraperMetadataConfig.isMetadata()) {
-                movie.setMetadata(md, scraperMetadataConfig);
-              }
-
-              // scrape artwork if wanted
-              if (scraperMetadataConfig.isArtwork()) {
-                movie.setArtwork(getArtwork(movie, md, artworkScrapers), scraperMetadataConfig);
-              }
-
-              // scrape trailer if wanted
-              if (scraperMetadataConfig.isTrailer()) {
-                movie.setTrailers(getTrailers(movie, md, trailerScrapers));
-                movie.writeNFO();
-              }
+          // we didn't do a search - pass imdbid and tmdbid from movie object
+          if (!doSearch) {
+            for (Entry<String, Object> entry : movie.getIds().entrySet()) {
+              options.setId(entry.getKey(), entry.getValue().toString());
             }
           }
-          catch (Exception e) {
-            LOGGER.error("movie.setMetadata", e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.metadatamoviefailed"));
+          else {
+            // override scraper with one from search result
+            mediaMetadataScraper = movieList.getMediaScraperById(result1.getProviderId());
+          }
+
+          // scrape metadata if wanted
+          MediaMetadata md = null;
+
+          if (mediaMetadataScraper != null && mediaMetadataScraper.getMediaProvider() != null) {
+            LOGGER.info("=====================================================");
+            LOGGER.info("Scraper metadata with scraper: " + mediaMetadataScraper.getMediaProvider().getProviderInfo().getId() + ", "
+                + mediaMetadataScraper.getMediaProvider().getProviderInfo().getVersion());
+            LOGGER.info(options.toString());
+            LOGGER.info("=====================================================");
+            try {
+              md = ((IMovieMetadataProvider) mediaMetadataScraper.getMediaProvider()).getMetadata(options);
+            }
+            catch (ScrapeException e) {
+              LOGGER.error("searchMovieFallback", e);
+              MessageManager.instance.pushMessage(
+                  new Message(MessageLevel.ERROR, movie, "message.scrape.metadatamoviefailed", new String[] { ":", e.getLocalizedMessage() }));
+            }
+            catch (MissingIdException e) {
+              LOGGER.warn("missing id for scrape");
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "scraper.error.missingid"));
+            }
+            catch (UnsupportedMediaTypeException e) {
+              LOGGER.warn("unsupported media type: " + mediaMetadataScraper.getMediaProvider().getProviderInfo().getId());
+            }
+
+            if (scraperMetadataConfig.isMetadata()) {
+              movie.setMetadata(md, scraperMetadataConfig);
+            }
+
+            // scrape artwork if wanted
+            if (scraperMetadataConfig.isArtwork()) {
+              movie.setArtwork(getArtwork(movie, md, artworkScrapers), scraperMetadataConfig);
+            }
+
+            // scrape trailer if wanted
+            if (scraperMetadataConfig.isTrailer()) {
+              movie.setTrailers(getTrailers(movie, md, trailerScrapers));
+              movie.writeNFO();
+            }
           }
         }
       }
@@ -282,9 +293,12 @@ public class MovieScrapeTask extends TmmThreadPool {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception e) {
+        catch (ScrapeException e) {
           LOGGER.error("getArtwork", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movieartworkfailed"));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, movie, "message.scrape.movieartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException ignored) {
         }
       }
 
@@ -323,9 +337,12 @@ public class MovieScrapeTask extends TmmThreadPool {
             trailers.add(movieTrailer);
           }
         }
-        catch (Exception e) {
+        catch (ScrapeException e) {
           LOGGER.error("getTrailers", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed"));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
         }
       }
 

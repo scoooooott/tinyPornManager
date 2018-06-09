@@ -24,6 +24,10 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -120,9 +124,12 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
           try {
             artwork.addAll(artworkProvider.getArtwork(options));
           }
-          catch (Exception e) {
+          catch (ScrapeException e) {
             LOGGER.error("getArtwork", e);
-            MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed"));
+            MessageManager.instance.pushMessage(
+                new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
+          }
+          catch (MissingIdException ignored) {
           }
         }
 
@@ -177,10 +184,16 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
           break;
         }
       }
-      catch (Exception e) {
-        LOGGER.error("Thread crashed", e);
+      catch (ScrapeException e) {
+        LOGGER.error("getArtwork", e);
         MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowMissingArtwork", "message.scrape.threadcrashed",
             new String[] { ":", e.getLocalizedMessage() }));
+      }
+      catch (MissingIdException e) {
+        LOGGER.warn("missing id for scrape");
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, episode, "scraper.error.missingid"));
+      }
+      catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
       }
     }
   }

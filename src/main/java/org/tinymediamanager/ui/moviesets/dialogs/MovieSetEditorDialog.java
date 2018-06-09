@@ -48,6 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -58,6 +60,9 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -568,19 +573,32 @@ public class MovieSetEditorDialog extends TmmDialog {
               options.setImdbId(movie.getImdbId());
               options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
               options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
-              MediaMetadata md = mp.getMetadata(options);
-              if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
-                tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));
-                break;
+              try {
+                MediaMetadata md = mp.getMetadata(options);
+                if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
+                  tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));
+                  break;
+                }
+              }
+              catch (ScrapeException ex) {
+                LOGGER.error("getMetadata", ex);
+                MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser",
+                    "message.scrape.metadatamoviesetfailed", new String[] { ":", ex.getLocalizedMessage() }));
+              }
+              catch (MissingIdException ex) {
+                LOGGER.warn("missing id for scrape");
+                MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "scraper.error.missingid"));
+              }
+              catch (UnsupportedMediaTypeException ignored) {
+                LOGGER.warn("unsupported media type: " + mp.getProviderInfo().getId());
               }
             }
           }
         }
       }
-      catch (Exception e1) {
+      catch (Exception ex) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("movieset.tmdb.error")); //$NON-NLS-1$
       }
-
     }
   }
 

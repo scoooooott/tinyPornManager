@@ -60,6 +60,8 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -541,10 +543,12 @@ public class MovieList extends AbstractModelObject {
             LOGGER.info("=====================================================");
             sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
           }
-          catch (Exception e) {
+          catch (ScrapeException e) {
             LOGGER.error("searchMovieFallback", e);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+          }
+          catch (UnsupportedMediaTypeException ignored) {
           }
           if (!sr.isEmpty()) {
             break;
@@ -552,10 +556,12 @@ public class MovieList extends AbstractModelObject {
         }
       }
     }
-    catch (Exception e) {
+    catch (ScrapeException e) {
       LOGGER.error("searchMovie", e);
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+    }
+    catch (UnsupportedMediaTypeException ignored) {
     }
 
     return sr;

@@ -39,7 +39,11 @@ import javax.swing.JViewport;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -47,6 +51,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -78,6 +85,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
   private static final long                                serialVersionUID = 3317576458848699068L;
+  private static final Logger                              LOGGER           = LoggerFactory.getLogger(TvShowEpisodeChooserDialog.class);
 
   private TvShowEpisode                                    episode;
   private MediaScraper                                     mediaScraper;
@@ -245,7 +253,16 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
           episodeEventList.add(new TvShowEpisodeChooserModel(mediaScraper, episode));
         }
       }
-      catch (Exception ignored) {
+      catch (ScrapeException e) {
+        LOGGER.error("searchMovieFallback", e);
+        MessageManager.instance.pushMessage(
+            new Message(Message.MessageLevel.ERROR, episode, "message.scrape.episodelistfailed", new String[] { ":", e.getLocalizedMessage() }));
+      }
+      catch (MissingIdException e) {
+        LOGGER.warn("missing id for scrape");
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, episode, "scraper.error.missingid"));
+      }
+      catch (UnsupportedMediaTypeException ignored) {
       }
       return null;
     }

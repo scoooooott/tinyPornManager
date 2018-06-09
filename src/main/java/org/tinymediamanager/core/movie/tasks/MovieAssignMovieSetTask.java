@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -35,6 +37,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -117,7 +123,12 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
                   }
                 }
               }
-              catch (Exception ignored) {
+              catch (ScrapeException e) {
+                LOGGER.error("getMovieSet", e);
+                MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.scrape.metadatamoviesetfailed",
+                    new String[] { ":", e.getLocalizedMessage() }));
+              }
+              catch (MissingIdException | UnsupportedMediaTypeException | NothingFoundException ignored) {
               }
             }
 
@@ -136,8 +147,12 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           }
         }
       }
-      catch (Exception e) {
-        LOGGER.error("error getting metadata: " + e.getMessage());
+      catch (ScrapeException e) {
+        LOGGER.error("getMovieSet", e);
+        MessageManager.instance.pushMessage(
+            new Message(Message.MessageLevel.ERROR, movie, "message.scrape.metadatamoviesetfailed", new String[] { ":", e.getLocalizedMessage() }));
+      }
+      catch (MissingIdException | UnsupportedMediaTypeException | NothingFoundException ignored) {
       }
     }
   }

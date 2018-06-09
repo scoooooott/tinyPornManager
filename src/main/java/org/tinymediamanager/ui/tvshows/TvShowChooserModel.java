@@ -42,6 +42,10 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -179,10 +183,16 @@ public class TvShowChooserModel extends AbstractModelObject {
       scraped = true;
 
     }
-    catch (Exception e) {
-      LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(
-          new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
+    catch (ScrapeException e) {
+      LOGGER.error("getMetadata", e);
+      MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "message.scrape.metadatatvshowfailed",
+          new String[] { ":", e.getLocalizedMessage() }));
+    }
+    catch (MissingIdException e) {
+      LOGGER.warn("missing id for scrape");
+      MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "scraper.error.missingid"));
+    }
+    catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
     }
   }
 
@@ -214,7 +224,16 @@ public class TvShowChooserModel extends AbstractModelObject {
         episodes.add(ep);
       }
     }
-    catch (Exception ignored) {
+    catch (ScrapeException e) {
+      LOGGER.error("getEpisodeList", e);
+      MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "message.scrape.episodelistfailed",
+          new String[] { ":", e.getLocalizedMessage() }));
+    }
+    catch (MissingIdException e) {
+      LOGGER.warn("missing id for scrape");
+      MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "scraper.error.missingid"));
+    }
+    catch (UnsupportedMediaTypeException ignored) {
     }
     return episodes;
   }
@@ -279,8 +298,12 @@ public class TvShowChooserModel extends AbstractModelObject {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception e) {
-          LOGGER.warn("could not get artwork from " + artworkProvider.getProviderInfo().getName() + ": " + e.getMessage());
+        catch (ScrapeException e) {
+          LOGGER.error("getArtwork", e);
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, tvShowToScrape, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException ignored) {
         }
       }
 

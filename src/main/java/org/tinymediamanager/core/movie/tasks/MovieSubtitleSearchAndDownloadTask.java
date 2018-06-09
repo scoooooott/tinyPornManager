@@ -37,6 +37,8 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -122,8 +124,12 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
 
             TmmTaskManager.getInstance().addDownloadTask(new MovieSubtitleDownloadTask(firstResult.getUrl(), mf.getFileAsPath(), lang, movie));
           }
-          catch (Exception e) {
-            LOGGER.error("Error at subtitle searching: " + e.getMessage());
+          catch (ScrapeException e) {
+            LOGGER.error("getSubtitles", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.subtitlefailed", new String[] { ":", e.getLocalizedMessage() }));
+          }
+          catch (MissingIdException ignored) {
           }
         }
       }

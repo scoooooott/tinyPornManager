@@ -27,6 +27,8 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -42,6 +44,10 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -50,7 +56,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * The Class MovieSetChooserModel.
  */
 public class MovieSetChooserModel extends AbstractModelObject {
-  private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
+  private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger              LOGGER      = LoggerFactory.getLogger(MovieSetChooserModel.class);
   public static final MovieSetChooserModel emptyResult = new MovieSetChooserModel();
   private String                           name        = "";
@@ -165,8 +171,12 @@ public class MovieSetChooserModel extends AbstractModelObject {
               MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));
             }
-            catch (Exception e) {
-              LOGGER.warn(e.getMessage());
+            catch (ScrapeException e) {
+              LOGGER.error("getMovieSet", e);
+              MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, mis.name, "message.scrape.metadatamoviesetfailed",
+                  new String[] { ":", e.getLocalizedMessage() }));
+            }
+            catch (MissingIdException | UnsupportedMediaTypeException | NothingFoundException ignored) {
             }
           }
         }
@@ -194,7 +204,26 @@ public class MovieSetChooserModel extends AbstractModelObject {
         options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
         options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
-        MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
+        MediaMetadata info = null;
+
+        try {
+          info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
+        }
+        catch (ScrapeException e) {
+          LOGGER.error("getMetadata", e);
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "message.scrape.metadatamoviesetfailed",
+              new String[] { ":", e.getLocalizedMessage() }));
+          return;
+        }
+        catch (MissingIdException e) {
+          LOGGER.warn("missing id for scrape");
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "scraper.error.missingid"));
+          return;
+        }
+        catch (UnsupportedMediaTypeException ignored) {
+          LOGGER.warn("unsupported media type: " + scraper.getMediaProvider().getProviderInfo().getId());
+          return;
+        }
 
         if (info != null) {
           this.metadata = info;
@@ -228,9 +257,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
       }
     }
     catch (Exception e) {
-      LOGGER.warn("error while scraping metadata", e);
+      LOGGER.error("scrapeMedia", e);
+      MessageManager.instance.pushMessage(
+          new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
-
   }
 
   public String getOverview() {
@@ -287,7 +317,12 @@ public class MovieSetChooserModel extends AbstractModelObject {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception ignored) {
+        catch (ScrapeException e) {
+          LOGGER.error("getArtwork", e);
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, movieSetToScrape, "message.scrape.movieartworkfailed",
+              new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException ignored) {
         }
       }
 

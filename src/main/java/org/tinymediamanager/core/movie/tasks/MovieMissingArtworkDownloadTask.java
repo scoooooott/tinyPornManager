@@ -36,6 +36,8 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -61,11 +63,11 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
     initThreadPool(3, "scrapeMissingMovieArtwork");
     start();
 
-      for (Movie movie : moviesToScrape) {
-          if (MovieArtworkHelper.hasMissingArtwork(movie)) {
-              submitTask(new Worker(movie));
-          }
+    for (Movie movie : moviesToScrape) {
+      if (MovieArtworkHelper.hasMissingArtwork(movie)) {
+        submitTask(new Worker(movie));
       }
+    }
     waitForCompletionOrCancel();
     LOGGER.info("Done getting missing artwork");
   }
@@ -109,9 +111,12 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
           try {
             artwork.addAll(artworkProvider.getArtwork(options));
           }
-          catch (Exception e) {
+          catch (ScrapeException e) {
             LOGGER.error("getArtwork", e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movieartworkfailed"));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.subtitlefailed", new String[] { ":", e.getLocalizedMessage() }));
+          }
+          catch (MissingIdException ignored) {
           }
         }
 

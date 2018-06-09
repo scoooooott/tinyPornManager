@@ -46,6 +46,9 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -195,7 +198,24 @@ public class MovieChooserModel extends AbstractModelObject {
           + metadataProvider.getMediaProvider().getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
-      metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
+      try {
+        metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
+      }
+      catch (ScrapeException e) {
+        LOGGER.error("searchMovieFallback", e);
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.metadatamoviefailed", new String[] { ":", e.getLocalizedMessage() }));
+        return;
+      }
+      catch (MissingIdException e) {
+        LOGGER.warn("missing id for scrape");
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "scraper.error.missingid"));
+        return;
+      }
+      catch (UnsupportedMediaTypeException ignored) {
+        LOGGER.warn("unsupported media type: " + metadataProvider.getMediaProvider().getProviderInfo().getId());
+        return;
+      }
       setOriginalTitle(metadata.getOriginalTitle());
 
       List<Person> castMembers = new ArrayList<>();
@@ -304,7 +324,12 @@ public class MovieChooserModel extends AbstractModelObject {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception ignored) {
+        catch (ScrapeException e) {
+          LOGGER.error("getArtwork", e);
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, movieToScrape, "message.scrape.movieartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException ignored) {
         }
       }
 
@@ -359,8 +384,12 @@ public class MovieChooserModel extends AbstractModelObject {
             trailer.add(movieTrailer);
           }
         }
-        catch (Exception e) {
-          LOGGER.warn(e.getMessage());
+        catch (ScrapeException e) {
+          LOGGER.error("getTrailers", e);
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+        }
+        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
         }
       }
 
