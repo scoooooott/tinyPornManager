@@ -22,7 +22,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -38,8 +42,9 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  * @author Manuel Laggner
  */
 public class MovieTrailerDownloadAction extends TmmAction {
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieTrailerDownloadAction.class);
   private static final long           serialVersionUID = -8668265401054434251L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   public MovieTrailerDownloadAction() {
     putValue(NAME, BUNDLE.getString("movie.downloadtrailer")); //$NON-NLS-1$
@@ -84,8 +89,15 @@ public class MovieTrailerDownloadAction extends TmmAction {
       if (movie.getTrailer().isEmpty()) {
         continue;
       }
-      MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
-      TmmTaskManager.getInstance().addDownloadTask(task);
+      try {
+        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
+        TmmTaskManager.getInstance().addDownloadTask(task);
+      }
+      catch (Exception ex) {
+        LOGGER.error("could not start trailer download: " + ex.getMessage());
+        MessageManager.instance.pushMessage(
+            new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", ex.getLocalizedMessage() }));
+      }
     }
   }
 }

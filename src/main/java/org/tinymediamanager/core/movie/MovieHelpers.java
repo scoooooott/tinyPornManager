@@ -16,6 +16,15 @@
 
 package org.tinymediamanager.core.movie;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
 
 /**
@@ -24,6 +33,8 @@ import org.tinymediamanager.scraper.entities.Certification;
  * @author Manuel Laggner
  */
 public class MovieHelpers {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieHelpers.class);
+
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
@@ -95,5 +106,28 @@ public class MovieHelpers {
       cert = Certification.findCertification(name);
     }
     return cert;
+  }
+
+  /**
+   * start the automatic trailer download for the given movie
+   * 
+   * @param movie
+   *          the movie to start the trailer download for
+   */
+  public static void startAutomaticTrailerDownload(Movie movie) {
+    // start movie trailer download?
+    if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
+        && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
+      try {
+        MovieTrailer trailer = movie.getTrailer().get(0);
+        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+        TmmTaskManager.getInstance().addDownloadTask(task);
+      }
+      catch (Exception e) {
+        LOGGER.error("could not start trailer download: " + e.getMessage());
+        MessageManager.instance.pushMessage(
+            new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    }
   }
 }

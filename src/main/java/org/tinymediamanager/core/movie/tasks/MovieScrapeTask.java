@@ -31,6 +31,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -227,7 +228,11 @@ public class MovieScrapeTask extends TmmThreadPool {
             // scrape trailer if wanted
             if (scraperMetadataConfig.isTrailer()) {
               movie.setTrailers(getTrailers(movie, md, trailerScrapers));
+              movie.saveToDb();
               movie.writeNFO();
+
+              // start automatic movie trailer download
+              MovieHelpers.startAutomaticTrailerDownload(movie);
             }
           }
         }

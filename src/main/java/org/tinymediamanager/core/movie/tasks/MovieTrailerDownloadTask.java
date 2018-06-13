@@ -27,7 +27,7 @@ import org.tinymediamanager.core.threading.DownloadTask;
  */
 public class MovieTrailerDownloadTask extends DownloadTask {
 
-  public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) {
+  public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) throws Exception {
     super(trailer.getDownloadUrl(), movie.getPathNIO().resolve(movie.getTrailerBasename() + "-trailer"), movie, MediaFileType.TRAILER);
     if ("apple".equalsIgnoreCase(trailer.getProvider())) {
       setSpecialUserAgent("QuickTime");

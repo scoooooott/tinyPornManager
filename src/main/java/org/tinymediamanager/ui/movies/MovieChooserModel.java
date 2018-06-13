@@ -30,6 +30,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -406,7 +407,11 @@ public class MovieChooserModel extends AbstractModelObject {
       }
 
       movieToScrape.setTrailers(trailer);
+      movieToScrape.saveToDb();
       movieToScrape.writeNFO();
+
+      // start automatic movie trailer download
+      MovieHelpers.startAutomaticTrailerDownload(movieToScrape);
     }
   }
 }

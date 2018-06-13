@@ -99,7 +99,6 @@ import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -967,15 +966,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
       addTrailer(trailer);
     }
-
-    if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
-        && getMediaFiles(MediaFileType.TRAILER).isEmpty() && !trailer.isEmpty()) {
-      MovieTrailer trailer = this.trailer.get(0);
-      MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, this);
-      TmmTaskManager.getInstance().addDownloadTask(task);
-    }
-
-    saveToDb();
   }
 
   /**

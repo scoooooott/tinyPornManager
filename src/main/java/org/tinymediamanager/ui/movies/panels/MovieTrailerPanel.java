@@ -240,8 +240,15 @@ public class MovieTrailerPanel extends JPanel {
 
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
           Movie movie = movieSelectionModel.getSelectedMovie();
-          MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
-          TmmTaskManager.getInstance().addDownloadTask(task);
+          try {
+            MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+            TmmTaskManager.getInstance().addDownloadTask(task);
+          }
+          catch (Exception ex) {
+            LOGGER.error("could not start trailer download: " + ex.getMessage());
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", ex.getLocalizedMessage() }));
+          }
         }
       }
 
