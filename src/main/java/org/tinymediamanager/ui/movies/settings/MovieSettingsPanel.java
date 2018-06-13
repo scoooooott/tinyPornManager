@@ -197,7 +197,7 @@ public class MovieSettingsPanel extends JPanel {
         movieSettingsBeanProperty, chckbxPersistUiFilters, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_1 = BeanProperty.create("movieRenameAfterScrape");
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_1 = BeanProperty.create("renameAfterScrape");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_1, chckbxRenameAfterScrape, jCheckBoxBeanProperty);
     autoBinding_1.bind();
