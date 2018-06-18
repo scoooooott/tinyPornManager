@@ -265,9 +265,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       catch (Exception ignored) {
       }
 
-      if (StringUtils.isNotBlank(show.banner)) {
-        result.setPosterUrl(artworkUrl + show.banner);
-      }
+      // do not get banners instead of posters
+      //if (StringUtils.isNotBlank(show.banner)) {
+      //  result.setPosterUrl(artworkUrl + show.banner);
+      //}
 
       // for how the api responds only a banner - we would like to have a poster here;
       // just try to fetch the poster url
