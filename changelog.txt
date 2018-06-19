@@ -1,5 +1,165 @@
 
+[2018-06-19]
+ * fix: update media info panel for TV shows with changes
+ * feature: more flexible TV show specials handling
+ * fix: hide format and fileSize in TV show tree per default
+
+[2018-06-18]
+ * doc: wording
+
+[2018-06-15]
+ * naming detection: add {} as delimiter
+
+[2018-06-13]
+ * fix: rename after scrape storing
+ * fix: changed automatic trailer download handling
+
+[2018-06-09]
+ * lib: removed zelluloid scraper
+ * feature: better exception handling in scrapers
+ * fix: wrong text in messages.properties
+
+[2018-05-23]
+ * fix: Improved handling of external processes
+ * fix: changed parent handling of the image chooser dialog
+
+[2018-05-22]
+ * fix: improved renaming of multi ep files
+ * feature: added automatic rename to TV shows too
+ * fix: various fixes in the TV show renamer
+ * fix: layouting of threshold hint
+
+[2018-05-18]
+ * refactor unit tests
+
+[2018-05-17]
+ * refactor some unit tests
+ * fix sorting table via movie path (NPE)
+ * correct v3 version in EXEs
+ * update miglayout to 5.1
+
+[2018-05-16]
+ * fix: display Kodi scrapers at the end in the settings panel
+
+[2018-05-09]
+ * fix: prevent long movie sets/genres/tags from taking too much space
+
+[2018-05-08]
+ * fix: changed beanbindings to bindinggroups for cleanup
+
+[2018-05-03]
+ * fix: added Ł and ł in the ascii replacer
+
+[2018-05-02]
+ * feature: added artwork download retries
+ * fix: removed unneeded loginfo
+ * fix: cleanup of movie extra artwork downloader
+ * fix: fixed choosing of extrafanarts
+ * chore: adopted class names
+ * fix: code cleanup & fixes for image choosing while scraping
+
+[2018-04-30]
+ * feature: added a universal movie scraper
+ * unit test: add missing NFO
+
+[2018-04-24]
+ * feature: added a play button to the editors
+
+[2018-04-23]
+ * feature: add uniqueid to movie NFOs
+
+[2018-04-20]
+ * unit test: parse IMDB from NFO
+ * fix: parsing IMDB out of movie NFOs
+
+[2018-04-18]
+ * fix: take the right method for main video file
+
+[2018-04-17]
+ * feature: added a new UPPER case renderer for the renamer
+ * feature: provide more media infos for the renamer
+ * fix: do not execute a recursive scan on MDD for cleanup
+ * fix: downloading extrafanart/extrathumbs after network failures
+
+[2018-04-15]
+ * Code Polishing & Optimization & Migration to Java 8 & Fixed Deprecations -Fixed Indentation
+ * Code Polishing & Optimization & Migration to Java 8 & Fixed Deprecations -Adjustments after Review
+
+[2018-04-14]
+ * Code Polishing & Optimization & Migration to Java 8 & Fixed Deprecations -Removed final modifier from static methods. -Replaced redundant Ifs with an inline return on simple logic functions. -Replaced classic fors with foreaches where it is applicable. -Removed legacy & obsolete code. -Resolved many Unchecked Calls and Unchecked Assignments. -Simplified boolean expressions. -Removed redundant local variables. -Used Collection.singletonList() instead of Arrays.asList on single argument lists to improve performance. -Replaced += & + string concatenations with String builder in for loops. -Replaced == evaluation with equals on strings. -Replaced redundant type arguments with diamond operator <> -Renamed empty catch blocks' Exception argument to "ignored". -Added final modifier to objects that are used in synchronized methods. -Removed unnecessary throws declarations on methods. -Replaced ThreadLocal anonymous classes having initialValue() to ThreadLocal.withInitial() -Replaced try-finally with try with resource management. -Removed unnecessary private accessor on enum constructors. -Removed unnecessary  access modifiers from interfaces.
+
+[2018-04-10]
+ * fix: detect landscape.jpg/png as thumb
+ * fix: show image chooser for tv shows and manual choosing
+
+[2018-04-09]
+ * fix: prevent NPE in movie set comparator
+ * fix: scraping of episode thumbs
+ * RPC: check equality case insensitive
+
+[2018-04-08]
+ * fix: prefer java 8 in OSX
+ * fix: in form user when executed in a readonly env on OSX
+
+[2018-04-05]
+ * fix: adopt color of the what's new dialog to the dark theme
+
+[2018-04-02]
+ * fix: pre-select first search result on TV show search
+
+[2018-04-01]
+ * feature: provide navigate back also for movie sets and TV shows
+ * feature: inform user when nothing has been selected for an action
+ * fix: sort movies in movie set by title as fallback
+
+[2018-03-31]
+ * fix: occasional deletion of video in the renamer (on mac OS X)
+
+[2018-03-29]
+ * fix: remember of chosen trailer source
+ * fix: removing of directory separators in renamer templates
+
+[2018-03-27]
+ * fix: set popup menu for movie set panel
+ * fix: set the certification in movie editor
+
+[2018-03-17]
+ * feature: store location of the splitpane divider
+ * fix: displaying of column names in treetable column chooser
+
+[2018-03-11]
+ * feature: dark theme
+
+[2018-03-09]
+ * remove
+
+[2018-03-08]
+ * fix: cleanup bindings in dialogs to prevent a memory leak
+ * feature: tmdb scrape for imdb for TV shows too
+
+[2018-03-06]
+ * chore: removed usage of Google Analytics
+
+[2018-03-05]
+ * feature: added 3D info column
+ * feature: added audio info column
+
+[2018-03-03]
+ * fix: added rating token to the movie renamer example list
+ * fix: format of audio channels for the renamer
+
+[2018-02-25]
+ * fix: added missing resources for several unit tests
+ * feature: added .actors for TV shows
+ * fix: updated year in the about dialog
+ * fix: 3D format in the movie renamer
+
+[2018-02-19]
+ * fix: rename of UDS
+ * fix: cleanup of season artwork renamer
+
 [2018-02-17]
+ * fix: changed branch to compare to refs/remotes/origin/devel
  * fix: reverted last changelog generation changes
  * fix: automatic changelog generation
  * feature: automatic changelog generation for v3
