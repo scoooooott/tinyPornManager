@@ -140,7 +140,7 @@ public class IconManager {
   public final static ImageIcon            VIDEO_FORMAT                = createFontAwesomeIcon('\uF320', 16);
   public final static ImageIcon            WATCHED                     = createFontAwesomeIcon('\uF04B', 16);
 
-  private static Font loadFontAwesome() {
+  public static Font loadFontAwesome() {
     Font fontAwesome = null;
     try {
       InputStream fontStream = IconManager.class.getResource("fontawesome-pro-regular-400.ttf").openStream();

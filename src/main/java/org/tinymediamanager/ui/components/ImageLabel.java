@@ -42,6 +42,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
 
@@ -314,10 +315,10 @@ public class ImageLabel extends JLabel {
 
       // calculate the optimal font size; the pt is about 0.75 * the needed px
       // we draw that icon at max 50% of the available space
-      int fontSize = (int) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
+      float fontSize = (float) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
 
       // draw the _no image found_ icon
-      Font font = new Font("Font Awesome 5 Pro Regular", Font.PLAIN, fontSize);
+      Font font = IconManager.loadFontAwesome().deriveFont(fontSize);
       BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
