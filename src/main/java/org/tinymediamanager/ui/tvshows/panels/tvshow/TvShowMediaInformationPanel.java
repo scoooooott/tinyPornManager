@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+
 import java.beans.PropertyChangeListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +40,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -102,7 +104,7 @@ public class TvShowMediaInformationPanel extends JPanel {
       Object source = propertyChangeEvent.getSource();
       // react on selection of a tv show and change of media files
       if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
-          || (source.getClass() == TvShowEpisode.class && "mediaFiles".equals(property))) {
+          || (source.getClass() == TvShow.class && MEDIA_FILES.equals(property))) {
         try {
           mediaFileEventList.getReadWriteLock().writeLock().lock();
           mediaFileEventList.clear();
