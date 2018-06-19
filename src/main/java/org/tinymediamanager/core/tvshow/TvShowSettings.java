@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -199,6 +200,8 @@ public class TvShowSettings extends AbstractSettings {
    */
   @Override
   protected void writeDefaultSettings() {
+    setTvShowTableHiddenColumns(Arrays.asList("format", "fileSize"));
+
     // activate default scrapers
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
       addTvShowSubtitleScraper(ms.getId());
