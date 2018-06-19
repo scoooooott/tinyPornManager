@@ -34,6 +34,7 @@ import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.w3c.dom.Element;
 
 /**
@@ -164,7 +165,14 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
 
     for (Rating r : movie.getRatings().values()) {
       Element rating = document.createElement("rating");
-      rating.setAttribute("name", r.getId());
+
+      // Kodi needs themoviedb instead of tmdb
+      if (MediaMetadata.TMDB.equals(r.getId())) {
+        rating.setAttribute("name", "themoviedb");
+      }
+      else {
+        rating.setAttribute("name", r.getId());
+      }
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
       Rating mainRating = movie.getRating();

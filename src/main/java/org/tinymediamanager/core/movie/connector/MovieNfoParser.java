@@ -336,6 +336,11 @@ public class MovieNfoParser {
         // name
         r.id = ratingChild.attr("name");
 
+        // Kodi writes tmdb votes as "themoviedb"
+        if ("themoviedb".equals(r.id)) {
+          r.id = MediaMetadata.TMDB;
+        }
+
         // maxvalue
         try {
           r.maxValue = MetadataUtil.parseInt(ratingChild.attr("max"));

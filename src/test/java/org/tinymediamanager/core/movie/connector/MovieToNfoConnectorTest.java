@@ -45,6 +45,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
@@ -99,6 +100,9 @@ public class MovieToNfoConnectorTest extends BasicTest {
 
     try {
       Movie movie = createMovie("kodi_nfo");
+
+      // also add a second rating
+      movie.setRating(new Rating(MediaMetadata.TMDB, 7.7f, 56987));
 
       // write it
       List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.MOVIE_NFO);
