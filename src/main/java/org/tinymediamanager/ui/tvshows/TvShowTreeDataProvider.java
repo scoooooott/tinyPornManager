@@ -20,12 +20,14 @@ import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
@@ -35,6 +37,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * @author Manuel Laggner
  */
 public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
+  protected static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private TmmTreeNode                  root           = new TmmTreeNode(new Object(), this);
   private RuleBasedCollator            stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
@@ -376,10 +379,14 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       if (getUserObject() instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) getUserObject();
         if (season.getSeason() == -1) {
-          return "Uncategorized";
+          return BUNDLE.getString("tvshow.uncategorized");
         }
 
-        return "Season " + season.getSeason();
+        if (season.getSeason() == 0) {
+          return BUNDLE.getString("metatag.specials");
+        }
+
+        return BUNDLE.getString("metatag.season") + " " + season.getSeason();
       }
 
       // fallback: call super

@@ -808,8 +808,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         Matcher matcher = seasonPosterPattern.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
-            int season = -1;
-            if (!mf.getFilename().startsWith("season-specials-poster")) {
+            int season;
+            if (mf.getFilename().startsWith("season-specials-poster")) {
+              season = 0;
+            }
+            else {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season poster " + mf.getFileAsPath());
@@ -825,8 +828,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         Matcher matcher = seasonBannerPattern.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
-            int season = -1;
-            if (!mf.getFilename().startsWith("season-specials-banner")) {
+            int season;
+            if (mf.getFilename().startsWith("season-specials-banner")) {
+              season = 0;
+            }
+            else {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season banner " + mf.getFileAsPath());
@@ -842,8 +848,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         Matcher matcher = seasonThumbPattern.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
-            int season = -1;
+            int season;
             if (!mf.getFilename().startsWith("season-specials-thumb")) {
+              season = 0;
+            }
+            else {
               season = Integer.parseInt(matcher.group(1));
             }
             LOGGER.debug("found season thumb " + mf.getFileAsPath());

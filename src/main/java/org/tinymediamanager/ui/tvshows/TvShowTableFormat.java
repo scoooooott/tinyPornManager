@@ -71,7 +71,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     addColumn(col);
 
     /*
-     * video format
+     * video format (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.format"), "format", this::getFormat, String.class);
     col.setHeaderIcon(IconManager.VIDEO_FORMAT);
@@ -80,7 +80,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     addColumn(col);
 
     /*
-     * main video file size
+     * main video file size (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", this::getFileSize, String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);

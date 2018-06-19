@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.ITvShowSeasonFileNaming;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 
@@ -35,11 +36,14 @@ public enum TvShowSeasonPosterNaming implements ITvShowSeasonFileNaming {
   SEASON_POSTER {
     @Override
     public String getFilename(TvShow tvShow, int season, String extension) {
-      if (season > 0) {
+      if (season == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
+        return "season-specials-poster." + extension;
+      }
+      else if (season > -1) {
         return String.format("season%02d-poster." + extension, season);
       }
       else {
-        return "season-specials-poster." + extension;
+        return "";
       }
     }
   },
@@ -61,11 +65,14 @@ public enum TvShowSeasonPosterNaming implements ITvShowSeasonFileNaming {
         filename = seasonFoldername + File.separator;
       }
 
-      if (season > 0) {
+      if (season == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
+        filename += "season-specials";
+      }
+      else if (season > -1) {
         filename += String.format("season%02d", season);
       }
       else {
-        filename += "season-specials";
+        return "";
       }
       return filename + "." + extension;
     }

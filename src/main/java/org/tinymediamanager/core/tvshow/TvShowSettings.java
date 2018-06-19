@@ -127,6 +127,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              renamerSpaceSubstitution       = false;
   private String                               renamerSpaceReplacement        = "_";
   private boolean                              asciiReplacement               = false;
+  private boolean                              specialSeason                  = true;
 
   // meta data scraper
   private String                               scraper                        = Constants.TVDB;
@@ -374,6 +375,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.asciiReplacement;
     this.asciiReplacement = newValue;
     firePropertyChange("asciiReplacement", oldValue, newValue);
+  }
+
+  public boolean isSpecialSeason() {
+    return specialSeason;
+  }
+
+  public void setSpecialSeason(boolean newValue) {
+    boolean oldValue = this.specialSeason;
+    this.specialSeason = newValue;
+    firePropertyChange("specialSeason", oldValue, newValue);
   }
 
   public String getRenamerSpaceReplacement() {

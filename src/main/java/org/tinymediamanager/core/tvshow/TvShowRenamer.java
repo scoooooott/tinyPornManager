@@ -963,13 +963,20 @@ public class TvShowRenamer {
       return "";
     }
 
-    // replace all other tokens
-    seasonFolderName = createDestination(seasonFolderName, tvShowSeason);
+    // season 0 = Specials
+    if (tvShowSeason.getSeason() == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
+      seasonFolderName = "Specials";
+    }
+    else {
+      // replace all other tokens
+      seasonFolderName = createDestination(seasonFolderName, tvShowSeason);
+    }
 
     // only allow empty season dir if the season is in the filename (aka recommended)
     if (StringUtils.isBlank(seasonFolderName) && !TvShowRenamer.isRecommended(template, TvShowModuleManager.SETTINGS.getRenamerFilename())) {
       seasonFolderName = "Season " + String.valueOf(season);
     }
+
     return seasonFolderName;
   }
 
