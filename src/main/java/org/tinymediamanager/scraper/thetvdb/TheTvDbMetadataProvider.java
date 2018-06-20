@@ -332,6 +332,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       SeriesResponse response = tvdb.series().series(id, options.getLanguage().getLanguage()).execute().body();
       show = response.data;
     }
+    catch (NullPointerException e) {
+      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
+      LOGGER.error("failed to get meta data - tvdb returned nothing");
+    }
     catch (Exception e) {
       LOGGER.error("failed to get meta data: " + e.getMessage());
       throw new ScrapeException(e);
@@ -484,9 +488,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // get the episode data in desired language
-    Episode.FullEpisode episode;
+    Episode.FullEpisode episode = null;
     try {
       episode = getFullEpisode(options.getLanguage().getLanguage(), useDvdOrder, id, seasonNr, episodeNr, aired);
+    }
+    catch (NullPointerException ignored) {
+      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
+      LOGGER.error("failed to get meta data - tvdb returned nothing");
     }
     catch (Exception e) {
       LOGGER.error("failed to get meta data: " + e.getMessage());
@@ -640,6 +648,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           images.addAll(response1.data);
         }
       }
+    }
+    catch (NullPointerException e) {
+      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
+      LOGGER.error("failed to get artwork - tvdb returned nothing");
     }
     catch (Exception e) {
       LOGGER.error("failed to get artwork: " + e.getMessage());
@@ -822,6 +834,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
         counter++;
       }
+    }
+    catch (NullPointerException e) {
+      LOGGER.error("failed to get episode list - tvdb returned nothing");
+      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
+      return episodes;
     }
     catch (Exception e) {
       LOGGER.error("failed to get episode list: " + e.getMessage());
