@@ -31,6 +31,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.components.PopupMenuScroller;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonArtworkAction;
@@ -287,6 +288,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
 
     // update popup menu
     updatePopupMenu = new JPopupMenu();
+    PopupMenuScroller.setScrollerFor(updatePopupMenu, 20, 25, 2, 2);
     updatePopupMenu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {

@@ -96,6 +96,8 @@ public class IconManager {
   public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
 
   // font awesome icons normal
+  public final static ImageIcon            CARET_UP                    = createFontAwesomeIcon('\uF0D8');
+  public final static ImageIcon            CARET_DOWN                  = createFontAwesomeIcon('\uF0D7');
   public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
   public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);

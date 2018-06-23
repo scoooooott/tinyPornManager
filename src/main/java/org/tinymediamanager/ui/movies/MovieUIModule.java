@@ -30,6 +30,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.components.PopupMenuScroller;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
@@ -243,7 +244,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
 
     // update popup menu
     updatePopupMenu = new JPopupMenu();
-    updatePopupMenu.add(createAndRegisterAction(MovieUpdateDatasourceAction.class));
+    PopupMenuScroller.setScrollerFor(updatePopupMenu, 20, 25, 2, 5);
     updatePopupMenu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
