@@ -254,11 +254,39 @@ public class TvShowList extends AbstractModelObject {
    */
   public int getEpisodeCount() {
     int count = 0;
-      for (TvShow tvShow : tvShowList) {
-          count += tvShow.getEpisodeCount();
-      }
+    for (TvShow tvShow : tvShowList) {
+      count += tvShow.getEpisodeCount();
+    }
 
     return count;
+  }
+
+  /**
+   * Gets the dummy episode count
+   *
+   * @return the dummy episode count
+   */
+  public int getDummyEpisodeCount() {
+    int count = 0;
+    for (TvShow tvShow : tvShowList) {
+      count += tvShow.getDummyEpisodeCount();
+    }
+
+    return count;
+  }
+
+  /**
+   * are there any dummy episodes?
+   * 
+   * @return true/false
+   */
+  public boolean hasDummyEpisodes() {
+    for (TvShow tvShow : tvShowList) {
+      if (tvShow.getDummyEpisodeCount() > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public TvShow lookupTvShow(UUID uuid) {

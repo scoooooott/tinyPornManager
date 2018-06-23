@@ -523,6 +523,23 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * Gets the dummy episode count
+   * 
+   * @return the dummy episode count
+   */
+  public int getDummyEpisodeCount() {
+    int count = 0;
+    for (TvShowSeason season : seasons) {
+      for (TvShowEpisode episode : season.getEpisodesForDisplay()) {
+        if (episode.isDummy()) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  /**
    * Adds the to season.
    * 
    * @param episode

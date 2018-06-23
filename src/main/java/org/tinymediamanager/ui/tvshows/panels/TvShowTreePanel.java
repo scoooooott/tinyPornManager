@@ -36,13 +36,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractSettings;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -86,12 +82,25 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
 
   public TvShowTreePanel(TvShowSelectionModel selectionModel) {
     initComponents();
-    initDataBindings();
 
     selectionModel.setTreeTable(tree);
 
+    // initialize totals
+    updateTotals();
+
     // initialize filteredCount
     updateFilteredCount();
+
+    tvShowList.addPropertyChangeListener(evt -> {
+      switch (evt.getPropertyName()) {
+        case Constants.TV_SHOW_COUNT:
+        case Constants.EPISODE_COUNT:
+          updateTotals();
+
+        default:
+          break;
+      }
+    });
   }
 
   private void initComponents() {
@@ -261,24 +270,54 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     }
   }
 
+  private void updateTotals() {
+    lblTvShowCountTotal.setText(String.valueOf(tvShowList.getTvShowCount()));
+    if (tvShowList.hasDummyEpisodes()) {
+      int episodeCount = tvShowList.getEpisodeCount();
+      lblEpisodeCountTotal.setText(episodeCount + " (" + String.valueOf(episodeCount + tvShowList.getDummyEpisodeCount()) + ")");
+    }
+    else {
+      lblEpisodeCountTotal.setText(String.valueOf(tvShowList.getEpisodeCount()));
+    }
+  }
+
   private void updateFilteredCount() {
     int tvShowCount = 0;
     int episodeCount = 0;
+    int virtualEpisodeCount = 0;
+
     for (int i = 0; i < tree.getTreeTableModel().getRowCount(); i++) {
       DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(i, 0);
-      if (node != null) {
-        // movie set node
-        if (node.getUserObject() instanceof TvShow) {
-          tvShowCount++;
-          for (int j = 0; j < node.getChildCount(); j++) {
-            TreeNode child = node.getChildAt(j);
-            episodeCount += child.getChildCount();
+      // tv show node
+      if (node != null && node.getUserObject() instanceof TvShow) {
+        tvShowCount++;
+        for (int j = 0; j < node.getChildCount(); j++) {
+          DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(j);
+          // season node
+          for (int k = 0; k < child.getChildCount(); k++) {
+            DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) child.getChildAt(k);
+            // episode node
+            Object userObject = leaf.getUserObject();
+            if (userObject instanceof TvShowEpisode) {
+              if (((TvShowEpisode) userObject).isDummy()) {
+                virtualEpisodeCount++;
+              }
+              else {
+                episodeCount++;
+              }
+            }
           }
         }
       }
     }
     lblTvShowCountFiltered.setText(String.valueOf(tvShowCount));
-    lblEpisodeCountFiltered.setText(String.valueOf(episodeCount));
+
+    if (tvShowList.hasDummyEpisodes()) {
+      lblEpisodeCountFiltered.setText(String.valueOf(episodeCount) + " (" + String.valueOf(episodeCount + virtualEpisodeCount) + ")");
+    }
+    else {
+      lblEpisodeCountFiltered.setText(String.valueOf(episodeCount));
+    }
   }
 
   @Override
@@ -332,18 +371,5 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
         tree.expandRow(i++);
       } while (i < tree.getRowCount());
     }
-  }
-
-  protected void initDataBindings() {
-    BeanProperty<TvShowList, Integer> tvShowListBeanProperty = BeanProperty.create("tvShowCount");
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList, tvShowListBeanProperty,
-        lblTvShowCountTotal, jLabelBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<TvShowList, Integer> tvShowListBeanProperty_1 = BeanProperty.create("episodeCount");
-    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
-        tvShowListBeanProperty_1, lblEpisodeCountTotal, jLabelBeanProperty);
-    autoBinding_1.bind();
   }
 }
