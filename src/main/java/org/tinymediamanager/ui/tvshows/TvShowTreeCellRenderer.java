@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import static org.tinymediamanager.ui.UIConstants.LINK_COLOR;
+
 import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -38,7 +39,7 @@ public class TvShowTreeCellRenderer extends TmmTreeTableCellRenderer {
   private Color colorDummy;
 
   public TvShowTreeCellRenderer() {
-    this.colorDummy = UIManager.getColor("Label.foreground");
+    this.colorDummy = LINK_COLOR;
   }
 
   @Override
