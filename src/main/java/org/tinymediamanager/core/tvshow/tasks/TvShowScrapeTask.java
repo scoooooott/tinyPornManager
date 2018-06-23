@@ -238,6 +238,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
               catch (UnsupportedMediaTypeException ignored) {
               }
               tvShow.setDummyEpisodes(episodes);
+              tvShow.saveToDb();
             }
 
             // scrape episodes
