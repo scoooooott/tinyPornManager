@@ -46,19 +46,19 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
     if (userObject instanceof TvShow) {
       TvShow tvShow = (TvShow) userObject;
       if (getFilterState() == FilterState.ACTIVE) {
-        return accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+        return accept(tvShow, new ArrayList<>(tvShow.getEpisodesForDisplay()));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+        return !accept(tvShow, new ArrayList<>(tvShow.getEpisodesForDisplay()));
       }
     }
     else if (userObject instanceof TvShowSeason) {
       TvShowSeason season = (TvShowSeason) userObject;
       if (getFilterState() == FilterState.ACTIVE) {
-        return accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+        return accept(season.getTvShow(), new ArrayList<>(season.getEpisodesForDisplay()));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+        return !accept(season.getTvShow(), new ArrayList<>(season.getEpisodesForDisplay()));
       }
     }
     else if (userObject instanceof TvShowEpisode) {
