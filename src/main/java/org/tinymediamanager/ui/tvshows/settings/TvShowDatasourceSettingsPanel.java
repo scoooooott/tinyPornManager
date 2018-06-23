@@ -79,10 +79,11 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
 
     // logic initializations
     btnAddDatasource.addActionListener(arg0 -> {
-      String path = TmmProperties.getInstance().getProperty("movie.datasource.path"); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path"); //$NON-NLS-1$
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addTvShowDataSources(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
       }
     });
     btnRemoveDatasource.addActionListener(arg0 -> {
@@ -101,10 +102,11 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
       }
     });
     btnAddSkipFolder.addActionListener(e -> {
-      String path = TmmProperties.getInstance().getProperty("movie.ignore.path"); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("tvshow.ignore.path"); //$NON-NLS-1$
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addSkipFolder(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("tvshow.ignore.path", file.toAbsolutePath().toString());
       }
     });
     btnRemoveSkipFolder.addActionListener(e -> {

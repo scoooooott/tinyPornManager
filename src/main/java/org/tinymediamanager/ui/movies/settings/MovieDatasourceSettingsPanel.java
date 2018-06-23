@@ -100,6 +100,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addMovieDataSources(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("movie.datasource.path", file.toAbsolutePath().toString());
       }
     });
 
@@ -108,6 +109,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addSkipFolder(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("movie.ignore.path", file.toAbsolutePath().toString());
       }
     });
 
