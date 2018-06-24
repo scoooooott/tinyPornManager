@@ -29,7 +29,6 @@ import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -66,6 +65,10 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+
 /**
  * The Class TvShowList.
  * 
@@ -89,7 +92,7 @@ public class TvShowList extends AbstractModelObject {
    */
   private TvShowList() {
     // create the lists
-    tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<>()));
+    tvShowList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(TvShow.class));
     tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
     episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
     videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());

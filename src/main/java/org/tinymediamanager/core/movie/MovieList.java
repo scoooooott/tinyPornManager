@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,7 +98,7 @@ public class MovieList extends AbstractModelObject {
   private MovieList() {
     // create all lists
     movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Movie.class));
-    movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<>()));
+    movieSetList = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
     tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
     videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
     audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
