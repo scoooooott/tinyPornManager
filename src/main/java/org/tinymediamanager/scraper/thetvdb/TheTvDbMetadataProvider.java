@@ -266,9 +266,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
 
       // do not get banners instead of posters
-      //if (StringUtils.isNotBlank(show.banner)) {
-      //  result.setPosterUrl(artworkUrl + show.banner);
-      //}
+      // if (StringUtils.isNotBlank(show.banner)) {
+      // result.setPosterUrl(artworkUrl + show.banner);
+      // }
 
       // for how the api responds only a banner - we would like to have a poster here;
       // just try to fetch the poster url
@@ -939,13 +939,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       // return 1;
       // }
 
-      // if rating is the same, return 0
-      if (arg0.ratingsInfo.average == arg1.ratingsInfo.average) {
-        return 0;
+      // swap arg0 and arg1 to sort reverse
+      int result = Double.compare(arg1.ratingsInfo.average, arg0.ratingsInfo.average);
+
+      // equal rating; sort by votes
+      if (result == 0) {
+        result = Integer.compare(arg1.ratingsInfo.count, arg0.ratingsInfo.count);
       }
 
-      // we did not sort until here; so lets sort with the rating
-      return arg0.ratingsInfo.average > arg1.ratingsInfo.average ? -1 : 1;
+      return result;
     }
   }
 }
