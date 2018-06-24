@@ -33,12 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -48,6 +46,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ObservableCopyOnWriteArrayList;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -98,12 +97,12 @@ public class MovieList extends AbstractModelObject {
   private MovieList() {
     // create all lists
     movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Movie.class));
-    movieSetList = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    certificationsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    frameRateObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    movieSetList = new ObservableCopyOnWriteArrayList<>();
+    tagsObservable = new ObservableCopyOnWriteArrayList<>();
+    videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    certificationsObservable = new ObservableCopyOnWriteArrayList<>();
+    frameRateObservable = new ObservableCopyOnWriteArrayList<>();
 
     // the tag listener: its used to always have a full list of all tags used in tmm
     tagListener = evt -> {

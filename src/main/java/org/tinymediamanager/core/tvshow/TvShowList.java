@@ -32,12 +32,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -46,6 +44,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ObservableCopyOnWriteArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -93,11 +92,11 @@ public class TvShowList extends AbstractModelObject {
   private TvShowList() {
     // create the lists
     tvShowList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(TvShow.class));
-    tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
-    frameRateObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<>());
+    tvShowTagsObservable = new ObservableCopyOnWriteArrayList<>();
+    episodeTagsObservable = new ObservableCopyOnWriteArrayList<>();
+    videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    frameRateObservable = new ObservableCopyOnWriteArrayList<>();
 
     // the tag listener: its used to always have a full list of all tags used in tmm
     propertyChangeListener = evt -> {
