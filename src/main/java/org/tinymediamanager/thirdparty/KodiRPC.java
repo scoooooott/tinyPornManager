@@ -292,18 +292,20 @@ public class KodiRPC {
    * @param config
    *          Host configuration
    * @throws ApiException
-   *          Throws ApiException when something goes wrong with the initialization of the API.
+   *           Throws ApiException when something goes wrong with the initialization of the API.
    */
   public void connect(HostConfig config) throws ApiException {
-    if (cm.isConnected()) {
+    if (isConnected()) {
       cm.disconnect();
     }
     LOGGER.info("Connecting...");
     cm.connect(config);
 
-    getAndSetKodiVersion();
-    getAndSetVideoDataSources();
-    getAndSetAudioDataSources();
+    if (isConnected()) {
+      getAndSetKodiVersion();
+      getAndSetVideoDataSources();
+      getAndSetAudioDataSources();
+    }
   }
 
   public void connect() throws ApiException {
