@@ -209,6 +209,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     if (StringUtils.isNotEmpty(options.getQuery())) {
       searchString = options.getQuery();
     }
+    searchString = cleanString(searchString);
 
     // return an empty search result if no query provided
     if (StringUtils.isEmpty(searchString)) {
@@ -892,6 +893,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
    */
   private boolean yearDiffers(Integer i1, Integer i2) {
     return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  }
+
+  private String cleanString(String oldString) {
+    if (StringUtils.isEmpty(oldString)) {
+      return "";
+    }
+    // remove semicolons (for searies like "ChäoS;Child" or "Steins;Gate")
+    String newString = oldString.replaceAll(";", "");
+
+    return newString.trim();
   }
 
   /**********************************************************************
