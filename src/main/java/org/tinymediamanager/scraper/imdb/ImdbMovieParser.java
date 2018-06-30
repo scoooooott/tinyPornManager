@@ -181,6 +181,8 @@ public class ImdbMovieParser extends ImdbParser {
         parseReleaseinfoPage(releaseinfoDoc, options, md);
       }
 
+      // if everything worked so far, we can set the given id
+      md.setId(providerInfo.getId(), imdbId);
     }
     catch (Exception e) {
       LOGGER.error("problem while scraping: " + e.getMessage());
