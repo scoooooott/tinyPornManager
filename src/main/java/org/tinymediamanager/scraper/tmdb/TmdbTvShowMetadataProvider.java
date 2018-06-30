@@ -298,6 +298,10 @@ class TmdbTvShowMetadataProvider {
     md.setReleaseDate(complete.first_air_date);
     md.setPlot(complete.overview);
 
+    if (complete.episode_run_time != null && !complete.episode_run_time.isEmpty()) {
+      md.setRuntime(complete.episode_run_time.get(0));
+    }
+
     // Poster
     if (StringUtils.isNotBlank(complete.poster_path)) {
       MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
@@ -371,7 +375,7 @@ class TmdbTvShowMetadataProvider {
       // title in original language or plot was empty - scrape in fallback language
 
       if (fallback) {
-        LOGGER.debug("Movie data not found with fallback language. Returning original.");
+        LOGGER.debug("TV show data not found with fallback language. Returning original.");
         return metadata;
       }
 
