@@ -138,21 +138,33 @@ public class KodiRPC {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.VIDEO); // movies + tv !!!
     this.videodatasources = new ArrayList<>();
     send(call);
-    for (ListModel.SourceItem res : call.getResults()) {
-      this.videodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+    if (call.getResults() != null) {
+      for (ListModel.SourceItem res : call.getResults()) {
+        this.videodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+      }
     }
   }
 
   public void getAndSetEntityMappings() {
     final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(MovieFields.FILE);
     send(call);
+    if (call.getResults() != null) {
 
-    for (MovieDetail res : call.getResults()) {
-      if (res.file.startsWith("stack")) {
-        String[] files = res.file.split(" , ");
-        for (String s : files) {
-          s = s.replaceFirst("^stack://", "");
-          SplitUri sp = new SplitUri(s, res.label, cm.getHostConfig().getAddress()); // generate clean object
+      for (MovieDetail res : call.getResults()) {
+        if (res.file.startsWith("stack")) {
+          String[] files = res.file.split(" , ");
+          for (String s : files) {
+            s = s.replaceFirst("^stack://", "");
+            SplitUri sp = new SplitUri(s, res.label, cm.getHostConfig().getAddress()); // generate clean object
+            for (SplitUri ds : videodatasources) {
+              if (sp.file.startsWith(ds.file)) {
+                moviemappings.put(sp.file, res.movieid);
+              }
+            }
+          }
+        }
+        else {
+          SplitUri sp = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
           for (SplitUri ds : videodatasources) {
             if (sp.file.startsWith(ds.file)) {
               moviemappings.put(sp.file, res.movieid);
@@ -160,20 +172,12 @@ public class KodiRPC {
           }
         }
       }
-      else {
-        SplitUri sp = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
-        for (SplitUri ds : videodatasources) {
-          if (sp.file.startsWith(ds.file)) {
-            moviemappings.put(sp.file, res.movieid);
-          }
-        }
-      }
-    }
 
-    for (Map.Entry<String, Integer> entry : moviemappings.entrySet()) {
-      String key = entry.getKey();
-      Integer value = entry.getValue();
-      LOGGER.debug(key + " - " + value);
+      for (Map.Entry<String, Integer> entry : moviemappings.entrySet()) {
+        String key = entry.getKey();
+        Integer value = entry.getValue();
+        LOGGER.debug(key + " - " + value);
+      }
     }
   }
 
@@ -201,8 +205,10 @@ public class KodiRPC {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.MUSIC);
     this.audiodatasources = new ArrayList<>();
     send(call);
-    for (ListModel.SourceItem res : call.getResults()) {
-      this.audiodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+    if (call.getResults() != null) {
+      for (ListModel.SourceItem res : call.getResults()) {
+        this.audiodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+      }
     }
   }
 
