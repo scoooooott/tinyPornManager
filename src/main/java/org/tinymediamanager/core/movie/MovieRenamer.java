@@ -653,6 +653,9 @@ public class MovieRenamer {
       existingFiles = Utils.listFilesRecursive(movie.getPathNIO());
     }
 
+    // also add all files from the old path (if upgraded from MMD)
+    existingFiles.addAll(Utils.listFiles(Paths.get(oldPathname)));
+
     for (int i = cleanup.size() - 1; i >= 0; i--) {
       MediaFile cl = cleanup.get(i);
 
