@@ -46,6 +46,7 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
     buildAndInstallDatasourceArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallDatasourceArray();
     movieSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
+    movieSettings.addPropertyChangeListener("movieDataSource", propertyChangeListener);
   }
 
   @Override
