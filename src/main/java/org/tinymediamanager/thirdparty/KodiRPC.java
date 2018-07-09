@@ -287,7 +287,6 @@ public class KodiRPC {
       return;
     }
     try {
-      LOGGER.debug("Calling Kodi: {}", call.getRequest());
       call.setResponse(JsonApiRequest.execute(cm.getHostConfig(), call.getRequest()));
     }
     catch (ApiException e) {
