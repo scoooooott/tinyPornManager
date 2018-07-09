@@ -323,7 +323,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       id = options.getIdAsInteger(providerInfo.getId());
     }
 
-    if (id == 0) {
+    if (id == null || id == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
@@ -463,7 +463,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       id = options.getIdAsInteger(providerInfo.getId());
     }
 
-    if (id == 0) {
+    if (id == null || id == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
@@ -807,7 +807,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       id = options.getIdAsInteger(providerInfo.getId());
     }
 
-    if (id == 0) {
+    if (id == null || id == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
