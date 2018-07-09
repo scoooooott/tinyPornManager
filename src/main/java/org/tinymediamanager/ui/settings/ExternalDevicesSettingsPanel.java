@@ -37,6 +37,8 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.jsonrpc.config.HostConfig;
@@ -162,7 +164,8 @@ public class ExternalDevicesSettingsPanel extends JPanel {
           KodiRPC.getInstance().connect(c);
         }
         catch (ApiException cex) {
-          LOGGER.error("Error connecting to Kodi instance!", e);
+          LOGGER.error("Error connecting to Kodi instance! {}", cex.getMessage());
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, e, "Could not connect to Kodi: " + cex.getMessage()));
         }
       });
       add(btnKodiConnect, "cell 3 4,growx");

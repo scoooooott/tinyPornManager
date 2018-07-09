@@ -228,8 +228,10 @@ public class KodiRPC {
   public void ApplicationMute() {
     final Application.GetProperties props = new Application.GetProperties("muted");
     send(props); // get current
-    final Application.SetMute call = new Application.SetMute(new GlobalModel.Toggle(!props.getResult().muted));
-    send(call); // toggle true/false
+    if (props.getResults() != null) {
+      final Application.SetMute call = new Application.SetMute(new GlobalModel.Toggle(!props.getResult().muted));
+      send(call); // toggle true/false
+    }
   }
 
   /**
@@ -285,7 +287,9 @@ public class KodiRPC {
       return;
     }
     try {
+      LOGGER.debug("Calling Kodi: {}", call.getRequest());
       call.setResponse(JsonApiRequest.execute(cm.getHostConfig(), call.getRequest()));
+      LOGGER.trace("Kodi response: {}", call.getResult());
     }
     catch (ApiException e) {
       LOGGER.error("Error calling Kodi: {}", e.getMessage());
