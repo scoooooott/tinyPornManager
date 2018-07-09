@@ -47,7 +47,6 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
     buildAndInstallDatasourceArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallDatasourceArray();
     tvShowSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
-    tvShowSettings.addPropertyChangeListener("tvShowDataSource", propertyChangeListener);
   }
 
   @Override

@@ -33,7 +33,7 @@ import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.moviesets.AbstractMovieSetUIFilter;
 
 /**
- * this class is used for a video - 3D movie filter
+ * this class is used for a movie set data source filter
  * 
  * @author Manuel Laggner
  */
@@ -47,7 +47,6 @@ public class MovieSetDatasourceFilter extends AbstractMovieSetUIFilter {
     buildAndInstallDatasourceArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallDatasourceArray();
     movieSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
-    movieSettings.addPropertyChangeListener("movieDatasource", propertyChangeListener);
   }
 
   @Override

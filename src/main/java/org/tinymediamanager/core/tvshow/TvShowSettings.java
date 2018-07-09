@@ -242,6 +242,7 @@ public class TvShowSettings extends AbstractSettings {
     if (!tvShowDataSources.contains(path)) {
       tvShowDataSources.add(path);
       firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
+      firePropertyChange(Constants.DATA_SOURCE, null, tvShowDataSources);
     }
   }
 
@@ -250,6 +251,7 @@ public class TvShowSettings extends AbstractSettings {
     tvShowList.removeDatasource(path);
     tvShowDataSources.remove(path);
     firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
+    firePropertyChange(Constants.DATA_SOURCE, null, tvShowDataSources);
   }
 
   public List<String> getTvShowDataSource() {
