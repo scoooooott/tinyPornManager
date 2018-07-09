@@ -549,25 +549,48 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       md.setId(MediaMetadata.IMDB, episode.imdbId);
     }
 
+    // HACK HACK HACK
+    // damn TVDB - always responds with delimited actors for episodes, instead of multiple ones!!
+    // checked direct swagger response:
+    // "writers": [
+    // "Jack Hannah, Carl Barks"
+    // ],
+    // as single string - dafuq?
+
     // directors
-    for (String director : episode.directors) {
-      MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
-      cm.setName(director);
-      md.addCastMember(cm);
+    if (episode.directors != null && !episode.directors.isEmpty()) {
+      for (String director : episode.directors) {
+        String[] multiple = director.split(",");
+        for (String g2 : multiple) {
+          MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
+          cm.setName(director);
+          md.addCastMember(cm);
+        }
+      }
     }
 
     // writers
-    for (String writer : episode.writers) {
-      MediaCastMember cm = new MediaCastMember(CastType.WRITER);
-      cm.setName(writer);
-      md.addCastMember(cm);
+    if (episode.writers != null && !episode.writers.isEmpty()) {
+      for (String writer : episode.writers) {
+        String[] multiple = writer.split(",");
+        for (String g2 : multiple) {
+          MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+          cm.setName(writer);
+          md.addCastMember(cm);
+        }
+      }
     }
 
     // actors (guests?)
-    for (String guest : episode.guestStars) {
-      MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
-      cm.setName(guest);
-      md.addCastMember(cm);
+    if (episode.guestStars != null && !episode.guestStars.isEmpty()) {
+      for (String guest : episode.guestStars) {
+        String[] multiple = guest.split(",");
+        for (String g2 : multiple) {
+          MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
+          cm.setName(g2.trim());
+          md.addCastMember(cm);
+        }
+      }
     }
 
     // Thumb
