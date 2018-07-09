@@ -53,7 +53,6 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.jsonrpc.io.ApiException;
 import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
@@ -324,7 +323,8 @@ public class TinyMediaManager {
           try {
             KodiRPC.getInstance().connect();
           }
-          catch (ApiException e) {
+          catch (Exception e) {
+            // catch all, to not kill JVM on any other exceptions!
             LOGGER.error(e.getMessage());
           }
 

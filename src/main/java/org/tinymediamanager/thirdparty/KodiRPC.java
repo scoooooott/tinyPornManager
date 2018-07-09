@@ -138,7 +138,7 @@ public class KodiRPC {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.VIDEO); // movies + tv !!!
     this.videodatasources = new ArrayList<>();
     send(call);
-    if (call.getResults() != null) {
+    if (call.getResults() != null && !call.getResults().isEmpty()) {
       for (ListModel.SourceItem res : call.getResults()) {
         this.videodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
       }
@@ -148,7 +148,7 @@ public class KodiRPC {
   public void getAndSetEntityMappings() {
     final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(MovieFields.FILE);
     send(call);
-    if (call.getResults() != null) {
+    if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       for (MovieDetail res : call.getResults()) {
         if (res.file.startsWith("stack")) {
@@ -205,7 +205,7 @@ public class KodiRPC {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.MUSIC);
     this.audiodatasources = new ArrayList<>();
     send(call);
-    if (call.getResults() != null) {
+    if (call.getResults() != null && !call.getResults().isEmpty()) {
       for (ListModel.SourceItem res : call.getResults()) {
         this.audiodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
       }
@@ -228,7 +228,7 @@ public class KodiRPC {
   public void ApplicationMute() {
     final Application.GetProperties props = new Application.GetProperties("muted");
     send(props); // get current
-    if (props.getResults() != null) {
+    if (props.getResults() != null && !props.getResults().isEmpty()) {
       final Application.SetMute call = new Application.SetMute(new GlobalModel.Toggle(!props.getResult().muted));
       send(call); // toggle true/false
     }
@@ -289,7 +289,6 @@ public class KodiRPC {
     try {
       LOGGER.debug("Calling Kodi: {}", call.getRequest());
       call.setResponse(JsonApiRequest.execute(cm.getHostConfig(), call.getRequest()));
-      LOGGER.trace("Kodi response: {}", call.getResult());
     }
     catch (ApiException e) {
       LOGGER.error("Error calling Kodi: {}", e.getMessage());
