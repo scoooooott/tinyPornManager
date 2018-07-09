@@ -81,10 +81,7 @@ import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.images.LoadingSpinner;
-import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
-import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
-import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
 
@@ -431,10 +428,6 @@ public class ToolbarPanel extends JPanel {
       });
 
       debugMenu.add(trace);
-      debugMenu.add(new DebugDumpMovieAction());
-      debugMenu.add(new DebugDumpMovieSetAction());
-      debugMenu.add(new DebugDumpShowAction());
-
       menu.addSeparator();
       menu.add(debugMenu);
     }

@@ -19,6 +19,7 @@ import java.awt.CardLayout;
 
 import javax.swing.Action;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
@@ -26,11 +27,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.PopupMenuScroller;
+import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
@@ -239,6 +242,13 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieRemoveAction.class));
     popupMenu.add(createAndRegisterAction(MovieDeleteAction.class));
+
+    if (Globals.isDebug()) {
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      debugMenu.add(new DebugDumpMovieAction());
+      popupMenu.addSeparator();
+      popupMenu.add(debugMenu);
+    }
 
     listPanel.setPopupMenu(popupMenu);
 

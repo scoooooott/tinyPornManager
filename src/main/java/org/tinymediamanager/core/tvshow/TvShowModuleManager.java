@@ -156,7 +156,8 @@ public class TvShowModuleManager implements ITmmModule {
       }
       node.set("episodes", episodes);
 
-      LOGGER.info("Dumping TvShow:\n" + node.toString());
+      String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+      LOGGER.info("Dumping TvShow:\n" + s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);

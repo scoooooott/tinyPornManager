@@ -19,11 +19,13 @@ import java.awt.CardLayout;
 
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -36,6 +38,7 @@ import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
+import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
@@ -165,6 +168,13 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     // actions for both of them
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieSetRenameAction.class));
+
+    if (Globals.isDebug()) {
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      debugMenu.add(new DebugDumpMovieSetAction());
+      popupMenu.addSeparator();
+      popupMenu.add(debugMenu);
+    }
 
     listPanel.setPopupMenu(popupMenu);
 

@@ -39,7 +39,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The class MovieModuleManager. Used to manage the movies module
@@ -145,8 +144,9 @@ public class MovieModuleManager implements ITmmModule {
   public void dump(Movie movie) {
     try {
       ObjectMapper mapper = new ObjectMapper();
-      ObjectNode node = mapper.readValue(movieObjectWriter.writeValueAsString(movie), ObjectNode.class);
-      LOGGER.info("Dumping Movie:\n" + node);
+      Object json = mapper.readValue(movieObjectWriter.writeValueAsString(movie), Object.class);
+      String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+      LOGGER.info("Dumping Movie:\n" + s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
@@ -162,8 +162,9 @@ public class MovieModuleManager implements ITmmModule {
   public void dump(MovieSet movieSet) {
     try {
       ObjectMapper mapper = new ObjectMapper();
-      ObjectNode node = mapper.readValue(movieObjectWriter.writeValueAsString(movieSet), ObjectNode.class);
-      LOGGER.info("Dumping MovieSet:\n" + node);
+      Object json = mapper.readValue(movieObjectWriter.writeValueAsString(movieSet), Object.class);
+      String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+      LOGGER.info("Dumping MovieSet:\n" + s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
