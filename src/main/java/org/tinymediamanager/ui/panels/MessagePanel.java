@@ -72,10 +72,14 @@ public class MessagePanel extends JPanel {
 
     switch (message.getMessageLevel()) {
       case ERROR:
-      case WARN:
         lblIcon.setIcon(IconManager.ERROR);
         break;
-
+      case WARN:
+        lblIcon.setIcon(IconManager.WARN);
+        break;
+      case INFO:
+        lblIcon.setIcon(IconManager.INFO);
+        break;
       default:
         lblIcon.setIcon(null);
         break;

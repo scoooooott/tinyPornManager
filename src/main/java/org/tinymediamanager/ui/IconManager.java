@@ -99,8 +99,10 @@ public class IconManager {
   public final static ImageIcon            CARET_UP                    = createFontAwesomeIcon('\uF0D8');
   public final static ImageIcon            CARET_DOWN                  = createFontAwesomeIcon('\uF0D7');
   public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
-  public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF071');
-  public final static ImageIcon            ERROR_INTENSIFIED           = createFontAwesomeIcon('\uF071', Color.red);
+  public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF057');
+  public final static ImageIcon            WARN                        = createFontAwesomeIcon('\uF071');
+  public final static ImageIcon            WARN_INTENSIFIED            = createFontAwesomeIcon('\uF071', Color.RED);
+  public final static ImageIcon            INFO                        = createFontAwesomeIcon('\uF05A');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
   public final static ImageIcon            NEW                         = createTextIcon("new", 14);
   public final static ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');

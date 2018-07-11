@@ -116,7 +116,7 @@ public class StatusBarPanel extends JPanel {
       add(lblMemory, "cell 0 0");
     }
     {
-      btnNotifications = new FlatButton(IconManager.ERROR_INTENSIFIED);
+      btnNotifications = new FlatButton(IconManager.WARN_INTENSIFIED);
       // btnNotifications.setBorderPainted(false);
       // btnNotifications.setOpaque(false);
       // btnNotifications.setContentAreaFilled(false);
