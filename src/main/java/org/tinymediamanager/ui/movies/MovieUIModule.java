@@ -130,6 +130,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
       @Override
       public void updateUI() {
         putClientProperty("leftBorder", "half");
+        putClientProperty("bottomBorder", "half");
         super.updateUI();
       }
     };

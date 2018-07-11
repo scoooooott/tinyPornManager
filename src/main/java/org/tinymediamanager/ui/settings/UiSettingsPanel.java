@@ -77,6 +77,7 @@ public class UiSettingsPanel extends JPanel {
   private JCheckBox                   chckbxStoreWindowPreferences;
   private JComboBox                   cbTheme;
   private JLabel                      lblThemeHint;
+  private JCheckBox                   chckbxShowMemory;
 
   public UiSettingsPanel() {
     LocaleComboBox actualLocale = null;
@@ -138,7 +139,7 @@ public class UiSettingsPanel extends JPanel {
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][20lp][][][][][][20lp][][]"));
+    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][20lp][][][][][][20lp][][][]"));
     {
       final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), 1.16667); //$NON-NLS-1$
       add(lblLanguageT, "cell 0 0 3 1");
@@ -210,6 +211,10 @@ public class UiSettingsPanel extends JPanel {
     {
       chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
       add(chckbxStoreWindowPreferences, "cell 1 17 2 1");
+    }
+    {
+      chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory")); //$NON-NLS-1$
+      add(chckbxShowMemory, "cell 1 18 2 1");
     }
   }
 
@@ -295,5 +300,10 @@ public class UiSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxStoreWindowPreferences, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("showMemory");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxShowMemory, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

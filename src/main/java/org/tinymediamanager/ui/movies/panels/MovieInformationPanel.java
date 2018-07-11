@@ -175,7 +175,7 @@ public class MovieInformationPanel extends JPanel {
 
   private void initComponents() {
     putClientProperty("class", "roundedPanel");
-    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 350]", "[grow][][shrink 0][][]"));
+    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 350]", "[200lp:n,grow][][shrink 0][][]"));
 
     {
       JPanel panelLeft = new JPanel();
@@ -203,7 +203,8 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
+      panelTopRight
+          .setLayout(new MigLayout("insets 0 n n n", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][20lp:40lp,grow]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);

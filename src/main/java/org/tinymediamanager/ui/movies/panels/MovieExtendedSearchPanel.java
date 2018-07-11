@@ -63,7 +63,6 @@ import org.tinymediamanager.ui.movies.filters.MovieVideoFormatFilter;
 import org.tinymediamanager.ui.movies.filters.MovieWatchedFilter;
 import org.tinymediamanager.ui.movies.filters.MovieYearFilter;
 import org.tinymediamanager.ui.panels.RoundedPanel;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -103,13 +102,13 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
-    setLayout(new MigLayout("", "[][10lp][]", "[][][][][][20lp]"));
+    setLayout(new MigLayout("", "[][10lp][][10lp]", "[][10lp:n,grow][][][][20lp]"));
 
     JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
     add(lblFilterBy, "cell 0 0,growx,aligny top");
 
-    panelFilter = new ScrollablePanel();
+    panelFilter = new JPanel();
     GridBagLayout gbl_panelFilter = new GridBagLayout();
     gbl_panelFilter.columnWidths = new int[] { 0 };
     gbl_panelFilter.rowHeights = new int[] { 0 };

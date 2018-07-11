@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +97,7 @@ public class Settings extends AbstractSettings {
   private boolean   storeWindowPreferences = true;
 
   private boolean   deleteTrashOnExit      = false;
+  private boolean   showMemory             = true;
 
   private boolean   upnpShareLibrary       = false;
   private boolean   upnpRemotePlay         = false;
@@ -916,5 +917,15 @@ public class Settings extends AbstractSettings {
 
   public boolean isStoreWindowPreferences() {
     return storeWindowPreferences;
+  }
+
+  public boolean isShowMemory() {
+    return showMemory;
+  }
+
+  public void setShowMemory(boolean newValue) {
+    boolean oldValue = this.showMemory;
+    this.showMemory = newValue;
+    firePropertyChange("showMemory", oldValue, newValue);
   }
 }

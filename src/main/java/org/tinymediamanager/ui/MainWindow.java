@@ -61,6 +61,7 @@ import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.images.LogoCircle;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
+import org.tinymediamanager.ui.panels.StatusBarPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
@@ -86,6 +87,7 @@ public class MainWindow extends JFrame {
   private JTabbedPane                 tabbedPane;
   private JPanel                      detailPanel;
   private JSplitPane                  splitPane;
+  private JPanel                      panelStatusBar;
 
   /**
    * Create the application.
@@ -203,10 +205,10 @@ public class MainWindow extends JFrame {
 
     JPanel rootPanel = new JPanel();
     rootPanel.putClientProperty("class", "rootPanel");
-    rootPanel.setLayout(new MigLayout("insets 0", "[900lp:n,grow]", "[400lp:n,grow]"));
+    rootPanel.setLayout(new MigLayout("insets 0", "[900lp:n,grow]", "[300lp:400lp,grow,shrink 0]0[shrink 0]"));
 
     // to draw the shadow beneath the toolbar, encapsulate the panel
-    JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI());
+    JLayer<JComponent> rootLayer = new JLayer<>(rootPanel, new ShadowLayerUI()); // $hide$ - do not parse this in wbpro
     getContentPane().add(rootLayer, BorderLayout.CENTER);
 
     splitPane = new TmmSplitPane();
@@ -218,6 +220,7 @@ public class MainWindow extends JFrame {
       @Override
       public void updateUI() {
         putClientProperty("rightBorder", "half");
+        putClientProperty("bottomBorder", "half");
         super.updateUI();
       }
     };
@@ -227,6 +230,9 @@ public class MainWindow extends JFrame {
     detailPanel.setOpaque(false);
     detailPanel.setLayout(new CardLayout(0, 0));
     splitPane.setRightComponent(detailPanel);
+
+    panelStatusBar = new StatusBarPanel();
+    rootPanel.add(panelStatusBar, "cell 0 1,grow");
 
     addModule(MovieUIModule.getInstance());
     toolbarPanel.setUIModule(MovieUIModule.getInstance());

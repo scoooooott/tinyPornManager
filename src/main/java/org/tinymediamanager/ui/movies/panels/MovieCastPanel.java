@@ -118,7 +118,7 @@ public class MovieCastPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][150lp,grow][200lp,grow]"));
+    setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][100lp:150lp,grow][150lp:200lp,grow]"));
     {
       JLabel lblDirectorT = new TmmLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
       add(lblDirectorT, "cell 0 0");

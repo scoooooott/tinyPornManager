@@ -28,6 +28,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -104,7 +105,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow]0[][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,grow");
@@ -242,31 +243,34 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     };
     tree.addMouseListener(mouseListener);
 
+    JSeparator separator = new JSeparator();
+    add(separator, "cell 0 2 2 1,growx");
+
     {
       JLabel lblTvShowCount = new JLabel(BUNDLE.getString("tmm.tvshows") + ":"); //$NON-NLS-1$
-      add(lblTvShowCount, "flowx,cell 0 2 2 1");
+      add(lblTvShowCount, "flowx,cell 0 3 2 1");
 
       lblTvShowCountFiltered = new JLabel("");
-      add(lblTvShowCountFiltered, "cell 0 2 2 1");
+      add(lblTvShowCountFiltered, "cell 0 3 2 1");
 
       JLabel lblTvShowCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
-      add(lblTvShowCountOf, "cell 0 2 2 1");
+      add(lblTvShowCountOf, "cell 0 3 2 1");
 
       lblTvShowCountTotal = new JLabel("");
-      add(lblTvShowCountTotal, "cell 0 2");
+      add(lblTvShowCountTotal, "cell 0 3 2 1");
     }
     {
       JLabel lblEpisodeCount = new JLabel(BUNDLE.getString("metatag.episodes") + ":"); //$NON-NLS-1$
-      add(lblEpisodeCount, "flowx,cell 0 3 2 1");
+      add(lblEpisodeCount, "flowx,cell 0 4 2 1");
 
       lblEpisodeCountFiltered = new JLabel("");
-      add(lblEpisodeCountFiltered, "cell 0 3");
+      add(lblEpisodeCountFiltered, "cell 0 4 2 1");
 
       JLabel lblEpisodeCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
-      add(lblEpisodeCountOf, "cell 0 3");
+      add(lblEpisodeCountOf, "cell 0 4 2 1");
 
       lblEpisodeCountTotal = new JLabel("");
-      add(lblEpisodeCountTotal, "cell 0 3");
+      add(lblEpisodeCountTotal, "cell 0 4 2 1");
     }
   }
 

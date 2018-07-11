@@ -23,6 +23,7 @@ import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
@@ -96,7 +97,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:300lp,grow]0[][]"));
 
     searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
     add(searchField, "cell 0 0,growx");
@@ -167,17 +168,20 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected()));
     add(btnExtendedFilter, "cell 1 0");
 
+    JSeparator separator = new JSeparator();
+    add(separator, "cell 0 2 2 1, growx");
+
     JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
-    add(lblMovieCount, "flowx,cell 0 2 2 1");
+    add(lblMovieCount, "flowx,cell 0 3 2 1");
 
     lblMovieCountFiltered = new JLabel("");
-    add(lblMovieCountFiltered, "cell 0 2");
+    add(lblMovieCountFiltered, "cell 0 3 2 1");
 
     JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
-    add(lblMovieCountOf, "cell 0 2");
+    add(lblMovieCountOf, "cell 0 3 2 1");
 
     lblMovieCountTotal = new JLabel("");
-    add(lblMovieCountTotal, "cell 0 2");
+    add(lblMovieCountTotal, "cell 0 3 2 1");
 
     initDataBindings();
 

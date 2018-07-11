@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.IMessageListener;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -77,7 +78,7 @@ public class TmmUIMessageCollector extends AbstractModelObject implements IMessa
         messages.add(message);
         int oldValue = newMessages;
         newMessages++;
-        firePropertyChange("messages", oldValue, newMessages);
+        firePropertyChange(Constants.MESSAGES, oldValue, newMessages);
       });
     }
   }
@@ -106,7 +107,7 @@ public class TmmUIMessageCollector extends AbstractModelObject implements IMessa
   public void resetNewMessageCount() {
     int oldValue = newMessages;
     newMessages = 0;
-    firePropertyChange("messages", oldValue, newMessages);
+    firePropertyChange(Constants.MESSAGES, oldValue, newMessages);
   }
 
   /**

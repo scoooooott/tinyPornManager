@@ -13,6 +13,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -50,13 +51,13 @@ import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import net.miginfocom.swing.MigLayout;
 
 public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
-  private static final long            serialVersionUID = 5889203009864512935L;
+  private static final long           serialVersionUID = 5889203009864512935L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TmmTreeTable                 tree;
+  private TmmTreeTable                tree;
 
-  private final MovieList              movieList        = MovieList.getInstance();
+  private final MovieList             movieList        = MovieList.getInstance();
 
   private JLabel                      lblMovieCountFiltered;
   private JLabel                      lblMovieCountTotal;
@@ -74,7 +75,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][400lp,grow][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][400lp,grow]0[][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
@@ -202,31 +203,34 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
       }
     };
     tree.addMouseListener(mouseListener);
+
+    JSeparator separator = new JSeparator();
+    add(separator, "cell 0 2 2 1,growx");
     {
       JLabel lblMovieSetCount = new JLabel(BUNDLE.getString("tmm.moviesets") + ":"); //$NON-NLS-1$
-      add(lblMovieSetCount, "flowx,cell 0 2 2 1");
+      add(lblMovieSetCount, "flowx,cell 0 3 2 1");
 
       lblMovieSetCountFiltered = new JLabel("");
-      add(lblMovieSetCountFiltered, "cell 0 2 2 1");
+      add(lblMovieSetCountFiltered, "cell 0 3 2 1");
 
       JLabel lblMovieSetCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
-      add(lblMovieSetCountOf, "cell 0 2 2 1");
+      add(lblMovieSetCountOf, "cell 0 3 2 1");
 
       lblMovieSetCountTotal = new JLabel("");
-      add(lblMovieSetCountTotal, "cell 0 2");
+      add(lblMovieSetCountTotal, "cell 0 3 2 1");
     }
     {
       JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
-      add(lblMovieCount, "flowx,cell 0 3 2 1");
+      add(lblMovieCount, "flowx,cell 0 4 2 1");
 
       lblMovieCountFiltered = new JLabel("");
-      add(lblMovieCountFiltered, "cell 0 3");
+      add(lblMovieCountFiltered, "cell 0 4 2 1");
 
       JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
-      add(lblMovieCountOf, "cell 0 3");
+      add(lblMovieCountOf, "cell 0 4 2 1");
 
       lblMovieCountTotal = new JLabel("");
-      add(lblMovieCountTotal, "cell 0 3");
+      add(lblMovieCountTotal, "cell 0 4 2 1");
     }
   }
 

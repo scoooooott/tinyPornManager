@@ -36,10 +36,10 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieArtworkPanel extends JPanel {
-  private static final long       serialVersionUID = -7478111154774646873L;
+  private static final long     serialVersionUID = -7478111154774646873L;
 
-  private final List<MediaFile>   mediaFiles;
-  private ImagePanel              imagePanel;
+  private final List<MediaFile> mediaFiles;
+  private ImagePanel            imagePanel;
 
   public MovieArtworkPanel(final MovieSelectionModel selectionModel) {
     mediaFiles = new ArrayList<>();
@@ -65,7 +65,7 @@ public class MovieArtworkPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[400lp,grow]", "[400lp,grow]"));
+    setLayout(new MigLayout("", "[400lp,grow]", "[300lp:400lp,grow]"));
 
     {
       imagePanel = new ImagePanel(mediaFiles);
