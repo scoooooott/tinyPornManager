@@ -147,7 +147,7 @@ public class TmmButtonUI extends BaseButtonUI {
           JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
         }
       }
-      if (background instanceof ColorUIResource) {
+      if (background instanceof ColorUIResource && !isFlatButton) {
         if (model.isPressed() && model.isArmed()) {
           g.setColor(AbstractLookAndFeel.getTheme().getPressedForegroundColor());
         }

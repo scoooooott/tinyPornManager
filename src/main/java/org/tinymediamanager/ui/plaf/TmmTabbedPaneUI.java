@@ -86,6 +86,11 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
       contentBorderInsets.bottom = 0;
     }
 
+    if ("half".equals(this.tabPane.getClientProperty("bottomBorder"))) {
+      tabAreaInsets.bottom = tabAreaInsets.bottom / 2;
+      contentBorderInsets.bottom = contentBorderInsets.bottom / 2;
+    }
+
     if (Boolean.FALSE.equals(this.tabPane.getClientProperty("roundEdge"))) {
       roundEdge = false;
     }
@@ -140,7 +145,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     int xt = contentBorderInsets.left;
     int yt = 0;
     int wt = w - contentBorderInsets.left - contentBorderInsets.right;
-    int ht = h - BORDER_RADIUS;
+    int ht = h + contentBorderInsets.bottom - BORDER_RADIUS;
 
     g2D.setColor(AbstractLookAndFeel.getBackgroundColor());
 
