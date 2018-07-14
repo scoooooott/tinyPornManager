@@ -109,7 +109,7 @@ public class StatusBarPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0 n n n", "[][grow][]", "[]"));
+    setLayout(new MigLayout("insets 0 n 0 n", "[][grow][]", "[]"));
     setOpaque(false);
     {
       lblMemory = new JLabel("");

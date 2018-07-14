@@ -220,7 +220,7 @@ public class MainWindow extends JFrame {
       @Override
       public void updateUI() {
         putClientProperty("rightBorder", "half");
-        putClientProperty("bottomBorder", "half");
+        putClientProperty("bottomBorder", Boolean.FALSE);
         super.updateUI();
       }
     };

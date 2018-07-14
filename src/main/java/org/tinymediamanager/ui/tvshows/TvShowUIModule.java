@@ -134,7 +134,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
       @Override
       public void updateUI() {
         putClientProperty("leftBorder", "half");
-        putClientProperty("bottomBorder", "half");
+        putClientProperty("bottomBorder", Boolean.FALSE);
         super.updateUI();
       }
     };
