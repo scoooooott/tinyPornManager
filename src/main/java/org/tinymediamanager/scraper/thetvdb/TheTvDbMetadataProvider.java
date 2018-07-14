@@ -53,6 +53,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -83,6 +84,7 @@ import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
+import retrofit2.Response;
 
 /**
  * The Class TheTvDbMetadataProvider.
@@ -92,12 +94,12 @@ import okhttp3.OkHttpClient;
 @PluginImplementation
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
   private static final Logger     LOGGER      = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-  private static List<Language>   tvdbLanguages;
   private static String           artworkUrl  = "http://thetvdb.com/banners/";
   private static final String     TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
 
   private final MediaProviderInfo providerInfo;
   private TheTvdb                 tvdb;
+  private List<Language>          tvdbLanguages;
 
   public TheTvDbMetadataProvider() {
     // create the providerinfo
@@ -137,7 +139,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             return this.okHttpClient;
           }
         };
-        LanguagesResponse response = tvdb.languages().allAvailable().execute().body();
+        Response<LanguagesResponse> httpResponse = tvdb.languages().allAvailable().execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        LanguagesResponse response = httpResponse.body();
         if (response == null) {
           throw new Exception("Could not connect to TVDB");
         }
@@ -223,21 +229,28 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     List<Series> series = new ArrayList<>();
     // first with the desired scraping language
     try {
-      SeriesResultsResponse response = tvdb.search().series(searchString, null, null, language).execute().body();
-      series.addAll(response.data);
+      Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, language).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.message(), httpResponse.code());
+      }
+      series.addAll(httpResponse.body().data);
     }
     catch (Exception e) {
       LOGGER.error("problem getting data vom tvdb: " + e.getMessage());
+      throw new ScrapeException(e);
     }
 
     // second with the fallback language
     if (!fallbackLanguage.equals(language)) {
       try {
-        SeriesResultsResponse response = tvdb.search().series(searchString, null, null, fallbackLanguage).execute().body();
-        series.addAll(response.data);
+        Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, fallbackLanguage).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        series.addAll(httpResponse.body().data);
       }
       catch (Exception e) {
-        LOGGER.error("problem getting data vom tvdb: " + e.getMessage());
+        LOGGER.error("problem getting data vom tvdb with fallback langauge: " + e.getMessage());
       }
     }
 
@@ -274,9 +287,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       // for how the api responds only a banner - we would like to have a poster here;
       // just try to fetch the poster url
       try {
-        SeriesImageQueryResultResponse response = tvdb.series().imagesQuery(show.id, "poster", null, null, null).execute().body();
-        if (response != null && !response.data.isEmpty()) {
-          result.setPosterUrl(artworkUrl + response.data.get(0).fileName);
+        Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(show.id, "poster", null, null, null).execute();
+        if (httpResponse.isSuccessful()) {
+          SeriesImageQueryResultResponse response = httpResponse.body();
+          if (response != null && !response.data.isEmpty()) {
+            result.setPosterUrl(artworkUrl + response.data.get(0).fileName);
+          }
         }
       }
       catch (Exception e) {
@@ -330,12 +346,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     Series show = null;
     try {
-      SeriesResponse response = tvdb.series().series(id, options.getLanguage().getLanguage()).execute().body();
-      show = response.data;
-    }
-    catch (NullPointerException e) {
-      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
-      LOGGER.error("failed to get meta data - tvdb returned nothing");
+      Response<SeriesResponse> httpResponse = tvdb.series().series(id, options.getLanguage().getLanguage()).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.message(), httpResponse.code());
+      }
+      show = httpResponse.body().data;
     }
     catch (Exception e) {
       LOGGER.error("failed to get meta data: " + e.getMessage());
@@ -350,13 +365,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
     if (StringUtils.isAnyBlank(show.seriesName, show.overview) && !fallbackLanguage.equals(options.getLanguage().getLanguage())) {
       try {
-        SeriesResponse response = tvdb.series().series(id, fallbackLanguage).execute().body();
-        Series fallBackShow = response.data;
-        if (StringUtils.isBlank(show.seriesName) && StringUtils.isNotBlank(fallBackShow.seriesName)) {
-          show.seriesName = fallBackShow.seriesName;
-        }
-        if (StringUtils.isBlank(show.overview) && StringUtils.isNotBlank(fallBackShow.overview)) {
-          show.overview = fallBackShow.overview;
+        Response<SeriesResponse> httpResponse = tvdb.series().series(id, fallbackLanguage).execute();
+        if (httpResponse.isSuccessful()) {
+          Series fallBackShow = httpResponse.body().data;
+          if (StringUtils.isBlank(show.seriesName) && StringUtils.isNotBlank(fallBackShow.seriesName)) {
+            show.seriesName = fallBackShow.seriesName;
+          }
+          if (StringUtils.isBlank(show.overview) && StringUtils.isNotBlank(fallBackShow.overview)) {
+            show.overview = fallBackShow.overview;
+          }
         }
       }
       catch (Exception e) {
@@ -414,8 +431,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     List<Actor> actors = new ArrayList<>();
     try {
-      ActorsResponse response = tvdb.series().actors(id).execute().body();
-      actors.addAll(response.data);
+      Response<ActorsResponse> httpResponse = tvdb.series().actors(id).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.message(), httpResponse.code());
+      }
+      actors.addAll(httpResponse.body().data);
     }
     catch (Exception e) {
       LOGGER.error("failed to get actors: " + e.getMessage());
@@ -492,10 +512,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     Episode.FullEpisode episode = null;
     try {
       episode = getFullEpisode(options.getLanguage().getLanguage(), useDvdOrder, id, seasonNr, episodeNr, aired);
-    }
-    catch (NullPointerException ignored) {
-      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
-      LOGGER.error("failed to get meta data - tvdb returned nothing");
     }
     catch (Exception e) {
       LOGGER.error("failed to get meta data: " + e.getMessage());
@@ -610,20 +626,52 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // get by season/ep number
     if (useDvdOrder) {
-      response = tvdb.series().episodesQuery(id, null, null, null, seasonNr, (double) episodeNr, null, null, 1, language).execute().body();
+      try {
+        Response<EpisodesResponse> httpResponse = tvdb.series()
+            .episodesQuery(id, null, null, null, seasonNr, (double) episodeNr, null, null, 1, language).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        response = httpResponse.body();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get ep by season/ep number: " + e.getMessage());
+      }
     }
     else {
-      response = tvdb.series().episodesQuery(id, null, seasonNr, episodeNr, null, null, null, null, 1, language).execute().body();
+      try {
+        Response<EpisodesResponse> httpResponse = tvdb.series().episodesQuery(id, null, seasonNr, episodeNr, null, null, null, null, 1, language)
+            .execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        response = httpResponse.body();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get ep by season/ep number: " + e.getMessage());
+      }
     }
 
     // not found? try to match by date
     if (response == null && !aired.isEmpty()) {
-      response = tvdb.series().episodesQuery(id, null, null, null, null, null, null, aired, 1, language).execute().body();
+      try {
+        Response<EpisodesResponse> httpResponse = tvdb.series().episodesQuery(id, null, null, null, null, null, null, aired, 1, language).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        response = httpResponse.body();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get ep by date: " + e.getMessage());
+      }
     }
 
     if (response != null && !response.data.isEmpty()) {
-      EpisodeResponse response1 = tvdb.episodes().get(response.data.get(0).id, language).execute().body();
-      return response1.data;
+      Response<EpisodeResponse> httpResponse = tvdb.episodes().get(response.data.get(0).id, language).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.message(), httpResponse.code());
+      }
+      return httpResponse.body().data;
     }
 
     return null;
@@ -668,14 +716,19 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             || ("season".equals(param.keyType) && options.getArtworkType() == SEASON_POSTER)
             || ("seasonwide".equals(param.keyType) && options.getArtworkType() == SEASON_BANNER)
             || ("series".equals(param.keyType) && options.getArtworkType() == BANNER)) {
-          SeriesImageQueryResultResponse response1 = tvdb.series().imagesQuery(id, param.keyType, null, null, null).execute().body();
-          images.addAll(response1.data);
+
+          try {
+            Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(id, param.keyType, null, null, null).execute();
+            if (!httpResponse.isSuccessful()) {
+              throw new HttpException(httpResponse.message(), httpResponse.code());
+            }
+            images.addAll(httpResponse.body().data);
+          }
+          catch (Exception e) {
+            LOGGER.error("could not get artwork from tvdb: " + e.getMessage());
+          }
         }
       }
-    }
-    catch (NullPointerException e) {
-      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
-      LOGGER.error("failed to get artwork - tvdb returned nothing");
     }
     catch (Exception e) {
       LOGGER.error("failed to get artwork: " + e.getMessage());
@@ -843,12 +896,24 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       // 100 results per page
       int counter = 1;
       while (true) {
-        EpisodesResponse response = tvdb.series().episodes(id, counter, options.getLanguage().getLanguage()).execute().body();
+        Response<EpisodesResponse> httpResponse = tvdb.series().episodes(id, counter, options.getLanguage().getLanguage()).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        EpisodesResponse response = httpResponse.body();
 
         // and get the episode listing in the fallback language too
         if (!fallbackLanguage.equals(options.getLanguage().getLanguage())) {
-          EpisodesResponse responseFallback = tvdb.series().episodes(id, counter, fallbackLanguage).execute().body();
-          fallbackEps.addAll(responseFallback.data);
+          try {
+            httpResponse = tvdb.series().episodes(id, counter, fallbackLanguage).execute();
+            if (!httpResponse.isSuccessful()) {
+              throw new HttpException(httpResponse.message(), httpResponse.code());
+            }
+            fallbackEps.addAll(httpResponse.body().data);
+          }
+          catch (Exception e) {
+            LOGGER.warn("could not get data in fallback language: " + e.getMessage());
+          }
         }
 
         eps.addAll(response.data);
@@ -858,11 +923,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
         counter++;
       }
-    }
-    catch (NullPointerException e) {
-      LOGGER.error("failed to get episode list - tvdb returned nothing");
-      // do nothing here - just ignore it; retrofit returns null if something has gone wrong
-      return episodes;
     }
     catch (Exception e) {
       LOGGER.error("failed to get episode list: " + e.getMessage());
@@ -931,7 +991,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   /**********************************************************************
    * local helper classes
    **********************************************************************/
-  private static class ImageComparator implements Comparator<SeriesImageQueryResult> {
+  private class ImageComparator implements Comparator<SeriesImageQueryResult> {
     private int preferredLangu = 0;
     private int english        = 0;
 
