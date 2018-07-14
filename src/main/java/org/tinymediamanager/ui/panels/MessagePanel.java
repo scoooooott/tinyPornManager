@@ -87,7 +87,7 @@ public class MessagePanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[450lp,grow]", "[][]"));
+    setLayout(new MigLayout("", "[300lp:450lp,grow]", "[][]"));
 
     lblDate = new JLabel("");
     add(lblDate, "cell 0 0,aligny top");
@@ -100,18 +100,18 @@ public class MessagePanel extends JPanel {
       }
     };
     add(innerPanel, "cell 0 1,growx");
-    innerPanel.setLayout(new MigLayout("", "[1px][350lp,grow]", "[1px][1px][]"));
+    innerPanel.setLayout(new MigLayout("", "[1px][][300lp:350lp,grow]", "[][]"));
 
     lblIcon = new JLabel("");
     lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-    innerPanel.add(lblIcon, "cell 0 1,alignx center,aligny center");
+    innerPanel.add(lblIcon, "cell 1 0,alignx center,aligny center");
 
     lblTitle = new JLabel();
     TmmFontHelper.changeFont(lblTitle, Font.BOLD);
 
-    innerPanel.add(lblTitle, "cell 1 0,growx");
+    innerPanel.add(lblTitle, "cell 2 0,growx");
 
     taMessage = new ReadOnlyTextArea();
-    innerPanel.add(taMessage, "cell 1 2,grow");
+    innerPanel.add(taMessage, "cell 2 1,wmin 0,grow");
   }
 }

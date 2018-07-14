@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,14 +58,15 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
     getContentPane().add(panelContent, BorderLayout.CENTER);
 
     messagesPanel = new JPanel();
-    messagesPanel.setBackground(Color.WHITE);
+    messagesPanel.setOpaque(false);
     messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.PAGE_AXIS));
 
     JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setViewportView(messagesPanel);
     scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-    panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[400lp,grow]"));
-    panelContent.add(scrollPane, "cell 0 0,grow");
+    panelContent.setLayout(new MigLayout("", "[300lp:600lp,grow]", "[200lp:400lp,grow]"));
+    panelContent.add(scrollPane, "cell 0 0,grow, wmin 0");
 
     JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
     btnClose.addActionListener(arg0 -> setVisible(false));

@@ -117,12 +117,6 @@ public class StatusBarPanel extends JPanel {
     }
     {
       btnNotifications = new FlatButton(IconManager.WARN_INTENSIFIED);
-      // btnNotifications.setBorderPainted(false);
-      // btnNotifications.setOpaque(false);
-      // btnNotifications.setContentAreaFilled(false);
-      // btnNotifications.setIconTextGap(0);
-      // btnNotifications.setBorder(BorderFactory.createEmptyBorder());
-      // btnNotifications.setFocusPainted(false);
       btnNotifications.setVisible(false);
       btnNotifications.setEnabled(false);
       btnNotifications.setForeground(Color.RED);
