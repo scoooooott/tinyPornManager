@@ -37,9 +37,10 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
-  protected static int BORDER_RADIUS = 15;
+  protected static int BORDER_RADIUS         = 15;
+  protected static int DEFAULT_BOTTOM_INSETS = 10 + BORDER_RADIUS;
 
-  private boolean      roundEdge     = true;
+  private boolean      roundEdge             = true;
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmTabbedPaneUI();
@@ -57,7 +58,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     tabAreaBackground = AbstractLookAndFeel.getTheme().getTabAreaBackgroundColor();
     tabInsets = new Insets(5, 20, 5, 20);
     tabAreaInsets = new Insets(0, 20, 15, 20);
-    contentBorderInsets = new Insets(0, 20, 10 + BORDER_RADIUS, 20);
+    contentBorderInsets = new Insets(0, 20, DEFAULT_BOTTOM_INSETS, 20);
     roundedTabs = false;
 
     // overrides
@@ -81,18 +82,23 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
       contentBorderInsets.left = contentBorderInsets.left / 2;
     }
 
+    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("roundEdge"))) {
+      roundEdge = false;
+    }
+
     if (Boolean.FALSE.equals(this.tabPane.getClientProperty("bottomBorder"))) {
       tabAreaInsets.bottom = 0;
-      contentBorderInsets.bottom = 0;
+      if (roundEdge) {
+        contentBorderInsets.bottom = 10;
+      }
+      else {
+        contentBorderInsets.bottom = 0;
+      }
     }
 
     if ("half".equals(this.tabPane.getClientProperty("bottomBorder"))) {
       tabAreaInsets.bottom = tabAreaInsets.bottom / 2;
       contentBorderInsets.bottom = contentBorderInsets.bottom / 2;
-    }
-
-    if (Boolean.FALSE.equals(this.tabPane.getClientProperty("roundEdge"))) {
-      roundEdge = false;
     }
 
   }
@@ -145,7 +151,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     int xt = contentBorderInsets.left;
     int yt = 0;
     int wt = w - contentBorderInsets.left - contentBorderInsets.right;
-    int ht = h + contentBorderInsets.bottom - BORDER_RADIUS;
+    int ht = h + DEFAULT_BOTTOM_INSETS - contentBorderInsets.bottom - BORDER_RADIUS;
 
     g2D.setColor(AbstractLookAndFeel.getBackgroundColor());
 
