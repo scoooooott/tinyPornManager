@@ -73,6 +73,7 @@ public abstract class ImdbParser {
   protected SimpleDateFormat     sdf1              = new SimpleDateFormat("d MMMM yyyy", Locale.US);
   protected SimpleDateFormat     sdf2              = new SimpleDateFormat("MMMM yyyy", Locale.US);
   protected SimpleDateFormat     sdf3              = new SimpleDateFormat("d MMM. yyyy", Locale.US);
+  protected SimpleDateFormat     sdf4              = new SimpleDateFormat("d MMM yyyy", Locale.US); // no dot like "May"
 
   protected ImdbParser(MediaType type) {
     this.type = type;
@@ -952,19 +953,21 @@ public abstract class ImdbParser {
     }
     catch (ParseException ignored) {
     }
-
     try {
       return sdf2.parse(dateAsSting);
     }
     catch (ParseException ignored) {
     }
-
     try {
       return sdf3.parse(dateAsSting);
     }
     catch (ParseException ignored) {
     }
-
+    try {
+      return sdf4.parse(dateAsSting);
+    }
+    catch (ParseException ignored) {
+    }
     return null;
   }
 
