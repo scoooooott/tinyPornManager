@@ -5,6 +5,7 @@ mirror = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-V3/ws/bu
 # UI Configuration
 ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
+ui.background = 00000000
 ui.icon = tmm.png
 ui.progress = 47, 400, 227, 10
 #ui.progress_text = 868686
@@ -86,6 +87,7 @@ skip_md5_cache = true
 # and all other launchers too
 #####################################################################################
 jvmarg = -XX:+IgnoreUnrecognizedVMOptions
+jvmarg = --add-modules=java.xml.bind
 jvmarg = --add-modules=java.xml.ws
 jvmarg = -Xms64m
 jvmarg = -Xmx512m
