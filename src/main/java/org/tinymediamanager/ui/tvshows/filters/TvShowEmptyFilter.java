@@ -47,8 +47,8 @@ public class TvShowEmptyFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    return tvShow.getEpisodeCount() != 0;
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
+    return invert ^ tvShow.getEpisodeCount() != 0;
   }
 
   @Override

@@ -57,7 +57,7 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     String videoFormat = (String) comboBox.getSelectedItem();
 
     if (StringUtils.isBlank(videoFormat)) {
@@ -66,15 +66,15 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
 
     for (TvShowEpisode episode : episodes) {
       if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
-        if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat())) {
+        if (invert ^ (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
           return true;
         }
-        if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat())) {
+        if (invert ^ (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
           return true;
         }
       }
       else {
-        if (videoFormat.equals(episode.getMediaInfoVideoFormat())) {
+        if (invert ^ videoFormat.equals(episode.getMediaInfoVideoFormat())) {
           return true;
         }
       }

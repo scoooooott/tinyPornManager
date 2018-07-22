@@ -83,12 +83,12 @@ public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  public boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  public boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<MediaSource> selectedItems = checkComboBox.getSelectedItems();
 
     // search for media source in episodes
     for (TvShowEpisode episode : episodes) {
-      if (selectedItems.contains(episode.getMediaSource())) {
+      if (invert ^ selectedItems.contains(episode.getMediaSource())) {
         return true;
       }
     }

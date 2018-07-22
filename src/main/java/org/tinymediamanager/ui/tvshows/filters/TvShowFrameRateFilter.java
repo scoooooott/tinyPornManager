@@ -82,15 +82,15 @@ public class TvShowFrameRateFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     Double frameRate = (Double) comboBox.getSelectedItem();
-    if (frameRate == 0) {
+    if (invert ^ frameRate == 0) {
       return true;
     }
 
     // search codec in the episodes
     for (TvShowEpisode episode : episodes) {
-      if (frameRate == episode.getMediaInfoFrameRate()) {
+      if (invert ^ frameRate == episode.getMediaInfoFrameRate()) {
         return true;
       }
     }

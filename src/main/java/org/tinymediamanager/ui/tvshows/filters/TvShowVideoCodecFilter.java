@@ -72,7 +72,7 @@ public class TvShowVideoCodecFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     String codec = (String) comboBox.getSelectedItem();
     if (StringUtils.isBlank(codec)) {
       return true;
@@ -82,7 +82,7 @@ public class TvShowVideoCodecFilter extends AbstractTvShowUIFilter {
     for (TvShowEpisode episode : episodes) {
       List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
       for (MediaFile mf : mfs) {
-        if (mf.getVideoCodec().equalsIgnoreCase(codec)) {
+        if (invert ^ mf.getVideoCodec().equalsIgnoreCase(codec)) {
           return true;
         }
       }

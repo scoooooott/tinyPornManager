@@ -75,14 +75,20 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<String> tags = checkComboBox.getSelectedItems();
-    if (tvShow.getTags().containsAll(tags)) {
+
+    // search tags of the show
+    boolean containsTags = tvShow.getTags().containsAll(tags);
+    if (!invert && containsTags) {
       return true;
+    }
+    else if (invert && containsTags) {
+      return false;
     }
 
     for (TvShowEpisode episode : episodes) {
-      if (episode.getTags().containsAll(tags)) {
+      if (invert ^ episode.getTags().containsAll(tags)) {
         return true;
       }
     }

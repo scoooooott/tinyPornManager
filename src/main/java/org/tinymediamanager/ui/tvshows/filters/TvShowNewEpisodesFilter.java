@@ -47,9 +47,9 @@ public class TvShowNewEpisodesFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     for (TvShowEpisode episode : episodes) {
-      if (episode.isNewlyAdded()) {
+      if (invert ^ episode.isNewlyAdded()) {
         return true;
       }
     }

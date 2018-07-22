@@ -49,7 +49,7 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
         return accept(tvShow, new ArrayList<>(tvShow.getEpisodesForDisplay()));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(tvShow, new ArrayList<>(tvShow.getEpisodesForDisplay()));
+        return accept(tvShow, new ArrayList<>(tvShow.getEpisodesForDisplay()), true);
       }
     }
     else if (userObject instanceof TvShowSeason) {
@@ -58,7 +58,7 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
         return accept(season.getTvShow(), new ArrayList<>(season.getEpisodesForDisplay()));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(season.getTvShow(), new ArrayList<>(season.getEpisodesForDisplay()));
+        return accept(season.getTvShow(), new ArrayList<>(season.getEpisodesForDisplay()), true);
       }
     }
     else if (userObject instanceof TvShowEpisode) {
@@ -67,11 +67,18 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
         return accept(episode.getTvShow(), Collections.singletonList(episode));
       }
       else if (getFilterState() == FilterState.ACTIVE_NEGATIVE) {
-        return !accept(episode.getTvShow(), Collections.singletonList(episode));
+        return accept(episode.getTvShow(), Collections.singletonList(episode), true);
       }
     }
 
     return true;
+  }
+
+  /**
+   * utility method for easier calling
+   */
+  private boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+    return accept(tvShow, episodes, false);
   }
 
   /**
@@ -81,10 +88,11 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
    *          the tvShow of this node
    * @param episodes
    *          all episodes of this node
-   * @return
-   *          whether we should or not accept it.
+   * @param invert
+   *          invert the accept logic for negative searches
+   * @return whether we should or not accept it.
    */
-  protected abstract boolean accept(TvShow tvShow, List<TvShowEpisode> episodes);
+  protected abstract boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert);
 
   /**
    * delegate the filter changed event to the tree

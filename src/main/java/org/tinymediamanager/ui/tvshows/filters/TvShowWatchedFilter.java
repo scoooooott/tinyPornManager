@@ -93,9 +93,9 @@ public class TvShowWatchedFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     for (TvShowEpisode episode : episodes) {
-      if (episode.isWatched() == (comboBox.getSelectedItem() == WatchedFlag.WATCHED)) {
+      if (invert ^ episode.isWatched() == (comboBox.getSelectedItem() == WatchedFlag.WATCHED)) {
         return true;
       }
     }

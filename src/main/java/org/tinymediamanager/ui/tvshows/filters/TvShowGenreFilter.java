@@ -83,9 +83,9 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
-    return tvShow.getGenres().containsAll(selectedItems);
+    return invert ^ tvShow.getGenres().containsAll(selectedItems);
   }
 
   @Override

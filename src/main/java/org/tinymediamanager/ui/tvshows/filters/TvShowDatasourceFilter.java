@@ -76,9 +76,9 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<String> dataSources = checkComboBox.getSelectedItems();
-    return dataSources.contains(tvShow.getDataSource());
+    return invert ^ dataSources.contains(tvShow.getDataSource());
   }
 
   @Override

@@ -47,13 +47,13 @@ public class TvShowMissingArtworkFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    if (!tvShow.getHasImages()) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
+    if (invert ^ !tvShow.getHasImages()) {
       return true;
     }
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.getHasImages()) {
+      if (invert ^ !episode.getHasImages()) {
         return true;
       }
     }

@@ -47,13 +47,13 @@ public class TvShowMissingMetadataFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    if (!tvShow.isScraped()) {
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
+    if (invert ^ !tvShow.isScraped()) {
       return true;
     }
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.isScraped()) {
+      if (invert ^ !episode.isScraped()) {
         return true;
       }
     }
