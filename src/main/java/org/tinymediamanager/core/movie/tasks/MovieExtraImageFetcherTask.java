@@ -31,11 +31,13 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -188,6 +190,15 @@ public class MovieExtraImageFetcherTask implements Runnable {
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
 
+        // build up image cache
+        if (Settings.getInstance().isImageCache()) {
+          try {
+            ImageCache.cacheImage(destFile);
+          }
+          catch (Exception ignored) {
+          }
+        }
+
         // has tmm been shut down?
         if (Thread.interrupted()) {
           return;
@@ -320,6 +331,15 @@ public class MovieExtraImageFetcherTask implements Runnable {
         MediaFile mf = new MediaFile(destFile, MediaFileType.EXTRATHUMB);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
+
+        // build up image cache
+        if (Settings.getInstance().isImageCache()) {
+          try {
+            ImageCache.cacheImage(destFile);
+          }
+          catch (Exception ignored) {
+          }
+        }
 
         // has tmm been shut down?
         if (Thread.interrupted()) {

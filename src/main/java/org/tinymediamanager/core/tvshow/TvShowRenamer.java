@@ -48,6 +48,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -191,6 +192,15 @@ public class TvShowRenamer {
       // if (!srcDir.equals(destDir)) {
       if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
         try {
+          // ######################################################################
+          // ## invalidate image cache
+          // ######################################################################
+          for (MediaFile gfx : show.getMediaFiles()) {
+            if (gfx.isGraphic()) {
+              ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+            }
+          }
+
           // FileUtils.moveDirectory(srcDir, destDir);
           // create parent if needed
           if (!Files.exists(destDir.getParent())) {
@@ -205,16 +215,22 @@ public class TvShowRenamer {
               episode.updateMediaFilePath(srcDir, destDir);
             }
 
+            show.saveToDb();
+
             // ######################################################################
-            // ## invalidate image cache
+            // ## build up image cache
             // ######################################################################
-            for (MediaFile gfx : show.getMediaFiles()) {
-              if (gfx.isGraphic()) {
-                ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+            if (Settings.getInstance().isImageCache()) {
+              for (MediaFile gfx : show.getMediaFiles()) {
+                if (gfx.isGraphic()) {
+                  try {
+                    ImageCache.cacheImage(gfx.getFileAsPath());
+                  }
+                  catch (Exception ignored) {
+                  }
+                }
               }
             }
-
-            show.saveToDb();
           }
         }
         catch (Exception e) {
@@ -338,6 +354,21 @@ public class TvShowRenamer {
         }
         catch (IOException e) {
           LOGGER.error("cleanup of " + cl.getFileAsPath().toString() + " : " + e.getMessage());
+        }
+      }
+    }
+
+    // ######################################################################
+    // ## build up image cache
+    // ######################################################################
+    if (Settings.getInstance().isImageCache()) {
+      for (MediaFile gfx : tvShow.getMediaFiles()) {
+        if (gfx.isGraphic()) {
+          try {
+            ImageCache.cacheImage(gfx.getFileAsPath());
+          }
+          catch (Exception ignored) {
+          }
         }
       }
     }
@@ -546,6 +577,21 @@ public class TvShowRenamer {
       e.setPath(seasonFolder.toString());
       e.gatherMediaFileInformation(false);
       e.saveToDb();
+
+      // ######################################################################
+      // ## build up image cache
+      // ######################################################################
+      if (Settings.getInstance().isImageCache()) {
+        for (MediaFile gfx : e.getMediaFiles()) {
+          if (gfx.isGraphic()) {
+            try {
+              ImageCache.cacheImage(gfx.getFileAsPath());
+            }
+            catch (Exception ignored) {
+            }
+          }
+        }
+      }
     }
   }
 

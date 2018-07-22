@@ -35,6 +35,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -193,6 +194,16 @@ public class MediaEntityImageFetcherTask implements Runnable {
               entity.setArtwork(destFile, MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();
+
+              // build up image cache
+              if (Settings.getInstance().isImageCache()) {
+                try {
+                  ImageCache.cacheImage(destFile);
+                }
+                catch (Exception ignored) {
+                }
+              }
+
               break;
 
             default:
@@ -230,9 +241,20 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case DISC:
             case LOGO:
             case CLEARLOGO:
-              entity.setArtwork(Paths.get(oldFilename), MediaFileType.getMediaFileType(type));
+              Path oldFile = Paths.get(oldFilename);
+              entity.setArtwork(oldFile, MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();
+
+              // build up image cache
+              if (Settings.getInstance().isImageCache()) {
+                try {
+                  ImageCache.cacheImage(oldFile);
+                }
+                catch (Exception ignored) {
+                }
+              }
+
               break;
 
             default:
