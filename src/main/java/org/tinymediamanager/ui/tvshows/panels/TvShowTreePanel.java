@@ -219,6 +219,9 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
           TvShowUIModule.getInstance().setSelectedTvShowEpisode(tvShowEpisode);
         }
       }
+      else {
+        TvShowUIModule.getInstance().setSelectedTvShow(null);
+      }
     });
 
     // selecting first TV show at startup

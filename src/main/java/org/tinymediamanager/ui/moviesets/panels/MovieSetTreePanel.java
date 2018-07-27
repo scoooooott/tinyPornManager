@@ -181,6 +181,9 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
           MovieSetUIModule.getInstance().setSelectedMovie(movie);
         }
       }
+      else {
+        MovieSetUIModule.getInstance().setSelectedMovieSet(null);
+      }
     });
 
     // selecting first movie set at startup
