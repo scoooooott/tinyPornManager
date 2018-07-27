@@ -294,6 +294,11 @@ public class MovieSettings extends AbstractSettings {
     movieDataSources.remove(path);
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
     firePropertyChange(Constants.DATA_SOURCE, null, movieDataSources);
+
+    // if all datasources has been remove we can safely remove all movie sets too
+    if (movieDataSources.isEmpty()) {
+      movieList.removeMovieSets();
+    }
   }
 
   public List<String> getMovieDataSource() {

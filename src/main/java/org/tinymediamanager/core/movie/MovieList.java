@@ -189,6 +189,15 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * remove all movie sets
+   */
+  void removeMovieSets() {
+    for (MovieSet movieSet : movieSetList) {
+      removeMovieSet(movieSet);
+    }
+  }
+
+  /**
    * Gets the unscraped movies.
    * 
    * @return the unscraped movies
