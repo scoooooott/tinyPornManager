@@ -27,8 +27,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.TmmProperties;
 
@@ -38,7 +36,6 @@ import org.tinymediamanager.core.TmmProperties;
  * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
-  private final static Logger   LOGGER = LoggerFactory.getLogger(TmmWindowSaver.class);
   private static TmmWindowSaver instance;
 
   private final TmmProperties   properties;
@@ -125,6 +122,7 @@ public class TmmWindowSaver implements AWTEventListener {
   public void loadSettings(JDialog dialog) {
     if (!Globals.settings.isStoreWindowPreferences()) {
       dialog.pack();
+      dialog.setLocationRelativeTo(dialog.getParent());
       return;
     }
 
@@ -135,6 +133,7 @@ public class TmmWindowSaver implements AWTEventListener {
       }
       else {
         dialog.pack();
+        dialog.setLocationRelativeTo(dialog.getParent());
       }
     }
   }

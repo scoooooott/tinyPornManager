@@ -25,11 +25,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -110,9 +110,9 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,grow");
 
-    final JToggleButton btnFilter = new JToggleButton("Filter");
+    final JButton btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
-    btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterMenuVisible(btnFilter.isSelected()));
+    btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterDialogVisible(true));
     add(btnFilter, "cell 1 0,alignx left,aligny bottom");
 
     tree = new TmmTreeTable(new TvShowTreeDataProvider(), new TvShowTableFormat()) {

@@ -20,12 +20,12 @@ import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -163,9 +163,9 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     movieTable.configureScrollPane(scrollPane, new int[] { 0 });
     add(scrollPane, "cell 0 1 2 1,grow");
 
-    final JToggleButton btnExtendedFilter = new JToggleButton("Filter");
+    final JButton btnExtendedFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     btnExtendedFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
-    btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected()));
+    btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterDialogVisible(true));
     add(btnExtendedFilter, "cell 1 0");
 
     JSeparator separator = new JSeparator();

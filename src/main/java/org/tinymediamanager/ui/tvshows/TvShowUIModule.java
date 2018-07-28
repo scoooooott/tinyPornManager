@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
 
-import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -67,7 +66,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
-import org.tinymediamanager.ui.tvshows.panels.TvShowExtendedSearchPanel;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowFilterDialog;
 import org.tinymediamanager.ui.tvshows.panels.TvShowTreePanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeInformationPanel;
@@ -91,19 +90,19 @@ import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
 import net.miginfocom.swing.MigLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
-  private final static String             ID       = "tvShows";
+  private final static String       ID       = "tvShows";
 
-  private static TvShowUIModule           instance = null;
+  private static TvShowUIModule     instance = null;
 
-  final TvShowSelectionModel              tvShowSelectionModel;
-  final TvShowSeasonSelectionModel        tvShowSeasonSelectionModel;
-  final TvShowEpisodeSelectionModel       tvShowEpisodeSelectionModel;
+  final TvShowSelectionModel        tvShowSelectionModel;
+  final TvShowSeasonSelectionModel  tvShowSeasonSelectionModel;
+  final TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
 
-  private final TvShowTreePanel           listPanel;
-  private final JPanel                    dataPanel;
-  private final TvShowExtendedSearchPanel filterPanel;
+  private final TvShowTreePanel     listPanel;
+  private final JPanel              dataPanel;
+  private final TvShowFilterDialog  tvShowFilterDialog;
 
-  private TmmSettingsNode                 settingsNode;
+  private TmmSettingsNode           settingsNode;
 
   private TvShowUIModule() {
 
@@ -118,14 +117,10 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     detailPanel.setOpaque(false);
     detailPanel.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
-    // layeredpane for displaying the filter dialog at the top
-    JLayeredPane layeredPane = new JLayeredPane();
-    layeredPane.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
-    detailPanel.add(layeredPane, "cell 0 0, grow");
-
     dataPanel = new JPanel();
     dataPanel.setOpaque(false);
     dataPanel.setLayout(new CardLayout());
+    detailPanel.add(dataPanel, "cell 0 0, grow");
 
     // panel for TV shows
     JTabbedPane tvShowDetailPanel = new MainTabbedPane() {
@@ -158,14 +153,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel));//$NON-NLS-1$
     dataPanel.add(tvShowEpisodeDetailPanel, "tvShowEpisode");
 
-    layeredPane.add(dataPanel, "cell 0 0, grow");
-    layeredPane.setLayer(dataPanel, 0);
-
     // glass pane for searching/filtering
-    filterPanel = new TvShowExtendedSearchPanel(listPanel.getTreeTable());
-    filterPanel.setVisible(false);
-    layeredPane.add(filterPanel, "pos 0 0");
-    layeredPane.setLayer(filterPanel, 1);
+    tvShowFilterDialog = new TvShowFilterDialog(listPanel.getTreeTable());
 
     // create actions and menus
     createActions();
@@ -206,8 +195,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     return instance;
   }
 
-  public void setFilterMenuVisible(boolean visible) {
-    filterPanel.setVisible(visible);
+  public void setFilterDialogVisible(boolean selected) {
+    tvShowFilterDialog.setVisible(selected);
   }
 
   @Override
