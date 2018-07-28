@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.moviesets;
 import java.awt.CardLayout;
 
 import javax.swing.Icon;
-import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -45,26 +44,24 @@ import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
-import org.tinymediamanager.ui.moviesets.panels.MovieSetExtendedSearchPanel;
+import org.tinymediamanager.ui.moviesets.dialogs.MovieSetFilterDialog;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
-import net.miginfocom.swing.MigLayout;
-
 public class MovieSetUIModule extends AbstractTmmUIModule {
-  private final static String               ID       = "movieSets";
+  private final static String          ID       = "movieSets";
 
-  private static MovieSetUIModule           instance = null;
+  private static MovieSetUIModule      instance = null;
 
-  private final MovieSetSelectionModel      selectionModel;
-  private final MovieSelectionModel         movieSelectionModel;
+  private final MovieSetSelectionModel selectionModel;
+  private final MovieSelectionModel    movieSelectionModel;
 
-  private final MovieSetTreePanel           treePanel;
-  private final JPanel                      dataPanel;
-  private final MovieSetExtendedSearchPanel filterPanel;
+  private final MovieSetTreePanel      treePanel;
+  private final JPanel                 dataPanel;
+  private final MovieSetFilterDialog   movieSetFilterDialog;
 
-  private JPopupMenu                        popupMenu;
+  private JPopupMenu                   popupMenu;
 
   private MovieSetUIModule() {
     selectionModel = new MovieSetSelectionModel();
@@ -77,14 +74,10 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     detailPanel.setOpaque(false);
     detailPanel.setLayout(new CardLayout());
 
-    // layeredpane for displaying the filter dialog at the top
-    JLayeredPane layeredPane = new JLayeredPane();
-    layeredPane.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
-    detailPanel.add(layeredPane, "cell 0 0, grow");
-
     dataPanel = new JPanel();
     dataPanel.setOpaque(false);
     dataPanel.setLayout(new CardLayout());
+    detailPanel.add(dataPanel, "cell 0 0, grow");
 
     // panel for movie sets
     JTabbedPane movieSetDetailPanel = new MainTabbedPane() {
@@ -110,14 +103,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     movieDetailPanel.addTab("Trailer", new MovieTrailerPanel(movieSelectionModel));
     dataPanel.add(movieDetailPanel, "movie");
 
-    layeredPane.add(dataPanel, "cell 0 0, grow");
-    layeredPane.setLayer(dataPanel, 0);
-
-    // glass pane for searching/filtering
-    filterPanel = new MovieSetExtendedSearchPanel(treePanel.getTreeTable());
-    filterPanel.setVisible(false);
-    layeredPane.add(filterPanel, "pos 0 0");
-    layeredPane.setLayer(filterPanel, 1);
+    movieSetFilterDialog = new MovieSetFilterDialog(treePanel.getTreeTable());
 
     // create actions and menus
     createActions();
@@ -142,8 +128,8 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     }
   }
 
-  public void setFilterMenuVisible(boolean visible) {
-    filterPanel.setVisible(visible);
+  public void setFilterDialogVisible(boolean visible) {
+    movieSetFilterDialog.setVisible(visible);
   }
 
   private void createActions() {

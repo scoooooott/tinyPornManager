@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.ui.tvshows.dialogs;
+package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -35,38 +35,25 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.tvshows.ITvShowUIFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowCastFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowDatasourceFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowEmptyFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowFrameRateFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowGenreFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowMediaSourceFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowMissingArtworkFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowMissingEpisodesFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowMissingMetadataFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowMissingSubtitlesFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowNewEpisodesFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowTagFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowVideoCodecFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowVideoFormatFilter;
-import org.tinymediamanager.ui.tvshows.filters.TvShowWatchedFilter;
+import org.tinymediamanager.ui.moviesets.IMovieSetUIFilter;
+import org.tinymediamanager.ui.moviesets.filters.MovieSetDatasourceFilter;
+import org.tinymediamanager.ui.moviesets.filters.MovieSetNewMoviesFilter;
+import org.tinymediamanager.ui.moviesets.filters.MovieSetWithMoreThanOneMovieFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-public class TvShowFilterDialog extends TmmDialog {
-  private static final long             serialVersionUID = 2298540526328945319L;
+public class MovieSetFilterDialog extends TmmDialog {
+  private static final long             serialVersionUID = 5003714573168481816L;
   /** @wbp.nls.resourceBundle messages */
   protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private static final float            FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
 
-  private TmmTreeTable                  treeTable;
+  private final TmmTreeTable            treeTable;
   private final JPanel                  panelFilter;
 
-  public TvShowFilterDialog(TmmTreeTable treeTable) {
-    super(BUNDLE.getString("movieextendedsearch.options"), "tvShowFilter");
+  public MovieSetFilterDialog(TmmTreeTable treeTable) {
+    super(BUNDLE.getString("movieextendedsearch.options"), "movieSetFilter");
     setModalityType(ModalityType.MODELESS);
 
     this.treeTable = treeTable;
@@ -74,7 +61,7 @@ public class TvShowFilterDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][10lp][]", "[][300lp:n,grow][][][]"));
+      panelContent.setLayout(new MigLayout("", "[][10lp][]", "[][50lp:n,grow][][][]"));
 
       JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
       setComponentFont(lblFilterBy);
@@ -92,22 +79,9 @@ public class TvShowFilterDialog extends TmmDialog {
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       panelContent.add(scrollPane, "cell 0 1 3 1,grow");
 
-      addFilter(new TvShowNewEpisodesFilter());
-      addFilter(new TvShowWatchedFilter());
-      addFilter(new TvShowGenreFilter());
-      addFilter(new TvShowCastFilter());
-      addFilter(new TvShowTagFilter());
-      addFilter(new TvShowVideoFormatFilter());
-      addFilter(new TvShowVideoCodecFilter());
-      addFilter(new TvShowFrameRateFilter());
-      addFilter(new TvShowAudioCodecFilter());
-      addFilter(new TvShowMediaSourceFilter());
-      addFilter(new TvShowDatasourceFilter());
-      addFilter(new TvShowMissingMetadataFilter());
-      addFilter(new TvShowMissingArtworkFilter());
-      addFilter(new TvShowMissingSubtitlesFilter());
-      addFilter(new TvShowMissingEpisodesFilter());
-      addFilter(new TvShowEmptyFilter());
+      addFilter(new MovieSetNewMoviesFilter());
+      addFilter(new MovieSetWithMoreThanOneMovieFilter());
+      addFilter(new MovieSetDatasourceFilter());
     }
   }
 
@@ -117,7 +91,7 @@ public class TvShowFilterDialog extends TmmDialog {
    * @param filter
    *          the filter to be added
    */
-  private void addFilter(ITvShowUIFilter<TmmTreeNode> filter) {
+  private void addFilter(IMovieSetUIFilter<TmmTreeNode> filter) {
     GridBagConstraints gbc = new GridBagConstraints();
 
     gbc.gridx = 0;
@@ -166,5 +140,4 @@ public class TvShowFilterDialog extends TmmDialog {
     // do not dispose (singleton), but save the size/position
     TmmWindowSaver.getInstance().saveSettings(this);
   }
-
 }
