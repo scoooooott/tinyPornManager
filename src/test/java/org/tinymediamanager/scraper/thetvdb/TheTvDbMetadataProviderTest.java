@@ -335,7 +335,13 @@ public class TheTvDbMetadataProviderTest {
 
       assertThat(episodes.size()).isEqualTo(126);
 
-      MediaMetadata episode = episodes.get(9);
+      MediaMetadata episode = null;
+      for (MediaMetadata ep : episodes) {
+        if (ep.getSeasonNumber() == 1 && ep.getEpisodeNumber() == 2) {
+          episode = ep;
+          break;
+        }
+      }
       assertThat(episode.getEpisodeNumber()).isEqualTo(2);
       assertThat(episode.getSeasonNumber()).isEqualTo(1);
       assertThat(episode.getDvdEpisodeNumber()).isEqualTo(2);
@@ -372,7 +378,13 @@ public class TheTvDbMetadataProviderTest {
 
       assertThat(episodes.size()).isEqualTo(126);
 
-      MediaMetadata episode = episodes.get(9);
+      MediaMetadata episode = null;
+      for (MediaMetadata ep : episodes) {
+        if (ep.getSeasonNumber() == 1 && ep.getEpisodeNumber() == 2) {
+          episode = ep;
+          break;
+        }
+      }
       assertThat(episode.getEpisodeNumber()).isEqualTo(2);
       assertThat(episode.getSeasonNumber()).isEqualTo(1);
       assertThat(episode.getDvdEpisodeNumber()).isEqualTo(2);
