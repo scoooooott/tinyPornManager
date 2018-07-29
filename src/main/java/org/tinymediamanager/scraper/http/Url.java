@@ -337,6 +337,10 @@ public class Url {
       try {
         is = getInputStream();
       }
+      catch (InterruptedIOException | IllegalStateException | InterruptedException e) {
+        // has this thread been interrupted?
+        return null;
+      }
       catch (Exception ignored) {
       }
       if (is != null || (is == null && getStatusCode() > 0 && getStatusCode() < 500)) {
