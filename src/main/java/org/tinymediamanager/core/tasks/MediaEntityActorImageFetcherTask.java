@@ -60,6 +60,11 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
       // first check which actors images can be deleted
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(actorsDir)) {
         for (Path path : directoryStream) {
+          // has tmm been shut down?
+          if (Thread.interrupted()) {
+            return;
+          }
+
           if (Utils.isRegularFile(path) && path.getFileName().toString().matches("(?i).*\\.(tbn|png|jpg)")
               && !path.getFileName().toString().startsWith(".")) {
             boolean found = false;
@@ -88,6 +93,11 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
 
       // second download missing images
       for (Person actor : persons) {
+        // has tmm been shut down?
+        if (Thread.interrupted()) {
+          return;
+        }
+
         String actorImageFilename = actor.getNameForStorage();
         if (StringUtils.isBlank(actorImageFilename)) {
           continue;
