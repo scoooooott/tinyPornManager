@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
 
-import java.awt.Dimension;
+package org.tinymediamanager.ui.dialogs;
+
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,78 +25,96 @@ import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.tinymediamanager.core.threading.TmmTaskHandle;
-import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TaskListComponent;
 
-/**
- * The class TaskListPopupPane. To present active tasks in a popup pane
- *
- * @author Manuel Laggner
- */
-public class TaskListPopup extends JPopupMenu implements TmmTaskListener {
-  private static final long                           serialVersionUID = 27076046690061838L;
-  /* @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                 BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+import net.miginfocom.swing.MigLayout;
+
+public class TaskListDialog extends TmmDialog implements TmmTaskListener {
+  private static final long                           serialVersionUID = 4151412495928010232L;
+  /** @wbp.nls.resourceBundle messages */
+  protected static final ResourceBundle               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private static TaskListDialog                       instance;
 
   // a map of all active tasks
   private final Map<TmmTaskHandle, TaskListComponent> taskMap          = new HashMap<>();
   // a list of all tasks to be displayed
   private final HashSet<TaskListComponent>            listComponents   = new HashSet<>();
 
-  // UI components
-  private final JScrollPane                           scrollPane;
-  private final JPanel                                view;
   private final TaskListComponent                     noActiveTask;
 
-  public TaskListPopup() {
-    view = new JPanel();
-    view.setBackground(UIManager.getColor("Menu.background"));
+  private final JPanel                                panelContent;
+  private final JScrollPane                           scrollPane;
 
-    noActiveTask = new TaskListComponent(BUNDLE.getString("task.nonerunning")); //$NON-NLS-1$
-    noActiveTask.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
-    view.add(noActiveTask);
+  private TaskListDialog() {
+    super(BUNDLE.getString("tasklist.title"), "taskList"); //$NON-NLS-1$
+    setModalityType(ModalityType.MODELESS);
 
-    GridLayout grid = new GridLayout(0, 1);
-    grid.setHgap(0);
-    grid.setVgap(5);
-    view.setLayout(grid);
-    view.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+    {
+      panelContent = new JPanel();
+      panelContent.setOpaque(false);
 
-    scrollPane = new JScrollPane() {
-      @Override
-      public Dimension getPreferredSize() {
-        int count = view.getComponentCount();
-        int height = count > 0 ? view.getComponent(0).getPreferredSize().height : 0;
-        int offset = count > 5 ? height * 5 + 10 : (count * height) + 10;
-        // 22 is the width of the additional scroll bar
-        return new Dimension(count > 5 ? TaskListComponent.ITEM_WIDTH + getVerticalScrollBar().getWidth() : TaskListComponent.ITEM_WIDTH + 2, offset);
-      }
-    };
-    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setFocusable(true);
-    scrollPane.setRequestFocusEnabled(true);
-    scrollPane.setViewportView(view);
-    add(scrollPane);
+      noActiveTask = new TaskListComponent(BUNDLE.getString("task.nonerunning")); //$NON-NLS-1$
+      noActiveTask.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+      panelContent.add(noActiveTask);
 
+      GridLayout grid = new GridLayout(0, 1);
+      grid.setHgap(0);
+      grid.setVgap(5);
+      panelContent.setLayout(grid);
+      panelContent.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+
+      scrollPane = new JScrollPane();
+      scrollPane.setOpaque(false);
+      scrollPane.getViewport().setOpaque(false);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setViewportView(panelContent);
+
+      JPanel rootPanel = new JPanel();
+      rootPanel.setBackground(UIManager.getColor("Menu.background"));
+      rootPanel.setLayout(new MigLayout("insets 0", "[]", "[100lp:300lp]"));
+      rootPanel.add(scrollPane, "cell 0 0, top");
+
+      getContentPane().add(rootPanel);
+    }
     TmmTaskManager.getInstance().addTaskListener(this);
+  }
+
+  @Override
+  protected void initBottomPanel() {
+    // no bottom panel needed
+  }
+
+  @Override
+  public void dispose() {
+    // do not dispose (singleton), but save the size/position
+    TmmWindowSaver.getInstance().saveSettings(this);
+  }
+
+  public static TaskListDialog getInstance() {
+    if (instance == null) {
+      instance = new TaskListDialog();
+    }
+    return instance;
   }
 
   @Override
   public void processTaskEvent(final TmmTaskHandle task) {
     SwingUtilities.invokeLater(() -> {
-      if (task.getState() == TaskState.CREATED || task.getState() == TaskState.QUEUED) {
+      if (task.getState() == TmmTaskHandle.TaskState.CREATED || task.getState() == TmmTaskHandle.TaskState.QUEUED) {
         addListItem(task);
       }
-      else if (task.getState() == TaskState.STARTED) {
+      else if (task.getState() == TmmTaskHandle.TaskState.STARTED) {
         TaskListComponent comp = taskMap.get(task);
         if (comp == null) {
           addListItem(task);
@@ -104,7 +122,7 @@ public class TaskListPopup extends JPopupMenu implements TmmTaskListener {
         }
         comp.updateTaskInformation();
       }
-      else if (task.getState() == TaskState.CANCELLED || task.getState() == TaskState.FINISHED) {
+      else if (task.getState() == TmmTaskHandle.TaskState.CANCELLED || task.getState() == TmmTaskHandle.TaskState.FINISHED) {
         removeListItem(task);
       }
     });
@@ -129,18 +147,12 @@ public class TaskListPopup extends JPopupMenu implements TmmTaskListener {
     }
 
     // remove the no active task component (if available)
-    view.remove(noActiveTask);
+    panelContent.remove(noActiveTask);
 
-    // ass the new component
+    // add the new component
     listComponents.add(comp);
     comp.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
-    view.add(comp);
-    if (listComponents.size() > 5) {
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    }
-    else {
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-    }
+    panelContent.add(comp);
 
     if (isShowing()) {
       scrollPane.invalidate();
@@ -161,20 +173,14 @@ public class TaskListPopup extends JPopupMenu implements TmmTaskListener {
     while (it.hasNext()) {
       TaskListComponent comp = it.next();
       if (comp.getHandle() == task) {
-        view.remove(comp);
+        panelContent.remove(comp);
         it.remove();
         break;
       }
     }
-    if (listComponents.size() > 5) {
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    }
-    else {
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-    }
 
     if (listComponents.isEmpty()) {
-      view.add(noActiveTask);
+      panelContent.add(noActiveTask);
     }
 
     if (isShowing()) {

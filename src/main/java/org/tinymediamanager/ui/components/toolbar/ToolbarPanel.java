@@ -18,9 +18,7 @@ package org.tinymediamanager.ui.components.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.nio.file.Files;
@@ -76,10 +74,10 @@ import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.ShowChangelogAction;
 import org.tinymediamanager.ui.actions.WikiAction;
-import org.tinymediamanager.ui.components.TaskListPopup;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
+import org.tinymediamanager.ui.dialogs.TaskListDialog;
 import org.tinymediamanager.ui.images.LoadingSpinner;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
@@ -109,8 +107,6 @@ public class ToolbarPanel extends JPanel {
   private ToolbarMenu                 menuSearch;
   private ToolbarMenu                 menuEdit;
   private ToolbarMenu                 menuRename;
-
-  private JPopupMenu                  taskListPopupMenu;
 
   private JPanel                      panelEast;
 
@@ -172,76 +168,26 @@ public class ToolbarPanel extends JPanel {
     menuRename = new ToolbarMenu(BUNDLE.getString("Toolbar.rename"));
     panelCenter.add(menuRename, "cell 4 1, center");
 
-    taskListPopupMenu = new TaskListPopup();
-    ToolbarMenu menuProgress = new ToolbarMenu(BUNDLE.getString("Toolbar.progress"), taskListPopupMenu);
-    panelCenter.add(menuProgress, "cell 6 1, center");
+    JLabel lblTaskList = new ToolbarLabel(BUNDLE.getString("Toolbar.progress"), e -> TaskListDialog.getInstance().setVisible(true));
+    panelCenter.add(lblTaskList, "cell 6 1, center");
 
-    JLabel lblSettings = new JLabel(BUNDLE.getString("Toolbar.settings"));
-    lblSettings.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        settingsAction.actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      }
-    });
-    lblSettings.setForeground(Color.GRAY);
+    JLabel lblSettings = new ToolbarLabel(BUNDLE.getString("Toolbar.settings"), settingsAction);
     panelCenter.add(lblSettings, "cell 7 1, center");
 
     ToolbarMenu lblTools = new ToolbarMenu(BUNDLE.getString("Toolbar.tools"), toolsPopupMenu);
     panelCenter.add(lblTools, "cell 8 1, center");
 
-    JLabel lblExport = new JLabel(BUNDLE.getString("Toolbar.export"));
-    lblExport.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (btnExport.getAction() != null) {
-          btnExport.getAction().actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
-        }
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    JLabel lblExport = new ToolbarLabel(BUNDLE.getString("Toolbar.export"), e -> {
+      if (btnExport.getAction() != null) {
+        btnExport.getAction().actionPerformed(e);
       }
     });
-    lblExport.setForeground(Color.GRAY);
     panelCenter.add(lblExport, "cell 9 1, center");
 
     ToolbarMenu menuHelp = new ToolbarMenu(BUNDLE.getString("Toolbar.help"), infoPopupMenu);
     panelCenter.add(menuHelp, "cell 10 1, center");
 
-    JLabel lblDonate = new JLabel(BUNDLE.getString("Toolbar.donate"));
-    lblDonate.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        btnDonate.getAction().actionPerformed(new ActionEvent(e, ActionEvent.ACTION_PERFORMED, ""));
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      }
-    });
-    lblDonate.setForeground(Color.GRAY);
+    JLabel lblDonate = new ToolbarLabel(BUNDLE.getString("Toolbar.donate"), e -> btnDonate.getAction().actionPerformed(e));
     panelCenter.add(lblDonate, "cell 11 1, center");
 
     panelEast = new JPanel();
@@ -340,7 +286,7 @@ public class ToolbarPanel extends JPanel {
 
       @Override
       public void mouseClicked(MouseEvent arg0) {
-        taskListPopupMenu.show(button, button.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), button.getHeight());
+        TaskListDialog.getInstance().setVisible(true);
       }
     });
 

@@ -27,13 +27,11 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ToolbarMenu extends JLabel {
+public class ToolbarMenu extends ToolbarLabel {
   public static Color        COLOR       = Color.GRAY;
   public static Color        COLOR_HOVER = Color.WHITE;
 
@@ -42,19 +40,10 @@ public class ToolbarMenu extends JLabel {
   protected static ImageIcon menuImage;
   protected static ImageIcon menuImageHover;
 
-  protected final String     defaultText;
   protected JPopupMenu       popupMenu   = null;
 
   public ToolbarMenu(String text) {
-    super(text, SwingConstants.CENTER);
-    defaultText = text;
-
-    setHorizontalTextPosition(SwingConstants.LEFT);
-    setVerticalTextPosition(SwingConstants.BOTTOM);
-    setOpaque(false);
-    setForeground(COLOR);
-
-    setMouseListener();
+    super(text);
   }
 
   public ToolbarMenu(String text, JPopupMenu popupMenu) {
@@ -65,6 +54,7 @@ public class ToolbarMenu extends JLabel {
     }
   }
 
+  @Override
   protected void setMouseListener() {
     addMouseListener(new MouseAdapter() {
       @Override

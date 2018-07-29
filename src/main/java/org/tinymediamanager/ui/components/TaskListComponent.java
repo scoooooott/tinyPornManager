@@ -15,17 +15,14 @@
  */
 package org.tinymediamanager.ui.components;
 
-import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JSeparator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
@@ -34,9 +31,10 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
- * The class TaskListComponent is used to show one task in the
- * {@link TaskListPopup}
+ * The class TaskListComponent is used to show one task in the {@link org.tinymediamanager.ui.dialogs.TaskListDialog}
  * 
  * @author Manuel Laggner
  */
@@ -44,20 +42,20 @@ public class TaskListComponent extends JPanel {
   private static final long           serialVersionUID = -6088880093610800005L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  static final int                    ITEM_WIDTH       = 400;
-
   private TmmTaskHandle               taskHandle;
 
   private JLabel                      mainLabel;
   private JLabel                      dynaLabel;
   private JProgressBar                bar;
   private JButton                     closeButton;
+  private JSeparator                  separator;
 
-  private TaskListComponent() {
-    setFocusable(true);
-    setRequestFocusEnabled(true);
-    setLayout(new BorderLayout(5, 0));
-    setBorder(BorderFactory.createEmptyBorder());
+  public TaskListComponent() {
+    initComponents();
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[100lp:300lp,grow][]", "[][][][]"));
     setOpaque(false);
 
     mainLabel = new JLabel();
@@ -66,22 +64,22 @@ public class TaskListComponent extends JPanel {
 
     bar = new JProgressBar();
 
-    closeButton = new JButton(new CancelAction());
-    closeButton.setBorderPainted(false);
-    closeButton.setBorder(BorderFactory.createEmptyBorder());
-    closeButton.setOpaque(false);
-    closeButton.setContentAreaFilled(false);
-    closeButton.setFocusable(false);
+    closeButton = new FlatButton(IconManager.CANCEL);
+    closeButton.addActionListener(e -> taskHandle.cancel());
 
-    add(mainLabel, BorderLayout.NORTH);
-    add(bar, BorderLayout.CENTER);
-    add(closeButton, BorderLayout.EAST);
-    add(dynaLabel, BorderLayout.SOUTH);
+    add(mainLabel, "cell 0 0,wmin 0");
+    add(bar, "cell 0 1,growx");
+    add(closeButton, "cell 1 1");
+    add(dynaLabel, "cell 0 2,wmin 0");
+
+    separator = new JSeparator();
+    add(separator, "cell 0 3 2 1,growx");
   }
 
-  TaskListComponent(String staticText) {
+  public TaskListComponent(String staticText) {
     this();
     mainLabel.setText(staticText);
+    mainLabel.setToolTipText(staticText);
     bar.setVisible(false);
     closeButton.setVisible(false);
     dynaLabel.setVisible(false);
@@ -94,12 +92,13 @@ public class TaskListComponent extends JPanel {
     updateTaskInformation();
   }
 
-  void updateTaskInformation() {
+  public void updateTaskInformation() {
     if (taskHandle == null) {
       return;
     }
 
     mainLabel.setText(taskHandle.getTaskName());
+    mainLabel.setToolTipText(taskHandle.getTaskName());
 
     switch (taskHandle.getState()) {
       case CREATED:
@@ -140,20 +139,7 @@ public class TaskListComponent extends JPanel {
     }
   }
 
-  TmmTaskHandle getHandle() {
+  public TmmTaskHandle getHandle() {
     return taskHandle;
-  }
-
-  private class CancelAction extends AbstractAction {
-    private static final long serialVersionUID = -2634569716059018131L;
-
-    private CancelAction() {
-      putValue(SMALL_ICON, IconManager.CANCEL_INV);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-      taskHandle.cancel();
-    }
   }
 }

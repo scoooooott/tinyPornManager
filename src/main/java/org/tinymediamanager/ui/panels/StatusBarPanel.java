@@ -17,46 +17,71 @@
 package org.tinymediamanager.ui.panels;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskHandle;
+import org.tinymediamanager.core.threading.TmmTaskListener;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIMessageCollector;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
+import org.tinymediamanager.ui.dialogs.TaskListDialog;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * a status bar indicating the memory amount, some information and the messages
+ * a status taskProgressBar indicating the memory amount, some information and the messages
  *
  * @author Manuel Laggner
  */
-public class StatusBarPanel extends JPanel {
+public class StatusBarPanel extends JPanel implements TmmTaskListener {
+  private static final long           serialVersionUID = -6375900257553323558L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private Set<TmmTaskHandle>          taskSet;
+  private TmmTaskHandle               activeTask;
 
   private JButton                     btnNotifications;
   private JLabel                      lblMemory;
+
+  private JLabel                      taskLabel;
+  private JProgressBar                taskProgressBar;
+  private JButton                     taskStopButton;
 
   public StatusBarPanel() {
     initComponents();
 
     // further initializations
 
+    // task management
+    taskSet = new HashSet<>();
+    taskLabel.setText("");
+    TmmTaskManager.getInstance().addTaskListener(this);
+
     // memory indication
     final Settings settings = Settings.getInstance();
-    final Timer m = new Timer(2000, null);
+    final Timer m = new Timer(1000, null);
     m.addActionListener(evt -> lblMemory.setText(getMemory()));
 
     if (settings.isShowMemory()) {
@@ -109,19 +134,45 @@ public class StatusBarPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0 n 0 n", "[][grow][]", "[]"));
+    setLayout(new MigLayout("insets 0 n 0 n", "[][50lp:n][grow][100lp][][15lp:n][]", "[]"));
     setOpaque(false);
     {
       lblMemory = new JLabel("");
       add(lblMemory, "cell 0 0");
     }
+
+    {
+      taskLabel = new JLabel("XYZ");
+      add(taskLabel, "cell 2 0,alignx right, wmin 0");
+    }
+    {
+      taskProgressBar = new JProgressBar();
+      taskProgressBar.setBackground(UIManager.getColor("Panel.background"));
+      taskProgressBar.addMouseListener(new MListener());
+      add(taskProgressBar, "cell 3 0");
+    }
+    {
+      taskStopButton = new FlatButton(IconManager.CANCEL);
+      taskStopButton.addActionListener(e -> {
+        if (activeTask instanceof TmmTask) {
+          activeTask.cancel();
+        }
+      });
+      add(taskStopButton, "cell 4 0");
+    }
+    {
+      // spacer
+      Component verticalStrut = Box.createVerticalStrut(Math.max(taskLabel.getPreferredSize().height, taskStopButton.getPreferredSize().height));
+      add(verticalStrut, "cell 5 0");
+    }
     {
       btnNotifications = new FlatButton(IconManager.WARN_INTENSIFIED);
       btnNotifications.setVisible(false);
+
       btnNotifications.setEnabled(false);
       btnNotifications.setForeground(Color.RED);
       btnNotifications.setToolTipText(BUNDLE.getString("notifications.new")); //$NON-NLS-1$
-      add(btnNotifications, "cell 2 0");
+      add(btnNotifications, "cell 6 0");
     }
   }
 
@@ -139,5 +190,92 @@ public class StatusBarPanel extends JPanel {
     String phys = "";
     return BUNDLE.getString("tmm.memoryused") + " " + used / megs + " MiB  /  " + BUNDLE.getString("tmm.memoryfree") + " " + free / megs + " MiB  /  "
         + BUNDLE.getString("tmm.memorymax") + " " + maxMem / megs + " MiB" + phys;
+  }
+
+  @Override
+  public synchronized void processTaskEvent(final TmmTaskHandle task) {
+    SwingUtilities.invokeLater(() -> {
+
+      if (task.getState() == TmmTaskHandle.TaskState.CREATED || task.getState() == TmmTaskHandle.TaskState.QUEUED) {
+        taskSet.add(task);
+      }
+      else if (task.getState() == TmmTaskHandle.TaskState.STARTED) {
+        taskSet.add(task);
+      }
+      else if (task.getState() == TmmTaskHandle.TaskState.CANCELLED || task.getState() == TmmTaskHandle.TaskState.FINISHED) {
+        taskSet.remove(task);
+      }
+
+      // search for a new activetask to be displayed in the statusbar
+      if (activeTask == null || activeTask.getState() == TmmTaskHandle.TaskState.FINISHED
+          || activeTask.getState() == TmmTaskHandle.TaskState.CANCELLED) {
+        activeTask = null;
+        for (TmmTaskHandle handle : taskSet) {
+          if (handle.getType() == TmmTaskHandle.TaskType.MAIN_TASK && handle.getState() == TmmTaskHandle.TaskState.STARTED) {
+            activeTask = handle;
+            break;
+          }
+        }
+
+        // no active main task found; if there are any BG tasks, display a dummy char to indicate something is working
+        if (activeTask == null) {
+          for (TmmTaskHandle handle : taskSet) {
+            if (handle.getState() == TmmTaskHandle.TaskState.STARTED) {
+              activeTask = handle;
+              break;
+            }
+          }
+        }
+      }
+
+      // hide components if there is nothing to be displayed
+      if (activeTask == null) {
+        taskLabel.setVisible(false);
+        taskStopButton.setVisible(false);
+        taskProgressBar.setVisible(false);
+      }
+      else {
+        // ensure everything is visible
+        taskLabel.setVisible(true);
+        taskProgressBar.setVisible(true);
+        if (activeTask.getType() == TmmTaskHandle.TaskType.MAIN_TASK) {
+          taskStopButton.setVisible(true);
+        }
+        else {
+          taskStopButton.setVisible(false);
+        }
+
+        // and update content
+        taskLabel.setText(activeTask.getTaskName());
+        if (activeTask.getWorkUnits() > 0) {
+          taskProgressBar.setIndeterminate(false);
+          taskProgressBar.setMaximum(activeTask.getWorkUnits());
+          taskProgressBar.setValue(activeTask.getProgressDone());
+        }
+        else {
+          taskProgressBar.setIndeterminate(true);
+        }
+      }
+    });
+  }
+
+  /****************************************************************************************
+   * helper classes
+   ****************************************************************************************/
+  private class MListener extends MouseAdapter {
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      TaskListDialog.getInstance().setVisible(true);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
   }
 }
