@@ -96,6 +96,7 @@ public class IconManager {
   public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
 
   // font awesome icons normal
+  public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF057');
   public final static ImageIcon            CARET_UP                    = createFontAwesomeIcon('\uF0D8');
   public final static ImageIcon            CARET_DOWN                  = createFontAwesomeIcon('\uF0D7');
   public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
@@ -106,15 +107,16 @@ public class IconManager {
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
   public final static ImageIcon            NEW                         = createTextIcon("new", 14);
   public final static ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');
+  public final static ImageIcon            STOP                        = createFontAwesomeIcon('\uF28D');
   public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
 
   // font awesome icons light (button usage)
   public final static ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', true);
   public final static ImageIcon            ARROW_UP_INV                = createFontAwesomeIcon('\uF077', true);
   public final static ImageIcon            ARROW_DOWN_INV              = createFontAwesomeIcon('\uF078', true);
-  public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF00C', true);
-  public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF053', true);
-  public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF00D', true);
+  public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF058', true);
+  public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF137', true);
+  public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF057', true);
   public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A', true);
   public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8', true);
   public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', true);
@@ -125,7 +127,7 @@ public class IconManager {
   public final static ImageIcon            PLAY_INV                    = createFontAwesomeIcon('\uF04B', true);
   public final static ImageIcon            REMOVE_INV                  = createFontAwesomeIcon('\uF068', true);
   public final static ImageIcon            SEARCH_INV                  = createFontAwesomeIcon('\uF002', true);
-  public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF04D', true);
+  public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF28D', true);
 
   // font awesome icons - column headers
   public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
