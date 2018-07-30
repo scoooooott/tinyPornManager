@@ -158,6 +158,9 @@ public class TvShowRenamer {
       }
     }
 
+    // last but not least escape single backslashes
+    morphedTemplate = morphedTemplate.replace("\\", "\\\\");
+
     return morphedTemplate;
   }
 
