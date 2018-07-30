@@ -72,7 +72,7 @@ public class TvShowNfoParser {
   public int                        year                = 0;
   public String                     plot                = "";
   public int                        runtime             = 0;
-  public Certification              certification       = Certification.NOT_RATED;
+  public Certification              certification       = Certification.UNKNOWN;
   public Date                       releaseDate         = null;
   public MediaAiredStatus           status              = MediaAiredStatus.UNKNOWN;
   public boolean                    watched             = false;

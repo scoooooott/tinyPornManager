@@ -38,6 +38,10 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
 
   @Override
   public Icon convertForward(Certification cert) {
+    // we have no certification here
+    if (cert == Certification.UNKNOWN) {
+      return null;
+    }
     // try to find an image for this genre
     try {
       StringBuilder sb = new StringBuilder("/org/tinymediamanager/ui/images/certifications/");

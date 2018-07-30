@@ -51,7 +51,7 @@ public class VSMeta {
   private String                  year          = "";
   /** yyyy-mm-dd **/
   private String                  date          = "";
-  private Certification           certification = Certification.NOT_RATED;
+  private Certification           certification = Certification.UNKNOWN;
   private List<MediaArtwork>      artworks      = new ArrayList<>(0);
   private List<MediaGenres>       genres        = new ArrayList<>(0);
   private List<MediaCastMember>   cast          = new ArrayList<>(0);

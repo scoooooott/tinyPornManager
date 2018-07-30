@@ -81,7 +81,7 @@ public class MovieNfoParser {
   public String               outline             = "";
   public String               tagline             = "";
   public int                  runtime             = 0;
-  public Certification        certification       = Certification.NOT_RATED;
+  public Certification        certification       = Certification.UNKNOWN;
   public String               country             = "";
   public Date                 releaseDate         = null;
   public boolean              watched             = false;

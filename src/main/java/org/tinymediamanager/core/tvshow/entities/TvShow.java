@@ -134,7 +134,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private String                             sortTitle             = "";
   @JsonProperty
-  private Certification                      certification         = Certification.NOT_RATED;
+  private Certification                      certification         = Certification.UNKNOWN;
 
   @JsonProperty
   private List<MediaGenres>                  genres                = new CopyOnWriteArrayList<>();

@@ -49,7 +49,7 @@ public class MovieHelpers {
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
 
   public static Certification parseCertificationStringForMovieSetupCountry(String name) {
-    Certification cert = Certification.NOT_RATED;
+    Certification cert = Certification.UNKNOWN;
     name = name.trim();
     if (name.contains("/")) {
       // multiple countries
@@ -60,13 +60,13 @@ public class MovieHelpers {
         if (c.contains(":")) {
           String[] cs = c.split(":");
           cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1]);
-          if (cert != Certification.NOT_RATED) {
+          if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
         else {
           cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
-          if (cert != Certification.NOT_RATED) {
+          if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
@@ -78,13 +78,13 @@ public class MovieHelpers {
         if (c.contains(":")) {
           String[] cs = c.split(":");
           cert = Certification.findCertification(cs[1]);
-          if (cert != Certification.NOT_RATED) {
+          if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
         else {
           cert = Certification.findCertification(c);
-          if (cert != Certification.NOT_RATED) {
+          if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
@@ -102,7 +102,7 @@ public class MovieHelpers {
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate
-    if (cert == Certification.NOT_RATED) {
+    if (cert == Certification.UNKNOWN) {
       cert = Certification.findCertification(name);
     }
     return cert;

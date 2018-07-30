@@ -157,7 +157,7 @@ public class TvShowEpisodeNfoParser {
     public int                        displayepisode      = -1;
     public String                     plot                = "";
     public int                        runtime             = 0;
-    public Certification              certification       = Certification.NOT_RATED;
+    public Certification              certification       = Certification.UNKNOWN;
     public Date                       releaseDate         = null;
     public boolean                    watched             = false;
     public int                        playcount           = 0;

@@ -164,7 +164,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private boolean                               videoIn3D                  = false;
   @JsonProperty
-  private Certification                         certification              = Certification.NOT_RATED;
+  private Certification                         certification              = Certification.UNKNOWN;
   @JsonProperty
   private UUID                                  movieSetId;
   @JsonProperty
