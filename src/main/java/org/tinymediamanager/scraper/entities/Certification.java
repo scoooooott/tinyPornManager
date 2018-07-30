@@ -233,7 +233,8 @@ public enum Certification {
     PT_M18(CountryCode.PT, "M/18", new String[] { "M/18", "M_18" }),
     PT_P(CountryCode.PT, "P", new String[] { "P" }),
 
-    NOT_RATED(CountryCode.US, "not rated", new String[] { "not rated" }); 
+    NOT_RATED(CountryCode.US, "not rated", new String[] { "not rated", "NR" }),
+    UNKNOWN(null, "unknown", new String[] { "unknown" });
   // @formatter:on
 
   private CountryCode country;
@@ -299,9 +300,9 @@ public enum Certification {
       }
     }
 
-    // at last - add NOT_RATED
-    if (!certifications.contains(NOT_RATED)) {
-      certifications.add(NOT_RATED);
+    // at last - add unknown
+    if (!certifications.contains(UNKNOWN)) {
+      certifications.add(UNKNOWN);
     }
 
     return certifications;
@@ -377,6 +378,9 @@ public enum Certification {
     if (cert == null) {
       return "";
     }
+    if (cert == UNKNOWN) {
+      return cert.name;
+    }
     if (cert == NOT_RATED) {
       return "NR";
     }
@@ -421,7 +425,7 @@ public enum Certification {
         }
       }
     }
-    return NOT_RATED;
+    return UNKNOWN;
   }
 
   /**
@@ -451,7 +455,7 @@ public enum Certification {
         }
       }
     }
-    return NOT_RATED;
+    return UNKNOWN;
   }
 
   /**
