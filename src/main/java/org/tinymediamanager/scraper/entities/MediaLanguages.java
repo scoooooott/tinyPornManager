@@ -16,7 +16,10 @@
 package org.tinymediamanager.scraper.entities;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The Enum MediaLanguages. All languages we support for scraping
@@ -65,12 +68,13 @@ public enum MediaLanguages {
   zh("华语");
   //@formatter:on
 
-  private String title;
+  private String                                   title;
+  private String                                   displayTitle;
 
   private static final Map<String, MediaLanguages> lookup = prepareLookup();
 
-  private static Map<String,MediaLanguages> prepareLookup() {
-    Map<String,MediaLanguages> mlMap = new HashMap<>();
+  private static Map<String, MediaLanguages> prepareLookup() {
+    Map<String, MediaLanguages> mlMap = new HashMap<>();
     for (MediaLanguages lang : MediaLanguages.values()) {
       mlMap.put(lang.getTitle(), lang);
     }
@@ -81,6 +85,7 @@ public enum MediaLanguages {
    * Get MediaLanguage by Title
    *
    * @param title
+   *          the title/name of the language
    * @return the MediaLanguages Enum Object.
    */
   public static MediaLanguages get(String title) {
@@ -89,6 +94,13 @@ public enum MediaLanguages {
 
   MediaLanguages(String title) {
     this.title = title;
+    Locale locale = Locale.forLanguageTag(name());
+    if (locale != null && StringUtils.isNotBlank(locale.getDisplayLanguage()) && !name().equals(locale.getDisplayLanguage())) {
+      this.displayTitle = locale.getDisplayLanguage();
+    }
+    else {
+      this.displayTitle = title;
+    }
   }
 
   /**
@@ -111,6 +123,6 @@ public enum MediaLanguages {
 
   @Override
   public String toString() {
-    return title;
+    return displayTitle;
   }
 }
