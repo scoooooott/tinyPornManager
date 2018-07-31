@@ -148,11 +148,18 @@ public class MovieInformationPanel extends JPanel {
           }
         }
       }
-      if ((source.getClass() == Movie.class && FANART.equals(property))) {
+      if (source instanceof Movie || source instanceof MediaFile) {
+        // if there is another change in the movie/media file, just update the logos to be sure
+        Movie movie = movieSelectionModel.getSelectedMovie();
+        if (movie != null) {
+          panelLogos.setMediaInformationSource(movie);
+        }
+      }
+      if (source instanceof Movie && FANART.equals(property)) {
         Movie movie = (Movie) source;
         setFanart(movie);
       }
-      if ((source.getClass() == Movie.class && POSTER.equals(property))) {
+      if (source instanceof Movie && POSTER.equals(property)) {
         Movie movie = (Movie) source;
         setPoster(movie);
       }

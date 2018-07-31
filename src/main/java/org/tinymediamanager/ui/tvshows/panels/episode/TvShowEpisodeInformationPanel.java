@@ -111,11 +111,18 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         setEpisodeThumb(model.getSelectedTvShowEpisode());
         panelLogos.setMediaInformationSource(model.getSelectedTvShowEpisode());
       }
-      if ((source.getClass() == TvShowEpisode.class && THUMB.equals(property))) {
+      if (source instanceof TvShowEpisode || source instanceof MediaFile) {
+        // if there is another change in the episode/media file, just update the logos to be sure
+        TvShowEpisode episode = tvShowEpisodeSelectionModel.getSelectedTvShowEpisode();
+        if (episode != null) {
+          panelLogos.setMediaInformationSource(episode);
+        }
+      }
+      if (source instanceof TvShowEpisode && THUMB.equals(property)) {
         TvShowEpisode episode = (TvShowEpisode) source;
         setEpisodeThumb(episode);
       }
-      if ((source.getClass() == TvShowEpisode.class && Constants.SEASON_POSTER.equals(property))) {
+      if (source instanceof TvShowEpisode && Constants.SEASON_POSTER.equals(property)) {
         TvShowEpisode episode = (TvShowEpisode) source;
         setSeasonPoster(episode);
       }

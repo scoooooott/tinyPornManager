@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -241,8 +240,6 @@ public class TvShowEditorDialog extends TmmDialog {
       spDateAdded.setValue(tvShow.getDateAdded());
       spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
 
-      cbCertification.setSelectedItem(tvShow.getCertification());
-
       for (Person origCast : tvShow.getActors()) {
         actors.add(new Person(origCast));
       }
@@ -253,6 +250,7 @@ public class TvShowEditorDialog extends TmmDialog {
       for (Certification cert : Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
+      cbCertification.setSelectedItem(tvShow.getCertification());
 
       List<TvShowEpisode> epl = new ArrayList<>(tvShowToEdit.getEpisodes());
       // custom sort per filename (just this time)
@@ -268,11 +266,6 @@ public class TvShowEditorDialog extends TmmDialog {
         container.episode = episode.getEpisode();
         episodes.add(container);
       }
-
-      if (((DefaultComboBoxModel) cbCertification.getModel()).getIndexOf(tvShow.getCertification()) == -1) {
-        cbCertification.addItem(tvShow.getCertification());
-      }
-
     }
 
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro

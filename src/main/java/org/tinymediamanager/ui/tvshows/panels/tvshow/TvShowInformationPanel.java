@@ -36,6 +36,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -101,15 +102,22 @@ public class TvShowInformationPanel extends JPanel {
         setBanner(model.getSelectedTvShow());
         panelLogos.setMediaInformationSource(model.getSelectedTvShow());
       }
-      if ((source instanceof TvShow && FANART.equals(property))) {
+      if (source instanceof TvShow || source instanceof MediaFile) {
+        // if there is another change in the episode/media file, just update the logos to be sure
+        TvShow tvShow = tvShowSelectionModel.getSelectedTvShow();
+        if (tvShow != null) {
+          panelLogos.setMediaInformationSource(tvShow);
+        }
+      }
+      if (source instanceof TvShow && FANART.equals(property)) {
         TvShow tvShow = (TvShow) source;
         setFanart(tvShow);
       }
-      if ((source instanceof TvShow && POSTER.equals(property))) {
+      if (source instanceof TvShow && POSTER.equals(property)) {
         TvShow tvShow = (TvShow) source;
         setPoster(tvShow);
       }
-      if ((source instanceof TvShow && BANNER.equals(property))) {
+      if (source instanceof TvShow && BANNER.equals(property)) {
         TvShow tvShow = (TvShow) source;
         setBanner(tvShow);
       }
