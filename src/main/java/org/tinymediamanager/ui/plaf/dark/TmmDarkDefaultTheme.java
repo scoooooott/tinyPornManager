@@ -55,7 +55,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     disabledBackgroundColor = backgroundColorLight;
 
     selectionForegroundColor = black;
-    selectionBackgroundColor = new ColorUIResource(136, 153, 170);
+    selectionBackgroundColor = new ColorUIResource(85, 85, 85);
     // selectionBackgroundColor = new ColorUIResource(119, 153, 187);
 
     frameColor = new ColorUIResource(46, 46, 46);
@@ -109,7 +109,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     desktopColor = backgroundColor;
 
     gridColor = new ColorUIResource(85, 85, 85);
-    selectedGridColor = new ColorUIResource(78, 107, 126);
+    selectedGridColor = new ColorUIResource(55, 55, 56);
 
     textAntiAliasingMode = TEXT_ANTIALIAS_DEFAULT;
     textAntiAliasing = true;

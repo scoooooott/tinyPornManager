@@ -54,7 +54,7 @@ public class TmmLightDefaultTheme extends TmmTheme {
     disabledForegroundColor = new ColorUIResource(157, 157, 157);
 
     selectionForegroundColor = black;
-    selectionBackgroundColor = new ColorUIResource(141, 165, 179);
+    selectionBackgroundColor = new ColorUIResource(197, 207, 213);
 
     frameColor = new ColorUIResource(46, 46, 46);
     // focusCellColor = new ColorUIResource(0, 60, 116);
