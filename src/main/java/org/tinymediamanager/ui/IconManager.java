@@ -70,8 +70,8 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_TOOLS_HOVER         = loadImage("icn_tools_hover.png");
 
   // packaged icons
-  public final static ImageIcon            DOT_AVAILABLE               = createDotIcon(UIConstants.FOCUS_COLOR);
-  public final static ImageIcon            DOT_UNAVAILABLE             = createDotIcon(UIConstants.FOREGROUND_COLOR);
+  public final static ImageIcon            DOT_AVAILABLE               = createFontAwesomeIcon('\uF00C', new Color(31, 187, 0));
+  public final static ImageIcon            DOT_UNAVAILABLE             = createFontAwesomeIcon('\uF00D', new Color(204, 2, 2));
   public final static ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
