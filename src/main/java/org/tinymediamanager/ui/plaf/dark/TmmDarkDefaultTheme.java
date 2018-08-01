@@ -50,7 +50,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     backgroundColorDark = new ColorUIResource(35, 35, 35);
     alterBackgroundColor = new ColorUIResource(60, 63, 65);
 
-    foregroundColor = new ColorUIResource(208, 208, 208);
+    foregroundColor = new ColorUIResource(192, 192, 192);
     disabledForegroundColor = foregroundColor;
     disabledBackgroundColor = backgroundColorLight;
 
