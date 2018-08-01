@@ -791,6 +791,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (config.isTitle()) {
       setTitle(metadata.getTitle());
+      setOriginalTitle(metadata.getOriginalTitle());
     }
 
     if (config.isPlot()) {

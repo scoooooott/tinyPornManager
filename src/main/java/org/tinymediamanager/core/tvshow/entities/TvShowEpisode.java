@@ -623,6 +623,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     boolean writeNewThumb = false;
 
     setTitle(metadata.getTitle());
+    setOriginalTitle(metadata.getOriginalTitle());
     setPlot(metadata.getPlot());
     setIds(metadata.getIds());
 
