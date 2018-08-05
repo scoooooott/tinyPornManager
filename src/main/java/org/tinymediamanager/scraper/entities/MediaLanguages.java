@@ -89,7 +89,13 @@ public enum MediaLanguages {
    * @return the MediaLanguages Enum Object.
    */
   public static MediaLanguages get(String title) {
-    return lookup.get(title);
+    MediaLanguages entry = lookup.get(title);
+
+    // if the entry is null (no one knows when that may happen), return EN as fallback to prevent NPE
+    if (entry == null) {
+      entry = MediaLanguages.en;
+    }
+    return entry;
   }
 
   MediaLanguages(String title) {
