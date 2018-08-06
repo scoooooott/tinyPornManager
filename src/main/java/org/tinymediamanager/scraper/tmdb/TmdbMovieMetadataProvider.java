@@ -398,7 +398,10 @@ class TmdbMovieMetadataProvider {
 
     Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
 
-    Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+    Locale fallbackLanguage = null;
+    if (titleFallback == true) {
+      fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+    }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     int tmdbId = 0;
@@ -495,8 +498,8 @@ class TmdbMovieMetadataProvider {
       LOGGER.warn("Error getting keywords");
     }
     // check if we need to rescrape in the fallback language
-    if (((movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()))
-        || StringUtils.isBlank(movie.overview)) && (!options.getLanguage().equals(fallbackLanguage) || fallback) && titleFallback) {
+    if (titleFallback && ((movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()))
+        || StringUtils.isBlank(movie.overview)) && (fallback || !options.getLanguage().equals(fallbackLanguage))) {
       // title in original language or plot was empty - scrape in fallback language
       if (fallback) {
         LOGGER.debug("Movie data not found with fallback language. Returning original.");
