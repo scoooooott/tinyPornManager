@@ -149,7 +149,7 @@ public class MediaProviderConfig {
   public MediaProviderConfigObject getConfigObject(String key) {
     MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
-      LOGGER.warn("Could not get confiuguration object for key '" + key + "' - key not defined!");
+      LOGGER.warn("Could not get configuration object for key '" + key + "' - key not defined!");
       return new MediaProviderConfigObject();
     }
     return co;

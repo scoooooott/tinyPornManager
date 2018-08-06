@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 
 /**
  * The Enum MediaLanguages. All languages we support for scraping
@@ -77,6 +78,7 @@ public enum MediaLanguages {
     Map<String, MediaLanguages> mlMap = new HashMap<>();
     for (MediaLanguages lang : MediaLanguages.values()) {
       mlMap.put(lang.getTitle(), lang);
+      mlMap.put(lang.name(), lang);
     }
     return mlMap;
   }
@@ -91,10 +93,16 @@ public enum MediaLanguages {
   public static MediaLanguages get(String title) {
     MediaLanguages entry = lookup.get(title);
 
-    // if the entry is null (no one knows when that may happen), return EN as fallback to prevent NPE
+    // if the entry is null (maybe localized name) try to load it via our language helper
+    if (entry == null) {
+      entry = lookup.get(LanguageUtils.getIso2LanguageFromLocalizedString(title));
+    }
+
+    // if the entry is still null (should not occur), take EN
     if (entry == null) {
       entry = MediaLanguages.en;
     }
+
     return entry;
   }
 
