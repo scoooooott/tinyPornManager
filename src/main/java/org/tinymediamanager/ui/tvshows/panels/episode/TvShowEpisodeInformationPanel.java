@@ -48,7 +48,6 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -153,7 +152,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
       lblSeasonPoster = new ImageLabel(false, false, true);
       lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
       panelLeft.add(lblSeasonPoster);
-      lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
       lblSeasonPoster.enableLightbox();
 
       lblSeasonPosterSize = new JLabel(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
@@ -163,7 +161,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
       lblEpisodeThumb = new ImageLabel(false, false, true);
       lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
       panelLeft.add(lblEpisodeThumb);
-      lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
       lblEpisodeThumb.enableLightbox();
 
       lblEpisodeThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
