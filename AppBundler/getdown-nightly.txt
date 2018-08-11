@@ -1,25 +1,25 @@
 # The URL from which the client is downloaded
-appbase = http://nightly.tinymediamanager.org/build/
-mirror = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-nightly/ws/build/
+appbase = http://nightly.tinymediamanager.org/v3/build/
+mirror = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-V3/ws/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
+ui.background = 00000000
 ui.icon = tmm.png
-ui.progress = 22, 272, 440, 21
-ui.progress_text = 000000
-ui.status = 30, 300, 450, 18
-ui.status_text = 000000
+ui.progress = 47, 400, 227, 10
+#ui.progress_text = 868686
+ui.progress_bar = 868686
+ui.hide_progress_text = true
+ui.progress_image = progress.jpg
+ui.status = 50, 380, 200, 18
+ui.status_text = 868686
 ui.mac_dock_icon = ../tmm.icns
 ui.hide_decorations = true
 
 # Application jar files, on classpath (generated from claspath in build.xml)
 code = tmm.jar
 %CODELIBS%
-
-# strings added 1:1 to classpath
-plugin = locale/*
-classpath = locale/*
 
 # plugins
 %PLUGINS%
@@ -30,6 +30,7 @@ classpath = locale/*
 # cleanup - check folder for unreferenced files and delete
 deleteAbandonedFilesInDir = lib
 
+resource = progress.jpg
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update
@@ -88,7 +89,7 @@ skip_md5_cache = true
 jvmarg = -XX:+IgnoreUnrecognizedVMOptions
 jvmarg = --add-modules=java.xml.bind
 jvmarg = --add-modules=java.xml.ws
-jvmarg = -Xms64m 
+jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = [windows] -Dsun.java2d.d3d=false
