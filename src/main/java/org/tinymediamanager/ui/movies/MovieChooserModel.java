@@ -31,6 +31,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieHelpers;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -53,6 +54,7 @@ import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -65,6 +67,7 @@ public class MovieChooserModel extends AbstractModelObject {
   private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
   public static final MovieChooserModel emptyResult      = new MovieChooserModel();
 
+  private final Movie                   movieToScrape;
   private MediaScraper                  metadataProvider = null;
   private List<MediaScraper>            artworkScrapers  = null;
   private List<MediaScraper>            trailerScrapers  = null;
@@ -73,6 +76,7 @@ public class MovieChooserModel extends AbstractModelObject {
   private MediaSearchResult             result           = null;
   private MediaMetadata                 metadata         = null;
 
+  private float                         score            = 0;
   private String                        title            = "";
   private String                        originalTitle    = "";
   private String                        overview         = "";
@@ -83,14 +87,16 @@ public class MovieChooserModel extends AbstractModelObject {
   private List<Person>                  castMembers      = new ArrayList<>();
   private boolean                       scraped          = false;
 
-  public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers,
+  public MovieChooserModel(Movie movie, MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers,
       MediaSearchResult result, MediaLanguages language) {
+    this.movieToScrape = movie;
     this.metadataProvider = metadataProvider;
     this.artworkScrapers = artworkScrapers;
     this.trailerScrapers = trailerScrapers;
     this.result = result;
     this.language = language;
 
+    score = result.getScore();
     setTitle(result.getTitle());
     setOriginalTitle(result.getOriginalTitle());
     if (result.getYear() != 0) {
@@ -104,24 +110,25 @@ public class MovieChooserModel extends AbstractModelObject {
    */
   private MovieChooserModel() {
     setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    movieToScrape = null;
     combinedName = title;
   }
 
   public void setTitle(String title) {
     String oldValue = this.title;
-    this.title = title;
+    this.title = StrgUtils.getNonNullString(title);
     firePropertyChange("title", oldValue, title);
   }
 
   public void setOriginalTitle(String originalTitle) {
     String oldValue = this.originalTitle;
-    this.originalTitle = originalTitle;
+    this.originalTitle = StrgUtils.getNonNullString(originalTitle);
     firePropertyChange("originalTitle", oldValue, overview);
   }
 
   public void setOverview(String overview) {
     String oldValue = this.overview;
-    this.overview = overview;
+    this.overview = StrgUtils.getNonNullString(overview);
     firePropertyChange("overview", oldValue, overview);
   }
 
@@ -129,6 +136,10 @@ public class MovieChooserModel extends AbstractModelObject {
     this.castMembers.clear();
     this.castMembers.addAll(castMembers);
     firePropertyChange("castMembers", null, castMembers);
+  }
+
+  public float getScore() {
+    return score;
   }
 
   public String getTitle() {
@@ -153,7 +164,8 @@ public class MovieChooserModel extends AbstractModelObject {
 
   public void setPosterUrl(String newValue) {
     String oldValue = posterUrl;
-    posterUrl = newValue;
+    posterUrl = StrgUtils.getNonNullString(newValue);
+
     firePropertyChange("posterUrl", oldValue, newValue);
   }
 
@@ -262,6 +274,24 @@ public class MovieChooserModel extends AbstractModelObject {
 
   public MediaMetadata getMetadata() {
     return metadata;
+  }
+
+  public boolean isDuplicate() {
+    if (this == emptyResult) {
+      return false;
+    }
+
+    for (Movie movie : MovieList.getInstance().getMovies()) {
+      if (movieToScrape == movie) {
+        continue;
+      }
+
+      Object id = movie.getId(result.getProviderId());
+      if (id != null && id.toString().equals(result.getId())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean isScraped() {

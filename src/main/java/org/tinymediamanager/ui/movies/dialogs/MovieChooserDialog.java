@@ -16,18 +16,23 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
+import java.text.Collator;
+import java.text.Normalizer;
+import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -42,19 +47,11 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -75,6 +72,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
+import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -84,6 +82,8 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTableFormat;
+import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -94,57 +94,59 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieChooser.
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long          serialVersionUID      = -3104541519073924724L;
+  private static final long             serialVersionUID      = -3104541519073924724L;
 
-  private static final Logger        LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final Logger           LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                  movieList             = MovieList.getInstance();
-  private Movie                      movieToScrape;
-  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<>());
-  private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private MediaScraper               mediaScraper;
-  private List<MediaScraper>         artworkScrapers;
-  private List<MediaScraper>         trailerScrapers;
-  private boolean                    continueQueue         = true;
-  private boolean                    navigateBack          = false;
+  private MovieList                     movieList             = MovieList.getInstance();
+  private Movie                         movieToScrape;
+  private MovieScraperMetadataConfig    scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper                  mediaScraper;
+  private List<MediaScraper>            artworkScrapers;
+  private List<MediaScraper>            trailerScrapers;
+  private boolean                       continueQueue         = true;
+  private boolean                       navigateBack          = false;
 
-  private EventList<Person>          castMemberEventList   = null;
-  private MovieChooserModel          selectedResult        = null;
+  private SortedList<MovieChooserModel> searchResultEventList = null;
+  private EventList<Person>             castMemberEventList   = null;
+  private MovieChooserModel             selectedResult        = null;
 
-  private SearchTask                 activeSearchTask;
+  private SearchTask                    activeSearchTask;
 
   /**
    * UI components
    */
-  private JTextField                 textFieldSearchString;
-  private MediaScraperComboBox       cbScraper;
-  private JTable                     tableSearchResults;
-  private JLabel                     lblTitle;
-  private JTextArea                  taMovieDescription;
-  private ImageLabel                 lblMoviePoster;
-  private JLabel                     lblProgressAction;
-  private JProgressBar               progressBar;
-  private JLabel                     lblTagline;
-  private JButton                    okButton;
-  private JLabel                     lblPath;
-  private JComboBox                  cbLanguage;
-  private JLabel                     lblOriginalTitle;
-  private TmmTable                   tableCastMembers;
+  private JTextField                    textFieldSearchString;
+  private MediaScraperComboBox          cbScraper;
+  private TmmTable                      tableSearchResults;
+  private JLabel                        lblTitle;
+  private JTextArea                     taMovieDescription;
+  private ImageLabel                    lblMoviePoster;
+  private JLabel                        lblProgressAction;
+  private JProgressBar                  progressBar;
+  private JLabel                        lblTagline;
+  private JButton                       okButton;
+  private JLabel                        lblPath;
+  private JComboBox                     cbLanguage;
+  private JLabel                        lblOriginalTitle;
+  private TmmTable                      tableCastMembers;
 
   /**
    * Create the dialog.
-   * 
+   *
    * @param movie
    *          the movie
    * @param queueIndex
@@ -175,6 +177,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     scraperMetadataConfig.setTrailer(settings.isTrailer());
     scraperMetadataConfig.setCollection(settings.isCollection());
     scraperMetadataConfig.setTags(settings.isTags());
+
+    // table format for the search result
+    searchResultEventList = new SortedList<>(
+        new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MovieChooserModel.class)),
+        new SearchResultScoreComparator());
+
+    DefaultEventTableModel<MovieChooserModel> searchResultTableModel = new TmmTableModel<>(searchResultEventList, new SearchResultTableFormat());
 
     // table format for the castmembers
     castMemberEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
@@ -268,40 +277,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           {
             JScrollPane scrollPane = new JScrollPane();
             panelSearchResults.add(scrollPane, "cell 0 0,grow");
-            tableSearchResults = new TmmTable();
+            tableSearchResults = new TmmTable(searchResultTableModel);
+            tableSearchResults.configureScrollPane(scrollPane);
             scrollPane.setViewportView(tableSearchResults);
-            tableSearchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            tableSearchResults.setBorder(new LineBorder(new Color(0, 0, 0)));
-            ListSelectionModel rowSM = tableSearchResults.getSelectionModel();
-            rowSM.addListSelectionListener(e -> {
-              // Ignore extra messages.
-              if (e.getValueIsAdjusting())
-                return;
-
-              ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-              if (!lsm.isSelectionEmpty()) {
-                int selectedRow = lsm.getMinSelectionIndex();
-                selectedRow = tableSearchResults.convertRowIndexToModel(selectedRow);
-                try {
-                  MovieChooserModel model = moviesFound.get(selectedRow);
-                  if (model != MovieChooserModel.emptyResult && !model.isScraped()) {
-                    ScrapeTask task = new ScrapeTask(model);
-                    task.execute();
-                  }
-                }
-                catch (Exception ex) {
-                  LOGGER.warn(ex.getMessage());
-                }
-              }
-            });
-            tableSearchResults.addMouseListener(new MouseAdapter() {
-              @Override
-              public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
-                  actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
-                }
-              }
-            });
           }
         }
       }
@@ -402,7 +380,17 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
     }
 
-    bindingGroup = initDataBindings();
+    // install and save the comparator on the Table
+    TableComparatorChooser.install(tableSearchResults, searchResultEventList, TableComparatorChooser.SINGLE_COLUMN);
+
+    tableSearchResults.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+          actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
+        }
+      }
+    });
 
     // add a change listener for the cast members
     PropertyChangeListener listener = evt -> {
@@ -411,8 +399,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         castMemberEventList.clear();
         int row = tableSearchResults.convertRowIndexToModel(tableSearchResults.getSelectedRow());
         if (row > -1) {
-          MovieChooserModel model = moviesFound.get(row);
+          MovieChooserModel model = searchResultEventList.get(row);
           castMemberEventList.addAll(model.getCastMembers());
+          lblOriginalTitle.setText(model.getOriginalTitle());
+          lblTagline.setText(model.getTagline());
+          if (!model.getPosterUrl().equals(lblMoviePoster.getImageUrl())) {
+            lblMoviePoster.setImageUrl(model.getPosterUrl());
+          }
+          taMovieDescription.setText(model.getOverview());
         }
       }
     };
@@ -428,13 +422,34 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         removePropertyChangeListener(listener);
       }
       if (index > -1) {
-        MovieChooserModel model = moviesFound.get(index);
+        MovieChooserModel model = searchResultEventList.get(index);
         selectedResult = model;
         castMemberEventList.addAll(model.getCastMembers());
+        lblMoviePoster.setImageUrl(model.getPosterUrl());
+        lblTitle.setText(model.getCombinedName());
+        lblOriginalTitle.setText(model.getOriginalTitle());
+        lblTagline.setText(model.getTagline());
+        taMovieDescription.setText(model.getOverview());
         selectedResult.addPropertyChangeListener(listener);
       }
       else {
         selectedResult = null;
+      }
+
+      ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+      if (!lsm.isSelectionEmpty()) {
+        int selectedRow = lsm.getMinSelectionIndex();
+        selectedRow = tableSearchResults.convertRowIndexToModel(selectedRow);
+        try {
+          MovieChooserModel model = searchResultEventList.get(selectedRow);
+          if (model != MovieChooserModel.emptyResult && !model.isScraped()) {
+            ScrapeTask task = new ScrapeTask(model);
+            task.execute();
+          }
+        }
+        catch (Exception ex) {
+          LOGGER.warn(ex.getMessage());
+        }
       }
     });
 
@@ -457,7 +472,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     if ("OK".equals(e.getActionCommand())) {
       int row = tableSearchResults.getSelectedRow();
       if (row >= 0) {
-        MovieChooserModel model = moviesFound.get(row);
+        MovieChooserModel model = searchResultEventList.get(row);
         if (model != MovieChooserModel.emptyResult) {
           // when scraping was not successful, abort saving
           if (!model.isScraped()) {
@@ -668,7 +683,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private class ChangeScraperAction extends AbstractAction {
     private static final long serialVersionUID = -4365761222995534769L;
 
-    public ChangeScraperAction() {
+    private ChangeScraperAction() {
     }
 
     @Override
@@ -685,7 +700,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     private MediaLanguages          language;
     boolean                         cancel = false;
 
-    public SearchTask(String searchTerm, Movie movie) {
+    private SearchTask(String searchTerm, Movie movie) {
       this.searchTerm = searchTerm;
       this.movie = movie;
       this.language = (MediaLanguages) cbLanguage.getSelectedItem();
@@ -705,10 +720,10 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public void done() {
       if (!cancel) {
-        moviesFound.clear();
+        searchResultEventList.clear();
         if (searchResult == null || searchResult.size() == 0) {
           // display empty result
-          moviesFound.add(MovieChooserModel.emptyResult);
+          searchResultEventList.add(MovieChooserModel.emptyResult);
         }
         else {
           MediaScraper mpFromResult = null;
@@ -716,11 +731,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
             if (mpFromResult == null) {
               mpFromResult = movieList.getMediaScraperById(result.getProviderId());
             }
-            moviesFound.add(new MovieChooserModel(mpFromResult, artworkScrapers, trailerScrapers, result, language));
+            searchResultEventList.add(new MovieChooserModel(movieToScrape, mpFromResult, artworkScrapers, trailerScrapers, result, language));
             // get metadataProvider from searchresult
           }
         }
-        if (!moviesFound.isEmpty()) { // only one result
+        if (!searchResultEventList.isEmpty()) { // only one result
           tableSearchResults.setRowSelectionInterval(0, 0); // select first row
         }
       }
@@ -731,7 +746,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private class ScrapeTask extends SwingWorker<Void, Void> {
     private MovieChooserModel model;
 
-    public ScrapeTask(MovieChooserModel model) {
+    private ScrapeTask(MovieChooserModel model) {
       this.model = model;
     }
 
@@ -753,9 +768,78 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   }
 
   /**
-   * inner class for representing the table
+   * inner class for representing the result table
    */
-  private static class CastMemberTableFormat implements AdvancedTableFormat<Person> {
+  private static class SearchResultTableFormat extends TmmTableFormat<MovieChooserModel> {
+    private SearchResultTableFormat() {
+      Comparator<MovieChooserModel> searchResultComparator = new SearchResultTitleComparator();
+      Comparator<String> stringComparator = new StringComparator();
+
+      FontMetrics fontMetrics = getFontMetrics();
+
+      /*
+       * title
+       */
+      Column col = new Column(BUNDLE.getString("chooser.searchresult"), "title", result -> result, MovieChooserModel.class);
+      col.setColumnComparator(searchResultComparator);
+      col.setCellRenderer(new SearchResultRenderer());
+      addColumn(col);
+
+      /*
+       * year
+       */
+      col = new Column(BUNDLE.getString("metatag.year"), "year", MovieChooserModel::getYear, MovieChooserModel.class);
+      col.setColumnComparator(stringComparator);
+      col.setColumnResizeable(false);
+      col.setMinWidth((int) (fontMetrics.stringWidth("2000") * 1.2f));
+      col.setMaxWidth((int) (fontMetrics.stringWidth("2000") * 1.4f));
+      addColumn(col);
+    }
+  }
+
+  /**
+   * inner class for sorting the search results by score (descending)
+   */
+  private static class SearchResultScoreComparator implements Comparator<MovieChooserModel> {
+    @Override
+    public int compare(MovieChooserModel o1, MovieChooserModel o2) {
+      return Float.compare(o2.getScore(), o1.getScore());
+    }
+  }
+
+  /**
+   * inner class for sorting the search results by name
+   */
+  private static class SearchResultTitleComparator implements Comparator<MovieChooserModel> {
+    private Collator stringCollator;
+
+    private SearchResultTitleComparator() {
+      RuleBasedCollator defaultCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+      try {
+        // default collator ignores whitespaces
+        // using hack from http://stackoverflow.com/questions/16567287/java-collation-ignores-space
+        stringCollator = new RuleBasedCollator(defaultCollator.getRules().replace("<'\u005f'", "<' '<'\u005f'"));
+      }
+      catch (Exception e) {
+        stringCollator = defaultCollator;
+      }
+    }
+
+    @Override
+    public int compare(MovieChooserModel o1, MovieChooserModel o2) {
+      if (stringCollator != null) {
+        String titleMovie1 = Normalizer.normalize(o1.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String titleMovie2 = Normalizer.normalize(o2.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        return stringCollator.compare(titleMovie1, titleMovie2);
+      }
+      return o1.getTitle().toLowerCase(Locale.ROOT).compareTo(o2.getTitle().toLowerCase(Locale.ROOT));
+    }
+  }
+
+  /**
+   * inner class for representing the cast table
+   */
+  private static class CastMemberTableFormat implements TableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -784,71 +868,32 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
       throw new IllegalStateException();
     }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-          return String.class;
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int column) {
-      return null;
-    }
   }
 
-  protected BindingGroup initDataBindings() {
-    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        moviesFound, tableSearchResults);
-    //
-    BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false);
-    //
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextArea, String> JTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
-        jTableBeanProperty_1, taMovieDescription, JTextAreaBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
-        jTableBeanProperty_2, lblMoviePoster, imageLabelBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
-    BeanProperty<JLabel, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults, jTableBeanProperty,
-        lblTagline, jTextAreaBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
-    BeanProperty<JLabel, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
-        jTableBeanProperty_3, lblTitle, jTextAreaBeanProperty_1);
-    autoBinding_3.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_4 = BeanProperty.create("selectedElement.originalTitle");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tableSearchResults,
-        jTableBeanProperty_4, lblOriginalTitle, jTextAreaBeanProperty);
-    autoBinding_4.bind();
-    //
-    BindingGroup bindingGroup = new BindingGroup();
-    //
-    bindingGroup.addBinding(jTableBinding);
-    bindingGroup.addBinding(autoBinding_1);
-    bindingGroup.addBinding(autoBinding_2);
-    bindingGroup.addBinding(autoBinding);
-    bindingGroup.addBinding(autoBinding_3);
-    bindingGroup.addBinding(autoBinding_4);
-    return bindingGroup;
+  /**
+   * inner class to render the search result
+   */
+  public static class SearchResultRenderer extends BorderTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      if (value instanceof MovieChooserModel) {
+        MovieChooserModel result = (MovieChooserModel) value;
+
+        String text = result.getTitle();
+
+        if (result.isDuplicate()) {
+          setHorizontalTextPosition(SwingConstants.LEADING);
+          setIconTextGap(10);
+          setIcon(IconManager.WARN);
+          setToolTipText(BUNDLE.getString("moviechooser.duplicate.desc"));//$NON-NLS-1$
+        }
+        else {
+          setIcon(null);
+        }
+
+        return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+      }
+      return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    }
   }
 }

@@ -62,5 +62,9 @@ public class TmmTableModel<E> extends DefaultEventTableModel {
 
     column.setResizable(tmmTableFormat.getColumnResizeable(columnIndex));
     column.setMinWidth(tmmTableFormat.getMinWidth(columnIndex));
+
+    if (tmmTableFormat.getMaxWidth(columnIndex) > 0) {
+      column.setMaxWidth(tmmTableFormat.getMaxWidth(columnIndex));
+    }
   }
 }

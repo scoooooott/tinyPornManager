@@ -93,6 +93,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return columns.get(i).minWidth;
   }
 
+  public int getMaxWidth(int i) {
+    return columns.get(i).maxWidth;
+  }
+
   protected class Column {
     private String            columnTitle;
     private String            columnIdentifier;
@@ -103,6 +107,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     private ImageIcon         headerIcon       = null;
     private boolean           columnResizeable = true;
     private int               minWidth         = 0;
+    private int               maxWidth         = 0;
 
     public Column(String title, String identifier, Function<E, ?> value, Class clazz) {
       columnTitle = title;
@@ -130,6 +135,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
 
     public void setMinWidth(int minWidth) {
       this.minWidth = minWidth;
+    }
+
+    public void setMaxWidth(int maxWidth) {
+      this.maxWidth = maxWidth;
     }
   }
 
