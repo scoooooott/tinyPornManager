@@ -60,6 +60,7 @@ import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
+import org.tinymediamanager.scraper.util.CacheMap;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.TvUtils;
@@ -90,17 +91,20 @@ import retrofit2.Response;
  */
 @PluginImplementation
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
-  private static final Logger     LOGGER      = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-  private static String           artworkUrl  = "http://thetvdb.com/banners/";
-  private static final String     TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
+  private static final Logger                          LOGGER      = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
+  private static String                                artworkUrl  = "http://thetvdb.com/banners/";
+  private static final String                          TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
 
-  private final MediaProviderInfo providerInfo;
-  private TheTvdb                 tvdb;
-  private List<Language>          tvdbLanguages;
+  private final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap;
+
+  private final MediaProviderInfo                      providerInfo;
+  private TheTvdb                                      tvdb;
+  private List<Language>                               tvdbLanguages;
 
   public TheTvDbMetadataProvider() {
     // create the providerinfo
     providerInfo = createMediaProviderInfo();
+    episodeListCacheMap = new CacheMap<>(600, 5);
   }
 
   private synchronized void initAPI() throws ScrapeException {
@@ -507,7 +511,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // get the episode via the episodesList() (is cached and contains all data with 1 call per 100 eps)
-    List<MediaMetadata> episodes = getEpisodeList(options);
+    List<MediaMetadata> episodes = episodeListCacheMap.get(id);
+    if (episodes == null) {
+      episodes = getEpisodeList(options);
+    }
 
     // now search for the right episode in this list
     MediaMetadata foundEpisode = null;
@@ -879,6 +886,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       episodes.add(episode);
     }
+
+    // cache for further fast access
+    episodeListCacheMap.put(id, episodes);
 
     return episodes;
   }
