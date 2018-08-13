@@ -197,6 +197,12 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
         return;
       }
 
+      // if nothing is in the tree, set the initial TV show
+      if (tree.getModel().getRowCount() == 0) {
+        TvShowUIModule.getInstance().setSelectedTvShow(null);
+        return;
+      }
+
       int index = ((DefaultListSelectionModel) arg0.getSource()).getMinSelectionIndex();
 
       DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(index, 0);
@@ -218,9 +224,6 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
           TvShowEpisode tvShowEpisode = (TvShowEpisode) node.getUserObject();
           TvShowUIModule.getInstance().setSelectedTvShowEpisode(tvShowEpisode);
         }
-      }
-      else {
-        TvShowUIModule.getInstance().setSelectedTvShow(null);
       }
     });
 

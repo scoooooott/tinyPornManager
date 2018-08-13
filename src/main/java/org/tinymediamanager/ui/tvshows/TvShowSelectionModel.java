@@ -59,6 +59,11 @@ public class TvShowSelectionModel extends AbstractModelObject {
    *          the new selected tv show
    */
   public void setSelectedTvShow(TvShow tvShow) {
+    // no need to fire events if nothing has been changed
+    if (tvShow == selectedTvShow) {
+      return;
+    }
+
     TvShow oldValue = this.selectedTvShow;
 
     if (tvShow != null) {

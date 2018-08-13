@@ -490,6 +490,8 @@ public class ImageLabel extends JLabel {
           return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
+          // okay, we got an exception here - set the image path to empty to avoid an endless try-to-reload
+          ImageLabel.this.imagePath = "";
           return null;
         }
       }
