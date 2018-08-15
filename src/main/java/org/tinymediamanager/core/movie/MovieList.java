@@ -1048,6 +1048,9 @@ public class MovieList extends AbstractModelObject {
 
     if (movieSet == null && StringUtils.isNotBlank(title)) {
       movieSet = new MovieSet(title);
+      if (tmdbId > 0) {
+        movieSet.setTmdbId(tmdbId);
+      }
       movieSet.saveToDb();
       addMovieSet(movieSet);
     }

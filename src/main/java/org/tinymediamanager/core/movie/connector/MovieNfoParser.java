@@ -1414,7 +1414,18 @@ public class MovieNfoParser {
     if (set != null && StringUtils.isNotEmpty(set.name)) {
       // search for that movieset
       MovieList movieList = MovieList.getInstance();
-      MovieSet movieSet = movieList.getMovieSet(set.name, 0);
+
+      // movie set id
+      int tmdbSetId = 0;
+      if (ids.get("tmdbSet") != null) {
+        try {
+          tmdbSetId = Integer.parseInt(ids.get("tmdbSet").toString());
+        }
+        catch (Exception ignored) {
+        }
+      }
+
+      MovieSet movieSet = movieList.getMovieSet(set.name, tmdbSetId);
 
       // add movie to movieset
       if (movieSet != null) {
