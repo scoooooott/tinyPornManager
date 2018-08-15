@@ -1168,44 +1168,68 @@ public class MovieEditorDialog extends TmmDialog {
       MediaFileEditorPanel.syncMediaFiles(mediaFiles, movieToEdit.getMediaFiles());
       movieToEdit.fireEventForChangedMediaInformation();
 
-      if (!StringUtils.isEmpty(tfPoster.getText()) && !tfPoster.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+      if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
         movieToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
         movieToEdit.downloadArtwork(MediaFileType.POSTER);
       }
+      else if (StringUtils.isEmpty(tfPoster.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.POSTER);
+      }
 
-      if (!StringUtils.isEmpty(tfFanart.getText()) && !tfFanart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.FANART))) {
+      if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.FANART))) {
         movieToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
         movieToEdit.downloadArtwork(MediaFileType.FANART);
       }
+      else if (StringUtils.isEmpty(tfFanart.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.FANART);
+      }
 
-      if (!StringUtils.isEmpty(tfLogo.getText()) && !tfLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
+      if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
         movieToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
         movieToEdit.downloadArtwork(MediaFileType.LOGO);
       }
+      else if (StringUtils.isEmpty(tfLogo.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.LOGO);
+      }
 
-      if (!StringUtils.isEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+      if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
         movieToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
         movieToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
       }
+      else if (StringUtils.isEmpty(tfClearLogo.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.CLEARLOGO);
+      }
 
-      if (!StringUtils.isEmpty(tfBanner.getText()) && !tfBanner.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+      if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
         movieToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
         movieToEdit.downloadArtwork(MediaFileType.BANNER);
       }
+      else if (StringUtils.isEmpty(tfBanner.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.BANNER);
+      }
 
-      if (!StringUtils.isEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
+      if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
         movieToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
         movieToEdit.downloadArtwork(MediaFileType.CLEARART);
       }
+      else if (StringUtils.isEmpty(tfClearArt.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.CLEARART);
+      }
 
-      if (!StringUtils.isEmpty(tfThumb.getText()) && !tfThumb.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.THUMB))) {
+      if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.THUMB))) {
         movieToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         movieToEdit.downloadArtwork(MediaFileType.THUMB);
       }
+      else if (StringUtils.isEmpty(tfThumb.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.THUMB);
+      }
 
-      if (!StringUtils.isEmpty(tfDisc.getText()) && !tfDisc.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
+      if (StringUtils.isNotEmpty(tfDisc.getText()) && !tfDisc.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
         movieToEdit.setArtworkUrl(tfDisc.getText(), MediaFileType.DISC);
         movieToEdit.downloadArtwork(MediaFileType.DISC);
+      }
+      else if (StringUtils.isEmpty(tfDisc.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.DISC);
       }
 
       // set extrathumbs

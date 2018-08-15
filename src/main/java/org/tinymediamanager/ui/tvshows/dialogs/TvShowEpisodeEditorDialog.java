@@ -759,6 +759,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         episodeToEdit.writeThumbImage();
       }
+      else if (StringUtils.isBlank(tfThumb.getText())) {
+        episodeToEdit.removeArtworkUrl(MediaFileType.THUMB);
+      }
 
       episodeToEdit.setTags(tags);
       episodeToEdit.writeNFO();

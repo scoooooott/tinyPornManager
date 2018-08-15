@@ -124,6 +124,11 @@ public class TvShowArtworkHelper {
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, firstImage);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
+
+    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    if (url.startsWith("file:")) {
+      show.removeArtworkUrl(type);
+    }
   }
 
   /**

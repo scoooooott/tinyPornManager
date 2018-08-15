@@ -454,6 +454,16 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
+   * removed the artwork url for the desired type
+   * 
+   * @param type
+   *          the artwork type
+   */
+  public void removeArtworkUrl(MediaFileType type) {
+    artworkUrlMap.remove(type);
+  }
+
+  /**
    * get all artwork urls
    * 
    * @return a map containing all urls

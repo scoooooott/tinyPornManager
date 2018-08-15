@@ -605,6 +605,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
+
+    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    if (thumbUrl.startsWith("file:")) {
+      removeArtworkUrl(MediaFileType.THUMB);
+    }
   }
 
   /**

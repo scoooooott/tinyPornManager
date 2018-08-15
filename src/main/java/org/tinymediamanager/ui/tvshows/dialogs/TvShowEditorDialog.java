@@ -128,8 +128,8 @@ public class TvShowEditorDialog extends TmmDialog {
   private TvShowList                        tvShowList       = TvShowList.getInstance();
   private EventList<Person>                 actors;
   private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<>());
-  private EventList<MediaId>                ids              = new BasicEventList<>();
-  private EventList<MediaRating>            ratings          = new BasicEventList<>();
+  private EventList<MediaId>                ids;
+  private EventList<MediaRating>            ratings;
   private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer> episodes;
   private Rating                            userRating;
@@ -837,39 +837,60 @@ public class TvShowEditorDialog extends TmmDialog {
         tvShowToEdit.setCertification((Certification) certification);
       }
 
-      if (!StringUtils.isEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+      if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
         tvShowToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
         tvShowToEdit.downloadArtwork(MediaFileType.POSTER);
       }
+      else if (StringUtils.isEmpty(tfPoster.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.POSTER);
+      }
 
-      if (!StringUtils.isEmpty(tfFanart.getText()) && !tfFanart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
+      if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
         tvShowToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
         tvShowToEdit.downloadArtwork(MediaFileType.FANART);
       }
+      else if (StringUtils.isEmpty(tfFanart.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.FANART);
+      }
 
-      if (!StringUtils.isEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+      if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
         tvShowToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
         tvShowToEdit.downloadArtwork(MediaFileType.BANNER);
       }
+      else if (StringUtils.isEmpty(tfBanner.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.BANNER);
+      }
 
-      if (!StringUtils.isEmpty(tfLogo.getText()) && !tfLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.LOGO))) {
+      if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.LOGO))) {
         tvShowToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
         tvShowToEdit.downloadArtwork(MediaFileType.LOGO);
       }
+      else if (StringUtils.isEmpty(tfLogo.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.LOGO);
+      }
 
-      if (!StringUtils.isEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+      if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
         tvShowToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
         tvShowToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
       }
+      else if (StringUtils.isEmpty(tfClearLogo.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARLOGO);
+      }
 
-      if (!StringUtils.isEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
+      if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
         tvShowToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
         tvShowToEdit.downloadArtwork(MediaFileType.CLEARART);
       }
+      else if (StringUtils.isEmpty(tfClearArt.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARART);
+      }
 
-      if (!StringUtils.isEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.THUMB))) {
+      if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.THUMB))) {
         tvShowToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         tvShowToEdit.downloadArtwork(MediaFileType.THUMB);
+      }
+      else if (StringUtils.isEmpty(tfThumb.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.THUMB);
       }
 
       tvShowToEdit.setProductionCompany(tfStudio.getText());
