@@ -44,6 +44,7 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.TvUtils;
@@ -297,6 +298,16 @@ class TmdbTvShowMetadataProvider {
 
     md.setReleaseDate(complete.first_air_date);
     md.setPlot(complete.overview);
+    List<String> countries = new ArrayList<>();
+    for (String country : ListUtils.nullSafe(complete.origin_country)) {
+      if (providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+        md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage(), country));
+      }
+      else {
+        md.addCountry(country);
+      }
+    }
+    md.setCountries(countries);
 
     if (complete.episode_run_time != null && !complete.episode_run_time.isEmpty()) {
       md.setRuntime(complete.episode_run_time.get(0));

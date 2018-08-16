@@ -425,6 +425,7 @@ public class TmdbMetadataProviderTest {
       assertEquals(MediaAiredStatus.ENDED, md.getStatus());
       assertThat(md.getProductionCompanies()).isNotEmpty();
       assertEquals(Certification.US_TVPG, md.getCertifications().get(0));
+      assertThat(md.getCountries()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
