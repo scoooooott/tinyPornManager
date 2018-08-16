@@ -15,16 +15,11 @@
  */
 package org.tinymediamanager.ui;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -105,29 +100,29 @@ public class IconManager {
   public final static ImageIcon            WARN_INTENSIFIED            = createFontAwesomeIcon('\uF071', Color.RED);
   public final static ImageIcon            INFO                        = createFontAwesomeIcon('\uF05A');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF0B0', Color.RED);
-  public final static ImageIcon            NEW                         = createTextIcon("new", 14);
+  public final static ImageIcon            NEW                         = createTextIcon("new", DEFAULT_FONT_SIZE);
   public final static ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');
   public final static ImageIcon            STOP                        = createFontAwesomeIcon('\uF28D');
   public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
 
   // font awesome icons light (button usage)
-  public final static ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', true);
-  public final static ImageIcon            ARROW_UP_INV                = createFontAwesomeIcon('\uF077', true);
-  public final static ImageIcon            ARROW_DOWN_INV              = createFontAwesomeIcon('\uF078', true);
-  public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF058', true);
-  public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF137', true);
-  public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF057', true);
-  public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A', true);
-  public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8', true);
-  public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', true);
-  public final static ImageIcon            DATE_PICKER                 = createFontAwesomeIcon('\uF073', true);
-  public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', true);
-  public final static ImageIcon            FILE_OPEN_INV               = createFontAwesomeIcon('\uF07C', true);
-  public final static ImageIcon            IMAGE_INV                   = createFontAwesomeIcon('\uF03E', true);
-  public final static ImageIcon            PLAY_INV                    = createFontAwesomeIcon('\uF04B', true);
-  public final static ImageIcon            REMOVE_INV                  = createFontAwesomeIcon('\uF068', true);
-  public final static ImageIcon            SEARCH_INV                  = createFontAwesomeIcon('\uF002', true);
-  public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF28D', true);
+  public final static ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            ARROW_UP_INV                = createFontAwesomeIcon('\uF077', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            ARROW_DOWN_INV              = createFontAwesomeIcon('\uF078', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            APPLY_INV                   = createFontAwesomeIcon('\uF058', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            BACK_INV                    = createFontAwesomeIcon('\uF137', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            CANCEL_INV                  = createFontAwesomeIcon('\uF057', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            CHECK_ALL                   = createFontAwesomeIcon('\uF14A', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            DATE_PICKER                 = createFontAwesomeIcon('\uF073', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            FILE_OPEN_INV               = createFontAwesomeIcon('\uF07C', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            IMAGE_INV                   = createFontAwesomeIcon('\uF03E', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            PLAY_INV                    = createFontAwesomeIcon('\uF04B', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            REMOVE_INV                  = createFontAwesomeIcon('\uF068', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            SEARCH_INV                  = createFontAwesomeIcon('\uF002', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            STOP_INV                    = createFontAwesomeIcon('\uF28D', UIManager.getColor("Button.foreground"));
 
   // font awesome icons - column headers
   public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
@@ -212,47 +207,18 @@ public class IconManager {
     return icon;
   }
 
-  private static ImageIcon createDotIcon(Color color) {
-    int size = DEFAULT_FONT_SIZE / 2;
-
-    BufferedImage image = new BufferedImage(size, size + 2, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = image.createGraphics();
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-    Area dot = new Area(new Ellipse2D.Float(0, 1f, (float) size, (float) size));
-    Area bottomShadow = new Area(new Ellipse2D.Float(0, 2f, (float) size, (float) size));
-    Area topShadow = new Area(new Ellipse2D.Float(0, 1f, (float) size, (float) size));
-    topShadow.subtract(bottomShadow);
-
-    Composite defaultComposite = g2d.getComposite();
-
-    g2d.setColor(UIConstants.BACKGROUND_COLOR);
-    g2d.fill(bottomShadow);
-
-    g2d.setComposite(defaultComposite);
-    g2d.setColor(color);
-    g2d.fill(dot);
-
-    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f));
-    g2d.setColor(UIConstants.FOREGROUND_COLOR);
-    g2d.fill(topShadow);
-
-    g2d.dispose();
-    return new ImageIcon(image);
-  }
-
   /**
-   * create a image off the font awesome icon font in the default size 14pt for 12pt base font size.
+   * create a image off the font awesome icon font in the default size 14px for 12pt base font size.
    *
    * @param iconId
    *          the icon id
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId) {
-    return createFontAwesomeIcon(iconId, calculateFontSize(14 / 12.0f), UIManager.getColor("Label.foreground"));
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), UIManager.getColor("Label.foreground"));
   }
 
-  private static int calculateFontSize(float scaleFactor) {
+  private static int calculateFontIconSize(float scaleFactor) {
     return (int) Math.floor(DEFAULT_FONT_SIZE * scaleFactor);
   }
 
@@ -266,7 +232,7 @@ public class IconManager {
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, int size) {
-    return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.foreground"));
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(size / 12.0f), UIManager.getColor("Label.foreground"));
   }
 
   /**
@@ -279,40 +245,7 @@ public class IconManager {
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, float scaleFactor) {
-    return createFontAwesomeIcon(iconId, calculateFontSize(scaleFactor), UIManager.getColor("Label.foreground"));
-  }
-
-  /**
-   * create a image off the awesome icon font in given size (scaling to the base font size of 12pt applied!)
-   *
-   * @param iconId
-   *          the icon id
-   * @param size
-   *          the desired font size
-   * @param inverse
-   *          inverse color
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, int size, boolean inverse) {
-    if (inverse) {
-      return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.background"));
-    }
-    else {
-      return createFontAwesomeIcon(iconId, calculateFontSize(size / 12.0f), UIManager.getColor("Label.foreground"));
-    }
-  }
-
-  /**
-   * create a image off the awesome icon font in the default size 14pt for 12pt base font size.
-   *
-   * @param iconId
-   *          the icon id
-   * @param inverse
-   *          inverse color
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, boolean inverse) {
-    return createFontAwesomeIcon(iconId, 14, inverse);
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(scaleFactor), UIManager.getColor("Label.foreground"));
   }
 
   /**
@@ -325,7 +258,7 @@ public class IconManager {
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, Color color) {
-    return createFontAwesomeIcon(iconId, 14, color);
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), color);
   }
 
   /**

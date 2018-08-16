@@ -192,11 +192,16 @@ public class SettingsDialog extends TmmDialog {
     private JLabel label;
 
     SettingsTreeCellRenderer() {
-      label = new JLabel();
-      Object obj = UIManager.get("Tree.nodeBorder");
-      if (obj instanceof Border) {
-        label.setBorder((Border) obj);
-      }
+      label = new JLabel() {
+        @Override
+        public void updateUI() {
+          super.updateUI();
+          Object obj = UIManager.get("Tree.nodeBorder");
+          if (obj instanceof Border) {
+            setBorder((Border) obj);
+          }
+        }
+      };
     }
 
     @Override

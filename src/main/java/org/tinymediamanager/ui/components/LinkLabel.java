@@ -24,6 +24,7 @@ import java.awt.font.TextAttribute;
 import java.util.Map;
 
 import javax.swing.JLabel;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.UIConstants;
@@ -49,15 +50,6 @@ public class LinkLabel extends JLabel {
   public LinkLabel(String text) {
     super(text);
     setLink(text);
-
-    Font font = getFont();
-    Map attributes = font.getAttributes();
-    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-    attributes.put(TextAttribute.FOREGROUND, UIConstants.LINK_COLOR);
-    setFont(font.deriveFont(attributes));
-
-    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    enableEvents(MouseEvent.MOUSE_EVENT_MASK);
   }
 
   /**
@@ -65,6 +57,20 @@ public class LinkLabel extends JLabel {
    */
   public LinkLabel() {
     this(null);
+  }
+
+  @Override
+  public void updateUI() {
+    super.updateUI();
+
+    Font font = UIManager.getFont("Label.font");
+    Map attributes = font.getAttributes();
+    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+    attributes.put(TextAttribute.FOREGROUND, UIConstants.LINK_COLOR);
+    setFont(font.deriveFont(attributes));
+
+    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    enableEvents(MouseEvent.MOUSE_EVENT_MASK);
   }
 
   @Override

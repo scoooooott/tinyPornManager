@@ -19,30 +19,32 @@ package org.tinymediamanager.ui.components;
 import java.awt.Font;
 
 import javax.swing.JLabel;
+import javax.swing.UIManager;
 
 /**
  * an own label class which has bold set and the scaling factor applied
  */
 public class TmmLabel extends JLabel {
 
+  private double scaleFactor = 1d;
+
   public TmmLabel() {
-    setFont(getFont().deriveFont(Font.BOLD));
+    super();
   }
 
   /**
    * create a new label with the given text and scaled by the given factor
-   * 
+   *
    * @param text
    *          the text to be set
    */
   public TmmLabel(String text) {
     super(text);
-    setFont(getFont().deriveFont(Font.BOLD));
   }
 
   /**
    * create a new label with the given text and scaled by the given factor
-   * 
+   *
    * @param text
    *          the text to be set
    * @param scaleFactor
@@ -50,7 +52,15 @@ public class TmmLabel extends JLabel {
    */
   public TmmLabel(String text, double scaleFactor) {
     super(text);
-    setFont(scale(getFont().deriveFont(Font.BOLD), scaleFactor));
+    this.scaleFactor = scaleFactor;
+    setFont(scale(UIManager.getFont("Label.font").deriveFont(Font.BOLD), scaleFactor));
+  }
+
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    // to re-set the font after UI change
+    setFont(scale(UIManager.getFont("Label.font").deriveFont(Font.BOLD), scaleFactor > 0 ? scaleFactor : 1));
   }
 
   protected Font scale(Font font, double factor) {

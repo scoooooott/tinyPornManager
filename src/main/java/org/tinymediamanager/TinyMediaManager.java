@@ -465,83 +465,6 @@ public class TinyMediaManager {
       }
 
       /**
-       * Sets the look and feel.
-       * 
-       * @throws Exception
-       *           the exception
-       */
-      private void setLookAndFeel() throws Exception {
-        // preload LaF (to prevent chicken-egg problem with font-loading)
-        String themeDefaultFont = TmmTheme.FONT;
-
-        // get font from settings
-        String fontFamily = Globals.settings.getFontFamily();
-        try {// sanity check
-          fontFamily = Font.decode(fontFamily).getFamily();
-        }
-        catch (Exception e) {
-          // try LaF font as fallback
-          try {
-            fontFamily = Font.decode(themeDefaultFont).getFamily();
-          }
-          catch (Exception e1) {
-            // last resort fallback - default system font
-            fontFamily = "Dialog";
-          }
-        }
-
-        int fontSize = Globals.settings.getFontSize();
-        if (fontSize < 12) {
-          fontSize = 12;
-        }
-
-        String fontString = fontFamily + " " + fontSize;
-
-        // Get the native look and feel class name
-        // String laf = UIManager.getSystemLookAndFeelClassName();
-        Properties props = new Properties();
-        props.setProperty("controlTextFont", fontString);
-        props.setProperty("systemTextFont", fontString);
-        props.setProperty("userTextFont", fontString);
-        props.setProperty("menuTextFont", fontString);
-        // props.setProperty("windowTitleFont", "Dialog bold 20");
-
-        fontSize = Math.round((float) (fontSize * 0.833));
-        fontString = fontFamily + " " + fontSize;
-
-        props.setProperty("subTextFont", fontString);
-        // props.setProperty("backgroundColor", "237 237 237");
-        // props.setProperty("menuBackgroundColor", "237 237 237");
-        // props.setProperty("controlBackgroundColor", "237 237 237");
-        // props.setProperty("menuColorLight", "237 237 237");
-        // props.setProperty("menuColorDark", "237 237 237");
-        // props.setProperty("toolbarColorLight", "237 237 237");
-        // props.setProperty("toolbarColorDark", "237 237 237");
-        // props.setProperty("tooltipBackgroundColor", "255 255 255");
-        // props.put("windowDecoration", "system");
-        // props.put("logoString", "");
-        //
-        // // Get the look and feel class name
-        // com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
-        // String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
-
-        // Get the look and feel class name
-        String themeName = Globals.settings.getTheme();
-        String laf = "";
-        if ("Dark".equals(themeName)) {
-          TmmDarkLookAndFeel.setTheme(props);
-          laf = "org.tinymediamanager.ui.plaf.dark.TmmDarkLookAndFeel";
-        }
-        else {
-          TmmLightLookAndFeel.setTheme(props);
-          laf = "org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel";
-        }
-
-        // Install the look and feel
-        UIManager.setLookAndFeel(laf);
-      }
-
-      /**
        * Does some tasks at startup
        */
       private void doStartupTasks() {
@@ -568,6 +491,63 @@ public class TinyMediaManager {
         WhatsNewDialog.showChangelog();
       }
     });
+  }
+
+  public static void setLookAndFeel() throws Exception {
+    // preload LaF (to prevent chicken-egg problem with font-loading)
+    String themeDefaultFont = TmmTheme.FONT;
+
+    // get font from settings
+    String fontFamily = Globals.settings.getFontFamily();
+    try {// sanity check
+      fontFamily = Font.decode(fontFamily).getFamily();
+    }
+    catch (Exception e) {
+      // try LaF font as fallback
+      try {
+        fontFamily = Font.decode(themeDefaultFont).getFamily();
+      }
+      catch (Exception e1) {
+        // last resort fallback - default system font
+        fontFamily = "Dialog";
+      }
+    }
+
+    int fontSize = Globals.settings.getFontSize();
+    if (fontSize < 12) {
+      fontSize = 12;
+    }
+
+    String fontString = fontFamily + " " + fontSize;
+
+    // Get the native look and feel class name
+    // String laf = UIManager.getSystemLookAndFeelClassName();
+    Properties props = new Properties();
+    props.setProperty("controlTextFont", fontString);
+    props.setProperty("systemTextFont", fontString);
+    props.setProperty("userTextFont", fontString);
+    props.setProperty("menuTextFont", fontString);
+    // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+    fontSize = Math.round((float) (fontSize * 0.833));
+    fontString = fontFamily + " " + fontSize;
+
+    props.setProperty("subTextFont", fontString);
+
+    // Get the look and feel class name
+    String themeName = Globals.settings.getTheme();
+    String laf;
+    if ("Dark".equals(themeName)) {
+      TmmDarkLookAndFeel.setTheme(props);
+      laf = "org.tinymediamanager.ui.plaf.dark.TmmDarkLookAndFeel";
+    }
+    else {
+      TmmLightLookAndFeel.setTheme(props);
+      laf = "org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel";
+    }
+
+    // Install the look and feel
+    UIManager.setLookAndFeel(laf);
   }
 
   public static void shutdownLogger() {
