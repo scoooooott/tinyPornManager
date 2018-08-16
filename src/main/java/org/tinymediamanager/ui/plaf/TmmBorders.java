@@ -60,6 +60,12 @@ public class TmmBorders extends BaseBorders {
   protected static Border titledBorder   = null;
   protected static Border treeNodeBorder = null;
 
+  public static void initDefaults() {
+    BaseBorders.initDefaults();
+    titledBorder = null;
+    treeNodeBorder = null;
+  }
+
   // ------------------------------------------------------------------------------------
   // Lazy access methods
   // ------------------------------------------------------------------------------------
@@ -529,16 +535,16 @@ public class TmmBorders extends BaseBorders {
 
   public static class BottomBorderBorder extends AbstractBorder implements UIResource {
     private static final long  serialVersionUID = -1431631265848685069L;
-    public static final Color  COLOR            = AbstractLookAndFeel.getTheme().getGridColors()[0];
-    private static final Color COLOR2           = AbstractLookAndFeel.getTheme().getGridColors()[1];
+    private final Color       color1           = AbstractLookAndFeel.getTheme().getGridColors()[0];
+    private final Color       color2           = AbstractLookAndFeel.getTheme().getGridColors()[1];
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
       Graphics2D g2d = (Graphics2D) g;
 
-      g.setColor(COLOR);
+      g.setColor(color1);
       g.drawLine(g.getClipBounds().x, height - 2, g.getClipBounds().width, height - 2);
-      g.setColor(COLOR2);
+      g.setColor(color2);
 
       Composite savedComposite = g2d.getComposite();
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
