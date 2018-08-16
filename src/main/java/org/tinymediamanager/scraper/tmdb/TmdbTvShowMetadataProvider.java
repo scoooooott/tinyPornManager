@@ -298,7 +298,6 @@ class TmdbTvShowMetadataProvider {
 
     md.setReleaseDate(complete.first_air_date);
     md.setPlot(complete.overview);
-    List<String> countries = new ArrayList<>();
     for (String country : ListUtils.nullSafe(complete.origin_country)) {
       if (providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
         md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage(), country));
@@ -307,7 +306,6 @@ class TmdbTvShowMetadataProvider {
         md.addCountry(country);
       }
     }
-    md.setCountries(countries);
 
     if (complete.episode_run_time != null && !complete.episode_run_time.isEmpty()) {
       md.setRuntime(complete.episode_run_time.get(0));
