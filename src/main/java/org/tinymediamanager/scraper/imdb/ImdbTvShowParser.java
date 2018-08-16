@@ -129,9 +129,9 @@ public class ImdbTvShowParser extends ImdbParser {
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
 
     // worker for tmdb request
-    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
     Future<MediaMetadata> futureTmdb = null;
     if (isUseTmdbForTvShows()) {
+      ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
       Callable<MediaMetadata> worker2 = new TmdbTvShowWorker(imdbId, options.getLanguage(), options.getCountry());
       futureTmdb = compSvcTmdb.submit(worker2);
     }

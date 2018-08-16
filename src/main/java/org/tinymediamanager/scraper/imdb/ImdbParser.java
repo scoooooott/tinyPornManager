@@ -145,7 +145,7 @@ public abstract class ImdbParser {
       return result;
     }
 
-    // parse out language and coutry from the scraper query
+    // parse out language and country from the scraper query
     String language = query.getLanguage().getLanguage();
     int myear = query.getYear();
     String country = query.getCountry().getAlpha2(); // for passing the country to the scrape
