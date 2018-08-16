@@ -756,7 +756,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     setSpokenLanguages(StringUtils.join(metadata.getSpokenLanguages(), ", "));
-    setCountry(StringUtils.join(metadata.getCountries(), ", "));
 
     // certifications
     if (config.isCertification()) {
@@ -768,6 +767,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // cast
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+      setCountry(StringUtils.join(metadata.getCountries(), ", "));
       List<Person> actors = new ArrayList<>();
       List<Person> producers = new ArrayList<>();
       List<Person> directors = new ArrayList<>();

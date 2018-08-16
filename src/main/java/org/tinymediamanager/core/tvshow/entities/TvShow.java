@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.ADDED_SEASON;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
 import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
@@ -135,6 +136,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private String                             sortTitle             = "";
   @JsonProperty
   private Certification                      certification         = Certification.UNKNOWN;
+  @JsonProperty
+  private String                             country               = "";
 
   @JsonProperty
   private List<MediaGenres>                  genres                = new CopyOnWriteArrayList<>();
@@ -292,6 +295,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
     setStatus(status == MediaAiredStatus.UNKNOWN || force ? other.status : status);
     setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
+    setCountry(StringUtils.isEmpty(country) || force ? other.country : country);
 
     // when force is set, clear the lists/maps and add all other values
     if (force) {
@@ -786,7 +790,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // populate ids
     for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
-      setId((String) entry.getKey(), entry.getValue().toString());
+      setId(entry.getKey(), entry.getValue().toString());
     }
 
     if (config.isTitle()) {
@@ -823,6 +827,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+      setCountry(StringUtils.join(metadata.getCountries(), ", "));
       List<Person> actors = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -1353,6 +1358,27 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void setCertification(Certification newValue) {
     this.certification = newValue;
     firePropertyChange(CERTIFICATION, null, newValue);
+  }
+
+  /**
+   * get the country
+   * 
+   * @return the countries in which this TV show has been produced
+   */
+  public String getCountry() {
+    return country;
+  }
+
+  /**
+   * set the country
+   * 
+   * @param newValue
+   *          the country in which this TV show has been produced
+   */
+  public void setCountry(String newValue) {
+    String oldValue = this.country;
+    this.country = newValue;
+    firePropertyChange(COUNTRY, oldValue, newValue);
   }
 
   /**

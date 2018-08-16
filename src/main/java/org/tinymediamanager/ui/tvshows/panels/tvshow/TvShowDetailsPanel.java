@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
-import java.awt.Font;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,6 +67,8 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblYear;
   private JLabel                      lblTags;
   private LinkLabel                   lblTraktTvId;
+  private JLabel                      lblCountryT;
+  private JLabel                      lblCountry;
 
   /**
    * Instantiates a new tv show details panel.
@@ -136,10 +137,9 @@ public class TvShowDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
       JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
-      setBoldLabel(lblPremieredT);
       add(lblPremieredT, "cell 0 0");
 
       lblPremiered = new JLabel("");
@@ -147,88 +147,81 @@ public class TvShowDetailsPanel extends JPanel {
     }
     {
       JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-      setBoldLabel(lblYearT);
       add(lblYearT, "cell 2 0");
 
       lblYear = new JLabel("");
       add(lblYear, "cell 3 0");
     }
     {
-      JLabel lblStatusT = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
-      setBoldLabel(lblStatusT);
-      add(lblStatusT, "cell 0 1");
+      JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+      add(lblCertificationT, "cell 0 1");
 
-      lblStatus = new JLabel("");
-      add(lblStatus, "cell 1 1");
+      lblCertification = new JLabel("");
+      add(lblCertification, "cell 1 1");
     }
     {
       JLabel lblImdbIdT = new TmmLabel("IMDB Id");
-      setBoldLabel(lblImdbIdT);
       add(lblImdbIdT, "cell 2 1");
 
       lblImdbId = new LinkLabel("");
       add(lblImdbId, "cell 3 1");
     }
     {
-      JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-      setBoldLabel(lblStudioT);
-      add(lblStudioT, "cell 0 2");
+      JLabel lblStatusT = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
+      add(lblStatusT, "cell 0 2");
 
-      lblStudio = new JLabel("");
-      add(lblStudio, "cell 1 2, wmin 0");
+      lblStatus = new JLabel("");
+      add(lblStatus, "cell 1 2");
     }
     {
       JLabel lblThetvdbIdT = new TmmLabel("TheTVDB Id");
-      setBoldLabel(lblThetvdbIdT);
       add(lblThetvdbIdT, "cell 2 2");
 
       lblThetvdbId = new LinkLabel("");
       add(lblThetvdbId, "cell 3 2");
     }
     {
-      JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-      setBoldLabel(lblCertificationT);
-      add(lblCertificationT, "cell 0 3");
+      JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+      add(lblStudioT, "cell 0 3");
 
-      lblCertification = new JLabel("");
-      add(lblCertification, "cell 1 3");
+      lblStudio = new JLabel("");
+      add(lblStudio, "cell 1 3,wmin 0");
     }
     {
       JLabel lblTrakttvIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
-      setBoldLabel(lblTrakttvIdT);
       add(lblTrakttvIdT, "cell 2 3");
 
       lblTraktTvId = new LinkLabel("");
       add(lblTraktTvId, "cell 3 3");
     }
     {
+      lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+      add(lblCountryT, "cell 0 4");
+
+      lblCountry = new JLabel("");
+      add(lblCountry, "cell 1 4 3 1,wmin 0");
+    }
+    {
       JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-      setBoldLabel(lblGenresT);
-      add(lblGenresT, "cell 0 4");
+      add(lblGenresT, "cell 0 5");
 
       lblGenres = new JLabel("");
-      add(lblGenres, "cell 1 4 3 1,growx,wmin 0");
+      add(lblGenres, "cell 1 5 3 1,growx,wmin 0");
     }
     {
       JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      setBoldLabel(lblTagsT);
-      add(lblTagsT, "cell 0 5");
+      add(lblTagsT, "cell 0 6");
 
       lblTags = new JLabel("");
-      add(lblTags, "cell 1 5 3 1,growx,wmin 0");
+      add(lblTags, "cell 1 6 3 1,growx,wmin 0");
     }
     {
       JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      setBoldLabel(lblPathT);
-      add(lblPathT, "cell 0 6");
+      add(lblPathT, "cell 0 7");
 
       lblPath = new LinkLabel("");
-      add(lblPath, "cell 1 6 3 1, growx, wmin 0");
+      add(lblPath, "cell 1 7 3 1,growx,wmin 0");
     }
-  }
-
-  private void setBoldLabel(JLabel label) {
-    label.setFont(label.getFont().deriveFont(Font.BOLD));
   }
 
   protected void initDataBindings() {
@@ -289,5 +282,10 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_10, lblTraktTvId, linkLabelBeanProperty);
     autoBinding_10.setConverter(new ZeroIdConverter());
     autoBinding_10.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_11 = BeanProperty.create("selectedTvShow.country");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_11, lblCountry, jLabelBeanProperty);
+    autoBinding_11.bind();
   }
 }
