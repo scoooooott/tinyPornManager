@@ -274,13 +274,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         splitPane.setLeftComponent(panelSearchResults);
         panelSearchResults.setLayout(new MigLayout("insets 0", "[200lp:300lp,grow]", "[150lp:300lp,grow]"));
         {
-          {
-            JScrollPane scrollPane = new JScrollPane();
-            panelSearchResults.add(scrollPane, "cell 0 0,grow");
-            tableSearchResults = new TmmTable(searchResultTableModel);
-            tableSearchResults.configureScrollPane(scrollPane);
-            scrollPane.setViewportView(tableSearchResults);
-          }
+          JScrollPane scrollPane = new JScrollPane();
+          panelSearchResults.add(scrollPane, "cell 0 0,grow");
+          tableSearchResults = new TmmTable(searchResultTableModel);
+          tableSearchResults.configureScrollPane(scrollPane);
+          scrollPane.setViewportView(tableSearchResults);
         }
       }
       {
@@ -294,7 +292,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         }
         {
           lblOriginalTitle = new JLabel("");
-          panelSearchDetail.add(lblOriginalTitle, "cell 1 1");
+          panelSearchDetail.add(lblOriginalTitle, "cell 1 1,wmin 0");
         }
         {
           lblTagline = new JLabel("");
@@ -383,19 +381,20 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     // install and save the comparator on the Table
     TableComparatorChooser.install(tableSearchResults, searchResultEventList, TableComparatorChooser.SINGLE_COLUMN);
 
+    // double click to take the result
     tableSearchResults.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1 && okButton.isEnabled()) {
           actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
         }
       }
     });
 
-    // add a change listener for the cast members
+    // add a change listener for the async loaded meta data
     PropertyChangeListener listener = evt -> {
       String property = evt.getPropertyName();
-      if ("castMembers".equals(property)) {
+      if ("scraped".equals(property)) {
         castMemberEventList.clear();
         int row = tableSearchResults.convertRowIndexToModel(tableSearchResults.getSelectedRow());
         if (row > -1) {
@@ -419,17 +418,18 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       int index = tableSearchResults.convertRowIndexToModel(tableSearchResults.getSelectedRow());
       castMemberEventList.clear();
       if (selectedResult != null) {
-        removePropertyChangeListener(listener);
+        selectedResult.removePropertyChangeListener(listener);
       }
       if (index > -1) {
         MovieChooserModel model = searchResultEventList.get(index);
-        selectedResult = model;
         castMemberEventList.addAll(model.getCastMembers());
         lblMoviePoster.setImageUrl(model.getPosterUrl());
         lblTitle.setText(model.getCombinedName());
         lblOriginalTitle.setText(model.getOriginalTitle());
         lblTagline.setText(model.getTagline());
         taMovieDescription.setText(model.getOverview());
+
+        selectedResult = model;
         selectedResult.addPropertyChangeListener(listener);
       }
       else {
@@ -457,14 +457,10 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       movieToScrape = movie;
       progressBar.setVisible(false);
 
-      // adjust column name
-      tableSearchResults.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
       textFieldSearchString.setText(movieToScrape.getTitle());
-      searchMovie(textFieldSearchString.getText(), movieToScrape);
-
       lblPath.setText(movieToScrape.getPathNIO().resolve(movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()).toString());
+      searchMovie(textFieldSearchString.getText(), movieToScrape);
     }
-
   }
 
   @Override
@@ -696,8 +692,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private class SearchTask extends SwingWorker<Void, Void> {
     private String                  searchTerm;
     private Movie                   movie;
-    private List<MediaSearchResult> searchResult;
     private MediaLanguages          language;
+
+    private List<MediaSearchResult> searchResult;
     boolean                         cancel = false;
 
     private SearchTask(String searchTerm, Movie movie) {
@@ -788,7 +785,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       /*
        * year
        */
-      col = new Column(BUNDLE.getString("metatag.year"), "year", MovieChooserModel::getYear, MovieChooserModel.class);
+      col = new Column(BUNDLE.getString("metatag.year"), "year", MovieChooserModel::getYear, String.class);
       col.setColumnComparator(stringComparator);
       col.setColumnResizeable(false);
       col.setMinWidth((int) (fontMetrics.stringWidth("2000") * 1.2f));

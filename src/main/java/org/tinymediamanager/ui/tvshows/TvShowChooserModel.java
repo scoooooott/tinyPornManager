@@ -48,6 +48,7 @@ import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -64,56 +65,73 @@ public class TvShowChooserModel extends AbstractModelObject {
   private MediaLanguages                 language        = null;
   private MediaSearchResult              result          = null;
   private MediaMetadata                  metadata        = null;
-  private String                         name            = "";
+
+  private float                          score           = 0;
+  private String                         title           = "";
+  private String                         originalTitle   = "";
   private String                         overview        = "";
   private String                         year            = "";
   private String                         combinedName    = "";
   private String                         posterUrl       = "";
-  private String                         tagline         = "";
   private boolean                        scraped         = false;
 
   public TvShowChooserModel(MediaScraper mediaScraper, List<MediaScraper> artworkScrapers, MediaSearchResult result, MediaLanguages language) {
     this.mediaScraper = mediaScraper;
     this.artworkScrapers = artworkScrapers;
-    // this.trailerProviders = trailerProviders;
     this.result = result;
     this.language = language;
 
-    // name
-    setName(result.getTitle());
-    // year
+    setTitle(result.getTitle());
+    setOriginalTitle(result.getOriginalTitle());
+
     if (result.getYear() != 0) {
       setYear(Integer.toString(result.getYear()));
     }
     else {
       setYear("");
     }
-    // combined name (name (year))
+    // combined title (title (year))
     setCombinedName();
+
+    score = result.getScore();
   }
 
   /**
    * create the empty search result.
    */
   private TvShowChooserModel() {
-    setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
-    combinedName = name;
+    setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    combinedName = title;
   }
 
-  public void setName(String name) {
-    String oldValue = this.name;
-    this.name = name;
-    firePropertyChange("name", oldValue, name);
+  public float getScore() {
+    return score;
+  }
+
+  public void setTitle(String title) {
+    String oldValue = this.title;
+    this.title = StrgUtils.getNonNullString(title);
+    firePropertyChange("title", oldValue, this.title);
+  }
+
+  public void setOriginalTitle(String originalTitle) {
+    String oldValue = this.originalTitle;
+    this.originalTitle = StrgUtils.getNonNullString(originalTitle);
+    firePropertyChange("originalTitle", oldValue, this.originalTitle);
   }
 
   public void setOverview(String overview) {
     String oldValue = this.overview;
-    this.overview = overview;
-    firePropertyChange("overview", oldValue, overview);
+    this.overview = StrgUtils.getNonNullString(overview);
+    firePropertyChange("overview", oldValue, this.overview);
   }
 
-  public String getName() {
-    return name;
+  public String getTitle() {
+    return title;
+  }
+
+  public String getOriginalTitle() {
+    return originalTitle;
   }
 
   public String getOverview() {
@@ -126,7 +144,7 @@ public class TvShowChooserModel extends AbstractModelObject {
 
   public void setPosterUrl(String newValue) {
     String oldValue = posterUrl;
-    posterUrl = newValue;
+    posterUrl = StrgUtils.getNonNullString(newValue);
     firePropertyChange("posterUrl", oldValue, newValue);
   }
 
@@ -137,17 +155,17 @@ public class TvShowChooserModel extends AbstractModelObject {
   public void setYear(String year) {
     String oldValue = this.year;
     this.year = year;
-    firePropertyChange("year", oldValue, year);
+    firePropertyChange("year", oldValue, this.year);
   }
 
   public void setCombinedName() {
     String oldValue = this.combinedName;
 
     if (StringUtils.isNotBlank(getYear())) {
-      this.combinedName = getName() + " (" + getYear() + ")";
+      this.combinedName = getTitle() + " (" + getYear() + ")";
     }
     else {
-      this.combinedName = getName();
+      this.combinedName = getTitle();
     }
     firePropertyChange("combinedName", oldValue, this.combinedName);
   }
@@ -174,13 +192,12 @@ public class TvShowChooserModel extends AbstractModelObject {
       LOGGER.info("=====================================================");
       metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getPlot());
-      setTagline(metadata.getTagline());
 
       if (StringUtils.isBlank(posterUrl) && !metadata.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
         setPosterUrl(metadata.getMediaArt(MediaArtworkType.POSTER).get(0).getPreviewUrl());
       }
 
-      scraped = true;
+      setScraped(true);
 
     }
     catch (ScrapeException e) {
@@ -242,18 +259,14 @@ public class TvShowChooserModel extends AbstractModelObject {
     return metadata;
   }
 
+  private void setScraped(boolean newvalue) {
+    boolean oldValue = scraped;
+    scraped = newvalue;
+    firePropertyChange("scraped", oldValue, newvalue);
+  }
+
   public boolean isScraped() {
     return scraped;
-  }
-
-  public void setTagline(String newValue) {
-    String oldValue = this.tagline;
-    this.tagline = newValue;
-    firePropertyChange("tagline", oldValue, newValue);
-  }
-
-  public String getTagline() {
-    return tagline;
   }
 
   public MediaLanguages getLanguage() {

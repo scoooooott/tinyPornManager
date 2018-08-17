@@ -117,19 +117,19 @@ public class MovieChooserModel extends AbstractModelObject {
   public void setTitle(String title) {
     String oldValue = this.title;
     this.title = StrgUtils.getNonNullString(title);
-    firePropertyChange("title", oldValue, title);
+    firePropertyChange("title", oldValue, this.title);
   }
 
   public void setOriginalTitle(String originalTitle) {
     String oldValue = this.originalTitle;
     this.originalTitle = StrgUtils.getNonNullString(originalTitle);
-    firePropertyChange("originalTitle", oldValue, overview);
+    firePropertyChange("originalTitle", oldValue, this.originalTitle);
   }
 
   public void setOverview(String overview) {
     String oldValue = this.overview;
     this.overview = StrgUtils.getNonNullString(overview);
-    firePropertyChange("overview", oldValue, overview);
+    firePropertyChange("overview", oldValue, this.overview);
   }
 
   public void setCastMembers(List<Person> castMembers) {
@@ -176,7 +176,7 @@ public class MovieChooserModel extends AbstractModelObject {
   public void setYear(String year) {
     String oldValue = this.year;
     this.year = year;
-    firePropertyChange("year", oldValue, year);
+    firePropertyChange("year", oldValue, this.year);
   }
 
   public void setCombinedName() {
@@ -263,7 +263,7 @@ public class MovieChooserModel extends AbstractModelObject {
         setPosterUrl(metadata.getMediaArt(MediaArtworkType.POSTER).get(0).getPreviewUrl());
       }
 
-      scraped = true;
+      setScraped(true);
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
@@ -296,6 +296,12 @@ public class MovieChooserModel extends AbstractModelObject {
 
   public boolean isScraped() {
     return scraped;
+  }
+
+  private void setScraped(boolean newvalue) {
+    boolean oldValue = scraped;
+    scraped = newvalue;
+    firePropertyChange("scraped", oldValue, newvalue);
   }
 
   public void setTagline(String newValue) {
