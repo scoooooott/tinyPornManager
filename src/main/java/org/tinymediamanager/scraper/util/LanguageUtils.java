@@ -108,6 +108,12 @@ public class LanguageUtils {
       langArray.putIfAbsent(langu, base);
     }
 
+    // also sort in all languge tags from available locales
+    for (Locale locale : Locale.getAvailableLocales()) {
+      Locale base = new Locale(locale.getLanguage());
+      langArray.putIfAbsent(locale.toLanguageTag(), base);
+    }
+
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
     Collections.sort(keys, (s1, s2) -> s2.length() - s1.length());
