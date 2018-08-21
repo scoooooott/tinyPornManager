@@ -227,7 +227,6 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     searchAction = createAndRegisterAction(TvShowSingleScrapeAction.class);
     editAction = createAndRegisterAction(TvShowEditAction.class);
     updateAction = createAndRegisterAction(TvShowUpdateDatasourcesAction.class);
-    exportAction = createAndRegisterAction(TvShowExportAction.class);
     renameAction = createAndRegisterAction(TvShowRenameAction.class);
   }
 
@@ -333,6 +332,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowReadEpisodeNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowChangeToDvdOrderAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowChangeToAiredOrderAction.class));
+    editPopupMenu.addSeparator();
+    editPopupMenu.add(createAndRegisterAction(TvShowExportAction.class));
   }
 
   /**

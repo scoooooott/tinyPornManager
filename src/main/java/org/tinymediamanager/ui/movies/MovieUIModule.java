@@ -197,7 +197,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
     searchAction = createAndRegisterAction(MovieSingleScrapeAction.class);
     editAction = createAndRegisterAction(MovieEditAction.class);
     updateAction = createAndRegisterAction(MovieUpdateDatasourceAction.class);
-    exportAction = createAndRegisterAction(MovieExportAction.class);
     renameAction = createAndRegisterAction(MovieRenameAction.class);
   }
 
@@ -291,6 +290,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncSelectedTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
+    editPopupMenu.addSeparator();
+    editPopupMenu.add(createAndRegisterAction(MovieExportAction.class));
 
     // rename popup menu
     renamePopupMenu = new JPopupMenu();
@@ -356,11 +357,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
   @Override
   public JPopupMenu getRenameMenu() {
     return renamePopupMenu;
-  }
-
-  @Override
-  public Action getExportAction() {
-    return exportAction;
   }
 
   @Override

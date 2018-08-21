@@ -40,7 +40,6 @@ public abstract class AbstractTmmUIModule implements ITmmUIModule {
   protected Action                      searchAction = null;
   protected Action                      editAction   = null;
   protected Action                      updateAction = null;
-  protected Action                      exportAction = null;
   protected Action                      renameAction = null;
 
   protected JPopupMenu                  popupMenu;
@@ -139,11 +138,6 @@ public abstract class AbstractTmmUIModule implements ITmmUIModule {
   @Override
   public JPopupMenu getRenameMenu() {
     return renamePopupMenu;
-  }
-
-  @Override
-  public Action getExportAction() {
-    return exportAction;
   }
 
   @Override

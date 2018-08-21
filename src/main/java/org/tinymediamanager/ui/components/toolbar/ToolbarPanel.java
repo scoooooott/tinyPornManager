@@ -101,7 +101,6 @@ public class ToolbarPanel extends JPanel {
   private ToolbarButton               btnEdit;
   private ToolbarButton               btnUpdate;
   private ToolbarButton               btnRename;
-  private JButton                     btnExport;
 
   private ToolbarMenu                 menuUpdate;
   private ToolbarMenu                 menuSearch;
@@ -117,78 +116,68 @@ public class ToolbarPanel extends JPanel {
     JPanel panelCenter = new JPanel();
     add(panelCenter, BorderLayout.CENTER);
     panelCenter.setOpaque(false);
-    panelCenter.setLayout(new MigLayout("insets 0", "20lp[]20lp[]20lp[]20lp[]20lp[][grow][]15lp[]15lp[]15lp[]15lp[]15lp[]10lp", "[]1lp[]5lp"));
+    panelCenter.setLayout(new MigLayout("insets 0", "[5lp:n][]20lp[]20lp[]20lp[]20lp[][grow][]15lp[]15lp[]15lp[]15lp[][5lp:n]", "[]1lp[]"));
 
-    panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "cell 0 0 1 2,alignx center");
+    panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "cell 1 0 1 2,alignx center");
 
     btnUpdate = new ToolbarButton(IconManager.TOOLBAR_REFRESH, IconManager.TOOLBAR_REFRESH_HOVER);
-    panelCenter.add(btnUpdate, "cell 1 0, center");
+    panelCenter.add(btnUpdate, "cell 2 0,alignx center");
 
     btnSearch = new ToolbarButton(IconManager.TOOLBAR_SEARCH, IconManager.TOOLBAR_SEARCH_HOVER);
-    panelCenter.add(btnSearch, "cell 2 0, center");
+    panelCenter.add(btnSearch, "cell 3 0,alignx center");
 
     btnEdit = new ToolbarButton(IconManager.TOOLBAR_EDIT, IconManager.TOOLBAR_EDIT_HOVER);
-    panelCenter.add(btnEdit, "cell 3 0, center");
+    panelCenter.add(btnEdit, "cell 4 0,alignx center");
 
     btnRename = new ToolbarButton(IconManager.TOOLBAR_RENAME, IconManager.TOOLBAR_RENAME_HOVER);
-    panelCenter.add(btnRename, "cell 4 0, center");
+    panelCenter.add(btnRename, "cell 5 0,alignx center");
 
     JButton btnTasks = createTaskButton();
-    panelCenter.add(btnTasks, "cell 6 0, alignx center, aligny bottom");
+    panelCenter.add(btnTasks, "cell 7 0,alignx center,aligny bottom");
 
     JButton btnSettings = new ToolbarButton(IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
     Action settingsAction = new SettingsAction();
     btnSettings.setAction(settingsAction);
-    panelCenter.add(btnSettings, "cell 7 0, alignx center, aligny bottom");
+    panelCenter.add(btnSettings, "cell 8 0,alignx center,aligny bottom");
 
     JPopupMenu toolsPopupMenu = buildToolsMenu();
     JButton btnTools = new ToolbarButton(IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER, toolsPopupMenu);
-    panelCenter.add(btnTools, "cell 8 0, alignx center, aligny bottom");
-
-    btnExport = new ToolbarButton(IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
-    panelCenter.add(btnExport, "cell 9 0, alignx center, aligny bottom");
+    panelCenter.add(btnTools, "cell 9 0,alignx center,aligny bottom");
 
     JPopupMenu infoPopupMenu = buildInfoMenu();
     JButton btnInfo = new ToolbarButton(IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER, infoPopupMenu);
-    panelCenter.add(btnInfo, "cell 10 0, alignx center, aligny bottom");
+    panelCenter.add(btnInfo, "cell 10 0,alignx center,aligny bottom");
 
     JButton btnDonate = new ToolbarButton(IconManager.TOOLBAR_DONATE, IconManager.TOOLBAR_DONATE_HOVER);
     btnDonate.setAction(new DonateAction());
-    panelCenter.add(btnDonate, "cell 11 0, alignx center, aligny bottom");
+    panelCenter.add(btnDonate, "cell 11 0,alignx center,aligny bottom");
 
     menuUpdate = new ToolbarMenu(BUNDLE.getString("Toolbar.update"));
-    panelCenter.add(menuUpdate, "cell 1 1, center");
+    panelCenter.add(menuUpdate, "cell 2 1,alignx center");
 
     menuSearch = new ToolbarMenu(BUNDLE.getString("Toolbar.search"));
-    panelCenter.add(menuSearch, "cell 2 1, center");
+    panelCenter.add(menuSearch, "cell 3 1,alignx center");
 
     menuEdit = new ToolbarMenu(BUNDLE.getString("Toolbar.edit"));
-    panelCenter.add(menuEdit, "cell 3 1, center");
+    panelCenter.add(menuEdit, "cell 4 1,alignx center");
 
     menuRename = new ToolbarMenu(BUNDLE.getString("Toolbar.rename"));
-    panelCenter.add(menuRename, "cell 4 1, center");
+    panelCenter.add(menuRename, "cell 5 1,alignx center");
 
     JLabel lblTaskList = new ToolbarLabel(BUNDLE.getString("Toolbar.progress"), e -> TaskListDialog.getInstance().setVisible(true));
-    panelCenter.add(lblTaskList, "cell 6 1, center");
+    panelCenter.add(lblTaskList, "cell 7 1,alignx center");
 
     JLabel lblSettings = new ToolbarLabel(BUNDLE.getString("Toolbar.settings"), settingsAction);
-    panelCenter.add(lblSettings, "cell 7 1, center");
+    panelCenter.add(lblSettings, "cell 8 1,alignx center");
 
     ToolbarMenu lblTools = new ToolbarMenu(BUNDLE.getString("Toolbar.tools"), toolsPopupMenu);
-    panelCenter.add(lblTools, "cell 8 1, center");
-
-    JLabel lblExport = new ToolbarLabel(BUNDLE.getString("Toolbar.export"), e -> {
-      if (btnExport.getAction() != null) {
-        btnExport.getAction().actionPerformed(e);
-      }
-    });
-    panelCenter.add(lblExport, "cell 9 1, center");
+    panelCenter.add(lblTools, "cell 9 1,alignx center");
 
     ToolbarMenu menuHelp = new ToolbarMenu(BUNDLE.getString("Toolbar.help"), infoPopupMenu);
-    panelCenter.add(menuHelp, "cell 10 1, center");
+    panelCenter.add(menuHelp, "cell 10 1,alignx center");
 
     JLabel lblDonate = new ToolbarLabel(BUNDLE.getString("Toolbar.donate"), e -> btnDonate.getAction().actionPerformed(e));
-    panelCenter.add(lblDonate, "cell 11 1, center");
+    panelCenter.add(lblDonate, "cell 11 1,alignx center");
 
     panelEast = new JPanel();
     add(panelEast, BorderLayout.EAST);
@@ -213,8 +202,6 @@ public class ToolbarPanel extends JPanel {
 
     btnRename.setAction(module.getRenameAction());
     menuRename.setPopupMenu(module.getRenameMenu());
-
-    btnExport.setAction(module.getExportAction());
   }
 
   private JButton createTaskButton() {
@@ -252,7 +239,7 @@ public class ToolbarPanel extends JPanel {
           iconSpinner.start();
           iconSpinner.setCustomColors(new Color(255, 161, 0), new Color(255, 122, 0));
         }
-        else if (activeHandles.isEmpty()) {
+        else {
           // no -> change the icon to the idle icon
           iconSpinner.stop();
           iconSpinner.resetCustomColor();

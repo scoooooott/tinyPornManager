@@ -128,13 +128,6 @@ public interface ITmmUIModule {
   JPopupMenu getRenameMenu();
 
   /**
-   * get the export action (which will be triggered when pressing the export button in the toolbar)
-   * 
-   * @return the export action
-   */
-  Action getExportAction();
-
-  /**
    * get the settings node for the settings dialog
    * 
    * @return the settings node
