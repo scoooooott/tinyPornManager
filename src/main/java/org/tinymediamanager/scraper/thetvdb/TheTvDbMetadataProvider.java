@@ -169,7 +169,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
       fallbackLanguages.add(mediaLanguages.toString());
     }
-    providerInfo.getConfig().addBoolean("titleFallback", false);
     providerInfo.getConfig().addSelect("fallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
     providerInfo.getConfig().load();
 
@@ -241,19 +240,17 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // second with the fallback language
-    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
-      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
-      if (!fallbackLanguage.equals(language)) {
-        try {
-          Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, fallbackLanguage).execute();
-          if (!httpResponse.isSuccessful()) {
-            throw new HttpException(httpResponse.message(), httpResponse.code());
-          }
-          series.addAll(httpResponse.body().data);
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
+    if (!fallbackLanguage.equals(language)) {
+      try {
+        Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, fallbackLanguage).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
         }
-        catch (Exception e) {
-          LOGGER.error("problem getting data vom tvdb with fallback langauge: " + e.getMessage());
-        }
+        series.addAll(httpResponse.body().data);
+      }
+      catch (Exception e) {
+        LOGGER.error("problem getting data vom tvdb with fallback langauge: " + e.getMessage());
       }
     }
 
@@ -365,24 +362,22 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // if there is no localized content and we have a fallback language, rescrape in the fallback language
-    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
-      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
-      if (StringUtils.isAnyBlank(show.seriesName, show.overview) && !fallbackLanguage.equals(options.getLanguage().getLanguage())) {
-        try {
-          Response<SeriesResponse> httpResponse = tvdb.series().series(id, fallbackLanguage).execute();
-          if (httpResponse.isSuccessful()) {
-            Series fallBackShow = httpResponse.body().data;
-            if (StringUtils.isBlank(show.seriesName) && StringUtils.isNotBlank(fallBackShow.seriesName)) {
-              show.seriesName = fallBackShow.seriesName;
-            }
-            if (StringUtils.isBlank(show.overview) && StringUtils.isNotBlank(fallBackShow.overview)) {
-              show.overview = fallBackShow.overview;
-            }
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
+    if (StringUtils.isAnyBlank(show.seriesName, show.overview) && !fallbackLanguage.equals(options.getLanguage().getLanguage())) {
+      try {
+        Response<SeriesResponse> httpResponse = tvdb.series().series(id, fallbackLanguage).execute();
+        if (httpResponse.isSuccessful()) {
+          Series fallBackShow = httpResponse.body().data;
+          if (StringUtils.isBlank(show.seriesName) && StringUtils.isNotBlank(fallBackShow.seriesName)) {
+            show.seriesName = fallBackShow.seriesName;
+          }
+          if (StringUtils.isBlank(show.overview) && StringUtils.isNotBlank(fallBackShow.overview)) {
+            show.overview = fallBackShow.overview;
           }
         }
-        catch (Exception e) {
-          LOGGER.error("failed to get meta data: " + e.getMessage());
-        }
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get meta data: " + e.getMessage());
       }
     }
 
