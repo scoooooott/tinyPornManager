@@ -41,6 +41,7 @@ import com.uwetrottmann.tmdb2.entities.BaseCollection;
 import com.uwetrottmann.tmdb2.entities.BaseMovie;
 import com.uwetrottmann.tmdb2.entities.Collection;
 import com.uwetrottmann.tmdb2.entities.CollectionResultsPage;
+import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
 
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
@@ -237,6 +238,9 @@ class TmdbMovieSetMetadataProvider {
             }
           }
         }
+      }
+      catch (TmdbNotFoundException e) {
+        LOGGER.info("nothing found");
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());

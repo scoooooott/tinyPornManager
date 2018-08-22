@@ -64,6 +64,7 @@ import com.uwetrottmann.tmdb2.entities.TvShow;
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
+import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
 
 class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
@@ -275,6 +276,9 @@ class TmdbTvShowMetadataProvider {
             .tv(tmdbId, language,
                 new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS, AppendToResponseItem.CONTENT_RATINGS))
             .execute().body();
+      }
+      catch (TmdbNotFoundException e) {
+        LOGGER.info("nothing found");
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());
@@ -495,6 +499,9 @@ class TmdbTvShowMetadataProvider {
         }
 
         verifyTvEpisodeTitleLanguage(episode, options);
+      }
+      catch (TmdbNotFoundException e) {
+        LOGGER.info("nothing found");
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());

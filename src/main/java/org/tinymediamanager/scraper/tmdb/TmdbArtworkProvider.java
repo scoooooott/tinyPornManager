@@ -34,6 +34,7 @@ import org.tinymediamanager.scraper.util.ListUtils;
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
+import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
 
 /**
  * The class TmdbArtworkProvider. For managing all artwork provided tasks with tmdb
@@ -99,6 +100,9 @@ class TmdbArtworkProvider {
             }
             break;
         }
+      }
+      catch (TmdbNotFoundException e) {
+        LOGGER.info("nothing found");
       }
       catch (Exception e) {
         LOGGER.error("could not get data: " + e.getMessage());

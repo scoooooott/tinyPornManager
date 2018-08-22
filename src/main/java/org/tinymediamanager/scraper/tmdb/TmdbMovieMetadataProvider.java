@@ -62,6 +62,7 @@ import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
 import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
+import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
 
 /**
  * The class {@link TmdbMovieMetadataProvider} is used to provide metadata for movies from tmdb
@@ -444,6 +445,9 @@ class TmdbMovieMetadataProvider {
                 .execute().body();
           }
         }
+        catch (TmdbNotFoundException e) {
+          LOGGER.info("nothing found");
+        }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
           savedException = e;
@@ -453,6 +457,9 @@ class TmdbMovieMetadataProvider {
         try {
           movie = api.moviesService()
               .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
+        }
+        catch (TmdbNotFoundException e) {
+          LOGGER.info("nothing found");
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
