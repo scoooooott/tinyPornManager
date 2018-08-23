@@ -38,7 +38,7 @@ public class EnhancedTextField extends JTextField implements FocusListener {
   private static final long           serialVersionUID = 5397356153111919435L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JLabel                      lblIcon;
+  protected JLabel                    lblIcon;
   private String                      textWhenNotFocused;
   private Insets                      dummyInsets;
 

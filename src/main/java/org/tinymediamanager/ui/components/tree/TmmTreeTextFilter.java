@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.ui.components.tree;
 
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -43,6 +46,16 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
 
   public TmmTreeTextFilter() {
     super(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
+    lblIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblIcon.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (StringUtils.isNotBlank(getText())) {
+          setText("");
+        }
+      }
+    });
+
     initDocumentListener();
   }
 
@@ -50,17 +63,29 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
     getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(final DocumentEvent e) {
+        changeIcon();
         updateFilter();
       }
 
       @Override
       public void removeUpdate(final DocumentEvent e) {
+        changeIcon();
         updateFilter();
       }
 
       @Override
       public void changedUpdate(final DocumentEvent e) {
+        changeIcon();
         updateFilter();
+      }
+
+      private void changeIcon() {
+        if (StringUtils.isBlank(getText())) {
+          lblIcon.setIcon(IconManager.SEARCH_GREY);
+        }
+        else {
+          lblIcon.setIcon(IconManager.CLEAR_GREY);
+        }
       }
 
       private void updateFilter() {
