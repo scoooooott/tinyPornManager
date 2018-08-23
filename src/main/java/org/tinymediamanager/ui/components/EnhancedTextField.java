@@ -1,6 +1,8 @@
 package org.tinymediamanager.ui.components;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,12 +10,17 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.IconManager;
@@ -31,7 +38,7 @@ public class EnhancedTextField extends JTextField implements FocusListener {
   private static final long           serialVersionUID = 5397356153111919435L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Icon                        icon;
+  private JLabel                      lblIcon;
   private String                      textWhenNotFocused;
   private Insets                      dummyInsets;
 
@@ -74,10 +81,9 @@ public class EnhancedTextField extends JTextField implements FocusListener {
     super();
 
     if (icon != null) {
-      this.icon = icon;
-    }
-    else {
-      this.icon = IconManager.EMPTY_IMAGE;
+      setLayout(new BorderLayout());
+      lblIcon = new JLabel(icon);
+      add(lblIcon, BorderLayout.EAST);
     }
 
     if (textWhenNotFocused != null) {
@@ -101,15 +107,6 @@ public class EnhancedTextField extends JTextField implements FocusListener {
     super.paintComponent(g);
 
     int textX = 2;
-
-    if (this.icon != null) {
-      int iconWidth = icon.getIconWidth();
-      int iconHeight = icon.getIconHeight();
-      int x = this.getWidth() - dummyInsets.right - iconWidth - 5;// this is our icon's x
-      textX = x + iconWidth + 2; // this is the x where text should start
-      int y = (this.getHeight() - iconHeight) / 2;
-      icon.paintIcon(this, g, x, y);
-    }
 
     setMargin(new Insets(2, textX, 2, 2));
 
@@ -149,6 +146,41 @@ public class EnhancedTextField extends JTextField implements FocusListener {
    * @return the JTextField for searching
    */
   public static EnhancedTextField createSearchTextField() {
-    return new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
+    EnhancedTextField textField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
+    textField.lblIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    textField.lblIcon.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (StringUtils.isNotBlank(textField.getText())) {
+          textField.setText("");
+        }
+      }
+    });
+    textField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        changeIcon();
+      }
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        changeIcon();
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        changeIcon();
+      }
+
+      private void changeIcon() {
+        if (StringUtils.isBlank(textField.getText())) {
+          textField.lblIcon.setIcon(IconManager.SEARCH_GREY);
+        }
+        else {
+          textField.lblIcon.setIcon(IconManager.CLEAR_GREY);
+        }
+      }
+    });
+    return textField;
   }
 }

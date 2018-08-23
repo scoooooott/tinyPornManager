@@ -42,7 +42,6 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -99,7 +98,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
 
     setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:300lp,grow]0[][]"));
 
-    searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
+    searchField = EnhancedTextField.createSearchTextField();
     add(searchField, "cell 0 0,growx");
 
     MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<>(searchField, new MovieFilterator());

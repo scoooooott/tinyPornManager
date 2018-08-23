@@ -94,6 +94,7 @@ public class IconManager {
   public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF057');
   public final static ImageIcon            CARET_UP                    = createFontAwesomeIcon('\uF0D8');
   public final static ImageIcon            CARET_DOWN                  = createFontAwesomeIcon('\uF0D7');
+  public final static ImageIcon            CLEAR_GREY                  = createFontAwesomeIcon('\uF057');
   public final static ImageIcon            CONFIGURE                   = createFontAwesomeIcon('\uF0AD');
   public final static ImageIcon            ERROR                       = createFontAwesomeIcon('\uF057');
   public final static ImageIcon            WARN                        = createFontAwesomeIcon('\uF071');
