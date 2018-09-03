@@ -50,11 +50,11 @@ import org.tinymediamanager.ui.dialogs.TmmDialog;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class TvShowBatchEditorDialog.
+ * The Class TvShowBulkEditorDialog.
  * 
  * @author Manuel Laggner
  */
-public class TvShowBatchEditorDialog extends TmmDialog {
+public class TvShowBulkEditorDialog extends TmmDialog {
   private static final long      serialVersionUID = 3527478264068979388L;
 
   private TvShowList             tvShowList       = TvShowList.getInstance();
@@ -78,7 +78,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
    * @param episodes
    *          the episodes
    */
-  public TvShowBatchEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
+  public TvShowBulkEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
     super(BUNDLE.getString("tvshow.bulkedit"), "movieBatchEditor"); //$NON-NLS-1$
 
     tvShowsToEdit = tvShows;
@@ -91,7 +91,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
   private void initComponents() {
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new MigLayout("", "[20lp:n][][][]", "[][][][20lp:n][][][][][][]"));
+    panelContent.setLayout(new MigLayout("", "[20lp:n][][100lp,grow][]", "[][][][20lp:n][][][][][][]"));
 
     JLabel lblTvShowT = new TmmLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
     panelContent.add(lblTvShowT, "cell 0 0 2 1");
@@ -100,7 +100,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     panelContent.add(lblGenres, "cell 1 1,alignx right");
 
     cbGenres = new AutocompleteComboBox(MediaGenres.values());
-    panelContent.add(cbGenres, "cell 2 1,growx");
+    panelContent.add(cbGenres, "cell 2 1, growx, wmin 0");
     cbGenres.setEditable(true);
     JButton btnAddGenre = new JButton("");
     panelContent.add(btnAddGenre, "flowx,cell 3 1");
@@ -134,7 +134,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     panelContent.add(lblTags, "cell 1 2,alignx right");
 
     cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInTvShows());
-    panelContent.add(cbTags, "cell 2 2,growx");
+    panelContent.add(cbTags, "cell 2 2, growx, wmin 0");
     cbTags.setEditable(true);
 
     JButton btnAddTag = new JButton("");
@@ -218,7 +218,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     panelContent.add(lblTagsEpisode, "cell 1 8,alignx right");
 
     cbTagsEpisode = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
-    panelContent.add(cbTagsEpisode, "cell 2 8,growx");
+    panelContent.add(cbTagsEpisode, "cell 2 8,growx, wmin 0");
     cbTagsEpisode.setEditable(true);
 
     JButton btnAddTagEpisode = new JButton("");
@@ -239,7 +239,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     panelContent.add(lblMediasourceEpisode, "cell 1 9,alignx right");
 
     final JComboBox<MediaSource> cbMediaSourceEpisode = new JComboBox(MediaSource.values());
-    panelContent.add(cbMediaSourceEpisode, "cell 2 9,growx");
+    panelContent.add(cbMediaSourceEpisode, "cell 2 9,growx, wmin 0");
 
     JButton btnMediaSourceEpisode = new JButton("");
     panelContent.add(btnMediaSourceEpisode, "cell 3 9");

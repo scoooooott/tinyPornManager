@@ -31,7 +31,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowBatchEditorDialog;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowBulkEditorDialog;
 
 /**
  * The class TvShowBulkEditAction. To change more than one TV shows at once
@@ -74,7 +74,7 @@ public class TvShowBulkEditAction extends TmmAction {
       return;
     }
 
-    TvShowBatchEditorDialog dialog = new TvShowBatchEditorDialog(selectedTvShows, selectedEpisodes);
+    TvShowBulkEditorDialog dialog = new TvShowBulkEditorDialog(selectedTvShows, selectedEpisodes);
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.setVisible(true);
   }
