@@ -172,6 +172,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("${imdb}"));
     exampleEventList.add(new MovieRenamerExample("${certification}"));
     exampleEventList.add(new MovieRenamerExample("${directors[0].name}"));
+    exampleEventList.add(new MovieRenamerExample("${genres[0]}"));
     exampleEventList.add(new MovieRenamerExample("${genres[0].name}"));
     exampleEventList.add(new MovieRenamerExample("${tags[0]}"));
     exampleEventList.add(new MovieRenamerExample("${language}"));
