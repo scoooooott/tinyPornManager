@@ -106,6 +106,6 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
     }
 
     // re-add the itemlistener
-    checkBox.addActionListener(actionListener);
+    checkComboBox.addActionListener(actionListener);
   }
 }
