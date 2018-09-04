@@ -197,6 +197,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // load dummy episodes
     if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
       for (TvShowEpisode episode : dummyEpisodes) {
+        if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+          continue;
+        }
         episode.setTvShow(this);
         addToSeason(episode);
       }
@@ -508,6 +511,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
       // and now mix in unavailable ones
       for (TvShowEpisode episode : getDummyEpisodes()) {
+        if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+          continue;
+        }
         if (!availableEpisodes.contains(episode.getSeason() + "." + episode.getEpisode())) {
           episodes.add(episode);
         }
@@ -653,6 +659,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       // and mix in the dummy one again
       if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
         for (TvShowEpisode dummy : dummyEpisodes) {
+          if (dummy.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+            continue;
+          }
           if (dummy.getSeason() == episode.getSeason() && dummy.getEpisode() == episode.getEpisode()) {
             addToSeason(dummy);
             firePropertyChange(ADDED_EPISODE, null, dummy);

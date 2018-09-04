@@ -109,6 +109,11 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
         E child = (E) evt.getNewValue();
         nodeChanged(child);
       }
+      // the structure has been changed
+      if (TmmTreeDataProvider.NODE_STRUCTURE_CHANGED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
+        E child = (E) evt.getNewValue();
+        nodeStructureChanged(child);
+      }
     });
     loadTreeData(getRoot());
   }

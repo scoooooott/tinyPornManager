@@ -65,6 +65,7 @@ public class TvShowSettingsPanel extends JPanel {
   private JCheckBox                    chckbxPersonalRatingFirst;
   private AutocompleteComboBox<String> cbRating;
   private JCheckBox                    chckbxRenameAfterScrape;
+  private JCheckBox                    chckbxShowMissingSpecials;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -92,7 +93,7 @@ public class TvShowSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][20lp][][][]", "[][][][][][20lp][][][][20lp][][][20lp][][][][][][]"));
+    setLayout(new MigLayout("", "[25lp][20lp][][][]", "[][][][][][][20lp][][][][20lp][][][20lp][][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
@@ -107,78 +108,82 @@ public class TvShowSettingsPanel extends JPanel {
       add(chckbxShowMissingEpisodes, "cell 1 2 4 1");
     }
     {
+      chckbxShowMissingSpecials = new JCheckBox(BUNDLE.getString("Settings.tvshow.missingespecials")); //$NON-NLS-1$
+      add(chckbxShowMissingSpecials, "cell 2 3 3 1");
+    }
+    {
       JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
-      add(lblRating, "flowx,cell 1 3 4 1");
+      add(lblRating, "flowx,cell 1 4 4 1");
 
       cbRating = new AutocompleteComboBox(Arrays.asList("tvdb", "tmdb"));
-      add(cbRating, "cell 1 3 4 1");
+      add(cbRating, "cell 1 4 4 1");
     }
     {
       chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
-      add(chckbxPersonalRatingFirst, "cell 2 4");
+      add(chckbxPersonalRatingFirst, "cell 2 5");
     }
     {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 6 5 1");
+      add(lblAutomaticTasksT, "cell 0 7 5 1");
     }
     {
       chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.tvshow.automaticrename")); //$NON-NLS-1$
-      add(chckbxRenameAfterScrape, "flowx,cell 1 7 4 1");
+      add(chckbxRenameAfterScrape, "flowx,cell 1 8 4 1");
 
       JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
       lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.tvshow.automaticrename.desc")); //$NON-NLS-1$
-      add(lblAutomaticRenameHint, "cell 1 7");
+      add(lblAutomaticRenameHint, "cell 1 8 4 1");
     }
 
     {
       chckbxTraktTv = new JCheckBox(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-      add(chckbxTraktTv, "flowx,cell 1 8 4 1");
+      add(chckbxTraktTv, "flowx,cell 1 9 4 1");
 
       btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
-      add(btnClearTraktTvShows, "cell 1 8 4 1");
+      add(btnClearTraktTvShows, "cell 1 9 4 1");
     }
 
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 10 5 1");
+      add(lblMiscT, "cell 0 11 5 1");
     }
     {
       chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxImageCache, "flowx,cell 1 11 4 1");
+      add(chckbxImageCache, "flowx,cell 1 12 4 1");
     }
     {
       JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 13 5 1");
+      add(lblPresetT, "cell 0 14 5 1");
     }
     {
       JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 14 4 1");
+      add(lblPresetHintT, "cell 1 15 4 1");
     }
     {
       btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 2 15,growx");
+      add(btnPresetKodi, "flowx,cell 2 16,growx");
 
       btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 3 15,growx");
+      add(btnPresetXbmc, "cell 3 16,growx");
     }
     {
       btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 2 16,growx");
+      add(btnPresetMediaPortal1, "flowx,cell 2 17,growx");
 
       btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 3 16,growx");
+      add(btnPresetMediaPortal2, "cell 3 17,growx");
     }
     {
       btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 2 17,growx");
+      add(btnPresetPlex, "cell 2 18,growx");
     }
     {
       JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 11 4 1");
+      add(lblBuildImageCacheHint, "cell 1 12 4 1");
     }
   }
 
@@ -219,5 +224,15 @@ public class TvShowSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_5, chckbxRenameAfterScrape, jCheckBoxBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, chckbxShowMissingEpisodes,
+        jCheckBoxBeanProperty, chckbxShowMissingSpecials, jCheckBoxBeanProperty_1);
+    autoBinding_7.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_6 = BeanProperty.create("displayMissingSpecials");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_6, chckbxShowMissingSpecials, jCheckBoxBeanProperty);
+    autoBinding_8.bind();
   }
 }

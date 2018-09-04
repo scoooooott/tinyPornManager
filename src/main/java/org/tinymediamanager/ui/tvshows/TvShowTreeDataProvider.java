@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -38,14 +39,14 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  */
 public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   protected static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private TmmTreeNode                  root           = new TmmTreeNode(new Object(), this);
-  private RuleBasedCollator            stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+  private TmmTreeNode                   root           = new TmmTreeNode(new Object(), this);
+  private RuleBasedCollator             stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
-  private final PropertyChangeListener tvShowListPropertyChangeListener;
-  private final PropertyChangeListener tvShowPropertyChangeListener;
-  private final PropertyChangeListener episodePropertyChangeListener;
+  private final PropertyChangeListener  tvShowListPropertyChangeListener;
+  private final PropertyChangeListener  tvShowPropertyChangeListener;
+  private final PropertyChangeListener  episodePropertyChangeListener;
 
-  private final TvShowList             tvShowList     = TvShowList.getInstance();
+  private final TvShowList              tvShowList     = TvShowList.getInstance();
 
   public TvShowTreeDataProvider() {
     tvShowListPropertyChangeListener = evt -> {
@@ -114,6 +115,17 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     };
 
     setTreeComparator(new TvShowComparator());
+
+    TvShowModuleManager.SETTINGS.addPropertyChangeListener(evt -> {
+      switch (evt.getPropertyName()) {
+        case "displayMissingEpisodes":
+        case "displayMissingSpecials":
+          for (TvShow tvShow : tvShowList.getTvShows()) {
+            firePropertyChange(NODE_STRUCTURE_CHANGED, null, tvShow);
+          }
+          break;
+      }
+    });
   }
 
   /**

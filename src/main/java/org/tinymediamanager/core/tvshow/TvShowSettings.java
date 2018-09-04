@@ -151,6 +151,7 @@ public class TvShowSettings extends AbstractSettings {
 
   private boolean                              storeUiFilters                 = false;
   private boolean                              displayMissingEpisodes         = false;
+  private boolean                              displayMissingSpecials         = false;
 
   public TvShowSettings() {
     super();
@@ -552,6 +553,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.displayMissingEpisodes;
     this.displayMissingEpisodes = newValue;
     firePropertyChange("displayMissingEpisodes", oldValue, newValue);
+  }
+
+  public boolean isDisplayMissingSpecials() {
+    return displayMissingSpecials;
+  }
+
+  public void setDisplayMissingSpecials(boolean newValue) {
+    boolean oldValue = this.displayMissingSpecials;
+    this.displayMissingSpecials = newValue;
+    firePropertyChange("displayMissingSpecials", oldValue, newValue);
   }
 
   /**
