@@ -273,7 +273,7 @@ public class MovieRenamer {
   }
 
   /**
-   * Rename movie.
+   * Rename movie inside the actual datasource.
    * 
    * @param movie
    *          the movie

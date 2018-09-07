@@ -36,6 +36,7 @@ import org.tinymediamanager.ui.components.PopupMenuScroller;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeDatasourceAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
@@ -247,8 +248,9 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
 
     popupMenu.add(createAndRegisterAction(TvShowEditAction.class));
-    popupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowChangeDatasourceAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
     popupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
@@ -323,8 +325,9 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     // edit popupmenu
     editPopupMenu = new JPopupMenu();
     editPopupMenu.add(createAndRegisterAction(TvShowEditAction.class));
-    editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeDatasourceAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));

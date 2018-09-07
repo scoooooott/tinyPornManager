@@ -35,6 +35,7 @@ import org.tinymediamanager.ui.components.PopupMenuScroller;
 import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieChangeDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieCreateOfflineAction;
 import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
@@ -211,6 +212,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
+    popupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
@@ -280,6 +282,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu = new JPopupMenu();
     editPopupMenu.add(createAndRegisterAction(MovieEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
