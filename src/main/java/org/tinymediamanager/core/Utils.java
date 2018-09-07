@@ -31,6 +31,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
@@ -51,6 +52,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -580,8 +582,39 @@ public class Utils {
             Files.move(srcDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             rename = true; // no exception
           }
+          catch (DirectoryNotEmptyException e) {
+            // second try still did not work; original documentation
+            /*
+             * When moving a directory requires that its entries be moved then this method fails (by throwing an {@code IOException}). To move a
+             * <i>file tree</i> may involve copying rather than moving directories and this can be done using the {@link #copy copy} method in
+             * conjunction with the {@link #walkFileTree Files.walkFileTree} utility method.
+             */
+            // in this case we do a recursive copy & delete
+            // copy all files (with re-creating symbolic links if there are some)
+            Iterator<Path> srcFiles = Files.walk(srcDir).iterator();
+            while (srcFiles.hasNext()) {
+              Path source = srcFiles.next();
+              Path destination = destDir.resolve(srcDir.relativize(source));
+              if (Files.isSymbolicLink(source)) {
+                Files.createSymbolicLink(destination, source.toRealPath());
+                continue;
+              }
+              if (Files.isDirectory(source)) {
+                if (!Files.exists(destination)) {
+                  Files.createDirectory(destination);
+                }
+                continue;
+              }
+              Files.copy(source, destination);// use flag to override existing
+            }
+
+            // delete source files
+            Utils.deleteDirectoryRecursive(srcDir);
+            rename = true;
+          }
           catch (IOException e) {
             LOGGER.warn("rename problem: " + e.getMessage());
+            Utils.deleteDirectoryRecursive(destDir);
           }
         }
         catch (IOException e) {
