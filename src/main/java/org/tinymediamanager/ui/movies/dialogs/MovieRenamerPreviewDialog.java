@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieRenamerPreview;
 import org.tinymediamanager.core.movie.MovieRenamerPreviewContainer;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -47,7 +48,6 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.movies.MovieComparator;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;

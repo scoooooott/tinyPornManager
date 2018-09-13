@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.core.movie;
 
 import java.text.Collator;
 import java.text.Normalizer;
@@ -24,7 +24,7 @@ import java.util.Locale;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
- * The Class MovieComparator is used to (initial) sort the movies in the moviepanel.
+ * The Class {@link MovieComparator} is used to (initial) sort the movies.
  * 
  * @author Manuel Laggner
  */

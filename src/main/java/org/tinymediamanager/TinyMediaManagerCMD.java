@@ -34,6 +34,7 @@ import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -44,6 +45,7 @@ import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowComparator;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -367,7 +369,9 @@ public class TinyMediaManagerCMD {
             }
             else {
               MovieExporter ex = new MovieExporter(Paths.get(t.getPath()));
-              ex.export(MovieList.getInstance().getMovies(), exportDir);
+              List<Movie> movies = MovieList.getInstance().getMovies();
+              movies.sort(new MovieComparator());
+              ex.export(movies, exportDir);
             }
             break;
           }
@@ -541,7 +545,9 @@ public class TinyMediaManagerCMD {
             }
             else {
               TvShowExporter ex = new TvShowExporter(Paths.get(t.getPath()));
-              ex.export(TvShowList.getInstance().getTvShows(), exportDir);
+              List<TvShow> tvShows = TvShowList.getInstance().getTvShows();
+              tvShows.sort(new TvShowComparator());
+              ex.export(tvShows, exportDir);
             }
             break;
           }

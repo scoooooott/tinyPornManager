@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.util.StrgUtils;
