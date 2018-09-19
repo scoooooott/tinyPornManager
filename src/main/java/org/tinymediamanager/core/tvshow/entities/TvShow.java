@@ -50,6 +50,9 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -1762,6 +1765,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
 
+    filesToCache.addAll(listActorFiles());
+
     for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
       filesToCache.addAll(episode.getImagesToCache());
     }
@@ -1839,6 +1844,28 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
+  }
+
+  /**
+   * @return list of actor images on filesystem
+   */
+  private List<Path> listActorFiles() {
+    List<Path> fileNames = new ArrayList<>();
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(Person.ACTOR_DIR))) {
+      for (Path path : directoryStream) {
+        if (Utils.isRegularFile(path)) {
+          // only get graphics
+          MediaFile mf = new MediaFile(path);
+          if (mf.isGraphic()) {
+            fileNames.add(path.toAbsolutePath());
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(Person.ACTOR_DIR));
+    }
+    return fileNames;
   }
 
   /**

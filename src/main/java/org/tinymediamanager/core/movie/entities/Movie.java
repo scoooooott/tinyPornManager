@@ -1554,15 +1554,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   private List<Path> listActorFiles() {
     List<Path> fileNames = new ArrayList<>();
-    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(".actors"))) {
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(Person.ACTOR_DIR))) {
       for (Path path : directoryStream) {
         if (Utils.isRegularFile(path)) {
-          fileNames.add(path.toAbsolutePath());
+          // only get graphics
+          MediaFile mf = new MediaFile(path);
+          if (mf.isGraphic()) {
+            fileNames.add(path.toAbsolutePath());
+          }
         }
       }
     }
     catch (IOException e) {
-      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(".actors"));
+      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(Person.ACTOR_DIR));
     }
     return fileNames;
   }

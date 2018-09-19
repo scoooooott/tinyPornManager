@@ -41,6 +41,10 @@ public class TvShowActorImageFetcherTask extends MediaEntityActorImageFetcherTas
     }
   }
 
+  public TvShowActorImageFetcherTask(TvShowEpisode episode) {
+    persons.addAll(episode.getGuests());
+  }
+
   @Override
   protected Logger getLogger() {
     return LOGGER;

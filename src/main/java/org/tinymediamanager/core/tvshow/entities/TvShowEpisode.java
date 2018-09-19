@@ -84,6 +84,7 @@ import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
+import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -670,6 +671,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setActors(actors);
     setDirectors(directors);
     setWriters(writers);
+    writeActorImages();
 
     for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
       setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
@@ -1502,6 +1504,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       return tvShow.getProductionCompany();
     }
     return "";
+  }
+
+  /**
+   * Write actor images.
+   */
+  public void writeActorImages() {
+    // check if actor images shall be written
+    if (!TvShowModuleManager.SETTINGS.isWriteActorImages()) {
+      return;
+    }
+
+    TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**
