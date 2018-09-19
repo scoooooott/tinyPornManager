@@ -87,6 +87,8 @@ skip_md5_cache = true
 # and all other launchers too
 #####################################################################################
 jvmarg = -XX:+IgnoreUnrecognizedVMOptions
+jvmarg = -XX:+UseG1GC
+jvmarg = -XX:+UseStringDeduplication
 jvmarg = --add-modules=java.xml.bind
 jvmarg = --add-modules=java.xml.ws
 jvmarg = -Xms64m
