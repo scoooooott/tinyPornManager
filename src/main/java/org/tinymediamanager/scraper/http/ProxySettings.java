@@ -49,7 +49,7 @@ public class ProxySettings {
     INSTANCE.username = username == null ? "" : username;
     INSTANCE.password = password == null ? "" : password;
 
-    TmmHttpClient.changeProxy();
+    TmmHttpClient.recreateHttpClient();
   }
 
   public String getHost() {
