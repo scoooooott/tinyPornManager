@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.scraper.http.ProxySettings;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -101,6 +102,8 @@ public class Settings extends AbstractSettings {
 
   private boolean   upnpShareLibrary       = false;
   private boolean   upnpRemotePlay         = false;
+
+  private boolean   ignoreSSLProblems      = false;
 
   /**
    * Instantiates a new settings.
@@ -927,5 +930,30 @@ public class Settings extends AbstractSettings {
     boolean oldValue = this.showMemory;
     this.showMemory = newValue;
     firePropertyChange("showMemory", oldValue, newValue);
+  }
+
+  /**
+   * should we ignore SSL problems?
+   *
+   * @return
+   */
+  public boolean isIgnoreSSLProblems() {
+    return ignoreSSLProblems;
+  }
+
+  /**
+   * should we ignore SSL problems?
+   *
+   * @param ignoreSSLProblems
+   */
+  public void setIgnoreSSLProblems(boolean ignoreSSLProblems) {
+    boolean old = this.ignoreSSLProblems;
+    this.ignoreSSLProblems = ignoreSSLProblems;
+    firePropertyChange("ignoreSSLProblems", old, ignoreSSLProblems);
+    // and pass this setting to the HTTP client if it has been changed
+    if (old != ignoreSSLProblems) {
+      System.setProperty("tmm.trustallcerts", Boolean.valueOf(ignoreSSLProblems).toString());
+      TmmHttpClient.recreateHttpClient();
+    }
   }
 }

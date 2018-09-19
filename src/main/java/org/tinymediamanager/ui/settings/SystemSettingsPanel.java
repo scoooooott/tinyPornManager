@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -46,6 +47,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import com.sun.jna.Platform;
 
@@ -72,6 +74,7 @@ public class SystemSettingsPanel extends JPanel {
   private JButton                     btnSearchMediaPlayer;
   private JSlider                     sliderMemory;
   private JLabel                      lblMemory;
+  private JCheckBox                   chckbxIgnoreSSLProblems;
 
   /**
    * Instantiates a new general settings panel.
@@ -95,7 +98,7 @@ public class SystemSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp]"));
+    setLayout(new MigLayout("", "[25lp:n][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp][][]"));
     {
       final JLabel lblMediaPlayerT = new JLabel(BUNDLE.getString("Settings.mediaplayer")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMediaPlayerT, 1.16667, Font.BOLD);
@@ -107,7 +110,7 @@ public class SystemSettingsPanel extends JPanel {
       tfMediaPlayer.setColumns(35);
 
       btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-      add(btnSearchMediaPlayer, "cell 1 1 4 1");
+      add(btnSearchMediaPlayer, "cell 1 1 5 1");
 
       JTextArea tpMediaPlayer = new ReadOnlyTextArea(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
       add(tpMediaPlayer, "cell 1 2 5 1,growx");
@@ -185,6 +188,14 @@ public class SystemSettingsPanel extends JPanel {
       tfProxyPassword = new JPasswordField();
       tfProxyPassword.setColumns(20);
       add(tfProxyPassword, "cell 4 10");
+    }
+    {
+      final JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), 1.16667);
+      add(lblMiscT, "cell 0 12 6 1");
+    }
+    {
+      chckbxIgnoreSSLProblems = new JCheckBox(BUNDLE.getString("Settings.ignoressl"));
+      add(chckbxIgnoreSSLProblems, "cell 1 13 5 1");
     }
   }
 
@@ -309,5 +320,11 @@ public class SystemSettingsPanel extends JPanel {
     AutoBinding<JSlider, Integer, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, sliderMemory, jSliderBeanProperty,
         lblMemory, jLabelBeanProperty);
     autoBinding_11.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("ignoreSSLProblems");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, chckbxIgnoreSSLProblems, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }
