@@ -42,7 +42,9 @@ public class TvShowActorImageFetcherTask extends MediaEntityActorImageFetcherTas
   }
 
   public TvShowActorImageFetcherTask(TvShowEpisode episode) {
-    persons.addAll(episode.getGuests());
+    this.mediaEntity = episode;
+
+    persons = new HashSet<>(episode.getGuests());
   }
 
   @Override
