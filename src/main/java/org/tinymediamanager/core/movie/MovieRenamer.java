@@ -99,6 +99,7 @@ public class MovieRenamer {
     tokenMap.put("language", "movie.spokenLanguages");
 
     tokenMap.put("genres", "movie.genres");
+    tokenMap.put("genresAsString", "movie.genresAsString");
     tokenMap.put("tags", "movie.tags");
     tokenMap.put("actors", "movie.actors");
     tokenMap.put("producers", "movie.producers");
