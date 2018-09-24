@@ -40,5 +40,21 @@ public enum MovieDiscartNaming implements IFileNaming {
     public String getFilename(String basename, String extension) {
       return "disc." + extension;
     }
+  },
+
+  /** [filename]-discart.* */
+  FILENAME_DISCART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-discart." + extension : "";
+    }
+  },
+
+  /** discart.* */
+  DISCART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "discart." + extension;
+    }
   }
 }

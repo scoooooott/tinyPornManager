@@ -74,6 +74,8 @@ public class MovieImageTypeSettingsPanel extends JPanel {
   private JCheckBox                   chckbxDiscart1;
   private JCheckBox                   chckbxDiscart2;
   private ItemListener                checkBoxListener;
+  private JCheckBox                   chckbxDiscart4;
+  private JCheckBox                   chckbxDiscart3;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -247,6 +249,12 @@ public class MovieImageTypeSettingsPanel extends JPanel {
         case FILENAME_DISC:
           chckbxDiscart1.setSelected(true);
           break;
+        case DISCART:
+          chckbxDiscart4.setSelected(true);
+          break;
+        case FILENAME_DISCART:
+          chckbxDiscart3.setSelected(true);
+          break;
       }
     }
 
@@ -280,6 +288,8 @@ public class MovieImageTypeSettingsPanel extends JPanel {
 
     chckbxDiscart1.addItemListener(checkBoxListener);
     chckbxDiscart2.addItemListener(checkBoxListener);
+    chckbxDiscart3.addItemListener(checkBoxListener);
+    chckbxDiscart4.addItemListener(checkBoxListener);
   }
 
   private void clearSelection(JCheckBox... checkBoxes) {
@@ -301,7 +311,7 @@ public class MovieImageTypeSettingsPanel extends JPanel {
     {
       JPanel panelFileNaming = new JPanel();
       add(panelFileNaming, "cell 1 1");
-      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][10lp][][10lp][][10lp][][10lp][][][10lp][][10lp][][10lp][][20lp][]"));
+      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][10lp][][10lp][][10lp][][10lp][][][10lp][][10lp][][10lp][][][20lp][]"));
 
       JLabel lblPosterFilename = new JLabel(BUNDLE.getString("mediafiletype.poster"));//$NON-NLS-1$
       panelFileNaming.add(lblPosterFilename, "cell 0 0");
@@ -393,8 +403,14 @@ public class MovieImageTypeSettingsPanel extends JPanel {
       chckbxDiscart1 = new JCheckBox("<dynamic>-disc.ext");
       panelFileNaming.add(chckbxDiscart1, "cell 2 16");
 
+      chckbxDiscart4 = new JCheckBox("discart.ext");
+      panelFileNaming.add(chckbxDiscart4, "cell 1 17");
+
+      chckbxDiscart3 = new JCheckBox("<dynamic>-discart.ext");
+      panelFileNaming.add(chckbxDiscart3, "cell 2 17");
+
       JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      panelFileNaming.add(tpFileNamingHint, "cell 0 18 4 1,growx");
+      panelFileNaming.add(tpFileNamingHint, "cell 0 19 4 1,growx");
       TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     }
   }
@@ -492,6 +508,12 @@ public class MovieImageTypeSettingsPanel extends JPanel {
     }
     if (chckbxDiscart2.isSelected()) {
       settings.addDiscartFilename(MovieDiscartNaming.DISC);
+    }
+    if (chckbxDiscart3.isSelected()) {
+      settings.addDiscartFilename(MovieDiscartNaming.FILENAME_DISCART);
+    }
+    if (chckbxDiscart4.isSelected()) {
+      settings.addDiscartFilename(MovieDiscartNaming.DISCART);
     }
   }
 
