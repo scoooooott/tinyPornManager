@@ -132,7 +132,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
               MediaSearchResult result2 = results.get(1);
               // if both results have 100% score - do not take any result
               if (result1.getScore() == 1 && result2.getScore() == 1) {
-                LOGGER.info("two 100% results, can't decide whitch to take - ignore result");
+                LOGGER.info("two 100% results, can't decide which to take - ignore result");
                 MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "tvshow.scrape.nomatchfound"));
                 return;
               }
