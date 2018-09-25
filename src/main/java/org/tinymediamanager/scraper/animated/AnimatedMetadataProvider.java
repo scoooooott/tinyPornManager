@@ -187,8 +187,14 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
 
     // check cache
     try {
-      Files.createDirectories(JSON_FILE.getParent());
+      if (!Files.exists(JSON_FILE.getParent())) {
+        Files.createDirectories(JSON_FILE.getParent());
+      }
+    }
+    catch (Exception ignored) {
+    }
 
+    try {
       if (Files.exists(JSON_FILE) && Files.exists(CACHE_FILE)) {
         String dateStr = readFileToString(CACHE_FILE);
         long milliSeconds = Long.parseLong(dateStr);
