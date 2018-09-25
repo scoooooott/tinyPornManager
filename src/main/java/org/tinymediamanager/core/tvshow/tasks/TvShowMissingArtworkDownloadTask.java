@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.tasks.MovieMissingArtworkDownloadTask;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -36,7 +35,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * the class TvShowMissingArtworkDownloadTask is used to download missing artwork for TV shows
  */
 public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieMissingArtworkDownloadTask.class);
+  private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowMissingArtworkDownloadTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
 
   private List<TvShow>                tvShows;
