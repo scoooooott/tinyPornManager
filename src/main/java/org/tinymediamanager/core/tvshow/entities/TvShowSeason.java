@@ -214,6 +214,10 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
   }
 
+  public void removeArtworkUrl(MediaArtworkType artworkType) {
+    tvShow.clearSeasonArtworkUrl(season, artworkType);
+  }
+
   public String getArtworkUrl(MediaArtworkType type) {
     return tvShow.getSeasonArtworkUrl(season, type);
   }

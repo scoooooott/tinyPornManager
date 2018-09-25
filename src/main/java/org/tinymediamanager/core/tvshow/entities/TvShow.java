@@ -210,8 +210,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // create season artwork maps
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER)) {
-      if (mf.getFilename().startsWith("season-special-poster")) {
-        seasonPosters.put(-1, mf);
+      if (mf.getFilename().startsWith("season-specials-poster")) {
+        seasonPosters.put(0, mf);
       }
       else {
         // parse out the season from the name
@@ -227,8 +227,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_BANNER)) {
-      if (mf.getFilename().startsWith("season-special-banner")) {
-        seasonBanners.put(-1, mf);
+      if (mf.getFilename().startsWith("season-specials-banner")) {
+        seasonBanners.put(0, mf);
       }
       else {
         // parse out the season from the name
@@ -244,8 +244,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_THUMB)) {
-      if (mf.getFilename().startsWith("season-special-thumb")) {
-        seasonThumbs.put(-1, mf);
+      if (mf.getFilename().startsWith("season-specials-thumb")) {
+        seasonThumbs.put(0, mf);
       }
       else {
         // parse out the season from the name
@@ -1680,23 +1680,14 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // add it
     switch (artworkType) {
       case SEASON_POSTER:
-        if (seasonPosters.containsKey(season)) {
-          seasonPosters.remove(season);
-        }
         seasonPosters.put(season, mf);
         break;
 
       case SEASON_BANNER:
-        if (seasonBanners.containsKey(season)) {
-          seasonBanners.remove(season);
-        }
         seasonBanners.put(season, mf);
         break;
 
       case SEASON_THUMB:
-        if (seasonThumbs.containsKey(season)) {
-          seasonThumbs.remove(season);
-        }
         seasonThumbs.put(season, mf);
         break;
 
@@ -1729,6 +1720,25 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (mf != null) {
       removeFromMediaFiles(mf);
+    }
+  }
+
+  void clearSeasonArtworkUrl(int season, MediaArtworkType artworkType) {
+    switch (artworkType) {
+      case SEASON_POSTER:
+        seasonPosterUrlMap.remove(season);
+        break;
+
+      case SEASON_BANNER:
+        seasonBannerUrlMap.remove(season);
+        break;
+
+      case SEASON_THUMB:
+        seasonThumbUrlMap.remove(season);
+        break;
+
+      default:
+        return;
     }
   }
 

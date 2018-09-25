@@ -263,19 +263,28 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (!StringUtils.isEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_POSTER))) {
+      if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_POSTER))) {
         tvShowSeasonToEdit.setArtworkUrl(tfPoster.getText(), SEASON_POSTER);
         tvShowSeasonToEdit.downloadArtwork(SEASON_POSTER);
       }
+      else if (StringUtils.isEmpty(tfPoster.getText())) {
+        tvShowSeasonToEdit.removeArtworkUrl(SEASON_POSTER);
+      }
 
-      if (!StringUtils.isEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_BANNER))) {
+      if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_BANNER))) {
         tvShowSeasonToEdit.setArtworkUrl(tfBanner.getText(), SEASON_BANNER);
         tvShowSeasonToEdit.downloadArtwork(SEASON_BANNER);
       }
+      else if (StringUtils.isBlank(tfBanner.getText())) {
+        tvShowSeasonToEdit.removeArtworkUrl(SEASON_BANNER);
+      }
 
-      if (!StringUtils.isEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_THUMB))) {
+      if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowSeasonToEdit.getArtworkUrl(SEASON_THUMB))) {
         tvShowSeasonToEdit.setArtworkUrl(tfThumb.getText(), SEASON_THUMB);
         tvShowSeasonToEdit.downloadArtwork(SEASON_THUMB);
+      }
+      else if (StringUtils.isBlank(tfThumb.getText())) {
+        tvShowSeasonToEdit.removeArtworkUrl(SEASON_THUMB);
       }
 
       tvShowSeasonToEdit.getTvShow().saveToDb();

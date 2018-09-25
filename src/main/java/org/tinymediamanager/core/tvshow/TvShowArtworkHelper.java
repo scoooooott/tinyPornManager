@@ -37,6 +37,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -337,6 +338,11 @@ public class TvShowArtworkHelper {
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
+
+    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    if (seasonPosterUrl.startsWith("file:")) {
+      tvShowSeason.removeArtworkUrl(SEASON_POSTER);
+    }
   }
 
   /**
@@ -365,6 +371,11 @@ public class TvShowArtworkHelper {
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonBannerUrl, SEASON_BANNER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
+
+    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    if (seasonBannerUrl.startsWith("file:")) {
+      tvShowSeason.removeArtworkUrl(SEASON_BANNER);
+    }
   }
 
   /**
@@ -392,6 +403,11 @@ public class TvShowArtworkHelper {
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
+    }
+
+    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    if (seasonThumbUrl.startsWith("file:")) {
+      tvShowSeason.removeArtworkUrl(SEASON_THUMB);
     }
   }
 
@@ -440,12 +456,28 @@ public class TvShowArtworkHelper {
         if (tvShowSeason != null) {
           tvShowSeason.setArtwork(Paths.get(filename), artworkType);
         }
+        // build up image cache
+        if (Settings.getInstance().isImageCache()) {
+          try {
+            ImageCache.cacheImage(Paths.get(filename));
+          }
+          catch (Exception ignored) {
+          }
+        }
       }
       catch (IOException e) {
         LOGGER.debug("fetch image", e);
         // fallback
         if (tvShowSeason != null && !oldFilename.isEmpty()) {
           tvShowSeason.setArtwork(Paths.get(oldFilename), artworkType);
+        }
+        // build up image cache
+        if (Settings.getInstance().isImageCache()) {
+          try {
+            ImageCache.cacheImage(Paths.get(oldFilename));
+          }
+          catch (Exception ignored) {
+          }
         }
       }
       catch (Exception e) {
