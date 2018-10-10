@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,8 +229,19 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       throw new ScrapeException(e);
     }
 
-    if (images == null || !images.isSuccessful()) {
+    if (images == null) {
       LOGGER.info("got no result");
+      return returnArtwork;
+    }
+    if (!images.isSuccessful()) {
+      String message = "";
+      try {
+        message = images.errorBody().string();
+      }
+      catch (IOException e) {
+        // ignore
+      }
+      LOGGER.warn("request was not successful: HTTP/{} - {}", images.code(), message);
       return returnArtwork;
     }
 
