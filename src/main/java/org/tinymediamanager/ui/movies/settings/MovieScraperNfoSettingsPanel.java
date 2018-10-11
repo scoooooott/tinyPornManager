@@ -184,7 +184,7 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
         cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
         panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
 
-        cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle")); //$NON-NLS-1$
+        cbMovieNfoFilename3 = new JCheckBox("<html>VIDEO_TS / VIDEO_TS.nfo<br />BDMV / index.nfo</html>"); //$NON-NLS-1$
         panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
       }
       {
