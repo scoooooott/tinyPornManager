@@ -34,6 +34,7 @@ import org.tinymediamanager.core.tvshow.connector.TvShowConnectors;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearlogoNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowFanartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowLogoNaming;
@@ -89,6 +90,7 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
   private final static String                  SEASON_BANNER_FILENAME         = "seasonBannerFilename";
   private final static String                  SEASON_THUMB_FILENAME          = "seasonThumbFilename";
+  private final static String                  EPISODE_NFO_FILENAME           = "episodeNfoFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
 
   private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<>());
@@ -107,6 +109,7 @@ public class TvShowSettings extends AbstractSettings {
   private final List<TvShowSeasonPosterNaming> seasonPosterFilenames          = new ArrayList<>();
   private final List<TvShowSeasonBannerNaming> seasonBannerFilenames          = new ArrayList<>();
   private final List<TvShowSeasonThumbNaming>  seasonThumbFilenames           = new ArrayList<>();
+  private final List<TvShowEpisodeNfoNaming>   episodeNfoFilenames            = new ArrayList<>();
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
@@ -155,9 +158,54 @@ public class TvShowSettings extends AbstractSettings {
 
   public TvShowSettings() {
     super();
+
+    // add default entries to the lists - they will be overwritten by jackson later
+    addDefaultEntries();
+
     addPropertyChangeListener(evt -> setDirty());
     scraperMetadataConfig = new TvShowScraperMetadataConfig();
     scraperMetadataConfig.addPropertyChangeListener(ect -> setDirty());
+  }
+
+  private void addDefaultEntries() {
+    nfoFilenames.clear();
+    addNfoFilename(TvShowNfoNaming.TV_SHOW);
+
+    posterFilenames.clear();
+    addPosterFilename(TvShowPosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    addFanartFilename(TvShowFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    addBannerFilename(TvShowBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    addClearartFilename(TvShowClearartNaming.CLEARART);
+
+    logoFilenames.clear();
+    addLogoFilename(TvShowLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    addClearlogoFilename(TvShowClearlogoNaming.CLEARLOGO);
+
+    thumbFilenames.clear();
+    addThumbFilename(TvShowThumbNaming.THUMB);
+
+    seasonPosterFilenames.clear();
+    addSeasonPosterFilename(TvShowSeasonPosterNaming.SEASON_POSTER);
+
+    seasonBannerFilenames.clear();
+    addSeasonBannerFilename(TvShowSeasonBannerNaming.SEASON_BANNER);
+
+    seasonThumbFilenames.clear();
+    addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_THUMB);
+
+    episodeNfoFilenames.clear();
+    addEpisodeNfoFilename(TvShowEpisodeNfoNaming.FILENAME);
+
+    episodeThumbFilenames.clear();
+    addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
   }
 
   @Override
@@ -224,18 +272,7 @@ public class TvShowSettings extends AbstractSettings {
       }
     }
 
-    posterFilenames.add(TvShowPosterNaming.POSTER);
-    fanartFilenames.add(TvShowFanartNaming.FANART);
-    bannerFilenames.add(TvShowBannerNaming.BANNER);
-    clearartFilenames.add(TvShowClearartNaming.CLEARART);
-    logoFilenames.add(TvShowLogoNaming.LOGO);
-    clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
-    thumbFilenames.add(TvShowThumbNaming.THUMB);
-    seasonPosterFilenames.add(TvShowSeasonPosterNaming.SEASON_POSTER);
-    seasonBannerFilenames.add(TvShowSeasonBannerNaming.SEASON_BANNER);
-    seasonThumbFilenames.add(TvShowSeasonThumbNaming.SEASON_THUMB);
-    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_THUMB);
-
+    addDefaultEntries();
     saveSettings();
   }
 
@@ -761,6 +798,22 @@ public class TvShowSettings extends AbstractSettings {
     return new ArrayList<>(this.seasonThumbFilenames);
   }
 
+  public void addEpisodeNfoFilename(TvShowEpisodeNfoNaming filename) {
+    if (!episodeNfoFilenames.contains(filename)) {
+      episodeNfoFilenames.add(filename);
+      firePropertyChange(EPISODE_NFO_FILENAME, null, episodeNfoFilenames);
+    }
+  }
+
+  public void clearEpisodeNfoFilenames() {
+    episodeNfoFilenames.clear();
+    firePropertyChange(EPISODE_NFO_FILENAME, null, episodeNfoFilenames);
+  }
+
+  public List<TvShowEpisodeNfoNaming> getEpisodeNfoFilenames() {
+    return new ArrayList<>(this.episodeNfoFilenames);
+  }
+
   public CertificationStyle getCertificationStyle() {
     return certificationStyle;
   }
@@ -849,6 +902,9 @@ public class TvShowSettings extends AbstractSettings {
    * XBMC/Kodi <17 defaults
    */
   public void setDefaultSettingsForXbmc() {
+    nfoFilenames.clear();
+    nfoFilenames.add(TvShowNfoNaming.TV_SHOW);
+
     posterFilenames.clear();
     posterFilenames.add(TvShowPosterNaming.POSTER);
 
@@ -878,6 +934,9 @@ public class TvShowSettings extends AbstractSettings {
 
     seasonThumbFilenames.clear();
     seasonThumbFilenames.add(TvShowSeasonThumbNaming.SEASON_THUMB);
+
+    episodeNfoFilenames.clear();
+    episodeNfoFilenames.add(TvShowEpisodeNfoNaming.FILENAME);
 
     episodeThumbFilenames.clear();
     episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_THUMB);
@@ -896,6 +955,9 @@ public class TvShowSettings extends AbstractSettings {
    * Kodi 17+ defaults
    */
   public void setDefaultSettingsForKodi() {
+    nfoFilenames.clear();
+    nfoFilenames.add(TvShowNfoNaming.TV_SHOW);
+
     posterFilenames.clear();
     posterFilenames.add(TvShowPosterNaming.POSTER);
 
@@ -925,6 +987,9 @@ public class TvShowSettings extends AbstractSettings {
 
     seasonThumbFilenames.clear();
     seasonThumbFilenames.add(TvShowSeasonThumbNaming.SEASON_THUMB);
+
+    episodeNfoFilenames.clear();
+    episodeNfoFilenames.add(TvShowEpisodeNfoNaming.FILENAME);
 
     episodeThumbFilenames.clear();
     episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_LANDSCAPE);
@@ -943,6 +1008,9 @@ public class TvShowSettings extends AbstractSettings {
    * MediaPortal defaults
    */
   public void setDefaultSettingsForMediaPortal() {
+    nfoFilenames.clear();
+    nfoFilenames.add(TvShowNfoNaming.TV_SHOW);
+
     posterFilenames.clear();
     posterFilenames.add(TvShowPosterNaming.POSTER);
 
@@ -973,6 +1041,9 @@ public class TvShowSettings extends AbstractSettings {
     seasonThumbFilenames.clear();
     seasonThumbFilenames.add(TvShowSeasonThumbNaming.SEASON_THUMB);
 
+    episodeNfoFilenames.clear();
+    episodeNfoFilenames.add(TvShowEpisodeNfoNaming.FILENAME);
+
     episodeThumbFilenames.clear();
     episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);
 
@@ -990,6 +1061,9 @@ public class TvShowSettings extends AbstractSettings {
    * Plex defaults
    */
   public void setDefaultSettingsForPlex() {
+    nfoFilenames.clear();
+    nfoFilenames.add(TvShowNfoNaming.TV_SHOW);
+
     posterFilenames.clear();
     posterFilenames.add(TvShowPosterNaming.POSTER);
 
@@ -1019,6 +1093,9 @@ public class TvShowSettings extends AbstractSettings {
 
     seasonThumbFilenames.clear();
     seasonThumbFilenames.add(TvShowSeasonThumbNaming.SEASON_FOLDER);
+
+    episodeNfoFilenames.clear();
+    episodeNfoFilenames.add(TvShowEpisodeNfoNaming.FILENAME);
 
     episodeThumbFilenames.clear();
     episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);

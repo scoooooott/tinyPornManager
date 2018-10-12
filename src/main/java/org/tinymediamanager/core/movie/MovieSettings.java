@@ -172,9 +172,58 @@ public class MovieSettings extends AbstractSettings {
 
   public MovieSettings() {
     super();
+
+    // add default entries to the lists - they will be overwritten by jackson later
+    addDefaultEntries();
+
     addPropertyChangeListener(evt -> setDirty());
     movieScraperMetadataConfig = new MovieScraperMetadataConfig();
     movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
+  }
+
+  private void addDefaultEntries() {
+    nfoFilenames.clear();
+    addNfoFilename(MovieNfoNaming.MOVIE_NFO);
+
+    posterFilenames.clear();
+    addPosterFilename(MoviePosterNaming.POSTER);
+
+    fanartFilenames.clear();
+    addFanartFilename(MovieFanartNaming.FANART);
+
+    bannerFilenames.clear();
+    addBannerFilename(MovieBannerNaming.BANNER);
+
+    clearartFilenames.clear();
+    addClearartFilename(MovieClearartNaming.CLEARART);
+
+    thumbFilenames.clear();
+    addThumbFilename(MovieThumbNaming.THUMB);
+
+    logoFilenames.clear();
+    addLogoFilename(MovieLogoNaming.LOGO);
+
+    clearlogoFilenames.clear();
+    addClearlogoFilename(MovieClearlogoNaming.CLEARLOGO);
+
+    discartFilenames.clear();
+    addDiscartFilename(MovieDiscartNaming.DISC);
+
+    // activate default scrapers
+    artworkScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
+      addMovieArtworkScraper(ms.getId());
+    }
+
+    trailerScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
+      addMovieTrailerScraper(ms.getId());
+    }
+
+    subtitleScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
+      addMovieSubtitleScraper(ms.getId());
+    }
   }
 
   @Override
@@ -222,48 +271,7 @@ public class MovieSettings extends AbstractSettings {
     // hidden columns
     setMovieTableHiddenColumns(Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d"));
 
-    nfoFilenames.clear();
-    addNfoFilename(MovieNfoNaming.MOVIE_NFO);
-
-    posterFilenames.clear();
-    addPosterFilename(MoviePosterNaming.POSTER);
-
-    fanartFilenames.clear();
-    addFanartFilename(MovieFanartNaming.FANART);
-
-    bannerFilenames.clear();
-    addBannerFilename(MovieBannerNaming.BANNER);
-
-    clearartFilenames.clear();
-    addClearartFilename(MovieClearartNaming.CLEARART);
-
-    thumbFilenames.clear();
-    addThumbFilename(MovieThumbNaming.THUMB);
-
-    logoFilenames.clear();
-    addLogoFilename(MovieLogoNaming.LOGO);
-
-    clearlogoFilenames.clear();
-    addClearlogoFilename(MovieClearlogoNaming.CLEARLOGO);
-
-    discartFilenames.clear();
-    addDiscartFilename(MovieDiscartNaming.DISC);
-
-    // activate default scrapers
-    artworkScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
-      addMovieArtworkScraper(ms.getId());
-    }
-
-    trailerScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
-      addMovieTrailerScraper(ms.getId());
-    }
-
-    subtitleScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
-      addMovieSubtitleScraper(ms.getId());
-    }
+    addDefaultEntries();
 
     // set default languages based on java instance
     String defaultLang = Locale.getDefault().getLanguage();

@@ -698,6 +698,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Write nfo.
    */
   public void writeNFO() {
+    List<TvShowEpisodeNfoNaming> nfoNamings = TvShowModuleManager.SETTINGS.getEpisodeNfoFilenames();
+    if (nfoNamings.isEmpty()) {
+      return;
+    }
+
     List<TvShowEpisode> episodesInNfo = new ArrayList<>(1);
 
     LOGGER.debug("write nfo: " + getTvShow().getTitle() + " S" + getSeason() + "E" + getEpisode());

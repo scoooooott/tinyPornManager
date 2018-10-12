@@ -58,7 +58,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -1042,6 +1041,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void writeNFO() {
     ITvShowConnector connector;
 
+    List<TvShowNfoNaming> nfoNamings = TvShowModuleManager.SETTINGS.getNfoFilenames();
+    if (nfoNamings.isEmpty()) {
+      return;
+    }
+
     switch (TvShowModuleManager.SETTINGS.getTvShowConnector()) {
       case KODI:
         connector = new TvShowToKodiConnector(this);
@@ -1053,7 +1057,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         break;
     }
 
-    connector.write(Collections.singletonList(TvShowNfoNaming.TV_SHOW));
+    connector.write(nfoNamings);
 
     firePropertyChange(HAS_NFO_FILE, false, true);
   }
