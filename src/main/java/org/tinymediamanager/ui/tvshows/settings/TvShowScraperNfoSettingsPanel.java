@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Font;
 import java.awt.event.ItemListener;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
@@ -32,6 +33,8 @@ import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.connector.TvShowConnectors;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -54,13 +57,17 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
   private JComboBox<MediaLanguages>            cbNfoLanguage;
+  private JCheckBox                            chckbxEpisodeNfo1;
+  private JCheckBox                            chckbxTvShowNfo1;
 
+  private ItemListener                         checkBoxListener;
   private ItemListener                         comboBoxListener;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public TvShowScraperNfoSettingsPanel() {
+    checkBoxListener = e -> checkChanges();
     comboBoxListener = e -> checkChanges();
 
     // UI init
@@ -76,11 +83,12 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
       }
     });
 
+    buildCheckBoxes();
     buildComboBoxes();
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][10lp][][][10lp][][][10lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][][][10lp][][][10lp][][][10lp][]"));
     {
       JLabel lblNfoSettingsT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblNfoSettingsT, 1.16667, Font.BOLD);
@@ -92,24 +100,43 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
       cbNfoFormat = new JComboBox(TvShowConnectors.values());
       add(cbNfoFormat, "cell 1 1 2 1");
 
+      JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
+      add(lblNfoFileNaming, "cell 1 2 2 1");
+
+      JPanel panel = new JPanel();
+      add(panel, "cell 2 3,grow");
+      panel.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
+
+      JLabel lblTvShow = new JLabel(BUNDLE.getString("metatag.tvshow"));
+      panel.add(lblTvShow, "cell 0 0");
+
+      chckbxTvShowNfo1 = new JCheckBox("tvshow.nfo");
+      panel.add(chckbxTvShowNfo1, "cell 1 0");
+
+      JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode"));
+      panel.add(lblEpisode, "cell 0 1");
+
+      chckbxEpisodeNfo1 = new JCheckBox(BUNDLE.getString("Settings.tvshow.episodename") + ".nfo");
+      panel.add(chckbxEpisodeNfo1, "cell 1 1");
+
       JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-      add(lblNfoLanguage, "flowx,cell 1 3 2 1");
+      add(lblNfoLanguage, "flowx,cell 1 5 2 1");
 
       JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
-      add(lblNfoLanguageDesc, "cell 2 4");
+      add(lblNfoLanguageDesc, "cell 2 6");
 
       JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationFormatT, "flowx,cell 1 6 2 1");
+      add(lblCertificationFormatT, "flowx,cell 1 8 2 1");
 
       cbCertificationStyle = new JComboBox();
-      add(cbCertificationStyle, "cell 2 7");
+      add(cbCertificationStyle, "cell 2 9");
 
       chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-      add(chckbxWriteCleanNfo, "cell 1 9 2 1");
+      add(chckbxWriteCleanNfo, "cell 1 11 2 1");
     }
 
     cbNfoLanguage = new JComboBox(MediaLanguages.values());
-    add(cbNfoLanguage, "cell 1 3 2 1");
+    add(cbNfoLanguage, "cell 1 5 2 1");
   }
 
   /**
@@ -119,6 +146,17 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
     CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();
     if (wrapper != null && settings.getCertificationStyle() != wrapper.style) {
       settings.setCertificationStyle(wrapper.style);
+    }
+
+    // set NFO filenames
+    settings.clearNfoFilenames();
+    if (chckbxTvShowNfo1.isSelected()) {
+      settings.addNfoFilename(TvShowNfoNaming.TV_SHOW);
+    }
+
+    settings.clearEpisodeNfoFilenames();
+    if (chckbxEpisodeNfo1.isSelected()) {
+      settings.addEpisodeNfoFilename(TvShowEpisodeNfoNaming.FILENAME);
     }
   }
 
@@ -137,6 +175,32 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
     }
 
     cbCertificationStyle.addItemListener(comboBoxListener);
+  }
+
+  private void buildCheckBoxes() {
+    chckbxTvShowNfo1.removeItemListener(checkBoxListener);
+    chckbxEpisodeNfo1.removeItemListener(checkBoxListener);
+    clearSelection(chckbxTvShowNfo1, chckbxEpisodeNfo1);
+
+    // NFO filenames
+    List<TvShowNfoNaming> tvShowNfoNamings = settings.getNfoFilenames();
+    if (tvShowNfoNamings.contains(TvShowNfoNaming.TV_SHOW)) {
+      chckbxTvShowNfo1.setSelected(true);
+    }
+
+    List<TvShowEpisodeNfoNaming> TvShowEpisodeNfoNamings = settings.getEpisodeNfoFilenames();
+    if (TvShowEpisodeNfoNamings.contains(TvShowEpisodeNfoNaming.FILENAME)) {
+      chckbxEpisodeNfo1.setSelected(true);
+    }
+
+    chckbxTvShowNfo1.addItemListener(checkBoxListener);
+    chckbxEpisodeNfo1.addItemListener(checkBoxListener);
+  }
+
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkBox : checkBoxes) {
+      checkBox.setSelected(false);
+    }
   }
 
   /*
