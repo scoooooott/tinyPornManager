@@ -289,6 +289,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String ext = getExtension().toLowerCase(Locale.ROOT);
     String basename = FilenameUtils.getBaseName(getFilename());
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
+    String parentparent = "";
+    try {
+      parentparent = FilenameUtils.getBaseName(getFileAsPath().getParent().getParent().toString()).toLowerCase(Locale.ROOT);
+    }
+    catch (Exception e) {
+      // could happen if we are no 2 levels deep;
+      LOGGER.debug("way to up");
+    }
 
     if (ext.equals("nfo")) {
       return MediaFileType.NFO;
@@ -324,6 +332,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
           || foldername.equalsIgnoreCase("extras") // preferred folder name
           || foldername.equalsIgnoreCase("extra") // preferred folder name
+          || (!parentparent.isEmpty() && parentparent.matches("extra[s]?")) // extras folder a level deeper
           || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
           || PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
       {

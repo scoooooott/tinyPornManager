@@ -1344,8 +1344,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
           // check if file is a VIDEO type - only scan those folders (and not extras/trailer folders)!
           MediaFile mf = new MediaFile(file);
-          if (mf.getType() == MediaFileType.VIDEO) {
+          if (mf.getType() == MediaFileType.VIDEO && !datasource.relativize(file.getParent()).toString().matches("(?i).*[_.-]+extra[s]?.*")) {
             videofolders.add(file.getParent());
+          }
+          else {
+            LOGGER.debug("no VIDEO or EXTRA - do not parse {}", file);
           }
         }
       }
