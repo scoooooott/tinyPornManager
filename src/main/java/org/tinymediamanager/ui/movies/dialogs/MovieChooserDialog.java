@@ -420,7 +420,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       if (selectedResult != null) {
         selectedResult.removePropertyChangeListener(listener);
       }
-      if (index > -1) {
+      if (index > -1 && index < searchResultEventList.size()) {
         MovieChooserModel model = searchResultEventList.get(index);
         castMemberEventList.addAll(model.getCastMembers());
         lblMoviePoster.setImageUrl(model.getPosterUrl());

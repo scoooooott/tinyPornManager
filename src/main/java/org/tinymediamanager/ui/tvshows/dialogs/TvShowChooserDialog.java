@@ -365,7 +365,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       if (selectedResult != null) {
         selectedResult.removePropertyChangeListener(listener);
       }
-      if (index > -1) {
+      if (index > -1 && index < searchResultEventList.size()) {
         TvShowChooserModel model = searchResultEventList.get(index);
         lblTvShowPoster.setImageUrl(model.getPosterUrl());
         lblTtitle.setText(model.getCombinedName());
