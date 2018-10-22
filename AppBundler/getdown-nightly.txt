@@ -1,6 +1,5 @@
 # The URL from which the client is downloaded
 appbase = http://nightly.tinymediamanager.org/v3/build/
-mirror = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-V3/ws/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
@@ -23,12 +22,6 @@ code = tmm.jar
 
 # plugins
 %PLUGINS%
-
-# files to be deleted
-# delete = abc.jar
-
-# cleanup - check folder for unreferenced files and delete
-deleteAbandonedFilesInDir = lib
 
 resource = progress.jpg
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
@@ -78,9 +71,6 @@ tmm.class = org.tinymediamanager.TinyMediaManager
 # allow offline use
 allow_offline = true
 
-# do not create .v files
-skip_md5_cache = true
-
 # jvm args
 #####################################################################################
 # NOTE: please consider to write fundamental changes to the commandline start scripts
@@ -89,8 +79,6 @@ skip_md5_cache = true
 jvmarg = -XX:+IgnoreUnrecognizedVMOptions
 jvmarg = -XX:+UseG1GC
 jvmarg = -XX:+UseStringDeduplication
-jvmarg = --add-modules=java.xml.bind
-jvmarg = --add-modules=java.xml.ws
 jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -Xss512k

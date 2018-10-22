@@ -32,8 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -148,14 +146,14 @@ public class TinyMediaManager {
       }
     }
 
-    if (Globals.isDebug()) {
-      ClassLoader cl = ClassLoader.getSystemClassLoader();
-      URL[] urls = ((URLClassLoader) cl).getURLs();
-      LOGGER.info("=== DEBUG CLASS LOADING =============================");
-      for (URL url : urls) {
-        LOGGER.info(url.getFile());
-      }
-    }
+    // if (Globals.isDebug()) {
+    // ClassLoader cl = ClassLoader.getSystemClassLoader();
+    // URL[] urls = ((URLClassLoader) cl).getURLs();
+    // LOGGER.info("=== DEBUG CLASS LOADING =============================");
+    // for (URL url : urls) {
+    // LOGGER.info(url.getFile());
+    // }
+    // }
 
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2018 Manuel Laggner ===");

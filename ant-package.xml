@@ -64,9 +64,10 @@
 			<entry key="date" value="${tmmTimestamp}" />
 		</propertyfile>
 
-		<!-- ===================================================== -->
-		<!-- default files, to include in DIST and GD -->
-		<!-- ===================================================== -->
+
+		<echo message="=====================================================" />
+		<echo message="default files, to include in DIST and GD" />
+		<echo message="=====================================================" />
 		<copy file="changelog.txt" todir="${build.dir}" />
 		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
 		<copy file="LICENSE" todir="${build.dir}" />
@@ -124,9 +125,9 @@
 		<!-- echo message="${gd.plugins}" /-->
 		<replace file="${build.dir}/getdown.txt" token="%PLUGINS%" value="${gd.plugins}" />
 
-		<!-- ===================================================== -->
-		<!-- prepare build for MacOS X -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="prepare build for MacOS X" />
+		<echo message="=====================================================" />
 		<copy todir="${dist.dir}/mac/tinyMediaManager.app/Contents">
 			<fileset dir="AppBundler/dist-mac" />
 		</copy>
@@ -141,13 +142,13 @@
 				<exclude name="native/linux*/**" />
 			</fileset>
 		</copy>
-		<copy file="AppBundler/getdown.jar" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
+		<copy file="AppBundler/getdown-launcher.jar" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/getdown.jar" />
 
-		<!-- ===================================================== -->
-		<!-- prepare build for Windows -->
-		<!-- ===================================================== -->
-		<antcall target="launch4j32"/>
-		<antcall target="launch4j64"/>
+		<echo message="=====================================================" />
+		<echo message="prepare build for Windows" />
+		<echo message="=====================================================" />
+		<antcall target="launch4j32" />
+		<antcall target="launch4j64" />
 		<copy todir="${dist.dir}/win">
 			<fileset dir="${build.dir}">
 				<include name="**/*" />
@@ -155,11 +156,11 @@
 				<exclude name="native/linux*/**" />
 			</fileset>
 		</copy>
-		<copy file="AppBundler/getdown.jar" todir="${dist.dir}/win" />
+		<copy file="AppBundler/getdown-launcher.jar" tofile="${dist.dir}/win/getdown.jar" />
 
-		<!-- ===================================================== -->
-		<!-- prepare build for Linux -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="prepare build for Linux" />
+		<echo message="=====================================================" />
 		<copy todir="${dist.dir}/linux">
 			<fileset dir="AppBundler/dist-linux" />
 		</copy>
@@ -173,11 +174,11 @@
 				<exclude name="native/windows*/**" />
 			</fileset>
 		</copy>
-		<copy file="AppBundler/getdown.jar" todir="${dist.dir}/linux" />
+		<copy file="AppBundler/getdown-launcher.jar" tofile="${dist.dir}/linux/getdown.jar" />
 
-		<!-- ===================================================== -->
-		<!-- default files, NOT to include in DIST, but in GD -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="default files, NOT to include in DIST, but in GD" />
+		<echo message="=====================================================" />
 		<copy file="${dist.dir}/win/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
 		<copy file="${dist.dir}/win/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
 		<copy file="${dist.dir}/win/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
@@ -190,7 +191,7 @@
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" tofile="${build.dir}/JavaApplicationStub.new" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" todir="${build.dir}" />
 
-		<copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
+		<copy file="AppBundler/getdown-launcher.jar" tofile="${build.dir}/getdown-new.jar" />
 
 		<!-- create webstart file (currently w/o plugins) -->
 		<copy file="AppBundler/webstart.php" tofile="${build.dir}/webstart.php" />
@@ -205,13 +206,21 @@
 		<!-- echo message="${webstart}" /-->
 		<replace file="${build.dir}/webstart.php" token="%WEBSTARTLIBS%" value="${webstart}" />
 
-		<!-- finally create checksums -->
-		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="AppBundler/getdown.jar" />
+		<echo message="=====================================================" />
+		<echo message="finally create checksums" />
+		<echo message="=====================================================" />
+		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask">
+			<classpath>
+				<!-- ANT module currently does NOT yet include core -->
+				<pathelement location="AppBundler/getdown-ant.jar" />
+				<pathelement location="AppBundler/getdown-core.jar" />
+			</classpath>
+		</taskdef>
 		<digest appdir="${build.dir}" />
 
-		<!-- ===================================================== -->
-		<!-- package for MacOS X -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="package for MacOS X" />
+		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_mac.zip" level="9">
@@ -219,18 +228,18 @@
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 		</zip>
 
-		<!-- ===================================================== -->
-		<!-- package for Windows -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="package for Windows" />
+		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/win" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/win" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${dist.dir}/win" />
 		</zip>
 
-		<!-- ===================================================== -->
-		<!-- package for Linux -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="package for Linux" />
+		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/linux" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/linux" />
 		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_linux.tar.gz">
@@ -238,9 +247,9 @@
 			<tarfileset filemode="755" dir="${dist.dir}/linux" includes="*.sh" />
 		</tar>
 
-		<!-- ===================================================== -->
-		<!-- create a whole archive of /build for transfer to mirrors -->
-		<!-- ===================================================== -->
+		<echo message="=====================================================" />
+		<echo message="create a whole archive of /build for transfer to mirrors" />
+		<echo message="=====================================================" />
 		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
 			<tarfileset dir="${build.dir}" />
 			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />

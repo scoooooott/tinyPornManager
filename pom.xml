@@ -189,6 +189,18 @@
             <artifactId>animated-gif-lib</artifactId>
             <version>1.2</version>
         </dependency>
+
+        <!-- J9 / J10 / J11 deps -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
     </dependencies>
 
     <build>
