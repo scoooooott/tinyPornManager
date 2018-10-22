@@ -1432,6 +1432,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
+  public String getVideoHDRFormat() {
+    return getMainVideoFile().isHDR() ? "HDR" : "";
+  }
+
+  @Override
   public boolean isVideoIn3D() {
     String video3DFormat = "";
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);

@@ -1921,6 +1921,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public String getVideoHDRFormat() {
+    return "";
+  }
+
+  @Override
   public boolean isVideoIn3D() {
     return false;
   }

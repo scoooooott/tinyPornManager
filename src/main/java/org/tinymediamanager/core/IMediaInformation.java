@@ -84,6 +84,13 @@ public interface IMediaInformation {
   boolean isVideoIn3D();
 
   /**
+   * is the video in HighDynamicRange (HDR)
+   * 
+   * @return true if the video is HDR
+   */
+  String getVideoHDRFormat();
+
+  /**
    * gets the audio codec (e.g. mp3) from the main audio stream
    * 
    * @return the audio codec

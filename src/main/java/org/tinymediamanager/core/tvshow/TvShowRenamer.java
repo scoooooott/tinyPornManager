@@ -125,6 +125,7 @@ public class TvShowRenamer {
     tokenMap.put("audioLanguage", "episode.mediaInfoAudioLanguage");
     tokenMap.put("audioLanguageList", "episode.mediaInfoAudioLanguageList");
     tokenMap.put("3Dformat", "episode.video3DFormat");
+    tokenMap.put("hdr", "episode.videoHDRFormat");
 
     tokenMap.put("mediaSource", "episode.mediaSource");
 

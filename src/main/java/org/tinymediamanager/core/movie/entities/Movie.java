@@ -2099,6 +2099,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return "";
   }
 
+  @Override
+  public String getVideoHDRFormat() {
+    return getMainVideoFile().isHDR() ? "HDR" : "";
+  }
+
   public MovieEdition getEdition() {
     return edition;
   }
