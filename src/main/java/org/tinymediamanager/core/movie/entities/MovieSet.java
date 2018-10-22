@@ -107,9 +107,14 @@ public class MovieSet extends MediaEntity {
     titleSortable = "";
     firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
 
-    synchronized (movies) {
-      for (Movie movie : movies) {
-        movie.movieSetTitleChanged();
+    if (StringUtils.isNotBlank(oldValue)) {
+      // update artwork
+      MovieSetArtworkHelper.renameArtwork(this);
+
+      synchronized (movies) {
+        for (Movie movie : movies) {
+          movie.movieSetTitleChanged();
+        }
       }
     }
   }
