@@ -593,14 +593,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
     }
 
-    // if the String 3D is in the movie dir, assume it is a 3D movie
-    Matcher matcher = video3DPattern.matcher(movieDir.getFileName().toString());
-    if (matcher.find()) {
-      movie.setVideoIn3D(true);
-    }
-    // get edition from name if no edition has been set via NFO
-    if (movie.getEdition() == MovieEdition.NONE) {
-      movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
+    // set the 3D flag/edition from the file/folder name ONLY at first import
+    if (movie.isNewlyAdded()) {
+      // if the String 3D is in the movie dir, assume it is a 3D movie
+      Matcher matcher = video3DPattern.matcher(movieDir.getFileName().toString());
+      if (matcher.find()) {
+        movie.setVideoIn3D(true);
+      }
+      // get edition from name if no edition has been set via NFO
+      if (movie.getEdition() == MovieEdition.NONE) {
+        movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
+      }
     }
 
     movie.setPath(movieDir.toAbsolutePath().toString());
