@@ -490,15 +490,7 @@ class TmdbMovieMetadataProvider {
     try {
       Keywords mk = api.moviesService().keywords(tmdbId).execute().body();
       for (BaseKeyword kw : ListUtils.nullSafe(mk.keywords)) {
-        switch (kw.name) {
-          case "aftercreditsstinger":
-          case "duringcreditsstinger":
-            md.addTag(kw.name);
-            break;
-          default:
-            // ignore other tags?
-            break;
-        }
+        md.addTag(kw.name);
       }
     }
     catch (Exception e) {
