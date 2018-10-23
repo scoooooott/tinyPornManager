@@ -471,10 +471,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    for (String tag : tags) {
-      if (tag.equals(newTag)) {
-        return;
-      }
+    // do not accept duplicates
+    if (tags.contains(newTag)) {
+      return;
     }
 
     tags.add(newTag);
