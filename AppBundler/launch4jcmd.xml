@@ -29,8 +29,6 @@
     <opt>-Dtmm.consoleloglevel=INFO</opt>
     <opt>-Djna.nosys=true</opt>
     <opt>-XX:+IgnoreUnrecognizedVMOptions</opt>
-    <opt>--add-modules=java.xml.bind</opt>
-    <opt>--add-modules=java.xml.ws</opt>
   </jre>
   <versionInfo>
     <fileVersion>3.0.0.0</fileVersion>
