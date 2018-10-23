@@ -18,6 +18,7 @@
     <jdkPreference>preferJre</jdkPreference>
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
+	<runtimeBits>64/32</runtimeBits>
     <opt>-Dsun.java2d.d3d=false</opt>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Dsilent=noupdate</opt>
