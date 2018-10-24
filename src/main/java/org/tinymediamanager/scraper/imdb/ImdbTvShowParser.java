@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
@@ -368,6 +369,11 @@ public class ImdbTvShowParser extends ImdbParser {
           if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
             md.setPlot(tmdbMd.getPlot());
           }
+          // thumb (if nothing has been found in imdb)
+          if (md.getMediaArt(THUMB).isEmpty() && !tmdbMd.getMediaArt(THUMB).isEmpty()) {
+            MediaArtwork thumb = tmdbMd.getMediaArt(THUMB).get(0);
+            md.addMediaArt(thumb);
+          }
         }
       }
       catch (Exception ignored) {
@@ -513,7 +519,7 @@ public class ImdbTvShowParser extends ImdbParser {
               posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
 
               if (StringUtils.isNotBlank(posterUrl)) {
-                MediaArtwork ma = new MediaArtwork(ImdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.THUMB);
+                MediaArtwork ma = new MediaArtwork(ImdbMetadataProvider.providerInfo.getId(), THUMB);
                 ma.setPreviewUrl(posterUrl);
                 ma.setDefaultUrl(posterUrl);
                 ep.addMediaArt(ma);
