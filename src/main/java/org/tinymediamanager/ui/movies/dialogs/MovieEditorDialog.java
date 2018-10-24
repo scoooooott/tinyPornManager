@@ -1160,7 +1160,8 @@ public class MovieEditorDialog extends TmmDialog {
         }
       }
       for (String id : removeIds) {
-        movieToEdit.getIds().remove(id);
+        // set a null value causes to fire the right events
+        movieToEdit.setId(id, null);
       }
 
       Object certification = cbCertification.getSelectedItem();

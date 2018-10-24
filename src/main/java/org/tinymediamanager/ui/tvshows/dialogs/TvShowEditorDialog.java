@@ -841,7 +841,8 @@ public class TvShowEditorDialog extends TmmDialog {
         }
       }
       for (String id : removeIds) {
-        tvShowToEdit.getIds().remove(id);
+        // set a null value causes to fire the right events
+        tvShowToEdit.setId(id, null);
       }
 
       Object certification = cbCertification.getSelectedItem();
