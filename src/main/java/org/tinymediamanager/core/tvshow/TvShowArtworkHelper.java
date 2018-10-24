@@ -15,9 +15,16 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BACKGROUND;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CLEARART;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CLEARLOGO;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.LOGO;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -47,6 +55,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
+import org.tinymediamanager.core.tvshow.tasks.TvShowExtraImageFetcherTask;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
@@ -68,6 +77,12 @@ public class TvShowArtworkHelper {
    *          the artwork type to be downloaded
    */
   public static void downloadArtwork(TvShow show, MediaFileType type) {
+    // extra handling for extrafanart & extrathumbs
+    if (type == MediaFileType.EXTRAFANART) {
+      downloadExtraArtwork(show, type);
+      return;
+    }
+
     String url = show.getArtworkUrl(type);
     if (StringUtils.isBlank(url)) {
       return;
@@ -488,5 +503,154 @@ public class TvShowArtworkHelper {
         tvShow.saveToDb();
       }
     }
+  }
+
+  public static void setArtwork(TvShow tvShow, List<MediaArtwork> artwork) {
+    // poster
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == POSTER) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.POSTER);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.POSTER);
+        break;
+      }
+    }
+
+    // fanart
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == BACKGROUND) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.FANART);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.FANART);
+        break;
+      }
+    }
+
+    // banner
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == BANNER) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.BANNER);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.BANNER);
+        break;
+      }
+    }
+
+    // logo
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == LOGO) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.LOGO);
+        break;
+      }
+    }
+
+    // clearlogo
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == CLEARLOGO) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARLOGO);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.CLEARLOGO);
+        break;
+      }
+    }
+
+    // clearart
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == CLEARART) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.CLEARART);
+        break;
+      }
+    }
+
+    // thumb
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == THUMB) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.THUMB);
+        break;
+      }
+    }
+
+    // season poster
+    HashMap<Integer, String> seasonPosters = new HashMap<>();
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == MediaArtworkType.SEASON_POSTER && art.getSeason() >= 0) {
+        // check if there is already an artwork for this season
+        String url = seasonPosters.get(art.getSeason());
+        if (StringUtils.isBlank(url)) {
+          tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_POSTER);
+          TvShowArtworkHelper.downloadSeasonArtwork(tvShow, art.getSeason(), SEASON_POSTER);
+          seasonPosters.put(art.getSeason(), art.getDefaultUrl());
+        }
+      }
+    }
+
+    // season banner
+    HashMap<Integer, String> seasonBanners = new HashMap<>();
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == MediaArtworkType.SEASON_BANNER && art.getSeason() >= 0) {
+        // check if there is already an artwork for this season
+        String url = seasonBanners.get(art.getSeason());
+        if (StringUtils.isBlank(url)) {
+          tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_BANNER);
+          TvShowArtworkHelper.downloadSeasonArtwork(tvShow, art.getSeason(), SEASON_BANNER);
+          seasonBanners.put(art.getSeason(), art.getDefaultUrl());
+        }
+      }
+    }
+
+    // season thumb
+    HashMap<Integer, String> seasonThumbs = new HashMap<>();
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == MediaArtworkType.SEASON_THUMB && art.getSeason() >= 0) {
+        // check if there is already an artwork for this season
+        String url = seasonThumbs.get(art.getSeason());
+        if (StringUtils.isBlank(url)) {
+          tvShow.setSeasonArtworkUrl(art.getSeason(), art.getDefaultUrl(), SEASON_THUMB);
+          TvShowArtworkHelper.downloadSeasonArtwork(tvShow, art.getSeason(), SEASON_THUMB);
+          seasonThumbs.put(art.getSeason(), art.getDefaultUrl());
+        }
+      }
+    }
+
+    // extrafanart
+    List<String> extrafanarts = new ArrayList<>();
+    if (TvShowModuleManager.SETTINGS.isImageExtraFanart() && TvShowModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
+      for (MediaArtwork art : artwork) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtworkType.BACKGROUND) {
+          extrafanarts.add(art.getDefaultUrl());
+          if (extrafanarts.size() >= TvShowModuleManager.SETTINGS.getImageExtraFanartCount()) {
+            break;
+          }
+        }
+      }
+      tvShow.setExtraFanartUrls(extrafanarts);
+      if (extrafanarts.size() > 0) {
+        downloadArtwork(tvShow, MediaFileType.EXTRAFANART);
+      }
+    }
+
+    // update DB
+    tvShow.saveToDb();
+    tvShow.writeNFO(); // to get the artwork urls into the NFO
+  }
+
+  private static void downloadExtraArtwork(TvShow tvShow, MediaFileType type) {
+    // get images in thread
+    TvShowExtraImageFetcherTask task = new TvShowExtraImageFetcherTask(tvShow, type);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 }

@@ -141,6 +141,8 @@ public class TvShowSettings extends AbstractSettings {
   // artwork scraper
   private boolean                              scrapeBestImage                = true;
   private boolean                              writeActorImages               = false;
+  private boolean                              imageExtraFanart               = false;
+  private int                                  imageExtraFanartCount          = 5;
 
   // subtitle scraper
   private MediaLanguages                       subtitleScraperLanguage        = MediaLanguages.en;
@@ -892,6 +894,26 @@ public class TvShowSettings extends AbstractSettings {
 
   public boolean isRenameAfterScrape() {
     return this.renameAfterScrape;
+  }
+
+  public int getImageExtraFanartCount() {
+    return imageExtraFanartCount;
+  }
+
+  public void setImageExtraFanartCount(int newValue) {
+    int oldValue = this.imageExtraFanartCount;
+    this.imageExtraFanartCount = newValue;
+    firePropertyChange("imageExtraFanartCount", oldValue, newValue);
+  }
+
+  public boolean isImageExtraFanart() {
+    return imageExtraFanart;
+  }
+
+  public void setImageExtraFanart(boolean newValue) {
+    boolean oldValue = this.imageExtraFanart;
+    this.imageExtraFanart = newValue;
+    firePropertyChange("imageExtraFanart", oldValue, newValue);
   }
 
   /*****************************************************************

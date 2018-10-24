@@ -71,11 +71,13 @@ public class MovieExtraImageFetcherTask implements Runnable {
           case EXTRATHUMB:
             downloadExtraThumbs();
             break;
+
           case EXTRAFANART:
             downloadExtraFanart();
             break;
+
           default:
-            break;
+            return;
         }
       }
       else {

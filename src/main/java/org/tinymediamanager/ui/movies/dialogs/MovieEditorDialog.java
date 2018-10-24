@@ -137,8 +137,8 @@ public class MovieEditorDialog extends TmmDialog {
   private EventList<MediaId>                 ids;
   private EventList<MediaRating>             ratings;
   private List<MediaFile>                    mediaFiles       = new ArrayList<>();
-  private List<String>                       extrathumbs      = new ArrayList<>();
-  private List<String>                       extrafanarts     = new ArrayList<>();
+  private List<String>                       extrathumbs      = null;
+  private List<String>                       extrafanarts     = null;
   private Rating                             userRating;
   private boolean                            continueQueue    = true;
   private boolean                            navigateBack     = false;
@@ -310,8 +310,12 @@ public class MovieEditorDialog extends TmmDialog {
         }
       }
 
-      extrathumbs.addAll(movieToEdit.getExtraThumbs());
-      extrafanarts.addAll(movieToEdit.getExtraFanarts());
+      if (MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+        extrathumbs = new ArrayList<>(movieToEdit.getExtraThumbs());
+      }
+      if (MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+        extrafanarts = new ArrayList<>(movieToEdit.getExtraFanarts());
+      }
       for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
         cbMovieSet.addItem(movieSet);
         if (movieToEdit.getMovieSet() == movieSet) {

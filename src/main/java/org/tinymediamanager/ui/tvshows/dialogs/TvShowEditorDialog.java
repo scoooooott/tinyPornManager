@@ -132,6 +132,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private EventList<MediaRating>            ratings;
   private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer> episodes;
+  private List<String>                      extrafanarts     = null;
   private Rating                            userRating;
   private boolean                           continueQueue    = true;
   private boolean                           navigateBack     = false;
@@ -248,6 +249,9 @@ public class TvShowEditorDialog extends TmmDialog {
 
       genres.addAll(tvShow.getGenres());
       tags.addAll(tvShowToEdit.getTags());
+      if (TvShowModuleManager.SETTINGS.isImageExtraFanart()) {
+        extrafanarts = new ArrayList<>(tvShowToEdit.getExtraFanartUrls());
+      }
 
       for (Certification cert : Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
@@ -430,7 +434,7 @@ public class TvShowEditorDialog extends TmmDialog {
           @Override
           public void mouseClicked(MouseEvent e) {
             ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.FANART,
-                tvShowList.getAvailableArtworkScrapers(), lblFanart, null, null, MediaType.TV_SHOW);
+                tvShowList.getAvailableArtworkScrapers(), lblFanart, null, extrafanarts, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
             updateArtworkUrl(lblFanart, tfFanart);
@@ -899,6 +903,14 @@ public class TvShowEditorDialog extends TmmDialog {
       }
       else if (StringUtils.isEmpty(tfThumb.getText())) {
         tvShowToEdit.removeArtworkUrl(MediaFileType.THUMB);
+      }
+
+      // set extrafanarts
+      if (extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size() || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls())
+          || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts)) {
+        // movieToEdit.downloadExtraFanarts(extrafanarts);
+        tvShowToEdit.setExtraFanartUrls(extrafanarts);
+        tvShowToEdit.downloadArtwork(MediaFileType.EXTRAFANART);
       }
 
       tvShowToEdit.setProductionCompany(tfStudio.getText());

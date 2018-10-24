@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -32,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -72,7 +74,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowImageSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<>());
@@ -81,6 +83,8 @@ public class TvShowImageSettingsPanel extends JPanel {
   private JTextPane                   tpArtworkScraperDescription;
   private JPanel                      panelArtworkScraperOptions;
   private JCheckBox                   cbActorImages;
+  private JSpinner                    spDownloadCountExtrafanart;
+  private JCheckBox                   chckbxEnableExtrafanart;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -154,11 +158,11 @@ public class TvShowImageSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][grow]", "[][200lp][20lp,grow][20lp,shrink 0][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][200lp][20lp,grow][20lp,shrink 0][][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
-      add(lblScraperT, "cell 0 0 4 1");
+      add(lblScraperT, "cell 0 0 5 1");
     }
     {
       tableArtworkScraper = new TmmTable();
@@ -166,11 +170,11 @@ public class TvShowImageSettingsPanel extends JPanel {
 
       JScrollPane scrollPaneArtworkScraper = new JScrollPane(tableArtworkScraper);
       tableArtworkScraper.configureScrollPane(scrollPaneArtworkScraper);
-      add(scrollPaneArtworkScraper, "cell 1 1,grow");
+      add(scrollPaneArtworkScraper, "cell 1 1 2 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 1 2,grow");
+      add(scrollPaneScraperDetails, "cell 1 2 2 1,grow");
       scrollPaneScraperDetails.setBorder(null);
       scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -188,11 +192,22 @@ public class TvShowImageSettingsPanel extends JPanel {
       panelScraperDetails.add(panelArtworkScraperOptions, "cell 0 1,growx");
     }
     {
+      chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
+      add(chckbxEnableExtrafanart, "cell 1 5 2 1");
+
+      JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+      add(lblDownloadCount, "flowx,cell 2 6");
+
+      spDownloadCountExtrafanart = new JSpinner();
+      spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
+      add(spDownloadCountExtrafanart, "cell 2 6");
+    }
+    {
       JSeparator separator = new JSeparator();
-      add(separator, "cell 1 3,growx");
+      add(separator, "cell 2 3,growx");
 
       cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
-      add(cbActorImages, "cell 1 4");
+      add(cbActorImages, "cell 1 4 2 1");
     }
   }
 
@@ -296,5 +311,21 @@ public class TvShowImageSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty, cbActorImages, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<TvShowSettings, Integer> tvShowSettingsBeanProperty_1 = BeanProperty.create("imageExtraFanartCount");
+    BeanProperty<JSpinner, Object> jSpinnerBeanProperty_1 = BeanProperty.create("value");
+    AutoBinding<TvShowSettings, Integer, JSpinner, Object> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_1, spDownloadCountExtrafanart, jSpinnerBeanProperty_1);
+    autoBinding_3.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_2 = BeanProperty.create("imageExtraFanart");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_2, chckbxEnableExtrafanart, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
+    //
+    BeanProperty<JSpinner, Boolean> jSpinnerBeanProperty = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, chckbxEnableExtrafanart,
+        jCheckBoxBeanProperty, spDownloadCountExtrafanart, jSpinnerBeanProperty);
+    autoBinding_2.bind();
   }
 }

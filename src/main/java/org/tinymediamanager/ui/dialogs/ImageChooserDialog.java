@@ -314,7 +314,7 @@ public class ImageChooserDialog extends TmmDialog {
     }
 
     // add buttons to select/deselect all extrafanarts/extrathumbs
-    if (mediaType == MediaType.MOVIE && MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+    if (type == ImageType.FANART && extraThumbs != null) {
       JLabel labelThumbs = new JLabel("Extrathumbs:");
       contentPanel.add(labelThumbs, "flowx,cell 0 2");
 
@@ -346,7 +346,7 @@ public class ImageChooserDialog extends TmmDialog {
         }
       });
     }
-    if (mediaType == MediaType.MOVIE && MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+    if (type == ImageType.FANART && extraFanarts != null) {
       JLabel labelFanart = new JLabel("Extrafanart:");
       contentPanel.add(labelFanart, "flowx,cell 0 3");
 
@@ -506,7 +506,7 @@ public class ImageChooserDialog extends TmmDialog {
     imagePanel.add(cb, gbc);
 
     // should we provide an option for extrathumbs
-    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+    if (type == ImageType.FANART && extraThumbs != null) {
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
       gbc.gridy = 1;
@@ -524,7 +524,7 @@ public class ImageChooserDialog extends TmmDialog {
     }
 
     // should we provide an option for extrafanart
-    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+    if (type == ImageType.FANART && extraFanarts != null) {
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
       gbc.gridy = MovieModuleManager.SETTINGS.isImageExtraThumbs() ? 2 : 1;
@@ -774,12 +774,12 @@ public class ImageChooserDialog extends TmmDialog {
       }
 
       // extrathumbs
-      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+      if (type == ImageType.FANART && extraThumbs != null) {
         processExtraThumbs();
       }
 
       // extrafanart
-      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+      if (type == ImageType.FANART && extraFanarts != null) {
         processExtraFanart();
       }
 
