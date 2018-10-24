@@ -17,16 +17,11 @@ package org.tinymediamanager.ui.components.toolbar;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -37,8 +32,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
@@ -52,9 +45,6 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
-import org.tinymediamanager.core.threading.TmmTaskHandle;
-import org.tinymediamanager.core.threading.TmmTaskListener;
-import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.IconManager;
@@ -77,8 +67,6 @@ import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
-import org.tinymediamanager.ui.dialogs.TaskListDialog;
-import org.tinymediamanager.ui.images.LoadingSpinner;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
@@ -132,9 +120,6 @@ public class ToolbarPanel extends JPanel {
     btnRename = new ToolbarButton(IconManager.TOOLBAR_RENAME, IconManager.TOOLBAR_RENAME_HOVER);
     panelCenter.add(btnRename, "cell 5 0,alignx center");
 
-    JButton btnTasks = createTaskButton();
-    panelCenter.add(btnTasks, "cell 7 0,alignx center,aligny bottom");
-
     JButton btnSettings = new ToolbarButton(IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
     Action settingsAction = new SettingsAction();
     btnSettings.setAction(settingsAction);
@@ -163,9 +148,6 @@ public class ToolbarPanel extends JPanel {
 
     menuRename = new ToolbarMenu(BUNDLE.getString("Toolbar.rename"));
     panelCenter.add(menuRename, "cell 5 1,alignx center");
-
-    JLabel lblTaskList = new ToolbarLabel(BUNDLE.getString("Toolbar.progress"), e -> TaskListDialog.getInstance().setVisible(true));
-    panelCenter.add(lblTaskList, "cell 7 1,alignx center");
 
     JLabel lblSettings = new ToolbarLabel(BUNDLE.getString("Toolbar.settings"), settingsAction);
     panelCenter.add(lblSettings, "cell 8 1,alignx center");
@@ -202,82 +184,6 @@ public class ToolbarPanel extends JPanel {
 
     btnRename.setAction(module.getRenameAction());
     menuRename.setPopupMenu(module.getRenameMenu());
-  }
-
-  private JButton createTaskButton() {
-    final JButton button = new JButton("");
-    final LoadingSpinner iconSpinner = new LoadingSpinner(30, button);
-    button.setIcon(iconSpinner);
-    button.setVerticalTextPosition(SwingConstants.BOTTOM);
-    button.setHorizontalTextPosition(SwingConstants.CENTER);
-    button.setOpaque(false);
-    button.setBorder(BorderFactory.createEmptyBorder());
-    button.putClientProperty("flatButton", Boolean.TRUE);
-    button.updateUI();
-
-    final Set<TmmTaskHandle> activeHandles = new HashSet<>();
-    final TmmTaskListener tmmTaskListener = task -> {
-      // run the updates in EDT
-      SwingUtilities.invokeLater(() -> {
-        // track the task states
-        switch (task.getState()) {
-          case CREATED:
-          case QUEUED:
-          case STARTED:
-            activeHandles.add(task);
-            break;
-
-          case CANCELLED:
-          case FINISHED:
-            activeHandles.remove(task);
-            break;
-        }
-
-        // change the buttons if needed
-        if (!activeHandles.isEmpty()) {
-          // yes -> change the icon to the running icon
-          iconSpinner.start();
-          iconSpinner.setCustomColors(new Color(255, 161, 0), new Color(255, 122, 0));
-        }
-        else {
-          // no -> change the icon to the idle icon
-          iconSpinner.stop();
-          iconSpinner.resetCustomColor();
-        }
-      });
-    };
-    TmmTaskManager.getInstance().addTaskListener(tmmTaskListener);
-
-    button.addMouseListener(new MouseListener() {
-      @Override
-      public void mouseReleased(MouseEvent arg0) {
-      }
-
-      @Override
-      public void mousePressed(MouseEvent arg0) {
-      }
-
-      @Override
-      public void mouseExited(MouseEvent arg0) {
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        if (activeHandles.isEmpty()) {
-          iconSpinner.resetCustomColor();
-        }
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent arg0) {
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        iconSpinner.setCustomColors(new Color(255, 161, 0), new Color(255, 122, 0));
-      }
-
-      @Override
-      public void mouseClicked(MouseEvent arg0) {
-        TaskListDialog.getInstance().setVisible(true);
-      }
-    });
-
-    return button;
   }
 
   private JPopupMenu buildToolsMenu() {
