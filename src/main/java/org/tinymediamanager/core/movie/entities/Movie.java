@@ -258,7 +258,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       tags.clear();
       trailer.clear();
       extraFanarts.clear();
-      extraFanarts.clear();
+      extraThumbs.clear();
     }
 
     setGenres(other.genres);
