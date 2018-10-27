@@ -907,8 +907,8 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       // set extrafanarts
-      if (extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size() || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls())
-          || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts)) {
+      if (extrafanarts != null && extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size()
+          || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls()) || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts)) {
         // movieToEdit.downloadExtraFanarts(extrafanarts);
         tvShowToEdit.setExtraFanartUrls(extrafanarts);
         tvShowToEdit.downloadArtwork(MediaFileType.EXTRAFANART);

@@ -1238,7 +1238,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       // set extrathumbs
-      if (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
+      if (extrathumbs != null && extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
           || !movieToEdit.getExtraThumbs().containsAll(extrathumbs)) {
         // movieToEdit.downloadExtraThumbs(extrathumbs);
         movieToEdit.setExtraThumbs(extrathumbs);
@@ -1246,7 +1246,8 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       // set extrafanarts
-      if (extrafanarts.size() != movieToEdit.getExtraFanarts().size() || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
+      if (extrafanarts != null && extrafanarts.size() != movieToEdit.getExtraFanarts().size()
+          || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
           || !movieToEdit.getExtraFanarts().containsAll(extrafanarts)) {
         // movieToEdit.downloadExtraFanarts(extrafanarts);
         movieToEdit.setExtraFanarts(extrafanarts);
