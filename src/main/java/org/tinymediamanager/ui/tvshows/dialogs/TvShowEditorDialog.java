@@ -907,8 +907,8 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       // set extrafanarts
-      if (extrafanarts != null && extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size()
-          || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls()) || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts)) {
+      if (extrafanarts != null && (extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size()
+          || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls()) || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts))) {
         // movieToEdit.downloadExtraFanarts(extrafanarts);
         tvShowToEdit.setExtraFanartUrls(extrafanarts);
         tvShowToEdit.downloadArtwork(MediaFileType.EXTRAFANART);
@@ -1039,7 +1039,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private class AddRatingAction extends AbstractAction {
     private static final long serialVersionUID = 2903255414533349267L;
 
-    public AddRatingAction() {
+    private AddRatingAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
@@ -1063,7 +1063,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private class RemoveRatingAction extends AbstractAction {
     private static final long serialVersionUID = -7079821950827356996L;
 
-    public RemoveRatingAction() {
+    private RemoveRatingAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
@@ -1428,7 +1428,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private class NavigateBackAction extends AbstractAction {
     private static final long serialVersionUID = -1652218154720642310L;
 
-    public NavigateBackAction() {
+    private NavigateBackAction() {
       putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.BACK_INV);
     }

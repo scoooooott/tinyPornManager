@@ -1238,17 +1238,17 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       // set extrathumbs
-      if (extrathumbs != null && extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
-          || !movieToEdit.getExtraThumbs().containsAll(extrathumbs)) {
+      if (extrathumbs != null && (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
+          || !movieToEdit.getExtraThumbs().containsAll(extrathumbs))) {
         // movieToEdit.downloadExtraThumbs(extrathumbs);
         movieToEdit.setExtraThumbs(extrathumbs);
         movieToEdit.downloadArtwork(MediaFileType.EXTRATHUMB);
       }
 
       // set extrafanarts
-      if (extrafanarts != null && extrafanarts.size() != movieToEdit.getExtraFanarts().size()
+      if (extrafanarts != null && (extrafanarts.size() != movieToEdit.getExtraFanarts().size()
           || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
-          || !movieToEdit.getExtraFanarts().containsAll(extrafanarts)) {
+          || !movieToEdit.getExtraFanarts().containsAll(extrafanarts))) {
         // movieToEdit.downloadExtraFanarts(extrafanarts);
         movieToEdit.setExtraFanarts(extrafanarts);
         movieToEdit.downloadArtwork(MediaFileType.EXTRAFANART);
