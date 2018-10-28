@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 
 import org.slf4j.Logger;
@@ -114,6 +116,10 @@ public class UpdateDialog extends TmmDialog {
       originalText = originalText.replace(matcher.group(1), "<a href=\"" + matcher.group(1) + "\">" + matcher.group(1) + "</a>");
     }
 
-    return "<html><pre>" + originalText + "</pre><html>";
+    // set the foreground color of the content
+    Color foreground = UIManager.getColor("TextPane.foreground");
+    String color = Integer.toHexString(foreground.getRed()) + Integer.toHexString(foreground.getGreen()) + Integer.toHexString(foreground.getBlue());
+
+    return "<html><pre style=\"color: #" + color + "\">" + originalText + "</pre><html>";
   }
 }
