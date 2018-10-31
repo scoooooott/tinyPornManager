@@ -28,6 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.text.Collator;
 import java.text.Normalizer;
 import java.text.RuleBasedCollator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -498,6 +499,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
   private void chooseArtwork(MediaFileType mediaFileType) {
     ImageType imageType;
+    List<String> extrafanarts = null;
 
     switch (mediaFileType) {
       case POSTER:
@@ -512,6 +514,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           return;
         }
         imageType = ImageType.FANART;
+        extrafanarts = new ArrayList<>();
         break;
 
       case BANNER:
@@ -553,11 +556,20 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         return;
     }
 
-    String imageUrl = ImageChooserDialog.chooseImage(this, tvShowToScrape.getIds(), imageType, artworkScrapers, MediaType.TV_SHOW);
+    String imageUrl = ImageChooserDialog.chooseImage(this, tvShowToScrape.getIds(), imageType, artworkScrapers, null, extrafanarts,
+        MediaType.TV_SHOW);
 
     tvShowToScrape.setArtworkUrl(imageUrl, mediaFileType);
     if (StringUtils.isNotBlank(imageUrl)) {
       tvShowToScrape.downloadArtwork(mediaFileType);
+    }
+
+    // set extrafanarts
+    if (mediaFileType == MediaFileType.FANART) {
+      tvShowToScrape.setExtraFanartUrls(extrafanarts);
+      if (extrafanarts.size() > 0) {
+        tvShowToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
+      }
     }
   }
 
