@@ -162,5 +162,19 @@ public class UpgradeTasks {
         }
       }
     }
+
+    // OSX tmm.icns
+    if (Platform.isMac()) {
+      file = new File("tmm.icns");
+      if (file.exists() && file.length() > 0) {
+        File cur = new File("../tmm.icns");
+        try {
+          FileUtils.copyFile(file, cur);
+        }
+        catch (IOException e) {
+          LOGGER.error("Could not update tmm.icns");
+        }
+      }
+    }
   }
 }

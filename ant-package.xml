@@ -190,6 +190,7 @@
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" todir="${build.dir}" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" tofile="${build.dir}/JavaApplicationStub.new" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" todir="${build.dir}" />
+		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/tmm.icns" todir="${build.dir}"/>
 
 		<copy file="AppBundler/getdown-launcher.jar" tofile="${build.dir}/getdown-new.jar" />
 
