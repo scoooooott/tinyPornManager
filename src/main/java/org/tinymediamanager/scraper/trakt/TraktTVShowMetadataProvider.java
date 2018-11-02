@@ -174,7 +174,7 @@ class TraktTVShowMetadataProvider {
 
         if (episode.rating != null) {
           MediaRating rating = new MediaRating(TraktMetadataProvider.providerInfo.getId());
-          rating.setRating(episode.rating);
+          rating.setRating(Math.round(episode.rating * 10.0) / 10.0); // hack to round to 1 decimal
           rating.setVoteCount(episode.votes);
           rating.setMaxValue(10);
           ep.addRating(rating);

@@ -199,7 +199,7 @@ class TraktMovieMetadataProvider {
     md.setReleaseDate(TraktUtils.toDate(movie.released));
 
     MediaRating rating = new MediaRating("trakt");
-    rating.setRating(movie.rating);
+    rating.setRating(Math.round(movie.rating * 10.0) / 10.0); // hack to round to 1 decimal
     rating.setVoteCount(movie.votes);
     rating.setMaxValue(10);
     md.addRating(rating);
