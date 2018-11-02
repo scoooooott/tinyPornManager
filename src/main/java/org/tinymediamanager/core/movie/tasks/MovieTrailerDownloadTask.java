@@ -18,7 +18,7 @@ package org.tinymediamanager.core.movie.tasks;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.core.threading.DownloadTask;
+import org.tinymediamanager.core.tasks.DownloadTask;
 
 /**
  * A task for downloading movie trailers

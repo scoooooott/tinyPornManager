@@ -27,7 +27,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.threading.DownloadTask;
+import org.tinymediamanager.core.tasks.DownloadTask;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**

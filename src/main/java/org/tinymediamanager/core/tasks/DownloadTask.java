@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.threading;
+package org.tinymediamanager.core.tasks;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -34,6 +35,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.scraper.http.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
@@ -134,6 +136,15 @@ public class DownloadTask extends TmmTask {
       if (StringUtils.isNotBlank(userAgent)) {
         u.setUserAgent(userAgent);
       }
+
+      Path tempFile = file.resolveSibling(file.getFileName() + ".part");
+      // try to resume if the temp file exists
+      boolean resume = false;
+      if (Files.exists(tempFile)) {
+        resume = true;
+        u.addHeader("Range", "bytes=" + tempFile.toFile().length() + "-");
+      }
+
       InputStream is = u.getInputStream();
 
       // trace server headers
@@ -172,9 +183,8 @@ public class DownloadTask extends TmmTask {
 
       LOGGER.info("Downloading to " + file);
 
-      Path tempFile = file.resolveSibling(file.getFileName() + ".part");
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-      FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
+      FileOutputStream outputStream = new FileOutputStream(tempFile.toFile(), resume);
       int count = 0;
       byte buffer[] = new byte[2048];
       Long timestamp1 = System.nanoTime();
