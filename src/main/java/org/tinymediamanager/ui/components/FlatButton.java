@@ -51,6 +51,7 @@ public class FlatButton extends JButton {
   @Override
   protected void init(String text, Icon icon) {
     setOpaque(false);
+    setContentAreaFilled(false);
     putClientProperty("flatButton", Boolean.TRUE);
     setBorder(BorderFactory.createEmptyBorder());
     super.init(text, icon);

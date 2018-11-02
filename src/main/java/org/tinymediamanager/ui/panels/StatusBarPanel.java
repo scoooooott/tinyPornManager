@@ -68,6 +68,7 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
   private JLabel                      taskLabel;
   private JProgressBar                taskProgressBar;
   private JButton                     taskStopButton;
+  private Component                   spacer;
 
   public StatusBarPanel() {
     initComponents();
@@ -120,11 +121,13 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
     TmmUIMessageCollector.instance.addPropertyChangeListener(evt -> {
       if (Constants.MESSAGES.equals(evt.getPropertyName())) {
         if (TmmUIMessageCollector.instance.getNewMessagesCount() > 0) {
+          spacer.setVisible(true);
           btnNotifications.setVisible(true);
           btnNotifications.setEnabled(true);
           btnNotifications.setText("" + TmmUIMessageCollector.instance.getNewMessagesCount());
         }
         else {
+          spacer.setVisible(false);
           btnNotifications.setVisible(false);
           btnNotifications.setEnabled(false);
         }
@@ -134,7 +137,7 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0 n 0 n", "[][50lp:n][grow][100lp][][15lp:n][]", "[]"));
+    setLayout(new MigLayout("insets 0 n 0 n, hidemode 2", "[][50lp:n][grow][100lp][][15lp:n][]", "[]"));
     setOpaque(false);
     {
       lblMemory = new JLabel("");
@@ -161,9 +164,9 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
       add(taskStopButton, "cell 4 0");
     }
     {
-      // spacer
-      Component verticalStrut = Box.createVerticalStrut(Math.max(taskLabel.getPreferredSize().height, taskStopButton.getPreferredSize().height));
-      add(verticalStrut, "cell 5 0");
+      spacer = Box.createVerticalStrut(Math.max(taskLabel.getPreferredSize().height, taskStopButton.getPreferredSize().height));
+      spacer.setVisible(false);
+      add(spacer, "cell 5 0");
     }
     {
       btnNotifications = new FlatButton(IconManager.WARN_INTENSIFIED);
