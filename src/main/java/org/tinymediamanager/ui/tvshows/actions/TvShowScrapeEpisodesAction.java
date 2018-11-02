@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
@@ -55,7 +56,8 @@ public class TvShowScrapeEpisodesAction extends TmmAction {
       return;
     }
 
-    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, TvShowList.getInstance().getDefaultMediaScraper(), true);
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, TvShowList.getInstance().getDefaultMediaScraper(),
+        TvShowModuleManager.SETTINGS.getScraperMetadataConfig(), true);
     TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }

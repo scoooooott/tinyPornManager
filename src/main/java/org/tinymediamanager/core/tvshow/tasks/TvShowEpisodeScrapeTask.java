@@ -31,6 +31,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -53,14 +54,15 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask extends TmmTask {
-  private static final ResourceBundle BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+  private static final ResourceBundle       BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger               LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
-  private final List<TvShowEpisode>   episodes;
-  private final MediaScraper          mediaScraper;
+  private final List<TvShowEpisode>         episodes;
+  private final MediaScraper                mediaScraper;
+  private final TvShowScraperMetadataConfig config;
 
-  private boolean                     scrapeThumb;
-  private MediaLanguages              language = TvShowModuleManager.SETTINGS.getScraperLanguage();
+  private boolean                           scrapeThumb;
+  private MediaLanguages                    language = TvShowModuleManager.SETTINGS.getScraperLanguage();
 
   /**
    * Instantiates a new tv show episode scrape task.
@@ -70,10 +72,11 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
    * @param mediaScraper
    *          the media scraper to use
    */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper) {
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, TvShowScraperMetadataConfig config) {
     super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
     this.episodes = episodes;
     this.mediaScraper = mediaScraper;
+    this.config = config;
     this.scrapeThumb = true;
   }
 
@@ -87,10 +90,11 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
    * @param scrapeThumb
    *          should we also scrape thumbs?
    */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, boolean scrapeThumb) {
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, TvShowScraperMetadataConfig config, boolean scrapeThumb) {
     super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
     this.episodes = episodes;
     this.mediaScraper = mediaScraper;
+    this.config = config;
     this.scrapeThumb = scrapeThumb;
   }
 
@@ -138,7 +142,7 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
         LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
         if (StringUtils.isNotBlank(metadata.getTitle())) {
-          episode.setMetadata(metadata);
+          episode.setMetadata(metadata, config);
         }
       }
       catch (ScrapeException e) {

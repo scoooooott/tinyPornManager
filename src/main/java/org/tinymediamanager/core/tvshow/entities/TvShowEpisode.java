@@ -79,6 +79,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.ITvShowEpisodeConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcConnector;
@@ -619,7 +620,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param metadata
    *          the new metadata
    */
-  public void setMetadata(MediaMetadata metadata) {
+  public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
     // check against null metadata (e.g. aborted request)
     if (metadata == null) {
       LOGGER.error("metadata was null");
@@ -628,10 +629,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     boolean writeNewThumb = false;
 
-    setTitle(metadata.getTitle());
-    setOriginalTitle(metadata.getOriginalTitle());
-    setPlot(metadata.getPlot());
-    setIds(metadata.getIds());
+    // populate ids
+    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
+      setId(entry.getKey(), entry.getValue().toString());
+    }
 
     setAiredSeason(metadata.getSeasonNumber());
     setAiredEpisode(metadata.getEpisodeNumber());
@@ -641,42 +642,57 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setDisplaySeason(metadata.getDisplaySeasonNumber());
     setDisplayEpisode(metadata.getDisplayEpisodeNumber());
 
-    clearRatings();
-    for (MediaRating mediaRating : metadata.getRatings()) {
-      setRating(new Rating(mediaRating));
+    if (config.isTitle()) {
+      setTitle(metadata.getTitle());
+      setOriginalTitle(metadata.getOriginalTitle());
     }
 
-    List<Person> actors = new ArrayList<>();
-    List<Person> directors = new ArrayList<>();
-    List<Person> writers = new ArrayList<>();
+    if (config.isPlot()) {
+      setPlot(metadata.getPlot());
+    }
 
-    for (MediaCastMember member : metadata.getCastMembers()) {
-      switch (member.getType()) {
-        case ACTOR:
-          actors.add(new Person(member));
-          break;
-
-        case DIRECTOR:
-          directors.add(new Person(member));
-          break;
-
-        case WRITER:
-          writers.add(new Person(member));
-          break;
-
-        default:
-          break;
+    if (config.isRating()) {
+      clearRatings();
+      for (MediaRating mediaRating : metadata.getRatings()) {
+        setRating(new Rating(mediaRating));
       }
     }
-    setActors(actors);
-    setDirectors(directors);
-    setWriters(writers);
-    writeActorImages();
 
-    for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
-      setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
-      writeNewThumb = true;
-      break;
+    if (config.isCast()) {
+      List<Person> actors = new ArrayList<>();
+      List<Person> directors = new ArrayList<>();
+      List<Person> writers = new ArrayList<>();
+
+      for (MediaCastMember member : metadata.getCastMembers()) {
+        switch (member.getType()) {
+          case ACTOR:
+            actors.add(new Person(member));
+            break;
+
+          case DIRECTOR:
+            directors.add(new Person(member));
+            break;
+
+          case WRITER:
+            writers.add(new Person(member));
+            break;
+
+          default:
+            break;
+        }
+      }
+      setActors(actors);
+      setDirectors(directors);
+      setWriters(writers);
+      writeActorImages();
+    }
+
+    if (config.isArtwork()) {
+      for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+        setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
+        writeNewThumb = true;
+        break;
+      }
     }
 
     // update DB

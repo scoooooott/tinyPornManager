@@ -246,7 +246,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
               List<TvShowEpisode> episodesToScrape = tvShow.getEpisodesToScrape();
               // scrape episodes in a task
               if (!episodesToScrape.isEmpty()) {
-                TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, mediaMetadataScraper);
+                TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, mediaMetadataScraper, scraperMetadataConfig);
                 TmmTaskManager.getInstance().addUnnamedTask(task);
               }
             }

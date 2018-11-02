@@ -490,7 +490,7 @@ public class TinyMediaManagerCMD {
           }
         }
         else {
-          task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper());
+          task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper(), options.getScraperMetadataConfig());
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
