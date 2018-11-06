@@ -50,10 +50,10 @@ public class TvShowEpisodeAndSeasonParser {
 
   // new parsing logic
   private static Pattern      episodePattern      = Pattern.compile("[epx_-]+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      episodePattern2     = Pattern.compile("episode[\\. _-]*(\\d{1,3})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      episodePattern2     = Pattern.compile("(?:episode|ep)[\\. _-]*(\\d{1,3})", Pattern.CASE_INSENSITIVE);
   private static Pattern      romanPattern        = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonPattern       = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonMultiEP         = Pattern.compile("s(\\d{1,4})[ ]?((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonMultiEP       = Pattern.compile("s(\\d{1,4})[ ]?((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP2      = Pattern.compile("(\\d{1,4})(?=x)((?:([epx]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers2Pattern     = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers3Pattern     = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
@@ -94,10 +94,10 @@ public class TvShowEpisodeAndSeasonParser {
     title = title.replaceAll("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)", "");
     title = title.replaceAll("[\\/ _.-]p(?:ar)?t[ _.-]()([ivx]+)", "");
     title = title.replaceAll("[epx_-]+(\\d{1,3})", "");
-    title = title.replaceAll("episode[\\. _-]*(\\d{1,2})", "");
+    title = title.replaceAll("episode[\\. _-]*(\\d{1,3})", "");
     title = title.replaceAll("(part|pt)[\\._\\s]+([MDCLXVI]+)", "");
     title = title.replaceAll("(staffel|season|series)[\\s_.-]*(\\d{1,4})", "");
-    title = title.replaceAll("s(\\d{1,4})((?:([epx_.-]+\\d{1,3})+))", "");
+    title = title.replaceAll("s(\\d{1,4})[ ]?((?:([epx_.-]+\\d{1,3})+))", "");
     title = title.replaceAll("(\\d{1,4})(?=x)((?:([epx]+\\d{1,3})+))", "");
 
     // split and reassemble
@@ -309,6 +309,9 @@ public class TvShowEpisodeAndSeasonParser {
           result.episodes.add(ep);
           LOGGER.trace("add found EP " + ep);
         }
+      }
+      if (!result.episodes.isEmpty()) {
+        return result;
       }
     }
 
