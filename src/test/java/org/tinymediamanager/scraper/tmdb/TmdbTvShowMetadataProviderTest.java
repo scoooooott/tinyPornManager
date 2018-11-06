@@ -107,7 +107,7 @@ public class TmdbTvShowMetadataProviderTest extends TmdbMetadataProviderBaseTest
 
     assertThat(searchResults).isNotNull();
     assertThat(searchResults.size()).isGreaterThanOrEqualTo(1);
-    assertThat(searchResults.get(1).getTitle()).isEqualTo("One Piece");
+    assertThat(searchResults.get(1).getTitle()).isEqualTo("One Piece Cut To Manga");
     assertThat(searchResults.get(1).getId()).isEqualTo("37854");
     assertThat(searchResults.get(1).getScore()).isEqualTo(1);
 

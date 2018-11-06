@@ -235,7 +235,6 @@ class TmdbTvShowMetadataProvider {
     LOGGER.debug("getTvShowMetadata() " + options.toString());
 
     Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
-
     Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
 
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
@@ -421,7 +420,16 @@ class TmdbTvShowMetadataProvider {
   }
 
   private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    return getEpisodeMetadata(options, false, null);
+  }
+
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options, Boolean fallback, MediaMetadata metadata)
+      throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getEpisodeMetadata() " + options.toString());
+
+    Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
+    Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
     int tmdbId = 0;
@@ -595,6 +603,37 @@ class TmdbTvShowMetadataProvider {
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
       md.addMediaArt(ma);
+    }
+
+    // check if we need to rescrape in the fallback language
+    if ((StringUtils.isBlank(md.getPlot())
+        || StringUtils.isBlank(md.getTitle()) && (!options.getLanguage().equals(fallbackLanguage) || fallback) && titleFallback)) {
+      // title or plot was empty - scrape in fallback language
+
+      if (fallback) {
+        LOGGER.debug("episode data not found with fallback language. Returning original.");
+        return metadata;
+      }
+
+      Locale oldLang = options.getLanguage();
+      try {
+        options.setLanguage(fallbackLanguage);
+
+        LOGGER.debug("Re-scraping using fallback language " + MediaLanguages.valueOf(options.getLanguage().getLanguage()));
+        MediaMetadata fallbackMd = getEpisodeMetadata(options, true, md);
+
+        if (StringUtils.isBlank(md.getPlot()) && StringUtils.isNotBlank(fallbackMd.getPlot())) {
+          md.setPlot(fallbackMd.getPlot());
+        }
+        if (StringUtils.isBlank(md.getTitle()) && StringUtils.isNotBlank(fallbackMd.getTitle())) {
+          md.setTitle(fallbackMd.getTitle());
+        }
+      }
+      catch (Exception ignored) {
+      }
+      finally {
+        options.setLanguage(oldLang);
+      }
     }
 
     return md;
