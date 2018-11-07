@@ -49,6 +49,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -1112,6 +1113,7 @@ public class MovieRenamer {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
       engine.setModelAdaptor(new TmmRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);

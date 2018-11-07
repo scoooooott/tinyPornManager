@@ -36,6 +36,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -65,6 +66,7 @@ public class MovieJmteTests {
       engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
       engine.setModelAdaptor(new TmmModelAdaptor());
       root = new HashMap<>();
       root.put("movie", movie);
@@ -72,6 +74,7 @@ public class MovieJmteTests {
       // test single tokens
       compare("${title}", "Aladdin");
       compare("${title[0]}", "A");
+      compare("${title;first}", "A");
       compare("${title[0,2]}", "Al");
       compare("${originalTitle}", "Disneys Aladdin");
       compare("${sortTitle}", "Aladdin");
