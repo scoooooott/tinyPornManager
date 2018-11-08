@@ -39,6 +39,7 @@ import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.RuntimeConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
@@ -293,7 +294,7 @@ public class MovieInformationPanel extends JPanel {
           panelTopDetails.add(lblRunningTimeT, "cell 0 2");
 
           lblRunningTime = new JLabel("");
-          panelTopDetails.add(lblRunningTime, "cell 1 2,growx");
+          panelTopDetails.add(lblRunningTime, "cell 1 2");
         }
 
         {
@@ -449,6 +450,7 @@ public class MovieInformationPanel extends JPanel {
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.runtime");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_13, lblRunningTime, jLabelBeanProperty);
+    autoBinding_14.setConverter(new RuntimeConverter());
     autoBinding_14.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_15 = BeanProperty.create("selectedMovie.tmdbId");

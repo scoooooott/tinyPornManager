@@ -37,6 +37,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.RuntimeConverter;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -69,6 +70,7 @@ public class TvShowDetailsPanel extends JPanel {
   private LinkLabel                   lblTraktTvId;
   private JLabel                      lblCountryT;
   private JLabel                      lblCountry;
+  private JLabel                      lblRuntime;
 
   /**
    * Instantiates a new tv show details panel.
@@ -137,7 +139,7 @@ public class TvShowDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
       JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
       add(lblPremieredT, "cell 0 0");
@@ -181,11 +183,11 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblThetvdbId, "cell 3 2");
     }
     {
-      JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-      add(lblStudioT, "cell 0 3");
+      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+      add(lblRuntimeT, "cell 0 3");
 
-      lblStudio = new JLabel("");
-      add(lblStudio, "cell 1 3,wmin 0");
+      lblRuntime = new JLabel("");
+      add(lblRuntime, "cell 1 3");
     }
     {
       JLabel lblTrakttvIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
@@ -194,33 +196,40 @@ public class TvShowDetailsPanel extends JPanel {
       lblTraktTvId = new LinkLabel("");
       add(lblTraktTvId, "cell 3 3");
     }
+    JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+    add(lblStudioT, "cell 0 4");
+    {
+
+      lblStudio = new JLabel("");
+      add(lblStudio, "cell 1 4 3 1,wmin 0");
+    }
     {
       lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-      add(lblCountryT, "cell 0 4");
+      add(lblCountryT, "cell 0 5");
 
       lblCountry = new JLabel("");
-      add(lblCountry, "cell 1 4 3 1,wmin 0");
+      add(lblCountry, "cell 1 5 3 1,wmin 0");
     }
     {
       JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-      add(lblGenresT, "cell 0 5");
+      add(lblGenresT, "cell 0 6");
 
       lblGenres = new JLabel("");
-      add(lblGenres, "cell 1 5 3 1,growx,wmin 0");
+      add(lblGenres, "cell 1 6 3 1,growx,wmin 0");
     }
     {
       JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      add(lblTagsT, "cell 0 6");
+      add(lblTagsT, "cell 0 7");
 
       lblTags = new JLabel("");
-      add(lblTags, "cell 1 6 3 1,growx,wmin 0");
+      add(lblTags, "cell 1 7 3 1,growx,wmin 0");
     }
     {
       JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      add(lblPathT, "cell 0 7");
+      add(lblPathT, "cell 0 8");
 
       lblPath = new LinkLabel("");
-      add(lblPath, "cell 1 7 3 1,growx,wmin 0");
+      add(lblPath, "cell 1 8 3 1,growx,wmin 0");
     }
   }
 
@@ -287,5 +296,11 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_11, lblCountry, jLabelBeanProperty);
     autoBinding_11.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_12 = BeanProperty.create("selectedTvShow.runtime");
+    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_12, lblRuntime, jLabelBeanProperty);
+    autoBinding_12.setConverter(new RuntimeConverter());
+    autoBinding_12.bind();
   }
 }
