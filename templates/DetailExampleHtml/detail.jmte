@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <style>
+      .poster{ }
+      .plot{ vertical-align:top; }
+      .genres{}
+      .caption{font-weight:bold; vertical-align:top;}
+    </style>
+  </head>
+
+  <body>
+    <!-- print movie name and movie year -->
+    <h1>${movie.title} (${movie.year})</h1>
+    <!-- print original title -->
+    <h3>${movie.originalTitle}</h3>
+    <br />
+    <table>
+      <tr>
+        <!-- display movie poster (via url) or the image nopicture.gif if imageurl is empty -->
+		<!-- <td><div class="poster"><img src="${movie.artworkUrls.POSTER(../nopicture.gif)}" width="180px"/></div></td> -->
+
+		<!-- display/copy movie poster from the local artworks or the image nopicture.gif if no poster is available -->
+		<td><div class="poster"><img src="../images/${movie;copyArtwork(type=POSTER, thumb=true, width=180, escape=true, default=../nopicture.gif)}" width="180px"/></div></td>
+        <td class="plot">${movie.plot}</td>
+      </tr>
+      <tr>
+        <!-- print all genres -->
+        <td class="caption">Genres:</td><td><div>${foreach movie.genres genre , }${genre}${end}</div></td>
+      </tr>
+      <tr>
+        <! -- print the director -->
+        <td class="caption">Director:</td><td><div>${foreach movie.directors director <br /> }${director.name}${end}</div></td>
+      </tr>
+      <tr>
+        <!-- print the writer -->
+        <td class="caption">Writer:</td><td><div>${foreach movie.writers writer <br /> }${writer.name}${end}</div></td>
+      </tr>
+        <!-- print all actors (their character and real name -->
+        <td class="caption">Cast:</td><td><div>${foreach movie.actors actor <br /> }${actor.role} - ${actor.name}${end}</div></td>
+      </tr>
+    </table>
+
+    <a href=../movielist.html>back...</a>
+  </body>
+
+</html>

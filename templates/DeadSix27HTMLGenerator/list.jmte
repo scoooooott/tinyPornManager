@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- Copyright DeadSix27 2013-2014 -->
+<!-- Generated with DeadSix27's HTML Generator-->
+<!-- https://forum.kodi.tv/showthread.php?tid=160863 -->
+<!-- adapted for tinyMediaManager -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="./images/icons/favicon.ico" />
+    <title>Library - Movies</title>
+    <script type="text/javascript" src="./lib/jquery.js"></script>
+    <link rel="stylesheet" href="./lib/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="./lib/jquery.lazyload.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.fancybox.pack.js"></script>
+    <script type="text/javascript" src="./lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="./lib/deadsix.js"></script>
+    <meta name="author" content="DeadSix27" />
+    <meta name="publisher" content="DeadSix27" />
+    <meta name="description" content="Share your Library with DeadSix27&#39;s HTML Generator" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="generator" content="tinyMediaManager (template from abandoned HTML Generator)" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script type="text/javascript">
+                $(document).ready(function() {
+                                        startUP();
+                                });
+                                $(window).on(&#39;hashchange&#39;, function() {
+                                  checkHash();
+                                });
+            
+</script>
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <div id="largeContainer">
+      <div class="infoContainer">
+        <div id="searchContainer">
+        <input type="text" autocomplete="off" onfocus="this.value=&#39;&#39;;clearHilight();"
+        onblur="if(this.value==&#39;&#39;){this.value=&#39;Search...&#39;};"
+        onkeypress="searchVideo(this.value.toLowerCase(),&#39;m&#39;,&#39;index_movie&#39;,&#39;.htm&#39;,event);" value=""
+        name="search" id="search_box" /> 
+        <input type="submit" id="search_button" value="Search" />
+        <div id="search_result"></div></div>
+        <span class="copyrightInfo">HTML Generator v7.0.0 Revision: 19536 - 
+        <a href="#">moreIT.eu</a><!-- removed link - currently fake/spam site --> 
+        <a href="#">Dead6.eu</a></span><!-- removed link - currently fake/spam site -->
+        <div class="pageLinkContainer">
+        <span class="pageLink pageLink_first">
+          <a href="tvshows.html">TV Shows</a>
+        </span> 
+        <span class="pageLink pageLink_second current">
+          <a href="movielist.html">Movies</a>
+        </span></div>
+        <div class="infoBackTitleContainer">
+          <span class="infoBackTitle">My Library</span>
+          <hr class="subTitleSeprator" />
+          <span class="infoBackTitleSub">Movies</span>
+        </div>
+        <div class="infoContainerTextContainer">
+          <div class="name">
+            <span class="titleNoBlock">Movies:</span>
+            <span>0</span>
+          </div>
+          <div class="name">
+            <span class="titleNoBlock">Movie Size:</span>
+            <span>0 B</span>
+          </div>
+          <div class="name">
+            <span class="titleNoBlock">Total Size:</span>
+            <span>0 B</span>
+          </div>
+        </div>
+        <span class="dateInfo">
+        <span>Generated on:</span> </span>
+      </div>
+	  
+	  
+${foreach movies movie}
+      <div id="movie_${index_movie}" class="aniContainer aniOrder0">
+        <a href="images/fanart/fanart.jpg" class="fancybox" rel="${index_movie}">
+          <div class="fanArt" id="fanart_${index_movie}">
+            <img alt="fanart" onerror="this.style.display=&#39;none&#39;;"
+            src="images/${movie;copyArtwork(type=FANART, thumb=true, width=500, escape=true, default=images/icons/fanartPlaceholder.jpg)}" />
+          </div>
+        </a>
+        <div onclick="showPlot(this.getAttribute(&#39;data-plotid&#39;));" class="plotIcon" data-plotid="${index_movie}" id="plot_${index_movie}_icon"></div>
+        <div onclick="hidePlot(this.getAttribute(&#39;data-plotid&#39;));" class="plotContainer" data-plotid="${index_movie}" id="plot_${index_movie}">
+          <span class="value">${movie.plot}</span>
+        </div>
+        <span class="showId">#${index_movie}</span>
+        <div class="posterContainer">
+          <a class="fancybox" rel="${index_movie}">
+            <img class="posterImage" alt="poster" onerror="this.src = &#39;./images/icons/noPoster.jpg&#39;;"
+            src="images/${movie;copyArtwork(type=POSTER, thumb=true, width=180, escape=true, default=images/icons/noPoster.jpg)}" />
+          </a>
+        </div>
+        <div class="infoTextContainer rightAligned">
+          <div class="aniName name">
+            <span class="titleBlock">Name:</span>
+            <span class="value">${movie.title}</span>
+          </div>
+          <div class="aniDate name">
+            <span class="titleNoBlock">Date:</span>
+            <span class="value">${movie.year}</span>
+          </div>
+          <div class="aniRating name">
+            <span class="titleNoBlock">Rating:</span>
+            <span class="value">${movie.rating}</span>
+          </div>
+          <div class="aniGenre name">
+            <span class="titleBlock">Genre(s):</span>
+            <span class="value">${foreach movie.genres genre , }${genre}${end}</span>
+          </div>
+          <div class="aniStudio name">
+            <span class="titleNoBlock">Studio:</span>
+            <span class="value">${movie.productionCompany}</span>
+          </div>
+          <div class="aniWriters name">
+            <span class="titleNoBlock">Writer(s):</span>
+            <span class="value">${foreach movie.writers writer <br /> }${writer.name}${end}</span>
+          </div>
+          <div class="aniDirector name">
+            <span class="titleNoBlock">Director(s):</span>
+            <span class="value">${foreach movie.directors director <br /> }${director.name}${end}</span>
+          </div>
+        </div>
+        <div class="qBar"></div>
+      </div>
+${end}
+	  
+
+	  <script type="text/javascript">
+                      $(document).ready(function() {
+                                $(&quot;.fancybox&quot;).fancybox({
+                                                openEffect : &#39;elastic&#39;,
+                                                closeEffect     : &#39;elastic&#39;,
+                                                helpers : {
+                                                        title : {
+                                                                type : &#39;float&#39;
+                                                        }
+                                                }
+                                                });
+                        });
+                
+</script>
+  </body>
+</html>

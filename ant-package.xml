@@ -80,9 +80,12 @@
 		<copy todir="${build.dir}/native">
 			<fileset dir="native" />
 		</copy>
-		<copy todir="${build.dir}/templates">
-			<fileset dir="templates" />
-		</copy>
+
+		<!-- zip templates -->
+		<zip destfile="${build.dir}/templates/templates.zip"
+			 basedir="templates">
+		</zip>
+
 		<copy todir="${build.dir}/lib">
 			<fileset dir="target/dependency" />
 		</copy>

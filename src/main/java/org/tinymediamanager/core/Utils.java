@@ -1400,21 +1400,19 @@ public class Utils {
   public static void extractTemplates(boolean force) {
     Path dest = Paths.get("templates");
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dest)) {
-      for (Path path : directoryStream) {
-        if (!Files.isDirectory(path)) {
-          String fn = path.getFileName().toString();
-          if (fn.endsWith(".jar")) {
-            // always extract when dir not existing
-            if (!Files.exists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
-              Utils.unzip(path, dest);
-            }
-            else {
-              if (force) {
-                Utils.unzip(path, dest);
-              }
-            }
+      // count the directory amount if not forced
+      int dirCount = 0;
+      if (!force) {
+        for (Path path : directoryStream) {
+          if (Files.isDirectory(path)) {
+            dirCount++;
           }
         }
+      }
+
+      // if forced or the directory count is zero, we will extract the templates.zip
+      if (dirCount == 0 || force) {
+        Utils.unzip(dest.resolve("templates.zip"), dest);
       }
     }
     catch (IOException e) {

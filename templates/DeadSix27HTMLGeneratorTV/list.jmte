@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!-- Copyright DeadSix27 2013-2014 -->
+<!-- Generated with DeadSix27's HTML Generator-->
+<!-- https://forum.kodi.tv/showthread.php?tid=160863 -->
+<!-- adapted for tinyMediaManager -->
+<html lang="en">
+  <head>
+    <meta name="generator" content="HTML Tidy for HTML5 for Windows version 5.3.1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="./images/icons/favicon.ico" />
+    <title>Library - TV Shows</title>
+    <script type="text/javascript" src="./lib/jquery.js"></script>
+    <link rel="stylesheet" href="./lib/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="./lib/jquery.fancybox.pack.js"></script>
+    <script type="text/javascript" src="./lib/jquery.lazyload.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="./lib/deadsix.js"></script>
+    <meta name="author" content="DeadSix27" />
+    <meta name="publisher" content="DeadSix27" />
+    <meta name="description" content="Share your Library with DeadSix27&#39;s HTML Generator" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="generator" content="tinyMediaManager (template from abandoned HTML Generator)" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script type="text/javascript">
+                $(document).ready(function() {
+                                        startUP();
+                                });
+                                $(window).on(&#39;hashchange&#39;, function() {
+                                  checkHash();
+                                });
+            
+</script>
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <div id="largeContainer">
+      <div class="infoContainer">
+        <div id="searchContainer">
+        <input type="text" autocomplete="off" onfocus="this.value=&#39;&#39;;clearHilight();"
+        onblur="if(this.value==&#39;&#39;){this.value=&#39;Search...&#39;};"
+        onkeypress="searchVideo(this.value.toLowerCase(),&#39;t&#39;,&#39;index&#39;,&#39;.htm&#39;,event);" value="" name="search"
+        id="search_box" /> 
+        <input type="submit" id="search_button" value="Search" />
+        <div id="search_result"></div></div>
+        <span class="copyrightInfo">HTML Generator v7.0.0 Revision: 19536 - 
+        <a href="#">moreIT.eu</a><!-- removed link - currently fake/spam site --> 
+        <a href="#">Dead6.eu</a></span><!-- removed link - currently fake/spam site -->
+        <div class="pageLinkContainer">
+        <span class="pageLink pageLink_first current">
+          <a href="tvshows.html">TV Shows</a>
+        </span> 
+        <span class="pageLink pageLink_second">
+          <a href="movielist.html">Movies</a>
+        </span></div>
+        <div class="infoBackTitleContainer">
+          <span class="infoBackTitle">My Library</span>
+          <hr class="subTitleSeprator" />
+          <span class="infoBackTitleSub">TV Shows</span>
+        </div>
+        <div class="infoContainerTextContainer">
+          <div class="name">
+            <span class="titleNoBlock">TV Shows:</span>
+            <span>0</span>
+          </div>
+          <div class="name">
+            <span class="titleNoBlock">Total Episodes:</span>
+            <span>0</span>
+          </div>
+          <div class="name">
+            <span class="titleNoBlock">TVShow Size:</span>
+            <span>0 B</span>
+          </div>
+          <div class="name">
+            <span class="titleNoBlock">Total Size:</span>
+            <span>0 B</span>
+          </div>
+        </div>
+        <span class="dateInfo">
+        <span>Generated on:</span> </span>
+      </div>
+      
+${foreach tvShows show}
+      <div id="tvshow_${index_show}" class="aniContainer aniOrder0">
+        <a href="images/fanart/${index_show}.jpg" class="fancybox" rel="${index_show}">
+          <div class="fanArt" id="fanart_${index_show}">
+            <img class="lazyLoad" alt="fanart" onerror="this.style.display=&#39;none&#39;;"
+            src="images/${show;copyArtwork(type=FANART, thumb=true, width=500, escape=true, default=images/icons/fanartPlaceholder.jpg)}" />
+          </div>
+        </a>
+        <div onclick="showPlot(this.getAttribute(&#39;data-plotid&#39;));" class="plotIcon" data-plotid="${index_show}" id="plot_${index_show}_icon"></div>
+        <a target="_BLANK" href="${show;filename(escape=true)}/tvshow.html" class="detailsIcon">
+          <img src="images/icons/detailsIcon.png" />
+        </a>
+        <div onclick="hidePlot(this.getAttribute(&#39;data-plotid&#39;));" class="plotContainer" data-plotid="${index_show}" id="plot_${index_show}">
+          <span class="value">${show.plot}</span>
+        </div>
+        <span class="showId">#${index_show}</span>
+        <div class="posterContainer">
+          <a href="images/${show;copyArtwork(type=POSTER, thumb=true, width=180, escape=true, default=icons/noPoster.jpg)}" class="fancybox" rel="${index_show}">
+            <img class="posterImage lazyLoad" alt="poster" onerror="this.src = &#39;images/icons/noPoster.jpg&#39;;"
+            src="images/${show;copyArtwork(type=POSTER, thumb=true, width=180, escape=true, default=icons/noPoster.jpg)}" />
+          </a>
+        </div>
+        <div class="infoTextContainer rightAligned">
+          <div class="aniName name">
+            <span class="titleBlock">Name:</span>
+            <span class="value">${show.title}</span>
+          </div>
+          <div class="aniDate name">
+            <span class="titleNoBlock">Date:</span>
+            <span class="value">${show.firstAiredAsString}</span>
+          </div>
+          <div class="aniSeasons name">
+            <span class="titleNoBlock">Seasons:</span>
+            <span class="value">${show.seasonCount}</span>
+          </div>
+          <div class="aniNumEps name">
+            <span class="titleNoBlock">No. Episodes:</span>
+            <span class="value">${show.episodeCount}</span>
+          </div>
+          <div class="aniRating name">
+            <span class="titleNoBlock">Rating:</span>
+            <span class="value">${show.rating}</span>
+          </div>
+          <div class="aniGenre name">
+            <span class="titleBlock">Genre(s):</span>
+            <span class="value">${foreach show.genres genre , }${genre}${end}</span>
+          </div>
+          <div class="aniStudio name">
+            <span class="titleNoBlock">Studio:</span>
+            <span class="value">${show.productionCompany}</span>
+          </div>
+        </div>
+        <div class="qBar"></div>
+      </div>
+${end}
+
+      <div class="footerSpacer"></div>
+      <div class="footerContainer">
+        <div class="footerTextContainer">
+        <span class="title">Style:</span> 
+        <span class="value">Transparent Style (Author: DeadSix27)</span></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+                      $(document).ready(function() {
+                                $(&quot;.fancybox&quot;).fancybox({
+                                                openEffect : &#39;elastic&#39;,
+                                                closeEffect     : &#39;elastic&#39;,
+                                                helpers : {
+                                                        title : {
+                                                                type : &#39;float&#39;
+                                                        }
+                                                }
+                                                });
+                        });
+                
+</script>
+  </body>
+</html>

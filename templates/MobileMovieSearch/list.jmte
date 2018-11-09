@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Movie Collection</title>
+	<link rel="stylesheet" href="include/jquery.mobile-1.4.5.min.css">
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="include/jquery.mobile-1.4.5.min.js"></script>
+	<script type="text/javascript" src="include/indexOf.js"></script>
+	<script>
+	var allMovies = [];
+	var genreList = [];
+	</script>
+	<style>
+	table {width:100%;padding:0px;}
+	a:hover {background-color:rgb(0,240,0);}
+	div.img:hover {border: 1px solid rgb(0,240,0);}
+	div.img {background-position: 50% 50%; background-repeat:no-repeat;background-size:cover;border:1px solid #ccc;position:relative;z-index:0;}
+	div.img img {width:100%;height:auto;}
+	div.desc{font-size:60%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px;}
+	.ribbon {
+	  position: absolute;
+	  left: -5px; top: -5px;
+	  z-index: 1;
+	  overflow: hidden;
+	  width: 75px; height: 75px;
+	  text-align: right;
+	  opacity:0.90;filter: alpha(opacity=90);
+	}
+	.ribbon span {
+	  font-size: 10px;
+	  font-weight: bold;
+	  color: #FFF;
+	  text-align: center;
+	  line-height: 20px;
+	  transform: rotate(-45deg);
+	  -webkit-transform: rotate(-45deg);
+	  width: 100px;
+	  display: block;
+	  background: #79A70A;
+	  background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+	  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+	  position: absolute;
+	  top: 19px; left: -21px;
+	  text-shadow: none;
+	}
+	.ribbon span::before {
+	  content: "";
+	  position: absolute; left: 0px; top: 100%;
+	  z-index: -1;
+	  border-left: 3px solid #79A70A;
+	  border-right: 3px solid transparent;
+	  border-bottom: 3px solid transparent;
+	  border-top: 3px solid #79A70A;
+	}
+	.ribbon span::after {
+	  content: "";
+	  position: absolute; right: 0px; top: 100%;
+	  z-index: -1;
+	  border-left: 3px solid transparent;
+	  border-right: 3px solid #79A70A;
+	  border-bottom: 3px solid transparent;
+	  border-top: 3px solid #79A70A;
+	}
+	* {box-sizing: border-box;}
+	
+	/* For mobile phones: */
+	.responsive {
+		padding: 3px;
+		float: left;
+		width: 24.5%;
+	    }
+	/* For tablets: */
+	@media only screen and (min-width: 600px){
+	    .responsive {
+		width: 19.5%;
+	    }
+	}
+	/* For desktop: */
+	@media only screen and (min-width: 768px){
+	    .responsive {
+		    width: 11%;
+	    }
+	}
+	.clearfix:after {
+	    content: "";
+	    display: table;
+	    clear: both;
+	}
+	</style>
+</head>
+<body>
+
+<!--/ Movies Search Page -->
+<div data-role="page" data-theme="b" id="AllMovies" data-title="Search Movies">
+	<div data-role="content">
+	<form method="get" id="searchForm" name="searchForm">
+	<fieldset data-role="collapsible">
+        	<legend>Filter Movies</legend>
+		<table>
+		<tr>
+			<td><input type="text" name="moviename" id="moviename" placeholder="Movie" data-mini="true" data-theme="a" /></td>
+			<td><input type="text" name="actorname" id="actorname" placeholder="Actor" data-mini="true" data-theme="a" /></td>
+		</tr>
+		<tr>
+			<td><select name="search_newmovie" id="search_newmovie" data-mini="true" data-theme="a">
+					<option value="">--Select Status--</option>
+					<option value="yes">Not Watched</option>
+					<option value="no">Watched</option>
+				</select></td>
+			<td><select name="search_path" id="search_path" data-mini="true" data-theme="a">
+					<option value="">--Must See?--</option>
+					<option value="yes">Yes</option>	
+					<option value="no">No</option>
+				</select></td>
+		</tr>
+		<tr>
+			<td><select name="search_genres" id="search_genres" data-mini="true" data-theme="a">
+					<option value="">--Select Genre--</option>
+				</select></td>
+			<td><select name="search_rating" id="search_rating" data-mini="true" data-theme="a">
+					<option value="">--Select Rating--</option>
+					<option value="R">R</option>
+					<option value="PG-13">PG-13</option>
+					<option value="PG">PG</option>
+					<option value="G">G</option>
+				</select></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<table><tr><td><input type="button" name="submit" id="filter" value="Filter" data-mini="true" data-theme="a" onclick="return goSearch()" /></td>
+			<td><input type="button" name="submit" id="reset" value="Reset" data-mini="true" data-theme="a" onclick="return goReset()" /></td>
+			<td><input type="button" name="random" id="random" value="Random" data-mini="true" onclick="return goRandom()" /></td></tr></table>
+		</tr>
+		</table>
+	 </fieldset>
+	</form>
+	<form id="searchResults" name="searchResults">
+${foreach movies movie}
+		<div class="responsive" id="resp${movie.imdbId}">
+			<a target="_blank" href="http://www.imdb.com/title/${movie.imdbId}">
+				<div class="img" style="background-image:url('images/${movie;copyArtwork(type=POSTER, thumb=true, width=180, escape=true)}')">
+				${if !movie.watched}<div class="ribbon"><span>UNWATCHED</span></div>${end}
+				<img src="include/images/spacer.png" alt="${movie.title}" style="opacity:0.0;filter: alpha(opacity=0);">
+				</div>
+			</a>
+			<div class="desc">${movie.year} (${movie.certification})</div>
+			<script>allMovies[allMovies.length] = "${movie.imdbId}";${foreach movie.genres genre}if (genreList.indexOf("${genre}") < 0){genreList[genreList.length] = "${genre}";}${end}</script>
+			<input type="hidden" id="search_id" value="${movie.imdbId}">
+			<input type="hidden" id="search_moviename" value="${movie.title}"> 
+			<input type="hidden" id="search_actorname" value="${foreach movie.actors actor ,}${actor.name}${end}">
+			${if !movie.watched}<input type="hidden" id="search_newmovie" value="yes">${else}<input type="hidden" id="search_newmovie" value="no">${end}
+			<input type="hidden" id="search_path" value="${movie.path}">
+			<input type="hidden" id="search_genres" value="${movie.genres}">
+			<input type="hidden" id="search_rating" value="${movie.certification}">	
+		</div>	
+${end}
+	<div class="clearfix"></div>
+	</form>
+	</div>
+	<div data-role="footer" data-position="fixed" id="footer">
+		 <h2 id="numMovies"></h2>
+	</div>
+</div>
+
+<script>
+//update footer with the number of movies
+document.getElementById("numMovies").innerHTML=allMovies.length+" Movies";
+$(document).ready(function(){
+	//update genre selectable menu
+	genreList.sort();
+	for (var i=0; i<genreList.length; i++){
+		$('#search_genres').append('<option value="'+genreList[i]+
+		'">'+genreList[i]+'</option>');
+	 }
+	 $("#search_genres").trigger("change");
+}); 
+function goSearch(){
+	var srchForm = document.searchForm;
+	var srchMovieName = srchForm.moviename.value.toLowerCase();
+	var srchActorName = srchForm.actorname.value.toLowerCase();
+	var srchNewMovie = srchForm.search_newmovie.value;
+	var srchMustSee = srchForm.search_path.value;
+	var srchRating = srchForm.search_rating.value;
+	var srchGenre = srchForm.search_genres.value.toLowerCase();
+	
+	var srchResults = document.searchResults;
+	var movieID,respID,displayMovie;
+	var iMovies = allMovies.length;
+	for (i=0;i<allMovies.length;i++){
+		movieID = srchResults.search_id[i].value;
+		respID = document.getElementById("resp"+movieID);
+		respID.style.display = "inline";
+		displayMovie = 1;
+		//movie name search
+		if (srchMovieName.length > 0){
+			//if movie name doesn't match, hide it.		
+			if (srchResults.search_moviename[i].value.toLowerCase().indexOf(srchMovieName) < 0){
+				displayMovie = 0;
+			}
+		}
+		//actor name search
+		if (srchActorName.length > 0){
+			//if actor name doesn't match, hide it.		
+			if (srchResults.search_actorname[i].value.toLowerCase().indexOf(srchActorName) < 0){
+				displayMovie = 0;
+			}
+		}
+		//watched, unwatched or all movies
+		if (srchNewMovie.length > 0){
+			//looking for only unwatched and movie is unwatched or watched and movie is watched		
+			if (srchNewMovie != srchResults.search_newmovie[i].value){
+				displayMovie = 0;
+			}
+		}
+		//must see movies
+		if (srchMustSee.length > 0){
+			//looking for only must see movies and movie is must see or not must see movies and movie is not a must see	
+			if ((srchMustSee == "yes" && srchResults.search_path[i].value.indexOf("Must See") < 0) || (srchMustSee == "no" && srchResults.search_path[i].value.indexOf("Must See") >= 0)){
+				displayMovie = 0;
+			}
+		}
+		//rating
+		if (srchRating.length > 0){
+			//looking for only movies of a certain rating		
+			if (srchRating != srchResults.search_rating[i].value){
+				displayMovie = 0;
+			}
+		}
+		//genres
+		if (srchGenre.length > 0){
+			//looking for only movies of a certain genre		
+			if (srchResults.search_genres[i].value.toLowerCase().indexOf(srchGenre) < 0){
+				displayMovie = 0;
+			}
+		}
+		if (displayMovie == 0){
+			respID.style.display = "none";
+			iMovies = iMovies - 1;
+		}
+	}
+	document.getElementById("numMovies").innerHTML=iMovies+" Movies";
+	$("#footer").trigger("updatelayout");
+}
+function goReset(){
+	var srchForm = document.searchForm;
+	srchForm.moviename.value = "";
+	srchForm.actorname.value = "";
+	srchForm.search_newmovie.value = "";
+	srchForm.search_path.value = "";
+	srchForm.search_rating.value = "";
+	srchForm.search_genres.value = "";
+	var srchResults = document.searchResults;
+	for (i=0;i<allMovies.length;i++){
+		movieID = srchResults.search_id[i].value;
+		respID = document.getElementById("resp"+movieID);
+		respID.style.display = "inline";
+	}
+	document.getElementById("numMovies").innerHTML=allMovies.length+" Movies";
+	$("#footer").trigger("updatelayout");
+}
+function goRandom(){
+	var arRandom = [];
+	var srchResults = document.searchResults;
+	var movieID;
+	for (i=0;i<allMovies.length;i++){
+		movieID = srchResults.search_id[i].value;
+		respID = document.getElementById("resp"+movieID);
+		respID.style.display = "none";
+		if (srchResults.search_path[i].value.indexOf("Must See") >= 0){
+			arRandom[arRandom.length] = respID;
+		}
+	}
+	var random = Math.floor(Math.random() * (arRandom.length));
+	arRandom[random].style.display = 'inline';
+	$("#footer").trigger("updatelayout");
+}
+</script>
+</body>
+</html>
