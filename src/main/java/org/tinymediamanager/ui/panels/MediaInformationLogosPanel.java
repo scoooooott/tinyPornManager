@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.panels;
 
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 
 import net.miginfocom.swing.MigLayout;
@@ -38,7 +40,7 @@ public class MediaInformationLogosPanel extends JPanel {
   private static final long           serialVersionUID            = -3403472105793548302L;
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(MediaInformationLogosPanel.class);
 
-  private static final String         IMAGE_SOURCE                = "/org/tinymediamanager/ui/images/";
+  private final String                imageSource;
 
   private IMediaInformation           mediaInformationSource;
 
@@ -55,6 +57,8 @@ public class MediaInformationLogosPanel extends JPanel {
   private JLabel                      lblSource                   = new JLabel();
 
   public MediaInformationLogosPanel() {
+    imageSource = "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images/";
+
     setLayout(new MigLayout("hidemode 3, insets n n n 15lp", "[][][][][][10lp][][][10lp][][]", "[]"));
 
     add(lblCertification, "cell 0 0, gapright 15lp");
@@ -124,10 +128,10 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/video/format/" + videoFormat + ".png");
+      URL file = this.getClass().getResource(imageSource + "/video/format/" + videoFormat + ".png");
 
       if (file == null) {
-        file = this.getClass().getResource(IMAGE_SOURCE + "/video/format/" + videoFormat.replaceAll("[pi]", "") + ".png");
+        file = this.getClass().getResource(imageSource + "/video/format/" + videoFormat.replaceAll("[pi]", "") + ".png");
       }
 
       // return image
@@ -159,7 +163,7 @@ public class MediaInformationLogosPanel extends JPanel {
     try {
       String ratio = String.valueOf(aspectRatio);
       // try to load image
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/aspectratio/" + ratio + ".png");
+      URL file = this.getClass().getResource(imageSource + "/aspectratio/" + ratio + ".png");
 
       // return image
       if (file != null) {
@@ -188,7 +192,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/video/codec/" + videoCodec.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/video/codec/" + videoCodec.toLowerCase() + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -215,7 +219,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/audio/codec/" + audioCodec.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase() + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -249,16 +253,16 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/" + audioChannels + ".png");
+      URL file = this.getClass().getResource(imageSource + "/audio/channels/" + audioChannels + ".png");
 
       // stereo?
       if (audioChannelsInt == 2) {
-        file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/2.0ch.png");
+        file = this.getClass().getResource(imageSource + "/audio/channels/2.0ch.png");
       }
 
       if (file == null && audioChannelsInt > 0) {
         String channels = audioChannelsInt - 1 + ".1ch";
-        file = this.getClass().getResource(IMAGE_SOURCE + "/audio/channels/" + channels + ".png");
+        file = this.getClass().getResource(imageSource + "/audio/channels/" + channels + ".png");
       }
 
       if (file != null) {
@@ -285,7 +289,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/video/3d.png");
+      URL file = this.getClass().getResource(imageSource + "/video/3d.png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -312,7 +316,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/container/" + container.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/container/" + container.toLowerCase() + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -339,7 +343,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(IMAGE_SOURCE + "/source/" + source.name().toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/source/" + source.name().toLowerCase() + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }

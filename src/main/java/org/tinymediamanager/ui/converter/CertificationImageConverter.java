@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.entities.Certification;
 
 /**
@@ -44,20 +45,12 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
     }
     // try to find an image for this genre
     try {
-      StringBuilder sb = new StringBuilder("/org/tinymediamanager/ui/images/certifications/");
+      StringBuilder sb = new StringBuilder(
+          "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images/certification/");
       sb.append(cert.name().toLowerCase(Locale.ROOT));
       sb.append(".png");
 
       URL file = getClass().getResource(sb.toString());
-      if (file == null) {
-        // try to find the image without the country name in path
-        sb = new StringBuilder("/org/tinymediamanager/ui/images/certifications/");
-        String certName = cert.name();
-        sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase(Locale.ROOT));
-        sb.append(".png");
-        file = getClass().getResource(sb.toString());
-      }
-
       if (file != null) {
         return new ImageIcon(file);
       }
