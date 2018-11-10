@@ -82,7 +82,7 @@
 		</copy>
 
 		<!-- zip templates -->
-		<zip destfile="${build.dir}/templates/templates.zip"
+		<zip destfile="${build.dir}/templates/templates.jar"
 			 basedir="templates">
 		</zip>
 

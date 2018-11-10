@@ -51,7 +51,7 @@ resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
 
 # templates
-uresource = templates/templates.zip
+uresource = templates/templates.jar
 
 # The main entry point for the application (prefix needed for GD params)
 class = org.tinymediamanager.TinyMediaManager

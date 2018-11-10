@@ -1412,7 +1412,7 @@ public class Utils {
 
       // if forced or the directory count is zero, we will extract the templates.zip
       if (dirCount == 0 || force) {
-        Utils.unzip(dest.resolve("templates.zip"), dest);
+        Utils.unzip(dest.resolve("templates.jar"), dest);
       }
     }
     catch (IOException e) {
