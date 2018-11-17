@@ -110,6 +110,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
   private MediaScraperCheckComboBox                         cbScraper;
   private JLabel                                            lblProgressAction;
   private JProgressBar                                      progressBar;
+  private JButton                                           btnSearch;
 
   public MovieSubtitleChooserDialog(Movie movie, MediaFile mediaFile, boolean inQueue) {
     super(BUNDLE.getString("moviesubtitlechooser.search"), "movieSubtitleChooser"); //$NON-NLS-1$
@@ -149,6 +150,10 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       }
     }
 
+    // action listeners
+    btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
+    cbLanguage.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
+
     // start initial search
     searchSubtitle(fileToScrape.getFileAsPath().toFile(), movieToScrape.getImdbId(), tfSearchQuery.getText());
   }
@@ -167,7 +172,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     {
       final JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][250lp][][150lp][]", "[][][][][shrink 0][200lp,grow]"));
+      panelContent.setLayout(new MigLayout("", "[][250lp][][150lp,grow][]", "[][][][][shrink 0][200lp,grow]"));
 
       final JLabel lblMediaFileNameT = new TmmLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
       panelContent.add(lblMediaFileNameT, "cell 0 0,alignx right");
@@ -197,15 +202,14 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       panelContent.add(tfSearchQuery, "cell 2 2 2 1,growx,aligny center");
       tfSearchQuery.setColumns(10);
 
-      final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-      btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
+      // $NON-NLS-1$
+      btnSearch = new JButton(BUNDLE.getString("Button.search"));
       panelContent.add(btnSearch, "cell 4 2,alignx left,aligny top");
 
       final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
       panelContent.add(lblLanguageT, "cell 0 3,alignx right");
 
       cbLanguage = new JComboBox<>();
-      cbLanguage.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
       panelContent.add(cbLanguage, "cell 1 3,growx");
 
       JSeparator separator = new JSeparator();

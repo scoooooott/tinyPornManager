@@ -105,6 +105,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
   private MediaScraperCheckComboBox                          cbScraper;
   private JLabel                                             lblProgressAction;
   private JProgressBar                                       progressBar;
+  private JButton                                            btnSearch;
 
   public TvShowSubtitleChooserDialog(TvShowEpisode episode, MediaFile mediaFile, boolean inQueue) {
     super(BUNDLE.getString("tvshowepisodesubtitlechooser.search"), "episodeSubtitleChooser"); //$NON-NLS-1$
@@ -143,6 +144,12 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
         cbLanguage.setSelectedItem(language);
       }
     }
+
+    // action listeners
+    btnSearch.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
+        episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
+    cbLanguage.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
+        episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
 
     // start initial search
     searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(), episodeToScrape.getSeason(),
@@ -189,9 +196,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
       cbScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
       panelContent.add(cbScraper, "cell 1 3,growx");
 
-      final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-      btnSearch.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
-          episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
+      // $NON-NLS-1$
+      btnSearch = new JButton(BUNDLE.getString("Button.search"));
       panelContent.add(btnSearch, "cell 2 3,alignx left");
 
       final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
