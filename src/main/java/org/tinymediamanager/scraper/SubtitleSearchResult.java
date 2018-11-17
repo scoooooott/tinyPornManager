@@ -169,7 +169,6 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
     this.url = StrgUtils.getNonNullString(url);
   }
 
-
   /**
    * Get the rating of this search result
    *
@@ -196,6 +195,9 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
     }
     else if (getScore() == arg0.getScore() && getRating() < arg0.getRating()) {
       return -1;
+    }
+    else if (getScore() == arg0.getScore() && getRating() == arg0.getRating()) {
+      return 0;
     }
     else {
       return 1;
