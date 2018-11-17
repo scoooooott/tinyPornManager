@@ -29,7 +29,7 @@ ${foreach movies movie}
 			<span class="bold">Movie information</span><br />
 			${foreach movie.genres genre , }${genre}${end}<br />
 			${movie.year}<br />
-			<div class="spaceme">Rating : </div>${movie.rating}
+			<div class="spaceme">Rating : </div>${movie.rating.rating}
 		</div>
 		
 		<div class="right">

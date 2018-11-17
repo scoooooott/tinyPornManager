@@ -105,7 +105,7 @@ ${foreach movies movie}
           </div>
           <div class="aniRating name">
             <span class="titleNoBlock">Rating:</span>
-            <span class="value">${movie.rating}</span>
+            <span class="value">${movie.rating.rating}</span>
           </div>
           <div class="aniGenre name">
             <span class="titleBlock">Genre(s):</span>

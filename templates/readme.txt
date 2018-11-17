@@ -93,10 +93,10 @@ boolean               		duplicate
 boolean               		isDisc
 boolean               		scraped
 boolean               		watched
-float                 		rating
+float                 		rating.rating
 int                   		runtime
 int                   		tmdbId
-int                   		votes
+int                   		rating.votes
 
 MovieCast:
 String                		character
@@ -183,8 +183,8 @@ String                		year
 boolean               		duplicate
 boolean               		scraped
 boolean               		watched
-float                 		rating
-int                   		votes
+float                 		rating.rating
+int                   		rating.votes
 
 TvShowSeason:
 int                   		season
@@ -202,8 +202,8 @@ String                		director
 String                		writer 
 boolean               		disc   
 boolean               		watched 
-float                 		rating
-int                   		votes    
+float                 		rating.rating
+int                   		rating.votes
      
 TvShowActor:
 String                		character
