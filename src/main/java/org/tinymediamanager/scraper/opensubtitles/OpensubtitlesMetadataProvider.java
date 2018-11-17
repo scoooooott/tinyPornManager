@@ -19,6 +19,7 @@ package org.tinymediamanager.scraper.opensubtitles;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -39,13 +40,13 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.opensubtitles.model.Info;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.Similarity;
 
-import de.timroes.axmlrpc.XMLRPCException;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
@@ -101,7 +102,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   }
 
   @Override
-  public List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws UnsupportedMediaTypeException {
+  public List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws UnsupportedMediaTypeException, ScrapeException {
     List<SubtitleSearchResult> results = new ArrayList<>();
 
     if (options.getMediaType() != MediaType.SUBTITLE) {
@@ -139,6 +140,23 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           }
 
           LOGGER.debug("found " + info.getMovieInfo().size() + " results");
+        }
+        catch (TmmXmlRpcException e) {
+          switch (e.statusCode) {
+            // forbidden/unauthorized
+            case HttpURLConnection.HTTP_FORBIDDEN:
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
+              throw new ScrapeException(new Exception("Access to Opensubtitles was not successfull (HTTP " + e.statusCode + ")"));
+
+              // rate limit exceeded?
+            case 429:
+            case 407:
+              throw new ScrapeException(new Exception("Rate limit exceeded (HTTP " + e.statusCode + ")"));
+
+              // unspecified error:
+            default:
+              throw new ScrapeException(e.getCause());
+          }
         }
         catch (Exception e) {
           LOGGER.error("Could not search subtitle.", e);
@@ -183,6 +201,23 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
 
         LOGGER.debug("found " + info.getMovieInfo().size() + " results");
       }
+      catch (TmmXmlRpcException e) {
+        switch (e.statusCode) {
+          // forbidden/unauthorized
+          case HttpURLConnection.HTTP_FORBIDDEN:
+          case HttpURLConnection.HTTP_UNAUTHORIZED:
+            throw new ScrapeException(new Exception("Access to Opensubtitles was not successfull (HTTP " + e.statusCode + ")"));
+
+            // rate limit exceeded?
+          case 429:
+          case 407:
+            throw new ScrapeException(new Exception("Rate limit exceeded (HTTP " + e.statusCode + ")"));
+
+            // unspecified error:
+          default:
+            throw new ScrapeException(e.getCause());
+        }
+      }
       catch (Exception e) {
         LOGGER.error("Could not search subtitle.", e);
       }
@@ -214,6 +249,23 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
 
         LOGGER.debug("found " + info.getMovieInfo().size() + " results");
       }
+      catch (TmmXmlRpcException e) {
+        switch (e.statusCode) {
+          // forbidden/unauthorized
+          case HttpURLConnection.HTTP_FORBIDDEN:
+          case HttpURLConnection.HTTP_UNAUTHORIZED:
+            throw new ScrapeException(new Exception("Access to Opensubtitles was not successfull (HTTP " + e.statusCode + ")"));
+
+            // rate limit exceeded?
+          case 429:
+          case 407:
+            throw new ScrapeException(new Exception("Rate limit exceeded (HTTP " + e.statusCode + ")"));
+
+            // unspecified error:
+          default:
+            throw new ScrapeException(e.getCause());
+        }
+      }
       catch (Exception e) {
         LOGGER.error("Could not search subtitle.", e);
       }
@@ -233,9 +285,9 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
    * @param params
    *          the params
    * @return return value
-   * @throws XMLRPCException
+   * @throws TmmXmlRpcException
    */
-  private Object methodCall(String method, Object params) throws XMLRPCException {
+  private Object methodCall(String method, Object params) throws TmmXmlRpcException {
     startSession();
     Object response = null;
     if (StringUtils.isNotBlank(sessionToken)) {
@@ -277,7 +329,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
    * (either registered user or anonymous). If user has no account, blank username and password should be used.
    */
   @SuppressWarnings("unchecked")
-  private static synchronized void startSession() {
+  private static synchronized void startSession() throws TmmXmlRpcException {
     if ((providerInfo.getConfig().getValue("username") != null && !username.equals(providerInfo.getConfig().getValue("username")))
         || (providerInfo.getConfig().getValue("password") != null && !password.equals(providerInfo.getConfig().getValue("password")))) {
       username = providerInfo.getConfig().getValue("username");
@@ -286,14 +338,9 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     }
 
     if (StringUtils.isBlank(sessionToken)) {
-      try {
-        Map<String, Object> response = (Map<String, Object>) client.call("LogIn", new Object[] { username, password, "", USER_AGENT });
-        sessionToken = (String) response.get("token");
-        LOGGER.debug("Login OK");
-      }
-      catch (Exception e) {
-        LOGGER.error("Could not start session!", e);
-      }
+      Map<String, Object> response = (Map<String, Object>) client.call("LogIn", new Object[] { username, password, "", USER_AGENT });
+      sessionToken = (String) response.get("token");
+      LOGGER.debug("Login OK");
     }
   }
 

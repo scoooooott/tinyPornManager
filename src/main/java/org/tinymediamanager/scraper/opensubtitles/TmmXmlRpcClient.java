@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,8 +46,10 @@ import okhttp3.OkUrlFactory;
 public class TmmXmlRpcClient {
   private static OkHttpClient client;
 
+  private Map<String, Object> callCache = new HashMap<>();
+
   private URL                 url;
-  private String              userAgent = "";
+  private String              userAgent;
   private ResponseParser      responseParser;
 
   public TmmXmlRpcClient(URL url, String userAgent) {
@@ -71,10 +74,10 @@ public class TmmXmlRpcClient {
    * @param params
    *          An array of parameters for the method.
    * @return The result of the server.
-   * @throws XMLRPCException
+   * @throws TmmXmlRpcException
    *           Will be thrown if an error occurred during the call.
    */
-  public Object call(String method, Object... params) throws XMLRPCException {
+  public Object call(String method, Object... params) throws TmmXmlRpcException {
     return new Caller().call(method, params);
   }
 
@@ -103,12 +106,19 @@ public class TmmXmlRpcClient {
      * @param params
      *          An array of parameters for the method.
      * @return The result of the server.
-     * @throws XMLRPCException
+     * @throws TmmXmlRpcException
      *           Will be thrown if an error occurred during the call.
      */
-    public Object call(String methodName, Object[] params) throws XMLRPCException {
+    public Object call(String methodName, Object[] params) throws TmmXmlRpcException {
       try {
         Call c = new Call(methodName, params);
+        String callXml = c.getXML();
+
+        // look in the cache if there is a cached call
+        Object cachedResponse = callCache.get(callXml);
+        if (cachedResponse != null) {
+          return cachedResponse;
+        }
 
         HttpURLConnection http = new OkUrlFactory(client).open(url);
         http.setRequestProperty(USER_AGENT, userAgent);
@@ -117,26 +127,26 @@ public class TmmXmlRpcClient {
         http.setDoInput(true);
 
         OutputStreamWriter stream = new OutputStreamWriter(http.getOutputStream());
-        stream.write(c.getXML());
+        stream.write(callXml);
         stream.flush();
         stream.close();
 
         // Try to get the status code from the connection
         int statusCode = http.getResponseCode();
 
+        // if the response was not successful, throw an exception
         if (statusCode != HttpURLConnection.HTTP_OK) {
-          throw new XMLRPCException("The status code of the http response must be 200.");
+          throw new TmmXmlRpcException(statusCode, url.toString());
         }
 
-        // If status code was 401 or 403 throw exception
-        if (statusCode == HttpURLConnection.HTTP_FORBIDDEN || statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-          throw new XMLRPCException("Invalid status code '" + statusCode + "' returned from server.");
-        }
+        // cache the response
+        cachedResponse = responseParser.parse(http.getInputStream());
+        callCache.put(callXml, cachedResponse);
 
-        return responseParser.parse(http.getInputStream());
+        return cachedResponse;
       }
       catch (Exception ex) {
-        throw new XMLRPCException(ex);
+        throw new TmmXmlRpcException(ex, url.toString());
       }
     }
   }
