@@ -411,7 +411,7 @@ public class TvShowRenamer {
     ArrayList<MediaFile> cleanup = new ArrayList<>(episode.getMediaFiles());
     cleanup.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
 
-    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode.getSeason());
+    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode);
     Path seasonFolder = episode.getTvShow().getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = episode.getTvShow().getPathNIO().resolve(seasonFoldername);
@@ -627,7 +627,7 @@ public class TvShowRenamer {
     }
 
     // create SeasonDir
-    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode.getSeason());
+    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode);
     Path seasonFolder = episode.getTvShow().getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = episode.getTvShow().getPathNIO().resolve(seasonFoldername);
@@ -767,7 +767,7 @@ public class TvShowRenamer {
       newFilename = createDestination(template, eps);
     }
 
-    String seasonFoldername = getSeasonFoldername(tvShow, eps.get(0).getSeason());
+    String seasonFoldername = getSeasonFoldername(tvShow, eps.get(0));
     Path seasonFolder = tvShow.getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = tvShow.getPathNIO().resolve(seasonFoldername);
@@ -985,12 +985,12 @@ public class TvShowRenamer {
    *
    * @param show
    *          the TV show to generate the season folder for
-   * @param season
-   *          the season to generate the folder name for
+   * @param episode
+   *          the episode to generate the season folder name for
    * @return the folder name of that season
    */
-  public static String getSeasonFoldername(TvShow show, int season) {
-    return getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), show, season);
+  public static String getSeasonFoldername(TvShow show, TvShowEpisode episode) {
+    return getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), show, episode);
   }
 
   /**
@@ -1000,13 +1000,13 @@ public class TvShowRenamer {
    *          the given template
    * @param show
    *          the TV show to generate the season folder for
-   * @param season
-   *          the season to generate the folder name for
+   * @param episode
+   *          the episode to generate the season folder name for
    * @return the folder name of that season
    */
-  public static String getSeasonFoldername(String template, TvShow show, int season) {
+  public static String getSeasonFoldername(String template, TvShow show, TvShowEpisode episode) {
     String seasonFolderName = template;
-    TvShowSeason tvShowSeason = show.getSeason(season);
+    TvShowSeason tvShowSeason = show.getSeason(episode.getSeason());
 
     // should not happen, but check it
     if (tvShowSeason == null) {
@@ -1020,12 +1020,12 @@ public class TvShowRenamer {
     }
     else {
       // replace all other tokens
-      seasonFolderName = createDestination(seasonFolderName, tvShowSeason);
+      seasonFolderName = createDestination(seasonFolderName, tvShowSeason, episode);
     }
 
     // only allow empty season dir if the season is in the filename (aka recommended)
     if (StringUtils.isBlank(seasonFolderName) && !TvShowRenamer.isRecommended(template, TvShowModuleManager.SETTINGS.getRenamerFilename())) {
-      seasonFolderName = "Season " + String.valueOf(season);
+      seasonFolderName = "Season " + String.valueOf(tvShowSeason.getSeason());
     }
 
     return seasonFolderName;
@@ -1120,14 +1120,10 @@ public class TvShowRenamer {
    *          the season to generate the folder name for
    * @return the season folder name
    */
-  public static String createDestination(String template, TvShowSeason season) {
+  public static String createDestination(String template, TvShowSeason season, TvShowEpisode episode) {
     if (StringUtils.isBlank(template)) {
       return "";
     }
-
-    // create a dummy episode to inject the season number
-    TvShowEpisode episode = new TvShowEpisode();
-    episode.setSeason(season.getSeason());
 
     String newDestination = getTokenValue(season.getTvShow(), episode, template);
     newDestination = cleanupDestination(newDestination);

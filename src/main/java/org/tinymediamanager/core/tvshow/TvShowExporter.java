@@ -152,7 +152,7 @@ public class TvShowExporter extends MediaEntityExporter {
           for (TvShowEpisode episode : show.getEpisodes()) {
             List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
             if (!mfs.isEmpty()) {
-              Path seasonDir = showDir.resolve(TvShowRenamer.getSeasonFoldername("", episode.getTvShow(), episode.getSeason()));
+              Path seasonDir = showDir.resolve(TvShowRenamer.getSeasonFoldername("", episode.getTvShow(), episode));
               if (!Files.isDirectory(seasonDir)) {
                 Files.createDirectory(seasonDir);
               }
