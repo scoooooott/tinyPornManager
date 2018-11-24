@@ -53,11 +53,9 @@ import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
@@ -82,6 +80,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
   private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
   private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
+  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList("", "-"));
   private EventList<TvShowRenamerExample>          exampleEventList;
 
   /*
@@ -92,12 +91,13 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private JTextField                               tfSeasonFolderName;
   private JCheckBox                                chckbxAsciiReplacement;
   private JComboBox<String>                        cbSpaceReplacement;
-  private JHintCheckBox                            chckbxSpaceReplacement;
+  private JCheckBox                                chckbxSpaceReplacement;
   private JComboBox<TvShowEpisodePreviewContainer> cbEpisodeForPreview;
   private TmmTable                                 tableExamples;
   private JTextField                               tfTvShowFolder;
   private JTextField                               tfEpisodeFilename;
   private JCheckBox                                chckbxSpecialSeason;
+  private JComboBox                                cbColonReplacement;
 
   public TvShowRenamerSettingsPanel() {
 
@@ -145,11 +145,20 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
     cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
     cbSpaceReplacement.addActionListener(renamerActionListener);
+    cbColonReplacement.addActionListener(renamerActionListener);
 
+    // space replacement
     String spaceReplacement = settings.getRenamerSpaceReplacement();
     int index = this.spaceReplacement.indexOf(spaceReplacement);
     if (index >= 0) {
       cbSpaceReplacement.setSelectedIndex(index);
+    }
+
+    // colon replacement
+    String colonReplacement = settings.getRenamerColonReplacement();
+    index = this.colonReplacement.indexOf(colonReplacement);
+    if (index >= 0) {
+      cbColonReplacement.setSelectedIndex(index);
     }
 
     lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
@@ -182,7 +191,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][100lp,grow][300lp,grow]", "[][][][][][][][20lp][][][][][20lp][][][][100lp,grow]"));
+    setLayout(
+        new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][100lp,grow][300lp,grow]", "[][][][][][][][20lp][][][][][][20lp][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
@@ -241,44 +251,51 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       add(chckbxSpecialSeason, "cell 1 8 4 1");
     }
     {
-      chckbxSpaceReplacement = new JHintCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution"));
+      chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
+      chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
       add(chckbxSpaceReplacement, "flowx,cell 1 9 4 1");
-      chckbxSpaceReplacement.setHintIcon(IconManager.HINT);
-      chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
 
       cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
       add(cbSpaceReplacement, "cell 1 9 4 1");
     }
     {
+      JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement")); //$NON-NLS-1$
+      lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint")); //$NON-NLS-1$
+      add(lblColonReplacement, "flowx,cell 2 10 3 1");
+
+      cbColonReplacement = new JComboBox(colonReplacement.toArray());
+      add(cbColonReplacement, "cell 2 10 3 1");
+    }
+    {
       chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
-      add(chckbxAsciiReplacement, "cell 1 10 4 1");
+      add(chckbxAsciiReplacement, "cell 1 11 4 1");
 
       JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAsciiHint, 0.833);
-      add(lblAsciiHint, "cell 2 11 3 1");
+      add(lblAsciiHint, "cell 2 12 3 1");
     }
     {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 13 6 1");
+      add(lblExampleT, "cell 0 14 6 1");
     }
     {
       JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-      add(lblExampleTvShowT, "flowx,cell 1 14 3 1,alignx left");
+      add(lblExampleTvShowT, "flowx,cell 1 15 3 1,alignx left");
 
       cbTvShowForPreview = new JComboBox();
-      add(cbTvShowForPreview, "cell 1 14 3 1,growx,wmin 0");
+      add(cbTvShowForPreview, "cell 1 15 3 1,growx,wmin 0");
     }
     {
       JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
-      add(lblExampleEpisodeT, "flowx,cell 4 14,alignx left");
+      add(lblExampleEpisodeT, "flowx,cell 4 15,alignx left");
 
       cbEpisodeForPreview = new JComboBox();
-      add(cbEpisodeForPreview, "cell 4 14, growx, wmin 0");
+      add(cbEpisodeForPreview, "cell 4 15,growx,wmin 0");
     }
     {
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 15 4 1, wmin 0");
+      add(lblExample, "cell 1 16 4 1,wmin 0");
       TmmFontHelper.changeFont(lblExample, Font.BOLD);
     }
     {
@@ -288,7 +305,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       tableExamples = new TmmTable(exampleTableModel);
       JScrollPane scrollPane = new JScrollPane(tableExamples);
       tableExamples.configureScrollPane(scrollPane);
-      add(scrollPane, "cell 1 16 4 1,grow");
+      add(scrollPane, "cell 1 17 4 1,grow");
       scrollPane.setViewportView(tableExamples);
     }
   }
@@ -383,6 +400,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private void checkChanges() {
     String spaceReplacement = (String) cbSpaceReplacement.getSelectedItem();
     settings.setRenamerSpaceReplacement(spaceReplacement);
+
+    String colonReplacement = (String) cbColonReplacement.getSelectedItem();
+    settings.setRenamerColonReplacement(colonReplacement);
   }
 
   /*************************************************************

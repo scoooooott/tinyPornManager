@@ -51,7 +51,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
-import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
+import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -67,6 +67,8 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.TemplateContext;
+import com.floreysoft.jmte.token.Token;
 
 /**
  * The Class MovieRenamer.
@@ -1114,7 +1116,7 @@ public class MovieRenamer {
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
-      engine.setModelAdaptor(new TmmRenamerModelAdaptor());
+      engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
       return engine.transform(morphTemplate(token), root);
@@ -1306,5 +1308,51 @@ public class MovieRenamer {
     String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
 
     return pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}");
+  }
+
+  /**
+   * replaces all invalid/illegal characters for filenames with ""<br>
+   * except the colon, which will be changed to a dash
+   *
+   * @param source
+   *          string to clean
+   * @return cleaned string
+   */
+  public static String replaceInvalidCharacters(String source) {
+    String result = source;
+
+    if ("-".equals(MovieModuleManager.SETTINGS.getRenamerColonReplacement())) {
+      result = result.replaceAll(": ", " - "); // nicer
+      result = result.replaceAll(":", "-"); // nicer
+    }
+    else {
+      result = result.replaceAll(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
+    }
+
+    return result.replaceAll("([\"\\\\:<>|/?*])", "");
+  }
+
+  private static class MovieRenamerModelAdaptor extends TmmModelAdaptor {
+    @Override
+    public Object getValue(Map<String, Object> model, String expression) {
+      Object value = super.getValue(model, expression);
+
+      if (value instanceof String) {
+        value = replaceInvalidCharacters((String) value);
+      }
+
+      return value;
+    }
+
+    @Override
+    public Object getValue(TemplateContext context, Token token, List<String> segments, String expression) {
+      Object value = super.getValue(context, token, segments, expression);
+
+      if (value instanceof String) {
+        value = replaceInvalidCharacters((String) value);
+      }
+
+      return value;
+    }
   }
 }

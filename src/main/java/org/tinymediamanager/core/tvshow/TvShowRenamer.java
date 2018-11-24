@@ -56,7 +56,7 @@ import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
-import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
+import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -70,6 +70,8 @@ import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.TemplateContext;
+import com.floreysoft.jmte.token.Token;
 
 /**
  * The TvShowRenamer Works on per MediaFile basis
@@ -1082,7 +1084,7 @@ public class TvShowRenamer {
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
-      engine.setModelAdaptor(new TmmRenamerModelAdaptor());
+      engine.setModelAdaptor(new TvShowRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", show);
@@ -1499,5 +1501,42 @@ public class TvShowRenamer {
       return delimiter + "CD" + mf.getStacking();
     }
     return "";
+  }
+
+  public static String replaceInvalidCharacters(String source) {
+    String result = source;
+
+    if ("-".equals(TvShowModuleManager.SETTINGS.getRenamerColonReplacement())) {
+      result = result.replaceAll(": ", " - "); // nicer
+      result = result.replaceAll(":", "-"); // nicer
+    }
+    else {
+      result = result.replaceAll(":", TvShowModuleManager.SETTINGS.getRenamerColonReplacement());
+    }
+    return result.replaceAll("([\"\\\\:<>|/?*])", "");
+  }
+
+  private static class TvShowRenamerModelAdaptor extends TmmModelAdaptor {
+    @Override
+    public Object getValue(Map<String, Object> model, String expression) {
+      Object value = super.getValue(model, expression);
+
+      if (value instanceof String) {
+        value = replaceInvalidCharacters((String) value);
+      }
+
+      return value;
+    }
+
+    @Override
+    public Object getValue(TemplateContext context, Token token, List<String> segments, String expression) {
+      Object value = super.getValue(context, token, segments, expression);
+
+      if (value instanceof String) {
+        value = replaceInvalidCharacters((String) value);
+      }
+
+      return value;
+    }
   }
 }

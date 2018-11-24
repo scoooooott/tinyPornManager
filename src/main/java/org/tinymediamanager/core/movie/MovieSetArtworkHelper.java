@@ -39,7 +39,6 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.jmte.TmmRenamerModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -93,7 +92,7 @@ public class MovieSetArtworkHelper {
       if (mf.isGraphic() && mf.getFile().getParent().endsWith(artworkFolder)) {
         try {
           String extension = FilenameUtils.getExtension(mf.getFilename());
-          String artworkFileName = TmmRenamerModelAdaptor.replaceInvalidCharacters(movieSet.getTitle()) + "-"
+          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-"
               + mf.getType().name().toLowerCase(Locale.ROOT) + "." + extension;
           Path artworkFile = Paths.get(artworkFolder, artworkFileName);
           Utils.moveFileSafe(mf.getFileAsPath(), artworkFile);
@@ -126,7 +125,7 @@ public class MovieSetArtworkHelper {
 
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = TmmRenamerModelAdaptor.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT)
+        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT)
             + "." + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
@@ -515,7 +514,7 @@ public class MovieSetArtworkHelper {
 
       // write files
       try {
-        String filename = TmmRenamerModelAdaptor.replaceInvalidCharacters(movieSet.getTitle()) + "-";
+        String filename = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-";
         filename += type.name().toLowerCase(Locale.ROOT) + "." + extension;
 
         writeImage(bytes, artworkFolder.resolve(filename));
