@@ -127,7 +127,7 @@ public class SettingsDialog extends TmmDialog {
 
       JPanel panelLeft = new JPanel();
       splitPane.setLeftComponent(panelLeft);
-      panelLeft.setLayout(new MigLayout("", "[300lp:300lp,grow]", "[][400lp,grow]"));
+      panelLeft.setLayout(new MigLayout("", "[200lp:200lp,grow]", "[][400lp,grow]"));
       {
         tfFilter = new TmmTreeTextFilter<>();
         panelLeft.add(tfFilter, "cell 0 0,grow");
