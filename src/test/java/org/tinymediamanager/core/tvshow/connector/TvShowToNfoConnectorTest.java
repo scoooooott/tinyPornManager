@@ -38,8 +38,10 @@ import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -110,6 +112,46 @@ public class TvShowToNfoConnectorTest extends BasicTest {
       TvShowNfoParser tvShowNfoParser = TvShowNfoParser.parseNfo(nfoFile);
       TvShow newTvShow = tvShowNfoParser.toTvShow();
       compareTvShows(tvShow, newTvShow);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testWriteUnsupportedTags() {
+    TvShowModuleManager.SETTINGS.setWriteCleanNfo(false);
+    // Kodi version 17.0
+    try {
+      Path showPath = Paths.get(getSettingsFolder(), "kodi_nfo_unsupported");
+      FileUtils.deleteQuietly(new File(getSettingsFolder(), "kodi_nfo_unsupported"));
+      try {
+        Files.createDirectories(showPath);
+      }
+      catch (Exception e) {
+        Assertions.fail(e.getMessage());
+      }
+
+      // copy the existing NFO to the target folder
+      Path targetNfo = Paths.get(getSettingsFolder(), "kodi_nfo_unsupported", "tvshow.nfo");
+      Files.copy(Paths.get("target/test-classes/tvshow_nfo/kodi17.0.nfo"), targetNfo);
+
+      TvShowNfoParser parser = TvShowNfoParser.parseNfo(targetNfo);
+      TvShow tvShow = parser.toTvShow();
+      tvShow.setPath(showPath.toString());
+      tvShow.addToMediaFiles(new MediaFile(targetNfo));
+
+      // write it
+      List<TvShowNfoNaming> nfoNames = Collections.singletonList(TvShowNfoNaming.TV_SHOW);
+      TvShowToKodiConnector connector = new TvShowToKodiConnector(tvShow);
+      connector.write(nfoNames);
+
+      Path nfoFile = showPath.resolve("tvshow.nfo");
+      assertThat(Files.exists(nfoFile)).isTrue();
+
+      // unmarshal it
+      TvShowNfoParser tvShowNfoParser = TvShowNfoParser.parseNfo(nfoFile);
+      assertThat(tvShowNfoParser.episodeguide).isNotEmpty();
     }
     catch (Exception e) {
       fail(e.getMessage());

@@ -57,7 +57,7 @@ public class MediaInformationLogosPanel extends JPanel {
   private JLabel                      lblSource                   = new JLabel();
 
   public MediaInformationLogosPanel() {
-    imageSource = "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images/";
+    imageSource = "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images";
 
     setLayout(new MigLayout("hidemode 3, insets n n n 15lp", "[][][][][][10lp][][][10lp][][]", "[]"));
 
