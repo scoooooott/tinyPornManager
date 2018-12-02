@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,17 +37,19 @@ import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class MovieScraperSettingsPanel.
+ * The class {@link MovieScraperSettingsPanel} is used to display NFO related settings.
  * 
  * @author Manuel Laggner
  */
-public class MovieScraperNfoSettingsPanel extends JPanel {
+class MovieScraperNfoSettingsPanel extends JPanel {
   private static final long                    serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -66,7 +69,7 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
   /**
    * Instantiates a new movie scraper settings panel.
    */
-  public MovieScraperNfoSettingsPanel() {
+  MovieScraperNfoSettingsPanel() {
     checkBoxListener = e -> checkChanges();
     comboBoxListener = e -> checkChanges();
 
@@ -156,57 +159,55 @@ public class MovieScraperNfoSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][][][10lp][][][10lp][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      JLabel lblNfoSettingsT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblNfoSettingsT, 1.16667, Font.BOLD);
-      add(lblNfoSettingsT, "cell 0 0 3 1");
-    }
-    {
+      JPanel panelNfo = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-      add(lblNfoFormat, "flowx,cell 1 1 2 1");
-
-      cbNfoFormat = new JComboBox(MovieConnectors.values());
-      add(cbNfoFormat, "cell 1 1 2 1");
-
+      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelNfo, lblNfoT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
-        JPanel panelNfoFormat = new JPanel();
-        add(panelNfoFormat, "cell 1 2 2 1,grow");
-        panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][][]"));
+        JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
+        panelNfo.add(lblNfoFormat, "cell 1 0 2 1");
 
-        JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
-        panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
+        cbNfoFormat = new JComboBox(MovieConnectors.values());
+        panelNfo.add(cbNfoFormat, "cell 1 0");
 
-        cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename1, "cell 1 0");
+        {
+          JPanel panelNfoFormat = new JPanel();
+          panelNfo.add(panelNfoFormat, "cell 1 1 2 1");
+          panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][][]"));
 
-        cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
+          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
+          panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
 
-        cbMovieNfoFilename3 = new JCheckBox("<html>VIDEO_TS / VIDEO_TS.nfo<br />BDMV / index.nfo</html>"); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
-      }
-      {
+          cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
+          panelNfoFormat.add(cbMovieNfoFilename1, "cell 1 0");
+
+          cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
+          panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
+
+          cbMovieNfoFilename3 = new JCheckBox("<html>VIDEO_TS / VIDEO_TS.nfo<br />BDMV / index.nfo</html>"); //$NON-NLS-1$
+          panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
+        }
+
         chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-        add(chckbxWriteCleanNfo, "cell 1 3 2 1");
-      }
-      {
+        panelNfo.add(chckbxWriteCleanNfo, "cell 1 2 2 1");
+
         JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-        add(lblNfoLanguage, "flowx,cell 1 5 2 1");
+        panelNfo.add(lblNfoLanguage, "cell 1 4 2 1");
 
         cbNfoLanguage = new JComboBox(MediaLanguages.values());
-        add(cbNfoLanguage, "cell 1 5 2 1");
+        panelNfo.add(cbNfoLanguage, "cell 1 4");
 
         JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
-        add(lblNfoLanguageDesc, "cell 2 6");
-      }
-      {
+        panelNfo.add(lblNfoLanguageDesc, "cell 2 5");
+
         JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-        add(lblCertificationStyle, "flowx,cell 1 8 2 1");
+        panelNfo.add(lblCertificationStyle, "flowx,cell 1 7 2 1");
 
         cbCertificationStyle = new JComboBox();
-        add(cbCertificationStyle, "cell 1 8 2 1");
+        panelNfo.add(cbCertificationStyle, "cell 1 7");
       }
     }
   }

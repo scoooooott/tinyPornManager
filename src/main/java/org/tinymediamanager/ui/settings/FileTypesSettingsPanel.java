@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,12 +35,13 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class FileTypesSettingsPanel extends JPanel {
+class FileTypesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 9136097757447080369L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -61,7 +63,7 @@ public class FileTypesSettingsPanel extends JPanel {
   /**
    * Instantiates a new general settings panel.
    */
-  public FileTypesSettingsPanel() {
+  FileTypesSettingsPanel() {
     // UI init
     initComponents();
     initDataBindings();
@@ -109,75 +111,81 @@ public class FileTypesSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][150lp][][25lp][150lp][][25lp][150lp][]", "[][400lp][]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      final JLabel lblVideoFiletypesT = new JLabel(BUNDLE.getString("Settings.videofiletypes")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblVideoFiletypesT, 1.16667, Font.BOLD);
-      add(lblVideoFiletypesT, "cell 0 0 2 1");
+      JPanel panelVideoFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
-      add(scrollPaneVideoFiletypes, "cell 1 1,grow");
+      JLabel lblVideoFiletypesT = new TmmLabel(BUNDLE.getString("Settings.videofiletypes"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelVideoFiletypes, lblVideoFiletypesT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
+        panelVideoFiletypes.add(scrollPaneVideoFiletypes, "cell 1 0,grow");
 
-      listVideoFiletypes = new JList<>();
-      scrollPaneVideoFiletypes.setViewportView(listVideoFiletypes);
+        listVideoFiletypes = new JList<>();
+        scrollPaneVideoFiletypes.setViewportView(listVideoFiletypes);
 
-      btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
-      add(btnRemoveVideoFiletype, "cell 2 1,aligny bottom");
-      btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
+        panelVideoFiletypes.add(btnRemoveVideoFiletype, "cell 2 0,aligny bottom, growx");
+        btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
 
-      tfVideoFiletype = new JTextField();
-      add(tfVideoFiletype, "cell 1 2,growx");
-      tfVideoFiletype.setColumns(10);
+        tfVideoFiletype = new JTextField();
+        panelVideoFiletypes.add(tfVideoFiletype, "cell 1 1,growx");
 
-      btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
-      add(btnAddVideoFiletype, "cell 2 2");
-      btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
+        panelVideoFiletypes.add(btnAddVideoFiletype, "cell 2 1,growx");
+        btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      }
     }
     {
-      final JLabel lblSubtitleFiletypeT = new JLabel(BUNDLE.getString("Settings.extrafiletypes")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblSubtitleFiletypeT, 1.16667, Font.BOLD);
-      add(lblSubtitleFiletypeT, "cell 3 0 2 1");
+      JPanel panelSubtitleFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
-      add(scrollPaneSubtitleFiletypes, "cell 4 1,grow");
+      JLabel lblSubtitleFiletypesT = new TmmLabel(BUNDLE.getString("Settings.extrafiletypes"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelSubtitleFiletypes, lblSubtitleFiletypesT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
+        panelSubtitleFiletypes.add(scrollPaneSubtitleFiletypes, "cell 1 0,grow");
 
-      listSubtitleFiletypes = new JList<>();
-      scrollPaneSubtitleFiletypes.setViewportView(listSubtitleFiletypes);
+        listSubtitleFiletypes = new JList<>();
+        scrollPaneSubtitleFiletypes.setViewportView(listSubtitleFiletypes);
 
-      btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
-      add(btnRemoveSubtitleFiletype, "cell 5 1,aligny bottom");
-      btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
+        panelSubtitleFiletypes.add(btnRemoveSubtitleFiletype, "cell 2 0,aligny bottom, growx");
+        btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
 
-      tfSubtitleFiletype = new JTextField();
-      add(tfSubtitleFiletype, "cell 4 2,growx");
-      tfSubtitleFiletype.setColumns(10);
+        tfSubtitleFiletype = new JTextField();
+        panelSubtitleFiletypes.add(tfSubtitleFiletype, "cell 1 1,growx");
 
-      btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
-      add(btnAddSubtitleFiletype, "cell 5 2");
-      btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
+        panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "cell 2 1");
+        btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      }
     }
     {
-      final JLabel lblAudioFiletypeT = new JLabel(BUNDLE.getString("Settings.audiofiletypes")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblAudioFiletypeT, 1.16667, Font.BOLD);
-      add(lblAudioFiletypeT, "cell 6 0 2 1");
+      JPanel panelAudioFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
-      add(scrollPaneAudioFiletypes, "cell 7 1,grow");
+      JLabel lblAudioFiletypesT = new TmmLabel(BUNDLE.getString("Settings.audiofiletypes"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAudioFiletypes, lblAudioFiletypesT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
+        panelAudioFiletypes.add(scrollPaneAudioFiletypes, "cell 1 0,grow");
 
-      listAudioFiletypes = new JList<>();
-      scrollPaneAudioFiletypes.setViewportView(listAudioFiletypes);
+        listAudioFiletypes = new JList<>();
+        scrollPaneAudioFiletypes.setViewportView(listAudioFiletypes);
 
-      btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
-      add(btnRemoveAudioFiletype, "cell 8 1,aligny bottom");
-      btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
+        panelAudioFiletypes.add(btnRemoveAudioFiletype, "cell 2 0,aligny bottom, growx");
+        btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
 
-      tfAudioFiletype = new JTextField();
-      add(tfAudioFiletype, "cell 7 2,growx");
-      tfAudioFiletype.setColumns(10);
+        tfAudioFiletype = new JTextField();
+        panelAudioFiletypes.add(tfAudioFiletype, "cell 1 1,growx");
 
-      btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
-      add(btnAddAudioFiletype, "cell 8 2");
-      btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
+        panelAudioFiletypes.add(btnAddAudioFiletype, "cell 2 1, growx");
+        btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      }
     }
   }
 

@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -37,17 +38,19 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class TvShowScraperSettingsPanel.
+ * The class {@link TvShowScraperSettingsPanel} is used to display NFO related settings.
  * 
  * @author Manuel Laggner
  */
-public class TvShowScraperNfoSettingsPanel extends JPanel {
+class TvShowScraperNfoSettingsPanel extends JPanel {
   private static final long                    serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -66,7 +69,7 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
   /**
    * Instantiates a new movie scraper settings panel.
    */
-  public TvShowScraperNfoSettingsPanel() {
+  TvShowScraperNfoSettingsPanel() {
     checkBoxListener = e -> checkChanges();
     comboBoxListener = e -> checkChanges();
 
@@ -88,55 +91,60 @@ public class TvShowScraperNfoSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][][][10lp][][][10lp][][][10lp][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      JLabel lblNfoSettingsT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblNfoSettingsT, 1.16667, Font.BOLD);
-      add(lblNfoSettingsT, "cell 0 0 3 1");
+      JPanel panelNfo = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblNfoFormatT = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-      add(lblNfoFormatT, "flowx,cell 1 1 2 1");
+      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelNfo, lblNfoT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JLabel lblNfoFormatT = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
+        panelNfo.add(lblNfoFormatT, "cell 1 0 2 1");
 
-      cbNfoFormat = new JComboBox(TvShowConnectors.values());
-      add(cbNfoFormat, "cell 1 1 2 1");
+        cbNfoFormat = new JComboBox(TvShowConnectors.values());
+        panelNfo.add(cbNfoFormat, "cell 1 0");
 
-      JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
-      add(lblNfoFileNaming, "cell 1 2 2 1");
+        {
+          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
+          panelNfo.add(lblNfoFileNaming, "cell 1 1 2 1");
 
-      JPanel panel = new JPanel();
-      add(panel, "cell 2 3,grow");
-      panel.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
+          JPanel panel = new JPanel();
+          panelNfo.add(panel, "cell 2 2");
+          panel.setLayout(new MigLayout("insets 0", "[][]", ""));
 
-      JLabel lblTvShow = new JLabel(BUNDLE.getString("metatag.tvshow"));
-      panel.add(lblTvShow, "cell 0 0");
+          JLabel lblTvShow = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
+          panel.add(lblTvShow, "cell 0 0");
 
-      chckbxTvShowNfo1 = new JCheckBox("tvshow.nfo");
-      panel.add(chckbxTvShowNfo1, "cell 1 0");
+          chckbxTvShowNfo1 = new JCheckBox("tvshow.nfo");
+          panel.add(chckbxTvShowNfo1, "cell 1 0");
 
-      JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode"));
-      panel.add(lblEpisode, "cell 0 1");
+          JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+          panel.add(lblEpisode, "cell 0 1");
 
-      chckbxEpisodeNfo1 = new JCheckBox(BUNDLE.getString("Settings.tvshow.episodename") + ".nfo");
-      panel.add(chckbxEpisodeNfo1, "cell 1 1");
+          chckbxEpisodeNfo1 = new JCheckBox(BUNDLE.getString("Settings.tvshow.episodename") + ".nfo"); //$NON-NLS-1$
+          panel.add(chckbxEpisodeNfo1, "cell 1 1");
+        }
 
-      JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-      add(lblNfoLanguage, "flowx,cell 1 5 2 1");
+        JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
+        panelNfo.add(lblNfoLanguage, "cell 1 4 2 1");
 
-      JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
-      add(lblNfoLanguageDesc, "cell 2 6");
+        cbNfoLanguage = new JComboBox(MediaLanguages.values());
+        panelNfo.add(cbNfoLanguage, "cell 1 4");
 
-      JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationFormatT, "flowx,cell 1 8 2 1");
+        JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
+        panelNfo.add(lblNfoLanguageDesc, "cell 2 5");
 
-      cbCertificationStyle = new JComboBox();
-      add(cbCertificationStyle, "cell 2 9");
+        JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
+        panelNfo.add(lblCertificationFormatT, "cell 1 7 2 1");
 
-      chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-      add(chckbxWriteCleanNfo, "cell 1 11 2 1");
+        cbCertificationStyle = new JComboBox();
+        panelNfo.add(cbCertificationStyle, "cell 1 7");
+
+        chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
+        panelNfo.add(chckbxWriteCleanNfo, "cell 1 9 2 1");
+      }
     }
-
-    cbNfoLanguage = new JComboBox(MediaLanguages.values());
-    add(cbNfoLanguage, "cell 1 5 2 1");
   }
 
   /**

@@ -49,7 +49,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
-import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel.TvShowScraper;
+import org.tinymediamanager.ui.tvshows.TvShowScraper;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -64,7 +64,7 @@ class TvShowScraperPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
   private final List<TvShowScraper>   scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -73,10 +73,9 @@ class TvShowScraperPanel extends JPanel {
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox<CountryCode>      cbCertificationCountry;
   private JTextPane                   tpScraperDescription;
-  private JLabel                      lblTvShowScraper;
   private JPanel                      panelScraperOptions;
 
-  public TvShowScraperPanel() {
+  TvShowScraperPanel() {
     // data init before UI init
     MediaScraper defaultMediaScraper = TvShowList.getInstance().getDefaultMediaScraper();
     int selectedIndex = 0;
@@ -144,7 +143,7 @@ class TvShowScraperPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[][400lp,grow]"));
 
-    lblTvShowScraper = new JLabel(BUNDLE.getString("wizard.tvshow.scraper"));
+    JLabel lblTvShowScraper = new JLabel(BUNDLE.getString("wizard.tvshow.scraper"));
     add(lblTvShowScraper, "cell 0 0");
     JPanel panelTvShowScrapers = new JPanel();
 

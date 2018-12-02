@@ -15,156 +15,113 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
-import java.awt.Canvas;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.image.BufferedImage;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.ResourceBundle;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringUtils;
-import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class TvShowScraperSettingsPanel.
+ * The class {@link TvShowScraperSettingsPanel} shows scraper options for the meta data scraper.
  * 
  * @author Manuel Laggner
  */
-public class TvShowScraperOptionsSettingsPanel extends JPanel {
+class TvShowScraperOptionsSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
+  private JComboBox<MediaLanguages>   cbScraperLanguage;
+  private JComboBox<CountryCode>      cbCertificationCountry;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
-  public TvShowScraperOptionsSettingsPanel() {
+  TvShowScraperOptionsSettingsPanel() {
     // UI init
     initComponents();
     initDataBindings();
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp,grow]", "[][][20lp,shrink 0][][]"));
+    setLayout(new MigLayout("", "[grow,shrink 0]", "[][]15lp![][15lp!][][15lp!][]"));
     {
-      final JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblScraperOptionsT, 1.16667, Font.BOLD);
-      add(lblScraperOptionsT, "cell 0 0 2 1");
+      JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptions, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); // $NON-NLS-1$
+        panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
+
+        cbScraperLanguage = new JComboBox<>(MediaLanguages.values());
+        panelOptions.add(cbScraperLanguage, "cell 1 0");
+
+        JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); // $NON-NLS-1$
+        panelOptions.add(lblCountry, "cell 1 1 2 1");
+
+        cbCertificationCountry = new JComboBox<>(CountryCode.values());
+        panelOptions.add(cbCertificationCountry, "cell 1 1");
+      }
     }
     {
-      final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
-      add(scraperMetadataPanel, "cell 1 1,grow");
+      JPanel panelDefaults = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblDefaultsT = new TmmLabel(BUNDLE.getString("scraper.metadata.defaults"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDefaults, lblDefaultsT, true);
+      add(collapsiblePanel, "cell 0 2,growx, wmin 0");
+      {
+        TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
+        panelDefaults.add(scraperMetadataPanel, "cell 1 0 2 1,grow");
+      }
     }
     {
-      final JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblArtworkScrapeT, 1.16667, Font.BOLD);
-      add(lblArtworkScrapeT, "cell 0 3 2 1");
-    }
-    {
-      chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
-      add(chckbxAutomaticallyScrapeImages, "cell 1 4");
-    }
-  }
+      JPanel panelImages = SettingsPanelFactory.createSettingsPanel();
 
-  /*****************************************************************************************************
-   * helper classes
-   ****************************************************************************************************/
-  public static class TvShowScraper extends AbstractModelObject {
-    private MediaScraper scraper;
-    private Icon         scraperLogo;
-    private boolean      defaultScraper;
-
-    public TvShowScraper(MediaScraper scraper) {
-      this.scraper = scraper;
-      if (scraper.getMediaProvider() == null || scraper.getMediaProvider().getProviderInfo() == null
-          || scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
-        scraperLogo = new ImageIcon();
+      JLabel lblImagesT = new TmmLabel(BUNDLE.getString("Settings.images"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelImages, lblImagesT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
+        panelImages.add(chckbxAutomaticallyScrapeImages, "cell 1 0 2 1");
       }
-      else {
-        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
-      }
-    }
-
-    private ImageIcon getScaledIcon(ImageIcon original) {
-      Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(new JPanel().getFont());
-
-      int height = (int) (fm.getHeight() * 2f);
-      int width = original.getIconWidth() / original.getIconHeight() * height;
-
-      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_ANTIALIAS);
-      return new ImageIcon(scaledImage);
-    }
-
-    public String getScraperId() {
-      return scraper.getId();
-    }
-
-    public String getScraperName() {
-      return scraper.getName() + " - " + scraper.getVersion();
-    }
-
-    public String getScraperDescription() {
-      // first try to get the localized version
-      String description = null;
-      try {
-        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
-      }
-      catch (Exception ignored) {
-      }
-
-      if (StringUtils.isBlank(description)) {
-        // try to get a scraper text
-        description = scraper.getDescription();
-      }
-
-      return description;
-    }
-
-    public Icon getScraperLogo() {
-      return scraperLogo;
-    }
-
-    public Boolean getDefaultScraper() {
-      return defaultScraper;
-    }
-
-    public void setDefaultScraper(Boolean newValue) {
-      Boolean oldValue = this.defaultScraper;
-      this.defaultScraper = newValue;
-      firePropertyChange("defaultScraper", oldValue, newValue);
-    }
-
-    public IMediaProvider getMediaProvider() {
-      return scraper.getMediaProvider();
     }
   }
 
   protected void initDataBindings() {
+    BeanProperty<TvShowSettings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_8, cbScraperLanguage, jComboBoxBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<TvShowSettings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    AutoBinding<TvShowSettings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_9, cbCertificationCountry, jComboBoxBeanProperty);
+    autoBinding_8.bind();
+    //
     BeanProperty<TvShowSettings, Boolean> settingsBeanProperty = BeanProperty.create("scrapeBestImage");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,

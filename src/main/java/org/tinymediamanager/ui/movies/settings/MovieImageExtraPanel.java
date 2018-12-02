@@ -15,8 +15,9 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.Dimension;
-import java.awt.Font;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
@@ -35,9 +36,10 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -46,7 +48,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class MovieImageExtraPanel extends JPanel {
+class MovieImageExtraPanel extends JPanel {
   private static final long           serialVersionUID = 7312645402037806284L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
@@ -67,7 +69,7 @@ public class MovieImageExtraPanel extends JPanel {
   /**
    * Instantiates a new movie image settings panel.
    */
-  public MovieImageExtraPanel() {
+  MovieImageExtraPanel() {
 
     // UI init
     initComponents();
@@ -85,58 +87,61 @@ public class MovieImageExtraPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][][][][10lp][][][10lp][][10lp][][][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      final JLabel lblExtraArtworkT = new JLabel(BUNDLE.getString("Settings.extraartwork"));//$NON-NLS-1$
-      TmmFontHelper.changeFont(lblExtraArtworkT, 1.16667, Font.BOLD);
-      add(lblExtraArtworkT, "cell 0 0 3 1");
+      JPanel panelExtra = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp][grow]", ""));
+
+      JLabel lblExtra = new TmmLabel(BUNDLE.getString("Settings.extraartwork"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExtra, lblExtra, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));
+        panelExtra.add(chckbxEnableExtrathumbs, "cell 1 0 2 1");
+
+        chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs"));
+        panelExtra.add(chckbxResizeExtrathumbsTo, "cell 2 1");
+
+        spExtrathumbWidth = new JSpinner();
+        spExtrathumbWidth.setMinimumSize(new Dimension(60, 20));
+        panelExtra.add(spExtrathumbWidth, "cell 2 1");
+
+        JLabel lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+        panelExtra.add(lblDownload, "cell 2 2");
+
+        spDownloadCountExtrathumbs = new JSpinner();
+        spDownloadCountExtrathumbs.setMinimumSize(new Dimension(60, 20));
+        panelExtra.add(spDownloadCountExtrathumbs, "cell 2 2");
+
+        chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
+        panelExtra.add(chckbxEnableExtrafanart, "cell 1 3 2 1");
+
+        JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+        panelExtra.add(lblDownloadCount, "cell 2 4");
+
+        spDownloadCountExtrafanart = new JSpinner();
+        spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
+        panelExtra.add(spDownloadCountExtrafanart, "cell 2 4");
+
+        cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
+        panelExtra.add(cbActorImages, "cell 1 5 2 1");
+
+        chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie"));
+        panelExtra.add(chckbxMovieSetArtwork, "cell 1 6 2 1");
+
+        chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store"));
+        panelExtra.add(chckbxStoreMoviesetArtwork, "cell 1 7 2 1");
+
+        JLabel lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
+        panelExtra.add(lblFoldername, "cell 2 8");
+
+        tfMovieSetArtworkFolder = new JTextField();
+        panelExtra.add(tfMovieSetArtworkFolder, "cell 2 8");
+        tfMovieSetArtworkFolder.setColumns(40);
+
+        btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
+        panelExtra.add(btnSelectFolder, "cell 2 8");
+      }
     }
-
-    chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));
-    add(chckbxEnableExtrathumbs, "cell 1 1 2 1");
-
-    chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs"));
-    add(chckbxResizeExtrathumbsTo, "flowx,cell 2 2");
-
-    JLabel lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-    add(lblDownload, "flowx,cell 2 3");
-
-    chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
-    add(chckbxEnableExtrafanart, "cell 1 5 2 1");
-
-    JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-    add(lblDownloadCount, "flowx,cell 2 6");
-
-    cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
-    add(cbActorImages, "cell 1 8 2 1");
-
-    chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie"));
-    add(chckbxMovieSetArtwork, "cell 1 10 2 1");
-
-    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store"));
-    add(chckbxStoreMoviesetArtwork, "cell 1 11 2 1");
-
-    JLabel lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
-    add(lblFoldername, "flowx,cell 2 12");
-
-    spExtrathumbWidth = new JSpinner();
-    spExtrathumbWidth.setMinimumSize(new Dimension(60, 20));
-    add(spExtrathumbWidth, "cell 2 2");
-
-    spDownloadCountExtrathumbs = new JSpinner();
-    spDownloadCountExtrathumbs.setMinimumSize(new Dimension(60, 20));
-    add(spDownloadCountExtrathumbs, "cell 2 3");
-
-    spDownloadCountExtrafanart = new JSpinner();
-    spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
-    add(spDownloadCountExtrafanart, "cell 2 6");
-
-    tfMovieSetArtworkFolder = new JTextField();
-    add(tfMovieSetArtworkFolder, "cell 2 12,growx");
-    tfMovieSetArtworkFolder.setColumns(30);
-
-    btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
-    add(btnSelectFolder, "cell 2 12");
   }
 
   protected void initDataBindings() {

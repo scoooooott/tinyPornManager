@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+import static org.tinymediamanager.ui.TmmFontHelper.L2;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -62,6 +65,9 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
@@ -73,10 +79,10 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Manuel Laggner
  */
-public class MovieTrailerSettingsPanel extends JPanel {
+class MovieTrailerSettingsPanel extends JPanel {
   private static final long              serialVersionUID = -1607146878528487625L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
   private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -88,7 +94,7 @@ public class MovieTrailerSettingsPanel extends JPanel {
   private JCheckBox                      chckbxAutomaticTrailerDownload;
   private JPanel                         panelScraperOptions;
 
-  public MovieTrailerSettingsPanel() {
+  MovieTrailerSettingsPanel() {
     // UI init
     initComponents();
     initDataBindings();
@@ -162,66 +168,75 @@ public class MovieTrailerSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][200lp][grow][20lp,shrink 0][][][][][]"));
+    setLayout(new MigLayout("hidemode 0", "[400lp,grow]", "[][15lp!][]"));
     {
-      JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
-      add(lblScraperT, "cell 0 0 3 1");
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:200lp,grow][][200lp:300lp,grow]"));
+
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
+      add(collapsiblePanel, "cell 0 0,wmin 0,grow");
+      {
+        JScrollPane scrollPaneScraper = new JScrollPane();
+        panelScraper.add(scrollPaneScraper, "cell 1 0,grow");
+
+        tableTrailerScraper = new TmmTable();
+        tableTrailerScraper.setRowHeight(29);
+        tableTrailerScraper.configureScrollPane(scrollPaneScraper);
+
+        JSeparator separator = new JSeparator();
+        panelScraper.add(separator, "cell 1 1,growx");
+
+        JScrollPane scrollPaneScraperDetails = new JScrollPane();
+        panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
+
+        scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneScraperDetails.setBorder(null);
+
+        JPanel panelScraperDetails = new ScrollablePanel();
+        scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
+
+        tpScraperDescription = new JTextPane();
+        tpScraperDescription.setOpaque(false);
+        tpScraperDescription.setEditorKit(new HTMLEditorKit());
+        panelScraperDetails.add(tpScraperDescription, "cell 0 0,grow");
+
+        panelScraperOptions = new ScrollablePanel();
+        panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelScraperDetails.add(panelScraperOptions, "cell 0 1,grow");
+      }
     }
     {
-      tableTrailerScraper = new TmmTable();
-      tableTrailerScraper.setRowHeight(29);
+      JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
 
-      JScrollPane scrollPaneScraper = new JScrollPane(tableTrailerScraper);
-      tableTrailerScraper.configureScrollPane(scrollPaneScraper);
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
-    }
-    {
-      JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 1 2 2 1,grow");
-      scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      scrollPaneScraperDetails.setBorder(null);
+      JLabel lblOptionsT = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptionsT, true);
+      add(collapsiblePanel, "cell 0 2,growx, wmin 0");
+      {
+        checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
+        panelOptions.add(checkBox, "cell 1 0 2 1");
 
-      JPanel panelScraperDetails = new ScrollablePanel();
-      scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-      panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
-      tpScraperDescription = new JTextPane();
-      tpScraperDescription.setOpaque(false);
+        JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
+        panelOptions.add(lblTrailerSource, "cell 2 1");
 
-      panelScraperDetails.add(tpScraperDescription, "cell 0 0,growx,aligny top");
-      panelScraperOptions = new ScrollablePanel();
-      panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-      panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
-    }
-    {
-      JSeparator separator = new JSeparator();
-      add(separator, "cell 1 3 2 1,growx");
-    }
-    {
-      checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
-      add(checkBox, "cell 1 4 2 1");
+        cbTrailerSource = new JComboBox();
+        cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
+        panelOptions.add(cbTrailerSource, "cell 2 1");
 
-      JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
-      add(lblTrailerSource, "flowx,cell 2 5");
+        JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
+        panelOptions.add(lblTrailerQuality, "cell 2 2");
 
-      cbTrailerSource = new JComboBox();
-      add(cbTrailerSource, "cell 2 5");
-      cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
+        cbTrailerQuality = new JComboBox();
+        cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
+        panelOptions.add(cbTrailerQuality, "cell 2 2");
 
-      JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
-      add(lblTrailerQuality, "flowx,cell 2 6");
+        chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
+        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 1 3 2 1");
 
-      cbTrailerQuality = new JComboBox();
-      add(cbTrailerQuality, "cell 2 6");
-      cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
-    }
-    {
-      chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
-      add(chckbxAutomaticTrailerDownload, "cell 1 7 2 1");
-
-      JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
-      add(lblAutomaticTrailerDownloadHint, "cell 2 8");
-      TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, 0.833);
+        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+        panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
+        TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
+      }
     }
   }
 

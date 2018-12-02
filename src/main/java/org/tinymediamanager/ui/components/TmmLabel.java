@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.components;
 
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
@@ -33,7 +34,7 @@ public class TmmLabel extends JLabel {
   }
 
   /**
-   * create a new label with the given text and scaled by the given factor
+   * create a new label with the given text
    *
    * @param text
    *          the text to be set
@@ -54,6 +55,26 @@ public class TmmLabel extends JLabel {
     super(text);
     this.scaleFactor = scaleFactor;
     setFont(scale(UIManager.getFont("Label.font").deriveFont(Font.BOLD), scaleFactor));
+  }
+
+  /**
+   * create a new label with the given text and scaled by the given factor
+   *
+   * @param text
+   *          the text to be set
+   * @param scaleFactor
+   *          the scale factor applied to the default font size
+   * @param drawBorder
+   *          should we draw a border beneath the text
+   */
+  public TmmLabel(String text, double scaleFactor, boolean drawBorder) {
+    super(text);
+    this.scaleFactor = scaleFactor;
+    setFont(scale(UIManager.getFont("Label.font").deriveFont(Font.BOLD), scaleFactor));
+
+    if (drawBorder) {
+      setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getForeground()));
+    }
   }
 
   @Override

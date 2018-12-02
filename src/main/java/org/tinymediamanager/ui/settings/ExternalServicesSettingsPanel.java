@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -28,9 +29,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.trakttv.TraktTv;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -39,16 +42,15 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class ExternalServicesSettingsPanel extends JPanel {
+class ExternalServicesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 7266564870819511988L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private JButton                     btnGetTraktPin;
   private JButton                     btnTestTraktConnection;
   private JLabel                      lblTraktStatus;
-  private JLabel                      lblTraktDonator;
 
-  public ExternalServicesSettingsPanel() {
+  ExternalServicesSettingsPanel() {
     // UI init
     initComponents();
 
@@ -113,26 +115,24 @@ public class ExternalServicesSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][]", "[][][][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      final JLabel lblTraktT = new JLabel(BUNDLE.getString("Settings.trakt"));
-      TmmFontHelper.changeFont(lblTraktT, 1.16667, Font.BOLD);
-      add(lblTraktT, "cell 0 0 2 1,growx");
-    }
-    {
-      lblTraktStatus = new JLabel("");
-      add(lblTraktStatus, "cell 1 1");
-    }
-    {
-      btnGetTraktPin = new JButton(BUNDLE.getString("Settings.trakt.getpin"));
-      add(btnGetTraktPin, "flowx,cell 1 2");
+      JPanel panelTrakt = SettingsPanelFactory.createSettingsPanel();
 
-      btnTestTraktConnection = new JButton(BUNDLE.getString("Settings.trakt.testconnection"));
-      add(btnTestTraktConnection, "cell 1 2");
-    }
-    {
-      lblTraktDonator = new JLabel("");
-      add(lblTraktDonator, "cell 1 3");
+      JLabel lblTraktT = new TmmLabel(BUNDLE.getString("Settings.trakt"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelTrakt, lblTraktT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        lblTraktStatus = new JLabel("");
+        panelTrakt.add(lblTraktStatus, "cell 1 0 2 1");
+      }
+      {
+        btnGetTraktPin = new JButton(BUNDLE.getString("Settings.trakt.getpin"));
+        panelTrakt.add(btnGetTraktPin, "cell 1 1 2 1");
+
+        btnTestTraktConnection = new JButton(BUNDLE.getString("Settings.trakt.testconnection"));
+        panelTrakt.add(btnTestTraktConnection, "cell 1 1");
+      }
     }
   }
 }

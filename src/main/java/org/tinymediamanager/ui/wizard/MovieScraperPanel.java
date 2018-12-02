@@ -52,7 +52,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.movies.settings.MovieScraperSettingsPanel.MovieScraper;
+import org.tinymediamanager.ui.movies.MovieScraper;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
@@ -68,7 +68,7 @@ class MovieScraperPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
   private final List<MovieScraper>    scrapers         = ObservableCollections.observableList(new ArrayList<>());

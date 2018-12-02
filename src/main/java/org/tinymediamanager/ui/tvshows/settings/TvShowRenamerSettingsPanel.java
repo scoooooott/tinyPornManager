@@ -16,6 +16,9 @@
 
 package org.tinymediamanager.ui.tvshows.settings;
 
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+import static org.tinymediamanager.ui.TmmFontHelper.L2;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -56,7 +59,10 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -191,122 +197,131 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   private void initComponents() {
-    setLayout(
-        new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][100lp,grow][300lp,grow]", "[][][][][][][][20lp][][][][][][20lp][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.title")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
-      add(lblPatternAndOptionsT, "cell 0 0 9 1");
+      JPanel panelPatterns = new JPanel(new MigLayout("insets 0, hidemode 1", "[20lp!][15lp][][300lp,grow]", "[][][][][][]"));
+
+      JLabel lblPatternsT = new TmmLabel(BUNDLE.getString("Settings.tvshow.renamer.title"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelPatterns, lblPatternsT, true);
+      add(collapsiblePanel, "cell 0 0,growx,wmin 0");
+
+      {
+        JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
+        panelPatterns.add(lblTvShowFolder, "cell 1 0 2 1,alignx right");
+
+        tfTvShowFolder = new JTextField();
+        panelPatterns.add(tfTvShowFolder, "cell 3 0 2 1,growx");
+
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        panelPatterns.add(lblDefault, "cell 1 1 2 1,alignx right");
+        TmmFontHelper.changeFont(lblDefault, L2);
+
+        JTextArea tpDefaultFolderPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+        panelPatterns.add(tpDefaultFolderPattern, "cell 3 1 2 1,growx,wmin 0");
+        TmmFontHelper.changeFont(tpDefaultFolderPattern, L2);
+      }
+      {
+        JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
+        panelPatterns.add(lblSeasonFolderName, "cell 1 2 2 1,alignx right");
+
+        tfSeasonFolderName = new JTextField();
+        panelPatterns.add(tfSeasonFolderName, "cell 3 2 2 1,growx");
+
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        panelPatterns.add(lblDefault, "cell 1 3 2 1,alignx right");
+        TmmFontHelper.changeFont(lblDefault, L2);
+
+        JTextArea tpDefaultSeasonPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
+        panelPatterns.add(tpDefaultSeasonPattern, "cell 3 3 2 1,growx,wmin 0");
+        TmmFontHelper.changeFont(tpDefaultSeasonPattern, L2);
+      }
+      {
+        JLabel lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));
+        panelPatterns.add(lblEpisodeFileName, "cell 1 4 2 1,alignx right");
+
+        tfEpisodeFilename = new JTextField();
+        panelPatterns.add(tfEpisodeFilename, "cell 3 4 2 1,growx");
+
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        panelPatterns.add(lblDefault, "cell 1 5 2 1,alignx right");
+        TmmFontHelper.changeFont(lblDefault, L2);
+
+        JTextArea tpDefaultFilePattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
+        panelPatterns.add(tpDefaultFilePattern, "cell 3 5 2 1,growx,wmin 0");
+        TmmFontHelper.changeFont(tpDefaultFilePattern, L2);
+      }
     }
     {
-      JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
-      add(lblTvShowFolder, "cell 1 1 2 1");
+      JPanel panelAdvancedOptions = SettingsPanelFactory.createSettingsPanel();
 
-      tfTvShowFolder = new JTextField();
-      tfTvShowFolder.setColumns(20);
-      add(tfTvShowFolder, "cell 3 1 2 1,growx");
+      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAdvancedOptions, lblAdvancedOptions, true);
+      add(collapsiblePanel, "cell 0 2,growx");
+      {
+        chckbxSpecialSeason = new JCheckBox(BUNDLE.getString("tvshow.renamer.specialseason")); //$NON-NLS-1$
+        panelAdvancedOptions.add(chckbxSpecialSeason, "cell 1 0 2 1");
+      }
+      {
+        chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
+        chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
+        panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 1 2 1");
 
-      JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 2 2 1,alignx right");
-      TmmFontHelper.changeFont(lblDefault, 0.833);
+        cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
+        panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 1");
+      }
+      {
+        JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement")); //$NON-NLS-1$
+        panelAdvancedOptions.add(lblColonReplacement, "cell 2 2");
+        lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint"));
 
-      JTextArea tpDefaultFolderPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-      add(tpDefaultFolderPattern, "cell 3 2 2 1,growx, wmin 0");
-      TmmFontHelper.changeFont(tpDefaultFolderPattern, 0.833);
+        cbColonReplacement = new JComboBox(colonReplacement.toArray());
+        panelAdvancedOptions.add(cbColonReplacement, "cell 2 2");
+      }
+
+      {
+        chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement"));
+        panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 3 2 1");
+
+        JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+        panelAdvancedOptions.add(lblAsciiHint, "cell 2 4");
+        TmmFontHelper.changeFont(lblAsciiHint, L2);
+      }
     }
     {
-      JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
-      add(lblSeasonFolderName, "cell 1 3 2 1");
+      JPanel panelExample = SettingsPanelFactory.createSettingsPanel();
 
-      tfSeasonFolderName = new JTextField();
-      tfSeasonFolderName.setColumns(20);
-      add(tfSeasonFolderName, "cell 3 3 2 1,growx");
+      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblAdvancedOptions, true);
+      add(collapsiblePanel, "cell 0 4,growx, wmin 0");
+      {
+        JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
+        panelExample.add(lblExampleTvShowT, "cell 1 0 2 1");
 
-      JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 4 2 1,alignx right");
-      TmmFontHelper.changeFont(lblDefault, 0.833);
+        cbTvShowForPreview = new JComboBox();
+        panelExample.add(cbTvShowForPreview, "cell 1 0,growx,wmin 0");
+      }
+      {
+        JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
+        panelExample.add(lblExampleEpisodeT, "cell 1 0");
 
-      JTextArea tpDefaultSeasonPattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
-      add(tpDefaultSeasonPattern, "cell 3 4 2 1,growx, wmin 0");
-      TmmFontHelper.changeFont(tpDefaultSeasonPattern, 0.833);
-    }
-    {
-      JLabel lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));
-      add(lblEpisodeFileName, "cell 1 5 2 1");
+        cbEpisodeForPreview = new JComboBox();
+        panelExample.add(cbEpisodeForPreview, "cell 1 0,growx,wmin 0");
+      }
+      {
+        lblExample = new JLabel("");
+        panelExample.add(lblExample, "cell 1 1 2 1, wmin 0");
+        TmmFontHelper.changeFont(lblExample, Font.BOLD);
+      }
+      {
+        DefaultEventTableModel<TvShowRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
+            GlazedListsSwing.swingThreadProxyList(exampleEventList), new TvShowRenamerExampleTableFormat());
 
-      tfEpisodeFilename = new JTextField();
-      tfEpisodeFilename.setColumns(20);
-      add(tfEpisodeFilename, "cell 3 5 2 1,growx");
-
-      JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
-      add(lblDefault, "flowx,cell 1 6 2 1,alignx right");
-      TmmFontHelper.changeFont(lblDefault, 0.833);
-
-      JTextArea tpDefaultFilePattern = new ReadOnlyTextArea(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
-      add(tpDefaultFilePattern, "cell 3 6 2 1,growx, wmin 0");
-      TmmFontHelper.changeFont(tpDefaultFilePattern, 0.833);
-    }
-    {
-      chckbxSpecialSeason = new JCheckBox(BUNDLE.getString("tvshow.renamer.specialseason")); //$NON-NLS-1$
-      add(chckbxSpecialSeason, "cell 1 8 4 1");
-    }
-    {
-      chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
-      chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
-      add(chckbxSpaceReplacement, "flowx,cell 1 9 4 1");
-
-      cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
-      add(cbSpaceReplacement, "cell 1 9 4 1");
-    }
-    {
-      JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement")); //$NON-NLS-1$
-      lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint")); //$NON-NLS-1$
-      add(lblColonReplacement, "flowx,cell 2 10 3 1");
-
-      cbColonReplacement = new JComboBox(colonReplacement.toArray());
-      add(cbColonReplacement, "cell 2 10 3 1");
-    }
-    {
-      chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
-      add(chckbxAsciiReplacement, "cell 1 11 4 1");
-
-      JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblAsciiHint, 0.833);
-      add(lblAsciiHint, "cell 2 12 3 1");
-    }
-    {
-      final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 14 6 1");
-    }
-    {
-      JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-      add(lblExampleTvShowT, "flowx,cell 1 15 3 1,alignx left");
-
-      cbTvShowForPreview = new JComboBox();
-      add(cbTvShowForPreview, "cell 1 15 3 1,growx,wmin 0");
-    }
-    {
-      JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
-      add(lblExampleEpisodeT, "flowx,cell 4 15,alignx left");
-
-      cbEpisodeForPreview = new JComboBox();
-      add(cbEpisodeForPreview, "cell 4 15,growx,wmin 0");
-    }
-    {
-      lblExample = new JLabel("");
-      add(lblExample, "cell 1 16 4 1,wmin 0");
-      TmmFontHelper.changeFont(lblExample, Font.BOLD);
-    }
-    {
-      DefaultEventTableModel<TvShowRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
-          GlazedListsSwing.swingThreadProxyList(exampleEventList), new TvShowRenamerExampleTableFormat());
-
-      tableExamples = new TmmTable(exampleTableModel);
-      JScrollPane scrollPane = new JScrollPane(tableExamples);
-      tableExamples.configureScrollPane(scrollPane);
-      add(scrollPane, "cell 1 17 4 1,grow");
-      scrollPane.setViewportView(tableExamples);
+        tableExamples = new TmmTable(exampleTableModel);
+        JScrollPane scrollPane = new JScrollPane(tableExamples);
+        tableExamples.configureScrollPane(scrollPane);
+        panelExample.add(scrollPane, "cell 1 2 2 1,grow");
+        scrollPane.setViewportView(tableExamples);
+      }
     }
   }
 

@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
@@ -36,16 +37,18 @@ import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class MovieImageSettingsPanel.
+ * The class {@link MovieImageSettingsPanel} is used to display image file name settings.
  * 
  * @author Manuel Laggner
  */
-public class MovieImageTypeSettingsPanel extends JPanel {
+class MovieImageTypeSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 7312645402037806284L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
@@ -80,7 +83,7 @@ public class MovieImageTypeSettingsPanel extends JPanel {
   /**
    * Instantiates a new movie image settings panel.
    */
-  public MovieImageTypeSettingsPanel() {
+  MovieImageTypeSettingsPanel() {
     checkBoxListener = e -> checkChanges();
 
     // UI init
@@ -299,119 +302,115 @@ public class MovieImageTypeSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][grow]", "[][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
+      JPanel panelFileNaming = new JPanel(
+          new MigLayout("insets 0", "[20lp!][][][][]", "[][][10lp!][][10lp!][][10lp!][][10lp!][][][10lp!][][10lp!][][10lp!][][][20lp][]"));
 
-    }
-    {
-      final JLabel lblFileNamingT = new JLabel(BUNDLE.getString("Settings.artwork.naming")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblFileNamingT, 1.16667, Font.BOLD);
-      add(lblFileNamingT, "cell 0 0 2 1");
-    }
-    {
-      JPanel panelFileNaming = new JPanel();
-      add(panelFileNaming, "cell 1 1");
-      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][10lp][][10lp][][10lp][][10lp][][][10lp][][10lp][][10lp][][][20lp][]"));
+      JLabel lblFiletypes = new TmmLabel(BUNDLE.getString("Settings.artwork.naming"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelFileNaming, lblFiletypes, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JLabel lblPosterFilename = new JLabel(BUNDLE.getString("mediafiletype.poster"));//$NON-NLS-1$
+        panelFileNaming.add(lblPosterFilename, "cell 1 0");
 
-      JLabel lblPosterFilename = new JLabel(BUNDLE.getString("mediafiletype.poster"));//$NON-NLS-1$
-      panelFileNaming.add(lblPosterFilename, "cell 0 0");
+        chckbxMoviePosterFilename8 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-poster.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxMoviePosterFilename8, "cell 3 0");
 
-      chckbxMoviePosterFilename8 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-poster.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxMoviePosterFilename8, "cell 2 0");
+        chckbxMoviePosterFilename2 = new JCheckBox("movie.ext");
+        panelFileNaming.add(chckbxMoviePosterFilename2, "cell 4 0");
 
-      chckbxMoviePosterFilename2 = new JCheckBox("movie.ext");
-      panelFileNaming.add(chckbxMoviePosterFilename2, "cell 3 0");
+        chckbxMoviePosterFilename7 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxMoviePosterFilename7, "cell 3 1");
 
-      chckbxMoviePosterFilename7 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxMoviePosterFilename7, "cell 2 1");
+        chckbxMoviePosterFilename4 = new JCheckBox("poster.ext");
+        panelFileNaming.add(chckbxMoviePosterFilename4, "cell 2 0");
 
-      chckbxMoviePosterFilename4 = new JCheckBox("poster.ext");
-      panelFileNaming.add(chckbxMoviePosterFilename4, "cell 1 0");
+        chckbxMoviePosterFilename6 = new JCheckBox("folder.ext");
+        panelFileNaming.add(chckbxMoviePosterFilename6, "cell 2 1");
 
-      chckbxMoviePosterFilename6 = new JCheckBox("folder.ext");
-      panelFileNaming.add(chckbxMoviePosterFilename6, "cell 1 1");
+        JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("mediafiletype.fanart"));//$NON-NLS-1$
+        panelFileNaming.add(lblFanartFileNaming, "cell 1 3");
 
-      JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("mediafiletype.fanart"));//$NON-NLS-1$
-      panelFileNaming.add(lblFanartFileNaming, "cell 0 3");
+        chckbxMovieFanartFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-fanart.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxMovieFanartFilename1, "cell 3 3");
 
-      chckbxMovieFanartFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-fanart.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxMovieFanartFilename1, "cell 2 3");
+        chckbxMovieFanartFilename3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".fanart.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxMovieFanartFilename3, "cell 4 3");
 
-      chckbxMovieFanartFilename3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".fanart.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxMovieFanartFilename3, "cell 3 3");
+        chckbxMovieFanartFilename2 = new JCheckBox("fanart.ext");
+        panelFileNaming.add(chckbxMovieFanartFilename2, "cell 2 3");
 
-      chckbxMovieFanartFilename2 = new JCheckBox("fanart.ext");
-      panelFileNaming.add(chckbxMovieFanartFilename2, "cell 1 3");
+        JLabel lblBannerNamingT = new JLabel(BUNDLE.getString("mediafiletype.banner"));//$NON-NLS-1$
+        panelFileNaming.add(lblBannerNamingT, "cell 1 5");
 
-      JLabel lblBannerNamingT = new JLabel(BUNDLE.getString("mediafiletype.banner"));//$NON-NLS-1$
-      panelFileNaming.add(lblBannerNamingT, "cell 0 5");
+        chckbxBanner2 = new JCheckBox("banner.ext");
+        panelFileNaming.add(chckbxBanner2, "cell 2 5");
 
-      chckbxBanner2 = new JCheckBox("banner.ext");
-      panelFileNaming.add(chckbxBanner2, "cell 1 5");
+        chckbxBanner1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-banner.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxBanner1, "cell 3 5");
 
-      chckbxBanner1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-banner.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxBanner1, "cell 2 5");
+        JLabel lblClearartNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearart"));//$NON-NLS-1$
+        panelFileNaming.add(lblClearartNamingT, "cell 1 7");
 
-      JLabel lblClearartNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearart"));//$NON-NLS-1$
-      panelFileNaming.add(lblClearartNamingT, "cell 0 7");
+        chckbxClearart2 = new JCheckBox("clearart.ext");
+        panelFileNaming.add(chckbxClearart2, "cell 2 7");
 
-      chckbxClearart2 = new JCheckBox("clearart.ext");
-      panelFileNaming.add(chckbxClearart2, "cell 1 7");
+        chckbxClearart1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-clearart.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxClearart1, "cell 3 7");
 
-      chckbxClearart1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-clearart.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxClearart1, "cell 2 7");
+        JLabel lblThumbNamingT = new JLabel(BUNDLE.getString("mediafiletype.thumb"));//$NON-NLS-1$
+        panelFileNaming.add(lblThumbNamingT, "cell 1 9");
 
-      JLabel lblThumbNamingT = new JLabel(BUNDLE.getString("mediafiletype.thumb"));//$NON-NLS-1$
-      panelFileNaming.add(lblThumbNamingT, "cell 0 9");
+        chckbxThumb2 = new JCheckBox("thumb.ext");
+        panelFileNaming.add(chckbxThumb2, "cell 2 9");
 
-      chckbxThumb2 = new JCheckBox("thumb.ext");
-      panelFileNaming.add(chckbxThumb2, "cell 1 9");
+        chckbxThumb1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-thumb.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxThumb1, "cell 3 9");
 
-      chckbxThumb1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-thumb.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxThumb1, "cell 2 9");
+        chckbxThumb4 = new JCheckBox("landscape.ext");
+        panelFileNaming.add(chckbxThumb4, "cell 2 10");
 
-      chckbxThumb4 = new JCheckBox("landscape.ext");
-      panelFileNaming.add(chckbxThumb4, "cell 1 10");
+        chckbxThumb3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-landscape.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxThumb3, "cell 3 10");
 
-      chckbxThumb3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-landscape.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxThumb3, "cell 2 10");
+        JLabel lblLogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.logo"));//$NON-NLS-1$
+        panelFileNaming.add(lblLogoNamingT, "cell 1 12");
 
-      JLabel lblLogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.logo"));//$NON-NLS-1$
-      panelFileNaming.add(lblLogoNamingT, "cell 0 12");
+        chckbxLogo2 = new JCheckBox("logo.ext");
+        panelFileNaming.add(chckbxLogo2, "cell 2 12");
 
-      chckbxLogo2 = new JCheckBox("logo.ext");
-      panelFileNaming.add(chckbxLogo2, "cell 1 12");
+        chckbxLogo1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-logo.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxLogo1, "cell 3 12");
 
-      chckbxLogo1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-logo.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxLogo1, "cell 2 12");
+        JLabel lblClearlogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo"));//$NON-NLS-1$
+        panelFileNaming.add(lblClearlogoNamingT, "cell 1 14");
 
-      JLabel lblClearlogoNamingT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo"));//$NON-NLS-1$
-      panelFileNaming.add(lblClearlogoNamingT, "cell 0 14");
+        chckbxClearlogo2 = new JCheckBox("clearlogo.ext");
+        panelFileNaming.add(chckbxClearlogo2, "cell 2 14");
 
-      chckbxClearlogo2 = new JCheckBox("clearlogo.ext");
-      panelFileNaming.add(chckbxClearlogo2, "cell 1 14");
+        chckbxClearlogo1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-clearlogo.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxClearlogo1, "cell 3 14");
 
-      chckbxClearlogo1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-clearlogo.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxClearlogo1, "cell 2 14");
+        JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("mediafiletype.disc"));//$NON-NLS-1$
+        panelFileNaming.add(lblDiscartNamingT, "cell 1 16");
 
-      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("mediafiletype.disc"));//$NON-NLS-1$
-      panelFileNaming.add(lblDiscartNamingT, "cell 0 16");
+        chckbxDiscart2 = new JCheckBox("disc.ext");
+        panelFileNaming.add(chckbxDiscart2, "cell 2 16");
 
-      chckbxDiscart2 = new JCheckBox("disc.ext");
-      panelFileNaming.add(chckbxDiscart2, "cell 1 16");
+        chckbxDiscart1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-disc.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxDiscart1, "cell 3 16");
 
-      chckbxDiscart1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-disc.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxDiscart1, "cell 2 16");
+        chckbxDiscart4 = new JCheckBox("discart.ext");
+        panelFileNaming.add(chckbxDiscart4, "cell 2 17");
 
-      chckbxDiscart4 = new JCheckBox("discart.ext");
-      panelFileNaming.add(chckbxDiscart4, "cell 1 17");
+        chckbxDiscart3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-discart.ext");//$NON-NLS-1$
+        panelFileNaming.add(chckbxDiscart3, "cell 3 17");
 
-      chckbxDiscart3 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-discart.ext");//$NON-NLS-1$
-      panelFileNaming.add(chckbxDiscart3, "cell 2 17");
-
-      JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-      panelFileNaming.add(tpFileNamingHint, "cell 0 19 4 1,growx");
-      TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
+        JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
+        panelFileNaming.add(tpFileNamingHint, "cell 1 19 4 1,growx");
+        TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
+      }
     }
   }
 

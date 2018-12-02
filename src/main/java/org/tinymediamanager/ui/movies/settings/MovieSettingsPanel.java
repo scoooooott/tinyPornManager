@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -35,8 +36,10 @@ import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 
 import net.miginfocom.swing.MigLayout;
@@ -92,101 +95,101 @@ public class MovieSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][20lp][50lp][][]", "[][][][][][20lp][][][][20lp][][][][][20lp][][][][][]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][][15lp!][]"));
     {
-      JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
-      add(lblUiT, "cell 0 0 5 1");
-    }
-    {
-      chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
-      add(chckbxPersistUiFilters, "cell 1 1 4 1");
-    }
-    {
-      chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
-      add(chckbxPersistUiSorting, "cell 1 2 4 1");
-    }
-    {
-      JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
-      add(lblRating, "flowx,cell 1 3 4 1");
+      JPanel panelUiSettings = SettingsPanelFactory.createSettingsPanel();
 
-      cbRating = new AutocompleteComboBox(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
-      add(cbRating, "cell 1 3 4 1");
-    }
-    {
-      chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
-      add(chckbxPersonalRatingFirst, "cell 2 4 3 1");
-    }
-    {
-      JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 6 5 1");
-    }
-    {
-      chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
-      add(chckbxTraktSync, "flowx,cell 1 8 4 1");
-    }
-    {
-      JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 10 5 1");
-    }
-    {
-      chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxBuildImageCache, "flowx,cell 1 11 4 1");
-    }
-    {
-      chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
-      add(chckbxRuntimeFromMi, "cell 1 12 4 1");
-    }
-    {
-      chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo")); //$NON-NLS-1$
-      add(chckbxIncludeExternalAudioStreams, "cell 1 13 3 1");
-    }
-    {
-      JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
-      add(lblPresetT, "cell 0 15 5 1");
-    }
-    {
-      JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
-      add(lblPresetHintT, "cell 1 16 4 1");
-    }
-    {
-      btnPresetKodi = new JButton("Kodi v17+");
-      add(btnPresetKodi, "flowx,cell 2 17,growx");
+      JLabel lblUiSettings = new TmmLabel(BUNDLE.getString("Settings.ui"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelUiSettings, lblUiSettings, true);
+      add(collapsiblePanel, "cell 0 0,growx,wmin 0");
+      {
+        chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
+        panelUiSettings.add(chckbxPersistUiFilters, "cell 1 0 2 1");
+      }
+      {
+        chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
+        panelUiSettings.add(chckbxPersistUiSorting, "cell 1 1 2 1");
+      }
+      {
+        JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
+        panelUiSettings.add(lblRating, "cell 1 2 2 1");
 
-      btnPresetXbmc = new JButton("XBMC/Kodi <v17");
-      add(btnPresetXbmc, "cell 3 17,growx");
+        cbRating = new AutocompleteComboBox<>(Arrays.asList("imdb", "tmdb", "rottentomatoes"));
+        panelUiSettings.add(cbRating, "cell 1 2");
+      }
+      {
+        chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
+        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 3 2 1");
+      }
     }
     {
-      btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
-      add(btnPresetMediaPortal1, "flowx,cell 2 18,growx");
+      JPanel panelAutomaticTasks = SettingsPanelFactory.createSettingsPanel();
 
-      btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
-      add(btnPresetMediaPortal2, "cell 3 18,growx");
+      JLabel lblAutomaticTasksT = new TmmLabel(BUNDLE.getString("Settings.automatictasks"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAutomaticTasks, lblAutomaticTasksT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
+        panelAutomaticTasks.add(chckbxRenameAfterScrape, "cell 1 0 2 1");
+
+        JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
+        lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
+        panelAutomaticTasks.add(lblAutomaticRenameHint, "cell 2 0");
+
+        chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
+        panelAutomaticTasks.add(chckbxTraktSync, "cell 1 1 2 1");
+
+        btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
+        panelAutomaticTasks.add(btnClearTraktData, "cell 2 1");
+      }
     }
     {
-      btnPresetPlex = new JButton("Plex");
-      add(btnPresetPlex, "cell 2 19,growx");
+      JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
+        panelMisc.add(chckbxBuildImageCache, "cell 1 0 2 1");
+
+        JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
+        lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+        panelMisc.add(lblBuildImageCacheHint, "cell 2 0");
+
+        chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
+        panelMisc.add(chckbxRuntimeFromMi, "cell 1 1 2 1");
+
+        chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo")); //$NON-NLS-1$
+        panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 2");
+      }
     }
     {
-      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
-      add(chckbxRenameAfterScrape, "flowx,cell 1 7 4 1");
-    }
-    {
-      JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
-      lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
-      add(lblAutomaticRenameHint, "cell 1 7 4 1");
-    }
-    {
-      btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
-      add(btnClearTraktData, "cell 1 8 4 1");
-    }
-    {
-      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
-      lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 11 4 1");
+      JPanel panelPresets = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][15lp][][][grow]", "[]"));
+
+      JLabel lblPresets = new TmmLabel(BUNDLE.getString("Settings.preset"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelPresets, lblPresets, true);
+      add(collapsiblePanel, "cell 0 6,growx,wmin 0");
+      {
+        JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
+        panelPresets.add(lblPresetHintT, "cell 1 0 3 1");
+      }
+      {
+        btnPresetKodi = new JButton("Kodi v17+");
+        panelPresets.add(btnPresetKodi, "cell 2 1,growx");
+
+        btnPresetXbmc = new JButton("XBMC/Kodi <v17");
+        panelPresets.add(btnPresetXbmc, "cell 3 1,growx");
+
+        btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
+        panelPresets.add(btnPresetMediaPortal1, "cell 2 2,growx");
+
+        btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
+        panelPresets.add(btnPresetMediaPortal2, "cell 3 2,growx");
+
+        btnPresetPlex = new JButton("Plex");
+        panelPresets.add(btnPresetPlex, "cell 2 3,growx");
+      }
     }
   }
 

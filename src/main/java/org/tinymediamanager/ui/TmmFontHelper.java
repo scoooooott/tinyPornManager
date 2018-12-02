@@ -11,6 +11,14 @@ import javax.swing.JComponent;
  */
 public class TmmFontHelper {
 
+  public static double H1 = 1.33333;
+  public static double H2 = 1.33333;
+  public static double H3 = 1.16667;
+
+  public static double L1 = 0.91667;
+  public static double L2 = 0.83333;
+  public static double L3 = 0.66667;
+
   /**
    * Scale the original font of a component by a given factor
    * 

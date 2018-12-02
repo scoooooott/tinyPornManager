@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionListener;
@@ -46,8 +48,10 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +61,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class UiSettingsPanel extends JPanel {
+class UiSettingsPanel extends JPanel {
   private static final long           serialVersionUID   = 6409982195347794360L;
 
   /** @wbp.nls.resourceBundle messages */
@@ -79,7 +83,7 @@ public class UiSettingsPanel extends JPanel {
   private JLabel                      lblThemeHint;
   private JCheckBox                   chckbxShowMemory;
 
-  public UiSettingsPanel() {
+  UiSettingsPanel() {
     LocaleComboBox actualLocale = null;
     Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     for (Locale l : Utils.getLanguages()) {
@@ -139,82 +143,94 @@ public class UiSettingsPanel extends JPanel {
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][400lp,grow]", "[][][][][][20lp][][][][20lp][][][][][][20lp][][][]"));
+    setLayout(new MigLayout("hidemode 1", "[grow]", "[][15lp!][][15lp!][][15lp!][]"));
     {
-      final JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), 1.16667); //$NON-NLS-1$
-      add(lblLanguageT, "cell 0 0 3 1");
+      JPanel panelLanguage = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelLanguage, lblLanguageT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        cbLanguage = new JComboBox(locales.toArray());
+        panelLanguage.add(cbLanguage, "cell 1 0 2 1");
+      }
+      {
+        final JLabel lblLanguageHint = new JLabel(BUNDLE.getString("tmm.helptranslate")); //$NON-NLS-1$
+        panelLanguage.add(lblLanguageHint, "cell 1 1 2 1");
+      }
+      {
+        lblLinkTransifex = new LinkLabel("https://forum.kodi.tv/showthread.php?tid=174987");
+        panelLanguage.add(lblLinkTransifex, "cell 1 2 2 1");
+      }
+      {
+        lblLanguageChangeHint = new JLabel("");
+        TmmFontHelper.changeFont(lblLanguageChangeHint, Font.BOLD);
+        panelLanguage.add(lblLanguageChangeHint, "cell 0 3 3 1");
+      }
     }
     {
-      cbLanguage = new JComboBox(locales.toArray());
-      add(cbLanguage, "cell 1 1 2 1");
+      JPanel panelTheme = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblThemeT = new TmmLabel(BUNDLE.getString("Settings.uitheme"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelTheme, lblThemeT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        cbTheme = new JComboBox(new String[] { "Light", "Dark" });
+        panelTheme.add(cbTheme, "cell 1 0 2 1");
+      }
+      {
+        lblThemeHint = new JLabel("");
+        TmmFontHelper.changeFont(lblThemeHint, Font.BOLD);
+        panelTheme.add(lblThemeHint, "cell 0 1 3 1");
+      }
     }
     {
-      final JLabel lblLanguageHint = new JLabel(BUNDLE.getString("tmm.helptranslate")); //$NON-NLS-1$
-      add(lblLanguageHint, "cell 1 2 2 1");
+      JPanel panelFont = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblFontT = new TmmLabel(BUNDLE.getString("Settings.font"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelFont, lblFontT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        JLabel lblFontFamilyT = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
+        panelFont.add(lblFontFamilyT, "cell 1 0");
+      }
+      {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
+        panelFont.add(cbFontFamily, "cell 2 0");
+      }
+      {
+        JLabel lblFontSizeT = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
+        panelFont.add(lblFontSizeT, "cell 1 1");
+      }
+      {
+        cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
+        panelFont.add(cbFontSize, "cell 2 1");
+      }
+      {
+        JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
+        panelFont.add(tpFontHint, "cell 1 2 2 1,growx");
+      }
+      {
+        lblFontChangeHint = new JLabel("");
+        TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
+        panelFont.add(lblFontChangeHint, "cell 0 3 3 1");
+      }
     }
     {
-      lblLinkTransifex = new LinkLabel("https://forum.kodi.tv/showthread.php?tid=174987");
-      add(lblLinkTransifex, "cell 1 3 2 1");
-    }
-    {
-      lblLanguageChangeHint = new JLabel("");
-      TmmFontHelper.changeFont(lblLanguageChangeHint, Font.BOLD);
-      add(lblLanguageChangeHint, "cell 0 4 3 1");
-    }
-    {
-      final JLabel lblTheme = new TmmLabel(BUNDLE.getString("Settings.uitheme"), 1.16667); //$NON-NLS-1$
-      add(lblTheme, "cell 0 6 3 1");
-    }
-    {
-      cbTheme = new JComboBox(new String[] { "Light", "Dark" });
-      add(cbTheme, "cell 1 7 2 1");
-    }
-    {
-      lblThemeHint = new JLabel("");
-      TmmFontHelper.changeFont(lblThemeHint, Font.BOLD);
-      add(lblThemeHint, "cell 0 8 3 1");
-    }
-    {
-      final JLabel lblFontT = new TmmLabel(BUNDLE.getString("Settings.font"), 1.16667); //$NON-NLS-1$
-      add(lblFontT, "cell 0 10 3 1");
-    }
-    {
-      final JLabel lblFontFamilyT = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
-      add(lblFontFamilyT, "cell 1 11");
-    }
-    {
-      GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
-      add(cbFontFamily, "cell 2 11");
-    }
-    {
-      final JLabel lblFontSizeT = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
-      add(lblFontSizeT, "cell 1 12");
-    }
-    {
-      cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
-      add(cbFontSize, "cell 2 12");
-    }
-    {
-      final JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-      add(tpFontHint, "cell 1 13 2 1,growx");
-    }
-    {
-      lblFontChangeHint = new JLabel("");
-      TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-      add(lblFontChangeHint, "cell 0 14 3 1");
-    }
-    {
-      final JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), 1.16667); //$NON-NLS-1$
-      add(lblMiscT, "cell 0 16 3 1");
-    }
-    {
-      chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
-      add(chckbxStoreWindowPreferences, "cell 1 17 2 1");
-    }
-    {
-      chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory")); //$NON-NLS-1$
-      add(chckbxShowMemory, "cell 1 18 2 1");
+      JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
+      add(collapsiblePanel, "cell 0 6,growx,wmin 0");
+      {
+        chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
+        panelMisc.add(chckbxStoreWindowPreferences, "cell 1 0 2 1");
+      }
+      {
+        chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory")); //$NON-NLS-1$
+        panelMisc.add(chckbxShowMemory, "cell 1 1 2 1");
+      }
     }
   }
 

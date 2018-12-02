@@ -15,13 +15,12 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
-import java.awt.Canvas;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -41,8 +40,6 @@ import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.apache.commons.lang3.StringUtils;
-import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -50,16 +47,16 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.ui.ScraperInTable;
 import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
@@ -67,21 +64,21 @@ import org.tinymediamanager.ui.panels.ScrollablePanel;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class TvShowImageSettingsPanel.
+ * The class {@link TvShowImageSettingsPanel} is used to display artwork scraper settings.
  *
  * @author Manuel Laggner
  */
-public class TvShowImageSettingsPanel extends JPanel {
+class TvShowImageSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
-  private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<>());
+  private List<ScraperInTable>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<>());
 
-  private TmmTable                    tableArtworkScraper;
-  private JTextPane                   tpArtworkScraperDescription;
-  private JPanel                      panelArtworkScraperOptions;
+  private TmmTable                    tableScraper;
+  private JTextPane                   tpScraperDescription;
+  private JPanel                      panelScraperOptions;
   private JCheckBox                   cbActorImages;
   private JSpinner                    spDownloadCountExtrafanart;
   private JCheckBox                   chckbxEnableExtrafanart;
@@ -89,7 +86,7 @@ public class TvShowImageSettingsPanel extends JPanel {
   /**
    * Instantiates a new movie scraper settings panel.
    */
-  public TvShowImageSettingsPanel() { // UI init
+  TvShowImageSettingsPanel() { // UI init
     initComponents();
     initDataBindings();
 
@@ -98,9 +95,9 @@ public class TvShowImageSettingsPanel extends JPanel {
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
-      ArtworkScraper artworkScraper = new ArtworkScraper(scraper);
+      ScraperInTable artworkScraper = new ScraperInTable(scraper);
       if (enabledArtworkProviders.contains(artworkScraper.getScraperId())) {
-        artworkScraper.active = true;
+        artworkScraper.setActive(true);
         if (selectedIndex < 0) {
           selectedIndex = counter;
         }
@@ -116,19 +113,19 @@ public class TvShowImageSettingsPanel extends JPanel {
     String bodyRule = "body { font-family: " + font.getFamily() + "; font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
         + color.getGreen() + "," + color.getBlue() + "); }";
 
-    TableColumnResizer.setMaxWidthForColumn(tableArtworkScraper, 0, 2);
-    TableColumnResizer.setMaxWidthForColumn(tableArtworkScraper, 1, 2);
-    TableColumnResizer.adjustColumnPreferredWidths(tableArtworkScraper, 5);
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 0, 2);
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
+    TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
-    tpArtworkScraperDescription.setEditorKit(new HTMLEditorKit());
-    ((HTMLDocument) tpArtworkScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
+    tpScraperDescription.setEditorKit(new HTMLEditorKit());
+    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
 
-    tableArtworkScraper.getModel().addTableModelListener(arg0 -> {
+    tableScraper.getModel().addTableModelListener(arg0 -> {
       // click on the checkbox
       if (arg0.getColumn() == 0) {
         int row = arg0.getFirstRow();
-        ArtworkScraper changedScraper = artworkScrapers.get(row);
-        if (changedScraper.active) {
+        ScraperInTable changedScraper = artworkScrapers.get(row);
+        if (changedScraper.getActive()) {
           settings.addTvShowArtworkScraper(changedScraper.getScraperId());
         }
         else {
@@ -137,14 +134,14 @@ public class TvShowImageSettingsPanel extends JPanel {
       }
     });
     // implement selection listener to load settings
-    tableArtworkScraper.getSelectionModel().addListSelectionListener(e -> {
-      int index = tableArtworkScraper.convertRowIndexToModel(tableArtworkScraper.getSelectedRow());
+    tableScraper.getSelectionModel().addListSelectionListener(e -> {
+      int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
       if (index > -1) {
-        panelArtworkScraperOptions.removeAll();
+        panelScraperOptions.removeAll();
         if (artworkScrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
-          panelArtworkScraperOptions.add(new MediaScraperConfigurationPanel(artworkScrapers.get(index).getMediaProvider()));
+          panelScraperOptions.add(new MediaScraperConfigurationPanel(artworkScrapers.get(index).getMediaProvider()));
         }
-        panelArtworkScraperOptions.revalidate();
+        panelScraperOptions.revalidate();
       }
     });
 
@@ -153,157 +150,91 @@ public class TvShowImageSettingsPanel extends JPanel {
       selectedIndex = 0;
     }
     if (counter > 0) {
-      tableArtworkScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][grow]", "[][200lp][20lp,grow][20lp,shrink 0][][][]"));
+    setLayout(new MigLayout("", "[400lp,grow]", "[][15lp!][]"));
     {
-      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
-      add(lblScraperT, "cell 0 0 5 1");
-    }
-    {
-      tableArtworkScraper = new TmmTable();
-      tableArtworkScraper.setRowHeight(29);
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:200lp,grow][][200lp:300lp,grow]"));
 
-      JScrollPane scrollPaneArtworkScraper = new JScrollPane(tableArtworkScraper);
-      tableArtworkScraper.configureScrollPane(scrollPaneArtworkScraper);
-      add(scrollPaneArtworkScraper, "cell 1 1 2 1,grow");
-    }
-    {
-      JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 1 2 2 1,grow");
-      scrollPaneScraperDetails.setBorder(null);
-      scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      JLabel lblScraperT = new TmmLabel(BUNDLE.getString("scraper.artwork"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraperT, true);
+      add(collapsiblePanel, "cell 0 0,wmin 0,grow");
+      {
+        JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
+        panelScraper.add(scrollPaneScraper, "cell 1 0,grow");
 
-      JPanel panelScraperDetails = new ScrollablePanel();
-      scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-      panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
+        tableScraper = new TmmTable();
+        tableScraper.setRowHeight(29);
+        tableScraper.configureScrollPane(scrollPaneScraper);
 
-      tpArtworkScraperDescription = new JTextPane();
-      tpArtworkScraperDescription.setOpaque(false);
-      tpArtworkScraperDescription.setEditable(false);
-      panelScraperDetails.add(tpArtworkScraperDescription, "cell 0 0,growx");
+        JSeparator separator = new JSeparator();
+        panelScraper.add(separator, "cell 1 1,growx");
 
-      panelArtworkScraperOptions = new JPanel();
-      panelArtworkScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-      panelScraperDetails.add(panelArtworkScraperOptions, "cell 0 1,growx");
-    }
-    {
-      chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
-      add(chckbxEnableExtrafanart, "cell 1 5 2 1");
+        JScrollPane scrollPaneScraperDetails = new JScrollPane();
+        panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
 
-      JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-      add(lblDownloadCount, "flowx,cell 2 6");
+        scrollPaneScraperDetails.setBorder(null);
+        scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-      spDownloadCountExtrafanart = new JSpinner();
-      spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
-      add(spDownloadCountExtrafanart, "cell 2 6");
-    }
-    {
-      JSeparator separator = new JSeparator();
-      add(separator, "cell 2 3,growx");
+        JPanel panelScraperDetails = new ScrollablePanel();
+        scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
 
-      cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
-      add(cbActorImages, "cell 1 4 2 1");
-    }
-  }
+        tpScraperDescription = new JTextPane();
+        tpScraperDescription.setOpaque(false);
+        tpScraperDescription.setEditorKit(new HTMLEditorKit());
+        panelScraperDetails.add(tpScraperDescription, "cell 0 0,grow");
 
-  /*****************************************************************************************************
-   * helper classes
-   ****************************************************************************************************/
-  public class ArtworkScraper extends AbstractModelObject {
-    private MediaScraper scraper;
-    private Icon         scraperLogo;
-    private boolean      active;
-
-    public ArtworkScraper(MediaScraper scraper) {
-      this.scraper = scraper;
-      if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
-        scraperLogo = new ImageIcon();
-      }
-      else {
-        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
+        panelScraperOptions = new JPanel();
+        panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelScraperDetails.add(panelScraperOptions, "cell 0 1,grow");
       }
     }
+    {
+      JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
 
-    private ImageIcon getScaledIcon(ImageIcon original) {
-      Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(getFont());
+      JLabel lblOptionsT = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptionsT, true);
+      add(collapsiblePanel, "cell 0 2,growx, wmin 0");
+      {
+        cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
+        panelOptions.add(cbActorImages, "cell 1 0 2 1");
 
-      int height = (int) (fm.getHeight() * 2f);
-      int width = original.getIconWidth() / original.getIconHeight() * height;
+        chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
+        panelOptions.add(chckbxEnableExtrafanart, "cell 1 1 2 1");
 
-      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_ANTIALIAS);
-      return new ImageIcon(scaledImage);
-    }
+        JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+        panelOptions.add(lblDownloadCount, "cell 2 2");
 
-    public String getScraperId() {
-      return scraper.getId();
-    }
-
-    public String getScraperName() {
-      return scraper.getName() + " - " + scraper.getVersion();
-    }
-
-    public String getScraperDescription() {
-      // first try to get the localized version
-      String description = null;
-      try {
-        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
+        spDownloadCountExtrafanart = new JSpinner();
+        spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
+        panelOptions.add(spDownloadCountExtrafanart, "cell 2 2");
       }
-      catch (Exception ignored) {
-      }
-
-      if (StringUtils.isBlank(description)) {
-        // try to get a scraper text
-        description = scraper.getDescription();
-      }
-
-      return description;
-    }
-
-    public Icon getScraperLogo() {
-      return scraperLogo;
-    }
-
-    public Boolean getActive() {
-      return active;
-    }
-
-    public void setActive(Boolean newValue) {
-      Boolean oldValue = this.active;
-      this.active = newValue;
-      firePropertyChange("active", oldValue, newValue);
-    }
-
-    public IMediaProvider getMediaProvider() {
-      return scraper.getMediaProvider();
     }
   }
 
   protected void initDataBindings() {
-    JTableBinding<ArtworkScraper, List<ArtworkScraper>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE,
-        artworkScrapers, tableArtworkScraper);
+    JTableBinding<ScraperInTable, List<ScraperInTable>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE,
+        artworkScrapers, tableScraper);
     //
-    BeanProperty<ArtworkScraper, Boolean> artworkScraperBeanProperty = BeanProperty.create("active");
+    BeanProperty<ScraperInTable, Boolean> artworkScraperBeanProperty = BeanProperty.create("active");
     jTableBinding_1.addColumnBinding(artworkScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
     //
-    BeanProperty<ArtworkScraper, Icon> artworkScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
+    BeanProperty<ScraperInTable, Icon> artworkScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
     jTableBinding_1.addColumnBinding(artworkScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
     //
-    BeanProperty<ArtworkScraper, String> artworkScraperBeanProperty_2 = BeanProperty.create("scraperName");
+    BeanProperty<ScraperInTable, String> artworkScraperBeanProperty_2 = BeanProperty.create("scraperName");
     jTableBinding_1.addColumnBinding(artworkScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
     //
     jTableBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableArtworkScraper,
-        jTableBeanProperty, tpArtworkScraperDescription, jTextPaneBeanProperty_1);
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
+        tpScraperDescription, jTextPaneBeanProperty_1);
     autoBinding_1.bind();
     //
     BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("writeActorImages");

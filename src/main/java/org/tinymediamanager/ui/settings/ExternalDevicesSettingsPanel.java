@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -45,8 +46,10 @@ import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiException;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
 
@@ -57,7 +60,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class ExternalDevicesSettingsPanel extends JPanel {
+class ExternalDevicesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 8176824801347872222L;
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ExternalDevicesSettingsPanel.class);
 
@@ -78,7 +81,7 @@ public class ExternalDevicesSettingsPanel extends JPanel {
   private JCheckBox                   chckbxUpnpShareLibrary;
   private JCheckBox                   chckbxUpnpRemotePlay;
 
-  public ExternalDevicesSettingsPanel() {
+  ExternalDevicesSettingsPanel() {
 
     // UI init
     initComponents();
@@ -121,98 +124,104 @@ public class ExternalDevicesSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][150lp][]", "[][200lp][20lp][][][][][20lp][][][]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      final JLabel lblWolT = new JLabel(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblWolT, 1.16667, Font.BOLD);
-      add(lblWolT, "cell 0 0 2 1");
+      JPanel panelWol = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][400lp][]", "[]"));
+
+      JLabel lblWolT = new TmmLabel(BUNDLE.getString("tmm.wakeonlan"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelWol, lblWolT, true);
+      add(collapsiblePanel, "growx,wmin 0");
+      {
+        JScrollPane spWolDevices = new JScrollPane();
+        panelWol.add(spWolDevices, "cell 1 0,grow");
+
+        tableWolDevices = new TmmTable();
+        spWolDevices.setViewportView(tableWolDevices);
+
+        btnAddWolDevice = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        panelWol.add(btnAddWolDevice, "flowy,cell 2 0,growx,aligny top");
+
+        btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
+        panelWol.add(btnEditWolDevice, "cell 2 0,growx");
+
+        btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        panelWol.add(btnRemoveWolDevice, "cell 2 0,growx");
+      }
     }
     {
-      JScrollPane spWolDevices = new JScrollPane();
-      add(spWolDevices, "cell 1 1 2 1,grow");
+      JPanel panelKodi = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][15lp][][]", "[]"));
 
-      tableWolDevices = new TmmTable();
-      spWolDevices.setViewportView(tableWolDevices);
+      JLabel lblKodiT = new TmmLabel("Kodi / XBMC", H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelKodi, lblKodiT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        JLabel lblKodiHostT = new JLabel(BUNDLE.getString("Settings.kodi.host")); //$NON-NLS-1$
+        panelKodi.add(lblKodiHostT, "cell 1 0");
 
-      btnAddWolDevice = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-      add(btnAddWolDevice, "flowy,cell 3 1,growx,aligny top");
+        tfKodiHost = new JTextField();
+        panelKodi.add(tfKodiHost, "cell 2 0");
+        tfKodiHost.setColumns(20);
 
-      btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
-      add(btnEditWolDevice, "cell 3 1,growx");
+        JButton btnKodiConnect = new JButton(BUNDLE.getString("Settings.kodi.connect")); //$NON-NLS-1$
+        btnKodiConnect.addActionListener(e -> {
+          HostConfig c = new HostConfig(tfKodiHost.getText(), tfKodiHttpPort.getText(), tfKodiTcpPort.getText(), tfKodiUsername.getText(),
+              new String(tfKodiPassword.getPassword()));
+          try {
+            KodiRPC.getInstance().connect(c);
+          }
+          catch (ApiException cex) {
+            LOGGER.error("Error connecting to Kodi instance! {}", cex.getMessage());
+            MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "KodiRPC", "Could not connect to Kodi: " + cex.getMessage()));
+          }
+        });
+        panelKodi.add(btnKodiConnect, "cell 3 0,growx");
 
-      btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-      add(btnRemoveWolDevice, "cell 3 1,growx");
+        JLabel lblKodiHttpPortT = new JLabel(BUNDLE.getString("Settings.kodi.httpport")); //$NON-NLS-1$
+        panelKodi.add(lblKodiHttpPortT, "cell 1 1");
+
+        tfKodiHttpPort = new JTextField();
+        panelKodi.add(tfKodiHttpPort, "cell 2 1");
+        tfKodiHttpPort.setColumns(20);
+
+        JButton btnKodiDisconnect = new JButton(BUNDLE.getString("Settings.kodi.disconnect")); //$NON-NLS-1$
+        btnKodiDisconnect.addActionListener(e -> KodiRPC.getInstance().disconnect());
+        panelKodi.add(btnKodiDisconnect, "cell 3 1,growx");
+
+        JLabel lblKodiTcpPortT = new JLabel(BUNDLE.getString("Settings.kodi.tcpport")); //$NON-NLS-1$
+        panelKodi.add(lblKodiTcpPortT, "cell 1 2");
+
+        tfKodiTcpPort = new JTextField();
+        panelKodi.add(tfKodiTcpPort, "cell 2 2");
+        tfKodiTcpPort.setColumns(20);
+
+        JLabel lblKodiUsernameT = new JLabel(BUNDLE.getString("Settings.kodi.user")); //$NON-NLS-1$
+        panelKodi.add(lblKodiUsernameT, "cell 1 3");
+
+        tfKodiUsername = new JTextField();
+        panelKodi.add(tfKodiUsername, "cell 2 3");
+        tfKodiUsername.setColumns(20);
+
+        JLabel lblKodiPasswordT = new JLabel(BUNDLE.getString("Settings.kodi.pass")); //$NON-NLS-1$
+        panelKodi.add(lblKodiPasswordT, "cell 1 4");
+
+        tfKodiPassword = new JPasswordField();
+        panelKodi.add(tfKodiPassword, "cell 2 4");
+        tfKodiPassword.setColumns(20);
+      }
     }
     {
-      final JLabel lblKodiT = new JLabel("Kodi / XBMC"); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblKodiT, 1.16667, Font.BOLD);
-      add(lblKodiT, "cell 0 3 2 1");
-    }
-    {
-      JLabel lblKodiHostT = new JLabel(BUNDLE.getString("Settings.kodi.host")); //$NON-NLS-1$
-      add(lblKodiHostT, "cell 1 4");
+      JPanel panelUpnp = SettingsPanelFactory.createSettingsPanel();
 
-      tfKodiHost = new JTextField();
-      add(tfKodiHost, "cell 2 4");
-      tfKodiHost.setColumns(20);
+      JLabel lblUpnp = new TmmLabel("UPnP", H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelUpnp, lblUpnp, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        chckbxUpnpShareLibrary = new JCheckBox(BUNDLE.getString("Settings.upnp.share")); //$NON-NLS-1$
+        panelUpnp.add(chckbxUpnpShareLibrary, "cell 1 0 2 1");
 
-      JButton btnKodiConnect = new JButton(BUNDLE.getString("Settings.kodi.connect")); //$NON-NLS-1$
-      btnKodiConnect.addActionListener(e -> {
-        HostConfig c = new HostConfig(tfKodiHost.getText(), tfKodiHttpPort.getText(), tfKodiTcpPort.getText(), tfKodiUsername.getText(),
-            new String(tfKodiPassword.getPassword()));
-        try {
-          KodiRPC.getInstance().connect(c);
-        }
-        catch (ApiException cex) {
-          LOGGER.error("Error connecting to Kodi instance! {}", cex.getMessage());
-          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "KodiRPC", "Could not connect to Kodi: " + cex.getMessage()));
-        }
-      });
-      add(btnKodiConnect, "cell 3 4,growx");
-
-      JLabel lblKodiHttpPortT = new JLabel(BUNDLE.getString("Settings.kodi.httpport")); //$NON-NLS-1$
-      add(lblKodiHttpPortT, "cell 1 5");
-
-      tfKodiHttpPort = new JTextField();
-      add(tfKodiHttpPort, "cell 2 5");
-      tfKodiHttpPort.setColumns(20);
-
-      JButton btnKodiDisconnect = new JButton(BUNDLE.getString("Settings.kodi.disconnect")); //$NON-NLS-1$
-      btnKodiDisconnect.addActionListener(e -> KodiRPC.getInstance().disconnect());
-      add(btnKodiDisconnect, "cell 3 5,growx");
-
-      JLabel lblKodiTcpPortT = new JLabel(BUNDLE.getString("Settings.kodi.tcpport")); //$NON-NLS-1$
-      add(lblKodiTcpPortT, "cell 1 6");
-
-      tfKodiTcpPort = new JTextField();
-      add(tfKodiTcpPort, "cell 2 6");
-      tfKodiTcpPort.setColumns(20);
-
-      JLabel lblKodiUsernameT = new JLabel(BUNDLE.getString("Settings.kodi.user")); //$NON-NLS-1$
-      add(lblKodiUsernameT, "cell 1 7");
-
-      tfKodiUsername = new JTextField();
-      add(tfKodiUsername, "cell 2 7");
-      tfKodiUsername.setColumns(20);
-
-      JLabel lblKodiPasswordT = new JLabel(BUNDLE.getString("Settings.kodi.pass")); //$NON-NLS-1$
-      add(lblKodiPasswordT, "cell 1 8");
-
-      tfKodiPassword = new JPasswordField();
-      add(tfKodiPassword, "cell 2 8");
-      tfKodiPassword.setColumns(20);
-    }
-    {
-      final JLabel lblUpnpT = new JLabel("UPnP");
-      TmmFontHelper.changeFont(lblUpnpT, 1.16667, Font.BOLD);
-      add(lblUpnpT, "cell 0 10 3 1");
-    }
-    {
-      chckbxUpnpShareLibrary = new JCheckBox(BUNDLE.getString("Settings.upnp.share")); //$NON-NLS-1$
-      add(chckbxUpnpShareLibrary, "cell 1 11 2 1");
-
-      chckbxUpnpRemotePlay = new JCheckBox(BUNDLE.getString("Settings.upnp.play")); //$NON-NLS-1$
-      add(chckbxUpnpRemotePlay, "cell 1 12 2 1");
+        chckbxUpnpRemotePlay = new JCheckBox(BUNDLE.getString("Settings.upnp.play")); //$NON-NLS-1$
+        panelUpnp.add(chckbxUpnpRemotePlay, "cell 1 1 2 1");
+      }
     }
   }
 

@@ -15,9 +15,9 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Insets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -43,18 +43,19 @@ import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The class TvShowDatasourceSettingsPanel is used to display data sources related settings
+ * The class {@link TvShowDatasourceSettingsPanel} is used to display data sources related settings
  * 
  * @author Manuel Laggner
  */
-public class TvShowDatasourceSettingsPanel extends JPanel {
+class TvShowDatasourceSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -675729644848101096L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -64,7 +65,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
   private JTextField                  tfAddBadword;
   private JList<String>               listBadWords;
   private JList<String>               listDatasources;
-  private JList<String>               listExclude;
+  private JList<String>               listSkipFolder;
   private JButton                     btnAddDatasource;
   private JButton                     btnRemoveDatasource;
   private JButton                     btnAddSkipFolder;
@@ -72,7 +73,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
   private JButton                     btnRemoveBadWord;
   private JButton                     btnAddBadWord;
 
-  public TvShowDatasourceSettingsPanel() {
+  TvShowDatasourceSettingsPanel() {
     // UI initializations
     initComponents();
     initDataBindings();
@@ -110,7 +111,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
       }
     });
     btnRemoveSkipFolder.addActionListener(e -> {
-      int row = listExclude.getSelectedIndex();
+      int row = listSkipFolder.getSelectedIndex();
       if (row != -1) { // nothing selected
         String ingore = settings.getSkipFolder().get(row);
         settings.removeSkipFolder(ingore);
@@ -132,100 +133,81 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][300lp,grow][25lp][300lp,grow]", "[][100lp,grow][][20lp][][100lp,grow][grow 200]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      JLabel lblDatasourcesT = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblDatasourcesT, 1.16667, Font.BOLD);
-      add(lblDatasourcesT, "cell 0 0 2 1");
+      JPanel panelDatasources = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][400lp][][grow]", "[]"));
+
+      JLabel lblDatasourcesT = new TmmLabel(BUNDLE.getString("Settings.source"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDatasources, lblDatasourcesT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JScrollPane scrollPaneDataSources = new JScrollPane();
+        panelDatasources.add(scrollPaneDataSources, "cell 1 0,grow");
+
+        listDatasources = new JList();
+        scrollPaneDataSources.setViewportView(listDatasources);
+
+        btnAddDatasource = new JButton(IconManager.ADD_INV);
+        panelDatasources.add(btnAddDatasource, "flowy, cell 2 0, aligny top, growx");
+        btnAddDatasource.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+
+        btnRemoveDatasource = new JButton(IconManager.REMOVE_INV);
+        panelDatasources.add(btnRemoveDatasource, "flowy, cell 2 0, aligny top, growx");
+        btnRemoveDatasource.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+
+        chckbxDvdOrder = new JCheckBox(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
+        panelDatasources.add(chckbxDvdOrder, "cell 1 2 2 1");
+      }
     }
-
     {
-      JScrollPane scrollPaneDatasource = new JScrollPane();
-      add(scrollPaneDatasource, "flowx,cell 1 1,grow");
+      JPanel panelIgnore = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][400lp][][grow]", "[]"));
 
-      listDatasources = new JList<>();
-      scrollPaneDatasource.setViewportView(listDatasources);
+      JLabel lblIgnoreT = new TmmLabel(BUNDLE.getString("Settings.ignore"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelIgnore, lblIgnoreT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        JScrollPane scrollPaneIgnore = new JScrollPane();
+        panelIgnore.add(scrollPaneIgnore, "cell 1 0,grow");
 
-      JPanel panelTvShowSourcesButtons = new JPanel();
-      add(panelTvShowSourcesButtons, "cell 1 1,aligny top");
+        listSkipFolder = new JList();
+        scrollPaneIgnore.setViewportView(listSkipFolder);
 
-      btnAddDatasource = new JButton(IconManager.ADD_INV);
-      btnAddDatasource.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-      btnAddDatasource.setMargin(new Insets(2, 2, 2, 2));
-      panelTvShowSourcesButtons.setLayout(new MigLayout("", "[]", "[][]"));
+        btnAddSkipFolder = new JButton(IconManager.ADD_INV);
+        panelIgnore.add(btnAddSkipFolder, "flowy, cell 2 0, aligny top, growx");
+        btnAddSkipFolder.setToolTipText(BUNDLE.getString("Settings.addignore")); //$NON-NLS-1$
 
-      panelTvShowSourcesButtons.add(btnAddDatasource, "cell 0 0,growx,aligny top");
-
-      btnRemoveDatasource = new JButton(IconManager.REMOVE_INV);
-      btnRemoveDatasource.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-      btnRemoveDatasource.setMargin(new Insets(2, 2, 2, 2));
-      panelTvShowSourcesButtons.add(btnRemoveDatasource, "cell 0 1,growx,aligny top");
-
-      chckbxDvdOrder = new JCheckBox(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
-      add(chckbxDvdOrder, "cell 1 2");
+        btnRemoveSkipFolder = new JButton(IconManager.REMOVE_INV);
+        panelIgnore.add(btnRemoveSkipFolder, "flowy, cell 2 0, aligny top, growx");
+        btnRemoveSkipFolder.setToolTipText(BUNDLE.getString("Settings.removeignore")); //$NON-NLS-1$
+      }
     }
-
     {
-      JLabel lblExcludeT = new JLabel(BUNDLE.getString("Settings.ignore"));//$NON-NLS-1$
-      TmmFontHelper.changeFont(lblExcludeT, 1.16667, Font.BOLD);
-      add(lblExcludeT, "cell 0 4 2 1");
+      JPanel panelBadWords = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblBadWordsT = new JLabel(BUNDLE.getString("Settings.movie.badwords")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblBadWordsT, 1.16667, Font.BOLD);
-      add(lblBadWordsT, "flowx,cell 2 4 2 1");
+      JLabel lblBadWordsT = new TmmLabel(BUNDLE.getString("Settings.movie.badwords"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelBadWords, lblBadWordsT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        JLabel lblBadWordsDesc = new JLabel(BUNDLE.getString("Settings.movie.badwords.hint"));
+        panelBadWords.add(lblBadWordsDesc, "cell 1 0 3 1");
 
-      JLabel lblBadWordsDesc = new JLabel(IconManager.HINT);
-      lblBadWordsDesc.setToolTipText(BUNDLE.getString("Settings.movie.badwords.hint")); //$NON-NLS-1$
-      add(lblBadWordsDesc, "cell 2 4 2 1");
-    }
+        JScrollPane scrollPaneBadWords = new JScrollPane();
+        panelBadWords.add(scrollPaneBadWords, "cell 1 1,grow");
 
-    {
-      JScrollPane scrollPaneIgnore = new JScrollPane();
-      add(scrollPaneIgnore, "flowx,cell 1 5,grow");
+        listBadWords = new JList();
+        scrollPaneBadWords.setViewportView(listBadWords);
 
-      listExclude = new JList<>();
-      scrollPaneIgnore.setViewportView(listExclude);
+        btnRemoveBadWord = new JButton(IconManager.REMOVE_INV);
+        panelBadWords.add(btnRemoveBadWord, "cell 2 1,aligny bottom");
+        btnRemoveBadWord.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
 
-      JPanel panelSkipFolderButtons = new JPanel();
-      add(panelSkipFolderButtons, "cell 1 5,aligny top");
+        tfAddBadword = new JTextField();
+        panelBadWords.add(tfAddBadword, "cell 1 2,growx");
 
-      btnAddSkipFolder = new JButton(IconManager.ADD_INV);
-      btnAddSkipFolder.setToolTipText(BUNDLE.getString("Settings.addignore")); //$NON-NLS-1$
-      btnAddSkipFolder.setMargin(new Insets(2, 2, 2, 2));
-      panelSkipFolderButtons.setLayout(new MigLayout("", "[]", "[][]"));
-      panelSkipFolderButtons.add(btnAddSkipFolder, "cell 0 0,alignx left,aligny top");
-
-      btnRemoveSkipFolder = new JButton(IconManager.REMOVE_INV);
-      btnRemoveSkipFolder.setToolTipText(BUNDLE.getString("Settings.removeignore")); //$NON-NLS-1$
-      btnRemoveSkipFolder.setMargin(new Insets(2, 2, 2, 2));
-      panelSkipFolderButtons.add(btnRemoveSkipFolder, "cell 0 1,alignx left,aligny top");
-    }
-
-    {
-      JPanel panelBadWords = new JPanel();
-      panelBadWords.setBorder(null); // $NON-NLS-1$
-      add(panelBadWords, "cell 3 5,grow");
-      panelBadWords.setLayout(new MigLayout("insets 0", "[][]", "[100lp,grow][]"));
-
-      JScrollPane scpBadWords = new JScrollPane();
-      panelBadWords.add(scpBadWords, "cell 0 0,grow");
-
-      listBadWords = new JList<>();
-      scpBadWords.setViewportView(listBadWords);
-
-      btnRemoveBadWord = new JButton(IconManager.REMOVE_INV);
-      btnRemoveBadWord.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-      btnRemoveBadWord.setMargin(new Insets(2, 2, 2, 2));
-      panelBadWords.add(btnRemoveBadWord, "cell 1 0,alignx left,aligny bottom");
-
-      tfAddBadword = new JTextField();
-      tfAddBadword.setColumns(10);
-      panelBadWords.add(tfAddBadword, "cell 0 1,growx,aligny center");
-
-      btnAddBadWord = new JButton(IconManager.ADD_INV);
-      btnAddBadWord.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-      btnAddBadWord.setMargin(new Insets(2, 2, 2, 2));
-      panelBadWords.add(btnAddBadWord, "cell 1 1,alignx left,aligny top");
+        btnAddBadWord = new JButton(IconManager.ADD_INV);
+        panelBadWords.add(btnAddBadWord, "cell 2 2, growx");
+        btnAddBadWord.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      }
     }
   }
 
@@ -243,7 +225,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
     //
     BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_3 = BeanProperty.create("skipFolder");
     JListBinding<String, TvShowSettings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, listExclude);
+        settingsBeanProperty_3, listSkipFolder);
     jListBinding_1.bind();
     //
     BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("badWord");

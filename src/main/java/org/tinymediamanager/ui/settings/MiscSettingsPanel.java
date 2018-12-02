@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
@@ -30,17 +31,19 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class GeneralSettingsPanel.
+ * The Class MiscSettingsPanel.
  * 
  * @author Manuel Laggner
  */
-public class GeneralSettingsPanel extends JPanel {
+class MiscSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 500841588272296493L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -53,31 +56,33 @@ public class GeneralSettingsPanel extends JPanel {
   /**
    * Instantiates a new general settings panel.
    */
-  public GeneralSettingsPanel() {
+  MiscSettingsPanel() {
     initComponents();
     initDataBindings();
 
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][20lp][200lp,grow]", "[][][][10lp][]"));
+    setLayout(new MigLayout("", "[25lp:n,grow]", "[]"));
     {
-      final JLabel lblMiscSettingsT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMiscSettingsT, 1.16667, Font.BOLD);
-      add(lblMiscSettingsT, "cell 0 0 3 1");
-    }
-    {
-      chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
-      add(chckbxImageCache, "cell 1 1 2 1");
+      JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
-      add(lblImageCacheQuality, "flowx,cell 2 2");
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache")); //$NON-NLS-1$
+        panelMisc.add(chckbxImageCache, "cell 1 0 2 1");
 
-      cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
-      add(cbImageCacheQuality, "cell 2 2");
+        JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype")); //$NON-NLS-1$
+        panelMisc.add(lblImageCacheQuality, "cell 2 1");
 
-      chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
-      add(chckbxDeleteTrash, "cell 1 4 2 1");
+        cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
+        panelMisc.add(cbImageCacheQuality, "cell 2 1");
+
+        chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash")); //$NON-NLS-1$
+        panelMisc.add(chckbxDeleteTrash, "cell 1 2 2 1");
+      }
     }
   }
 

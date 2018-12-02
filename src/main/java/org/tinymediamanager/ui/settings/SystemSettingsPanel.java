@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+import static org.tinymediamanager.ui.TmmFontHelper.L2;
+
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.io.IOException;
@@ -46,7 +48,9 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 import com.sun.jna.Platform;
@@ -54,11 +58,11 @@ import com.sun.jna.Platform;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class GeneralSettingsPanel.
+ * The Class MiscSettingsPanel.
  * 
  * @author Manuel Laggner
  */
-public class SystemSettingsPanel extends JPanel {
+class SystemSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 500841588272296493L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -79,7 +83,7 @@ public class SystemSettingsPanel extends JPanel {
   /**
    * Instantiates a new general settings panel.
    */
-  public SystemSettingsPanel() {
+  SystemSettingsPanel() {
 
     initComponents();
 
@@ -98,104 +102,113 @@ public class SystemSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp][][]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][][15lp!][]"));
     {
-      final JLabel lblMediaPlayerT = new JLabel(BUNDLE.getString("Settings.mediaplayer")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMediaPlayerT, 1.16667, Font.BOLD);
-      add(lblMediaPlayerT, "cell 0 0 3 1");
-    }
-    {
-      tfMediaPlayer = new JTextField();
-      add(tfMediaPlayer, "flowx,cell 1 1 5 1");
-      tfMediaPlayer.setColumns(35);
+      JPanel panelMediaPlayer = SettingsPanelFactory.createSettingsPanel();
 
-      btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-      add(btnSearchMediaPlayer, "cell 1 1 5 1");
+      JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.mediaplayer"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMediaPlayer, lblLanguageT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        tfMediaPlayer = new JTextField();
+        panelMediaPlayer.add(tfMediaPlayer, "cell 1 0 2 1");
+        tfMediaPlayer.setColumns(35);
 
-      JTextArea tpMediaPlayer = new ReadOnlyTextArea(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
-      add(tpMediaPlayer, "cell 1 2 5 1,growx");
-      TmmFontHelper.changeFont(tpMediaPlayer, 0.833);
-    }
-    {
-      final JLabel lblMemorySettingsT = new JLabel(BUNDLE.getString("Settings.memoryborder")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblMemorySettingsT, 1.16667, Font.BOLD);
-      add(lblMemorySettingsT, "cell 0 4 3 1");
-    }
-    {
-      JLabel lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
-      add(lblMemoryT, "flowx,cell 1 5 4 1,aligny top");
+        btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+        panelMediaPlayer.add(btnSearchMediaPlayer, "cell 1 0");
 
-      sliderMemory = new JSlider();
-      sliderMemory.setPaintLabels(true);
-      sliderMemory.setPaintTicks(true);
-      sliderMemory.setSnapToTicks(true);
-      sliderMemory.setMajorTickSpacing(512);
-      sliderMemory.setMinorTickSpacing(128);
-      sliderMemory.setMinimum(256);
-      if (Platform.is64Bit()) {
-        sliderMemory.setMaximum(2560);
+        JTextArea tpMediaPlayer = new ReadOnlyTextArea(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
+        panelMediaPlayer.add(tpMediaPlayer, "cell 1 1 2 1,growx");
+        TmmFontHelper.changeFont(tpMediaPlayer, L2);
       }
-      else {
-        sliderMemory.setMaximum(1536);
+    }
+    {
+      JPanel panelMemory = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][][300lp][grow]", ""));
+
+      JLabel lblMemoryT = new TmmLabel(BUNDLE.getString("Settings.memoryborder"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMemory, lblMemoryT, true);
+      add(collapsiblePanel, "cell 0 2,growx,wmin 0");
+      {
+        lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
+        panelMemory.add(lblMemoryT, "cell 1 0,aligny top");
+
+        sliderMemory = new JSlider();
+        sliderMemory.setPaintLabels(true);
+        sliderMemory.setPaintTicks(true);
+        sliderMemory.setSnapToTicks(true);
+        sliderMemory.setMajorTickSpacing(512);
+        sliderMemory.setMinorTickSpacing(128);
+        sliderMemory.setMinimum(256);
+        if (Platform.is64Bit()) {
+          sliderMemory.setMaximum(2560);
+        }
+        else {
+          sliderMemory.setMaximum(1536);
+        }
+        sliderMemory.setValue(512);
+        panelMemory.add(sliderMemory, "cell 2 0,growx,aligny top");
+
+        lblMemory = new JLabel("512");
+        panelMemory.add(lblMemory, "cell 3 0,aligny top");
+
+        JLabel lblMb = new JLabel("MB");
+        panelMemory.add(lblMb, "cell 3 0,aligny top");
+
+        JTextArea tpMemoryHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
+        panelMemory.add(tpMemoryHint, "cell 1 1 3 1,growx");
+        TmmFontHelper.changeFont(tpMemoryHint, L2);
       }
-      sliderMemory.setValue(512);
-      add(sliderMemory, "cell 1 5 4 1,growx,aligny top");
-
-      lblMemory = new JLabel("512");
-      add(lblMemory, "cell 1 5 4 1,aligny top");
-
-      JLabel lblMb = new JLabel("MB");
-      add(lblMb, "cell 1 5 4 1,aligny top");
-
-      JTextArea tpMemoryHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
-      add(tpMemoryHint, "cell 1 6 5 1,growx");
-      TmmFontHelper.changeFont(tpMemoryHint, 0.833);
     }
     {
-      final JLabel lblProxySettingsT = new JLabel(BUNDLE.getString("Settings.proxy")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblProxySettingsT, 1.16667, Font.BOLD);
-      add(lblProxySettingsT, "cell 0 8 3 1");
+      JPanel panelProxy = SettingsPanelFactory.createSettingsPanel();
+
+      JLabel lblProxyT = new TmmLabel(BUNDLE.getString("Settings.proxy"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelProxy, lblProxyT, true);
+      add(collapsiblePanel, "cell 0 4,growx,wmin 0");
+      {
+        JLabel lblProxyHostT = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
+        panelProxy.add(lblProxyHostT, "cell 1 0,alignx right");
+
+        tfProxyHost = new JTextField();
+        panelProxy.add(tfProxyHost, "cell 2 0");
+        tfProxyHost.setColumns(20);
+        lblProxyHostT.setLabelFor(tfProxyHost);
+
+        JLabel lblProxyPortT = new JLabel(BUNDLE.getString("Settings.proxyport")); //$NON-NLS-1$
+        panelProxy.add(lblProxyPortT, "cell 1 1,alignx right");
+        lblProxyPortT.setLabelFor(tfProxyPort);
+
+        tfProxyPort = new JTextField();
+        panelProxy.add(tfProxyPort, "cell 2 1");
+        tfProxyPort.setColumns(20);
+
+        JLabel lblProxyUserT = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
+        panelProxy.add(lblProxyUserT, "cell 1 2,alignx right");
+        lblProxyUserT.setLabelFor(tfProxyUsername);
+
+        tfProxyUsername = new JTextField();
+        panelProxy.add(tfProxyUsername, "cell 2 2");
+        tfProxyUsername.setColumns(20);
+
+        JLabel lblProxyPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
+        panelProxy.add(lblProxyPasswordT, "cell 1 3,alignx right");
+        lblProxyPasswordT.setLabelFor(tfProxyPassword);
+
+        tfProxyPassword = new JPasswordField();
+        tfProxyPassword.setColumns(20);
+        panelProxy.add(tfProxyPassword, "cell 2 3");
+      }
     }
     {
-      JLabel lblProxyHostT = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
-      add(lblProxyHostT, "cell 1 9,alignx right");
+      JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
 
-      tfProxyHost = new JTextField();
-      add(tfProxyHost, "cell 2 9");
-      tfProxyHost.setColumns(20);
-      lblProxyHostT.setLabelFor(tfProxyHost);
-
-      JLabel lblProxyPortT = new JLabel(BUNDLE.getString("Settings.proxyport")); //$NON-NLS-1$
-      add(lblProxyPortT, "cell 3 9,alignx right");
-      lblProxyPortT.setLabelFor(tfProxyPort);
-
-      tfProxyPort = new JTextField();
-      add(tfProxyPort, "cell 4 9");
-      tfProxyPort.setColumns(20);
-
-      JLabel lblProxyUserT = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
-      add(lblProxyUserT, "cell 1 10,alignx right");
-      lblProxyUserT.setLabelFor(tfProxyUsername);
-
-      tfProxyUsername = new JTextField();
-      add(tfProxyUsername, "cell 2 10");
-      tfProxyUsername.setColumns(20);
-
-      JLabel lblProxyPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-      add(lblProxyPasswordT, "cell 3 10,alignx right");
-      lblProxyPasswordT.setLabelFor(tfProxyPassword);
-
-      tfProxyPassword = new JPasswordField();
-      tfProxyPassword.setColumns(20);
-      add(tfProxyPassword, "cell 4 10");
-    }
-    {
-      final JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), 1.16667);
-      add(lblMiscT, "cell 0 12 6 1");
-    }
-    {
-      chckbxIgnoreSSLProblems = new JCheckBox(BUNDLE.getString("Settings.ignoressl"));
-      add(chckbxIgnoreSSLProblems, "cell 1 13 5 1");
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
+      add(collapsiblePanel, "cell 0 6,growx,wmin 0");
+      {
+        chckbxIgnoreSSLProblems = new JCheckBox(BUNDLE.getString("Settings.ignoressl"));
+        panelMisc.add(chckbxIgnoreSSLProblems, "cell 1 0 2 1");
+      }
     }
   }
 

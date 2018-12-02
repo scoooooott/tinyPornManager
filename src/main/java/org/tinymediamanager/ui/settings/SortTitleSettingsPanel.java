@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,9 +38,10 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
+import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -48,7 +50,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class SortTitleSettingsPanel extends JPanel {
+class SortTitleSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 1857926059556024932L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -60,7 +62,7 @@ public class SortTitleSettingsPanel extends JPanel {
   private JButton                     btnRemoveSortPrefix;
   private JButton                     btnAddSortPrefix;
 
-  public SortTitleSettingsPanel() {
+  SortTitleSettingsPanel() {
     // init UI
     initComponents();
     initDataBindings();
@@ -86,36 +88,34 @@ public class SortTitleSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][150lp][grow]", "[][][400lp][]"));
+    setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      final JLabel lblSortingT = new JLabel(BUNDLE.getString("Settings.sorting")); // $NON-NLS-1$
-      TmmFontHelper.changeFont(lblSortingT, 1.16667, Font.BOLD);
-      add(lblSortingT, "cell 0 0 2 1");
-    }
-    {
-      final JTextArea tpSortingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.sorting.info")); // $NON-NLS-1$
-      add(tpSortingHint, "cell 1 1 2 1,grow");
-    }
-    {
-      final JScrollPane scrollPane = new JScrollPane();
-      add(scrollPane, "cell 1 2,grow");
-      listSortPrefixes = new JList<>();
-      scrollPane.setViewportView(listSortPrefixes);
-    }
-    {
-      btnRemoveSortPrefix = new JButton(IconManager.REMOVE_INV);
-      btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-      add(btnRemoveSortPrefix, "cell 2 2,aligny bottom");
-    }
-    {
-      tfSortPrefix = new JTextField();
-      add(tfSortPrefix, "cell 1 3,growx");
-      tfSortPrefix.setColumns(10);
-    }
-    {
-      btnAddSortPrefix = new JButton(IconManager.ADD_INV);
-      btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-      add(btnAddSortPrefix, "cell 2 3");
+      JPanel panelSorttitle = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
+
+      JLabel lblSorttitleT = new TmmLabel(BUNDLE.getString("Settings.sorting"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelSorttitle, lblSorttitleT, true);
+      add(collapsiblePanel, "cell 0 0,growx, wmin 0");
+      {
+        JTextArea tpSortingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.sorting.info")); // $NON-NLS-1$
+        panelSorttitle.add(tpSortingHint, "cell 1 0 3 1,growx");
+
+        JScrollPane scrollPane = new JScrollPane();
+        panelSorttitle.add(scrollPane, "cell 1 1,grow");
+
+        listSortPrefixes = new JList<>();
+        scrollPane.setViewportView(listSortPrefixes);
+
+        btnRemoveSortPrefix = new JButton(IconManager.REMOVE_INV);
+        btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        panelSorttitle.add(btnRemoveSortPrefix, "cell 2 1,aligny bottom, growx");
+
+        tfSortPrefix = new JTextField();
+        panelSorttitle.add(tfSortPrefix, "cell 1 2,growx");
+
+        btnAddSortPrefix = new JButton(IconManager.ADD_INV);
+        btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        panelSorttitle.add(btnAddSortPrefix, "cell 2 2, growx");
+      }
     }
   }
 

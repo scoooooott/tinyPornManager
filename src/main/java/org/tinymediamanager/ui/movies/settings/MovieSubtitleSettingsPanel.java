@@ -15,12 +15,11 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import java.awt.Canvas;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,8 +38,6 @@ import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.apache.commons.lang3.StringUtils;
-import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -48,18 +45,18 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.ui.ScraperInTable;
 import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
@@ -67,24 +64,24 @@ import org.tinymediamanager.ui.panels.ScrollablePanel;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * The Class MovieSubtitleSettingsPanel. To maintain subtitle related settings
- * 
+ * The class {@link MovieSubtitleSettingsPanel} is used to maintain subtitle related settings
+ *
  * @author Manuel Laggner
  */
-public class MovieSubtitleSettingsPanel extends JPanel {
+class MovieSubtitleSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -1607146878528487625L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$ @wbp.nls.resourceBundle
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
-  private List<SubtitleScraper>       scrapers         = ObservableCollections.observableList(new ArrayList<>());
+  private List<ScraperInTable>        scrapers         = ObservableCollections.observableList(new ArrayList<>());
   private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JComboBox                   cbScraperLanguage;
   private JComboBox<LanguageStyle>    cbSubtitleLanguageStyle;
 
-  public MovieSubtitleSettingsPanel() {
+  MovieSubtitleSettingsPanel() {
     // UI init
     initComponents();
     initDataBindings();
@@ -94,9 +91,9 @@ public class MovieSubtitleSettingsPanel extends JPanel {
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
-      SubtitleScraper subtitleScraper = new SubtitleScraper(scraper);
+      ScraperInTable subtitleScraper = new ScraperInTable(scraper);
       if (enabledSubtitleProviders.contains(subtitleScraper.getScraperId())) {
-        subtitleScraper.active = true;
+        subtitleScraper.setActive(true);
         if (selectedIndex < 0) {
           selectedIndex = counter;
         }
@@ -124,8 +121,8 @@ public class MovieSubtitleSettingsPanel extends JPanel {
       // click on the checkbox
       if (arg0.getColumn() == 0) {
         int row = arg0.getFirstRow();
-        SubtitleScraper changedScraper = scrapers.get(row);
-        if (changedScraper.active) {
+        ScraperInTable changedScraper = scrapers.get(row);
+        if (changedScraper.getActive()) {
           settings.addMovieSubtitleScraper(changedScraper.getScraperId());
         }
         else {
@@ -156,143 +153,77 @@ public class MovieSubtitleSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][grow]", "[][200lp][grow][20lp,shrink 0][][]"));
+    setLayout(new MigLayout("hidemode 0", "[400lp,grow]", "[][15lp!][]"));
     {
-      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.subtitle"));// $NON-NLS-1$
-      TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
-      add(lblScraperT, "cell 0 0 3 1");
-    }
-    {
-      tableScraper = new TmmTable();
-      tableScraper.setRowHeight(29);
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:200lp,grow][][200lp:300lp,grow]"));
 
-      JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
-      tableScraper.configureScrollPane(scrollPaneScraper);
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
-    }
-    {
-      JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 1 2 2 1,grow");
-      scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      scrollPaneScraperDetails.setBorder(null);
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.subtitle"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
+      add(collapsiblePanel, "cell 0 0,wmin 0,grow");
+      {
+        JScrollPane scrollPaneScraper = new JScrollPane();
+        panelScraper.add(scrollPaneScraper, "cell 1 0,grow");
 
-      JPanel panelScraperDetails = new ScrollablePanel();
-      scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-      tpScraperDescription = new JTextPane();
-      tpScraperDescription.setOpaque(false);
+        tableScraper = new TmmTable();
+        tableScraper.setRowHeight(29);
+        tableScraper.configureScrollPane(scrollPaneScraper);
 
-      panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
-      panelScraperDetails.add(tpScraperDescription, "cell 0 0,growx,aligny top");
-      panelScraperOptions = new ScrollablePanel();
-      panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-      panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
-    }
-    {
-      JSeparator separator = new JSeparator();
-      add(separator, "cell 1 3 2 1,growx");
-    }
+        JSeparator separator = new JSeparator();
+        panelScraper.add(separator, "cell 1 1,growx");
 
-    {
-      JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-      add(lblScraperLanguage, "flowx,cell 1 4,alignx left");
+        JScrollPane scrollPaneScraperDetails = new JScrollPane();
+        panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
 
-      cbScraperLanguage = new JComboBox(MediaLanguages.values());
-      add(cbScraperLanguage, "cell 1 4");
-    }
-    {
-      JLabel lblSubtitleLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
-      add(lblSubtitleLanguageStyle, "flowx,cell 1 5,alignx left");
+        scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneScraperDetails.setBorder(null);
 
-      cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
-      add(cbSubtitleLanguageStyle, "cell 1 5");
-    }
-  }
+        JPanel panelScraperDetails = new ScrollablePanel();
+        scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
 
-  /*****************************************************************************************************
-   * helper classes
-   ****************************************************************************************************/
-  public class SubtitleScraper extends AbstractModelObject {
-    private MediaScraper scraper;
-    private Icon         scraperLogo;
-    private boolean      active;
+        tpScraperDescription = new JTextPane();
+        tpScraperDescription.setOpaque(false);
+        tpScraperDescription.setEditorKit(new HTMLEditorKit());
+        panelScraperDetails.add(tpScraperDescription, "cell 0 0,grow");
 
-    public SubtitleScraper(MediaScraper scraper) {
-      this.scraper = scraper;
-      if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
-        scraperLogo = new ImageIcon();
-      }
-      else {
-        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
+        panelScraperOptions = new ScrollablePanel();
+        panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelScraperDetails.add(panelScraperOptions, "cell 0 1,grow");
       }
     }
+    {
+      JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
 
-    private ImageIcon getScaledIcon(ImageIcon original) {
-      Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(getFont());
+      JLabel lblOptionsT = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptionsT, true);
+      add(collapsiblePanel, "cell 0 2,growx, wmin 0");
+      {
+        JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
+        panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
 
-      int height = (int) (fm.getHeight() * 2f);
-      int width = original.getIconWidth() / original.getIconHeight() * height;
+        cbScraperLanguage = new JComboBox(MediaLanguages.values());
+        panelOptions.add(cbScraperLanguage, "cell 1 0");
 
-      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_ANTIALIAS);
-      return new ImageIcon(scaledImage);
-    }
+        JLabel lblSubtitleLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
+        panelOptions.add(lblSubtitleLanguageStyle, "cell 1 1 2 1");
 
-    public String getScraperId() {
-      return scraper.getId();
-    }
-
-    public String getScraperName() {
-      return scraper.getName() + " - " + scraper.getVersion();
-    }
-
-    public String getScraperDescription() {
-      // first try to get the localized version
-      String description = null;
-      try {
-        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
+        cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
+        panelOptions.add(cbSubtitleLanguageStyle, "cell 1 1");
       }
-      catch (Exception ignored) {
-      }
-
-      if (StringUtils.isBlank(description)) {
-        // try to get a scraper text
-        description = scraper.getDescription();
-      }
-
-      return description;
-    }
-
-    public Icon getScraperLogo() {
-      return scraperLogo;
-    }
-
-    public Boolean getActive() {
-      return active;
-    }
-
-    public void setActive(Boolean newValue) {
-      Boolean oldValue = this.active;
-      this.active = newValue;
-      firePropertyChange("active", oldValue, newValue);
-    }
-
-    public IMediaProvider getMediaProvider() {
-      return scraper.getMediaProvider();
     }
   }
 
   protected void initDataBindings() {
-    JTableBinding<MovieSubtitleSettingsPanel.SubtitleScraper, List<MovieSubtitleSettingsPanel.SubtitleScraper>, JTable> jTableBinding = SwingBindings
-        .createJTableBinding(UpdateStrategy.READ_WRITE, scrapers, tableScraper);
+    JTableBinding<ScraperInTable, List<ScraperInTable>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, scrapers,
+        tableScraper);
     //
-    BeanProperty<MovieSubtitleSettingsPanel.SubtitleScraper, Boolean> subtitleScraperBeanProperty = BeanProperty.create("active");
+    BeanProperty<ScraperInTable, Boolean> subtitleScraperBeanProperty = BeanProperty.create("active");
     jTableBinding.addColumnBinding(subtitleScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
     //
-    BeanProperty<MovieSubtitleSettingsPanel.SubtitleScraper, Icon> subtitleScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
+    BeanProperty<ScraperInTable, Icon> subtitleScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
     jTableBinding.addColumnBinding(subtitleScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
     //
-    BeanProperty<MovieSubtitleSettingsPanel.SubtitleScraper, String> subtitleScraperBeanProperty_2 = BeanProperty.create("scraperName");
+    BeanProperty<ScraperInTable, String> subtitleScraperBeanProperty_2 = BeanProperty.create("scraperName");
     jTableBinding.addColumnBinding(subtitleScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
     //
     jTableBinding.bind();
