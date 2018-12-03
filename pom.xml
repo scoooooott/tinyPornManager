@@ -17,9 +17,9 @@
     <url>http://www.tinyMediaManager.org</url>
 
     <scm>
-        <url>https://github.com/tinyMediaManager/${project.artifactId}</url>
-        <connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+        <url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
+        <connection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
