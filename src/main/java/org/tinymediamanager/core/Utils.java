@@ -680,7 +680,11 @@ public class Utils {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
       LOGGER.debug("try to move file " + srcFile + " to " + destFile);
       if (!Files.exists(srcFile)) {
-        throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+        // allow moving of symlinks
+        // https://github.com/tinyMediaManager/tinyMediaManager/issues/410
+        if (!Files.isSymbolicLink(srcFile)) {
+          throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+        }
       }
       if (Files.isDirectory(srcFile)) {
         throw new IOException("Source '" + srcFile + "' is a directory");
