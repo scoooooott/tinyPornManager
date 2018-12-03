@@ -268,13 +268,33 @@ public class ImdbMovieParser extends ImdbParser {
           }
         }
       }
+    }
 
-      // no matching local release date found; take the first one
-      if (releaseDate == null) {
-        Element column = tableReleaseDates.getElementsByClass("release_date").first();
-        if (column != null) {
-          releaseDate = parseDate(column.text());
+    // new way; iterating over class name items
+    if (releaseDate == null) {
+      Elements rows = doc.getElementsByClass("release-date-item");
+      for (Element row : rows) {
+        Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
+        if (anchor != null) {
+          Matcher matcher = pattern.matcher(anchor.attr("href"));
+          if (matcher.find() && options.getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+            Element column = row.getElementsByClass("release-date-item__date").first();
+            if (column != null) {
+              releaseDate = parseDate(column.text());
+            }
+          }
+          else {
+            LOGGER.trace("country {} does not match ours {}", matcher.group(1), options.getCountry().getAlpha2());
+          }
         }
+      }
+    }
+
+    // no matching local release date found; take the first one
+    if (releaseDate == null && tableReleaseDates != null) {
+      Element column = tableReleaseDates.getElementsByClass("release_date").first();
+      if (column != null) {
+        releaseDate = parseDate(column.text());
       }
     }
 
@@ -303,6 +323,21 @@ public class ImdbMovieParser extends ImdbParser {
             break;
           }
         }
+      }
+    }
+
+    // alternative; new way with table classes
+    // <tr class="ipl-zebra-list__item aka-item">
+    // <td class="aka-item__name">Germany</td>
+    // <td class="aka-item__title">Avatar - Aufbruch nach Pandora</td>
+    // </tr>
+    Elements rows = doc.getElementsByClass("aka-item");
+    for (Element row : rows) {
+      Element country = row.getElementsByClass("aka-item__name").first();
+      Element title = row.getElementsByClass("aka-item__title").first();
+      if (country != null && country.text().toLowerCase(Locale.ROOT).contains("original title")) {
+        md.setOriginalTitle(title.text());
+        break;
       }
     }
 

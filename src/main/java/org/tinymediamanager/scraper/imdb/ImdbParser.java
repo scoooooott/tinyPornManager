@@ -469,6 +469,7 @@ public abstract class ImdbParser {
       String content = originalTitleYear.attr("content");
       int startOfYear = content.lastIndexOf("(");
       if (startOfYear > 0) {
+        // noo - this is NOT the original title!!! (seems always english?) parse from AKAs page...
         String originalTitle = content.substring(0, startOfYear - 1).trim();
         md.setOriginalTitle(originalTitle);
 
