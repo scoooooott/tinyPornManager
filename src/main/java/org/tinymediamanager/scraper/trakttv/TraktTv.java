@@ -455,7 +455,7 @@ public class TraktTv {
               // always set from trakt, if not matched (Trakt = master)
               LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmMovie.getLastWatched() + ")");
               tmmMovie.setLastWatched(lastWatchedAt);
-              dirty = true;
+              // dirty = true; // we do not write date to NFO. But just mark for syncing back...
             }
           }
 
@@ -730,7 +730,7 @@ public class TraktTv {
               // always set from trakt, if not matched (Trakt = master)
               LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmShow.getLastWatched() + ")");
               tmmShow.setLastWatched(lastWatchedAt);
-              dirty = true;
+              // dirty = true; // we do not write date to NFO. But just mark for syncing back...
             }
           }
 
@@ -738,17 +738,21 @@ public class TraktTv {
           for (BaseSeason bs : traktShow.seasons) {
             for (BaseEpisode be : bs.episodes) {
               TvShowEpisode tmmEP = tmmShow.getEpisode(bs.number, be.number);
+              if (tmmEP == null) {
+                continue;
+              }
               // update ep IDs - NOT YET POSSIBLE
               // boolean epDirty = updateIDs(tmmEP, be.ids);
 
-              if (tmmEP != null && be.last_watched_at != null) {
+              if (!tmmEP.isWatched()) {
+                tmmEP.setWatched(true);
+                tmmEP.writeNFO();
+                tmmEP.saveToDb();
+              }
+              if (be.last_watched_at != null) {
                 Date lastWatchedAt = DateTimeUtils.toDate(be.last_watched_at.toInstant());
                 if (!lastWatchedAt.equals(tmmEP.getLastWatched())) {
                   tmmEP.setLastWatched(lastWatchedAt);
-                  tmmEP.setWatched(true);
-                  tmmEP.writeNFO();
-                  tmmEP.saveToDb();
-                  // epDirty = true;
                 }
               }
             }
