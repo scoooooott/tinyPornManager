@@ -1030,7 +1030,15 @@ public class Utils {
     }
     // do we have a newer locale settings style?
     if (language.length() > 2) {
-      return LocaleUtils.toLocale(language);
+      try {
+        return LocaleUtils.toLocale(language);
+      }
+      catch (Exception e) {
+        // Whoopsie. try to fix string....
+        if (language.matches("^\\w\\w_\\w\\w.*")) {
+          return LocaleUtils.toLocale(language.substring(0, 5));
+        }
+      }
     }
     if (language.equalsIgnoreCase("en")) {
       return new Locale("en", "US"); // don't mess around; at least fixtate this
