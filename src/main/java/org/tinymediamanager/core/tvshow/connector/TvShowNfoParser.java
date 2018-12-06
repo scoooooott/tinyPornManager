@@ -668,6 +668,7 @@ public class TvShowNfoParser {
   private Void parseIds() {
     supportedElements.add("id");
     supportedElements.add("imdb");
+    supportedElements.add("imdbid");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
     supportedElements.add("uniqueid");
@@ -693,6 +694,10 @@ public class TvShowNfoParser {
 
     // imdb id and pattern check
     element = getSingleElement(root, "imdb");
+    if (element != null && MetadataUtil.isValidImdbId(element.ownText())) {
+      ids.put(MediaMetadata.IMDB, element.ownText());
+    }
+    element = getSingleElement(root, "imdbid");
     if (element != null && MetadataUtil.isValidImdbId(element.ownText())) {
       ids.put(MediaMetadata.IMDB, element.ownText());
     }
