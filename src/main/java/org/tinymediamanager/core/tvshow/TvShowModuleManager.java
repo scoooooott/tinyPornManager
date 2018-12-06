@@ -147,17 +147,17 @@ public class TvShowModuleManager implements ITmmModule {
   public void dump(TvShow tvshow) {
     try {
       ObjectMapper mapper = new ObjectMapper();
-      ObjectNode node = mapper.readValue(tvShowObjectWriter.writeValueAsString(tvshow), ObjectNode.class);
+      ObjectNode node = mapper.readValue(tvShowMap.get(tvshow.getDbId()), ObjectNode.class);
 
       ArrayNode episodes = JsonNodeFactory.instance.arrayNode();
       for (TvShowEpisode ep : tvshow.getEpisodes()) {
-        ObjectNode epNode = mapper.readValue(episodeObjectWriter.writeValueAsString(ep), ObjectNode.class);
+        ObjectNode epNode = mapper.readValue(episodeMap.get(ep.getDbId()), ObjectNode.class);
         episodes.add(epNode);
       }
       node.set("episodes", episodes);
 
       String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-      LOGGER.info("Dumping TvShow:\n" + s);
+      LOGGER.info("Dumping TvShow: {}\n{}", tvshow.getDbId(), s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);

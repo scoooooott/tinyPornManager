@@ -144,9 +144,9 @@ public class MovieModuleManager implements ITmmModule {
   public void dump(Movie movie) {
     try {
       ObjectMapper mapper = new ObjectMapper();
-      Object json = mapper.readValue(movieObjectWriter.writeValueAsString(movie), Object.class);
+      Object json = mapper.readValue(movieMap.get(movie.getDbId()), Object.class);
       String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-      LOGGER.info("Dumping Movie:\n" + s);
+      LOGGER.info("Dumping Movie: {}\n{}", movie.getDbId(), s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
@@ -162,9 +162,9 @@ public class MovieModuleManager implements ITmmModule {
   public void dump(MovieSet movieSet) {
     try {
       ObjectMapper mapper = new ObjectMapper();
-      Object json = mapper.readValue(movieObjectWriter.writeValueAsString(movieSet), Object.class);
+      Object json = mapper.readValue(movieSetMap.get(movieSet.getDbId()), Object.class);
       String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-      LOGGER.info("Dumping MovieSet:\n" + s);
+      LOGGER.info("Dumping MovieSet: {}\n{}", movieSet.getDbId(), s);
     }
     catch (Exception e) {
       LOGGER.error("Cannot parse JSON!", e);
