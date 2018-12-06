@@ -187,7 +187,7 @@ public class MovieModuleManager implements ITmmModule {
 
   void persistMovieSet(MovieSet movieSet) throws Exception {
     String newValue = movieSetObjectWriter.writeValueAsString(movieSet);
-    String oldValue = movieMap.get(movieSet.getDbId());
+    String oldValue = movieSetMap.get(movieSet.getDbId());
     if (!StringUtils.equals(newValue, oldValue)) {
       movieSetMap.put(movieSet.getDbId(), newValue);
     }
