@@ -458,9 +458,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
         if (movie == null) {
-          movie = new Movie();
+          movie = (nfo == null) ? new Movie() : nfo;
         }
-        movie.merge(nfo);
+        else {
+          movie.merge(nfo);
+        }
 
         // was NFO, but parsing exception. try to find at least imdb id within
         if (movie.getImdbId().isEmpty()) {
