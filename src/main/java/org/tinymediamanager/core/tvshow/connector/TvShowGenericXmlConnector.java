@@ -418,9 +418,9 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * add the imdb id in <imdbid>xxx</imdbid>
    */
   protected void addImdbid() {
-    Element tmdbid = document.createElement("imdbid");
-    tmdbid.setTextContent(tvShow.getImdbId());
-    root.appendChild(tmdbid);
+    Element imdbid = document.createElement("imdbid");
+    imdbid.setTextContent(tvShow.getImdbId());
+    root.appendChild(imdbid);
   }
 
   /**
