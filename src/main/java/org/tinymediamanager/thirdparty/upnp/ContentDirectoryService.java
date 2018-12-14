@@ -1,5 +1,6 @@
 package org.tinymediamanager.thirdparty.upnp;
 
+import java.beans.PropertyChangeSupport;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
@@ -21,17 +22,35 @@ import org.fourthline.cling.support.contentdirectory.DIDLParser;
 import org.fourthline.cling.support.model.BrowseFlag;
 import org.fourthline.cling.support.model.BrowseResult;
 import org.fourthline.cling.support.model.DIDLContent;
+import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.container.Container;
+import org.fourthline.cling.support.model.container.GenreContainer;
 import org.fourthline.cling.support.model.container.StorageFolder;
+import org.fourthline.cling.support.model.item.Item;
+import org.fourthline.cling.support.model.item.Movie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.DynaComparator;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.UTF8Control;
 
 public class ContentDirectoryService extends AbstractContentDirectoryService {
+
+  public ContentDirectoryService() {
+    super();
+  }
+
+  public ContentDirectoryService(List<String> searchCapabilities, List<String> sortCapabilities, PropertyChangeSupport propertyChangeSupport) {
+    super(searchCapabilities, sortCapabilities, propertyChangeSupport);
+  }
+
+  public ContentDirectoryService(List<String> searchCapabilities, List<String> sortCapabilities) {
+    super(searchCapabilities, sortCapabilities);
+  }
 
   private static final Logger         LOGGER = LoggerFactory.getLogger(ContentDirectoryService.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -57,113 +76,137 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
       DIDLContent didl = new DIDLContent();
 
       String[] path = StringUtils.split(objectID, '/');
-      // [0] = 0/1/2
-      // [1] = UUID
-      // [2] = Season
-      // [3] = Episode
+      if (path == null) {
+        throw new ContentDirectoryException(ContentDirectoryErrorCode.CANNOT_PROCESS, "path was NULL");
+      }
+      String request = path[path.length - 1];
+      String parent = "";
+      if (objectID.contains("/")) {
+        parent = objectID.substring(0, objectID.lastIndexOf("/")); // remove uuid
+      }
 
-      // =====================================================
-      // get full metadata of object (after clicking on item)
-      // =====================================================
-      if (browseFlag.equals(BrowseFlag.METADATA)) {
+      // Movie: 1/t/<uid>
+      // Movie: 1/g/Action/<uid>
+      // Show: 2/<uid>/s/e
 
-        if (path[0].equals(Upnp.ID_ROOT)) {
-          LOGGER.warn("Unable to get Metadata from root object!");
-          throw new ContentDirectoryException(ContentDirectoryErrorCode.CANNOT_PROCESS, "cannot get metadata from root");
+      // *********************************************
+      // STRUCTURE
+      // *********************************************
+      StorageFolder uRoot = new StorageFolder(Upnp.ID_ROOT, "-1", "All", "", 0, 0L);
+
+      // *********************************************
+      StorageFolder uMovies = new StorageFolder(Upnp.ID_MOVIES, uRoot, BUNDLE.getString("tmm.movies"), "", 0, 0L);
+
+      List<org.tinymediamanager.core.movie.entities.Movie> movies = MovieList.getInstance().getMovies();
+      StorageFolder grpTitles = new StorageFolder(uMovies.getId() + "/t", uMovies, BUNDLE.getString("metatag.title"), "",
+          MovieList.getInstance().getMovieCount(), 0L);
+
+      // add movies to titles
+      for (org.tinymediamanager.core.movie.entities.Movie movie : movies) {
+        Movie um = Metadata.getUpnpMovie(movie, false);
+        um.setId(grpTitles.getId() + "/" + um.getId()); // only get ID - prepend path
+        um.setParentID(grpTitles.getId());
+        grpTitles.addItem(um);
+      }
+
+      uMovies.addContainer(grpTitles);
+
+      List<MediaGenres> mgs = MovieList.getInstance().getUsedGenres();
+      GenreContainer grpGenres = new GenreContainer(uMovies.getId() + "/g", uMovies, BUNDLE.getString("metatag.genre"), "", mgs.size());
+      for (MediaGenres mg : mgs) {
+        GenreContainer gc = new GenreContainer(grpGenres.getId() + "/" + mg.getLocalizedName(), grpGenres, mg.getLocalizedName(), "", 0);
+
+        // add movies to genres
+        for (org.tinymediamanager.core.movie.entities.Movie movie : movies) {
+          if (movie.getGenres().contains(mg)) {
+            Movie um = Metadata.getUpnpMovie(movie, false);
+            um.setId(gc.getId() + "/" + um.getId()); // only get ID - prepend path
+            um.setParentID(gc.getId());
+            gc.addItem(um);
+          }
         }
-        else if (path[0].equals(Upnp.ID_MOVIES)) {
-          if (path.length == 2) {
-            org.tinymediamanager.core.movie.entities.Movie m = MovieList.getInstance().lookupMovie(UUID.fromString(path[1]));
+        gc.setChildCount(gc.getContainers().size() + gc.getItems().size());
+
+        grpGenres.addContainer(gc);
+      }
+      uMovies.addContainer(grpGenres);
+
+      uMovies.setChildCount(uMovies.getContainers().size() + uMovies.getItems().size());
+      uRoot.addContainer(uMovies);
+
+      // *********************************************
+      StorageFolder uTvShows = new StorageFolder(Upnp.ID_TVSHOWS, uRoot, BUNDLE.getString("tmm.tvshows"), "",
+          TvShowList.getInstance().getTvShowCount(), 0L);
+
+      List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = TvShowList.getInstance().getTvShows();
+      for (org.tinymediamanager.core.tvshow.entities.TvShow t : tmmShows) {
+        StorageFolder uTvShow = new StorageFolder(Upnp.ID_TVSHOWS + "/" + t.getDbId(), uTvShows, t.getTitle(), "", t.getSeasonCount(), 0L);
+
+        for (TvShowSeason s : t.getSeasons()) {
+          StorageFolder uSeason = new StorageFolder(uTvShow.getId() + "/" + s.getSeason(), uTvShow, "Season " + s.getSeason(), "",
+              t.getEpisodeCount(), 0L);
+
+          for (TvShowEpisode ep : s.getEpisodes()) {
+            Movie um = Metadata.getUpnpTvShowEpisode(t, ep, false);
+            uSeason.addItem(um);
+          }
+
+          uTvShow.addContainer(uSeason);
+        }
+
+        uTvShows.addContainer(uTvShow);
+      }
+
+      uRoot.addContainer(uTvShows);
+
+      // *********************************************
+      uRoot.setChildCount(uRoot.getContainers().size());
+
+      if (browseFlag.equals(BrowseFlag.METADATA)) {
+        DIDLObject obj = findId(objectID, uRoot);
+        if (obj instanceof Container) {
+          didl.addContainer((Container) obj);
+        }
+        else if (obj instanceof Item) {
+          Item item = (Item) obj; // only mandatory metadata
+
+          // get em fresh from DB, for FULL metadata
+          if (path[0].equals(Upnp.ID_MOVIES) && isUUID(request)) {
+            org.tinymediamanager.core.movie.entities.Movie m = MovieList.getInstance().lookupMovie(UUID.fromString(request));
             if (m != null) {
-              didl.addItem(Metadata.getUpnpMovie(m, true));
-              return returnResult(didl);
+              Movie um = Metadata.getUpnpMovie(m, true);
+              um.setId(parent + "/" + um.getId());
+              um.setParentID(parent);
+              item = um;
             }
           }
-          throw new ContentDirectoryException(ContentDirectoryErrorCode.NO_SUCH_OBJECT, "cannot get metadata for " + objectID);
-        }
-        else if (path[0].equals(Upnp.ID_TVSHOWS)) {
-          if (path.length > 1) {
+          else if (path[0].equals(Upnp.ID_TVSHOWS) && path.length == 4) {
             org.tinymediamanager.core.tvshow.entities.TvShow t = TvShowList.getInstance().lookupTvShow(UUID.fromString(path[1]));
             if (t != null) {
               TvShowEpisode ep = t.getEpisode(getInt(path[2]), getInt(path[3]));
               if (ep != null) {
-                didl.addItem(Metadata.getUpnpTvShowEpisode(t, ep, true));
-                return returnResult(didl);
+                item = Metadata.getUpnpTvShowEpisode(t, ep, true);
               }
             }
           }
-          throw new ContentDirectoryException(ContentDirectoryErrorCode.NO_SUCH_OBJECT, "cannot get metadata for " + objectID);
+          didl.addItem(item);
         }
-
+        return returnResult(didl, 1); // always 1 item
       }
-      // =====================================================
-      // Browse directory (after clicking on container)
-      // =====================================================
       else if (browseFlag.equals(BrowseFlag.DIRECT_CHILDREN)) {
-
-        // create ROOT folder structure (no items)
-        if (path[0].equals(Upnp.ID_ROOT)) {
-          StorageFolder cont = new StorageFolder();
-          cont.setId(Upnp.ID_MOVIES);
-          cont.setParentID(Upnp.ID_ROOT);
-          cont.setTitle(BUNDLE.getString("tmm.movies"));
-          cont.setChildCount(MovieList.getInstance().getMovieCount());
-          didl.addContainer(cont);
-
-          cont = new StorageFolder();
-          cont.setId(Upnp.ID_TVSHOWS);
-          cont.setParentID(Upnp.ID_ROOT);
-          cont.setTitle(BUNDLE.getString("tmm.tvshows"));
-          cont.setChildCount(TvShowList.getInstance().getTvShowCount());
-          didl.addContainer(cont);
-
-          return returnResult(didl);
+        DIDLObject obj = findId(objectID, uRoot);
+        long total = 0;
+        // if we browse children, this MUST be a container with children ;)
+        if (obj instanceof Container) {
+          Container cont = (Container) obj;
+          didl = createContentDidl(cont, firstResult, maxResults);
+          // total size of objects - can be different to actual didl
+          total = cont.getContainers().size() + cont.getItems().size();
         }
-        else if (path[0].equals(Upnp.ID_MOVIES)) {
-          // create MOVIE folder structure -> items
-          List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = MovieList.getInstance().getMovies();
-          tmmMovies.sort(new DynaComparator(orderMovie));
-          for (org.tinymediamanager.core.movie.entities.Movie m : tmmMovies) {
-            didl.addItem(Metadata.getUpnpMovie(m, false));
-          }
-          return returnResult(didl);
-        }
-        else if (path[0].equals(Upnp.ID_TVSHOWS)) {
-          if (path.length == 1) {
-            // create TVSHOW folder structure -> container
-            StorageFolder cont;
-            List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = TvShowList.getInstance().getTvShows();
-            tmmShows.sort(new DynaComparator(orderShow));
-            for (org.tinymediamanager.core.tvshow.entities.TvShow t : tmmShows) {
-              cont = new StorageFolder();
-              cont.setId(Upnp.ID_TVSHOWS + "/" + t.getDbId());
-              cont.setParentID(Upnp.ID_ROOT);
-              cont.setTitle(t.getTitle());
-              cont.setChildCount(t.getEpisodeCount());
-              didl.addContainer(cont);
-            }
-            return returnResult(didl);
-          }
-          else if (path.length == 2) {
-            // create EPISODE items
-            UUID uuid = UUID.fromString(path[1]);
-            org.tinymediamanager.core.tvshow.entities.TvShow show = TvShowList.getInstance().lookupTvShow(uuid);
-            if (show != null) {
-              for (TvShowEpisode ep : show.getEpisodes()) {
-                didl.addItem(Metadata.getUpnpTvShowEpisode(show, ep, false));
-              }
-              return returnResult(didl);
-            }
-            else {
-              throw new ContentDirectoryException(ContentDirectoryErrorCode.NO_SUCH_OBJECT, "cannot get metadata for " + objectID);
-            }
-          }
-        }
-        else {
-          LOGGER.warn("Whoops. There was an error in our directory structure. " + objectID);
-        }
+        return returnResult(didl, total);
       }
-      throw new ContentDirectoryException(ContentDirectoryErrorCode.CANNOT_PROCESS, "BrowseFlag wrong " + browseFlag);
+
+      throw new ContentDirectoryException(ContentDirectoryErrorCode.NO_SUCH_OBJECT, "BrowseFlag wrong " + browseFlag);
     }
     catch (Exception ex) {
       LOGGER.error("Browse failed", ex);
@@ -171,12 +214,104 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
     }
   }
 
+  /**
+   * recursive search uRoot object containers for matching tree ID
+   * 
+   * @param id
+   *          the objectID / path
+   * @param folder
+   *          mostly start with uRoot
+   * @return
+   */
+  private DIDLObject findId(String id, StorageFolder folder) {
+    DIDLObject ret = folder;
+
+    String[] path = id.split("/");
+    String parent = "";
+    for (int i = 0; i < path.length; i++) {
+      String s = path[i];
+      ret = getTreeObject(parent + s, ret);
+      parent += s + "/";
+      if (ret == null) {
+        break;
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * gets the specified ID from its sub containers/items
+   * 
+   * @param id
+   *          the objectID / path
+   * @param obj
+   * @return
+   */
+  private DIDLObject getTreeObject(String id, DIDLObject obj) {
+    DIDLObject ret = null;
+    if (id.equalsIgnoreCase(obj.getId())) {
+      // root
+      return obj;
+    }
+
+    if (obj instanceof Container) {
+      for (Container c : ((Container) obj).getContainers()) {
+        if (c.getId().equalsIgnoreCase(id)) {
+          ret = c;
+          break;
+        }
+      }
+      for (Item i : ((Container) obj).getItems()) {
+        if (i.getId().equalsIgnoreCase(id)) {
+          ret = i;
+          break;
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  private boolean isUUID(String uuid) {
+    return uuid.length() == 36;
+  }
+
+  private DIDLContent createContentDidl(Container cont, long firstResult, long maxResults) {
+    DIDLContent didl = new DIDLContent();
+    int cnt = 0;
+    for (Container c : cont.getContainers()) {
+      if (firstResult > 0) {
+        firstResult--;
+        continue;
+      }
+      if (maxResults == 0 || cnt < maxResults) {
+        didl.addContainer(c);
+        cnt++;
+      }
+    }
+    for (Item i : cont.getItems()) {
+      if (firstResult > 0) {
+        firstResult--;
+        continue;
+      }
+      if (maxResults == 0 || cnt < maxResults) {
+        didl.addItem(i);
+        cnt++;
+      }
+    }
+
+    return didl;
+  }
+
   private BrowseResult returnResult(DIDLContent didl) throws Exception {
+    return returnResult(didl, didl.getCount());
+  }
+
+  private BrowseResult returnResult(DIDLContent didl, long total) throws Exception {
     DIDLParser dip = new DIDLParser();
-    int count = didl.getItems().size() + didl.getContainers().size();
     String ret = dip.generate(didl);
-    LOGGER.trace(prettyFormat(ret, 2));
-    return new BrowseResult(ret, count, count);
+    LOGGER.debug(prettyFormat(ret, 2));
+    return new BrowseResult(ret, didl.getCount(), total);
   }
 
   private int getInt(String s) {

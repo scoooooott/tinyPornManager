@@ -56,6 +56,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -225,6 +226,23 @@ public class MovieList extends AbstractModelObject {
       }
     }
     return newMovies;
+  }
+
+  /**
+   * Gets a list of used genres.
+   * 
+   * @return MediaGenres list
+   */
+  public List<MediaGenres> getUsedGenres() {
+    List<MediaGenres> gl = new ArrayList<>();
+    for (Movie movie : movieList) {
+      for (MediaGenres g : movie.getGenres()) {
+        if (!gl.contains(g)) {
+          gl.add(g);
+        }
+      }
+    }
+    return gl;
   }
 
   /**

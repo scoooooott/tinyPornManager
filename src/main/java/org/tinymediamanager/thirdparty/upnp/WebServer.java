@@ -21,10 +21,10 @@ import fi.iki.elonen.NanoHTTPD.Response.Status;
 public class WebServer extends NanoHTTPD {
   private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
 
-  public WebServer() throws IOException {
-    super(8008);
+  public WebServer(int port) throws IOException {
+    super(port);
     start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-    LOGGER.info("Webserver running on port 8008");
+    LOGGER.info("Webserver running on port {}", port);
   }
 
   @Override

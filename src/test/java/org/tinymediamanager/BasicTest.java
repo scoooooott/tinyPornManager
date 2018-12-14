@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class BasicTest {
 
   public static void createFakeMovie(String title) {
     Movie movie = new Movie();
+    movie.setDbId(getUUID(title)); // fixate
 
     movie.setTitle(title);
     movie.setPath("/media/movies/" + title);
@@ -173,6 +175,7 @@ public class BasicTest {
 
   public static void createFakeShow(String title) {
     TvShow tvShow = new TvShow();
+    tvShow.setDbId(getUUID(title)); // fixate
 
     tvShow.setTitle(title);
     tvShow.setPath("/media/tvshows/" + title);
@@ -242,4 +245,7 @@ public class BasicTest {
     System.out.println("Created show " + tvShow.getDbId());
   }
 
+  public static UUID getUUID(String uuid) {
+    return UUID.nameUUIDFromBytes(uuid.getBytes());
+  }
 }
