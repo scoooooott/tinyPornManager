@@ -43,7 +43,7 @@ public class WikiAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("https://github.com/tinyMediaManager/tinyMediaManager/wiki");
+    String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/home");
     try {
       TmmUIHelper.browseUrl(url);
     }

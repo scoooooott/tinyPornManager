@@ -43,7 +43,7 @@ public class FaqAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("https://github.com/tinyMediaManager/tinyMediaManager/wiki/FAQ");
+    String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/FAQ");
     try {
       TmmUIHelper.browseUrl(url);
     }
