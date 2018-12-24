@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.plaf.light;
 
 import java.util.Properties;
 
+import org.tinymediamanager.ui.plaf.TmmBorders;
 import org.tinymediamanager.ui.plaf.TmmLookAndFeel;
 
 import com.jtattoo.plaf.AbstractBorderFactory;
@@ -49,6 +50,7 @@ public class TmmLightLookAndFeel extends TmmLookAndFeel {
   }
 
   public static void setTheme(Properties themesProps) {
+    TmmBorders.initDefaults();
     if (myTheme == null) {
       myTheme = new TmmLightDefaultTheme();
     }

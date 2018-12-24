@@ -25,6 +25,7 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 
 import com.jtattoo.plaf.AbstractLookAndFeel;
@@ -110,7 +111,12 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
 
   @Override
   protected Font getTabFont(boolean isSelected) {
-    return tabPane.getFont().deriveFont(14f).deriveFont(Font.BOLD);
+    return scale(UIManager.getFont("TabbedPane.font").deriveFont(Font.BOLD), 1.1667);
+  }
+
+  protected Font scale(Font font, double factor) {
+    int newSize = Math.round((float) (font.getSize() * factor));
+    return font.deriveFont((float) newSize);
   }
 
   @SuppressWarnings("deprecation")
