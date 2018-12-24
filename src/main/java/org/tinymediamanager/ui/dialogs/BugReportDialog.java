@@ -123,7 +123,7 @@ public class BugReportDialog extends TmmDialog {
     final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue")); //$NON-NLS-1$
     btnCreateIssue.addActionListener(e -> {
       // create the url for github
-      String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?body=";
+      String baseUrl = "https://gitlab.com/tinyMediaManager/tinyMediaManager/issues/new?issue[description]=";
       String params = "Version: " + ReleaseInfo.getRealVersion();
       params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
       params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
