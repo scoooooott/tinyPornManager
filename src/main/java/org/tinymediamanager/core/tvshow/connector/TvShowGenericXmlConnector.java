@@ -145,6 +145,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addSeasonThumb();
         addFanart();
         addMpaa();
+        addCertification();
         addEpisodeguide();
         addId();
         addImdbid();
@@ -381,6 +382,18 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       }
     }
     root.appendChild(mpaa);
+  }
+
+  /**
+   * add the certification in <certification></certification>
+   */
+  protected void addCertification() {
+    Element certification = document.createElement("certification");
+    if (tvShow.getCertification() != null) {
+      certification
+          .setTextContent(CertificationStyle.formatCertification(tvShow.getCertification(), TvShowModuleManager.SETTINGS.getCertificationStyle()));
+    }
+    root.appendChild(certification);
   }
 
   /**
