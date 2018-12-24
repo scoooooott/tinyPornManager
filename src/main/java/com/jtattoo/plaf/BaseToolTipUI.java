@@ -160,19 +160,6 @@ public class BaseToolTipUI extends MetalToolTipUI {
       BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
       Graphics2D big = bi.createGraphics();
       big.setClip(0, 0, w, h);
-      // ml210115 - start
-      // Paint savedPaint = big.getPaint();
-      // Color cHi;
-      // Color cLo;
-      // if (ColorHelper.getGrayValue(backColor) < 128) {
-      // cHi = ColorHelper.brighter(backColor, 10);
-      // cLo = ColorHelper.darker(backColor, 20);
-      // } else {
-      // cHi = ColorHelper.brighter(backColor, 40);
-      // cLo = ColorHelper.darker(backColor, 5);
-      // }
-      // big.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize) - shadowSize, cLo));
-      // ml210115 - end
       big.fillRect(borderSize + shadowSize, borderSize, w - (2 * borderSize) - (2 * shadowSize), h - (2 * borderSize) - shadowSize);
 
       // big.setPaint(savedPaint); //ml210115
@@ -201,26 +188,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
       g2D.fillRect(0, 0, w, h);
       g2D.setColor(ColorHelper.darker(backColor, 40));
       g2D.drawRect(0, 0, w - 1, h - 1);
-      g2D.setColor(ColorHelper.darker(backColor, 10));
-      g2D.drawRect(borderSize - 1, borderSize - 1, w - (2 * borderSize - 1), h - (2 * borderSize - 1));
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
-
-      // ml210115
-      // Paint savedPaint = g2D.getPaint();
-      // Color cHi;
-      // Color cLo;
-      // if (ColorHelper.getGrayValue(backColor) < 128) {
-      // cHi = ColorHelper.brighter(backColor, 10);
-      // cLo = ColorHelper.darker(backColor, 20);
-      // }
-      // else {
-      // cHi = ColorHelper.brighter(backColor, 40);
-      // cLo = ColorHelper.darker(backColor, 5);
-      // }
-      // g2D.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize), cLo));
-      // g2D.fillRect(borderSize, borderSize, w - (2 * borderSize), h - (2 * borderSize));
-      // g2D.setPaint(savedPaint);
-      // ml210115
       super.paint(g, c);
     }
   }
