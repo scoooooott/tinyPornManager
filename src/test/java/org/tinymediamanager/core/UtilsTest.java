@@ -1,5 +1,7 @@
 package org.tinymediamanager.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
@@ -266,11 +268,22 @@ public class UtilsTest extends BasicTest {
     for (String s : LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.keySet()) {
       System.out.println(s + " - " + LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.get(s));
     }
-    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "United States of America", "US"));
-    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "US"));
-    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage("fr", "United States of America", "US"));
-    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRENCH, "United States of America", "US"));
-    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRANCE, "United States of America", "US"));
+
+    // Java 8: Vereinigte Staaten von Amerika
+    // Java 9: Vereinigte Staaten
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage("de", "United States of America", "US")).startsWith("Vereinigte Staaten");
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage(Locale.GERMANY, "US")).startsWith("Vereinigte Staaten");
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage("de", "USA", "en_US", "US")).startsWith("Vereinigte Staaten");
+
+    assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "USA", "en_US", "US"));
+    assertEqual("United States", LanguageUtils.getLocalizedCountryForLanguage("en", "Vereinigte Staaten von Amerika", "Vereinigte Staaten"));
+
+    // Java 8: Etats-Unis
+    // Java 9: États-Unis
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage("fr", "United States of America", "US")).matches("(E|É)tats\\-Unis");
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage(Locale.FRENCH, "United States of America", "US")).matches("(E|É)tats\\-Unis");
+    assertThat(LanguageUtils.getLocalizedCountryForLanguage(Locale.FRANCE, "United States of America", "US")).matches("(E|É)tats\\-Unis");
+    assertEqual("West Germany", LanguageUtils.getLocalizedCountryForLanguage("de", "West Germany", "XWG"));
   }
 
   @Test
