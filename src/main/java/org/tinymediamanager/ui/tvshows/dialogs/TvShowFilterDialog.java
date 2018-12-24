@@ -17,8 +17,6 @@
 package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -75,19 +73,13 @@ public class TvShowFilterDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][10lp][]", "[][300lp:n,grow][][][]"));
+      panelContent.setLayout(new MigLayout("", "[][10lp][100lp, grow]", "[][200lp:n,grow][][][]"));
 
       JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
       setComponentFont(lblFilterBy);
       panelContent.add(lblFilterBy, "cell 0 0,growx,aligny top");
 
-      panelFilter = new JPanel();
-      GridBagLayout gbl_panelFilter = new GridBagLayout();
-      gbl_panelFilter.columnWidths = new int[] { 0 };
-      gbl_panelFilter.rowHeights = new int[] { 0 };
-      gbl_panelFilter.columnWeights = new double[] { Double.MIN_VALUE };
-      gbl_panelFilter.rowWeights = new double[] { Double.MIN_VALUE };
-      panelFilter.setLayout(gbl_panelFilter);
+      panelFilter = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
 
       JScrollPane scrollPane = new JScrollPane(panelFilter);
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -120,36 +112,15 @@ public class TvShowFilterDialog extends TmmDialog {
    *          the filter to be added
    */
   private void addFilter(ITvShowUIFilter<TmmTreeNode> filter) {
-    GridBagConstraints gbc = new GridBagConstraints();
-
-    gbc.gridx = 0;
-    gbc.gridy = GridBagConstraints.RELATIVE;
-    gbc.weighty = 1;
-    gbc.ipadx = 20;
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.anchor = GridBagConstraints.LINE_START;
-    panelFilter.add(filter.getCheckBox(), gbc);
-
-    gbc.gridx = 1;
-    gbc.anchor = GridBagConstraints.LINE_END;
-    panelFilter.add(filter.getLabel(), gbc);
-
-    gbc.gridx = 2;
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.anchor = GridBagConstraints.LINE_START;
+    panelFilter.add(filter.getCheckBox(), "");
+    panelFilter.add(filter.getLabel(), "right");
 
     if (filter.getFilterComponent() != null) {
-      panelFilter.add(filter.getFilterComponent(), gbc);
+      panelFilter.add(filter.getFilterComponent(), "wmin 100, grow, wrap");
     }
     else {
-      panelFilter.add(Box.createGlue(), gbc);
+      panelFilter.add(Box.createGlue(), "wrap");
     }
-
-    // small spacer for the scroll pane
-    gbc.gridx = 3;
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.anchor = GridBagConstraints.LINE_START;
-    panelFilter.add(Box.createGlue(), gbc);
 
     treeTable.addFilter(filter);
   }

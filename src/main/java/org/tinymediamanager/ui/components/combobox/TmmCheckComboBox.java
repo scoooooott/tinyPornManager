@@ -341,12 +341,14 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
       if (index > 0 && index <= checkBoxes.size()) {
         TmmCheckComboBoxItem<E> cb = checkBoxes.get(index - 1);
         if (cb.getUserObject() == nullObject) {
+          list.setToolTipText(null);
           return separator;
         }
 
         if (isSelected) {
           cb.setBackground(UIManager.getColor("ComboBox.selectionBackground"));
           cb.setForeground(UIManager.getColor("ComboBox.selectionForeground"));
+          list.setToolTipText(checkBoxes.get(index - 1).getText());
         }
         else {
           cb.setBackground(UIManager.getColor("ComboBox.background"));
@@ -355,6 +357,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
         return cb;
       }
+      list.setToolTipText(null);
 
       String str;
       List<E> objs = getSelectedItems();
