@@ -401,21 +401,20 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * add the episode guide in <episodeguide>xxx</episodeguide>
    */
   protected void addEpisodeguide() {
-    if (parser != null && StringUtils.isNotBlank(parser.episodeguide)) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      try {
-        Element episodeguide = document.createElement("episodeguide");
-
-        // parse content of episodeguide into own elements
-        Document unsupported = factory.newDocumentBuilder().parse(new ByteArrayInputStream(parser.episodeguide.getBytes("UTF-8")));
-        episodeguide.appendChild(document.importNode(unsupported.getFirstChild(), true));
-
-        // and append it
-        root.appendChild(episodeguide);
-      }
-      catch (Exception e) {
-        getLogger().warn("could not set episodeguide");
-      }
+    // create the new episodeguide format
+    // <episodeguide>
+    // <url post="yes"
+    // cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;439DFEBA9D3059C6&quot;,&quot;id&quot;:289574}|Content-Type=application/json</url>
+    // </episodeguide>
+    if (StringUtils.isNotBlank(tvShow.getTvdbId())) {
+      Element episodeguide = document.createElement("episodeguide");
+      Element url = document.createElement("url");
+      url.setAttribute("post", "yes");
+      url.setAttribute("cache", "auth.json");
+      url.setTextContent("https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;439DFEBA9D3059C6&quot;,&quot;id&quot;:" + tvShow.getTvdbId()
+          + "}|Content-Type=application/json");
+      episodeguide.appendChild(url);
+      root.appendChild(episodeguide);
     }
   }
 
