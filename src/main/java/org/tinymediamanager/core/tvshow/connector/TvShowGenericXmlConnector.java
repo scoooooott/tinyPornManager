@@ -54,6 +54,7 @@ import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -437,16 +438,24 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
   }
 
   /**
-   * add our own id store in the form <ids><id_provider>id</id_provide></ids>
+   * add our own id store in the new kodi form<br />
+   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   *
+   * only imdb has default = true
    */
   protected void addIds() {
-    Element ids = document.createElement("ids");
     for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
-      Element id = document.createElement(entry.getKey());
-      id.setTextContent(entry.getValue().toString());
-      ids.appendChild(id);
+      Element uniqueid = document.createElement("uniqueid");
+      uniqueid.setAttribute("type", entry.getKey());
+      if (MediaMetadata.TVDB.equals(entry.getKey())) {
+        uniqueid.setAttribute("default", "true");
+      }
+      else {
+        uniqueid.setAttribute("default", "false");
+      }
+      uniqueid.setTextContent(entry.getValue().toString());
+      root.appendChild(uniqueid);
     }
-    root.appendChild(ids);
   }
 
   /**

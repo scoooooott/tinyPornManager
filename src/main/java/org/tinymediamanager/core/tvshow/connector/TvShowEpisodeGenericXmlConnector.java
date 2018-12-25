@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -48,6 +49,7 @@ import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.w3c.dom.Document;
@@ -152,7 +154,8 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           addEpisode(episode, parserEpisode);
           addDisplaySeason(episode, parserEpisode);
           addDisplayEpisode(episode, parserEpisode);
-          addUniqueId(episode, parserEpisode);
+          addId(episode, parserEpisode);
+          addIds(episode, parserEpisode);
           addRating(episode, parserEpisode);
           addVotes(episode, parserEpisode);
           addPlot(episode, parserEpisode);
@@ -270,12 +273,33 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
   }
 
   /**
-   * add the uniqueid (tvdb Id) in the form <uniqueid>xxx</uniqueid>
+   * add the id (tvdb Id) in the form <id>xxx</id>
    */
-  protected void addUniqueId(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
-    Element uniqueid = document.createElement("uniqueid");
+  protected void addId(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element uniqueid = document.createElement("id");
     uniqueid.setTextContent(episode.getTvdbId());
     root.appendChild(uniqueid);
+  }
+
+  /**
+   * add our own id store in the new kodi form<br />
+   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   *
+   * only imdb has default = true
+   */
+  protected void addIds(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    for (Map.Entry<String, Object> entry : episode.getIds().entrySet()) {
+      Element uniqueid = document.createElement("uniqueid");
+      uniqueid.setAttribute("type", entry.getKey());
+      if (MediaMetadata.TVDB.equals(entry.getKey())) {
+        uniqueid.setAttribute("default", "true");
+      }
+      else {
+        uniqueid.setAttribute("default", "false");
+      }
+      uniqueid.setTextContent(entry.getValue().toString());
+      root.appendChild(uniqueid);
+    }
   }
 
   /**
