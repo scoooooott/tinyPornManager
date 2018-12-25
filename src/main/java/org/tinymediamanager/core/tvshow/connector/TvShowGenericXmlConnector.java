@@ -416,6 +416,23 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       episodeguide.appendChild(url);
       root.appendChild(episodeguide);
     }
+    // or even import it from the parser
+    else if (parser != null && StringUtils.isNotBlank(parser.episodeguide)) {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      try {
+        Element episodeguide = document.createElement("episodeguide");
+
+        // parse content of episodeguide into own elements
+        Document unsupported = factory.newDocumentBuilder().parse(new ByteArrayInputStream(parser.episodeguide.getBytes("UTF-8")));
+        episodeguide.appendChild(document.importNode(unsupported.getFirstChild(), true));
+
+        // and append it
+        root.appendChild(episodeguide);
+      }
+      catch (Exception e) {
+        getLogger().warn("could not set episodeguide");
+      }
+    }
   }
 
   /**
