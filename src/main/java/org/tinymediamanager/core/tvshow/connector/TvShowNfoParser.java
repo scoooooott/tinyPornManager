@@ -61,8 +61,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 public class TvShowNfoParser {
   private static final Logger       LOGGER              = LoggerFactory.getLogger(TvShowNfoParser.class);
   /** ignore the following tags since they originally do not belong to a TV show NFO */
-  private static final List<String> IGNORE              = Arrays.asList("set", "season", "episode", "displayseason", "displayepisode", "epbookmark",
-      "resume");
+  private static final List<String> IGNORE              = Arrays.asList("set", "epbookmark", "resume");
 
   private Element                   root;
   private final List<String>        supportedElements   = new ArrayList<>();
