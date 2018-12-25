@@ -133,6 +133,16 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     addColumn(col);
 
     /*
+     * votes (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.votes"), "votes", movie -> movie.getRating().getVotes(), Integer.class);
+    col.setColumnComparator(integerComparator);
+    col.setHeaderIcon(IconManager.VOTES);
+    col.setColumnResizeable(false);
+    col.setMinWidth((int) (fontMetrics.stringWidth("1000000") * 1.2f));
+    addColumn(col);
+
+    /*
      * date added
      */
     col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
@@ -150,7 +160,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     addColumn(col);
 
     /*
-     * video format
+     * video format (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.format"), "videoFormat", Movie::getMediaInfoVideoFormat, String.class);
     col.setColumnComparator(videoFormatComparator);

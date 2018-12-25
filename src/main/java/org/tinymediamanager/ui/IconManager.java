@@ -143,6 +143,7 @@ public class IconManager {
   public final static ImageIcon            TRAILER                     = createFontAwesomeIcon('\uF008', 16);
   public final static ImageIcon            VIDEO_3D                    = createFontAwesomeIcon('\uF1B2', 16);
   public final static ImageIcon            VIDEO_FORMAT                = createFontAwesomeIcon('\uF320', 16);
+  public final static ImageIcon            VOTES                       = createFontAwesomeIcon('\uF164', 16);
   public final static ImageIcon            WATCHED                     = createFontAwesomeIcon('\uF04B', 16);
 
   public static Font loadFontAwesome() {
