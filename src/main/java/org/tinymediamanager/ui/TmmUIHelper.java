@@ -245,7 +245,7 @@ public class TmmUIHelper {
   }
 
   public static void browseUrl(String url) throws Exception {
-    if (Desktop.isDesktopSupported()) {
+    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       Desktop.getDesktop().browse(new URI(url));
     }
     else if (SystemUtils.IS_OS_LINUX) {
@@ -261,6 +261,15 @@ public class TmmUIHelper {
       if (!started) {
         try {
           exec(new String[] { "kde-open", url });
+          started = true;
+        }
+        catch (IOException ignored) {
+        }
+      }
+
+      if (!started) {
+        try {
+          exec(new String[] { "kde-open5", url });
           started = true;
         }
         catch (IOException ignored) {
