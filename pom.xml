@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.tinymediamanager</groupId>
         <artifactId>tmm-parent</artifactId>
-        <version>3.0</version>
+        <version>3.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>tinyMediaManager</artifactId>
@@ -19,10 +19,6 @@
         <developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-
-    <properties>
-        <transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
-    </properties>
 
     <dependencies>
         <!-- TMM dependencies -->
@@ -313,7 +309,7 @@
                 <!-- copies our dependencies WITHOUT version number for packaging -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>copy-tmm-dependencies</id>
@@ -376,6 +372,25 @@
 
     <profiles>
         <profile>
+            <id>gitlab-ci</id>
+            <build>
+                <plugins>
+                    <!-- skip getting revision number on ci build -->
+                    <plugin>
+                        <!-- get SVN/GIT revision numbers -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>buildnumber-maven-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>
@@ -433,7 +448,7 @@
                     <plugin>
                         <groupId>de.thetaphi</groupId>
                         <artifactId>forbiddenapis</artifactId>
-                        <version>2.3</version>
+                        <version>2.6</version>
                         <configuration>
                             <!-- if the used Java version is too new, don't 
                                 fail, just do nothing: -->
@@ -469,7 +484,7 @@
                     <plugin>
                         <groupId>org.gaul</groupId>
                         <artifactId>modernizer-maven-plugin</artifactId>
-                        <version>1.5.0</version>
+                        <version>1.7.1</version>
                         <configuration>
                             <failOnViolations>false</failOnViolations>
                             <javaVersion>${maven.compiler.target}</javaVersion>

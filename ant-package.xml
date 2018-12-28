@@ -227,7 +227,7 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_mac.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${tmmVersion}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 		</zip>
@@ -237,7 +237,7 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/win" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/win" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_win.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${tmmVersion}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${dist.dir}/win" />
 		</zip>
 
@@ -246,19 +246,9 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/linux" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/linux" />
-		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_linux.tar.gz">
+		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_linux.tar.gz">
 			<tarfileset dir="${dist.dir}/linux" excludes="*.sh" />
 			<tarfileset filemode="755" dir="${dist.dir}/linux" includes="*.sh" />
-		</tar>
-
-		<echo message="=====================================================" />
-		<echo message="create a whole archive of /build for transfer to mirrors" />
-		<echo message="=====================================================" />
-		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
-			<tarfileset dir="${build.dir}" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="*.exe" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="*.sh" />
 		</tar>
 
 		<!-- done, move build dir -->

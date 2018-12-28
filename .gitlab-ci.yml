@@ -1,0 +1,117 @@
+image: maven:3-jdk-8-alpine
+
+variables:
+  MAVEN_CLI_OPTS: "-s .ci/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .m2/repository/
+    - target/
+
+stages:
+  - compile
+  - test
+  - deploy
+
+compile:
+  stage: compile
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+
+test:jdk8:
+  stage: test
+  image: maven:3-jdk-8-alpine
+  except:
+    - master
+  script:
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+  allow_failure: true
+
+test:jdk10:
+  stage: test
+  image: maven:3-jdk-10
+  except:
+    - master
+  script:
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+  allow_failure: true
+
+test:jdk11:
+  stage: test
+  image: maven:3-jdk-11
+  except:
+    - master
+  script:
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+  allow_failure: true
+
+test:jdk12:
+  stage: test
+  image: maven:3-jdk-12-alpine
+  except:
+    - master
+  script:
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+  allow_failure: true
+
+test:integration:
+  stage: test
+  only:
+    - master
+  script:
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=false -Dmaven.test.failure.ignore=false test
+
+deploy:nightly:
+  stage: deploy
+  image: maven:3-jdk-8                                # stay with stretch
+  only:
+    - devel@tinyMediaManager/tinyMediaManager
+  except:
+    - pushes                                          # do not run packaging on push-builds
+  script:
+    # update package sources and install ant, 32 bit libs, git and lftp
+    - dpkg --add-architecture i386 && apt-get update && apt-get install -y --no-install-recommends ant libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 git lftp curl
+    # generate changelog.txt for nightly builds
+    - ./generate_changelog.sh
+    # package
+    - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-nightly.txt -Dthread_pool_size=1 package
+    # push the build to the webserver
+    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_NIGHTLY},${FTP_PASSWORD_NIGHTLY} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
+    # and publish the files on the webserver
+    - curl http://nightly.tinymediamanager.org/bin/publish_build_v3.php
+  artifacts:
+    paths:
+      - build/
+      - dist/
+    expire_in: 1 week
+
+deploy:prerel:
+  stage: deploy
+  image: maven:3-jdk-8  # stay with stretch
+  only:
+    - master@tinyMediaManager/tinyMediaManager
+  except:
+    - pushes                                          # do not run packaging on push-builds
+  script:
+    # update package sources and install ant + 32 bit libs
+    - dpkg --add-architecture i386 && apt-get update && apt-get install -y --no-install-recommends ant libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 lftp curl
+    # package
+    - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-prerelease.txt -Dthread_pool_size=1 package
+    # push the build to the webserver
+    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
+    # and publish the files on the webserver
+    - curl http://prerelase.tinymediamanager.org/bin/publish_build_v3.php
+  artifacts:
+    paths:
+      - build/
+      - dist/
+
+deploy:release:
+  stage: deploy
+  only:
+    - master@tinyMediaManager/tinyMediaManager
+  when: manual
+  script:
+    - echo 'ToDo'
