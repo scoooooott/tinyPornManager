@@ -107,6 +107,16 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   }
 
   /**
+   * countries are concatenated in a single <country>xxx</country> tag
+   */
+  @Override
+  protected void addCountry() {
+    Element country = document.createElement("country");
+    country.setTextContent(movie.getCountry());
+    root.appendChild(country);
+  }
+
+  /**
    * studios are concatenated in a single <studio>xxx</studio> tag
    */
   @Override

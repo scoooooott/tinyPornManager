@@ -89,7 +89,7 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
       assertThat(parser.ids).contains(entry("tmdb", 272));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(2);
       assertThat(parser.releaseDate).isEqualTo("2005-06-14");
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
@@ -168,7 +168,7 @@ public class MovieNfoParserTest extends BasicTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(2);
       assertThat(parser.releaseDate).isNull();
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
@@ -247,7 +247,7 @@ public class MovieNfoParserTest extends BasicTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).isNull();
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
@@ -326,7 +326,7 @@ public class MovieNfoParserTest extends BasicTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).isNull();
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
@@ -401,7 +401,7 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.certification).isEqualTo(Certification.DE_FSK18);
       assertThat(parser.ids).isNotEmpty();
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
       assertThat(parser.watched).isEqualTo(false);
       assertThat(parser.playcount).isEqualTo(0);
@@ -478,7 +478,7 @@ public class MovieNfoParserTest extends BasicTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
       assertThat(parser.watched).isEqualTo(true);
       assertThat(parser.playcount).isEqualTo(1);
@@ -581,7 +581,7 @@ public class MovieNfoParserTest extends BasicTest {
       }
       assertThat(parser.certification).isEqualTo(Certification.DE_FSK12);
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
-      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
       assertThat(parser.watched).isEqualTo(true);
       assertThat(parser.playcount).isEqualTo(6);

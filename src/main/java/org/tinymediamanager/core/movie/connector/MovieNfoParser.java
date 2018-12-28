@@ -82,7 +82,6 @@ public class MovieNfoParser {
   public String               tagline             = "";
   public int                  runtime             = 0;
   public Certification        certification       = Certification.UNKNOWN;
-  public String               country             = "";
   public Date                 releaseDate         = null;
   public boolean              watched             = false;
   public int                  playcount           = 0;
@@ -97,6 +96,7 @@ public class MovieNfoParser {
   public List<String>         posters             = new ArrayList<>();
   public List<String>         fanarts             = new ArrayList<>();
   public List<MediaGenres>    genres              = new ArrayList<>();
+  public List<String>         countries           = new ArrayList<>();
   public List<String>         studios             = new ArrayList<>();
   public List<String>         tags                = new ArrayList<>();
   public List<Person>         actors              = new ArrayList<>();
@@ -706,16 +706,29 @@ public class MovieNfoParser {
   }
 
   /**
-   * the country usually comes in the country tag
+   * countries come in two different flavors<br />
+   * - multiple <country></country> tags (new style)<br />
+   * - one <country></country> tag with multiple comma separated values
    */
   private Void parseCountry() {
     supportedElements.add("country");
 
-    Element element = getSingleElement(root, "country");
-    if (element != null) {
-      country = element.ownText();
+    Elements elements = root.select(root.tagName() + " > country");
+    // if there is exactly one country tag, split the countries at the comma
+    if (elements.size() == 1) {
+      try {
+        countries.addAll(Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"))); // split on , or / and remove whitespace around)
+      }
+      catch (Exception ignored) {
+      }
     }
-
+    else {
+      for (Element element : elements) {
+        if (StringUtils.isNotBlank(element.ownText())) {
+          countries.add(element.ownText());
+        }
+      }
+    }
     return null;
   }
 
@@ -1399,7 +1412,13 @@ public class MovieNfoParser {
       movie.setProductionCompany(studio);
     }
 
-    movie.setCountry(country);
+    String country = StringUtils.join(countries, "/");
+    if (country == null) {
+      movie.setCountry("");
+    }
+    else {
+      movie.setCountry(country);
+    }
     movie.setCertification(certification);
 
     movie.setWatched(watched);
