@@ -203,6 +203,15 @@ class TmdbArtworkProvider {
 
   private void prepareDefaultPoster(MediaArtwork ma, MediaScrapeOptions options) {
     for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
+      // XLARGE
+      if (image.getWidth() >= 2000) {
+        if (options.getPosterSize().getOrder() >= MediaArtwork.PosterSizes.XLARGE.getOrder()) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(MediaArtwork.PosterSizes.XLARGE.getOrder());
+          break;
+        }
+        continue;
+      }
       // LARGE
       if (image.getWidth() >= 1000) {
         if (options.getPosterSize().getOrder() >= MediaArtwork.PosterSizes.LARGE.getOrder()) {
