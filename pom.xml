@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>tmm-parent</artifactId>
         <groupId>org.tinymediamanager</groupId>
-        <version>3.0</version>
+        <artifactId>tmm-parent</artifactId>
+        <version>3.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.tinymediamanager.plugins</groupId>
