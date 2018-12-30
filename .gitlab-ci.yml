@@ -18,7 +18,8 @@ build:
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS -DskipTests=false -Dmaven.test.failure.ignore=true test #temp deactivated because tmdb scraper from kodi is broken
+    - mvn $MAVEN_CLI_OPTS -DskipTests=false -Dmaven.test.failure.ignore=false test
+  allow_failure: true
 
 deploy_snapshot:
   stage: deploy
