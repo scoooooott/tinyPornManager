@@ -68,6 +68,7 @@ public class MediaArtwork {
    * @since 1.0
    */
   public enum PosterSizes {
+    XLARGE(BUNDLE.getString("Settings.image.xlarge") + ": ~2000x3000px", 16), //$NON-NLS-1$
     LARGE(BUNDLE.getString("Settings.image.large") + ": ~1000x1500px", 8), //$NON-NLS-1$
     BIG(BUNDLE.getString("Settings.image.big") + ": ~500x750px", 4), //$NON-NLS-1$
     MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~342x513px", 2), //$NON-NLS-1$
