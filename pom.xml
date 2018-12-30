@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.tinymediamanager</groupId>
         <artifactId>tmm-parent</artifactId>
-        <version>3.0</version>
+        <version>3.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.tinymediamanager.plugins</groupId>
