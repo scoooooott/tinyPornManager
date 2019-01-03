@@ -52,7 +52,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -483,13 +482,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           if (!MovieModuleManager.SETTINGS.isScrapeBestImage()) {
             md.clearMediaArt();
           }
-
-          // Capitalize First Letter of title and originalTitle,
-          // if setting is set!
-            if (MovieModuleManager.SETTINGS.isCapitalizeWordsSelected()) {
-                md.setTitle(WordUtils.capitalize(md.getTitle()));
-                md.setOriginalTitle(WordUtils.capitalize(md.getOriginalTitle()));
-            }
 
           // set scraped metadata
           movieToScrape.setMetadata(md, scraperMetadataConfig);

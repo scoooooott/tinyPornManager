@@ -71,6 +71,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
@@ -722,11 +723,23 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // set chosen metadata
     if (config.isTitle()) {
-      setTitle(metadata.getTitle());
+      // Capitalize first letter of title if setting is set!
+      if (MovieModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setTitle(WordUtils.capitalize(metadata.getTitle()));
+      }
+      else {
+        setTitle(metadata.getTitle());
+      }
     }
 
     if (config.isOriginalTitle()) {
-      setOriginalTitle(metadata.getOriginalTitle());
+      // Capitalize first letter of original title if setting is set!
+      if (MovieModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
+        setOriginalTitle(metadata.getOriginalTitle());
+      }
     }
 
     if (config.isTagline()) {
