@@ -28,12 +28,14 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -63,6 +65,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox<CountryCode>      cbCertificationCountry;
   private JCheckBox                   chckbxScraperFallback;
+  private JCheckBox                   chckbxCapitalizeWords;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -107,6 +110,9 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
 
         chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback"));
         panelOptions.add(chckbxScraperFallback, "cell 1 2 2 1");
+
+        chckbxCapitalizeWords = new JCheckBox((BUNDLE.getString("Settings.scraper.capitalizeWords")));
+        panelOptions.add(chckbxCapitalizeWords,"cell 1 3 2 1");
       }
     }
     {
@@ -191,5 +197,11 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxScraperFallback, jCheckBoxBeanProperty_2);
     autoBinding_1.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("capitalizeWords");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_3 = BeanProperty.create("selected");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+            settingsBeanProperty_2, chckbxCapitalizeWords, jCheckBoxBeanProperty_3);
+    autoBinding_2.bind();
   }
 }

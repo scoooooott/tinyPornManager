@@ -213,6 +213,8 @@ class MovieImageSettingsPanel extends JPanel {
 
         cbImageFanartSize = new JComboBox(FanartSizes.values());
         panelOptions.add(cbImageFanartSize, "cell 1 1");
+
+
       }
     }
   }

@@ -132,6 +132,7 @@ public class MovieSettings extends AbstractSettings {
   private double                           scraperThreshold                    = 0.75;
   private boolean                          scraperFallback                     = false;
   private MovieScraperMetadataConfig       movieScraperMetadataConfig          = null;
+  private boolean                          useCapitalLettersInTitles           = false;
 
   // artwork scraper
   private PosterSizes                      imagePosterSize                     = PosterSizes.BIG;
@@ -170,6 +171,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          storeUiSorting                      = false;
   private SortColumn                       sortColumn                          = SortColumn.TITLE;
   private boolean                          sortAscending                       = true;
+
 
   public MovieSettings() {
     super();
@@ -1089,6 +1091,16 @@ public class MovieSettings extends AbstractSettings {
     this.nfoLanguage = newValue;
     firePropertyChange("nfoLanguage", oldValue, newValue);
   }
+
+    public boolean isCapitalizeWordsSelected() {
+        return useCapitalLettersInTitles;
+    }
+
+    public void setCapitalizeWords(boolean newValue) {
+        boolean oldValue = this.useCapitalLettersInTitles;
+        this.useCapitalLettersInTitles = newValue;
+        firePropertyChange("capitalizeWords", oldValue, newValue);
+    }
 
   /*****************************************************************
    * defaults
