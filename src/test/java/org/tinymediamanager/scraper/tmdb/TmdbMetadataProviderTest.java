@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -107,7 +106,7 @@ public class TmdbMetadataProviderTest {
     try {
       mp = new TmdbMetadataProvider();
       options = new MediaSearchOptions(MediaType.MOVIE, "Recrutas da Pesada");
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.pt_BR.name()));
+      options.setLanguage(MediaLanguages.pt_BR.toLocale());
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -189,7 +188,7 @@ public class TmdbMetadataProviderTest {
     try {
       mp = new TmdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.MOVIE);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
       options.setId(mp.getProviderInfo().getId(), "62177");
 
       md = mp.getMetadata(options);
@@ -216,7 +215,7 @@ public class TmdbMetadataProviderTest {
     try {
       mp = new TmdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.MOVIE);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.pt_BR.name()));
+      options.setLanguage(MediaLanguages.pt_BR.toLocale());
       options.setId(mp.getProviderInfo().getId(), "10890");
 
       md = mp.getMetadata(options);
@@ -371,7 +370,7 @@ public class TmdbMetadataProviderTest {
     try {
       mp = new TmdbMetadataProvider();
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setCountry(CountryCode.US);
       options.setId(mp.getProviderInfo().getId(), "1447");
 
@@ -404,7 +403,7 @@ public class TmdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setTmdbId(1447);
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       md = mp.getMetadata(options);
 
       // did we get metadata?
@@ -448,7 +447,7 @@ public class TmdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setTmdbId(1447);
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "1");
       md = mp.getMetadata(options);

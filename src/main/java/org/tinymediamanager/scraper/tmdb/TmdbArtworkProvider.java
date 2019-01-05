@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -135,10 +137,10 @@ class TmdbArtworkProvider {
 
     // first sort the artwork
     if (tmdbArtwork.posters != null) {
-      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage().getLanguage()));
+      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage()));
     }
     if (tmdbArtwork.backdrops != null) {
-      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage().getLanguage()));
+      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage()));
     }
 
     // prepare posters
@@ -298,8 +300,13 @@ class TmdbArtworkProvider {
   private static class ImageComparator implements Comparator<Image> {
     private String preferredLangu;
 
-    private ImageComparator(String language) {
-      this.preferredLangu = language;
+    private ImageComparator(Locale locale) {
+      if (locale == null) {
+        this.preferredLangu = null;
+      }
+      else {
+        this.preferredLangu = locale.getLanguage();
+      }
     }
 
     /*
@@ -308,12 +315,12 @@ class TmdbArtworkProvider {
     @Override
     public int compare(Image arg0, Image arg1) {
       // check if first image is preferred langu
-      if (preferredLangu.equals(arg0.iso_639_1) && !preferredLangu.equals(arg1.iso_639_1)) {
+      if (Objects.equals(preferredLangu, arg0.iso_639_1) && !Objects.equals(preferredLangu, arg1.iso_639_1)) {
         return -1;
       }
 
       // check if second image is preferred langu
-      if (!preferredLangu.equals(arg0.iso_639_1) && preferredLangu.equals(arg1.iso_639_1)) {
+      if (!Objects.equals(preferredLangu, arg0.iso_639_1) && Objects.equals(preferredLangu, arg1.iso_639_1)) {
         return 1;
       }
 
