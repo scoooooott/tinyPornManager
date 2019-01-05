@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -93,7 +92,7 @@ public class OmdbMetadataProviderTest {
       mp.setVerbose(true);
 
       MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE);
-      scrapeOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      scrapeOptions.setLanguage(MediaLanguages.en.toLocale());
       MediaMetadata md = null;
 
       // Matrix
