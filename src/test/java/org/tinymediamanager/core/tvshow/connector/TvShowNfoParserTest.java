@@ -30,11 +30,22 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 public class TvShowNfoParserTest {
 
   @Test
-  public void testNfoParser() {
-    // live NFOs from different Kodi versions
+  public void testNfoParserKodi142() {
     testKodi14_2();
+  }
+
+  @Test
+  public void testNfoParserKodi152() {
     testKodi15_2();
+  }
+
+  @Test
+  public void testNfoParserKodi161() {
     testKodi16_1();
+  }
+
+  @Test
+  public void testNfoParserKodi170() {
     testKodi17_0();
   }
 
@@ -117,7 +128,7 @@ public class TvShowNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
 
-      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.unsupportedElements).hasSize(4); // season, episode, displayseason, displayepisode
       assertThat(parser.trailer).isEmpty();
 
       // xbmc tags
@@ -210,7 +221,7 @@ public class TvShowNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
 
-      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.unsupportedElements).hasSize(4); // season, episode, displayseason, displayepisode
       assertThat(parser.trailer).isEmpty();
 
       // xbmc tags
@@ -303,7 +314,7 @@ public class TvShowNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
 
-      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.unsupportedElements).hasSize(4); // season, episode, displayseason, displayepisode
       assertThat(parser.trailer).isEmpty();
 
       // xbmc tags
@@ -396,7 +407,7 @@ public class TvShowNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
 
-      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.unsupportedElements).hasSize(4); // season, episode, displayseason, displayepisode
       assertThat(parser.trailer).isEmpty();
 
       // xbmc tags
