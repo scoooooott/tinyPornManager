@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -164,7 +163,7 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider();
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setCountry(CountryCode.US);
       options.setId(mp.getProviderInfo().getId(), "tt0491738");
 
@@ -197,7 +196,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setImdbId("tt0491738");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       md = mp.getMetadata(options);
 
       // did we get metadata?
@@ -218,7 +217,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setImdbId("tt0303461");
       options.setCountry(CountryCode.DE);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
       md = mp.getMetadata(options);
 
       // did we get metadata?
@@ -250,7 +249,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setImdbId("tt0491738");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
       md = mp.getMetadata(options);
 
       // did we get metadata?
@@ -282,7 +281,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setImdbId("tt0491738");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "1");
       md = mp.getMetadata(options);
@@ -315,7 +314,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setImdbId("tt0491738");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "3");
       options.setId(MediaMetadata.EPISODE_NR, "12");
       md = mp.getMetadata(options);
@@ -358,7 +357,7 @@ public class ImdbMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue(ImdbMetadataProvider.USE_TMDB_FOR_TV_SHOWS, Boolean.TRUE);
       options.setImdbId("tt0491738");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "1");
       md = mp.getMetadata(options);
@@ -411,7 +410,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0472033");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       md = mp.getMetadata(options);
 
       // did we get metadata?
@@ -485,7 +484,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt0114746");
       options.setCountry(CountryCode.DE);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
 
       md = mp.getMetadata(options);
 
@@ -552,7 +551,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt1217209");
       options.setCountry(CountryCode.GB);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
 
       md = mp.getMetadata(options);
 
@@ -616,7 +615,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt1217209");
       options.setCountry(CountryCode.DE);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+      options.setLanguage(MediaLanguages.de.toLocale());
 
       md = mp.getMetadata(options);
 
@@ -640,7 +639,7 @@ public class ImdbMetadataProviderTest {
       options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setImdbId("tt1396557");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
 
       md = mp.getMetadata(options);
 
