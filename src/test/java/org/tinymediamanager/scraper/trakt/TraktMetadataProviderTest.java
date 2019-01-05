@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -63,7 +62,7 @@ public class TraktMetadataProviderTest {
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     TraktMetadataProvider mp = new TraktMetadataProvider();
-    options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+    options.setLanguage(MediaLanguages.en.toLocale());
     options.setId(mp.getProviderInfo().getId(), "545"); // Harry Potter and the Philosopher's Stone
 
     try {
