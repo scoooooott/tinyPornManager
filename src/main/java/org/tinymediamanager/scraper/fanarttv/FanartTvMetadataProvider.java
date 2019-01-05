@@ -143,9 +143,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   // http://webservice.fanart.tv/v3/movies/559
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
-    String language = options.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-      language += "-" + options.getLanguage().getCountry();
+    String language = null;
+    if (options.getLanguage() != null) {
+      language = options.getLanguage().getLanguage();
+      if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+        language += "-" + options.getLanguage().getCountry();
+      }
     }
 
     List<MediaArtwork> returnArtwork = new ArrayList<>();
@@ -212,9 +215,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   // http://webservice.fanart.tv/v3/tv/79349
   private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
-    String language = options.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-      language += "-" + options.getLanguage().getCountry();
+    String language = null;
+    if (options.getLanguage() != null) {
+      language = options.getLanguage().getLanguage();
+      if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+        language += "-" + options.getLanguage().getCountry();
+      }
     }
 
     List<MediaArtwork> returnArtwork = new ArrayList<>();

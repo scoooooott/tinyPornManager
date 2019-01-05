@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.fail;
 
 import java.util.List;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -42,7 +41,7 @@ public class FanartTvMetadataProviderTest {
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setTmdbId(19995);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setArtworkType(MediaArtwork.MediaArtworkType.POSTER);
 
       List<MediaArtwork> images = artworkProvider.getArtwork(options);
