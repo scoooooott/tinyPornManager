@@ -17,7 +17,9 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -46,6 +48,7 @@ public class KodiScraper implements IMediaProvider {
   File                                 addonFolder;
   String                               scraperXml;
   MediaProviderInfo                    providerInfo;
+  List<String>                         imports   = new ArrayList<String>();
 
   @Override
   public MediaProviderInfo getProviderInfo() {
@@ -86,6 +89,16 @@ public class KodiScraper implements IMediaProvider {
       // <email></email>
       // <source></source>
 
+      // parse addons for correct import
+      for (Element el : doc.getElementsByTag("import")) {
+        String imp = el.attr("addon");
+        if (!imp.isEmpty() && imp.startsWith("metadata.common")) {
+          LOGGER.debug("--> found common import: " + imp);
+          imports.add(imp);
+        }
+      }
+
+      // parse extensions
       for (Element el : doc.getElementsByAttribute("point")) {
         String point = el.attr("point");
         if (point.equals("xbmc.addon.metadata")) {

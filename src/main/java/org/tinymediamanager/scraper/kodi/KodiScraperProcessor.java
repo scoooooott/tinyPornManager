@@ -118,7 +118,7 @@ class KodiScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    // logCurrentBuffers(); // DEBUG
+    logCurrentBuffers(); // DEBUG
     Expression exp = r.getExpression();
 
     String in = getBuffer(r.getInput());
@@ -339,11 +339,12 @@ class KodiScraperProcessor {
         if (func == null) {
           throw new Exception("Invalid Function Name: " + url.getFunctionName());
         }
+        func = scraper.getFunction(url.getFunctionName()).clone();
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
         // call the set buffer again with this result
         text = proc.executeFunction(url.getFunctionName(), new String[] { "", url.getTextContent() });
-        append = true; // always append sub functions!
+        // append = true; // always append sub functions! // NOO, not needed!
       }
       catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
@@ -361,11 +362,12 @@ class KodiScraperProcessor {
         if (func == null) {
           throw new Exception("Invalid Function Name: " + m.group(1));
         }
+        func = scraper.getFunction(m.group(1)).clone();
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
-        // call the set buffer again with this result (why wrap function tag name???)
+        // call the set buffer again with this result (why wrap function tag name???) FIXME: remove <details>????
         text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</" + m.group(1) + ">";
-        append = true; // always append sub functions!
+        // append = true; // always append sub functions! // NOO, not needed!
       }
       catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);

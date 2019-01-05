@@ -172,9 +172,15 @@ class KodiScraperParser {
   }
 
   private void readScraperFunctions(KodiScraper scraper, List<File> common) {
+    // ALL common files
     for (File file : common) {
       // System.out.println("parsing common file: " + file);
+
+      // just filter only the needed ones!
+      for (String imp : scraper.imports) {
+        if (file.getPath().contains(imp)) {
       try {
+            LOGGER.debug("parsing imports from " + file);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
         Document xml = parser.parse(file);
@@ -206,5 +212,7 @@ class KodiScraperParser {
         LOGGER.error("problem parsing scraper function", e);
       }
     }
+  }
+}
   }
 }
