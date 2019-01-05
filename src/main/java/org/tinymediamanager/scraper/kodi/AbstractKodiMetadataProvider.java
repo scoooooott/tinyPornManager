@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -334,32 +335,59 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       md.setTagline(tagline);
     }
 
-    // TODO: better parsing of (sub) elements
     // <rating>8.0</rating>
     // or
     // <ratings>
-    // <rating name="themoviedb" default="true">
-    // <value>5.7,</value>
+    // <rating max="10" name="themoviedb" default="true">
+    // <value>5.7</value>
     // <votes>661</votes>
     // </rating>
     // </ratings>
 
-    String rating = getInfoFromScraperFunctionOrBase("rating", details, subDetails);
-    MediaRating rat = new MediaRating(getProviderInfo().getId());
-    if (StringUtils.isNotBlank(rating)) {
-      try {
-        float f = Float.valueOf(rating);
-        rat.setRating(f);
-        // puh... assume max values?
-        rat.setMaxValue(10);
-        if (f > 10) {
+    NodeList nlr = details.getElementsByTagName("rating");
+    for (int i = 0; i < nlr.getLength(); i++) {
+      Element rating = (Element) nlr.item(i);
+
+      String id = rating.getAttribute("name");
+      if (id == null || id.isEmpty()) {
+        id = getProviderInfo().getId();
+      }
+      MediaRating rat = new MediaRating(id);
+
+      float value = 0;
+      Element val = DOMUtils.getElementByTagName(rating, "value");
+      if (val == null) {
+        // no value tag? must be old rating element...
+        value = NumberUtils.toFloat(rating.getTextContent().trim());
+
+        String votes = getInfoFromScraperFunctionOrBase("votes", details, subDetails);
+        if (StringUtils.isNotBlank(votes)) {
+          try {
+            rat.setVoteCount(Integer.parseInt(votes));
+          }
+          catch (NumberFormatException ignored) {
+            LOGGER.warn("unparsable votecount: " + votes);
+          }
+        }
+      }
+      else {
+        value = NumberUtils.toFloat(val.getTextContent().trim());
+        rat.setVoteCount(DOMUtils.getElementIntValue(rating, "votes"));
+      }
+      rat.setRating(value);
+
+      int maxValue = NumberUtils.toInt(rating.getAttribute("max"));
+      if (maxValue > 0) {
+        rat.setMaxValue(maxValue);
+      }
+      else {
+        // try an educated guess of value...
+        if (value > 10) {
           rat.setMaxValue(100);
         }
-        md.addRating(rat);
       }
-      catch (NumberFormatException e) {
-        LOGGER.warn("unparsable rating: " + rating);
-      }
+
+      md.addRating(rat);
     }
 
     String set = getInfoFromScraperFunctionOrBase("set", details, subDetails);
@@ -383,16 +411,6 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         md.setRuntime(Integer.parseInt(runtime));
       }
       catch (NumberFormatException ignored) {
-      }
-    }
-
-    String votes = getInfoFromScraperFunctionOrBase("votes", details, subDetails);
-    if (StringUtils.isNotBlank(votes)) {
-      try {
-        rat.setVoteCount(Integer.parseInt(votes));
-      }
-      catch (NumberFormatException ignored) {
-        LOGGER.warn("unparsable votecount: " + votes);
       }
     }
 
@@ -508,7 +526,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         info = el.getTextContent();
         break;
       }
-      if (info != null)
+      if (!StringUtils.isBlank(info))
         break;
     }
 
