@@ -147,6 +147,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          enableMovieSetArtworkFolder         = false;
   private String                           movieSetArtworkFolder               = "MoviesetArtwork";
   private boolean                          scrapeBestImage                     = true;
+  private MediaLanguages                   imageScraperLanguage                = MediaLanguages.none;
   private boolean                          imageLanguagePriority               = true;
   private boolean                          writeActorImages                    = false;
 
@@ -1030,6 +1031,16 @@ public class MovieSettings extends AbstractSettings {
     String oldValue = this.preferredRating;
     this.preferredRating = newValue;
     firePropertyChange("preferredRating", oldValue, newValue);
+  }
+
+  public MediaLanguages getImageScraperLanguage() {
+    return imageScraperLanguage;
+  }
+
+  public void setImageScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.imageScraperLanguage;
+    this.imageScraperLanguage = newValue;
+    firePropertyChange("imageScraperLanguage", oldValue, newValue);
   }
 
   public boolean isImageLanguagePriority() {

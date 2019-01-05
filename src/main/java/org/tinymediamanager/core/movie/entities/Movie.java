@@ -66,7 +66,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -848,7 +847,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
               IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
-              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+              options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
               options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);

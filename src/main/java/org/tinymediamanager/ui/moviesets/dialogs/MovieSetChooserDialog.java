@@ -42,7 +42,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -284,7 +283,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET, searchTerm);
-          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+          options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
           List<MediaSearchResult> movieSets = mp.search(options);
           movieSetsFound.clear();
           if (movieSets.size() == 0) {

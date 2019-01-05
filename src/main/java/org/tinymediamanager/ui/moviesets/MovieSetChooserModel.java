@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -163,7 +162,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
           if (scraper.getMediaProvider() != null) {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setTmdbId(mis.tmdbId);
-            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
             options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
             options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
@@ -201,7 +200,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       if (scraper.getMediaProvider() != null) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
         options.setTmdbId(Integer.parseInt(result.getId()));
-        options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+        options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
         options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
         MediaMetadata info = null;
@@ -306,7 +305,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
       options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
       options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());

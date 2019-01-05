@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
@@ -100,7 +99,7 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
         for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());
         }
-        options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+        options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
         options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
         options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
         options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());

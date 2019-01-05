@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -175,7 +174,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         if ((doSearch && result1 != null) || !doSearch) {
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
           options.setResult(result1);
-          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+          options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
           options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
           options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
           options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
@@ -287,7 +286,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
       options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
       options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
@@ -329,7 +328,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
       options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
       // scrape trailers

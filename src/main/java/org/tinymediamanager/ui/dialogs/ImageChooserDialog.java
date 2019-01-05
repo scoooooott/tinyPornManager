@@ -52,7 +52,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
@@ -900,13 +899,13 @@ public class ImageChooserDialog extends TmmDialog {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
-            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
             options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
             options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
-            options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
             options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
           }
           else {

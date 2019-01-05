@@ -38,7 +38,6 @@ import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -242,7 +241,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     @Override
     public Void doInBackground() {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());

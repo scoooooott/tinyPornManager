@@ -33,7 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.slf4j.Logger;
@@ -533,7 +532,7 @@ public class TvShowList extends AbstractModelObject {
       }
 
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
-      options.setLanguage(LocaleUtils.toLocale(language.name()));
+      options.setLanguage(language.toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       if (show != null) {
         if (Utils.isValidImdbId(show.getImdbId())) {

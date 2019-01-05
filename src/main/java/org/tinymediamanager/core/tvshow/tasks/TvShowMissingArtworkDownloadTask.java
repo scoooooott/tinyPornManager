@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -111,7 +110,7 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
         List<MediaArtwork> artwork = new ArrayList<>();
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
         options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
-        options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+        options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
         options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
         for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());
@@ -160,7 +159,7 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
         List<MediaArtwork> artwork = new ArrayList<>();
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
         options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
-        options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+        options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
         options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
         for (Map.Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());

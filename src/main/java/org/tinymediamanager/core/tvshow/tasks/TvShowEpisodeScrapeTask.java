@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +107,7 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
       }
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(LocaleUtils.toLocale(language.name()));
+      options.setLanguage(language.toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
 
       MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());

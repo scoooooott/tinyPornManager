@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
@@ -155,7 +154,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
           try {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
             options.setResult(result1);
-            options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
             options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
 
             // we didn't do a search - pass imdbid and tmdbid from movie
@@ -291,7 +290,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());

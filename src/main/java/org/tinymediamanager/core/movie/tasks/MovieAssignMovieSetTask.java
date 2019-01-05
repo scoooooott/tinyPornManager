@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +64,9 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
     initThreadPool(1, "scrape");
     start();
 
-      for (Movie movie : moviesToScrape) {
-          submitTask(new Worker(movie));
-      }
+    for (Movie movie : moviesToScrape) {
+      submitTask(new Worker(movie));
+    }
     waitForCompletionOrCancel();
     LOGGER.info("Done assigning movies to movie sets");
   }
@@ -91,7 +90,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+          options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
           options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
           for (Entry<String, Object> entry : movie.getIds().entrySet()) {
             options.setId(entry.getKey(), entry.getValue().toString());
@@ -108,7 +107,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
               try {
                 options = new MediaScrapeOptions(MediaType.MOVIE_SET);
                 options.setTmdbId(collectionId);
-                options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+                options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
                 options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
                 MediaMetadata info = mp.getMetadata(options);

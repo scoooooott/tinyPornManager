@@ -51,6 +51,7 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.ScraperInTable;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
@@ -81,6 +82,7 @@ class MovieImageSettingsPanel extends JPanel {
   private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
+  private JComboBox<MediaLanguages>   cbScraperLanguage;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -202,19 +204,23 @@ class MovieImageSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptionsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
+        JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
+        panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
+
+        cbScraperLanguage = new JComboBox(MediaLanguages.values());
+        panelOptions.add(cbScraperLanguage, "cell 1 0");
+
         JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$
-        panelOptions.add(lblImageTmdbPosterSize, "cell 1 0 2 1");
+        panelOptions.add(lblImageTmdbPosterSize, "cell 1 1 2 1");
 
         cbImagePosterSize = new JComboBox(PosterSizes.values());
-        panelOptions.add(cbImagePosterSize, "cell 1 0");
+        panelOptions.add(cbImagePosterSize, "cell 1 1");
 
         JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size")); //$NON-NLS-1$
-        panelOptions.add(lblImageTmdbFanartSize, "cell 1 1 2 1");
+        panelOptions.add(lblImageTmdbFanartSize, "cell 1 2 2 1");
 
         cbImageFanartSize = new JComboBox(FanartSizes.values());
-        panelOptions.add(cbImageFanartSize, "cell 1 1");
-
-
+        panelOptions.add(cbImageFanartSize, "cell 1 2");
       }
     }
   }
@@ -250,5 +256,10 @@ class MovieImageSettingsPanel extends JPanel {
     AutoBinding<JTable, String, JTextPane, String> autoBinding_23 = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
         tpScraperDescription, jTextPaneBeanProperty);
     autoBinding_23.bind();
+    //
+    BeanProperty<MovieSettings, MediaLanguages> movieSettingsBeanProperty = BeanProperty.create("imageScraperLanguage");
+    AutoBinding<MovieSettings, MediaLanguages, JComboBox, Object> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty, cbScraperLanguage, jComboBoxBeanProperty);
+    autoBinding.bind();
   }
 }

@@ -176,7 +176,7 @@ public class MovieSetArtworkHelper {
    */
   public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage()));
 
     // poster
     setBestPoster(movieSet, artwork);
@@ -201,7 +201,7 @@ public class MovieSetArtworkHelper {
    */
   private static void setBestPoster(MovieSet movieSet, List<MediaArtwork> artwork) {
     int preferredSizeOrder = MovieModuleManager.SETTINGS.getImagePosterSize().getOrder();
-    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage();
 
     MediaArtwork foundPoster = null;
 
@@ -261,7 +261,7 @@ public class MovieSetArtworkHelper {
    */
   private static void setBestFanart(MovieSet movieSet, List<MediaArtwork> artwork) {
     int preferredSizeOrder = MovieModuleManager.SETTINGS.getImageFanartSize().getOrder();
-    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage();
 
     MediaArtwork foundfanart = null;
 

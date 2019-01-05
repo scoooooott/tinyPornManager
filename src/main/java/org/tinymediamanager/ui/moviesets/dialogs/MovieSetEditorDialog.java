@@ -36,7 +36,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -571,7 +570,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
               options.setTmdbId(movie.getTmdbId());
               options.setImdbId(movie.getImdbId());
-              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+              options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
               options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
               try {
                 MediaMetadata md = mp.getMetadata(options);

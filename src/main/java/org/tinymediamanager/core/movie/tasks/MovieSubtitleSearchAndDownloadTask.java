@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +100,7 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
 
             IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
             SubtitleSearchOptions options = new SubtitleSearchOptions(mf.getFileAsPath().toFile(), movie.getOriginalTitle());
-            options.setLanguage(LocaleUtils.toLocale(language.name()));
+            options.setLanguage(language.toLocale());
             options.setImdbId(movie.getImdbId());
             List<SubtitleSearchResult> searchResults = subtitleProvider.search(options);
             if (searchResults.isEmpty()) {

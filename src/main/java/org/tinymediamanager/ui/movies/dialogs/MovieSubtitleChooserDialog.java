@@ -44,7 +44,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -319,7 +318,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
           IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
           SubtitleSearchOptions options = new SubtitleSearchOptions(file, searchTerm);
           options.setImdbId(imdbId);
-          options.setLanguage(LocaleUtils.toLocale(language.name()));
+          options.setLanguage(language.toLocale());
           searchResults.addAll(subtitleProvider.search(options));
         }
         catch (ScrapeException e) {

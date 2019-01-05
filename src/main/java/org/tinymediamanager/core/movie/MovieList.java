@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.slf4j.Logger;
@@ -526,7 +525,7 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-      options.setLanguage(LocaleUtils.toLocale(langu.name()));
+      options.setLanguage(langu.toLocale());
       options.setCountry(movieSettings.getCertificationCountry());
       if (movie != null) {
         options.setIds(movie.getIds());
