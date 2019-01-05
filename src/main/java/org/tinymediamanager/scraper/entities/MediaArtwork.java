@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
@@ -499,10 +500,10 @@ public class MediaArtwork {
     @Override
     public int compare(MediaArtwork arg0, MediaArtwork arg1) {
       // check first if is preferred langu
-      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+      if (Objects.equals(preferredLangu, arg0.getLanguage()) && !Objects.equals(preferredLangu, arg1.getLanguage())) {
         return -1;
       }
-      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+      if (!Objects.equals(preferredLangu, arg0.getLanguage()) && Objects.equals(preferredLangu, arg1.getLanguage())) {
         return 1;
       }
 

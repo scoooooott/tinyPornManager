@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 
@@ -66,7 +67,8 @@ public enum MediaLanguages {
   sv("Svenska"),
   tr("Türkçe"),
   uk("Українська"),
-  zh("华语");
+  zh("华语"),
+  none("-");
   //@formatter:on
 
   private String                                   title;
@@ -132,11 +134,21 @@ public enum MediaLanguages {
    * @return the language
    */
   public String getLanguage() {
+    if (this == none) {
+      return "";
+    }
     return name().substring(0, 2);
   }
 
   @Override
   public String toString() {
     return displayTitle;
+  }
+
+  public Locale toLocale() {
+    if (this == none) {
+      return null;
+    }
+    return LocaleUtils.toLocale(name());
   }
 }
