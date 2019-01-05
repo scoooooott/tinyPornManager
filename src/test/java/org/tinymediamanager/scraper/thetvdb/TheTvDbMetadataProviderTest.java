@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -90,7 +89,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -134,7 +133,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.tr.name()));
+      options.setLanguage(MediaLanguages.tr.toLocale());
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -179,7 +178,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "2");
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
@@ -228,7 +227,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.tr.name()));
+      options.setLanguage(MediaLanguages.tr.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "2");
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
@@ -326,7 +325,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+      options.setLanguage(MediaLanguages.en.toLocale());
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       List<MediaMetadata> episodes = metadataProvider.getEpisodeList(options);
 
@@ -369,7 +368,7 @@ public class TheTvDbMetadataProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setCountry(CountryCode.US);
-      options.setLanguage(LocaleUtils.toLocale(MediaLanguages.tr.name()));
+      options.setLanguage(MediaLanguages.tr.toLocale());
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       List<MediaMetadata> episodes = metadataProvider.getEpisodeList(options);
 
