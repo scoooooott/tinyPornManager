@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.scraper.entities;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -32,6 +34,11 @@ public class MediaRating {
 
   public MediaRating(String id) {
     this.id = id;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
   public void setId(String id) {
@@ -69,4 +76,40 @@ public class MediaRating {
   public void setMaxValue(int maxValue) {
     this.maxValue = maxValue;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + maxValue;
+    result = prime * result + Float.floatToIntBits(rating);
+    result = prime * result + voteCount;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    MediaRating other = (MediaRating) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    }
+    else if (!id.equals(other.id))
+      return false;
+    if (maxValue != other.maxValue)
+      return false;
+    if (Float.floatToIntBits(rating) != Float.floatToIntBits(other.rating))
+      return false;
+    if (voteCount != other.voteCount)
+      return false;
+    return true;
+  }
+
 }

@@ -891,7 +891,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Set the ratings. The values are valid from 0 to 10.0
+   * Set the ratings. The values usually from 0 to 100.0
    * 
    * @param newRatings
    *          the ratings to be set
@@ -903,14 +903,16 @@ public class MediaMetadata {
   }
 
   /**
-   * Add a rating. The values are valid from 0 to 10.0
+   * Add a rating. The values usually from 0 to 100.0
    *
    * @param rating
    *          the rating to be set
    */
   public void addRating(MediaRating rating) {
     if (rating != null && StringUtils.isNotBlank(rating.getId()) && rating.getRating() > 0 && rating.getMaxValue() > 0) {
-      ratings.add(rating);
+      if (!ratings.contains(rating)) {
+        ratings.add(rating);
+      }
     }
   }
 
