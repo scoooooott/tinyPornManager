@@ -1,4 +1,4 @@
-image: maven:3-jdk-11
+image: maven:3-jdk-8-alpine
 
 variables:
   MAVEN_CLI_OPTS: "-s .ci/settings.xml --batch-mode"
