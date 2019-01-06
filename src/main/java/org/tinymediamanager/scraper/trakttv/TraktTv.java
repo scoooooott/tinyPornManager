@@ -138,7 +138,8 @@ public class TraktTv {
     // OAuthAccessTokenResponse response = TraktV2.refreshAccessToken(CLIENT_ID,
     // ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
     // "urn:ietf:wg:oauth:2.0:oob", Globals.settings.getTraktRefreshToken());
-    Response<AccessToken> response = TRAKT.refreshToken(Globals.settings.getTraktRefreshToken()).refreshAccessToken();
+    Response<AccessToken> response = TRAKT.refreshToken(Globals.settings.getTraktRefreshToken())
+        .refreshAccessToken(Globals.settings.getTraktRefreshToken());
 
     if (StringUtils.isNoneBlank(response.body().access_token, response.body().refresh_token)) {
       Globals.settings.setTraktAccessToken(response.body().access_token);
