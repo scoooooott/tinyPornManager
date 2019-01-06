@@ -8,10 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiException;
-import org.tinymediamanager.thirdparty.KodiRPC.SplitUri;
 
 public class ITKodiRPCTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(ITKodiRPCTest.class);
@@ -36,6 +37,7 @@ public class ITKodiRPCTest {
   @Test
   public void getMappings() {
     KodiRPC.getInstance().getAndSetEntityMappings();
+    // TODO: match movie (local/network/ip)
   }
 
   @Test
@@ -56,15 +58,15 @@ public class ITKodiRPCTest {
   }
 
   private void testUri(String s) {
-    System.out.println(new KodiRPC.SplitUri(s));
+    System.out.println(new SplitUri(s));
   }
 
   @Test
   public void testUriMatching() {
     // enter a valid hostname, else it will take long ;)
-    String s1 = "smb://NAS/video/a.mkv";
-    String s2 = "\\\\nas\\video\\a.mkv";
-    Assert.assertEquals(new KodiRPC.SplitUri(s1), new KodiRPC.SplitUri(s2));
+    String s1 = "smb://localhost/public/TMM/DS2/testmovies/101 Dalmatiner/101 Dalmatiner.avi";
+    String s2 = "\\\\127.0.0.1\\public\\TMM\\DS2\\testmovies\\101 Dalmatiner\\101 Dalmatiner.avi";
+    Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
   }
 
   @Test
@@ -112,10 +114,13 @@ public class ITKodiRPCTest {
 
   @BeforeClass
   public static void setUp() {
+    TmmModuleManager.getInstance().startUp();
+    MovieModuleManager.getInstance().startUp();
+
     // Upnp.getInstance().createUpnpService();
     // Upnp.getInstance().sendPlayerSearchRequest();
     try {
-      HostConfig config = new HostConfig("127.0.0.1", 80);
+      HostConfig config = new HostConfig("127.0.0.1", 8080, "kodi", "kodi");
       KodiRPC.getInstance().connect(config);
     }
     catch (ApiException e) {
@@ -125,9 +130,11 @@ public class ITKodiRPCTest {
   }
 
   @AfterClass
-  public static void tearDown() throws InterruptedException {
+  public static void tearDown() throws Exception {
     Thread.sleep(10000); // wait a bit - async
     KodiRPC.getInstance().disconnect();
+    MovieModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
     Thread.sleep(200); // wait a bit - async
   }
 }
