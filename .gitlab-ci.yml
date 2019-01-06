@@ -1,7 +1,7 @@
-image: maven:3-jdk-8-alpine
+image: maven:3-jdk-11
 
 variables:
-  MAVEN_CLI_OPTS: "-s .ci/settings.xml --batch-mode -U"
+  MAVEN_CLI_OPTS: "-s .ci/settings.xml --batch-mode"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
@@ -18,7 +18,7 @@ stages:
 compile:
   stage: compile
   script:
-    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn $MAVEN_CLI_OPTS -U clean compile  # re-fetch snapshots every time
 
 test:jdk8:
   stage: test
@@ -65,7 +65,6 @@ test:integration:
 
 deploy:nightly:
   stage: deploy
-  image: maven:3-jdk-8                                # stay with stretch
   only:
     - devel@tinyMediaManager/tinyMediaManager
   except:
