@@ -7,7 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tinymediamanager.thirdparty.KodiRPC;
-import org.tinymediamanager.thirdparty.KodiRPC.SplitUri;
+import org.tinymediamanager.thirdparty.SplitUri;
 
 public class KodiRPCMenu {
 

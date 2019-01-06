@@ -1,28 +1,18 @@
 package org.tinymediamanager.thirdparty;
 
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.net.UnknownHostException;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.types.UDN;
-import org.fourthline.cling.registry.Registry;
-import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -47,7 +37,6 @@ import org.tinymediamanager.jsonrpc.io.ConnectionListener;
 import org.tinymediamanager.jsonrpc.io.JavaConnectionManager;
 import org.tinymediamanager.jsonrpc.io.JsonApiRequest;
 import org.tinymediamanager.jsonrpc.notification.AbstractEvent;
-import org.tinymediamanager.thirdparty.upnp.Upnp;
 
 public class KodiRPC {
   private static final Logger          LOGGER           = LoggerFactory.getLogger(KodiRPC.class);
@@ -58,7 +47,7 @@ public class KodiRPC {
   private ArrayList<SplitUri>          videodatasources = new ArrayList<>();
   private ArrayList<SplitUri>          audiodatasources = new ArrayList<>();
 
-  private HashMap<String, Integer>     moviemappings    = new HashMap<>();
+  private HashMap<UUID, Integer>       moviemappings    = new HashMap<>();                       // TMM-to-Kodi
 
   private KodiRPC() {
     cm.registerConnectionListener(new ConnectionListener() {
@@ -150,39 +139,66 @@ public class KodiRPC {
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
+      // cache all absolute main video files as SplitUris
+      // TODO: add ifo & index
+      Map<SplitUri, UUID> mainVids = new HashMap<SplitUri, UUID>();
+      for (Movie movie : MovieList.getInstance().getMovies()) {
+        MediaFile main = movie.getMainVideoFile();
+        mainVids.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
+        if (movie.isDisc()) {
+          // Kodi RPC sends those files
+          for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+            if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
+              mainVids.put(new SplitUri(mf.getFileAsPath().toString()), movie.getDbId());
+            }
+          }
+        }
+      }
+
       for (MovieDetail res : call.getResults()) {
         if (res.file.startsWith("stack")) {
           String[] files = res.file.split(" , ");
           for (String s : files) {
             s = s.replaceFirst("^stack://", "");
             SplitUri sp = new SplitUri(s, res.label, cm.getHostConfig().getAddress()); // generate clean object
-            for (SplitUri ds : videodatasources) {
-              if (sp.file.startsWith(ds.file)) {
-                moviemappings.put(sp.file, res.movieid);
+
+            for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+              SplitUri tmmsp = entry.getKey();
+              UUID uuid = entry.getValue();
+              if (sp.equals(tmmsp)) {
+                LOGGER.debug(sp.toString());
+                moviemappings.put(uuid, res.movieid);
               }
             }
           }
         }
         else {
           SplitUri sp = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
-          for (SplitUri ds : videodatasources) {
-            if (sp.file.startsWith(ds.file)) {
-              moviemappings.put(sp.file, res.movieid);
+
+          for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+            SplitUri tmmsp = entry.getKey();
+            UUID uuid = entry.getValue();
+            if (sp.equals(tmmsp)) {
+              LOGGER.debug(sp.toString());
+              moviemappings.put(uuid, res.movieid);
             }
           }
         }
       }
 
-      for (Map.Entry<String, Integer> entry : moviemappings.entrySet()) {
-        String key = entry.getKey();
+      // debug
+      for (Map.Entry<UUID, Integer> entry : moviemappings.entrySet()) {
+        UUID key = entry.getKey();
         Integer value = entry.getValue();
-        LOGGER.debug(key + " - " + value);
+        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
+      LOGGER.debug("Size {}", moviemappings.size());
     }
   }
 
   public void refreshMovieFromNfo(Movie m) {
-
+    // kodiID =moviemappings.get(m.getDBid());
+    // final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
   }
 
   // -----------------------------------------------------------------------------------
@@ -434,188 +450,5 @@ public class KodiRPC {
         LOGGER.error("Error {}: {}", code, message);
       }
     });
-  }
-
-  /**
-   * gets the MAC from an upnp UUID string (= last 6 bytes reversed)<br>
-   * like upnp://00113201-aac2-0011-c2aa-02aa01321100 -> 00113201AA02
-   *
-   * @param uuid
-   * @return
-   */
-  private static String getMacFromUpnpUUID(String uuid) {
-    String s = uuid.substring(uuid.lastIndexOf('-') + 1);
-    StringBuilder result = new StringBuilder();
-    for (int i = s.length() - 2; i >= 0; i = i - 2) {
-      result.append(new StringBuilder(s.substring(i, i + 2)));
-      result.append(i > 1 ? ":" : ""); // skip last
-    }
-    return result.toString().toUpperCase();
-  }
-
-  /**
-   * Splits an URI (Kodi datasource, file, UNC, ...) in it's parameters<br>
-   * <br>
-   * <b>Type:</b><br>
-   * LOCAL for local datasources<br>
-   * UPNP for UPNP ones<br>
-   * SMB/NFS/... Url schema for other remotes
-   * 
-   * @author Myron Boyle
-   *
-   */
-  public static class SplitUri {
-    public String label    = "";
-    public String type     = "";
-    public String ip       = "";
-    public String hostname = "";
-    public String file     = "";
-
-    @SuppressWarnings("unused")
-    private SplitUri() {
-    }
-
-    public SplitUri(String ds) {
-      this(ds, ds);
-    }
-
-    public SplitUri(String ds, String label) {
-      this(ds, ds, "");
-    }
-
-    public SplitUri(String ds, String label, String ipForLocal) {
-      this.label = label;
-
-      URI u = null;
-      try {
-        try {
-          ds = URLDecoder.decode(ds, "UTF-8");
-          ds = URLDecoder.decode(ds, "UTF-8");
-          ds = URLDecoder.decode(ds, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-          LOGGER.warn(e.getMessage());
-        }
-        ds = ds.replaceAll("\\\\", "/");
-        if (ds.contains(":///")) {
-          // 3 = file with scheme - parse as URI, but keep one slash
-          u = new URI(ds.substring(ds.indexOf(":///") + 3));
-        }
-        else if (ds.contains("://")) {
-          // 2 = //hostname/path - parse as URI
-          u = new URI(ds);
-        }
-        else {
-          // 0 = local file - parse as Path
-          u = Paths.get(ds).toUri();
-        }
-      }
-      catch (URISyntaxException e) {
-        try {
-          ds = ds.replaceAll(".*?:/{2,3}", ""); // replace scheme
-          u = Paths.get(ds).toAbsolutePath().toUri();
-        }
-        catch (InvalidPathException e2) {
-          LOGGER.warn(e2.getMessage());
-        }
-      }
-
-      if (u != null && !StringUtil.isBlank(u.getHost())) {
-        this.file = u.getPath();
-        if (ds.startsWith("upnp")) {
-          this.type = "UPNP";
-          this.hostname = getMacFromUpnpUUID(u.getHost());
-
-          UpnpService us = Upnp.getInstance().getUpnpService();
-          if (us != null) {
-            Registry registry = us.getRegistry();
-            if (registry != null) {
-              @SuppressWarnings("rawtypes")
-              Device foundDevice = registry.getDevice(UDN.valueOf(u.getHost()), true);
-              if (foundDevice != null) {
-                this.ip = foundDevice.getDetails().getPresentationURI().getHost();
-              }
-            }
-          }
-        }
-        else {
-          try {
-            this.type = u.getScheme().toUpperCase(Locale.ROOT);
-            this.hostname = u.getHost();
-            InetAddress i = InetAddress.getByName(u.getHost()); // FIXME: will block for ~5 secs
-            this.ip = i.getHostAddress();
-          }
-          catch (UnknownHostException e) {
-            this.hostname = u.getHost();
-          }
-        }
-      }
-      else {
-        this.type = "LOCAL";
-        this.file = ds;
-        if (ipForLocal.isEmpty()) {
-          this.ip = "127.0.0.1";
-          try {
-            this.hostname = InetAddress.getLocalHost().getHostName(); // "our" hostname, but not remote
-          }
-          catch (UnknownHostException e) {
-            this.hostname = "localhost";
-          }
-        }
-        else {
-          // remote
-          this.ip = ipForLocal;
-          this.hostname = ipForLocal;
-        }
-      }
-    }
-
-    @Override
-    public String toString() {
-      return "SplitUri [label=" + label + ", type=" + type + ", ip=" + ip + ", hostname=" + hostname + ", file=" + file + "]";
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((file == null) ? 0 : file.hashCode());
-      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + ((ip == null) ? 0 : ip.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      SplitUri other = (SplitUri) obj;
-
-      if (file == null || file.isEmpty()) {
-        return false;
-      }
-      else {
-        // 1: mandatory file does not match - step out
-        if (!file.equals(other.file)) {
-          return false;
-        }
-      }
-
-      // 2: - check either matching IP or hostname
-      if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
-        return true;
-      }
-      if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
-        return true;
-      }
-
-      // 3: did not match? return false
-      return false;
-    }
-
   }
 }
