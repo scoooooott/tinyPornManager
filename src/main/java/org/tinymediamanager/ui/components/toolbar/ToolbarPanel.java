@@ -271,10 +271,10 @@ public class ToolbarPanel extends JPanel {
       menu.add(debugMenu);
     }
 
-    final JMenu kodiRPCMenu = KodiRPCMenu.KodiMenu();
+    final JMenu kodiRPCMenu = KodiRPCMenu.KodiMenuTop();
     menu.add(kodiRPCMenu);
 
-    // activate/deactivate menu items based on som estatus
+    // activate/deactivate menu items based on some status
     menu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {

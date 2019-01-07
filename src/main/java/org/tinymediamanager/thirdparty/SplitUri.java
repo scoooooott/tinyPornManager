@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -133,17 +132,21 @@ public class SplitUri {
       this.file = ds;
       if (ipForLocal.isEmpty()) {
         this.ip = "127.0.0.1";
-        try {
-          this.hostname = InetAddress.getLocalHost().getHostName(); // "our" hostname, but not remote
-        }
-        catch (UnknownHostException e) {
-          this.hostname = "localhost";
-        }
+        this.hostname = "localhost";
       }
       else {
-        // remote
-        this.ip = ipForLocal;
-        this.hostname = ipForLocal;
+        try {
+          String tmp = lookup.get(ipForLocal);
+          if (tmp == null) {
+            InetAddress i = InetAddress.getByName(ipForLocal);
+            this.ip = i.getHostAddress();
+            this.hostname = i.getHostName();
+            lookup.put(ipForLocal, ip);
+            lookup.put(hostname, ip);
+          }
+        }
+        catch (Exception e) {
+        }
       }
     }
   }

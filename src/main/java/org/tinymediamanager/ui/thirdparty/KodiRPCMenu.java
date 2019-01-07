@@ -8,15 +8,28 @@ import javax.swing.JMenuItem;
 
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.SplitUri;
+import org.tinymediamanager.ui.movies.actions.MovieKodiRefreshNfoAction;
 
 public class KodiRPCMenu {
 
   /**
-   * Adds Kodi RPC menu structure
+   * Adds Kodi RPC menu structure in right-click popup
    * 
    * @return
    */
-  public static JMenu KodiMenu() {
+  public static JMenu KodiMenuRightClick() {
+    String version = KodiRPC.getInstance().getVersion();
+    JMenu m = new JMenu(version);
+    m.add(new MovieKodiRefreshNfoAction());
+    return m;
+  }
+
+  /**
+   * Adds Kodi RPC menu structure in top bar
+   * 
+   * @return
+   */
+  public static JMenu KodiMenuTop() {
     String version = KodiRPC.getInstance().getVersion();
     JMenu m = new JMenu(version);
     m.add(Application());

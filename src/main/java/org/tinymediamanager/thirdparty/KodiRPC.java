@@ -2,6 +2,7 @@ package org.tinymediamanager.thirdparty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -134,24 +135,29 @@ public class KodiRPC {
     }
   }
 
-  public void getAndSetEntityMappings() {
+  /**
+   * builds the moviemappings: DBid -> Kodi ID
+   */
+  protected void getAndSetEntityMappings() {
     final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(MovieFields.FILE);
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       // cache all absolute main video files as SplitUris
-      // TODO: add ifo & index
       Map<SplitUri, UUID> mainVids = new HashMap<SplitUri, UUID>();
       for (Movie movie : MovieList.getInstance().getMovies()) {
         MediaFile main = movie.getMainVideoFile();
-        mainVids.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
         if (movie.isDisc()) {
-          // Kodi RPC sends those files
+          // Kodi RPC sends only those disc files
           for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+            // FIXME: we do not have IFO MFs, so...
             if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
               mainVids.put(new SplitUri(mf.getFileAsPath().toString()), movie.getDbId());
             }
           }
+        }
+        else {
+          mainVids.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
         }
       }
 
@@ -166,8 +172,9 @@ public class KodiRPC {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (sp.equals(tmmsp)) {
-                LOGGER.debug(sp.toString());
+                LOGGER.trace(sp.toString());
                 moviemappings.put(uuid, res.movieid);
+                break;
               }
             }
           }
@@ -179,26 +186,47 @@ public class KodiRPC {
             SplitUri tmmsp = entry.getKey();
             UUID uuid = entry.getValue();
             if (sp.equals(tmmsp)) {
-              LOGGER.debug(sp.toString());
+              LOGGER.trace(sp.toString());
               moviemappings.put(uuid, res.movieid);
+              break;
             }
           }
         }
       }
 
-      // debug
+      // debug output
       for (Map.Entry<UUID, Integer> entry : moviemappings.entrySet()) {
         UUID key = entry.getKey();
         Integer value = entry.getValue();
         LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
-      LOGGER.debug("Size {}", moviemappings.size());
+      LOGGER.debug("mapped {} items", moviemappings.size());
+
+      // intersect
+      for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+        if (!moviemappings.containsKey(entry.getValue())) {
+          LOGGER.warn("could not map: {}", entry.getKey());
+        }
+      }
+      mainVids.clear();
     }
   }
 
-  public void refreshMovieFromNfo(Movie m) {
-    // kodiID =moviemappings.get(m.getDBid());
-    // final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
+  public void refreshMovieFromNfo(List<Movie> movies) {
+    for (Movie movie : movies) {
+      refreshMovieFromNfo(movie);
+    }
+  }
+
+  public void refreshMovieFromNfo(Movie movie) {
+    Integer kodiID = moviemappings.get(movie.getDbId());
+    if (kodiID != null) {
+      final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
+      send(call);
+    }
+    else {
+      LOGGER.error("Unable to refresh - could not map movie '{}' to Kodi library!", movie.getTitle());
+    }
   }
 
   // -----------------------------------------------------------------------------------
@@ -329,6 +357,7 @@ public class KodiRPC {
       getAndSetKodiVersion();
       getAndSetVideoDataSources();
       getAndSetAudioDataSources();
+      getAndSetEntityMappings();
     }
   }
 

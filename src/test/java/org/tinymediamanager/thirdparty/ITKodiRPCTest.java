@@ -37,7 +37,6 @@ public class ITKodiRPCTest {
   @Test
   public void getMappings() {
     KodiRPC.getInstance().getAndSetEntityMappings();
-    // TODO: match movie (local/network/ip)
   }
 
   @Test
@@ -64,8 +63,8 @@ public class ITKodiRPCTest {
   @Test
   public void testUriMatching() {
     // enter a valid hostname, else it will take long ;)
-    String s1 = "smb://localhost/public/TMM/DS2/testmovies/101 Dalmatiner/101 Dalmatiner.avi";
-    String s2 = "\\\\127.0.0.1\\public\\TMM\\DS2\\testmovies\\101 Dalmatiner\\101 Dalmatiner.avi";
+    String s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner.avi";
+    String s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\101 Dalmatiner\\101 Dalmatiner.avi";
     Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
   }
 

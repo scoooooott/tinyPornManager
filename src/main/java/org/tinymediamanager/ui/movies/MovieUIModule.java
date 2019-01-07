@@ -29,6 +29,7 @@ import javax.swing.event.PopupMenuListener;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.PopupMenuScroller;
@@ -72,6 +73,7 @@ import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSettingsNode;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
+import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -202,6 +204,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
+    JMenu kodiRPCMenu = KodiRPCMenu.KodiMenuRightClick();
+    popupMenu.add(kodiRPCMenu);
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieClearImageCacheAction.class));
     popupMenu.addSeparator();
@@ -214,6 +218,28 @@ public class MovieUIModule extends AbstractTmmUIModule {
       popupMenu.addSeparator();
       popupMenu.add(debugMenu);
     }
+
+    // activate/deactivate menu items based on some status
+    popupMenu.addPopupMenuListener(new PopupMenuListener() {
+      @Override
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        kodiRPCMenu.setText(KodiRPC.getInstance().getVersion());
+        if (KodiRPC.getInstance().isConnected()) {
+          kodiRPCMenu.setEnabled(true);
+        }
+        else {
+          kodiRPCMenu.setEnabled(false);
+        }
+      }
+
+      @Override
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+      }
+
+      @Override
+      public void popupMenuCanceled(PopupMenuEvent e) {
+      }
+    });
 
     listPanel.setPopupMenu(popupMenu);
 
