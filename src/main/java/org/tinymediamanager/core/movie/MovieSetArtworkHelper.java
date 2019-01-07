@@ -400,6 +400,170 @@ public class MovieSetArtworkHelper {
     }
   }
 
+  public static boolean hasMissingArtwork(MovieSet movieSet) {
+    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+      return true;
+    }
+    if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public static void downloadMissingArtwork(MovieSet movieSet) {
+    downloadMissingArtwork(movieSet, false);
+  }
+
+  public static void downloadMissingArtwork(MovieSet movieSet, boolean force) {
+    MediaFileType[] mfts = MediaFileType.getGraphicMediaFileTypes();
+
+    // do for all known graphical MediaFileTypes
+    for (MediaFileType mft : mfts) {
+
+      List<MediaFile> mfs = movieSet.getMediaFiles(mft);
+      if (mfs.isEmpty()) {
+        boolean download = false;
+        // not in our list? get'em!
+        switch (mft) {
+          case FANART:
+            if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case POSTER:
+            if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case BANNER:
+            if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case CLEARART:
+            if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case DISC:
+            if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case LOGO:
+            if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case CLEARLOGO:
+            if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case THUMB:
+            if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
+          case EXTRAFANART:
+            if (MovieModuleManager.SETTINGS.isImageExtraFanart() || force) {
+              download = true;
+            }
+            break;
+
+          case EXTRATHUMB:
+            if (MovieModuleManager.SETTINGS.isImageExtraThumbs() || force) {
+              download = true;
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        if (download) {
+          downloadArtwork(movieSet, mft);
+        }
+      }
+    }
+  }
+
+  public static void downloadMissingArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
+    // sort artwork once again (langu/rating)
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+
+    // poster
+    if (movieSet.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+      setBestPoster(movieSet, artwork);
+    }
+
+    // fanart
+    if (movieSet.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+      setBestFanart(movieSet, artwork);
+    }
+
+    // logo
+    if (movieSet.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.LOGO);
+    }
+
+    // clearlogo
+    if (movieSet.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARLOGO);
+    }
+
+    // clearart
+    if (movieSet.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARART);
+    }
+
+    // banner
+    if (movieSet.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.BANNER);
+    }
+
+    // thumb
+    if (movieSet.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.THUMB);
+    }
+
+    // discart
+    if (movieSet.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.DISC);
+    }
+
+    // update DB
+    movieSet.saveToDb();
+  }
+
+
   private static class MovieSetImageFetcherTask implements Runnable {
     private MovieSet        movieSet;
     private String          urlToArtwork;

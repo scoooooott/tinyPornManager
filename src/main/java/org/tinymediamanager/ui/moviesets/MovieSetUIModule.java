@@ -37,13 +37,7 @@ import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
-import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
-import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
+import org.tinymediamanager.ui.moviesets.actions.*;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetFilterDialog;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
@@ -147,6 +141,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieSetRemoveAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetSearchAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSetMissingArtworkAction.class));
 
     // movie actions
     popupMenu.addSeparator();
