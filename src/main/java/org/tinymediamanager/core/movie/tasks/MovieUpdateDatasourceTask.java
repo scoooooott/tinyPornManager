@@ -932,6 +932,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case CLEARLOGO:
           case MEDIAINFO:
           case VSMETA:
+          case THEME:
             movie.addToMediaFiles(mf);
             break;
 

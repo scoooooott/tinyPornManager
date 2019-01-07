@@ -52,6 +52,7 @@ public enum MediaFileType {
   GRAPHIC, // NO gfx (since not a searchable type)
   MEDIAINFO, // xxx-mediainfo.xml
   VSMETA, // xxx.ext.vsmeta Synology
+  THEME, // "theme" files for some skins, like theme.mp3 (or bg video)
   TEXT, // various text infos, like BDinfo.txt or others...
   UNKNOWN;
   // @formatter:on

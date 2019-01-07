@@ -317,6 +317,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return parseImageType();
     }
 
+    if (basename.matches("(?i).*[_.-]+theme\\d*$") || basename.matches("(?i)theme\\d*")) {
+      return MediaFileType.THEME;
+    }
+
     if (Globals.settings.getAudioFileType().contains("." + ext)) {
       return MediaFileType.AUDIO;
     }
