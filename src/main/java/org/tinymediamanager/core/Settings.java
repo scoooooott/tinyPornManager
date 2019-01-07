@@ -152,6 +152,7 @@ public class Settings extends AbstractSettings {
     addVideoFileType(".fli");
     addVideoFileType(".flv");
     addVideoFileType(".h264");
+    addVideoFileType(".ifo"); // DVD; only needed for KodiRPC
     addVideoFileType(".img");
     addVideoFileType(".iso");
     addVideoFileType(".mts");
