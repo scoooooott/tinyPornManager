@@ -54,7 +54,7 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox<CountryCode>      cbCertificationCountry;
-
+  private JCheckBox                   chckbxCapitalizeWords;
   /**
    * Instantiates a new movie scraper settings panel.
    */
@@ -84,6 +84,9 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
 
         cbCertificationCountry = new JComboBox<>(CountryCode.values());
         panelOptions.add(cbCertificationCountry, "cell 1 1");
+
+        chckbxCapitalizeWords = new JCheckBox(BUNDLE.getString("Settings.scraper.capitalizeWords"));
+        panelOptions.add(chckbxCapitalizeWords, "cell 1 2");
       }
     }
     {
@@ -127,5 +130,11 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("capitalWordsInTitles");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("selected");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+            settingsBeanProperty_10, chckbxCapitalizeWords, jCheckBoxBeanProperty_1);
+    autoBinding_9.bind();
   }
 }

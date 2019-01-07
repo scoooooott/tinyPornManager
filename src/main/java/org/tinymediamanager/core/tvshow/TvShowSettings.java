@@ -158,6 +158,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              storeUiFilters                 = false;
   private boolean                              displayMissingEpisodes         = false;
   private boolean                              displayMissingSpecials         = false;
+  private boolean                              capitalWordsinTitles           = false;
 
   public TvShowSettings() {
     super();
@@ -925,6 +926,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.imageExtraFanart;
     this.imageExtraFanart = newValue;
     firePropertyChange("imageExtraFanart", oldValue, newValue);
+  }
+
+  public boolean getCapitalWordsInTitles() {
+    return capitalWordsinTitles;
+  }
+
+  public void setCapitalWordsInTitles(boolean newValue) {
+    boolean oldValue = this.capitalWordsinTitles;
+    this.capitalWordsinTitles = newValue;
+    firePropertyChange("capitalWordsInTitles", oldValue, newValue);
   }
 
   /*****************************************************************

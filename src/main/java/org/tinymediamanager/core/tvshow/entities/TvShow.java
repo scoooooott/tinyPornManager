@@ -65,6 +65,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
@@ -75,6 +76,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -798,9 +800,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       setId(entry.getKey(), entry.getValue().toString());
     }
 
+    // if option is set capitalize the first letter of each word
+    // in title and original title
     if (config.isTitle()) {
-      setTitle(metadata.getTitle());
-      setOriginalTitle(metadata.getOriginalTitle());
+      if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setTitle(WordUtils.capitalize(metadata.getTitle()));
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
+        setTitle(metadata.getTitle());
+        setOriginalTitle(metadata.getOriginalTitle());
+      }
     }
 
     if (config.isPlot()) {
