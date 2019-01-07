@@ -1213,7 +1213,13 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     if (connector != null) {
-      connector.write(MovieModuleManager.SETTINGS.getNfoFilenames());
+      List<MovieNfoNaming> naming = MovieModuleManager.SETTINGS.getNfoFilenames();
+      if (isMultiMovieDir()) {
+        // fixate
+        naming = new ArrayList<>();
+        naming.add(MovieNfoNaming.FILENAME_NFO);
+      }
+      connector.write(naming);
       firePropertyChange(HAS_NFO_FILE, false, true);
     }
   }
