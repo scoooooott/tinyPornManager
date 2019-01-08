@@ -9,7 +9,6 @@ import javax.swing.JMenuItem;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.SplitUri;
 import org.tinymediamanager.ui.movies.actions.MovieKodiRefreshNfoAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowKodiRefreshNfoAction;
 
 public class KodiRPCMenu {
 

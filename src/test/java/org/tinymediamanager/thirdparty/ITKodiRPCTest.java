@@ -36,7 +36,7 @@ public class ITKodiRPCTest {
 
   @Test
   public void getMappings() {
-    KodiRPC.getInstance().getAndSetEntityMappings();
+    KodiRPC.getInstance().getAndSetMovieMappings();
   }
 
   @Test
