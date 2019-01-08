@@ -68,6 +68,10 @@ public class SplitUri {
         LOGGER.warn(e.getMessage());
       }
       ds = ds.replaceAll("\\\\", "/");
+      // for directories, we might get a trailing delimiter - remove
+      if (ds.endsWith("/")) {
+        ds = ds.substring(0, ds.length() - 1);
+      }
       if (ds.contains(":///")) {
         // 3 = file with scheme - parse as URI, but keep one slash
         u = new URI(ds.substring(ds.indexOf(":///") + 3));

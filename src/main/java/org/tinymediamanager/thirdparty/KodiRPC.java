@@ -16,7 +16,10 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.jsonrpc.api.AbstractCall;
 import org.tinymediamanager.jsonrpc.api.call.Application;
 import org.tinymediamanager.jsonrpc.api.call.AudioLibrary;
@@ -28,9 +31,12 @@ import org.tinymediamanager.jsonrpc.api.model.FilesModel;
 import org.tinymediamanager.jsonrpc.api.model.GlobalModel;
 import org.tinymediamanager.jsonrpc.api.model.ListModel;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel;
+import org.tinymediamanager.jsonrpc.api.model.VideoModel.EpisodeDetail;
+import org.tinymediamanager.jsonrpc.api.model.VideoModel.EpisodeFields;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.MovieFields;
 import org.tinymediamanager.jsonrpc.api.model.VideoModel.TVShowDetail;
+import org.tinymediamanager.jsonrpc.api.model.VideoModel.TVShowFields;
 import org.tinymediamanager.jsonrpc.config.HostConfig;
 import org.tinymediamanager.jsonrpc.io.ApiCallback;
 import org.tinymediamanager.jsonrpc.io.ApiException;
@@ -48,7 +54,9 @@ public class KodiRPC {
   private ArrayList<SplitUri>          videodatasources = new ArrayList<>();
   private ArrayList<SplitUri>          audiodatasources = new ArrayList<>();
 
-  private HashMap<UUID, Integer>       moviemappings    = new HashMap<>();                       // TMM-to-Kodi
+  // TMM DbId-to-KodiId mappings
+  private HashMap<UUID, Integer>       moviemappings    = new HashMap<>();
+  private HashMap<UUID, Integer>       tvshowmappings   = new HashMap<>();
 
   private KodiRPC() {
     cm.registerConnectionListener(new ConnectionListener() {
@@ -138,29 +146,29 @@ public class KodiRPC {
   /**
    * builds the moviemappings: DBid -> Kodi ID
    */
-  protected void getAndSetEntityMappings() {
+  protected void getAndSetMovieMappings() {
     final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(MovieFields.FILE);
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
-      // cache all absolute main video files as SplitUris
-      Map<SplitUri, UUID> mainVids = new HashMap<SplitUri, UUID>();
+      // cache our video files/paths as SplitUris
+      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
       for (Movie movie : MovieList.getInstance().getMovies()) {
         MediaFile main = movie.getMainVideoFile();
         if (movie.isDisc()) {
           // Kodi RPC sends only those disc files
           for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-            // FIXME: we do not have IFO MFs, so...
             if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
-              mainVids.put(new SplitUri(mf.getFileAsPath().toString()), movie.getDbId());
+              tmmFiles.put(new SplitUri(mf.getFileAsPath().toString()), movie.getDbId());
             }
           }
         }
         else {
-          mainVids.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
+          tmmFiles.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
         }
       }
 
+      // iterate over all Kodi resources
       for (MovieDetail res : call.getResults()) {
         if (res.file.startsWith("stack")) {
           String[] files = res.file.split(" , ");
@@ -168,7 +176,7 @@ public class KodiRPC {
             s = s.replaceFirst("^stack://", "");
             SplitUri sp = new SplitUri(s, res.label, cm.getHostConfig().getAddress()); // generate clean object
 
-            for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+            for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (sp.equals(tmmsp)) {
@@ -182,7 +190,7 @@ public class KodiRPC {
         else {
           SplitUri sp = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
 
-          for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+          for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
             SplitUri tmmsp = entry.getKey();
             UUID uuid = entry.getValue();
             if (sp.equals(tmmsp)) {
@@ -203,12 +211,95 @@ public class KodiRPC {
       LOGGER.debug("mapped {} items", moviemappings.size());
 
       // intersect
-      for (Map.Entry<SplitUri, UUID> entry : mainVids.entrySet()) {
+      for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
         if (!moviemappings.containsKey(entry.getValue())) {
           LOGGER.warn("could not map: {}", entry.getKey());
         }
       }
-      mainVids.clear();
+      tmmFiles.clear();
+    }
+  }
+
+  /**
+   * builds the show/episode mappings: DBid -> Kodi ID
+   */
+  protected void getAndSetTvShowMappings() {
+    final VideoLibrary.GetTVShows call = new VideoLibrary.GetTVShows(TVShowFields.FILE);
+    send(call);
+    if (call.getResults() != null && !call.getResults().isEmpty()) {
+
+      // cache our video files/paths as SplitUris
+      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
+      for (TvShow show : TvShowList.getInstance().getTvShows()) {
+        tmmFiles.put(new SplitUri(show.getPathNIO().toString()), show.getDbId()); // folder
+
+        for (TvShowEpisode ep : show.getEpisodes()) {
+          if (ep.isDisc()) {
+            // Kodi RPC sends only those disc files
+            for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
+              if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
+                tmmFiles.put(new SplitUri(mf.getFileAsPath().toString()), ep.getDbId());
+              }
+            }
+          }
+          else {
+            tmmFiles.put(new SplitUri(ep.getMainVideoFile().getFileAsPath().toString()), ep.getDbId()); // file
+          }
+        }
+
+      }
+
+      // iterate over all Kodi shows
+      for (TVShowDetail show : call.getResults()) {
+        SplitUri sp = new SplitUri(show.file, show.label, cm.getHostConfig().getAddress()); // generate clean object
+
+        for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
+          SplitUri tmmsp = entry.getKey();
+          UUID uuid = entry.getValue();
+          if (sp.equals(tmmsp)) {
+            LOGGER.trace(sp.toString());
+            tvshowmappings.put(uuid, show.tvshowid);
+            break;
+          }
+        }
+
+        // inner call to get all episodes
+        final VideoLibrary.GetEpisodes epCall = new VideoLibrary.GetEpisodes(EpisodeFields.FILE);
+        send(epCall);
+        if (epCall.getResults() != null && !epCall.getResults().isEmpty()) {
+
+          for (EpisodeDetail ep : epCall.getResults()) {
+            SplitUri spEp = new SplitUri(ep.file, ep.label, cm.getHostConfig().getAddress()); // generate clean object
+
+            for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
+              SplitUri tmmsp = entry.getKey();
+              UUID uuid = entry.getValue();
+              if (spEp.equals(tmmsp)) {
+                LOGGER.trace(spEp.toString());
+                tvshowmappings.put(uuid, ep.episodeid);
+                break;
+              }
+            }
+          }
+        }
+
+      }
+
+      // debug output
+      for (Map.Entry<UUID, Integer> entry : tvshowmappings.entrySet()) {
+        UUID key = entry.getKey();
+        Integer value = entry.getValue();
+        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
+      }
+      LOGGER.debug("mapped {} items", tvshowmappings.size());
+
+      // intersect
+      for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
+        if (!tvshowmappings.containsKey(entry.getValue())) {
+          LOGGER.warn("could not map: {}", entry.getKey());
+        }
+      }
+      tmmFiles.clear();
     }
   }
 
@@ -357,7 +448,8 @@ public class KodiRPC {
       getAndSetKodiVersion();
       getAndSetVideoDataSources();
       getAndSetAudioDataSources();
-      getAndSetEntityMappings();
+      getAndSetMovieMappings();
+      getAndSetTvShowMappings();
     }
   }
 
