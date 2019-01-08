@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.SplitUri;
 import org.tinymediamanager.ui.movies.actions.MovieKodiRefreshNfoAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowKodiRefreshNfoAction;
 
 public class KodiRPCMenu {
 
@@ -17,10 +18,22 @@ public class KodiRPCMenu {
    * 
    * @return
    */
-  public static JMenu KodiMenuRightClick() {
+  public static JMenu KodiMenuRightClickMovies() {
     String version = KodiRPC.getInstance().getVersion();
     JMenu m = new JMenu(version);
     m.add(new MovieKodiRefreshNfoAction());
+    return m;
+  }
+
+  /**
+   * Adds Kodi RPC menu structure in right-click popup
+   * 
+   * @return
+   */
+  public static JMenu KodiMenuRightClickTvShows() {
+    String version = KodiRPC.getInstance().getVersion();
+    JMenu m = new JMenu(version);
+    m.add(new TvShowKodiRefreshNfoAction());
     return m;
   }
 

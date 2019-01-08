@@ -12,6 +12,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -264,7 +265,7 @@ public class KodiRPC {
         }
 
         // inner call to get all episodes
-        final VideoLibrary.GetEpisodes epCall = new VideoLibrary.GetEpisodes(EpisodeFields.FILE);
+        final VideoLibrary.GetEpisodes epCall = new VideoLibrary.GetEpisodes(show.tvshowid, EpisodeFields.FILE);
         send(epCall);
         if (epCall.getResults() != null && !epCall.getResults().isEmpty()) {
 
@@ -303,20 +304,35 @@ public class KodiRPC {
     }
   }
 
-  public void refreshMovieFromNfo(List<Movie> movies) {
-    for (Movie movie : movies) {
-      refreshMovieFromNfo(movie);
+  public void refreshFromNfo(List<MediaEntity> entities) {
+    for (MediaEntity entity : entities) {
+      refreshFromNfo(entity);
     }
   }
 
-  public void refreshMovieFromNfo(Movie movie) {
-    Integer kodiID = moviemappings.get(movie.getDbId());
+  public void refreshFromNfo(MediaEntity entity) {
+    Integer kodiID = moviemappings.get(entity.getDbId());
+    if (kodiID == null) {
+      kodiID = tvshowmappings.get(entity.getDbId());
+    }
     if (kodiID != null) {
-      final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
-      send(call);
+
+      if (entity instanceof Movie) {
+        final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
+        send(call);
+      }
+      else if (entity instanceof TvShow) {
+        final VideoLibrary.RefreshTVShow call = new VideoLibrary.RefreshTVShow(kodiID, false); // always refresh from NFO
+        send(call);
+      }
+      else if (entity instanceof TvShowEpisode) {
+        final VideoLibrary.RefreshEpisode call = new VideoLibrary.RefreshEpisode(kodiID, false); // always refresh from NFO
+        send(call);
+      }
+
     }
     else {
-      LOGGER.error("Unable to refresh - could not map movie '{}' to Kodi library!", movie.getTitle());
+      LOGGER.error("Unable to refresh - could not map '{}' to Kodi library! {}", entity.getTitle(), entity.getDbId());
     }
   }
 

@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -47,13 +47,13 @@ public class MovieKodiRefreshNfoAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    List<Movie> movies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<MediaEntity> movies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    if (movies == null || movies.isEmpty()) {
+    if (movies.isEmpty()) {
       JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
       return;
     }
 
-    KodiRPC.getInstance().refreshMovieFromNfo(movies);
+    KodiRPC.getInstance().refreshFromNfo(movies);
   }
 }

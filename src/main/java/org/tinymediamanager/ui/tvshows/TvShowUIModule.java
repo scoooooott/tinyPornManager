@@ -34,6 +34,7 @@ import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.PopupMenuScroller;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
+import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeDatasourceAction;
@@ -251,6 +252,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowSyncTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSyncWatchedTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSyncSelectedTraktTvAction.class));
+    JMenu kodiRPCMenu = KodiRPCMenu.KodiMenuRightClickTvShows();
+    popupMenu.add(kodiRPCMenu);
 
     popupMenu.addSeparator();
 
