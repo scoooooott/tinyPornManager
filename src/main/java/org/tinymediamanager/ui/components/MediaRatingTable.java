@@ -80,13 +80,13 @@ public class MediaRatingTable extends TmmTable {
     TableColumn column = getColumnModel().getColumn(1);
     column.setCellEditor(new NumberCellEditor(3, 2));
 
-    // votes column
-    column = getColumnModel().getColumn(2);
-    column.setCellEditor(new NumberCellEditor(10, 0));
-
     // maxValue column
+    column = getColumnModel().getColumn(2);
+    column.setCellEditor(new NumberCellEditor(3, 0));
+
+    // votes column
     column = getColumnModel().getColumn(3);
-    column.setCellEditor(new NumberCellEditor(3, 2));
+    column.setCellEditor(new NumberCellEditor(10, 0));
   }
 
   public static EventList<MediaRating> convertRatingMapToEventList(Map<String, Rating> idMap, boolean withUserRating) {
