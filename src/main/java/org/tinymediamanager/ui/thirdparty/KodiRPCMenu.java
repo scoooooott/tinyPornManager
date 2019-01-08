@@ -33,7 +33,7 @@ public class KodiRPCMenu {
   public static JMenu KodiMenuRightClickTvShows() {
     String version = KodiRPC.getInstance().getVersion();
     JMenu m = new JMenu(version);
-    m.add(new TvShowKodiRefreshNfoAction());
+    // m.add(new TvShowKodiRefreshNfoAction());
     return m;
   }
 
