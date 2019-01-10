@@ -119,13 +119,87 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     TvShowModuleManager.SETTINGS.addPropertyChangeListener(evt -> {
       switch (evt.getPropertyName()) {
         case "displayMissingEpisodes":
+          if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+            addDummyEpisodes();
+          }
+          else {
+            removeDummyEpisodes();
+          }
+          break;
         case "displayMissingSpecials":
-          for (TvShow tvShow : tvShowList.getTvShows()) {
-            firePropertyChange(NODE_STRUCTURE_CHANGED, null, tvShow);
+          if (TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+            addDummySpecials();
+          }
+          else {
+            removeDummySpecials();
           }
           break;
       }
     });
+  }
+
+  /**
+   * add the dummy episodes to the tree is the setting has been activated
+   */
+  private void addDummyEpisodes() {
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      for (TvShowEpisode episode : tvShow.getEpisodesForDisplay()) {
+        if (episode.isDummy()) {
+          addTvShowEpisode(episode);
+        }
+      }
+    }
+  }
+
+  /**
+   * remove the dummy episodes from the tree is the setting has been deactivated
+   */
+  private void removeDummyEpisodes() {
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      for (TvShowEpisode episode : tvShow.getDummyEpisodes()) {
+        if (episode.isDummy()) {
+          removeTvShowEpisode(episode);
+        }
+      }
+      // last but not least remove all empty seasons
+      for (TvShowSeason season : tvShow.getSeasons()) {
+        if (season.isDummy()) {
+          removeTvShowSeason(season);
+        }
+      }
+    }
+  }
+
+  /**
+   * add the dummy specials to the tree is the setting has been activated
+   */
+  private void addDummySpecials() {
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      for (TvShowEpisode episode : tvShow.getEpisodesForDisplay()) {
+        if (episode.isDummy() && episode.getSeason() == 0) {
+          addTvShowEpisode(episode);
+        }
+      }
+    }
+  }
+
+  /**
+   * remove the dummy specials from the tree is the setting has been deactivated
+   */
+  private void removeDummySpecials() {
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      for (TvShowEpisode episode : tvShow.getDummyEpisodes()) {
+        if (episode.isDummy() && episode.getSeason() == 0) {
+          removeTvShowEpisode(episode);
+        }
+      }
+      // last but not least remove all empty seasons
+      for (TvShowSeason season : tvShow.getSeasons()) {
+        if (season.getSeason() == 0 && season.isDummy()) {
+          removeTvShowSeason(season);
+        }
+      }
+    }
   }
 
   /**
@@ -300,6 +374,18 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
     // remove the propertychangelistener from this episode
     episode.removePropertyChangeListener(episodePropertyChangeListener);
+
+    firePropertyChange(NODE_REMOVED, null, cachedNode);
+  }
+
+  private void removeTvShowSeason(TvShowSeason season) {
+    TmmTreeNode cachedNode = removeNodeFromCache(season);
+    if (cachedNode == null) {
+      return;
+    }
+
+    // remove the propertychangelistener from this episode
+    season.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
   }

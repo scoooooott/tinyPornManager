@@ -76,7 +76,6 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.entities.Rating;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -191,12 +190,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     Utils.removeEmptyStringsFromList(tags);
 
     // load dummy episodes
-    if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
-      for (TvShowEpisode episode : dummyEpisodes) {
-        if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
-          continue;
-        }
-        episode.setTvShow(this);
+    for (TvShowEpisode episode : dummyEpisodes) {
+      if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+        continue;
+      }
+      episode.setTvShow(this);
+      if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
         addToSeason(episode);
       }
     }
@@ -461,22 +460,31 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     this.dummyEpisodes.clear();
     this.dummyEpisodes.addAll(dummyEpisodes);
 
-    for (TvShowEpisode episode : dummyEpisodes) {
-      episode.setTvShow(this);
-      TvShowSeason season = getSeasonForEpisode(episode);
+    // also mix in the episodes if activated
+    if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+      for (TvShowEpisode episode : dummyEpisodes) {
+        episode.setTvShow(this);
 
-      // also fire the event there was no episode for that dummy yet
-      boolean found = false;
-      for (TvShowEpisode e : season.getEpisodesForDisplay()) {
-        if (e.getSeason() == episode.getSeason() && e.getEpisode() == episode.getEpisode()) {
-          found = true;
-          break;
+        if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+          continue;
         }
-      }
 
-      season.addEpisode(episode);
+        TvShowSeason season = getSeasonForEpisode(episode);
 
-      if (!found) {
+        // also fire the event there was no episode for that dummy yet
+        boolean found = false;
+        for (TvShowEpisode e : season.getEpisodesForDisplay()) {
+          if (e.getSeason() == episode.getSeason() && e.getEpisode() == episode.getEpisode()) {
+            found = true;
+            break;
+          }
+        }
+
+        if (found) {
+          continue;
+        }
+
+        season.addEpisode(episode);
         firePropertyChange(ADDED_EPISODE, null, episode);
       }
     }
@@ -540,6 +548,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     for (TvShowSeason season : seasons) {
       for (TvShowEpisode episode : season.getEpisodesForDisplay()) {
         if (episode.isDummy()) {
+          if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
+            continue;
+          }
           count++;
         }
       }
