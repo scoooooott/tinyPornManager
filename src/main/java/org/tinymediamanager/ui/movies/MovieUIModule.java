@@ -204,6 +204,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSyncSelectedTraktTvAction.class));
     JMenu kodiRPCMenu = KodiRPCMenu.KodiMenuRightClickMovies();
     popupMenu.add(kodiRPCMenu);
     popupMenu.addSeparator();
