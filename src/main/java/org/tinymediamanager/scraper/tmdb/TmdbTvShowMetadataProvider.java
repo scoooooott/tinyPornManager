@@ -58,6 +58,7 @@ import com.uwetrottmann.tmdb2.entities.CastMember;
 import com.uwetrottmann.tmdb2.entities.ContentRating;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.FindResults;
+import com.uwetrottmann.tmdb2.entities.Genre;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.entities.TvShow;
@@ -379,6 +380,11 @@ class TmdbTvShowMetadataProvider {
 
         }
       }
+    }
+
+    // Genres
+    for (Genre genre : ListUtils.nullSafe(complete.genres)) {
+      md.addGenre(TmdbMetadataProvider.getTmmGenre(genre));
     }
 
     // check if we need to rescrape in the fallback language
