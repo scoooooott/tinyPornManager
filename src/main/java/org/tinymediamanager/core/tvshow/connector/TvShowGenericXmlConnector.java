@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -412,6 +413,15 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       url.setAttribute("cache", "auth.json");
       url.setTextContent(
           "https://api.thetvdb.com/login?{\"apikey\":\"439DFEBA9D3059C6\",\"id\":" + tvShow.getTvdbId() + "}|Content-Type=application/json");
+      episodeguide.appendChild(url);
+      root.appendChild(episodeguide);
+    }
+    else if (StringUtils.isNotBlank(tvShow.getIdAsString(Constants.TMDB))) {
+      // http://api.themoviedb.org/3/tv/1396?api_key=6a5be4999abf74eba1f9a8311294c267&language=en
+      Element episodeguide = document.createElement("episodeguide");
+      Element url = document.createElement("url");
+      url.setTextContent("http://api.themoviedb.org/3/tv/" + tvShow.getIdAsString(Constants.TMDB)
+          + "?api_key=6a5be4999abf74eba1f9a8311294c267&language=" + TvShowModuleManager.SETTINGS.getScraperLanguage().getLanguage());
       episodeguide.appendChild(url);
       root.appendChild(episodeguide);
     }
