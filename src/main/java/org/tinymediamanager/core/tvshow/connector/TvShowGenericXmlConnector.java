@@ -410,8 +410,8 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       Element url = document.createElement("url");
       url.setAttribute("post", "yes");
       url.setAttribute("cache", "auth.json");
-      url.setTextContent("https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;439DFEBA9D3059C6&quot;,&quot;id&quot;:" + tvShow.getTvdbId()
-          + "}|Content-Type=application/json");
+      url.setTextContent(
+          "https://api.thetvdb.com/login?{\"apikey\":\"439DFEBA9D3059C6\",\"id\":" + tvShow.getTvdbId() + "}|Content-Type=application/json");
       episodeguide.appendChild(url);
       root.appendChild(episodeguide);
     }
