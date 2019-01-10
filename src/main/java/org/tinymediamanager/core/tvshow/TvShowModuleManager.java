@@ -153,6 +153,7 @@ public class TvShowModuleManager implements ITmmModule {
       for (TvShowEpisode ep : tvshow.getEpisodes()) {
         ObjectNode epNode = mapper.readValue(episodeMap.get(ep.getDbId()), ObjectNode.class);
         episodes.add(epNode);
+        // TODO: dump EP IDs !!!
       }
       node.set("episodes", episodes);
 
