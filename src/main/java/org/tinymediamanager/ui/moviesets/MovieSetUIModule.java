@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2018 Manuel Laggner
+ * Copyright 2012 - 2019 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,14 @@ import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
-import org.tinymediamanager.ui.moviesets.actions.*;
+import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetMissingArtworkAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetFilterDialog;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;

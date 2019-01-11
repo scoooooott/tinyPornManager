@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2018 Manuel Laggner
+ * Copyright 2012 - 2019 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.movie.tasks;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
@@ -35,11 +40,6 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.ui.UTF8Control;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * The Class MovieMissingArtworkDownloadTask. Used to find and download missing for the given movies
