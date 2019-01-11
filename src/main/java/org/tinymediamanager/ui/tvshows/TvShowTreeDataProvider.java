@@ -444,7 +444,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      */
     @Override
     public String toString() {
-      // return movieSet name
+      // return TV show name
       if (getUserObject() instanceof TvShow) {
         TvShow tvShow = (TvShow) getUserObject();
         return tvShow.getTitle();

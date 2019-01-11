@@ -35,6 +35,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.AbstractLayoutCache;
 import javax.swing.tree.TreePath;
 
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+
 /**
  * An TreeTable aware TableCellRenderer which knows how to paint expansion handles and indent child nodes an appropriate amount.
  *
@@ -172,8 +174,14 @@ public class TmmTreeTableCellRenderer extends DefaultTableCellRenderer {
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     setForeground(null);
     setBackground(null);
+    setToolTipText(null);
     setLabelTextGap(0);
     super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+    // put the node text to the tooltip too
+    if (value instanceof TmmTreeNode) {
+      setToolTipText(value.toString());
+    }
 
     TmmTreeTable tbl = (TmmTreeTable) table;
     if (tbl.isTreeColumnIndex(column)) {

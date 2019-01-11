@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Component;
 
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableColumn;
@@ -55,7 +56,12 @@ public class MovieBorderTableCellRenderer extends BorderTableCellRenderer {
         setIcon(null);
       }
 
-      return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+      // also set a tooltip text here
+      Component comp = super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+      if (comp instanceof JLabel) {
+        ((JLabel) comp).setToolTipText(text);
+      }
+      return comp;
     }
     return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
   }
