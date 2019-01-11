@@ -317,6 +317,15 @@ public class KodiRPC {
     }
     if (kodiID != null) {
 
+      List<MediaFile> nfo = entity.getMediaFiles(MediaFileType.NFO);
+      if (!nfo.isEmpty()) {
+        LOGGER.info("Refreshing from NFO: {}", nfo.get(0).getFileAsPath());
+      }
+      else {
+        LOGGER.error("No NFO file found to refresh! {}", entity.getTitle());
+        // we do NOT return here, maybe Kodi will do something even w/o nfo...
+      }
+
       if (entity instanceof Movie) {
         final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
         send(call);
