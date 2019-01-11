@@ -322,7 +322,7 @@ public class KodiRPC {
         send(call);
       }
       else if (entity instanceof TvShow) {
-        final VideoLibrary.RefreshTVShow call = new VideoLibrary.RefreshTVShow(kodiID, false); // always refresh from NFO
+        final VideoLibrary.RefreshTVShow call = new VideoLibrary.RefreshTVShow(kodiID, false, true); // always refresh from NFO, recursive
         send(call);
       }
       else if (entity instanceof TvShowEpisode) {

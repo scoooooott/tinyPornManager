@@ -16,12 +16,18 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -47,20 +53,49 @@ public class TvShowKodiRefreshNfoAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
+
     if (selectedObjects.isEmpty()) {
       JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
       return;
     }
 
+    List<TvShowEpisode> eps = new ArrayList<>();
+    Set<TvShow> shows = new HashSet<>();
+
+    // if we specify show, we want it recursive for all episodes
+    // so remove all single episode calls to not sent them twice...
     for (Object obj : selectedObjects) {
+      if (obj instanceof TvShow) {
+        TvShow show = (TvShow) obj;
+        shows.add(show);
+      }
+      if (obj instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) obj;
+        eps.add(episode);
+      }
+      if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        eps.addAll(season.getEpisodes());
+      }
+    }
+
+    // remove all EPs, where we already have the show
+    for (int i = eps.size() - 1; i >= 0; i--) {
+      TvShowEpisode ep = eps.get(i);
+      if (shows.contains(ep.getTvShow())) {
+        eps.remove(i);
+      }
+    }
+
+    // update show + all EPs
+    for (Object obj : shows) {
       MediaEntity me = (MediaEntity) obj;
       KodiRPC.getInstance().refreshFromNfo(me);
-
-      // TODO: shall we update all sub entities, when selecting show/season?
-      // if (obj instanceof TvShow) {
-      // }
-      // else if (obj instanceof TvShowSeason) {
-      // }
+    }
+    // update single EP only
+    for (Object obj : eps) {
+      MediaEntity me = (MediaEntity) obj;
+      KodiRPC.getInstance().refreshFromNfo(me);
     }
 
   }
