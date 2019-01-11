@@ -34,7 +34,7 @@
     <fileVersion>3.0.0.0</fileVersion>
     <txtFileVersion>text</txtFileVersion>
     <fileDescription>tinyMediaManager is a media management tool written in Java/Swing. It is written to provide metadata for Kodi (XBMC).</fileDescription>
-    <copyright>(c) 2012-2018 Manuel Laggner</copyright>
+    <copyright>(c) 2012-2019 Manuel Laggner</copyright>
     <productVersion>3.0.0.0</productVersion>
     <txtProductVersion>text</txtProductVersion>
     <productName>tinyMediaManager</productName>
