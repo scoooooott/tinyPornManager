@@ -1,86 +1,16 @@
+Version 3.0 - RC1
+=======================
 
-[2018-12-28]
- * chore: activated gitlab-ci
- * fix: support for multiple <country> tags in the NFO
-
-[2018-12-26]
- * fix: check if java.awt.Desktop supports BROWSE
-
-[2018-12-25]
- * feature: added votes column
- * fix: do not drop season/episode count from TV show nfo
- * fix: episodeguide - also fall back to the value from the parser
- * fix: add episodeguide with Kodi API key
- * fix: storing of IDs in the new format for TV shows
-
-[2018-12-24]
- * fix: layouting of filter dialogs & tooltip on checkbombobox
- * fix: changed wiki url to GitLab
- * fix: changed bug report action to GitLab
- * fix: unit tests on java9+
- * fix: also write <certification> tag for TV show NFOs
-
-[2018-12-14]
- * UPNP / DLNA merge from devel
-
-[2018-12-06]
- * TV nfo: fix duplicate IMDB ids
- * internal: naming
- * Debug: dump entities better
- * UDS: better creation of movie objects
- * MovieSet: fix creation from VSMETA
- * MovieSet: fix persist
-
-[2018-12-03]
- * fixup template description
- * Trakt.tv: fix updating NFO on no changes
- * Allow moving of symlinks
- * fix parsing of some unknown locales (error in commons)
-
-[2018-12-02]
- * feature: major rework of the settings UI
-
-[2018-11-29]
- * fix: loading of media logos
-
-[2018-11-27]
- * fix: do not drop episodeguide from existing tv show NFOs
-
-[2018-11-24]
- * fix: better sizing of the settings dialog
- * compilation error with JDK11 (#422)
- * feature: make colon replacement configurable
-
-[2018-11-17]
- * feature: added episode tokens to season folder renamer patterns
- * fix: several fixes for subtitle scraping
- * fix: adopted templates to new rating system
-
-[2018-11-10]
- * fix: changed templates back to jar package
- * feature: added theme dependent media icons
-
-[2018-11-09]
- * chore: extracted templates for better change tracking in git
-
-[2018-11-08]
- * fix: enhanced display of runtime (movies & TV shows)
-
-[2018-11-07]
- * feature: added a new renderer for the renamer (first non letter -> #)
-
-[2018-11-06]
- * episode detection: able to detect 3 numbered EPxxx in favor of some uncommon multi episode style.
- * TV show parser; merge from devel
-
-[2018-11-02]
- * feature: resume broken trailer download
- * fix: better layout of the status bar
- * fix: respect set scraping options for episodes too
-
-[2018-11-01]
- * missing cast for J9/10/11
- * fix: new logo for the mac app
-
-[2018-10-31]
- * fix: also use extrafanart in the TV show chooser
++ completely rewritten UI (thx to @joostzilla)
+  - new style and layout (better usage of the available space - especially for low screen devices)
+  - flexible and configurable tables
+  - improved filters (inclusive and exclusive filters)
+  - better UI scaling on high dpi screens
++ added a dark theme
++ completely rewritten the renamer engine
++ completely rewritten NFO parsing and writing (much more flexible now)
++ easier translation via weblate.org now (https://hosted.weblate.org/projects/tinymediamanager/)
++ increased required Java version to Java 8+
++ ability to mix in missing episodes
++ presets in settings for common media centers
++ many enhancements under the hood
