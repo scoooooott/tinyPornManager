@@ -98,6 +98,7 @@ import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -1147,6 +1148,59 @@ public class Movie extends MediaEntity implements IMediaInformation {
         break;
     }
     // LOGGER.trace("getNfoFilename: '" + newMovieFilename + "' / " + nfo + " -> '" + filename + "'");
+    return filename;
+  }
+
+  /**
+   * all supported TRAILER names. (without path!)
+   * 
+   * @param trailer
+   *          trailer naming enum
+   * @return the associated trailer filename
+   */
+  public String getTrailerFilename(MovieTrailerNaming trailer) {
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      String name = mfs.get(0).getFilename();
+      if (isStacked()) {
+        // when movie IS stacked, remove stacking marker, else keep it!
+        name = Utils.cleanStackingMarkers(name);
+      }
+      return getTrailerFilename(trailer, name);
+    }
+    else {
+      return getTrailerFilename(trailer, ""); // no video files
+    }
+  }
+
+  /**
+   * all supported TRAILE names. (without path!)
+   * 
+   * @param trailer
+   *          trailer naming enum
+   * @param newMovieFilename
+   *          the new/desired movie filename (stacking marker should already be set correct here!)
+   * @return the associated trailer filename <b>(WITHOUT EXTENSION!!!!)</b>
+   */
+  public String getTrailerFilename(MovieTrailerNaming trailer, String newMovieFilename) {
+    String filename = "";
+    switch (trailer) {
+      case FILENAME_TRAILER:
+        if (isDisc()) {
+          filename += "movie-trailer"; // TODO: assume, or same naming as NFO?
+        }
+        else {
+          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
+          filename = movieFilename + "-trailer";
+        }
+        break;
+      case MOVIE_TRAILER:
+        filename += "movie-trailer";
+        break;
+      default:
+        filename = "";
+        break;
+    }
     return filename;
   }
 

@@ -63,6 +63,7 @@ import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -791,10 +792,28 @@ public class MovieRenamer {
         break;
 
       case TRAILER:
-        MediaFile trail = new MediaFile(mf);
-        newFilename += "-trailer." + mf.getExtension();
-        trail.setFile(newMovieDir.resolve(newFilename));
-        newFiles.add(trail);
+        if (MovieModuleManager.SETTINGS.getTrailerFilenames().isEmpty()) {
+          // we do not want trailers to be renamed? so they will be removed....
+          break;
+        }
+
+        List<MovieTrailerNaming> trailernames = new ArrayList<>();
+        if (newDestIsMultiMovieDir) {
+          // Fixate the name regardless of setting
+          trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+        }
+        else {
+          trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
+        }
+        for (MovieTrailerNaming name : trailernames) {
+          String newTrailerName = movie.getTrailerFilename(name, newFilename + ".avi"); // basename used, so add fake extension
+          if (newTrailerName.isEmpty()) {
+            continue;
+          }
+          MediaFile trail = new MediaFile(mf);
+          trail.setFile(newMovieDir.resolve(newTrailerName + "." + mf.getExtension())); // get w/o extension to add same
+          newFiles.add(trail);
+        }
         break;
 
       case SAMPLE:
@@ -862,6 +881,11 @@ public class MovieRenamer {
         break;
 
       case NFO:
+        if (MovieModuleManager.SETTINGS.getNfoFilenames().isEmpty()) {
+          // we do not want NFO to be renamed? so they will be removed....
+          break;
+        }
+
         if (MovieConnectors.isValidNFO(mf.getFileAsPath())) {
           List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
@@ -872,7 +896,7 @@ public class MovieRenamer {
             nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();
           }
           for (MovieNfoNaming name : nfonames) {
-            String newNfoName = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
+            String newNfoName = movie.getNfoFilename(name, newFilename + ".avi"); // basename used, so add fake extension
             if (newNfoName.isEmpty()) {
               continue;
             }
