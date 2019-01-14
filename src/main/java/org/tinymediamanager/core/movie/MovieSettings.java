@@ -348,7 +348,7 @@ public class MovieSettings extends AbstractSettings {
 
   public void clearTrailerFilenames() {
     trailerFilenames.clear();
-    firePropertyChange(NFO_FILENAME, null, trailerFilenames);
+    firePropertyChange(TRAILER_FILENAME, null, trailerFilenames);
   }
 
   public List<MovieTrailerNaming> getTrailerFilenames() {
