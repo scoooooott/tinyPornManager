@@ -79,7 +79,7 @@ public class MovieSettings extends AbstractSettings {
   private final static String              LOGO_FILENAME                       = "logoFilename";
   private final static String              CLEARLOGO_FILENAME                  = "clearlogoFilename";
   private final static String              DISCART_FILENAME                    = "discartFilename";
-  private final static String              TRAILER_FILENAME                    = "nfoFilename";
+  private final static String              TRAILER_FILENAME                    = "trailerFilename";
   private final static String              ARTWORK_SCRAPERS                    = "artworkScrapers";
   private final static String              TRAILER_SCRAPERS                    = "trailerScrapers";
   private final static String              SUBTITLE_SCRAPERS                   = "subtitleScrapers";
