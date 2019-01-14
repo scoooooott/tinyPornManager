@@ -27,9 +27,9 @@ Please provide your pull requests against our **devel** branch.
 ### How to build tinyMediaManager yourself
 tinyMediaManager is being built with maven, so you need to have maven (and git of course) installed.
 
-1. get tinyMediaManager from GitHub
+1. get tinyMediaManager from GitLab
 
-   `$ git clone https://github.com/tinyMediaManager/tinyMediaManager.git`
+   `$ git clone https://gitlab.com/tinyMediaManager/tinyMediaManager.git`
 
 2. build tinyMediaManager using maven
 
