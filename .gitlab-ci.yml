@@ -56,13 +56,6 @@ test:jdk12:
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
   allow_failure: true
 
-test:integration:
-  stage: test
-  only:
-    - master
-  script:
-    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=false -Dmaven.test.failure.ignore=false test
-
 deploy:nightly:
   stage: deploy
   image: maven:3-jdk-8                                # stay with stretch
@@ -92,8 +85,7 @@ deploy:prerel:
   image: maven:3-jdk-8  # stay with stretch
   only:
     - master@tinyMediaManager/tinyMediaManager
-  except:
-    - pushes                                          # do not run packaging on push-builds
+  when: manual
   script:
     # update package sources and install ant + 32 bit libs
     - dpkg --add-architecture i386 && apt-get update && apt-get install -y --no-install-recommends ant libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 lftp curl

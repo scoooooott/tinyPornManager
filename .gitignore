@@ -46,4 +46,5 @@ tvshows.db
 /config/
 /data/
 /tmp/
+/templates/*.jar
 
