@@ -94,7 +94,7 @@ deploy:prerel:
     # push the build to the webserver
     - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
     # and publish the files on the webserver
-    - curl http://prerelase.tinymediamanager.org/bin/publish_build_v3.php
+    - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
   artifacts:
     paths:
       - build/
