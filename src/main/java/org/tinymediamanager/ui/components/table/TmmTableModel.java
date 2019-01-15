@@ -31,7 +31,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 public class TmmTableModel<E> extends DefaultEventTableModel {
   private TmmTableFormat<? super E> tmmTableFormat;
 
-  public TmmTableModel(EventList source, TmmTableFormat<? super E> tableFormat) {
+  public TmmTableModel(EventList<? super E> source, TmmTableFormat<? super E> tableFormat) {
     super(source, tableFormat);
     tmmTableFormat = tableFormat;
   }
@@ -66,5 +66,19 @@ public class TmmTableModel<E> extends DefaultEventTableModel {
     if (tmmTableFormat.getMaxWidth(columnIndex) > 0) {
       column.setMaxWidth(tmmTableFormat.getMaxWidth(columnIndex));
     }
+  }
+
+  public String getTooltipAt(int row, int column) {
+    this.source.getReadWriteLock().readLock().lock();
+
+    String tooltip = null;
+    try {
+      tooltip = tmmTableFormat.getColumnTooltip((E) this.source.get(row), column);
+    }
+    finally {
+      this.source.getReadWriteLock().readLock().unlock();
+    }
+
+    return tooltip;
   }
 }

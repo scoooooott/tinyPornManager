@@ -58,6 +58,15 @@ class ConnectorTableModel extends AbstractTableModel {
     return tableFormat.getColumnValue(node, columnIndex);
   }
 
+  public String getTooltipAt(int rowIndex, int columnIndex) {
+    Object node = getNodeForRow(rowIndex);
+    if (node == null) {
+      assert false : "Some node should exist on row " + rowIndex + " and on column " + columnIndex + ", but was null.";
+      return null;
+    }
+    return tableFormat.getColumnTooltip(node, columnIndex);
+  }
+
   @Override
   public String getColumnName(int column) {
     return tableFormat.getColumnName(column);

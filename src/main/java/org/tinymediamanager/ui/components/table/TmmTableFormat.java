@@ -73,6 +73,13 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return columns.get(i).columnValue.apply(e);
   }
 
+  public String getColumnTooltip(E e, int i) {
+    if (columns.get(i).columnTooltip != null) {
+      return columns.get(i).columnTooltip.apply(e);
+    }
+    return null;
+  }
+
   public String getColumnIdentifier(int i) {
     return columns.get(i).columnIdentifier;
   }
@@ -98,16 +105,17 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
   }
 
   protected class Column {
-    private String            columnTitle;
-    private String            columnIdentifier;
-    private Function<E, ?>    columnValue;
-    private Class             columnClass;
-    private Comparator<?>     columnComparator = null;
-    private TableCellRenderer cellRenderer     = null;
-    private ImageIcon         headerIcon       = null;
-    private boolean           columnResizeable = true;
-    private int               minWidth         = 0;
-    private int               maxWidth         = 0;
+    private String              columnTitle;
+    private String              columnIdentifier;
+    private Function<E, ?>      columnValue;
+    private Function<E, String> columnTooltip    = null;
+    private Class               columnClass;
+    private Comparator<?>       columnComparator = null;
+    private TableCellRenderer   cellRenderer     = null;
+    private ImageIcon           headerIcon       = null;
+    private boolean             columnResizeable = true;
+    private int                 minWidth         = 0;
+    private int                 maxWidth         = 0;
 
     public Column(String title, String identifier, Function<E, ?> value, Class clazz) {
       columnTitle = title;
@@ -139,6 +147,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
 
     public void setMaxWidth(int maxWidth) {
       this.maxWidth = maxWidth;
+    }
+
+    public void setColumnTooltip(Function<E, String> tooltip) {
+      this.columnTooltip = tooltip;
     }
   }
 

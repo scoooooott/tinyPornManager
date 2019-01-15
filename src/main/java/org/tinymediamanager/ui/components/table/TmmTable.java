@@ -22,6 +22,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -366,5 +367,26 @@ public class TmmTable extends JTable {
 
       return this;
     }
+  }
+
+  /**
+   * provide table cell tooltips via our table model
+   * 
+   * @param e
+   *          the mouse event
+   * @return the tooltip or null
+   */
+  public String getToolTipText(MouseEvent e) {
+    if (!(getModel() instanceof TmmTableModel)) {
+      return super.getToolTipText(e);
+    }
+
+    TmmTableModel tableModel = ((TmmTableModel) getModel());
+    Point p = e.getPoint();
+    int rowIndex = rowAtPoint(p);
+    int colIndex = columnAtPoint(p);
+    int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+    return tableModel.getTooltipAt(rowIndex, realColumnIndex);
   }
 }

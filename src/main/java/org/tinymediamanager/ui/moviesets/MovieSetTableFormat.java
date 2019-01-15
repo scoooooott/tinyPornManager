@@ -112,7 +112,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
         return String.valueOf(size);
       }
     }
-    return "";
+    return null;
   }
 
   private String getRating(TmmTreeNode node) {
@@ -123,7 +123,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
         return String.valueOf(rating.getRating());
       }
     }
-    return "";
+    return null;
   }
 
   private String getFormat(TmmTreeNode node) {
@@ -131,7 +131,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
     if (userObject instanceof Movie) {
       return ((Movie) userObject).getMediaInfoVideoFormat();
     }
-    return "";
+    return null;
   }
 
   private String getFileSize(TmmTreeNode node) {
@@ -144,7 +144,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
 
       return (int) (size / (1024.0 * 1024.0)) + " M";
     }
-    return "";
+    return null;
   }
 
   private ImageIcon hasNfo(TmmTreeNode node) {

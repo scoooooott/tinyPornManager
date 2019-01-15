@@ -19,6 +19,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
@@ -521,6 +522,38 @@ public class TmmTreeTable extends TmmTable {
    * to be overridden to provide storing of filters
    */
   public void storeFilters() {
+  }
+
+  /**
+   * provide table cell tooltips via our table model
+   *
+   * @param e
+   *          the mouse event
+   * @return the tooltip or null
+   */
+  public String getToolTipText(MouseEvent e) {
+    if (!(getModel() instanceof TmmTreeTableModel)) {
+      return null;
+    }
+
+    Point p = e.getPoint();
+    int rowIndex = rowAtPoint(p);
+    int colIndex = columnAtPoint(p);
+    int realColumnIndex = convertColumnIndexToModel(colIndex) - 1; // first column is the tree
+
+    if (colIndex == 0) {
+      // tree
+      return super.getToolTipText(e);
+    }
+    else if (colIndex > 0) {
+      // table
+      TmmTreeTableModel treeTableModel = ((TmmTreeTableModel) getModel());
+      ConnectorTableModel tableModel = treeTableModel.getTableModel();
+
+      return tableModel.getTooltipAt(rowIndex, realColumnIndex);
+    }
+
+    return null;
   }
 
   private static class TreeCellEditorBorder implements Border {
