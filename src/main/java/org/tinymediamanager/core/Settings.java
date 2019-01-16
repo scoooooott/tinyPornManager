@@ -181,6 +181,7 @@ public class Settings extends AbstractSettings {
     addVideoFileType(".vob");
     addVideoFileType(".vp3");
     addVideoFileType(".wmv");
+    addVideoFileType(".webm");
     addVideoFileType(".xvid");
     Collections.sort(videoFileTypes);
 
