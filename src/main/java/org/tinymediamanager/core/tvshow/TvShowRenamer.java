@@ -773,13 +773,6 @@ public class TvShowRenamer {
     Path seasonFolder = tvShow.getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = tvShow.getPathNIO().resolve(seasonFoldername);
-      if (!Files.exists(seasonFolder)) {
-        try {
-          Files.createDirectory(seasonFolder);
-        }
-        catch (IOException ignored) {
-        }
-      }
     }
 
     // no new filename? just move the file
