@@ -75,6 +75,10 @@ public class TmmTableModel<E> extends DefaultEventTableModel {
     try {
       tooltip = tmmTableFormat.getColumnTooltip((E) this.source.get(row), column);
     }
+    catch (Exception e) {
+      // IOOB when -1; dunno how i managed this
+      return "";
+    }
     finally {
       this.source.getReadWriteLock().readLock().unlock();
     }
