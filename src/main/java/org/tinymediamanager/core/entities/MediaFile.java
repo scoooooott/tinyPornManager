@@ -373,6 +373,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private MediaFileType parseImageType() {
     String name = getFilename();
+    // String ext = getExtension().toLowerCase(Locale.ROOT);
+    // String basename = FilenameUtils.getBaseName(getFilename());
+    String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     // movieset artwork
     Matcher matcher = moviesetPattern.matcher(name);
@@ -453,6 +456,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     matcher = discartPattern.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.DISC;
+    }
+
+    // folder style as last chance
+    if (foldername.equalsIgnoreCase("extrafanarts") || foldername.equalsIgnoreCase("extrafanart")) {
+      return MediaFileType.EXTRAFANART;
+    }
+    if (foldername.equalsIgnoreCase("extrathumbs") || foldername.equalsIgnoreCase("extrathumb")) {
+      return MediaFileType.EXTRATHUMB;
     }
 
     return MediaFileType.GRAPHIC;
