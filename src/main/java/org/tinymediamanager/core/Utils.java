@@ -47,6 +47,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.CodeSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -938,13 +939,15 @@ public class Utils {
 
     // backup
     try {
+      Instant instant = Instant.now();
+      long timeStampSeconds = instant.getEpochSecond();
       // create path
-      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(folder).toString());
+      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(folder).toString() + timeStampSeconds);
       if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
-      deleteDirectoryRecursive(backup);
+      // deleteDirectoryRecursive(backup); // we timestamped our folder - no need for it
       return moveDirectorySafe(folder, backup);
     }
     catch (IOException e) {
