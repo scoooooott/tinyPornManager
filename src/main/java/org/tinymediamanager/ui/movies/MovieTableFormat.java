@@ -32,8 +32,8 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieComparator;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -111,13 +111,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * movie set (hidden per default)
      */
-    Function<Movie, String> movieSetFunction = movie -> {
-      MovieSet set = movie.getMovieSet();
-      if (set != null) {
-        return set.getTitle();
-      }
-      return null;
-    };
+    Function<Movie, String> movieSetFunction = movie -> movie.getMovieSet() == null ? null : movie.getMovieSet().getTitle();
     col = new Column(BUNDLE.getString("metatag.movieset"), "movieset", movieSetFunction, String.class);
     col.setColumnComparator(stringComparator);
     col.setColumnResizeable(true);
@@ -211,6 +205,25 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
+    addColumn(col);
+
+    /*
+     * Edition (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.edition"), "edition", Movie::getEdition, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.EDITION);
+    col.setColumnTooltip(movie -> movie.getEdition() == null || movie.getEdition() == MovieEdition.NONE ? null : movie.getEdition().toString());
+    addColumn(col);
+
+    /*
+     * Source (hidden per default)
+     */
+    Function<Movie, String> mediaSourceFunction = movie -> movie.getMediaSource() == null ? null : movie.getMediaSource().toString();
+    col = new Column(BUNDLE.getString("metatag.source"), "mediaSource", mediaSourceFunction, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.SOURCE);
+    col.setColumnTooltip(mediaSourceFunction);
     addColumn(col);
 
     /*

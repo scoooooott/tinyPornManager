@@ -131,6 +131,7 @@ public class IconManager {
   public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
+  public final static ImageIcon            EDITION                     = createFontAwesomeIcon('\uF51F', 16);
   public final static ImageIcon            EDIT_HEADER                 = createFontAwesomeIcon('\uF044', 16);
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
   public final static ImageIcon            FILE_SIZE                   = createFontAwesomeIcon('\uF0C7', 16);
@@ -139,6 +140,7 @@ public class IconManager {
   public final static ImageIcon            NFO                         = createFontAwesomeIcon('\uF15C', 16);
   public final static ImageIcon            RATING                      = createFontAwesomeIcon('\uF005', 16);
   public final static ImageIcon            SEASONS                     = createTextIcon("S", 18);
+  public final static ImageIcon            SOURCE                      = createFontAwesomeIcon('\uF601', 16);
   public final static ImageIcon            SUBTITLES                   = createFontAwesomeIcon('\uF086', 16);
   public final static ImageIcon            TRAILER                     = createFontAwesomeIcon('\uF008', 16);
   public final static ImageIcon            VIDEO_3D                    = createFontAwesomeIcon('\uF1B2', 16);
