@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.panels.tvshow;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -38,7 +39,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.RuntimeConverter;
-import org.tinymediamanager.ui.converter.ZeroIdConverter;
+import org.tinymediamanager.ui.tvshows.TvShowOtherIdsConverter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
@@ -67,7 +68,7 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblStatus;
   private JLabel                      lblYear;
   private JLabel                      lblTags;
-  private LinkLabel                   lblTraktTvId;
+  private JLabel                      lblOtherIds;
   private JLabel                      lblCountryT;
   private JLabel                      lblCountry;
   private JLabel                      lblRuntime;
@@ -108,17 +109,6 @@ public class TvShowDetailsPanel extends JPanel {
       }
     });
 
-    lblTraktTvId.addActionListener(arg0 -> {
-      String url = "https://trakt.tv/shows/" + lblTraktTvId.getText();
-      try {
-        TmmUIHelper.browseUrl(url);
-      }
-      catch (Exception e) {
-        LOGGER.error("browse to traktid", e);
-        MessageManager.instance
-            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-      }
-    });
     lblPath.addActionListener(arg0 -> {
       if (StringUtils.isNotBlank(lblPath.getText())) {
         // get the location from the label
@@ -190,11 +180,11 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblRuntime, "cell 1 3");
     }
     {
-      JLabel lblTrakttvIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
-      add(lblTrakttvIdT, "cell 2 3");
+      JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids")); //$NON-NLS-1$
+      add(lblOtherIdsT, "cell 2 3");
 
-      lblTraktTvId = new LinkLabel("");
-      add(lblTraktTvId, "cell 3 3");
+      lblOtherIds = new JLabel("");
+      add(lblOtherIds, "cell 3 3, wmin 0");
     }
     JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
     add(lblStudioT, "cell 0 4");
@@ -285,13 +275,6 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_9, lblTags, jLabelBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_10 = BeanProperty.create("selectedTvShow.traktId");
-    BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowSelectionModel, Integer, LinkLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_10, lblTraktTvId, linkLabelBeanProperty);
-    autoBinding_10.setConverter(new ZeroIdConverter());
-    autoBinding_10.bind();
-    //
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_11 = BeanProperty.create("selectedTvShow.country");
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_11, lblCountry, jLabelBeanProperty);
@@ -302,5 +285,11 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_12, lblRuntime, jLabelBeanProperty);
     autoBinding_12.setConverter(new RuntimeConverter());
     autoBinding_12.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Map<String, Object>> tvShowSelectionModelBeanProperty_10 = BeanProperty.create("selectedTvShow.ids");
+    AutoBinding<TvShowSelectionModel, Map<String, Object>, JLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        selectionModel, tvShowSelectionModelBeanProperty_10, lblOtherIds, jLabelBeanProperty);
+    autoBinding_10.setConverter(new TvShowOtherIdsConverter());
+    autoBinding_10.bind();
   }
 }

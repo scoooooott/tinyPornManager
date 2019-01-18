@@ -6,6 +6,7 @@ import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -42,6 +43,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.RuntimeConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
+import org.tinymediamanager.ui.movies.MovieOtherIdsConverter;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 
@@ -95,7 +97,7 @@ public class MovieInformationPanel extends JPanel {
   private ImageLabel                  lblMovieFanart;
   private JLabel                      lblFanartSize;
   private JLabel                      lblCertification;
-  private LinkLabel                   lblTraktId;
+  private JLabel                      lblOtherIds;
 
   private MediaInformationLogosPanel  panelLogos;
   private JLabel                      lblOriginalTitle;
@@ -121,6 +123,31 @@ public class MovieInformationPanel extends JPanel {
 
     // beansbinding init
     initDataBindings();
+
+    // action listeners
+    lblTmdbid.addActionListener(arg0 -> {
+      String url = "http://www.themoviedb.org/movie/" + lblTmdbid.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to tmdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
+
+    lblImdbid.addActionListener(arg0 -> {
+      String url = "http://www.imdb.com/title/" + lblImdbid.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
 
     // manual coded binding
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
@@ -248,17 +275,6 @@ public class MovieInformationPanel extends JPanel {
           panelTopDetails.add(lblImdbIdT, "cell 2 0");
 
           lblImdbid = new LinkLabel("");
-          lblImdbid.addActionListener(arg0 -> {
-            String url = "http://www.imdb.com/title/" + lblImdbid.getText();
-            try {
-              TmmUIHelper.browseUrl(url);
-            }
-            catch (Exception e) {
-              LOGGER.error("browse to imdbid", e);
-              MessageManager.instance
-                  .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-            }
-          });
           panelTopDetails.add(lblImdbid, "cell 3 0");
         }
 
@@ -275,17 +291,6 @@ public class MovieInformationPanel extends JPanel {
           panelTopDetails.add(lblTmdbIdT, "cell 2 1");
 
           lblTmdbid = new LinkLabel("");
-          lblTmdbid.addActionListener(arg0 -> {
-            String url = "http://www.themoviedb.org/movie/" + lblTmdbid.getText();
-            try {
-              TmmUIHelper.browseUrl(url);
-            }
-            catch (Exception e) {
-              LOGGER.error("browse to tmdbid", e);
-              MessageManager.instance
-                  .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-            }
-          });
           panelTopDetails.add(lblTmdbid, "cell 3 1");
         }
 
@@ -298,22 +303,11 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblTraktIdT = new TmmLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
-          panelTopDetails.add(lblTraktIdT, "cell 2 2");
+          JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids")); //$NON-NLS-1$
+          panelTopDetails.add(lblOtherIdsT, "cell 2 2");
 
-          lblTraktId = new LinkLabel("");
-          lblTraktId.addActionListener(arg0 -> {
-            String url = "https://trakt.tv/movies/" + lblTraktId.getText();
-            try {
-              TmmUIHelper.browseUrl(url);
-            }
-            catch (Exception e) {
-              LOGGER.error("browse to traktid", e);
-              MessageManager.instance
-                  .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-            }
-          });
-          panelTopDetails.add(lblTraktId, "cell 3 2");
+          lblOtherIds = new JLabel("");
+          panelTopDetails.add(lblOtherIds, "cell 3 2, wmin 0");
         }
 
         {
@@ -485,15 +479,15 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty, lblCertification, jLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_5 = BeanProperty.create("selectedMovie.traktId");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_5, lblTraktId, jLabelBeanProperty);
-    autoBinding_6.setConverter(new ZeroIdConverter());
-    autoBinding_6.bind();
-    //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalTitle");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_6, lblOriginalTitle, jLabelBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<MovieSelectionModel, Map<String, Object>> movieSelectionModelBeanProperty_5 = BeanProperty.create("selectedMovie.ids");
+    AutoBinding<MovieSelectionModel, Map<String, Object>, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_5, lblOtherIds, jLabelBeanProperty);
+    autoBinding_6.setConverter(new MovieOtherIdsConverter());
+    autoBinding_6.bind();
   }
 }
