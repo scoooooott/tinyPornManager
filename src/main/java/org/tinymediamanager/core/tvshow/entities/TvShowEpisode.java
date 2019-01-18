@@ -769,7 +769,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    return StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB));
+    return StringUtils.isNotBlank(getArtworkFilename(MediaFileType.THUMB));
   }
 
   /**

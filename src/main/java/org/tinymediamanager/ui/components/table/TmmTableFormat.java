@@ -156,9 +156,9 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
 
   protected ImageIcon getCheckIcon(boolean bool) {
     if (bool) {
-      return IconManager.DOT_AVAILABLE;
+      return IconManager.TABLE_OK;
     }
-    return IconManager.DOT_UNAVAILABLE;
+    return IconManager.TABLE_NOT_OK;
   }
 
   public class StringComparator implements Comparator<String> {
@@ -213,7 +213,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       if (arg0 == arg1) {
         return 0;
       }
-      if (arg0 == IconManager.DOT_AVAILABLE) {
+      if (arg0 == IconManager.TABLE_OK) {
         return 1;
       }
       return -1;

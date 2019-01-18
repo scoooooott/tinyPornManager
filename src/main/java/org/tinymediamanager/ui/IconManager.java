@@ -65,8 +65,6 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_TOOLS_HOVER         = loadImage("icn_tools_hover.png");
 
   // packaged icons
-  public final static ImageIcon            DOT_AVAILABLE               = createFontAwesomeIcon('\uF00C', new Color(31, 187, 0));
-  public final static ImageIcon            DOT_UNAVAILABLE             = createFontAwesomeIcon('\uF00D', new Color(204, 2, 2));
   public final static ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
@@ -89,6 +87,11 @@ public class IconManager {
   public final static ImageIcon            SEARCH                      = createFontAwesomeIcon('\uF002', ICON_COLOR);
   public final static ImageIcon            SUBTITLE                    = createFontAwesomeIcon('\uF086', ICON_COLOR);
   public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
+
+  // font awesome icons for the table/tree
+  public final static ImageIcon            TABLE_OK                    = createFontAwesomeIcon('\uF00C', new Color(31, 187, 0));
+  public final static ImageIcon            TABLE_PROBLEM               = createFontAwesomeIcon('\uF071', new Color(204, 120, 50));
+  public final static ImageIcon            TABLE_NOT_OK                = createFontAwesomeIcon('\uF00D', new Color(204, 2, 2));
 
   // font awesome icons normal
   public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF057');

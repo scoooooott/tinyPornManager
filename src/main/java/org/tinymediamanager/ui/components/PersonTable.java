@@ -110,9 +110,9 @@ public class PersonTable extends TmmTable {
        */
       col = new Column(BUNDLE.getString("image.url"), "imageUrl", person -> {
         if (StringUtils.isNotBlank(person.getThumbUrl())) {
-          return IconManager.DOT_AVAILABLE;
+          return IconManager.TABLE_OK;
         }
-        return IconManager.DOT_UNAVAILABLE;
+        return IconManager.TABLE_NOT_OK;
       }, ImageIcon.class);
       col.setColumnResizeable(false);
       col.setHeaderIcon(IconManager.IMAGES);
@@ -123,9 +123,9 @@ public class PersonTable extends TmmTable {
        */
       col = new Column(BUNDLE.getString("profile.url"), "profileUrl", person -> {
         if (StringUtils.isNotBlank(person.getProfileUrl())) {
-          return IconManager.DOT_AVAILABLE;
+          return IconManager.TABLE_OK;
         }
-        return IconManager.DOT_UNAVAILABLE;
+        return IconManager.TABLE_NOT_OK;
       }, ImageIcon.class);
       col.setColumnResizeable(false);
       col.setHeaderIcon(IconManager.IDCARD);

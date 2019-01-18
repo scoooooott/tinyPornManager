@@ -29,15 +29,15 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.ui.components.treetable.TmmTreeTableFormat;
 
 /**
  * The class TvShowTableFormat is used to define the columns for the TV show tree table
  *
  * @author Manuel Laggner
  */
-public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
+public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowTableFormat() {
@@ -94,6 +94,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", this::hasNfo, ImageIcon.class);
     col.setHeaderIcon(IconManager.NFO);
     col.setColumnResizeable(false);
+    col.setColumnTooltip(this::hasNfoTooltip);
     addColumn(col);
 
     /*
@@ -102,6 +103,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     col = new Column(BUNDLE.getString("tmm.images"), "images", this::hasImages, ImageIcon.class);
     col.setHeaderIcon(IconManager.IMAGES);
     col.setColumnResizeable(false);
+    col.setColumnTooltip(this::hasImageTooltip);
     addColumn(col);
 
     /*
@@ -168,8 +170,17 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
 
   private ImageIcon hasNfo(TmmTreeNode node) {
     Object userObject = node.getUserObject();
-    if (userObject instanceof TvShowEpisode) {
-      return getCheckIcon(((TvShowEpisode) userObject).getHasNfoFile());
+    if (userObject instanceof TvShow) {
+      TvShow tvShow = (TvShow) userObject;
+      return getTriStateIcon(TRI_STATE.getState(tvShow.getHasNfoFile(), tvShow.getHasEpisodeNfoFiles()));
+    }
+    else if (userObject instanceof TvShowSeason) {
+      TvShowSeason season = ((TvShowSeason) userObject);
+      return getCheckIcon(season.getHasEpisodeNfoFiles());
+    }
+    else if (userObject instanceof TvShowEpisode) {
+      TvShowEpisode episode = ((TvShowEpisode) userObject);
+      return getCheckIcon(episode.getHasNfoFile());
     }
     return null;
   }
@@ -177,10 +188,16 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
   private ImageIcon hasImages(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow) {
-      return getCheckIcon(((TvShow) userObject).getHasImages());
+      TvShow tvShow = (TvShow) userObject;
+      return getTriStateIcon(TRI_STATE.getState(tvShow.getHasImages(), tvShow.getHasSeasonAndEpisodeImages()));
     }
-    if (userObject instanceof TvShowEpisode) {
-      return getCheckIcon(((TvShowEpisode) userObject).getHasImages());
+    else if (userObject instanceof TvShowSeason) {
+      TvShowSeason season = ((TvShowSeason) userObject);
+      return getTriStateIcon(TRI_STATE.getState(season.getHasImages(), season.getHasEpisodeImages()));
+    }
+    else if (userObject instanceof TvShowEpisode) {
+      TvShowEpisode episode = ((TvShowEpisode) userObject);
+      return getCheckIcon(episode.getHasImages());
     }
     return null;
   }
@@ -190,11 +207,37 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     if (userObject instanceof TvShow) {
       return getCheckIcon(((TvShow) userObject).isWatched());
     }
-    if (userObject instanceof TvShowSeason) {
+    else if (userObject instanceof TvShowSeason) {
       return getCheckIcon(((TvShowSeason) userObject).isWatched());
     }
-    if (userObject instanceof TvShowEpisode) {
+    else if (userObject instanceof TvShowEpisode) {
       return getCheckIcon(((TvShowEpisode) userObject).isWatched());
+    }
+    return null;
+  }
+
+  private String hasNfoTooltip(TmmTreeNode node) {
+    if (node.getUserObject() instanceof TvShow) {
+      ImageIcon nfoIcon = hasNfo(node);
+      if (nfoIcon == IconManager.TABLE_PROBLEM) {
+        return BUNDLE.getString("tvshow.tree.nfo.problem");
+      }
+    }
+    return null;
+  }
+
+  private String hasImageTooltip(TmmTreeNode node) {
+    if (node.getUserObject() instanceof TvShow) {
+      ImageIcon nfoIcon = hasNfo(node);
+      if (nfoIcon == IconManager.TABLE_PROBLEM) {
+        return BUNDLE.getString("tvshow.tree.tvshow.image.problem");
+      }
+    }
+    else if (node.getUserObject() instanceof TvShowSeason) {
+      ImageIcon nfoIcon = hasNfo(node);
+      if (nfoIcon == IconManager.TABLE_PROBLEM) {
+        return BUNDLE.getString("tvshow.tree.season.image.problem");
+      }
     }
     return null;
   }
