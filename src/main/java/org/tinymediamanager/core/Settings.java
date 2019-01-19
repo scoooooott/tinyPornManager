@@ -54,12 +54,14 @@ public class Settings extends AbstractSettings {
   private final static String   VIDEO_FILE_TYPE        = "videoFileType";
   private final static String   AUDIO_FILE_TYPE        = "audioFileType";
   private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
+  private final static String   CLEANUP_FILE_TYPE      = "cleanupFileType";
   private final static String   WOL_DEVICES            = "wolDevices";
 
   private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>    audioFileTypes         = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>    subtitleFileTypes      = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>    cleanupFileTypes       = ObservableCollections.observableList(new ArrayList<>());
   private final List<WolDevice> wolDevices             = ObservableCollections.observableList(new ArrayList<>());
 
   private String                version                = "";
@@ -272,6 +274,15 @@ public class Settings extends AbstractSettings {
     addTitlePrefix("D`");
     Collections.sort(titlePrefixes);
 
+    //default cleanup postfix
+    cleanupFileTypes.clear();
+    addCleanupFileType(".txt");
+    addCleanupFileType(".url");
+    addCleanupFileType(".html");
+    Collections.sort(cleanupFileTypes);
+
+
+
     setProxyFromSystem();
 
     saveSettings();
@@ -479,6 +490,44 @@ public class Settings extends AbstractSettings {
     return subtitleFileTypes;
   }
 
+  /**
+   * Adds the subtitle file types.
+   *
+   * @param type
+   *          the type
+   */
+  public void addCleanupFileType(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
+    if (!cleanupFileTypes.contains(type)) {
+      cleanupFileTypes.add(type);
+      firePropertyChange(CLEANUP_FILE_TYPE, null, cleanupFileTypes);
+    }
+  }
+
+  /**
+   * Removes the subtitle file type.
+   *
+   * @param type
+   *          the type
+   */
+  public void removeCleanupFileType(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
+    cleanupFileTypes.remove(type);
+    firePropertyChange(CLEANUP_FILE_TYPE, null, cleanupFileTypes);
+  }
+
+  /**
+   * Gets the subtitle file type.
+   *
+   * @return the subtitle file type
+   */
+  public List<String> getCleanupFileType() {
+    return cleanupFileTypes;
+  }
   /**
    * Convenience method to get all supported file extensions
    * 
