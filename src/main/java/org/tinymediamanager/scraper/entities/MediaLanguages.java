@@ -65,6 +65,7 @@ public enum MediaLanguages {
   sk("Slovenčina"),
   sr("српски језик"),
   sv("Svenska"),
+  th("ภาษาไทย"),
   tr("Türkçe"),
   uk("Українська"),
   vi("Tiếng Việt"),
