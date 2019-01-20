@@ -116,7 +116,7 @@ class FileTypesSettingsPanel extends JPanel {
     btnAddCleanupFiletype.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfCleanupFiletype.getText())) {
         Globals.settings.addCleanupFileType(tfCleanupFiletype.getText());
-        tfAudioFiletype.setText("");
+        tfCleanupFiletype.setText("");
       }
     });
     btnRemoveCleanupFiletype.addActionListener(arg0 -> {
@@ -208,7 +208,7 @@ class FileTypesSettingsPanel extends JPanel {
     {
       JPanel panelCleanupFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unknownfiletypes"), H3); //$NON-NLS-1$
+      JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unwantedfiletypes"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelCleanupFiletypes, lblCleanupFiletypesT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
