@@ -43,11 +43,11 @@ public enum Certification {
     US_TV14(CountryCode.US, "TV-14", new String[] { "TV-14" }),
     US_TVMA(CountryCode.US, "TV-MA", new String[] { "TV-MA" }),
 
-    DE_FSK0(CountryCode.DE, "FSK 0", new String[] { "FSK 0", "FSK0", "0" }),
-    DE_FSK6(CountryCode.DE, "FSK 6", new String[] { "FSK 6", "FSK6", "6", "ab 6" }),
-    DE_FSK12(CountryCode.DE, "FSK 12", new String[] { "FSK 12", "FSK12", "12", "ab 12" }),
-    DE_FSK16(CountryCode.DE, "FSK 16", new String[] { "FSK 16", "FSK16", "16", "ab 16" }),
-    DE_FSK18(CountryCode.DE, "FSK 18", new String[] { "FSK 18", "FSK18", "18", "ab 18" }),
+    DE_FSK0(CountryCode.DE, "FSK 0", new String[] { "FSK 0", "FSK-0", "FSK0", "0" }),
+    DE_FSK6(CountryCode.DE, "FSK 6", new String[] { "FSK 6", "FSK-6", "FSK6", "6", "ab 6" }),
+    DE_FSK12(CountryCode.DE, "FSK 12", new String[] { "FSK 12", "FSK-12", "FSK12", "12", "ab 12" }),
+    DE_FSK16(CountryCode.DE, "FSK 16", new String[] { "FSK 16", "FSK-16", "FSK16", "16", "ab 16" }),
+    DE_FSK18(CountryCode.DE, "FSK 18", new String[] { "FSK 18", "FSK-18", "FSK18", "18", "ab 18" }),
 
     GB_UC(CountryCode.GB, "UC", new String[] { "UC" }),
     GB_U(CountryCode.GB, "U", new String[] { "U" }),
