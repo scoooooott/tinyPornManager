@@ -63,6 +63,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
@@ -642,9 +643,17 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setDisplaySeason(metadata.getDisplaySeasonNumber());
     setDisplayEpisode(metadata.getDisplayEpisodeNumber());
 
+    // if option is set capitalize the first letter of each word
+    // in title and original title
     if (config.isTitle()) {
-      setTitle(metadata.getTitle());
-      setOriginalTitle(metadata.getOriginalTitle());
+      if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setTitle(WordUtils.capitalize(metadata.getTitle()));
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
+        setTitle(metadata.getTitle());
+        setOriginalTitle(metadata.getOriginalTitle());
+      }
     }
 
     if (config.isPlot()) {
