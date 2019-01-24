@@ -114,4 +114,30 @@ public class Rating {
   public void setMaxValue(int maxValue) {
     this.maxValue = maxValue;
   }
+
+  /**
+   * get the rating normalized (0...10)
+   *
+   * @return the normalized rating
+   */
+  public float getRatingNormalized() {
+    if (maxValue != 0) {
+      return rating / maxValue * 10;
+    }
+    return 0;
+  }
+
+  /**
+   * set the normalized rating; also sets the maxvalue to 10!
+   *
+   * @param rating
+   *          the rating between 0 and 10
+   */
+  public void setRatingNormalized(float rating) {
+    if (rating < 0 || rating > 10) {
+      return;
+    }
+    this.rating = rating;
+    this.maxValue = 10;
+  }
 }

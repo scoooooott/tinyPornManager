@@ -29,6 +29,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -40,6 +41,7 @@ import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.RatingConverter;
 import org.tinymediamanager.ui.converter.RuntimeConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.ZeroIdConverter;
@@ -414,17 +416,8 @@ public class MovieInformationPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.rating.rating");
+    //
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, Float, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_1, lblRating, jLabelBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
-    AutoBinding<MovieSelectionModel, Float, StarRater, Float> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_1, starRater, starRaterBeanProperty);
-    autoBinding_3.bind();
-    //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.rating.votes");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
@@ -489,5 +482,18 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModel, movieSelectionModelBeanProperty_5, lblOtherIds, jLabelBeanProperty);
     autoBinding_6.setConverter(new MovieOtherIdsConverter());
     autoBinding_6.bind();
+    //
+    BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_7 = BeanProperty.create("selectedMovie.rating.ratingNormalized");
+    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
+    AutoBinding<MovieSelectionModel, Float, StarRater, Float> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_7, starRater, starRaterBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<MovieSelectionModel, Rating> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.rating");
+    BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<MovieSelectionModel, Rating, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_9, lblRating, jLabelBeanProperty_1);
+    autoBinding_1.setConverter(new RatingConverter());
+    autoBinding_1.bind();
   }
 }
