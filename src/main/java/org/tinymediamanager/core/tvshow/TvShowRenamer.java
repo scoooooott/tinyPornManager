@@ -101,6 +101,7 @@ public class TvShowRenamer {
     Map<String, String> tokenMap = new HashMap<>();
     // TV show tags
     tokenMap.put("showTitle", "tvShow.title");
+    tokenMap.put("showOriginalTitle", "tvShow.originalTitle");
     tokenMap.put("showTitleSortable", "tvShow.titleSortable");
     tokenMap.put("showYear", "tvShow.year");
 
@@ -114,6 +115,7 @@ public class TvShowRenamer {
     tokenMap.put("seasonNrDvd", "episode.dvdSeason");
     tokenMap.put("seasonNrDvd2", "episode.dvdSeason;number(%02d)");
     tokenMap.put("title", "episode.title");
+    tokenMap.put("originalTitle", "episode.originalTitle");
     tokenMap.put("titleSortable", "episode.titleSortable");
     tokenMap.put("year", "episode.year");
     tokenMap.put("airedDate", "episode.firstAired;date(yyyy-MM-dd)");
