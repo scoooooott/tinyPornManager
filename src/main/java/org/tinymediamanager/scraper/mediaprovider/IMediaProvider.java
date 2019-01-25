@@ -33,4 +33,12 @@ public interface IMediaProvider extends Plugin {
    * @return the provider info containing metadata of the provider
    */
   MediaProviderInfo getProviderInfo();
+
+  /**
+   * Method will be called, after ALL plugins have been loaded<br>
+   * This comes handy, when you need to initialize something depending on other plugins.
+   */
+  default void afterInitialization() {
+
+  }
 }

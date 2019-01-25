@@ -77,14 +77,29 @@ public class PluginManager {
   /**
    * loads plugins from classpath - needed for in-IDE development
    */
-  public static void loadClasspathPlugins() {
+  public void loadClasspathPlugins() {
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     LOGGER.debug("loading classpath plugins...");
     // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
-    pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+    if (LOGGER.isTraceEnabled()) {
+      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+    }
+    else {
+      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**"), new OptionReportAfter()); // 4 secs
+    }
     stopWatch.stop();
     LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
+  }
+
+  /**
+   * Method should be called, after ALL plugins have been loaded<br>
+   * This comes handy, when you need to initialize something depending on other plugins.
+   */
+  public void afterInitialization() {
+    for (IMediaProvider p : getPluginsForInterface(IMediaProvider.class)) {
+      p.afterInitialization();
+    }
   }
 
   /**
