@@ -300,8 +300,9 @@ public class TinyMediaManager {
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
           if (ReleaseInfo.isGitBuild()) {
-            PluginManager.loadClasspathPlugins();
+            PluginManager.getInstance().loadClasspathPlugins();
           }
+          PluginManager.getInstance().afterInitialization();
 
           if (g2 != null) {
             updateProgress(g2, "starting services", 60);
