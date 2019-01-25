@@ -47,9 +47,9 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.PluginManager;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 
 /**
  * This is a metadata provider which is highly configurable and combines the results of various other providers
@@ -58,31 +58,32 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  */
 @PluginImplementation
 public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
-  private static final String                       UNDEFINED = "-";
-  private static final String                       SEARCH    = "search";
-  private static final Logger                       LOGGER    = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
+  private static final String                       UNDEFINED          = "-";
+  private static final String                       SEARCH             = "search";
+  private static final Logger                       LOGGER             = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
   private final MediaProviderInfo                   providerInfo;
 
-  private final Map<String, IMovieMetadataProvider> compatibleScrapers;
+  private final Map<String, IMovieMetadataProvider> compatibleScrapers = new HashMap<>();
 
   public UniversalMovieMetadataProvider() {
-    // create the providerinfo
     providerInfo = createMediaProviderInfo();
+  }
 
-    // get all loaded and compatible plugins
-    compatibleScrapers = new HashMap<>();
-    List<String> compatibleScraperIds = new ArrayList<>();
-    compatibleScraperIds.add(UNDEFINED); // no scraper
-
-    for (IMovieMetadataProvider plugin : PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class)) {
-      // only the ones implementing IMovieTmdbMetadataProvider and IMovieImdbMetadataProvider can be used further
-      if (plugin instanceof IMovieTmdbMetadataProvider || plugin instanceof IMovieImdbMetadataProvider) {
-        compatibleScrapers.put(plugin.getProviderInfo().getId(), plugin);
-        compatibleScraperIds.add(plugin.getProviderInfo().getId());
-      }
+  @PluginLoaded
+  public void add(IMovieMetadataProvider plugin) {
+    // called for each plugin implementing that interface
+    if (plugin instanceof IMovieTmdbMetadataProvider || plugin instanceof IMovieImdbMetadataProvider) {
+      compatibleScrapers.put(plugin.getProviderInfo().getId(), plugin);
     }
+  }
+
+  @Override
+  public void afterInitialization() {
 
     MediaProviderConfig config = providerInfo.getConfig();
+
+    List<String> compatibleScraperIds = new ArrayList<>(compatibleScrapers.keySet());
+    compatibleScraperIds.add(0, UNDEFINED); // no scraper
 
     config.addSelect(SEARCH, compatibleScraperIds, UNDEFINED);
     // use the right key to let reflection work
