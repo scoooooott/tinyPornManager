@@ -143,7 +143,10 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
 
     returnArtwork = prepareArtwork(m, artworkType);
 
-    String language = options.getLanguage().getLanguage();
+    String language = "";
+    if (options.getLanguage() != null) {
+      language = options.getLanguage().getLanguage();
+    }
     returnArtwork.sort(new MediaArtwork.MediaArtworkComparator(language));
     return returnArtwork;
   }
