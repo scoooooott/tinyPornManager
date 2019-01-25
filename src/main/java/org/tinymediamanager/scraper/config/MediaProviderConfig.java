@@ -15,10 +15,12 @@
  */
 package org.tinymediamanager.scraper.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -69,9 +71,9 @@ public class MediaProviderConfig {
       return;
     }
     Properties p = new Properties();
-    File conf = new File(folder, "scraper_" + id + ".conf");
-    try {
-      p.load(new FileInputStream(conf));
+    Path conf = Paths.get(folder, "scraper_" + id + ".conf");
+    try (InputStream stream = Files.newInputStream(conf)) {
+      p.load(stream);
       for (MediaProviderConfigObject co : settings.values()) {
         String value = p.getProperty(co.getKey());
         if (co.isEncrypt()) {
@@ -104,9 +106,10 @@ public class MediaProviderConfig {
       }
       p.setProperty(co.getKey(), value);
     }
-    File conf = new File(folder, "scraper_" + id + ".conf");
-    try {
-      p.store(new FileOutputStream(conf), "");
+
+    Path conf = Paths.get(folder, "scraper_" + id + ".conf");
+    try (OutputStream stream = Files.newOutputStream(conf)) {
+      p.store(stream, "");
     }
     catch (IOException e) {
       LOGGER.warn("Cannot write settings " + conf);
