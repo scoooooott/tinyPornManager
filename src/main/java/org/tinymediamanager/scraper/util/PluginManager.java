@@ -83,10 +83,10 @@ public class PluginManager {
     LOGGER.debug("loading classpath plugins...");
     // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
     if (LOGGER.isTraceEnabled()) {
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**"), new OptionReportAfter()); // 4 secs
     }
     else {
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**"), new OptionReportAfter()); // 4 secs
+      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
     }
     stopWatch.stop();
     LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
