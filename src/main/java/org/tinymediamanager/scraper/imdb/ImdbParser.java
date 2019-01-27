@@ -891,8 +891,7 @@ public abstract class ImdbParser {
     Element characterElement = row.getElementsByClass("character").first();
     if (characterElement != null) {
       characterName = cleanString(characterElement.text());
-      // and now strip off trailing commentaries like - (120 episodes,
-      // 2006-2014)
+      // and now strip off trailing commentaries like - (120 episodes, 2006-2014)
       characterName = characterName.replaceAll("\\(.*?\\)$", "").trim();
     }
 
@@ -904,11 +903,13 @@ public abstract class ImdbParser {
       if (!StringUtils.isEmpty(imageSrc)) {
         int fileStart = imageSrc.lastIndexOf("/");
         if (fileStart > 0) {
-          int parameterStart = imageSrc.indexOf("_", fileStart);
+          // parse out the rescale/crop params
+          int parameterStart = imageSrc.indexOf("._", fileStart);
           if (parameterStart > 0) {
             int startOfExtension = imageSrc.lastIndexOf(".");
             if (startOfExtension > parameterStart) {
-              imageSrc = imageSrc.substring(0, parameterStart) + imageSrc.substring(startOfExtension);
+              // rebuild the path - scaled to 632 px height as in tmdb scraper
+              imageSrc = imageSrc.substring(0, parameterStart) + "._UY632" + imageSrc.substring(startOfExtension);
             }
           }
         }
