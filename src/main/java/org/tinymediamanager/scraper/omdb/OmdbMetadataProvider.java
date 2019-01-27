@@ -108,21 +108,17 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
       return metadata;
     }
 
-    String imdbId = "";
-
-    // id from a previous search
-    if (query.getResult() != null) {
-      imdbId = query.getResult().getIMDBId();
-    }
-
-    // id directly from the options
-    if (!MetadataUtil.isValidImdbId(imdbId)) {
-      imdbId = query.getImdbId();
-    }
+    // id from the options
+    String imdbId = query.getImdbId();
 
     // id from omdb proxy?
     if (!MetadataUtil.isValidImdbId(imdbId)) {
       imdbId = query.getIdAsString(getProviderInfo().getId());
+    }
+
+    // still no imdb id but tmdb id? get it from tmdb
+    if (!MetadataUtil.isValidImdbId(imdbId) && query.getTmdbId() > 0) {
+      imdbId = MetadataUtil.getImdbIdViaTmdbId(query.getTmdbId());
     }
 
     // imdbid check

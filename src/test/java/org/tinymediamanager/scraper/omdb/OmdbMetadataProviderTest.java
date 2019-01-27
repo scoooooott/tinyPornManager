@@ -135,7 +135,7 @@ public class OmdbMetadataProviderTest {
       assertThat(md.getCountries()).contains("USA");
       assertThat(md.getSpokenLanguages()).contains("English", "Spanish");
       assertThat(md.getRatings()).hasSize(3);
-      assertThat(md.getGenres()).contains(MediaGenres.ADVENTURE, MediaGenres.COMEDY, MediaGenres.FAMILY);
+      assertThat(md.getGenres()).contains(MediaGenres.ADVENTURE, MediaGenres.COMEDY);
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotNull();
 
     }
