@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -115,7 +116,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("universal_movie", "Universal movie scraper",
-        "<html><h3>Universal movie scraper</h3><br />A meta scraper which allows to collect data from several other scrapers</html>", null);
+        "<html><h3>Universal movie scraper</h3><br />A meta scraper which allows to collect data from several other scrapers</html>",
+        UniversalMovieMetadataProvider.class.getResource("/logo.png"));
     providerInfo.setVersion(UniversalMovieMetadataProvider.class);
     return providerInfo;
   }
@@ -140,7 +142,10 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     }
 
     try {
-      resultList.addAll(mp.search(options));
+      for (MediaSearchResult result : mp.search(options)) {
+        result.setProviderId(providerInfo.getId());
+        resultList.add(result);
+      }
     }
     catch (ScrapeException | UnsupportedMediaTypeException e) {
       LOGGER.warn("Could not call search method of " + mp.getProviderInfo().getId() + " : " + e.getMessage());
@@ -163,6 +168,13 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     Set<IMovieMetadataProvider> metadataProviders = getRelevantMetadataProviders();
     if (metadataProviders.isEmpty()) {
       return md;
+    }
+
+    if (!MetadataUtil.isValidImdbId(options.getImdbId()) && options.getTmdbId() > 0) {
+      String imdbId = MetadataUtil.getImdbIdViaTmdbId(options.getTmdbId());
+      if (StringUtils.isNotBlank(imdbId)) {
+        options.setImdbId(imdbId);
+      }
     }
 
     // call all scrapers in different workers and wait for them to finish
