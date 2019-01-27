@@ -107,18 +107,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
   private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
-    String id = "";
     String langu = options.getLanguage().getLanguage();
 
-    // id from result
-    if (options.getResult() != null) {
-      id = options.getResult().getId();
-    }
-
     // do we have an id from the options?
-    if (StringUtils.isEmpty(id)) {
-      id = options.getIdAsString(providerInfo.getId());
-    }
+    String id = options.getIdAsString(providerInfo.getId());
 
     if (StringUtils.isEmpty(id)) {
       throw new MissingIdException("anidb");
@@ -458,18 +450,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         throw new UnsupportedMediaTypeException(options.getType());
     }
 
-    String id = "";
     String langu = options.getLanguage().getLanguage();
 
-    // id from result
-    if (options.getResult() != null) {
-      id = options.getResult().getId();
-    }
-
     // do we have an id from the options?
-    if (StringUtils.isEmpty(id)) {
-      id = options.getIdAsString(providerInfo.getId());
-    }
+    String id = options.getIdAsString(providerInfo.getId());
 
     if (StringUtils.isEmpty(id)) {
       throw new MissingIdException(providerInfo.getId());
