@@ -106,13 +106,8 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     String detailUrl = "";
 
     // case a)
-    String id = "";
-    if (options.getResult() != null) {
-      id = options.getResult().getId();
-    }
-    if (StringUtils.isBlank(id)) {
-      id = options.getIdAsString(getProviderInfo().getId());
-    }
+    String id = options.getIdAsString(getProviderInfo().getId());
+
     if (StringUtils.isNotBlank(id)) {
       detailUrl = "http://www.ofdb.de/view.php?page=film&fid=" + id;
     }
