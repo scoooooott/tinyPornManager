@@ -16,6 +16,8 @@
 package org.tinymediamanager.scraper;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -31,18 +33,17 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @since 1.0
  */
 public class MediaSearchResult implements Comparable<MediaSearchResult> {
-  private String        providerId;
-  private String        url;
-  private String        title;
-  private int           year;
-  private String        originalTitle;
-  private String        originalLanguage;
-  private String        id;
-  private float         score;
-  private String        imdbId;
-  private MediaMetadata metadata = null;
-  private MediaType     type;
-  private String        posterUrl;
+  private String              providerId;
+  private String              url;
+  private String              title;
+  private int                 year;
+  private String              originalTitle;
+  private String              originalLanguage;
+  private Map<String, Object> ids      = new HashMap<>();
+  private float               score;
+  private MediaMetadata       metadata = null;
+  private MediaType           type;
+  private String              posterUrl;
 
   public MediaSearchResult(String providerId, MediaType type) {
     this.providerId = providerId;
@@ -58,7 +59,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public MediaSearchResult(String providerId, MediaType type, String id, String title, int year, float score) {
     this.providerId = providerId;
     this.type = type;
-    this.id = StrgUtils.getNonNullString(id);
+    this.ids.put(providerId, StrgUtils.getNonNullString(id));
     this.title = StrgUtils.getNonNullString(title);
     this.year = year;
     this.score = score;
@@ -81,9 +82,13 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     year = year == 0 ? msr.getYear() : year;
     originalTitle = StringUtils.isEmpty(originalTitle) ? msr.getOriginalTitle() : originalTitle;
     originalLanguage = StringUtils.isEmpty(originalLanguage) ? msr.getOriginalLanguage() : originalLanguage;
-    id = StringUtils.isEmpty(id) ? msr.getId() : id;
-    imdbId = StringUtils.isEmpty(imdbId) ? msr.getIMDBId() : imdbId;
     posterUrl = StringUtils.isEmpty(posterUrl) ? msr.getPosterUrl() : posterUrl;
+
+    for (String key : msr.getIds().keySet()) {
+      if (!ids.containsKey(key)) {
+        ids.put(key, msr.getIds().get(key));
+      }
+    }
 
     if (metadata == null) {
       metadata = msr.getMediaMetadata();
@@ -264,8 +269,8 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    * 
    * @return the id
    */
-  public String getId() {
-    return id;
+  public Object getId() {
+    return ids.get(providerId);
   }
 
   /**
@@ -275,7 +280,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the search result id
    */
   public void setId(String id) {
-    this.id = StrgUtils.getNonNullString(id);
+    this.ids.put(providerId, StrgUtils.getNonNullString(id));
   }
 
   /**
@@ -284,7 +289,66 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    * @return the IMDB id
    */
   public String getIMDBId() {
+    String imdbId = "";
+
+    // via imdb
+    Object obj = ids.get(MediaMetadata.IMDB);
+    if (obj != null) {
+      imdbId = obj.toString();
+    }
+
+    // legacy ID
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      obj = ids.get("imdbId");
+      if (obj != null) {
+        imdbId = obj.toString();
+      }
+    }
+
+    // prevent NPE
+    if (StringUtils.isBlank(imdbId)) {
+      return "";
+    }
+
     return imdbId;
+  }
+
+  /**
+   * any ID as int or 0
+   *
+   * @return the ID-value as int or an empty string
+   */
+  public int getIdAsInt(String key) {
+    int id = 0;
+    try {
+      id = Integer.parseInt(String.valueOf(ids.get(key)));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
+  }
+
+  /**
+   * any ID as String or empty
+   *
+   * @return the ID-value as String or an empty string
+   */
+  public String getIdAsString(String key) {
+    Object obj = ids.get(key);
+    if (obj == null) {
+      return "";
+    }
+    return String.valueOf(obj);
+  }
+
+  /**
+   * get all given ids
+   * 
+   * @return a map full of ids
+   */
+  public Map<String, Object> getIds() {
+    return ids;
   }
 
   /**
@@ -295,7 +359,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    */
   public void setIMDBId(String imdbid) {
     if (MetadataUtil.isValidImdbId(imdbid)) {
-      imdbId = imdbid;
+      ids.put(MediaMetadata.IMDB, imdbid);
     }
   }
 
@@ -344,7 +408,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     }
     else if (getScore() == arg0.getScore()) {
       // same score - rank on year
-      return Integer.compare(getYear(),arg0.getYear());
+      return Integer.compare(getYear(), arg0.getYear());
     }
     else {
       return 1;

@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 /**
  * The class MetadataUtil. Here are some helper utils for managing meta data
@@ -130,5 +134,42 @@ public class MetadataUtil {
       // since we do not know for which locale the separators has been written, remove . and ,
       return Integer.parseInt(intAsString.replaceAll("[,\\.]*", ""));
     }
+  }
+
+  /**
+   * gets the imdb id via tmdb id
+   *
+   * @param tmdbId
+   *          the tmdb id
+   * @return the imdb id or an empty String
+   */
+  public static String getImdbIdViaTmdbId(int tmdbId) {
+    if (tmdbId == 0) {
+      return "";
+    }
+
+    try {
+      // call the tmdb metadata provider
+      IMovieMetadataProvider tmdb = null;
+      for (IMovieMetadataProvider provider : PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class)) {
+        if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
+          tmdb = provider;
+          break;
+        }
+      }
+      if (tmdb == null) {
+        return "";
+      }
+
+      // we just need to "scrape" this movie
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      options.setId(MediaMetadata.TMDB, Integer.toString(tmdbId));
+      MediaMetadata md = tmdb.getMetadata(options);
+      return md.getId(MediaMetadata.IMDB).toString();
+    }
+    catch (Exception ingored) {
+    }
+
+    return "";
   }
 }

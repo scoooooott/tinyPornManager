@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.CountryCode;
@@ -27,6 +28,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
  * This class is used to set the scrape options for scraping.
@@ -82,6 +84,11 @@ public class MediaScrapeOptions {
       return String.valueOf(id);
     }
 
+    // nothing returned? try to parse from result
+    if (result != null) {
+      return result.getIdAsString(providerId);
+    }
+
     return null;
   }
 
@@ -104,6 +111,11 @@ public class MediaScrapeOptions {
         }
         catch (Exception ignored) {
         }
+    }
+
+    // nothing returned? try to parse from result
+    if (result != null) {
+      return result.getIdAsInt(providerId);
     }
 
     return null;
@@ -153,15 +165,33 @@ public class MediaScrapeOptions {
    * @return the imdbid or an empty string
    */
   public String getImdbId() {
+    String imdbId = "";
+
+    // via imdb
     Object obj = ids.get(MediaMetadata.IMDB);
-    if (obj == null) {
-      // legacy
+    if (obj != null) {
+      imdbId = obj.toString();
+    }
+
+    // legacy ID
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
       obj = ids.get("imdbId");
-      if (obj == null) {
-        return "";
+      if (obj != null) {
+        imdbId = obj.toString();
       }
     }
-    return obj.toString();
+
+    // from result
+    if (!MetadataUtil.isValidImdbId(imdbId) && result != null) {
+      imdbId = result.getIMDBId();
+    }
+
+    // prevent NPE
+    if (StringUtils.isBlank(imdbId)) {
+      return "";
+    }
+
+    return imdbId;
   }
 
   /**
@@ -174,6 +204,12 @@ public class MediaScrapeOptions {
     if (id == 0) {
       id = getIdAsIntOrDefault("tmdbId", 0);
     }
+
+    // from result
+    if (id == 0 && result != null) {
+      id = result.getIdAsInt(MediaMetadata.TMDB);
+    }
+
     return id;
   }
 
