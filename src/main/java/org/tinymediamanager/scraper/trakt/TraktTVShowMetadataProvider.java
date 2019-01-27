@@ -225,14 +225,12 @@ class TraktTVShowMetadataProvider {
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
     String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
-    if (StringUtils.isBlank(id) && options.getResult() != null) {
-      // take the id from the search result
-      id = options.getResult().getId();
-    }
+
+    // alternatively we can take the imdbid
     if (StringUtils.isBlank(id)) {
-      // alternatively we can take the imdbid
       id = options.getIdAsString(IMDB);
     }
+
     if (StringUtils.isBlank(id)) {
       LOGGER.warn("no id available");
       throw new MissingIdException(MediaMetadata.IMDB, TraktMetadataProvider.providerInfo.getId());
