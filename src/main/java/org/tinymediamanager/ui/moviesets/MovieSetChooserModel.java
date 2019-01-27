@@ -74,7 +74,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
     this.result = result;
 
     setName(result.getTitle());
-    setTmdbId(Integer.parseInt(result.getId()));
+    setTmdbId(result.getIdAsInt(result.getProviderId()));
     setPosterUrl(result.getPosterUrl());
 
     try {
@@ -199,7 +199,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
     try {
       if (scraper.getMediaProvider() != null) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
-        options.setTmdbId(Integer.parseInt(result.getId()));
+        options.setTmdbId(result.getIdAsInt(result.getProviderId()));
         options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
         options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
