@@ -16,7 +16,9 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
@@ -67,7 +69,12 @@ public class ImagePreviewDialog extends TmmDialog {
   @Override
   public void setVisible(boolean visible) {
     if (visible) {
-      setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
+      // get max screen size on multi screen setups
+      GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      int width = gd.getDisplayMode().getWidth();
+      int height = gd.getDisplayMode().getHeight();
+      setMaximumSize(new Dimension(width, height));
+
       pack();
       setLocationRelativeTo(MainWindow.getActiveInstance());
       super.setVisible(true);
