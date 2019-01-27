@@ -200,10 +200,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     List<MediaMetadata> episodeList = new ArrayList<>();
 
     String showId = options.getIdAsString(scraper.getProviderInfo().getId());
-    if (showId == null) {
-      showId = options.getResult().getId();
-    }
-    if (showId == null) {
+    if (StringUtils.isBlank(showId)) {
       LOGGER.error("Could not find showId - please scrape show first!");
       throw new MissingIdException("Could not find showId - please scrape show first!");
     }

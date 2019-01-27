@@ -198,10 +198,11 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         md.setId(MediaMetadata.IMDB, result.getIMDBId());
       }
 
-      String xmlDetails = processor.getDetails(new KodiUrl(result.getUrl()), result.getId());
+      String id = result.getIdAsString(result.getProviderId());
+      String xmlDetails = processor.getDetails(new KodiUrl(result.getUrl()), id);
 
       // save scraper ID
-      if (!StringUtils.isEmpty(result.getId())) {
+      if (!StringUtils.isEmpty(id)) {
         md.setId(scraper.getProviderInfo().getId(), result.getId());
       }
 
