@@ -7,10 +7,12 @@ Version 3.0 - RC1
   - improved filters (inclusive and exclusive filters)
   - better UI scaling on high dpi screens
 + added a dark theme
++ removed donator version (but donations are still highly appreciated)
 + completely rewritten the renamer engine
 + completely rewritten NFO parsing and writing (much more flexible now)
 + easier translation via weblate.org now (https://hosted.weblate.org/projects/tinymediamanager/)
 + increased required Java version to Java 8+
 + ability to mix in missing episodes
 + presets in settings for common media centers
++ added a feature to find "unwanted" files for clenaup (e.g. .txt, .url, ...)
 + many enhancements under the hood
