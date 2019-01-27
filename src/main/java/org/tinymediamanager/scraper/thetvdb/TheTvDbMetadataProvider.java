@@ -323,21 +323,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
-    Integer id = 0;
-
-    // id from result
-    if (options.getResult() != null) {
-      try {
-        id = Integer.parseInt(options.getResult().getId());
-      }
-      catch (Exception ignored) {
-      }
-    }
 
     // do we have an id from the options?
-    if (id == 0) {
-      id = options.getIdAsInteger(providerInfo.getId());
-    }
+    Integer id = options.getIdAsInteger(providerInfo.getId());
 
     if (id == null || id == 0) {
       LOGGER.warn("no id available");
@@ -465,21 +453,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws ScrapeException, NothingFoundException, MissingIdException {
     boolean useDvdOrder = false;
-    Integer id = 0;
-
-    // id from result
-    if (options.getResult() != null) {
-      try {
-        id = Integer.parseInt(options.getResult().getId());
-      }
-      catch (Exception ignored) {
-      }
-    }
 
     // do we have an id from the options?
-    if (id == 0) {
-      id = options.getIdAsInteger(providerInfo.getId());
-    }
+    Integer id = options.getIdAsInteger(providerInfo.getId());
 
     if (id == null || id == 0) {
       LOGGER.warn("no id available");
@@ -548,21 +524,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     LOGGER.debug("getting artwork: " + options);
     List<MediaArtwork> artwork = new ArrayList<>();
-    Integer id = 0;
-
-    // id from result
-    if (options.getResult() != null) {
-      try {
-        id = Integer.parseInt(options.getResult().getId());
-      }
-      catch (Exception ignored) {
-      }
-    }
 
     // do we have an id from the options?
-    if (id == 0) {
-      id = options.getIdAsInteger(providerInfo.getId());
-    }
+    Integer id = options.getIdAsInteger(providerInfo.getId());
 
     if (id == null || id == 0) {
       LOGGER.warn("no id available");
@@ -731,21 +695,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     LOGGER.debug("getting episode list: " + options);
     List<MediaMetadata> episodes = new ArrayList<>();
-    Integer id = 0;
-
-    // id from result
-    if (options.getResult() != null) {
-      try {
-        id = Integer.parseInt(options.getResult().getId());
-      }
-      catch (Exception ignored) {
-      }
-    }
 
     // do we have an id from the options?
-    if (id == 0) {
-      id = options.getIdAsInteger(providerInfo.getId());
-    }
+    Integer id = options.getIdAsInteger(providerInfo.getId());
 
     if (id == null || id == 0) {
       LOGGER.warn("no id available");
