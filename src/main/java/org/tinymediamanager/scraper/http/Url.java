@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -299,7 +300,8 @@ public class Url {
         responseCharset = response.body().contentType().charset();
         responseContentType = response.body().contentType().toString();
       }
-      is = response.body().byteStream();
+      // response.body().bytes() closes the connection
+      is = new ByteArrayInputStream(response.body().bytes());
     }
     catch (InterruptedIOException | IllegalStateException e) {
       LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
