@@ -405,20 +405,13 @@ class TmdbMovieMetadataProvider {
     }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
-    int tmdbId = 0;
-
-    // tmdbId from searchResult
-    if (options.getResult() != null) {
-      tmdbId = Integer.parseInt(options.getResult().getId());
-    }
 
     // tmdbId from option
-    if (tmdbId == 0) {
-      tmdbId = options.getTmdbId();
-    }
+    Integer tmdbId = options.getTmdbId();
 
     // imdbId from option
     String imdbId = options.getImdbId();
+
     if (tmdbId == 0 && !MetadataUtil.isValidImdbId(imdbId)) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId/imdbId found");
       throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
