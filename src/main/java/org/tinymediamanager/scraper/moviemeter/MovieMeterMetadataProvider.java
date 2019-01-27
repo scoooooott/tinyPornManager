@@ -123,21 +123,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
     // get ids to scrape
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
-    int mmId = 0;
-
-    // mmId from searchResult
-    if (options.getResult() != null) {
-      try {
-        mmId = Integer.parseInt(options.getResult().getId());// Constants.MOVIEMETERID));
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    // mmId from options
-    if (mmId == 0) {
-      mmId = options.getIdAsInt(providerInfo.getId());
-    }
+    int mmId = options.getIdAsInt(providerInfo.getId());
 
     // imdbid
     String imdbId = options.getImdbId();

@@ -27,7 +27,7 @@ public class MoviemeterMetadataProviderTest {
       assertThat(results.size()).isGreaterThanOrEqualTo(3);
       for (MediaSearchResult result : results) {
         assertThat(result.getTitle()).isNotNull().isNotEmpty();
-        assertThat(result.getId()).isNotNull().isNotEmpty();
+        assertThat(result.getId()).isNotNull();
       }
     }
     catch (Exception e) {
