@@ -237,6 +237,7 @@ public abstract class TmmDialog extends JDialog {
       pack();
       TmmWindowSaver.getInstance().loadSettings(this);
       super.setVisible(true);
+      toFront();
     }
     else {
       super.setVisible(false);
