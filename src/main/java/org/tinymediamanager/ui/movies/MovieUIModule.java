@@ -101,7 +101,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
     listPanel = new MovieListPanel();
     selectionModel = listPanel.getSelectionModel();
 
-
     super.listPanel = listPanel;
 
     detailPanel = new JPanel();
@@ -188,6 +187,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieSelectedScrapeMetadataAction.class));
     popupMenu.add(createAndRegisterAction(MovieAssignMovieSetAction.class));
     popupMenu.add(createAndRegisterAction(MovieDownloadMissingArtworkAction.class));
+    popupMenu.addSeparator();
+    popupMenu.add(createAndRegisterAction(MovieUpdateAction.class));
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
