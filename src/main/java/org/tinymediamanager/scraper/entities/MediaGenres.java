@@ -60,7 +60,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres              FANTASY         = new MediaGenres("FANTASY", 14, "Fantasy");
   public final static MediaGenres              FILM_NOIR       = new MediaGenres("FILM_NOIR", 15, "Film Noir");
   public final static MediaGenres              FOREIGN         = new MediaGenres("FOREIGN", 16, "Foreign");
-  public final static MediaGenres              GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow", new String[] { "Game Show" });
+  public final static MediaGenres              GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Game Show",
+      new String[] { "Game Show", "Gameshow" });
   public final static MediaGenres              HISTORY         = new MediaGenres("HISTORY", 18, "History");
   public final static MediaGenres              HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday", new String[] { "Travel" });
   public final static MediaGenres              HORROR          = new MediaGenres("HORROR", 20, "Horror");
@@ -82,7 +83,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres              SPORTING_EVENT  = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event");
   public final static MediaGenres              SPORTS_FILM     = new MediaGenres("SPORTS_FILM", 36, "Sports Film");
   public final static MediaGenres              SUSPENSE        = new MediaGenres("SUSPENSE", 37, "Suspense");
-  public final static MediaGenres              TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show");
+  public final static MediaGenres              TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk Show");
   public final static MediaGenres              TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie");
   public final static MediaGenres              THRILLER        = new MediaGenres("THRILLER", 40, "Thriller");
   public final static MediaGenres              WAR             = new MediaGenres("WAR", 41, "War");
