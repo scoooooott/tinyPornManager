@@ -49,7 +49,7 @@ deploy_snapshot:
   script:
     - mvn $MAVEN_CLI_OPTS deploy
   only:
-    - master
+    - master@tinyMediaManager/api-scraper
   artifacts:
     paths:
       - target/*.jar
