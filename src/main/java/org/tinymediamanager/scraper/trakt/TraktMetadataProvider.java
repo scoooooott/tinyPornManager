@@ -57,6 +57,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     providerInfo.setVersion(TraktMetadataProvider.class);
 
     providerInfo.getConfig().addText("apiKey", "", true);
+    providerInfo.getConfig().load();
 
     return providerInfo;
   }
