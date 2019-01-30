@@ -39,30 +39,33 @@ import com.jtattoo.plaf.JTattooUtilities;
 
 public class TmmIcons extends BaseIcons {
 
+  public static Color COLOR       = Color.GRAY;
+  public static Color COLOR_HOVER = Color.WHITE;
+
   public static Icon getCloseIcon() {
     if (closeIcon == null) {
-      closeIcon = new CloseSymbol(new Color(67, 67, 67), null, new Color(134, 134, 134));
+      closeIcon = new CloseSymbol(COLOR, null, COLOR_HOVER);
     }
     return closeIcon;
   }
 
   public static Icon getIconIcon() {
     if (iconIcon == null) {
-      iconIcon = new IconSymbol(new Color(67, 67, 67), null, new Color(134, 134, 134));
+      iconIcon = new IconSymbol(COLOR, null, COLOR_HOVER);
     }
     return iconIcon;
   }
 
   public static Icon getMaxIcon() {
     if (maxIcon == null) {
-      maxIcon = new MaxSymbol(new Color(67, 67, 67), null, new Color(134, 134, 134));
+      maxIcon = new MaxSymbol(COLOR, null, COLOR_HOVER);
     }
     return maxIcon;
   }
 
   public static Icon getMinIcon() {
     if (minIcon == null) {
-      minIcon = new MaxSymbol(new Color(67, 67, 67), null, new Color(134, 134, 134));
+      minIcon = new MaxSymbol(COLOR, null, COLOR_HOVER);
     }
     return minIcon;
   }
