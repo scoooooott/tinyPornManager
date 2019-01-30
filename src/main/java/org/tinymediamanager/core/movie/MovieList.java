@@ -952,30 +952,32 @@ public class MovieList extends AbstractModelObject {
       // imdb duplicate search only works with given imdbid
       if (StringUtils.isNotEmpty(movie.getImdbId())) {
         // is there a movie with this imdbid sotred?
-        if (imdbDuplicates.containsKey(movie.getImdbId())) {
+        String imdbId = movie.getImdbId();
+        if (imdbDuplicates.containsKey(imdbId)) {
           // yes - set duplicate flag on both movies
           movie.setDuplicate();
-          Movie movie2 = imdbDuplicates.get(movie.getImdbId());
+          Movie movie2 = imdbDuplicates.get(imdbId);
           movie2.setDuplicate();
         }
         else {
           // no, store movie
-          imdbDuplicates.put(movie.getImdbId(), movie);
+          imdbDuplicates.put(imdbId, movie);
         }
       }
 
       // tmdb duplicate search only works with with given tmdb id
-      if (movie.getTmdbId() > 0) {
+      int tmdbId = movie.getTmdbId();
+      if (tmdbId > 0) {
         // is there a movie with this tmdbid sotred?
-        if (tmdbDuplicates.containsKey(movie.getTmdbId())) {
+        if (tmdbDuplicates.containsKey(tmdbId)) {
           // yes - set duplicate flag on both movies
           movie.setDuplicate();
-          Movie movie2 = tmdbDuplicates.get(movie.getTmdbId());
+          Movie movie2 = tmdbDuplicates.get(tmdbId);
           movie2.setDuplicate();
         }
         else {
           // no, store movie
-          tmdbDuplicates.put(movie.getTmdbId(), movie);
+          tmdbDuplicates.put(tmdbId, movie);
         }
       }
     }

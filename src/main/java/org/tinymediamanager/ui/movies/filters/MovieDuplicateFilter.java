@@ -32,8 +32,13 @@ public class MovieDuplicateFilter extends AbstractMovieUIFilter {
   private MovieList movieList = MovieList.getInstance();
 
   @Override
-  public boolean accept(Movie movie) {
+  protected void filterChanged() {
     movieList.searchDuplicates();
+    super.filterChanged();
+  }
+
+  @Override
+  public boolean accept(Movie movie) {
     return movie.isDuplicate();
   }
 
