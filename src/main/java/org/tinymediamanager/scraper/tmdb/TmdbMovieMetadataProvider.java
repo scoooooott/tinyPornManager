@@ -219,7 +219,7 @@ class TmdbMovieMetadataProvider {
     // final tasks for the search results
     for (MediaSearchResult result : resultList) {
       // calculate score for all found movies
-      if (imdbId.equals(result.getIMDBId()) || String.valueOf(tmdbId).equals(result.getId())) {
+      if ((StringUtils.isNotBlank(imdbId) && imdbId.equals(result.getIMDBId())) || String.valueOf(tmdbId).equals(result.getId())) {
         LOGGER.debug("perfect match by ID - set score to 1");
         result.setScore(1);
       }
