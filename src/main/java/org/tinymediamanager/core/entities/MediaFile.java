@@ -1777,39 +1777,83 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     audioStreams.clear();
 
     for (int i = 0; i < streams; i++) {
+
       MediaFileAudioStream stream = new MediaFileAudioStream();
-      String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
-      audioCodec = audioCodec.replaceAll("\\p{Punct}", "");
-      if (audioCodec.toLowerCase(Locale.ROOT).contains("truehd")) {
-        // <Format>TrueHD / AC-3</Format>
+      String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID", "Format");
+      audioCodec = audioCodec.replaceAll("\\p{Punct}", "").toLowerCase(Locale.ROOT);
+      if (audioCodec.contains("truehd")) {
         audioCodec = "TrueHD";
       }
+      if (audioCodec.contains("dts")) {
+        audioCodec = "DTS";
+      }
 
-      String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
-      if ("dts".equalsIgnoreCase(audioCodec) && StringUtils.isNotBlank(audioAddition)) {
-        // <Format_Profile>X / MA / Core</Format_Profile>
-        if (audioAddition.contains("ES")) {
-          audioCodec = "DTSHD-ES";
+      // see https://github.com/MediaArea/MediaInfo/issues/286
+      // since 18.08
+      String addFeature = getMediaInfo(StreamKind.Audio, i, "Format_AdditionalFeatures");
+      if (!addFeature.isEmpty()) {
+        if ("dts".equalsIgnoreCase(audioCodec)) {
+          if (addFeature.equalsIgnoreCase("XLL X")) {
+            audioCodec = "DTS-X";
+          }
+          else if (addFeature.equalsIgnoreCase("XLL")) {
+            audioCodec = "DTSHD-MA";
+          }
         }
-        if (audioAddition.contains("HRA")) {
-          audioCodec = "DTSHD-HRA";
-        }
-        if (audioAddition.contains("MA")) {
-          audioCodec = "DTSHD-MA";
-        }
-        if (audioAddition.contains("X")) {
-          audioCodec = "DTS-X";
+        if ("TrueHD".equalsIgnoreCase(audioCodec)) {
+          if (addFeature.equalsIgnoreCase("16-ch")) {
+            audioCodec = "Atmos";
+          }
         }
       }
-      if ("TrueHD".equalsIgnoreCase(audioCodec) && StringUtils.isNotBlank(audioAddition)) {
-        if (audioAddition.contains("Atmos")) {
-          audioCodec = "Atmos";
+
+      // old 18.05 style
+      String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
+      if (!audioAddition.isEmpty()) {
+        if ("dts".equalsIgnoreCase(audioCodec)) {
+          // <Format_Profile>X / MA / Core</Format_Profile>
+          if (audioAddition.contains("ES")) {
+            audioCodec = "DTSHD-ES";
+          }
+          if (audioAddition.contains("HRA")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          if (audioAddition.contains("MA")) {
+            audioCodec = "DTSHD-MA";
+          }
+          if (audioAddition.contains("X")) {
+            audioCodec = "DTS-X";
+          }
+        }
+        if ("TrueHD".equalsIgnoreCase(audioCodec)) {
+          if (audioAddition.contains("Atmos")) {
+            audioCodec = "Atmos";
+          }
+        }
+      }
+
+      // STILL not found a sub format?
+      if ("dts".equalsIgnoreCase(audioCodec) || "truehd".equalsIgnoreCase(audioCodec)) {
+        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial").toLowerCase(Locale.ROOT); // since 18.08
+        if (!commName.isEmpty()) {
+          if (commName.contains("master audio")) {
+            audioCodec = "DTSHD-MA";
+          }
+          if (commName.contains("high resolution audio")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          if (commName.contains("extended")) {
+            audioCodec = "DTSHD-ES";
+          }
+          if (commName.contains("atmos")) {
+            audioCodec = "Atmos";
+          }
         }
       }
       stream.setCodec(audioCodec);
 
       // AAC sometimes codes channels into Channel(s)_Original
-      String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original", "Channel(s)");
+      String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)", "Channel(s)_Original");
       stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels);
 
       String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
