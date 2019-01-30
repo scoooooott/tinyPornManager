@@ -867,6 +867,45 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * Checks, if a specific string can be found in one or multiple values<br>
+   * comes handy for different MI versions, where something changed....
+   *
+   * @param streamKind
+   *          MediaInfo.StreamKind.(General|Video|Audio|Text|Chapters|Image|Menu )
+   * @param streamNumber
+   *          the stream number (0 for first)
+   * @param search
+   *          the information to search for
+   * @param keys
+   *          the information you want to fetch
+   * @return the search value you asked for, or empty string
+   */
+  private String getMediaInfoContains(StreamKind streamKind, int streamNumber, String search, String... keys) {
+    if (miSnapshot == null) {
+      getMediaInfoSnapshot(); // load snapshot
+    }
+    if (miSnapshot != null) {
+      for (String key : keys) {
+        List<Map<String, String>> stream = miSnapshot.get(streamKind);
+        if (stream != null) {
+          LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
+          if (info != null) {
+            String value = info.get(key);
+            // System.out.println(" " + streamKind + " " + key + " = " + value);
+            if (value != null && value.length() > 0) {
+              if (value.toLowerCase(Locale.ROOT).contains(search.toLowerCase(Locale.ROOT))) {
+                return search;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return "";
+  }
+
+  /**
    * Checks if is empty value.
    *
    * @param object
@@ -1778,14 +1817,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     for (int i = 0; i < streams; i++) {
 
-      MediaFileAudioStream stream = new MediaFileAudioStream();
-      String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID", "Format");
-      audioCodec = audioCodec.replaceAll("\\p{Punct}", "").toLowerCase(Locale.ROOT);
-      if (audioCodec.contains("truehd")) {
-        audioCodec = "TrueHD";
+      // search for well known String in defined keys (changes between different MI versions!)
+      String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "CodecID", "Codec" };
+      String audioCodec = getMediaInfoContains(StreamKind.Audio, i, "TrueHD", acSearch);
+      if (audioCodec.isEmpty()) {
+        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "Atmos", acSearch);
       }
-      if (audioCodec.contains("dts")) {
-        audioCodec = "DTS";
+      if (audioCodec.isEmpty()) {
+        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "DTS", acSearch);
+      }
+      if (audioCodec.isEmpty()) {
+        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "AC3", acSearch);
+      }
+      if (audioCodec.isEmpty()) {
+        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "PCM", acSearch);
       }
 
       // see https://github.com/MediaArea/MediaInfo/issues/286
@@ -1807,33 +1852,35 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
       }
 
-      // old 18.05 style
-      String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
-      if (!audioAddition.isEmpty()) {
-        if ("dts".equalsIgnoreCase(audioCodec)) {
-          // <Format_Profile>X / MA / Core</Format_Profile>
-          if (audioAddition.contains("ES")) {
-            audioCodec = "DTSHD-ES";
-          }
-          if (audioAddition.contains("HRA")) {
-            audioCodec = "DTSHD-HRA";
-          }
-          if (audioAddition.contains("MA")) {
-            audioCodec = "DTSHD-MA";
-          }
-          if (audioAddition.contains("X")) {
-            audioCodec = "DTS-X";
-          }
-        }
-        if ("TrueHD".equalsIgnoreCase(audioCodec)) {
-          if (audioAddition.contains("Atmos")) {
-            audioCodec = "Atmos";
-          }
-        }
-      }
-
       // STILL not found a sub format?
       if ("dts".equalsIgnoreCase(audioCodec) || "truehd".equalsIgnoreCase(audioCodec)) {
+
+        // old 18.05 style
+        String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
+        if (!audioAddition.isEmpty()) {
+          if ("dts".equalsIgnoreCase(audioCodec)) {
+            // <Format_Profile>X / MA / Core</Format_Profile>
+            if (audioAddition.contains("ES")) {
+              audioCodec = "DTSHD-ES";
+            }
+            if (audioAddition.contains("HRA")) {
+              audioCodec = "DTSHD-HRA";
+            }
+            if (audioAddition.contains("MA")) {
+              audioCodec = "DTSHD-MA";
+            }
+            if (audioAddition.contains("X")) {
+              audioCodec = "DTS-X";
+            }
+          }
+          if ("TrueHD".equalsIgnoreCase(audioCodec)) {
+            if (audioAddition.contains("Atmos")) {
+              audioCodec = "Atmos";
+            }
+          }
+        }
+
+        // newer 18.12 style
         String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial").toLowerCase(Locale.ROOT); // since 18.08
         if (!commName.isEmpty()) {
           if (commName.contains("master audio")) {
@@ -1850,6 +1897,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
         }
       }
+
+      MediaFileAudioStream stream = new MediaFileAudioStream();
       stream.setCodec(audioCodec);
 
       // AAC sometimes codes channels into Channel(s)_Original

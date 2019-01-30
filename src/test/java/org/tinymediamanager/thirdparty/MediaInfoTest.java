@@ -22,6 +22,53 @@ public class MediaInfoTest extends BasicTest {
   }
 
   @Test
+  public void testAudiofiles() {
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/DTS-X.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("DTS-X");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+    assertThat(mf.getAudioLanguage()).isEqualTo("eng");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/DTSHD-HRA.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("DTSHD-HRA");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+    assertThat(mf.getAudioLanguage()).isEqualTo("eng");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/DTSHD-MA.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("DTSHD-MA");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+    assertThat(mf.getAudioLanguage()).isEqualTo("eng");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/DTS.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("DTS");
+    assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/TrueHD.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("TrueHD");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+    assertThat(mf.getAudioLanguage()).isEqualTo("eng");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/TrueHD-Atmos.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("Atmos");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/AC-3.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("AC3");
+    assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/PCM.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("PCM");
+    assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+  }
+
+  @Test
   public void testIsoXml() {
     // DVD ISO - old format
     try {
@@ -260,7 +307,7 @@ public class MediaInfoTest extends BasicTest {
     setTraceLogging();
 
     // MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo.17.10.iso"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/TrueHD-Atmos.mka"));
     mf.gatherMediaInformation();
 
     System.out.println("----------------------");
