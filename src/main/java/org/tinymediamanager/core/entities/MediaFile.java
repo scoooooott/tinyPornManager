@@ -1999,10 +1999,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase(Locale.ROOT);
       LOGGER.debug("3D detected :) " + mvl);
       if (!StringUtils.isEmpty(mvl) && mvl.contains("top") && mvl.contains("bottom")) {
-        video3DFormat = VIDEO_3D_TAB;
+        video3DFormat = VIDEO_3D_HTAB; // assume HalfTAB as default
+        if (height > width) {
+          video3DFormat = VIDEO_3D_TAB;// FullTAB eg 1920x2160
+        }
       }
       if (!StringUtils.isEmpty(mvl) && mvl.contains("side")) {
-        video3DFormat = VIDEO_3D_SBS;
+        video3DFormat = VIDEO_3D_HSBS;// assume HalfSBS as default
+        if (getAspectRatioCalculated() > 3) {
+          video3DFormat = VIDEO_3D_SBS;// FullSBS eg 3840x1080
+        }
       }
     }
 
