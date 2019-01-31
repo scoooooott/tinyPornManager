@@ -23,7 +23,17 @@ public class MediaInfoTest extends BasicTest {
 
   @Test
   public void testAudiofiles() {
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/DTS-X.mka"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/AAC-HE_LC_6ch.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("AAC");
+    assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/AAC-HE_LC_8ch.mka"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("AAC");
+    assertThat(mf.getAudioChannels()).isEqualTo("8ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/DTS-X.mka"));
     mf.gatherMediaInformation();
     assertThat(mf.getAudioCodec()).isEqualTo("DTS-X");
     assertThat(mf.getAudioChannels()).isEqualTo("8ch");
