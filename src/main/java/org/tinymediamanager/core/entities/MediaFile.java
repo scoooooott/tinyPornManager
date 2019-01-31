@@ -1863,7 +1863,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       if ("dts".equalsIgnoreCase(audioCodec) || "truehd".equalsIgnoreCase(audioCodec)) {
 
         // old 18.05 style
-        String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
+        String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
         if (!audioAddition.isEmpty()) {
           if ("dts".equalsIgnoreCase(audioCodec)) {
             // <Format_Profile>X / MA / Core</Format_Profile>
