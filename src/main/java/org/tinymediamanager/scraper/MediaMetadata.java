@@ -891,7 +891,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Set the ratings. The values usually from 0 to 100.0
+   * Set the ratings
    * 
    * @param newRatings
    *          the ratings to be set
@@ -903,7 +903,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Add a rating. The values usually from 0 to 100.0
+   * Add a rating
    *
    * @param rating
    *          the rating to be set

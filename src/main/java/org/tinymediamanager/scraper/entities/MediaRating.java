@@ -81,35 +81,29 @@ public class MediaRating {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + maxValue;
-    result = prime * result + Float.floatToIntBits(rating);
-    result = prime * result + voteCount;
-    return result;
+    return prime * result + ((id == null) ? 0 : id.hashCode());
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     MediaRating other = (MediaRating) obj;
     if (id == null) {
       if (other.id != null)
         return false;
     }
-    else if (!id.equals(other.id))
+    else if (!id.equals(other.id)) {
       return false;
-    if (maxValue != other.maxValue)
-      return false;
-    if (Float.floatToIntBits(rating) != Float.floatToIntBits(other.rating))
-      return false;
-    if (voteCount != other.voteCount)
-      return false;
+    }
+
     return true;
   }
-
 }
