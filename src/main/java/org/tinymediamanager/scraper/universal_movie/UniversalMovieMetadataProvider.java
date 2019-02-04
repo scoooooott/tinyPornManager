@@ -40,6 +40,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.config.MediaProviderConfig;
+import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -59,22 +60,25 @@ import net.xeoh.plugins.base.annotations.events.PluginLoaded;
  */
 @PluginImplementation
 public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
-  private static final String                       UNDEFINED          = "-";
-  private static final String                       SEARCH             = "search";
-  private static final Logger                       LOGGER             = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
-  private final MediaProviderInfo                   providerInfo;
+  private static final String                              UNDEFINED          = "-";
+  private static final String                              SEARCH             = "search";
+  private static final String                              RATINGS            = "ratings";
+  private static final Logger                              LOGGER             = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
+  private final MediaProviderInfo                          providerInfo;
 
-  private final Map<String, IMovieMetadataProvider> compatibleScrapers = new HashMap<>();
+  private static final Map<String, IMovieMetadataProvider> compatibleScrapers = new HashMap<>();
 
   public UniversalMovieMetadataProvider() {
     providerInfo = createMediaProviderInfo();
   }
 
   @PluginLoaded
-  public void add(IMovieMetadataProvider plugin) {
+  public static void add(IMovieMetadataProvider plugin) {
     // called for each plugin implementing that interface
     if (plugin instanceof IMovieTmdbMetadataProvider || plugin instanceof IMovieImdbMetadataProvider) {
-      compatibleScrapers.put(plugin.getProviderInfo().getId(), plugin);
+      if (!compatibleScrapers.containsKey(plugin.getProviderInfo().getId())) {
+        compatibleScrapers.put(plugin.getProviderInfo().getId(), plugin);
+      }
     }
   }
 
@@ -96,7 +100,7 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     config.addSelect("releaseDate", "metatag.releasedate", compatibleScraperIds, UNDEFINED);
     config.addSelect("plot", "metatag.plot", compatibleScraperIds, UNDEFINED);
     config.addSelect("runtime", "metatag.runtime", compatibleScraperIds, UNDEFINED);
-    config.addSelect("ratings", "metatag.rating", compatibleScraperIds, UNDEFINED);
+    config.addSelect(RATINGS, "metatag.rating", compatibleScraperIds, UNDEFINED);
     config.addSelect("top250", "metatag.top250",
         compatibleScraperIds.contains(MediaMetadata.IMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.IMDB) : Collections.singletonList(UNDEFINED),
         UNDEFINED);
@@ -303,7 +307,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
 
     // assign the requested metadata
     for (Map.Entry<String, String> entry : providerInfo.getConfig().getConfigKeyValuePairs().entrySet()) {
-      if (!UNDEFINED.equals(entry.getValue()) && !SEARCH.equals(entry.getValue())) {
+      if (!SEARCH.equals(entry.getKey()) && !UNDEFINED.equals(entry.getValue())) {
+        // all specified fields should be filled from the desired scraper
         MediaMetadata mediaMetadata = metadataMap.get(entry.getValue());
         if (mediaMetadata != null) {
           try {
@@ -314,6 +319,21 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
           }
           catch (Exception e) {
             LOGGER.warn("Problem assigning " + entry.getKey() + " : " + e.getMessage());
+          }
+        }
+
+        // last but not least we take all ratings we got ;) the more the better
+        if (RATINGS.equals(entry.getKey())) {
+          for (Map.Entry<String, MediaMetadata> mediaMetadataEntry : metadataMap.entrySet()) {
+            // do not process the desired scraper again
+            if (mediaMetadataEntry.getKey().equals(entry.getValue())) {
+              continue;
+            }
+            for (MediaRating rating : mediaMetadataEntry.getValue().getRatings()) {
+              if (!md.getRatings().contains(rating)) {
+                md.addRating(rating);
+              }
+            }
           }
         }
       }
