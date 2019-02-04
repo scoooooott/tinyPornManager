@@ -34,6 +34,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -59,6 +60,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<String> videoFormatComparator = new VideoFormatComparator();
     Comparator<String> fileSizeComparator = new FileSizeComparator();
     Comparator<Integer> integerComparator = new IntegerComparator();
+    Comparator<Certification> certificationComparator = new CertificationComparator();
 
     FontMetrics fontMetrics = getFontMetrics();
 
@@ -138,6 +140,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.VOTES);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1000000") * 1.2f));
+    addColumn(col);
+
+    /*
+     * certification (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, Certification.class);
+    col.setColumnComparator(certificationComparator);
+    col.setHeaderIcon(IconManager.VOTES);
+    col.setColumnResizeable(true);
     addColumn(col);
 
     /*

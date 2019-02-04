@@ -19,6 +19,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.IconManager;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
@@ -268,6 +269,19 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       }
 
       return size;
+    }
+  }
+
+  public class CertificationComparator implements Comparator<Certification> {
+    @Override
+    public int compare(Certification arg0, Certification arg1) {
+      if (arg0 == null) {
+        return -1;
+      }
+      if (arg1 == null) {
+        return 1;
+      }
+      return arg0.toString().compareTo(arg1.toString());
     }
   }
 }

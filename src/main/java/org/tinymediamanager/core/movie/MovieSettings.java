@@ -280,7 +280,7 @@ public class MovieSettings extends AbstractSettings {
     // hidden columns
     setMovieTableHiddenColumns(
         Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d", "videoFormat", "votes", "edition",
-            "mediaSource"));
+            "mediaSource", "certification"));
 
     addDefaultEntries();
 
