@@ -1810,13 +1810,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private void fetchAudioInformation() {
-    int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount")) > 0 ? parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"))
-        : parseToInt(getMediaInfo(StreamKind.Audio, 0, "StreamCount"));
+    int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
+    if (streams == 0) {
+      // doubt it - maybe no AudioCount set!
+      String value = "";
+      while (value.isEmpty()) {
+        value = getMediaInfo(StreamKind.Audio, streams, "Format"); // should not be empty!
+        if (!value.isEmpty()) {
+          streams++;
+        }
+      }
+    }
 
     audioStreams.clear();
 
     for (int i = 0; i < streams; i++) {
 
+      // workaround for DTS & TrueHD variant detection
       // search for well known String in defined keys (changes between different MI versions!)
       String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "CodecID", "Codec" };
       String audioCodec = getMediaInfoContains(StreamKind.Audio, i, "TrueHD", acSearch);
@@ -1826,18 +1836,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       if (audioCodec.isEmpty()) {
         audioCodec = getMediaInfoContains(StreamKind.Audio, i, "DTS", acSearch);
       }
+
+      // else just take format
       if (audioCodec.isEmpty()) {
-        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "AC3", acSearch);
-      }
-      if (audioCodec.isEmpty()) {
-        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "AC-3", acSearch);
-        audioCodec = audioCodec.replaceAll("-", "");
-      }
-      if (audioCodec.isEmpty()) {
-        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "PCM", acSearch);
-      }
-      if (audioCodec.isEmpty()) {
-        audioCodec = getMediaInfoContains(StreamKind.Audio, i, "AAC", acSearch);
+        audioCodec = getMediaInfo(StreamKind.Audio, i, "Format");
       }
 
       // see https://github.com/MediaArea/MediaInfo/issues/286
@@ -1903,11 +1905,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             audioCodec = "Atmos";
           }
         }
-      }
-
-      // STILL? use old format
-      if (audioCodec.isEmpty()) {
-        audioCodec = getMediaInfo(StreamKind.Audio, i, "Format");
       }
 
       MediaFileAudioStream stream = new MediaFileAudioStream();
@@ -1993,7 +1990,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     String mvc = getMediaInfo(StreamKind.Video, 0, "MultiView_Count");
-
     if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
       video3DFormat = VIDEO_3D;
       String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase(Locale.ROOT);
@@ -2010,6 +2006,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           video3DFormat = VIDEO_3D_SBS;// FullSBS eg 3840x1080
         }
       }
+    }
+    else {
+      // not detected as 3D by MI - BUT: if we've got some known resolutions, we can at least find the "full" ones ;)
+      if (width == 3840 && height == 1080) {
+        video3DFormat = VIDEO_3D_SBS;
+      }
+      else if (width == 1920 && height == 2160) {
+        video3DFormat = VIDEO_3D_TAB;
+      }
+
     }
 
     String hdr = getMediaInfo(StreamKind.Video, 0, "colour_primaries");

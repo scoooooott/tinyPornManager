@@ -3,6 +3,9 @@ package org.tinymediamanager.thirdparty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 
@@ -69,13 +72,37 @@ public class MediaInfoTest extends BasicTest {
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/AC-3.mka"));
     mf.gatherMediaInformation();
-    assertThat(mf.getAudioCodec()).isEqualTo("AC3");
+    assertThat(mf.getAudioCodec()).isEqualTo("AC-3");
     assertThat(mf.getAudioChannels()).isEqualTo("6ch");
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/PCM.mka"));
     mf.gatherMediaInformation();
     assertThat(mf.getAudioCodec()).isEqualTo("PCM");
     assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/E-AC3.ac3"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("E-AC-3");
+    assertThat(mf.getAudioChannels()).isEqualTo("6ch");
+  }
+
+  // @Test
+  public void testVideofiles() {
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FSBS.mkv"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_SBS);
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HSBS.mkv"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HSBS);
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FTAB.mkv"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_TAB);
+
+    mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HTAB.mkv"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HTAB);
   }
 
   @Test
@@ -316,8 +343,7 @@ public class MediaInfoTest extends BasicTest {
   public void mediaFile() {
     setTraceLogging();
 
-    // MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/TrueHD-Atmos.mka"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/E-AC3.ac3"));
     mf.gatherMediaInformation();
 
     System.out.println("----------------------");
@@ -352,7 +378,7 @@ public class MediaInfoTest extends BasicTest {
    */
   @Test
   public void testDirect() throws Exception {
-    String FileName = "";
+    String FileName = "src/test/resources/samples/E-AC3.eac3";
     String To_Display = "";
 
     // Info about the library
@@ -399,5 +425,41 @@ public class MediaInfoTest extends BasicTest {
     MI.close();
 
     System.out.println(To_Display);
+  }
+
+  @Test
+  public void listDirectForAll() {
+    MediaInfo mi = new MediaInfo();
+
+    DirectoryStream<Path> stream = null;
+    try {
+      stream = Files.newDirectoryStream(Paths.get("src/test/resources/samples"));
+      for (Path path : stream) {
+        if (mi.open(path)) {
+
+          // https://github.com/MediaArea/MediaInfoLib/blob/master/Source/Resource/Text/Stream/Audio.csv
+          // Format;;;N YTY;;;Format used;;
+          // Format/String;;;Y NT;;;Format used + additional features
+          // Format/Info;;;Y NT;;;Info about the format;;
+          // Format_Commercial;;;N YT;;;Commercial name used by vendor for theses setings or Format field if there is no difference;;
+          // Format_Profile;;;Y YTY;;;Profile of the Format (old XML: 'Profile@Level' format; MIXML: 'Profile' only)
+          // Format_AdditionalFeatures;;;N YTY;;;Format features needed for fully supporting the content
+
+          String ret = path + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format") + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/String") + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/Info") + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Commercial") + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Profile") + "\n";
+          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_AdditionalFeatures") + "\n";
+
+          System.out.println(ret);
+          mi.close();
+        }
+      }
+    }
+    catch (Exception e) {
+      // TODO: handle exception
+    }
   }
 }
