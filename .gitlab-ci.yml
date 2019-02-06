@@ -24,7 +24,9 @@ test:jdk8:
   stage: test
   image: maven:3-jdk-8
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
     # install libmediainfo for unit tests
     - apt-get update && apt-get install -y --no-install-recommends libmms0
@@ -33,13 +35,14 @@ test:jdk8:
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk10:
   stage: test
   image: maven:3-jdk-10
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
     # install libmediainfo for unit tests
     - apt-get update && apt-get install -y --no-install-recommends libmms0
@@ -48,13 +51,14 @@ test:jdk10:
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk11:
   stage: test
   image: maven:3-jdk-11
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
     # install libmediainfo for unit tests
     - apt-get update && apt-get install -y --no-install-recommends libmms0
@@ -63,7 +67,6 @@ test:jdk11:
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 #test:jdk12:
 #  stage: test
