@@ -49,6 +49,7 @@ import org.tinymediamanager.ui.tvshows.filters.TvShowNewEpisodesFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowStudioFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowTagFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowVideoCodecFilter;
+import org.tinymediamanager.ui.tvshows.filters.TvShowVideoContainerFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowVideoFormatFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowWatchedFilter;
 
@@ -94,6 +95,7 @@ public class TvShowFilterDialog extends TmmDialog {
       addFilter(new TvShowVideoFormatFilter());
       addFilter(new TvShowVideoCodecFilter());
       addFilter(new TvShowFrameRateFilter());
+      addFilter(new TvShowVideoContainerFilter());
       addFilter(new TvShowAudioCodecFilter());
       addFilter(new TvShowMediaSourceFilter());
       addFilter(new TvShowDatasourceFilter());

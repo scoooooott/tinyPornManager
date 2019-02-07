@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -80,6 +81,7 @@ public class TvShowList extends AbstractModelObject {
   private final List<String>     tvShowTagsObservable;
   private final List<String>     episodeTagsObservable;
   private final List<String>     videoCodecsObservable;
+  private final List<String>     videoContainersObservable;
   private final List<String>     audioCodecsObservable;
   private final List<Double>     frameRateObservable;
 
@@ -94,6 +96,7 @@ public class TvShowList extends AbstractModelObject {
     tvShowTagsObservable = new ObservableCopyOnWriteArrayList<>();
     episodeTagsObservable = new ObservableCopyOnWriteArrayList<>();
     videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    videoContainersObservable = new ObservableCopyOnWriteArrayList<>();
     audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
     frameRateObservable = new ObservableCopyOnWriteArrayList<>();
 
@@ -652,7 +655,6 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateMediaInformationLists(TvShowEpisode episode) {
-    // video codec & frame rate
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
       String codec = mf.getVideoCodec();
@@ -665,14 +667,18 @@ public class TvShowList extends AbstractModelObject {
       if (!frameRateObservable.contains(frameRate)) {
         addFrameRate(frameRate);
       }
-    }
 
-    // audio codec
-    for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+      // video container
+      String container = mf.getContainerFormat();
+      if (StringUtils.isNotBlank(container) && !videoContainersObservable.contains(container.toLowerCase(Locale.ROOT))) {
+        addVideoContainer(container.toLowerCase(Locale.ROOT));
+      }
+
+      // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        String codec = audio.getCodec();
-        if (!audioCodecsObservable.contains(codec)) {
-          addAudioCodec(codec);
+        String audioCodec = audio.getCodec();
+        if (!audioCodecsObservable.contains(audioCodec)) {
+          addAudioCodec(audioCodec);
         }
       }
     }
@@ -691,6 +697,21 @@ public class TvShowList extends AbstractModelObject {
     }
 
     firePropertyChange(VIDEO_CODEC, null, videoCodecsObservable);
+  }
+
+  private void addVideoContainer(String newContainer) {
+    if (StringUtils.isBlank(newContainer)) {
+      return;
+    }
+
+    synchronized (videoContainersObservable) {
+      if (videoContainersObservable.contains(newContainer)) {
+        return;
+      }
+      videoContainersObservable.add(newContainer);
+    }
+
+    firePropertyChange(Constants.VIDEO_CONTAINER, null, videoContainersObservable);
   }
 
   private void addFrameRate(Double newFrameRate) {
@@ -725,6 +746,10 @@ public class TvShowList extends AbstractModelObject {
 
   public List<String> getVideoCodecsInEpisodes() {
     return videoCodecsObservable;
+  }
+
+  public List<String> getVideoContainersInEpisodes() {
+    return videoContainersObservable;
   }
 
   public List<Double> getFrameRatesInEpisodes() {
