@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -83,6 +84,7 @@ public class MovieList extends AbstractModelObject {
   private final List<MovieSet>         movieSetList;
   private final List<String>           tagsObservable;
   private final List<String>           videoCodecsObservable;
+  private final List<String>           videoContainersObservable;
   private final List<String>           audioCodecsObservable;
   private final List<Certification>    certificationsObservable;
   private final List<Double>           frameRateObservable;
@@ -100,6 +102,7 @@ public class MovieList extends AbstractModelObject {
     movieSetList = new ObservableCopyOnWriteArrayList<>();
     tagsObservable = new ObservableCopyOnWriteArrayList<>();
     videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    videoContainersObservable = new ObservableCopyOnWriteArrayList<>();
     audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
     certificationsObservable = new ObservableCopyOnWriteArrayList<>();
     frameRateObservable = new ObservableCopyOnWriteArrayList<>();
@@ -810,12 +813,11 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateMediaInformationLists(Movie movie) {
-    // video codec & frame rate
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
-      String codec = mf.getVideoCodec();
-      if (!videoCodecsObservable.contains(codec)) {
-        addVideoCodec(codec);
+      String videoCodec = mf.getVideoCodec();
+      if (!videoCodecsObservable.contains(videoCodec)) {
+        addVideoCodec(videoCodec);
       }
 
       // frame rate
@@ -823,14 +825,18 @@ public class MovieList extends AbstractModelObject {
       if (!frameRateObservable.contains(frameRate)) {
         addFrameRate(frameRate);
       }
-    }
 
-    // audio codec
-    for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      // video container
+      String container = mf.getContainerFormat();
+      if (StringUtils.isNotBlank(container) && !videoContainersObservable.contains(container.toLowerCase(Locale.ROOT))) {
+        addVideoContainer(container.toLowerCase(Locale.ROOT));
+      }
+
+      // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        String codec = audio.getCodec();
-        if (!audioCodecsObservable.contains(codec)) {
-          addAudioCodec(codec);
+        String audioCodec = audio.getCodec();
+        if (!audioCodecsObservable.contains(audioCodec)) {
+          addAudioCodec(audioCodec);
         }
       }
     }
@@ -844,6 +850,10 @@ public class MovieList extends AbstractModelObject {
 
   public List<String> getVideoCodecsInMovies() {
     return videoCodecsObservable;
+  }
+
+  public List<String> getVideoContainersInMovies() {
+    return videoContainersObservable;
   }
 
   public List<String> getAudioCodecsInMovies() {
@@ -892,6 +902,21 @@ public class MovieList extends AbstractModelObject {
     }
 
     firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsObservable);
+  }
+
+  private void addVideoContainer(String newContainer) {
+    if (StringUtils.isBlank(newContainer)) {
+      return;
+    }
+
+    synchronized (videoContainersObservable) {
+      if (videoContainersObservable.contains(newContainer)) {
+        return;
+      }
+      videoContainersObservable.add(newContainer);
+    }
+
+    firePropertyChange(Constants.VIDEO_CONTAINER, null, videoContainersObservable);
   }
 
   private void addAudioCodec(String newCodec) {

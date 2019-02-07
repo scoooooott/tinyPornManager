@@ -60,6 +60,7 @@ import org.tinymediamanager.ui.movies.filters.MovieProductionCompanyFilter;
 import org.tinymediamanager.ui.movies.filters.MovieTagFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideo3DFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideoCodecFilter;
+import org.tinymediamanager.ui.movies.filters.MovieVideoContainerFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideoExtrasFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideoFormatFilter;
 import org.tinymediamanager.ui.movies.filters.MovieWatchedFilter;
@@ -116,6 +117,7 @@ public class MovieFilterDialog extends TmmDialog {
       addFilter(new MovieVideoCodecFilter());
       addFilter(new MovieFrameRateFilter());
       addFilter(new MovieVideo3DFilter());
+      addFilter(new MovieVideoContainerFilter());
       addFilter(new MovieAudioCodecFilter());
       addFilter(new MovieDatasourceFilter());
       addFilter(new MovieMediaSourceFilter());
