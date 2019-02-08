@@ -1095,26 +1095,10 @@ public class Utils {
         return;
       }
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-      String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
+      String date = formatter.format(new Date());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
       if (!Files.exists(backup) || overwrite) {
-        // v1 - just copy
-        // FileUtils.copyFile(f, backup, true);
-
-        // v2 - zip'em
-        // ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(backup.toFile()));
-        // zos.setComment("backup from " + date);
-        // ZipEntry ze = new ZipEntry(f.getName());
-        // zos.putNextEntry(ze);
-        // FileInputStream in = new FileInputStream(f);
-        // IOUtils.copy(in, zos);
-        // in.close();
-        // zos.closeEntry();
-        // zos.close();
-
-        // v3 - Java 7 NIO file system zip
         createZip(backup, file, "/" + file.getFileName().toString()); // just put in main dir
-        // TODO: add timestamp to zipped file, to archive ALL of one day ;)
       }
     }
     catch (IOException e) {
@@ -1340,7 +1324,19 @@ public class Utils {
           Files.createDirectory(internalTargetPath.getParent());
         }
         // copy a file into the zip file
-        Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
+        if (Files.isDirectory(toBeAdded)) {
+          Files.walk(toBeAdded).forEach(source -> {
+            try {
+              Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()));
+            }
+            catch (Exception e) {
+              LOGGER.error("Failed to create zip file!" + e.getMessage());
+            }
+          });
+        }
+        else {
+          Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
+        }
       }
     }
     catch (Exception e) {
