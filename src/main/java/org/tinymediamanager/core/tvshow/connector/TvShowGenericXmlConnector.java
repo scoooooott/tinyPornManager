@@ -132,6 +132,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
         // add well known tags
         addTitle();
+        addOriginalTitle();
         addShowTitle();
         addYear();
         addRating();
@@ -199,6 +200,15 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Element title = document.createElement("title");
     title.setTextContent(tvShow.getTitle());
     root.appendChild(title);
+  }
+
+  /**
+   * add the original title in the form <originaltitle>xxx</originaltitle>
+   */
+  protected void addOriginalTitle() {
+    Element originaltitle = document.createElement("originaltitle");
+    originaltitle.setTextContent(tvShow.getOriginalTitle());
+    root.appendChild(originaltitle);
   }
 
   /**

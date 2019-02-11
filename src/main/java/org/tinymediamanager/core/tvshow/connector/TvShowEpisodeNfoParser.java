@@ -150,6 +150,7 @@ public class TvShowEpisodeNfoParser {
     private final List<String>        supportedElements   = new ArrayList<>();
 
     public String                     title               = "";
+    public String                     originaltitle       = "";
     public String                     showTitle           = "";
     public int                        season              = -1;
     public int                        episode             = -1;
@@ -193,6 +194,7 @@ public class TvShowEpisodeNfoParser {
 
       // parse all supported fields
       parseTag(Episode::parseTitle);
+      parseTag(Episode::parseOriginalTitle);
       parseTag(Episode::parseShowTitle);
       parseTag(Episode::parseSeason);
       parseTag(Episode::parseEpisode);
@@ -261,6 +263,20 @@ public class TvShowEpisodeNfoParser {
       Element element = getSingleElement(root, "title");
       if (element != null) {
         title = element.ownText();
+      }
+
+      return null;
+    }
+
+    /**
+     * the title usually comes in the original title tag
+     */
+    private Void parseOriginalTitle() {
+      supportedElements.add("originaltitle");
+
+      Element element = getSingleElement(root, "originaltitle");
+      if (element != null) {
+        originaltitle = element.ownText();
       }
 
       return null;
@@ -1259,6 +1275,7 @@ public class TvShowEpisodeNfoParser {
     public TvShowEpisode toTvShowEpisode() {
       TvShowEpisode episode = new TvShowEpisode();
       episode.setTitle(title);
+      episode.setOriginalTitle(originaltitle);
       episode.setSeason(season);
       episode.setEpisode(this.episode);
       episode.setDisplayEpisode(displayepisode);

@@ -149,6 +149,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           }
 
           addTitle(episode, parserEpisode);
+          addOriginalTitle(episode, parserEpisode);
           addShowTitle(episode, parserEpisode);
           addSeason(episode, parserEpisode);
           addEpisode(episode, parserEpisode);
@@ -225,6 +226,15 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     Element title = document.createElement("title");
     title.setTextContent(episode.getTitle());
     root.appendChild(title);
+  }
+
+  /**
+   * add the original title in the form <originaltitle>xxx</originaltitle>
+   */
+  protected void addOriginalTitle(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element originaltitle = document.createElement("originaltitle");
+    originaltitle.setTextContent(episode.getOriginalTitle());
+    root.appendChild(originaltitle);
   }
 
   /**
