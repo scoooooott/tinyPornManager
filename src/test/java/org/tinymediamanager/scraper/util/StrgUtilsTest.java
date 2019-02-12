@@ -1,5 +1,7 @@
 package org.tinymediamanager.scraper.util;
 
+import java.text.ParseException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,5 +25,13 @@ public class StrgUtilsTest {
   @Test
   public void hex() {
     Assert.assertEquals("6162636465666768", StrgUtils.bytesToHex("abcdefgh".getBytes()));
+  }
+
+  @Test
+  public void parseDateTests() throws ParseException {
+    Assert.assertNotNull(StrgUtils.parseDate("2019-02-12"));
+    Assert.assertNotNull(StrgUtils.parseDate("12-02-2019"));
+    Assert.assertNotNull(StrgUtils.parseDate("2019-02-12 15:16"));
+    Assert.assertNotNull(StrgUtils.parseDate("2019-02-12 15:16:13"));
   }
 }

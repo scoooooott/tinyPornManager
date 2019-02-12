@@ -36,6 +36,35 @@ public class StrgUtils {
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
   private final static char[]                    HEX_ARRAY             = "0123456789ABCDEF".toCharArray();
 
+  // @formatter:off
+  private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {
+  {
+    put("^\\d{8}$", "yyyyMMdd");
+    put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
+    put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+    put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
+    put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
+    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
+    put("^\\d{12}$", "yyyyMMddHHmm");
+    put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
+    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
+    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
+    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
+    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
+    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
+    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
+    put("^\\d{14}$", "yyyyMMddHHmmss");
+    put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
+    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
+    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
+    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
+    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
+    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
+    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
+  }};
+  // @formatter:on
+
   private StrgUtils() {
   }
 
@@ -178,6 +207,25 @@ public class StrgUtils {
   }
 
   /**
+   * Determine SimpleDateFormat pattern matching with the given date string. Returns null if format is unknown. You can simply extend DateUtil with
+   * more formats if needed.<br>
+   * https://stackoverflow.com/a/3390252
+   * 
+   * @param dateString
+   *          The date string to determine the SimpleDateFormat pattern for.
+   * @return The matching SimpleDateFormat pattern, or null if format is unknown.
+   * @see SimpleDateFormat
+   */
+  public static String determineDateFormat(String dateString) throws ParseException {
+    for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
+      if (dateString.toLowerCase().matches(regexp)) {
+        return DATE_FORMAT_REGEXPS.get(regexp);
+      }
+    }
+    return null; // Unknown format.
+  }
+
+  /**
    * Parses the date.
    * 
    * @param dateAsString
@@ -189,20 +237,11 @@ public class StrgUtils {
   public static Date parseDate(String dateAsString) throws ParseException {
     Date date = null;
 
-    Pattern datePattern = Pattern.compile("([0-9]{2})[_\\.-]([0-9]{2})[_\\.-]([0-9]{4})");
-    Matcher m = datePattern.matcher(dateAsString);
-    if (m.find()) {
-      date = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+    String format = determineDateFormat(dateAsString);
+    if (format != null) {
+      date = new SimpleDateFormat(format).parse(dateAsString);
     }
     else {
-      datePattern = Pattern.compile("([0-9]{4})[_\\.-]([0-9]{2})[_\\.-]([0-9]{2})");
-      m = datePattern.matcher(dateAsString);
-      if (m.find()) {
-        date = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
-      }
-    }
-
-    if (date == null) {
       throw new ParseException("could not parse date from: \"" + dateAsString + "\"", 0);
     }
 
