@@ -1809,18 +1809,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
   }
 
+  /**
+   * how many streams of chosen kind do we have gathered?
+   * 
+   * @param kind
+   * @return
+   */
+  private int getStreamCount(StreamKind kind) {
+    List<Map<String, String>> map = miSnapshot.get(kind);
+    if (map != null) {
+      return map.size();
+    }
+    return 0;
+  }
+
   private void fetchAudioInformation() {
     int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
     if (streams == 0) {
-      // doubt it - maybe no AudioCount set!
-      String value = "";
-      while (value.isEmpty()) {
-        value = getMediaInfo(StreamKind.Audio, streams, "Format"); // should not be empty!
-        if (!value.isEmpty()) {
-          streams++;
-        }
-      }
+      streams = getStreamCount(StreamKind.Audio);
     }
+    System.out.println(streams);
 
     audioStreams.clear();
 
