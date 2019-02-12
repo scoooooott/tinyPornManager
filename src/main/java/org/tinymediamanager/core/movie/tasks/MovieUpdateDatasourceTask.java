@@ -31,7 +31,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -545,7 +544,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie = new Movie();
       }
       movie.setNewlyAdded(true);
-      movie.setDateAdded(new Date());
     }
 
     // ***************************************************************
@@ -776,7 +774,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           if (matcher.find()) {
             movie.setVideoIn3D(true);
           }
-          movie.setDateAdded(new Date());
         }
         movie.setDataSource(dataSource.toString());
         movie.setNewlyAdded(true);

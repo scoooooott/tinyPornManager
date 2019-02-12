@@ -1388,6 +1388,7 @@ public class MovieNfoParser {
     movie.setYear(year);
     movie.setTop250(top250);
     movie.setReleaseDate(releaseDate);
+    movie.setDateAdded(dateadded);
     movie.setPlot(plot);
     movie.setTagline(tagline);
     movie.setRuntime(runtime);
