@@ -61,6 +61,8 @@ public class TvShowScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxScrapeEpisodes;
   private JCheckBox                   chckbxAired;
   private JCheckBox                   chckbxStatus;
+  private JCheckBox                   chckbxCountry;
+  private JCheckBox                   chckbxStudio;
 
   /**
    * Instantiates a new tv show scraper metadata panel.
@@ -109,18 +111,24 @@ public class TvShowScraperMetadataPanel extends JPanel {
     chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
     add(chckbxArtwork, "cell 4 2");
 
+    chckbxCountry = new JCheckBox(BUNDLE.getString("metatag.country"));
+    add(chckbxCountry,"cell 6 2");
+
+    chckbxStudio = new JCheckBox(BUNDLE.getString("metatag.studio"));
+    add(chckbxStudio, "cell 0 3");
+
     chckbxScrapeEpisodes = new JCheckBox(BUNDLE.getString("tvshow.scrapeepisodeseasondata")); //$NON-NLS-1$
-    add(chckbxScrapeEpisodes, "cell 0 3 7 1,aligny top");
+    add(chckbxScrapeEpisodes, "cell 0 4 7 1,aligny top");
 
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
-    add(btnSelectAll, "flowx,cell 0 4 7 1");
+    add(btnSelectAll, "flowx,cell 0 5 7 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
     btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     initDataBindings();
 
     JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
-    add(btnDeSelectAll, "cell 0 4");
+    add(btnDeSelectAll, "cell 0 5");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
   }
@@ -196,6 +204,16 @@ public class TvShowScraperMetadataPanel extends JPanel {
     AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         config, tvShowScraperMetadataConfigBeanProperty, chckbxScrapeEpisodes, jCheckBoxBeanProperty);
     autoBinding_12.bind();
+    //
+    BeanProperty<TvShowScraperMetadataConfig, Boolean> tvShowScraperMetadataConfigBeanProperty_13 = BeanProperty.create("country");
+    AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+            config, tvShowScraperMetadataConfigBeanProperty_13, chckbxCountry, jCheckBoxBeanProperty);
+    autoBinding_13.bind();
+    //
+    BeanProperty<TvShowScraperMetadataConfig, Boolean> tvShowScraperMetadataConfigBeanProperty_14 = BeanProperty.create("studio");
+    AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+            config, tvShowScraperMetadataConfigBeanProperty_14, chckbxStudio, jCheckBoxBeanProperty);
+    autoBinding_14.bind();
     //
     BeanProperty<TvShowScraperMetadataConfig, Boolean> tvShowScraperMetadataConfigBeanProperty_1 = BeanProperty.create("aired");
     AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,

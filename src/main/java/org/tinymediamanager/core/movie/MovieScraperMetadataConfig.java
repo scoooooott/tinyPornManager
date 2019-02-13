@@ -39,6 +39,8 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   private boolean year          = true;
   private boolean certification = true;
   private boolean cast          = true;
+  private boolean country       = true;
+  private boolean studio        = true;
   private boolean genres        = true;
   private boolean artwork       = true;
   private boolean trailer       = true;
@@ -67,6 +69,8 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
     year = value;
     certification = value;
     cast = value;
+    country = value;
+    studio = value;
     genres = value;
     artwork = value;
     trailer = value;
@@ -75,7 +79,8 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   }
 
   public boolean isMetadata() {
-    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || genres || collection || tags;
+    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || country
+            || studio || genres || collection || tags;
   }
 
   /**
@@ -157,6 +162,24 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
    */
   public boolean isCast() {
     return cast;
+  }
+
+  /**
+   * Checks if is country
+   *
+   * @return true, if is country
+   */
+  public boolean isCountry() {
+    return country;
+  }
+
+  /**
+   * Checks if is studio
+   *
+   * @return true, if is country
+   */
+  public boolean isStudio() {
+    return studio;
   }
 
   /**
@@ -308,6 +331,28 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.cast;
     this.cast = newValue;
     firePropertyChange("cast", oldValue, newValue);
+  }
+
+  /**
+   * Sets the country
+   *
+   * @param newValue the new country
+   */
+  public void setCountry(boolean newValue) {
+    boolean oldValue = this.country;
+    this.country = newValue;
+    firePropertyChange("country", oldValue, newValue);
+  }
+
+  /**
+   * Sets the studio
+
+   * @param newValue the new studio
+   */
+  public void setStudio(boolean newValue) {
+    boolean oldValue = this.studio;
+    this.studio = newValue;
+    firePropertyChange("studio", oldValue, newValue);
   }
 
   /**

@@ -756,10 +756,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
+    //country
+    if (config.isCountry()) {
+      setCountry(StringUtils.join(metadata.getCountries(), ", "));
+    }
+
+    //studio
+    if (config.isStudio()) {
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    }
+
     // cast
     if (config.isCast()) {
-      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      setCountry(StringUtils.join(metadata.getCountries(), ", "));
+
       List<Person> actors = new ArrayList<>();
       List<Person> producers = new ArrayList<>();
       List<Person> directors = new ArrayList<>();
