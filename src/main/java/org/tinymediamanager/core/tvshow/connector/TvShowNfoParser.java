@@ -1109,6 +1109,7 @@ public class TvShowNfoParser {
 
     show.setYear(year);
     show.setFirstAired(releaseDate);
+    show.setDateAdded(dateadded);
     show.setPlot(plot);
     show.setRuntime(runtime);
 

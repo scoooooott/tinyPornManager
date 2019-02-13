@@ -173,6 +173,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           addDirectors(episode, parserEpisode);
           addActors(episode, parserEpisode);
           addTrailer(episode, parserEpisode);
+          addDateAdded(episode, parserEpisode);
 
           // add connector specific tags
           addOwnTags(episode, parserEpisode);
@@ -399,6 +400,17 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(episode.getFirstAired()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the dateAdded date in <dateadded>xxx</dateadded>
+   */
+  protected void addDateAdded(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element dateadded = document.createElement("dateadded");
+    if (episode.getDateAdded() != null) {
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(episode.getDateAdded()));
+    }
+    root.appendChild(dateadded);
   }
 
   /**

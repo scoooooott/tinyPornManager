@@ -1288,6 +1288,7 @@ public class TvShowEpisodeNfoParser {
 
       episode.setYear(year);
       episode.setFirstAired(releaseDate);
+      episode.setDateAdded(dateadded);
       episode.setPlot(plot);
 
       if (!thumbs.isEmpty()) {

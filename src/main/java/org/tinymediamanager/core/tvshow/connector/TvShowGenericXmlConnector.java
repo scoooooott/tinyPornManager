@@ -161,6 +161,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addTags();
         addActors();
         addTrailer();
+        addDateAdded();
 
         // add connector specific tags
         addOwnTags();
@@ -502,6 +503,17 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getFirstAired()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the dateAdded date in <dateadded>xxx</dateadded>
+   */
+  protected void addDateAdded() {
+    Element dateadded = document.createElement("dateadded");
+    if (tvShow.getDateAdded() != null) {
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getDateAdded()));
+    }
+    root.appendChild(dateadded);
   }
 
   /**
