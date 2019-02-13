@@ -851,9 +851,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       setRuntime(metadata.getRuntime());
     }
 
-    if (config.isCast()) {
-      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    if (config.isCountry()) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
+    }
+
+    if (config.isStudio()) {
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    }
+
+    if (config.isCast()) {
+
       List<Person> actors = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {

@@ -62,6 +62,8 @@ public class MovieScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxYear;
   private JCheckBox                   chckbxCertification;
   private JCheckBox                   chckbxCast;
+  private JCheckBox                   chckbxCountry;
+  private JCheckBox                   chckbxStudio;
   private JCheckBox                   chckbxGenres;
   private JCheckBox                   chckbxArtwork;
   private JCheckBox                   chckbxTrailer;
@@ -129,13 +131,19 @@ public class MovieScraperMetadataPanel extends JPanel {
     add(lblMovieSetHint, "cell 6 2");
     lblMovieSetHint.setToolTipText(BUNDLE.getString("Settings.movieset.scraper.hint"));
 
+    chckbxCountry = new JCheckBox(BUNDLE.getString("metatag.country"));
+    add(chckbxCountry,"cell 8 2");
+
+    chckbxStudio = new JCheckBox(BUNDLE.getString("metatag.studio"));
+    add(chckbxStudio, "cell 0 3");
+
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
-    add(btnSelectAll, "flowx,cell 0 3 3 1");
+    add(btnSelectAll, "flowx,cell 0 4 3 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
     btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
-    add(btnDeSelectAll, "cell 0 3 3 1");
+    add(btnDeSelectAll, "cell 0 4 3 1");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
 
@@ -233,5 +241,16 @@ public class MovieScraperMetadataPanel extends JPanel {
     AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         config, movieScraperMetadataConfigBeanProperty, chckbxTags, jCheckBoxBeanProperty);
     autoBinding_13.bind();
+
+    BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_14 = BeanProperty.create("country");
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        config, scraperMetadataConfigBeanProperty_14, chckbxCountry, jCheckBoxBeanProperty);
+    autoBinding_14.bind();
+
+    BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_15 = BeanProperty.create("studio");
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+            config, scraperMetadataConfigBeanProperty_15, chckbxStudio, jCheckBoxBeanProperty);
+    autoBinding_15.bind();
+
   }
 }

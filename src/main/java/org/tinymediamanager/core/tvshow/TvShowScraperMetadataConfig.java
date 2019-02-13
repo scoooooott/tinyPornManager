@@ -36,6 +36,8 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   private boolean status;
   private boolean certification;
   private boolean cast;
+  private boolean country;
+  private boolean studio;
   private boolean genres;
   private boolean artwork;
   private boolean episodes;
@@ -53,6 +55,8 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     aired = true;
     status = true;
     certification = true;
+    country = true;
+    studio = true;
     cast = true;
     genres = true;
     artwork = true;
@@ -76,6 +80,8 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     status = value;
     certification = value;
     cast = value;
+    country = value;
+    studio = value;
     genres = value;
     artwork = value;
     episodes = value;
@@ -107,6 +113,14 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
 
   public boolean isCast() {
     return cast;
+  }
+
+  public boolean isCountry() {
+    return country;
+  }
+
+  public boolean isStudio() {
+    return studio;
   }
 
   public boolean isGenres() {
@@ -155,6 +169,18 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.cast;
     this.cast = newValue;
     firePropertyChange("cast", oldValue, newValue);
+  }
+
+  public void setCountry(boolean newValue) {
+    boolean oldValue = this.country;
+    this.country = newValue;
+    firePropertyChange("country", oldValue, newValue);
+  }
+
+  public void setStudio(boolean newValue) {
+    boolean oldValue = this.studio;
+    this.studio = newValue;
+    firePropertyChange("studio", oldValue, newValue);
   }
 
   public void setGenres(boolean newValue) {

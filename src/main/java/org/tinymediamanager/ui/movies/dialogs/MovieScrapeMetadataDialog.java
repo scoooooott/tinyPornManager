@@ -94,6 +94,8 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     scraperMetadataConfig.setYear(settings.isYear());
     scraperMetadataConfig.setCertification(settings.isCertification());
     scraperMetadataConfig.setCast(settings.isCast());
+    scraperMetadataConfig.setCountry(settings.isCountry());
+    scraperMetadataConfig.setStudio(settings.isStudio());
     scraperMetadataConfig.setGenres(settings.isGenres());
     scraperMetadataConfig.setArtwork(settings.isArtwork());
     scraperMetadataConfig.setTrailer(settings.isTrailer());
