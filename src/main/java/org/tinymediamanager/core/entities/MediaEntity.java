@@ -57,6 +57,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
@@ -71,6 +73,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public abstract class MediaEntity extends AbstractModelObject {
+  private static final Logger          LOGGER            = LoggerFactory.getLogger(MediaEntity.class);
   /** The id for the database. */
   protected UUID                       dbId              = UUID.randomUUID();
 
@@ -530,16 +533,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void setDateAddedFromMediaFile(MediaFile mf) {
     try {
       BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
-      Date creDat = new Date(view.creationTime().toMillis());
-      Date modDat = new Date(view.lastModifiedTime().toMillis());
-      if (creDat.compareTo(dateAdded) < 0) {
-        setDateAdded(creDat);
+      // sanity check; need something litil bit bigger than 0
+      if (view.creationTime().toMillis() > 100000) {
+        Date creDat = new Date(view.creationTime().toMillis());
+        if (creDat.compareTo(dateAdded) < 0) {
+          setDateAdded(creDat);
+        }
       }
-      if (modDat.compareTo(dateAdded) < 0) {
-        setDateAdded(modDat);
+      if (view.lastModifiedTime().toMillis() > 100000) {
+        Date modDat = new Date(view.lastModifiedTime().toMillis());
+        if (modDat.compareTo(dateAdded) < 0) {
+          setDateAdded(modDat);
+        }
       }
     }
     catch (Exception ignored) {
+      LOGGER.warn("could not read filedate" + ignored);
     }
   }
 
