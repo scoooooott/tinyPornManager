@@ -1828,7 +1828,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (streams == 0) {
       streams = getStreamCount(StreamKind.Audio);
     }
-    System.out.println(streams);
 
     audioStreams.clear();
 
@@ -1960,11 +1959,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int height = parseToInt(getMediaInfo(StreamKind.Video, 0, "Height"));
     String scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
     int width = parseToInt(getMediaInfo(StreamKind.Video, 0, "Width"));
+    String codecId = getMediaInfo(StreamKind.Video, 0, "CodecID");
     String videoCodec = getMediaInfo(StreamKind.Video, 0, "CodecID/Hint", "Format");
 
     // fix for Microsoft VC-1
     if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
       videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
+    }
+    if (codecId.equalsIgnoreCase("XVID")) {
+      // XVID is open source variant MP4, only detectable through codecId
+      videoCodec = "XVID";
     }
 
     String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
