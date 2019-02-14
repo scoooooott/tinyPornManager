@@ -129,7 +129,7 @@ public class UpgradeTasks {
     // exe launchers
     if (Platform.isWindows()) {
       file = new File("tinyMediaManager.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManager.exe");
         try {
           FileUtils.copyFile(file, cur);
@@ -139,7 +139,7 @@ public class UpgradeTasks {
         }
       }
       file = new File("tinyMediaManagerUpd.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManagerUpd.exe");
         try {
           FileUtils.copyFile(file, cur);
@@ -149,7 +149,7 @@ public class UpgradeTasks {
         }
       }
       file = new File("tinyMediaManagerCMD.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManagerCMD.exe");
         try {
           FileUtils.copyFile(file, cur);
