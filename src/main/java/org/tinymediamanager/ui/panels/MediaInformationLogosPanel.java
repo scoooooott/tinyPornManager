@@ -220,6 +220,9 @@ public class MediaInformationLogosPanel extends JPanel {
 
     try {
       URL file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase() + ".png");
+      if (file == null) {
+        file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase().replaceAll("\\p{Punct}", "") + ".png");
+      }
       if (file != null) {
         return new ImageIcon(file);
       }
