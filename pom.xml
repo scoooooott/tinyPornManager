@@ -15,7 +15,7 @@
 
     <name>Universal movie scraper</name>
     <description>A universal movie scraper for movies</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
