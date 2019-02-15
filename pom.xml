@@ -15,7 +15,7 @@
 
     <name>Kodi-Scraper plugin</name>
     <description>A Kodi-Scraper plugin</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
