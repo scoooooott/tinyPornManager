@@ -134,7 +134,7 @@ public class Upnp {
 
       // @formatter:off
       DeviceDetails details = new DeviceDetails("tinyMediaManager",
-        new ManufacturerDetails("tinyMediaManager", "http://www.tinymediamanager.org/"),
+        new ManufacturerDetails("tinyMediaManager", "https://www.tinymediamanager.org/"),
         new ModelDetails("tinyMediaManager", "tinyMediaManager - Media Server", ReleaseInfo.getVersion()), 
         // @Namespace default /dev/<udn>/desc
         new URI("http://" + hostname + ":" + UPNP_PORT + "/dev/" + identity.getUdn().getIdentifierString() + "/desc"),

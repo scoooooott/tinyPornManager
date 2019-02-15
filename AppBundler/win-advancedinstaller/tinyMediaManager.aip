@@ -10,7 +10,7 @@
     <ROW Property="ARPHELPLINK" Value="https://code.google.com/p/tinymediamanager"/>
     <ROW Property="ARPNOREPAIR" Value="1"/>
     <ROW Property="ARPPRODUCTICON" Value="tinyMediaManager.exe" Type="8"/>
-    <ROW Property="ARPURLINFOABOUT" Value="http://www.tinymediamanager.org/"/>
+    <ROW Property="ARPURLINFOABOUT" Value="https://www.tinymediamanager.org/"/>
     <ROW Property="CTRLS" Value="2"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:3"/>
     <ROW Property="Manufacturer" Value="Manuel Laggner"/>

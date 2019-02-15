@@ -9,7 +9,7 @@ will be overwritten each time you start tMM and you will lose your changes.
 *********************************************************************************
 
 If you create a nice template contact tMM and we will check it out for distribution with the program.
-Contact: http://www.tinymediamanager.org/contact/
+Contact: https://www.tinymediamanager.org/contact/
 
 Templates rely on three files to export successfully. All other files you create will
 also be exported, retaining their directory structure, when the page is built by tMM; 

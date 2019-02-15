@@ -44,7 +44,7 @@ public class HomepageAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("http://www.tinymediamanager.org");
+    String url = StringEscapeUtils.unescapeHtml4("https://www.tinymediamanager.org");
     try {
       TmmUIHelper.browseUrl(url);
     }

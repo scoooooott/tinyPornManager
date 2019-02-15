@@ -157,7 +157,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       try {
         // try a hardcoded "backup url" for GD.txt, where we could specify a new location :)
         LOGGER.info("Trying fallback...");
-        String fallback = "http://www.tinymediamanager.org";
+        String fallback = "https://www.tinymediamanager.org";
         if (SystemUtils.IS_JAVA_1_6) {
           fallback += LEGACY_PATH;
         }

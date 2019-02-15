@@ -43,7 +43,7 @@ public class DonateAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("http://tinymediamanager.org/donate.php");
+    String url = StringEscapeUtils.unescapeHtml4("https://tinymediamanager.org/donate");
     try {
       TmmUIHelper.browseUrl(url);
     }

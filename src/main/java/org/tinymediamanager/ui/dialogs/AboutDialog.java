@@ -81,7 +81,7 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblHomepage, "cell 0 7,alignx right");
     }
     {
-      final LinkLabel lblHomepage = new LinkLabel("http://www.tinymediamanager.org/"); //$NON-NLS-1$
+      final LinkLabel lblHomepage = new LinkLabel("https://www.tinymediamanager.org/"); //$NON-NLS-1$
       lblHomepage.addActionListener(arg0 -> {
         try {
           TmmUIHelper.browseUrl(lblHomepage.getText());
