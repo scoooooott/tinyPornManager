@@ -14,7 +14,7 @@
 
     <name>tinyMediaManager scraper API</name>
     <description>API for tinyMediaManager scrapers</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
