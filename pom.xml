@@ -14,7 +14,7 @@
 
     <name>tinyMediaManager - Look and Feel</name>
     <description>The look and feel for tinyMediaManager</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
