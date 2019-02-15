@@ -15,7 +15,7 @@
     <version>3.0-SNAPSHOT</version>
     <name>OpenSubtitles.org scraper</name>
     <description>A scraper for Subtitles</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
