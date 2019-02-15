@@ -15,7 +15,7 @@
 
     <name>Fanart.tv scraper</name>
     <description>A Fanart.tv scraper for tinyMediaManager</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
