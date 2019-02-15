@@ -15,7 +15,7 @@
 
     <name>IMDb scraper</name>
     <description>A scraper for IMDb</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
