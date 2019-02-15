@@ -15,7 +15,7 @@
 
     <name>TheTVDb scraper</name>
     <description>A TheTVDb scraper for tinyMediaManager</description>
-    <url>http://www.tinyMediaManager.org</url>
+    <url>https://www.tinymediamanager.org</url>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/scraper/${project.artifactId}</url>
