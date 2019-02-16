@@ -491,7 +491,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return null;
+          return BUNDLE.getString("Settings.renamer.token.name"); //$NON-NLS-1$
 
         case 1:
           return BUNDLE.getString("Settings.renamer.token"); //$NON-NLS-1$

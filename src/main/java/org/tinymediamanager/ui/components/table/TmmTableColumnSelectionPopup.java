@@ -62,9 +62,14 @@ public class TmmTableColumnSelectionPopup {
               }
           }
 
+      // header value
+      if (StringUtils.isBlank(columnName) && etc.getHeaderValue() != null) {
+        columnName = etc.getHeaderValue().toString();
+      }
+
           // fallback
-          if (StringUtils.isBlank(columnName)) {
-              columnName = etc.getHeaderValue().toString();
+      if (StringUtils.isBlank(columnName) && etc.getIdentifier() != null) {
+        columnName = etc.getIdentifier().toString();
           }
 
           JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem();
