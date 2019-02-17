@@ -38,6 +38,7 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -51,14 +52,14 @@ import javax.swing.plaf.basic.BasicGraphicsUtils;
  */
 public class JTattooUtilities {
 
-  private static final boolean isWindows     = System.getProperty("os.name").toLowerCase().indexOf("windows") != -1;
-  private static final boolean isOS2         = System.getProperty("os.name").toLowerCase().indexOf("os/2") != -1;
-  private static final boolean isMac         = System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
-  private static final boolean isLinux       = System.getProperty("os.name").toLowerCase().indexOf("linux") != -1;
-  private static final boolean isSunOS       = System.getProperty("os.name").toLowerCase().indexOf("sunos") != -1;
-  private static final boolean isAIX         = System.getProperty("os.name").toLowerCase().indexOf("aix") != -1;
-  private static final boolean isHPUX        = System.getProperty("os.name").toLowerCase().indexOf("hpux") != -1;
-  private static final boolean isFreeBSD     = System.getProperty("os.name").toLowerCase().indexOf("freebsd") != -1;
+  private static final boolean isWindows     = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("windows") != -1;
+  private static final boolean isOS2         = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("os/2") != -1;
+  private static final boolean isMac         = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("mac") != -1;
+  private static final boolean isLinux       = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("linux") != -1;
+  private static final boolean isSunOS       = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("sunos") != -1;
+  private static final boolean isAIX         = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("aix") != -1;
+  private static final boolean isHPUX        = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("hpux") != -1;
+  private static final boolean isFreeBSD     = System.getProperty("os.name").toLowerCase(Locale.ROOT).indexOf("freebsd") != -1;
   private static final boolean isHiresScreen = Toolkit.getDefaultToolkit().getScreenSize().width > 1280;
   private static Double        javaVersion   = null;
   private static Double        osVersion     = null;
