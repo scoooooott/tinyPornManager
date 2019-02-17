@@ -180,11 +180,6 @@ public class MovieSetInformationPanel extends JPanel {
   }
 
   private void setPoster(MovieSet movieSet) {
-    // only reset if there was a real change
-    if (movieSet.getArtworkFilename(MediaFileType.POSTER).equals(lblPoster.getImagePath())) {
-      return;
-    }
-
     lblPoster.clearImage();
     lblPoster.setImagePath(movieSet.getArtworkFilename(MediaFileType.POSTER));
     Dimension posterSize = movieSet.getArtworkDimension(MediaFileType.POSTER);
@@ -197,11 +192,6 @@ public class MovieSetInformationPanel extends JPanel {
   }
 
   private void setFanart(MovieSet movieSet) {
-    // only reset if there was a real change
-    if (movieSet.getArtworkFilename(MediaFileType.FANART).equals(lblFanart.getImagePath())) {
-      return;
-    }
-
     lblFanart.clearImage();
     lblFanart.setImagePath(movieSet.getArtworkFilename(MediaFileType.FANART));
     Dimension fanartSize = movieSet.getArtworkDimension(MediaFileType.FANART);

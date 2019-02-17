@@ -212,11 +212,6 @@ public class TvShowSeasonInformationPanel extends JPanel {
   }
 
   private void setPoster(TvShowSeason season) {
-    // only reset if there was a real change
-    if (season.getArtworkFilename(SEASON_POSTER).equals(lblTvShowPoster.getImagePath())) {
-      return;
-    }
-
     lblTvShowPoster.clearImage();
     lblTvShowPoster.setImagePath(season.getArtworkFilename(SEASON_POSTER));
     Dimension posterSize = season.getArtworkSize(SEASON_POSTER);
@@ -229,11 +224,6 @@ public class TvShowSeasonInformationPanel extends JPanel {
   }
 
   private void setBanner(TvShowSeason season) {
-    // only reset if there was a real change
-    if (season.getArtworkFilename(SEASON_BANNER).equals(lblTvShowBanner.getImagePath())) {
-      return;
-    }
-
     lblTvShowBanner.clearImage();
     lblTvShowBanner.setImagePath(season.getArtworkFilename(SEASON_BANNER));
     Dimension bannerSize = season.getArtworkSize(SEASON_BANNER);
@@ -246,11 +236,6 @@ public class TvShowSeasonInformationPanel extends JPanel {
   }
 
   private void setThumb(TvShowSeason season) {
-    // only reset if there was a real change
-    if (season.getArtworkFilename(SEASON_THUMB).equals(lblTvShowThumb.getImagePath())) {
-      return;
-    }
-
     lblTvShowThumb.clearImage();
     lblTvShowThumb.setImagePath(season.getArtworkFilename(SEASON_THUMB));
     Dimension thumbSize = season.getArtworkSize(SEASON_THUMB);
