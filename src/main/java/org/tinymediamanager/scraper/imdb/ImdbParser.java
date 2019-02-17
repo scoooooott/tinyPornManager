@@ -550,7 +550,8 @@ public abstract class ImdbParser {
     }
 
     // releasedate
-    Element releaseDateElement = doc.getElementsByAttributeValue("href", "/title/" + options.getImdbId().toLowerCase() + "/releaseinfo").first();
+    Element releaseDateElement = doc.getElementsByAttributeValue("href", "/title/" + options.getImdbId().toLowerCase(Locale.ROOT) + "/releaseinfo")
+        .first();
     if (releaseDateElement != null) {
       String releaseDateText = releaseDateElement.ownText();
       int startOfCountry = releaseDateText.indexOf("(");
