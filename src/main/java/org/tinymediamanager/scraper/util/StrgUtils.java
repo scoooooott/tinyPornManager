@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -220,7 +221,7 @@ public class StrgUtils {
    */
   public static String determineDateFormat(String dateString) throws ParseException {
     for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
-      if (dateString.toLowerCase().matches(regexp)) {
+      if (dateString.toLowerCase(Locale.ROOT).matches(regexp)) {
         return DATE_FORMAT_REGEXPS.get(regexp);
       }
     }
