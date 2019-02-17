@@ -166,10 +166,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
   public class StringComparator implements Comparator<String> {
     @Override
     public int compare(String arg0, String arg1) {
-      if (StringUtils.isEmpty(arg0)) {
+      if (StringUtils.isBlank(arg0)) {
         return -1;
       }
-      if (StringUtils.isEmpty(arg1)) {
+      if (StringUtils.isBlank(arg1)) {
         return 1;
       }
       return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));

@@ -221,10 +221,12 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * Edition (hidden per default)
      */
-    col = new Column(BUNDLE.getString("metatag.edition"), "edition", Movie::getEdition, String.class);
+    Function<Movie, String> movieEditionFunction = movie -> movie.getEdition() == null || movie.getEdition() == MovieEdition.NONE ? null
+        : movie.getEdition().toString();
+    col = new Column(BUNDLE.getString("metatag.edition"), "edition", movieEditionFunction, String.class);
     col.setColumnComparator(stringComparator);
     col.setHeaderIcon(IconManager.EDITION);
-    col.setColumnTooltip(movie -> movie.getEdition() == null || movie.getEdition() == MovieEdition.NONE ? null : movie.getEdition().toString());
+    col.setColumnTooltip(movieEditionFunction);
     addColumn(col);
 
     /*
