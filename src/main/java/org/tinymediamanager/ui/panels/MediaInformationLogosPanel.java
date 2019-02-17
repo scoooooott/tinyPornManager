@@ -192,7 +192,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(imageSource + "/video/codec/" + videoCodec.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/video/codec/" + videoCodec.toLowerCase(Locale.ROOT) + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -219,9 +219,9 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase(Locale.ROOT) + ".png");
       if (file == null) {
-        file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase().replaceAll("\\p{Punct}", "") + ".png");
+        file = this.getClass().getResource(imageSource + "/audio/codec/" + audioCodec.toLowerCase(Locale.ROOT).replaceAll("\\p{Punct}", "") + ".png");
       }
       if (file != null) {
         return new ImageIcon(file);
@@ -319,7 +319,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(imageSource + "/container/" + container.toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/container/" + container.toLowerCase(Locale.ROOT) + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }
@@ -346,7 +346,7 @@ public class MediaInformationLogosPanel extends JPanel {
     }
 
     try {
-      URL file = this.getClass().getResource(imageSource + "/source/" + source.name().toLowerCase() + ".png");
+      URL file = this.getClass().getResource(imageSource + "/source/" + source.name().toLowerCase(Locale.ROOT) + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }

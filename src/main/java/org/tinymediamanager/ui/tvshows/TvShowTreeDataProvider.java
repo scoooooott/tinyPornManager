@@ -20,6 +20,7 @@ import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.Constants;
@@ -403,7 +404,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
         TvShow tvShow1 = (TvShow) userObject1;
         TvShow tvShow2 = (TvShow) userObject2;
         if (stringCollator != null) {
-          return stringCollator.compare(tvShow1.getTitleSortable().toLowerCase(), tvShow2.getTitleSortable().toLowerCase());
+          return stringCollator.compare(tvShow1.getTitleSortable().toLowerCase(Locale.ROOT), tvShow2.getTitleSortable().toLowerCase(Locale.ROOT));
         }
         return tvShow1.getTitleSortable().compareToIgnoreCase(tvShow2.getTitleSortable());
       }

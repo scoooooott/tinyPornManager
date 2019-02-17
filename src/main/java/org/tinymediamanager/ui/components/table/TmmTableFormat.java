@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,7 +172,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       if (StringUtils.isEmpty(arg1)) {
         return 1;
       }
-      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+      return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));
     }
   }
 

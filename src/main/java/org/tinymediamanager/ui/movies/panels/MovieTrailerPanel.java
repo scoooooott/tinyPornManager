@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.DefaultListSelectionModel;
@@ -166,7 +167,7 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
+          if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
             return IconManager.DOWNLOAD;
           }
           return null;
@@ -187,7 +188,7 @@ public class MovieTrailerPanel extends JPanel {
           return trailer.getQuality();
 
         case 6:
-          String ext = UrlUtil.getExtension(trailer.getUrl()).toLowerCase();
+          String ext = UrlUtil.getExtension(trailer.getUrl()).toLowerCase(Locale.ROOT);
           if (!Globals.settings.getVideoFileType().contains("." + ext)) {
             // .php redirection scripts et all
             ext = "";
@@ -238,7 +239,7 @@ public class MovieTrailerPanel extends JPanel {
         row = table.convertRowIndexToModel(row);
         MovieTrailer trailer = trailerEventList.get(row);
 
-        if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
+        if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
           Movie movie = movieSelectionModel.getSelectedMovie();
           try {
             MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);

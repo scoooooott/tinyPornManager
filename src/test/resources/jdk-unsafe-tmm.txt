@@ -48,8 +48,8 @@ java.net.URLDecoder#decode(java.lang.String)
 java.net.URLEncoder#encode(java.lang.String)
 
 @defaultMessage Uses default locale
-java.lang.String#toLowerCase()
-java.lang.String#toUpperCase()
+java.lang.String#toLowerCase(Locale.ROOT)
+java.lang.String#toUpperCase(Locale.ROOT)
 java.lang.String#format(java.lang.String,java.lang.Object[])
 java.io.PrintStream#format(java.lang.String,java.lang.Object[])
 java.io.PrintStream#printf(java.lang.String,java.lang.Object[])

@@ -19,6 +19,7 @@ import static org.tinymediamanager.ui.TmmFontHelper.H3;
 
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
@@ -242,7 +243,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
 
     @Override
     public String toString() {
-      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase());
+      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ROOT));
       return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
     }
   }
