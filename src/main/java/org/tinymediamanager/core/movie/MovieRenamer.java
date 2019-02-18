@@ -48,6 +48,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
@@ -114,11 +115,11 @@ public class MovieRenamer {
     tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
     tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
-    tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList");
+    tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList;array");
     tokenMap.put("audioChannels", "movie.mediaInfoAudioChannels");
-    tokenMap.put("audioChannelList", "movie.mediaInfoAudioChannelList");
+    tokenMap.put("audioChannelList", "movie.mediaInfoAudioChannelList;array");
     tokenMap.put("audioLanguage", "movie.mediaInfoAudioLanguage");
-    tokenMap.put("audioLanguageList", "movie.mediaInfoAudioLanguageList");
+    tokenMap.put("audioLanguageList", "movie.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "movie.video3DFormat");
     tokenMap.put("hdr", "movie.videoHDRFormat");
 
@@ -1140,6 +1141,7 @@ public class MovieRenamer {
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
+      engine.registerNamedRenderer(new NamedArrayRenderer());
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
