@@ -14,5 +14,5 @@ Version 3.0 - RC1
 + increased required Java version to Java 8+
 + ability to mix in missing episodes
 + presets in settings for common media centers
-+ added a feature to find "unwanted" files for clenaup (e.g. .txt, .url, ...)
++ added a feature to find "unwanted" files for cleanup (e.g. .txt, .url, ...)
 + many enhancements under the hood
