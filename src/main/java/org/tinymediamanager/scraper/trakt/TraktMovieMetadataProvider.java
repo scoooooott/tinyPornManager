@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.trakt;
 import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
 import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,19 +73,13 @@ class TraktMovieMetadataProvider {
     }
 
     String searchString = "";
-    int year = 0;
-
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
       searchString = options.getQuery();
     }
 
-    if (options.getYear() != 0) {
-      try {
-        year = options.getYear();
-      }
-      catch (Exception e) {
-        year = 0;
-      }
+    String year = null;
+    if (options.getYear() > 1800) {
+      year = String.valueOf(options.getYear());
     }
 
     List<MediaSearchResult> results = new ArrayList<>();
@@ -94,12 +89,16 @@ class TraktMovieMetadataProvider {
 
     try {
       Response<List<SearchResult>> response;
-      if (year != 0) {
-        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, lang, null, null, null, null, Extended.FULL, 1, 25)
-            .execute();
-      }
-      else {
-        response = api.search().textQueryMovie(searchString, null, null, lang, null, null, null, null, Extended.FULL, 1, 25).execute();
+      response = api.search().textQueryMovie(searchString, year, null, lang, null, null, null, null, Extended.FULL, 1, 25).execute();
+      if (!response.isSuccessful()) {
+        String message = "";
+        try {
+          message = response.errorBody().string();
+        }
+        catch (IOException e) {
+          // ignore
+        }
+        LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), message);
       }
       searchResults = response.body();
     }
