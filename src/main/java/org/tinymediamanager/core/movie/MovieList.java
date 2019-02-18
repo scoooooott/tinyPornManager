@@ -47,6 +47,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ObservableCopyOnWriteArrayList;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -534,9 +535,11 @@ public class MovieList extends AbstractModelObject {
         options.setIds(movie.getIds());
         options.setQuery(movie.getTitle());
         options.setYear(movie.getYear());
-
       }
       if (!searchTerm.isEmpty()) {
+        if (Utils.isValidImdbId(searchTerm)) {
+          options.setImdbId(searchTerm);
+        }
         if (idFound) { // FIXME: check
           // id found, so search for it
           // except when searchTerm differs from movie title (we entered something to search for)

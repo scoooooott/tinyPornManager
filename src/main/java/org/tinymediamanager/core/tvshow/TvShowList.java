@@ -538,9 +538,7 @@ public class TvShowList extends AbstractModelObject {
       options.setLanguage(language.toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       if (show != null) {
-        if (Utils.isValidImdbId(show.getImdbId())) {
-          options.setImdbId(show.getImdbId());
-        }
+        options.setIds(show.getIds());
         options.setQuery(show.getTitle());
         if (show.getYear() != 0) {
           try {
@@ -549,6 +547,9 @@ public class TvShowList extends AbstractModelObject {
           catch (Exception ignored) {
           }
         }
+      }
+      if (Utils.isValidImdbId(searchTerm)) {
+        options.setImdbId(searchTerm);
       }
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
