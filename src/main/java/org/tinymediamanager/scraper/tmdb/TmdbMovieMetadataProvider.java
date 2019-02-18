@@ -145,9 +145,9 @@ class TmdbMovieMetadataProvider {
         imdbId = query.getImdbId();
         try {
           // /find/{id}
-          FindResults findResults = api.findService().find(imdbId, null, language).execute().body();
+          FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, language).execute().body();
           if (findResults != null && findResults.movie_results != null) {
-            for (Movie movie : findResults.movie_results) {
+            for (BaseMovie movie : findResults.movie_results) {
               if (verifyMovieTitleLanguage(query, new ArrayList<>(findResults.movie_results), resultList, true)) {
                 break;
               }

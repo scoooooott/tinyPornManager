@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.util.ListUtils;
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.Videos;
 import com.uwetrottmann.tmdb2.entities.Videos.Video;
+import com.uwetrottmann.tmdb2.enumerations.VideoType;
 
 /**
  * The class TmdbTrailerProvider. For managing all trailer provided tasks with tmdb
@@ -96,7 +97,7 @@ class TmdbTrailerProvider {
     }
 
     for (Video video : ListUtils.nullSafe(videos)) {
-      if (!"trailer".equalsIgnoreCase(video.type)) {
+      if (VideoType.TRAILER != video.type) {
         continue;
       }
       MediaTrailer trailer = new MediaTrailer();

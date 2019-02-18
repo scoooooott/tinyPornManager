@@ -202,7 +202,7 @@ class TmdbMovieSetMetadataProvider {
           if (collectionInFallbackLanguage != null) {
             Collection collectionInDefaultLanguage = null;
             if (StringUtils.isBlank(collectionInFallbackLanguage.name) || StringUtils.isBlank(collectionInFallbackLanguage.overview)) {
-              collectionInDefaultLanguage = api.collectionService().summary(tmdbId).execute().body();
+              collectionInDefaultLanguage = api.collectionService().summary(tmdbId, null).execute().body();
 
             }
 
