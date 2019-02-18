@@ -1,4 +1,4 @@
-Version 3.0 - RC1
+Version 3.0 - RC2
 =======================
 
 + completely rewritten UI (thx to @joostzilla)
