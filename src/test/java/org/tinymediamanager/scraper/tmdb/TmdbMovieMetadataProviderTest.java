@@ -64,8 +64,8 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
   @Test
   public void testMovieScrapeDataWithFallBackLanguageShouldFallbackAndReturnCorrectData() throws Exception {
 
-    providerInfo.getConfig().setValue("titleFallback",true);
-    providerInfo.getConfig().setValue("titleFallbackLanguage",MediaLanguages.en.toString());
+    providerInfo.getConfig().setValue("titleFallback", true);
+    providerInfo.getConfig().setValue("titleFallbackLanguage", MediaLanguages.en.toString());
 
     scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE);
     scrapeOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
@@ -75,7 +75,7 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
 
     assertThat(md.getTitle()).isEqualTo("The Front Line");
 
-    providerInfo.getConfig().setValue("titleFallback",false);
+    providerInfo.getConfig().setValue("titleFallback", false);
   }
 
   // @Test
@@ -120,8 +120,8 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
   @Test
   public void testMovieSearchWithFallBackLanguageEnglishVerifyFallbackInitiatedAndChangedTitlesNumberIntegrity() throws Exception {
 
-    providerInfo.getConfig().setValue("titleFallback",true);
-    providerInfo.getConfig().setValue("titleFallbackLanguage",MediaLanguages.en.toString());
+    providerInfo.getConfig().setValue("titleFallback", true);
+    providerInfo.getConfig().setValue("titleFallbackLanguage", MediaLanguages.en.toString());
 
     searchOptions = new MediaSearchOptions(MediaType.MOVIE, "The Front Line");
     searchOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
@@ -135,7 +135,7 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
 
     assertThat(results.get(1).getTitle()).isEqualTo("The Front Line");
 
-    providerInfo.getConfig().setValue("titleFallback",false);
+    providerInfo.getConfig().setValue("titleFallback", false);
   }
 
   @Test
@@ -178,6 +178,26 @@ public class TmdbMovieMetadataProviderTest extends TmdbMetadataProviderBaseTest 
     assertThat(object.getTitle()).isEqualTo("Harry Potter und der Stein der Weisen");
     assertThat(object.getOriginalTitle()).isEqualTo("Harry Potter and the Philosopher's Stone");
 
+  }
+
+  @Test
+  public void testImdbSearch() throws Exception {
+
+    scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE);
+    scrapeOptions.setImdbId("tt0114746");
+    scrapeOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+
+    md = movieMetadataProvider.getMetadata(scrapeOptions);
+
+    assertEquals("Twelve Monkeys", md.getTitle());
+    assertEquals(1995, md.getYear());
+    assertEquals(
+        "In the year 2035, convict James Cole reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly, and patient Jeffrey Goines, the son of a famous virus expert, who may hold the key to the mysterious rogue group, the Army of the 12 Monkeys, thought to be responsible for unleashing the killer disease.",
+        md.getPlot());
+    assertEquals("The future is history.", md.getTagline());
+
+    assertNotNull(md.getCastMembers(MediaCastMember.CastType.ACTOR));
+    assertEquals(65, md.getCastMembers(MediaCastMember.CastType.ACTOR).size());
   }
 
 }
