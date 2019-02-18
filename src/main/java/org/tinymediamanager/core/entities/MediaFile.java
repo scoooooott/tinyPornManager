@@ -226,7 +226,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *          the MediaFileType
    */
   public MediaFile(Path f, MediaFileType type) {
-    this.path = f.getParent().toString(); // just path w/o filename
+    this.path = f.getParent() == null ? "" : f.getParent().toString(); // just path w/o filename
     this.filename = f.getFileName().toString();
     this.file = f.toAbsolutePath();
     if (type == null) {
@@ -346,12 +346,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.VIDEO_EXTRA;
       }
 
-      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
+      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]*trailer[\\[\\]\\(\\)_.-]?$") || basename.equalsIgnoreCase("movie-trailer")
+          || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
         return MediaFileType.TRAILER;
       }
 
       // we have some false positives too - make a more precise check
-      if (basename.matches("(?i).*[_.-]*sample$") // end with sample
+      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]*sample[\\[\\]\\(\\)_.-]?$") // end with sample
           || foldername.equalsIgnoreCase("sample")) { // sample folder name
         return MediaFileType.SAMPLE;
       }
