@@ -216,7 +216,7 @@ public class SplitUri {
       result.append(new StringBuilder(s.substring(i, i + 2)));
       result.append(i > 1 ? ":" : ""); // skip last
     }
-    return result.toString().toUpperCase();
+    return result.toString().toUpperCase(Locale.ROOT);
   }
 
 }

@@ -851,9 +851,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       setRuntime(metadata.getRuntime());
     }
 
-    if (config.isCast()) {
-      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    if (config.isCountry()) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
+    }
+
+    if (config.isStudio()) {
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    }
+
+    if (config.isCast()) {
+
       List<Person> actors = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -972,7 +979,40 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    return !StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER)) && !StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART));
+    return StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER)) && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))
+        && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.BANNER));
+  }
+
+  /**
+   * Checks if all seasaons and episodes of that TV show have artwork assigned
+   *
+   * @return true if artwork is available
+   */
+  public Boolean getHasSeasonAndEpisodeImages() {
+    boolean images = true;
+    for (TvShowSeason season : seasons) {
+      if (!season.getHasImages() || !season.getHasEpisodeImages()) {
+        images = false;
+        break;
+      }
+    }
+    return images;
+  }
+
+  /**
+   * Checks if all episodes of that season have a NFO file
+   *
+   * @return true if NFO files are available
+   */
+  public Boolean getHasEpisodeNfoFiles() {
+    boolean nfo = true;
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.getHasNfoFile()) {
+        nfo = false;
+        break;
+      }
+    }
+    return nfo;
   }
 
   /**
@@ -1297,7 +1337,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * </p>
    * 
    * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
+   * @see ReflectionToStringBuilder#toString()
    */
   @Override
   public String toString() {

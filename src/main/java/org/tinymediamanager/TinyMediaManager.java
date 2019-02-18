@@ -34,6 +34,7 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
@@ -46,6 +47,7 @@ import javax.swing.UIManager;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -300,8 +302,9 @@ public class TinyMediaManager {
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
           if (ReleaseInfo.isGitBuild()) {
-            PluginManager.loadClasspathPlugins();
+            PluginManager.getInstance().loadClasspathPlugins();
           }
+          PluginManager.getInstance().afterInitialization();
 
           if (g2 != null) {
             updateProgress(g2, "starting services", 60);
@@ -475,6 +478,11 @@ public class TinyMediaManager {
 
         // clean old log files
         Utils.cleanOldLogs();
+
+        // create a backup of the /data folder and keep last 5 copies
+        Path db = Paths.get(Settings.getInstance().getSettingsFolder());
+        Utils.createBackupFile(db);
+        Utils.deleteOldBackupFile(db, 5);
 
         // check if a .desktop file exists
         if (Platform.isLinux()) {

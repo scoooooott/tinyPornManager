@@ -50,7 +50,7 @@ public class StarRater extends JPanel {
   private int                stars;
 
   /**
-   * The factor which the ratin will divided (i.e. rating 0 - 10 displayed with 5 stars)
+   * The factor which the rating will divided (i.e. rating 0 - 10 displayed with 5 stars)
    */
   private int                factor;
 

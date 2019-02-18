@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -46,6 +47,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ObservableCopyOnWriteArrayList;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -83,6 +85,7 @@ public class MovieList extends AbstractModelObject {
   private final List<MovieSet>         movieSetList;
   private final List<String>           tagsObservable;
   private final List<String>           videoCodecsObservable;
+  private final List<String>           videoContainersObservable;
   private final List<String>           audioCodecsObservable;
   private final List<Certification>    certificationsObservable;
   private final List<Double>           frameRateObservable;
@@ -100,6 +103,7 @@ public class MovieList extends AbstractModelObject {
     movieSetList = new ObservableCopyOnWriteArrayList<>();
     tagsObservable = new ObservableCopyOnWriteArrayList<>();
     videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
+    videoContainersObservable = new ObservableCopyOnWriteArrayList<>();
     audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
     certificationsObservable = new ObservableCopyOnWriteArrayList<>();
     frameRateObservable = new ObservableCopyOnWriteArrayList<>();
@@ -531,9 +535,11 @@ public class MovieList extends AbstractModelObject {
         options.setIds(movie.getIds());
         options.setQuery(movie.getTitle());
         options.setYear(movie.getYear());
-
       }
       if (!searchTerm.isEmpty()) {
+        if (Utils.isValidImdbId(searchTerm)) {
+          options.setImdbId(searchTerm);
+        }
         if (idFound) { // FIXME: check
           // id found, so search for it
           // except when searchTerm differs from movie title (we entered something to search for)
@@ -810,12 +816,11 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateMediaInformationLists(Movie movie) {
-    // video codec & frame rate
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
-      String codec = mf.getVideoCodec();
-      if (!videoCodecsObservable.contains(codec)) {
-        addVideoCodec(codec);
+      String videoCodec = mf.getVideoCodec();
+      if (!videoCodecsObservable.contains(videoCodec)) {
+        addVideoCodec(videoCodec);
       }
 
       // frame rate
@@ -823,14 +828,18 @@ public class MovieList extends AbstractModelObject {
       if (!frameRateObservable.contains(frameRate)) {
         addFrameRate(frameRate);
       }
-    }
 
-    // audio codec
-    for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      // video container
+      String container = mf.getContainerFormat();
+      if (StringUtils.isNotBlank(container) && !videoContainersObservable.contains(container.toLowerCase(Locale.ROOT))) {
+        addVideoContainer(container.toLowerCase(Locale.ROOT));
+      }
+
+      // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        String codec = audio.getCodec();
-        if (!audioCodecsObservable.contains(codec)) {
-          addAudioCodec(codec);
+        String audioCodec = audio.getCodec();
+        if (!audioCodecsObservable.contains(audioCodec)) {
+          addAudioCodec(audioCodec);
         }
       }
     }
@@ -844,6 +853,10 @@ public class MovieList extends AbstractModelObject {
 
   public List<String> getVideoCodecsInMovies() {
     return videoCodecsObservable;
+  }
+
+  public List<String> getVideoContainersInMovies() {
+    return videoContainersObservable;
   }
 
   public List<String> getAudioCodecsInMovies() {
@@ -892,6 +905,21 @@ public class MovieList extends AbstractModelObject {
     }
 
     firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsObservable);
+  }
+
+  private void addVideoContainer(String newContainer) {
+    if (StringUtils.isBlank(newContainer)) {
+      return;
+    }
+
+    synchronized (videoContainersObservable) {
+      if (videoContainersObservable.contains(newContainer)) {
+        return;
+      }
+      videoContainersObservable.add(newContainer);
+    }
+
+    firePropertyChange(Constants.VIDEO_CONTAINER, null, videoContainersObservable);
   }
 
   private void addAudioCodec(String newCodec) {
@@ -952,30 +980,32 @@ public class MovieList extends AbstractModelObject {
       // imdb duplicate search only works with given imdbid
       if (StringUtils.isNotEmpty(movie.getImdbId())) {
         // is there a movie with this imdbid sotred?
-        if (imdbDuplicates.containsKey(movie.getImdbId())) {
+        String imdbId = movie.getImdbId();
+        if (imdbDuplicates.containsKey(imdbId)) {
           // yes - set duplicate flag on both movies
           movie.setDuplicate();
-          Movie movie2 = imdbDuplicates.get(movie.getImdbId());
+          Movie movie2 = imdbDuplicates.get(imdbId);
           movie2.setDuplicate();
         }
         else {
           // no, store movie
-          imdbDuplicates.put(movie.getImdbId(), movie);
+          imdbDuplicates.put(imdbId, movie);
         }
       }
 
       // tmdb duplicate search only works with with given tmdb id
-      if (movie.getTmdbId() > 0) {
+      int tmdbId = movie.getTmdbId();
+      if (tmdbId > 0) {
         // is there a movie with this tmdbid sotred?
-        if (tmdbDuplicates.containsKey(movie.getTmdbId())) {
+        if (tmdbDuplicates.containsKey(tmdbId)) {
           // yes - set duplicate flag on both movies
           movie.setDuplicate();
-          Movie movie2 = tmdbDuplicates.get(movie.getTmdbId());
+          Movie movie2 = tmdbDuplicates.get(tmdbId);
           movie2.setDuplicate();
         }
         else {
           // no, store movie
-          tmdbDuplicates.put(movie.getTmdbId(), movie);
+          tmdbDuplicates.put(tmdbId, movie);
         }
       }
     }

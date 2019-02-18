@@ -17,6 +17,8 @@
     <cp>lib/*</cp>
   </classPath>
   <jre>
+    <path>%JAVA_HOME%</path> <!-- our "bundled" jre -->
+    <bundledJreAsFallback>true</bundledJreAsFallback> <!-- only used as fallback after normal search -->
     <minVersion>1.8.0</minVersion>
     <jdkPreference>preferJre</jdkPreference>
     <initialHeapSize>128</initialHeapSize>

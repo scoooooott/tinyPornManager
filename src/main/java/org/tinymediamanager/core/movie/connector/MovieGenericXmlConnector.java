@@ -159,6 +159,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addProducers();
         addTrailer();
         addLanguages();
+        addDateAdded();
 
         // add connector specific tags
         addOwnTags();
@@ -415,6 +416,17 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(movie.getReleaseDate()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the dateAdded date in <dateadded>xxx</dateadded>
+   */
+  protected void addDateAdded() {
+    Element dateadded = document.createElement("dateadded");
+    if (movie.getDateAdded() != null) {
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(movie.getDateAdded()));
+    }
+    root.appendChild(dateadded);
   }
 
   /**

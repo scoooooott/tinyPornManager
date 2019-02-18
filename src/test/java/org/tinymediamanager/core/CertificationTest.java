@@ -21,9 +21,9 @@ public class CertificationTest extends BasicTest {
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.SHORT)).isEqualTo("FSK 16");
     assertThat(CertificationStyle.formatCertification(Certification.US_PG13, CertificationStyle.MEDIUM)).isEqualTo("US: PG-13");
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.LARGE))
-        .isEqualTo("DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16");
+        .isEqualTo("DE:FSK 16 / DE:FSK-16 / DE:FSK16 / DE:16 / DE:ab 16");
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.LARGE_FULL))
-        .isEqualTo("Germany:FSK 16 / Germany:FSK16 / Germany:16 / Germany:ab 16");
+        .isEqualTo("Germany:FSK 16 / Germany:FSK-16 / Germany:FSK16 / Germany:16 / Germany:ab 16");
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.TECHNICAL)).isEqualTo("DE_FSK16");
   }
 }

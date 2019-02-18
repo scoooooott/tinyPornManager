@@ -260,6 +260,14 @@
 		<delete dir="${dist.dir}/win" />
 		<delete dir="${dist.dir}/mac" />
 		<delete dir="${dist.dir}/linux" />
+
+		<!-- create checksums -->
+		<checksum algorithm="SHA-1" fileext=".sha1">
+			<fileset dir="${dist.dir}">
+				<include name="tmm**"/>
+			</fileset>
+		</checksum>
+
 		<move file="${dist.dir}" tofile="dist" />
 	</target>
 

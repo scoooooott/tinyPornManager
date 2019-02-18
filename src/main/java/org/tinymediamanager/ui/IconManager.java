@@ -65,8 +65,6 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_TOOLS_HOVER         = loadImage("icn_tools_hover.png");
 
   // packaged icons
-  public final static ImageIcon            DOT_AVAILABLE               = createFontAwesomeIcon('\uF00C', new Color(31, 187, 0));
-  public final static ImageIcon            DOT_UNAVAILABLE             = createFontAwesomeIcon('\uF00D', new Color(204, 2, 2));
   public final static ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public final static ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
   public final static ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
@@ -89,6 +87,11 @@ public class IconManager {
   public final static ImageIcon            SEARCH                      = createFontAwesomeIcon('\uF002', ICON_COLOR);
   public final static ImageIcon            SUBTITLE                    = createFontAwesomeIcon('\uF086', ICON_COLOR);
   public final static ImageIcon            SYNC                        = createFontAwesomeIcon('\uF021', ICON_COLOR);
+
+  // font awesome icons for the table/tree
+  public final static ImageIcon            TABLE_OK                    = createFontAwesomeIcon('\uF00C', new Color(31, 187, 0));
+  public final static ImageIcon            TABLE_PROBLEM               = createFontAwesomeIcon('\uF071', new Color(204, 120, 50));
+  public final static ImageIcon            TABLE_NOT_OK                = createFontAwesomeIcon('\uF00D', new Color(204, 2, 2));
 
   // font awesome icons normal
   public final static ImageIcon            CANCEL                      = createFontAwesomeIcon('\uF057');
@@ -119,6 +122,7 @@ public class IconManager {
   public final static ImageIcon            CLEAR_ALL                   = createFontAwesomeIcon('\uF0C8', UIManager.getColor("Button.foreground"));
   public final static ImageIcon            COPY_INV                    = createFontAwesomeIcon('\uF24D', UIManager.getColor("Button.foreground"));
   public final static ImageIcon            DATE_PICKER                 = createFontAwesomeIcon('\uF073', UIManager.getColor("Button.foreground"));
+  public final static ImageIcon            DELETE_INV                  = createFontAwesomeIcon('\uF2ED', UIManager.getColor("Button.foreground"));
   public final static ImageIcon            FILTER_INV                  = createFontAwesomeIcon('\uF0B0', UIManager.getColor("Button.foreground"));
   public final static ImageIcon            FILE_OPEN_INV               = createFontAwesomeIcon('\uF07C', UIManager.getColor("Button.foreground"));
   public final static ImageIcon            IMAGE_INV                   = createFontAwesomeIcon('\uF03E', UIManager.getColor("Button.foreground"));
@@ -131,6 +135,7 @@ public class IconManager {
   public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
+  public final static ImageIcon            EDITION                     = createFontAwesomeIcon('\uF51F', 16);
   public final static ImageIcon            EDIT_HEADER                 = createFontAwesomeIcon('\uF044', 16);
   public final static ImageIcon            EPISODES                    = createTextIcon("E", 18);
   public final static ImageIcon            FILE_SIZE                   = createFontAwesomeIcon('\uF0C7', 16);
@@ -139,6 +144,7 @@ public class IconManager {
   public final static ImageIcon            NFO                         = createFontAwesomeIcon('\uF15C', 16);
   public final static ImageIcon            RATING                      = createFontAwesomeIcon('\uF005', 16);
   public final static ImageIcon            SEASONS                     = createTextIcon("S", 18);
+  public final static ImageIcon            SOURCE                      = createFontAwesomeIcon('\uF601', 16);
   public final static ImageIcon            SUBTITLES                   = createFontAwesomeIcon('\uF086', 16);
   public final static ImageIcon            TRAILER                     = createFontAwesomeIcon('\uF008', 16);
   public final static ImageIcon            VIDEO_3D                    = createFontAwesomeIcon('\uF1B2', 16);

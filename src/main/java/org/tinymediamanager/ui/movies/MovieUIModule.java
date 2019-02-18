@@ -37,6 +37,7 @@ import org.tinymediamanager.ui.movies.actions.DebugDumpMovieAction;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieChangeDatasourceAction;
+import org.tinymediamanager.ui.movies.actions.MovieCleanUpFilesAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieCreateOfflineAction;
 import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
@@ -187,6 +188,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieAssignMovieSetAction.class));
     popupMenu.add(createAndRegisterAction(MovieDownloadMissingArtworkAction.class));
     popupMenu.addSeparator();
+    popupMenu.add(createAndRegisterAction(MovieUpdateAction.class));
+    popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
@@ -208,6 +211,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     JMenu kodiRPCMenu = KodiRPCMenu.KodiMenuRightClickMovies();
     popupMenu.add(kodiRPCMenu);
     popupMenu.addSeparator();
+    popupMenu.add(createAndRegisterAction(MovieCleanUpFilesAction.class));
     popupMenu.add(createAndRegisterAction(MovieClearImageCacheAction.class));
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieRemoveAction.class));
@@ -295,6 +299,8 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncSelectedTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
+    editPopupMenu.addSeparator();
+    editPopupMenu.add(createAndRegisterAction(MovieCleanUpFilesAction.class));
     editPopupMenu.addSeparator();
     editPopupMenu.add(createAndRegisterAction(MovieExportAction.class));
 

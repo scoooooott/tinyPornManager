@@ -39,7 +39,7 @@ ${end}
 	<div class="helpIcon" id="helpQuestion"><img src="include/images/footer.png"></div>
 	
 	<div id="appearFooter" title="Links">
-		<a target="_blank" href="http://www.tinymediamanager.org/"><span class="text1"></span></a><br />
+		<a target="_blank" href="https://www.tinymediamanager.org/"><span class="text1"></span></a><br />
 		<a target="_blank"  href="https://github.com/tinyMediaManager/tinyMediaManager"><span class="text2"></span></a><br />
 		<a target="_blank" href="https://github.com/Clearmist"><span class="text3"></span></a>
 	</div>

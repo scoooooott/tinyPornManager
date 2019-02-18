@@ -42,7 +42,6 @@ import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TMDB;
 import static org.tinymediamanager.core.Constants.TOP250;
 import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
 import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITERS;
@@ -588,25 +587,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the TraktTV id.
-   * 
-   * @return the TraktTV id
-   */
-  public int getTraktId() {
-    return this.getIdAsInt(TRAKT);
-  }
-
-  /**
-   * Sets the TraktTV id.
-   * 
-   * @param newValue
-   *          the new TraktTV id
-   */
-  public void setTraktId(int newValue) {
-    this.setId(TRAKT, newValue);
-  }
-
-  /**
    * Gets the runtime in minutes
    * 
    * @return the runtime
@@ -776,10 +756,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
+    //country
+    if (config.isCountry()) {
+      setCountry(StringUtils.join(metadata.getCountries(), ", "));
+    }
+
+    //studio
+    if (config.isStudio()) {
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+    }
+
     // cast
     if (config.isCast()) {
-      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      setCountry(StringUtils.join(metadata.getCountries(), ", "));
+
       List<Person> actors = new ArrayList<>();
       List<Person> producers = new ArrayList<>();
       List<Person> directors = new ArrayList<>();

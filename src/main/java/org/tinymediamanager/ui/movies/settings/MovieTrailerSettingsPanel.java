@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -93,8 +95,14 @@ class MovieTrailerSettingsPanel extends JPanel {
   private JCheckBox                      checkBox;
   private JCheckBox                      chckbxAutomaticTrailerDownload;
   private JPanel                         panelScraperOptions;
+  private JCheckBox                      cbTrailerFilename1;
+  private JCheckBox                      cbTrailerFilename2;
+
+  private ItemListener                   checkBoxListener;
 
   MovieTrailerSettingsPanel() {
+    checkBoxListener = e -> checkChanges();
+
     // UI init
     initComponents();
     initDataBindings();
@@ -164,6 +172,46 @@ class MovieTrailerSettingsPanel extends JPanel {
     }
     if (counter > 0) {
       tableTrailerScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
+
+    buildCheckBoxes();
+  }
+
+  private void buildCheckBoxes() {
+    cbTrailerFilename1.removeItemListener(checkBoxListener);
+    cbTrailerFilename2.removeItemListener(checkBoxListener);
+    clearSelection(cbTrailerFilename1, cbTrailerFilename2);
+
+    // trailer filenames
+    List<MovieTrailerNaming> movieTrailerFilenames = settings.getTrailerFilenames();
+    if (movieTrailerFilenames.contains(MovieTrailerNaming.FILENAME_TRAILER)) {
+      cbTrailerFilename1.setSelected(true);
+    }
+    if (movieTrailerFilenames.contains(MovieTrailerNaming.MOVIE_TRAILER)) {
+      cbTrailerFilename2.setSelected(true);
+    }
+
+    cbTrailerFilename1.addItemListener(checkBoxListener);
+    cbTrailerFilename2.addItemListener(checkBoxListener);
+  }
+
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkBox : checkBoxes) {
+      checkBox.setSelected(false);
+    }
+  }
+
+  /**
+   * check changes of checkboxes
+   */
+  private void checkChanges() {
+    // set trailer filenames
+    settings.clearTrailerFilenames();
+    if (cbTrailerFilename1.isSelected()) {
+      settings.addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+    }
+    if (cbTrailerFilename2.isSelected()) {
+      settings.addTrailerFilename(MovieTrailerNaming.MOVIE_TRAILER);
     }
   }
 
@@ -236,6 +284,19 @@ class MovieTrailerSettingsPanel extends JPanel {
         JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
         panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
         TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
+
+        JPanel panelTrailerFilenames = new JPanel();
+        panelOptions.add(panelTrailerFilenames, "cell 1 5 2 1");
+        panelTrailerFilenames.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
+
+        JLabel lblTrailerFileNaming = new JLabel(BUNDLE.getString("Settings.trailerFileNaming")); //$NON-NLS-1$
+        panelTrailerFilenames.add(lblTrailerFileNaming, "cell 0 0");
+
+        cbTrailerFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-trailer.ext"); //$NON-NLS-1$
+        panelTrailerFilenames.add(cbTrailerFilename1, "cell 1 0");
+
+        cbTrailerFilename2 = new JCheckBox("movie-trailer.ext"); //$NON-NLS-1$
+        panelTrailerFilenames.add(cbTrailerFilename2, "cell 1 1");
       }
     }
   }

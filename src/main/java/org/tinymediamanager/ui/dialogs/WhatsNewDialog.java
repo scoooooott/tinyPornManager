@@ -84,10 +84,10 @@ public class WhatsNewDialog extends TmmDialog {
       JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint")); //$NON-NLS-1$
       panelContent.add(lblHint, "flowx,cell 0 1");
 
-      LinkLabel lblLink = new LinkLabel("http://www.tinymediamanager.org");
+      LinkLabel lblLink = new LinkLabel("https://www.tinymediamanager.org");
       lblLink.addActionListener(arg0 -> {
         try {
-          TmmUIHelper.browseUrl("http://www.tinymediamanager.org/index.php/changelog/");
+          TmmUIHelper.browseUrl("https://www.tinymediamanager.org/changelog/");
         }
         catch (Exception ignored) {
         }

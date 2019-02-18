@@ -27,6 +27,15 @@ import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * a collection of various helpers for the movie module
  *
@@ -130,4 +139,24 @@ public class MovieHelpers {
       }
     }
   }
+
+  /**
+   * Method to get a List of files with the following extensions
+   * @param path Path where the files are located
+   * @param extensions Extension ( *.txt ) or (*.{txt,html,url}
+   * @return List of Files
+   */
+  public static  List<File> getUnknownFiles(String path, String extensions) {
+    Path dir = FileSystems.getDefault().getPath(path);
+    List<File> files = new ArrayList<>();
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, extensions)) {
+      for (Path entry : stream) {
+        files.add(entry.toFile());
+      }
+      return files;
+    } catch (IOException x) {
+      throw new RuntimeException(String.format("error reading folder %s: %s", dir, x.getMessage()), x);
+    }
+  }
+
 }

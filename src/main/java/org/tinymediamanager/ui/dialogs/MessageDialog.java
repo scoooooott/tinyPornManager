@@ -49,7 +49,7 @@ public class MessageDialog extends TmmDialog {
   private JTextPane         textPane;
 
   public MessageDialog(Window owner, String title) {
-    super(owner, title, "nessageDialog");
+    super(owner, title, "messageDialog");
 
     {
       JPanel panelContent = new JPanel();

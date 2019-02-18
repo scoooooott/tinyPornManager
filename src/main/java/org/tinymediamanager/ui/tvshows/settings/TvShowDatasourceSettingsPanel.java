@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -145,6 +146,7 @@ class TvShowDatasourceSettingsPanel extends JPanel {
         panelDatasources.add(scrollPaneDataSources, "cell 1 0,grow");
 
         listDatasources = new JList();
+        listDatasources.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPaneDataSources.setViewportView(listDatasources);
 
         btnAddDatasource = new JButton(IconManager.ADD_INV);

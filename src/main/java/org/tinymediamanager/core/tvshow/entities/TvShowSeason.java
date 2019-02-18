@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -121,6 +122,49 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
 
     return watched;
+  }
+
+  /**
+   * Checks if that season has artwork assigned
+   * 
+   * @return true if artwork is available
+   */
+  public Boolean getHasImages() {
+    return StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_POSTER))
+        && StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_BANNER))
+        && StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_THUMB));
+  }
+
+  /**
+   * Checks if all episodes of that season have artwork assigned
+   *
+   * @return true if artwork is available
+   */
+  public Boolean getHasEpisodeImages() {
+    boolean images = true;
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.getHasImages()) {
+        images = false;
+        break;
+      }
+    }
+    return images;
+  }
+
+  /**
+   * Checks if all episodes of that season have a NFO file
+   *
+   * @return true if NFO files are available
+   */
+  public Boolean getHasEpisodeNfoFiles() {
+    boolean nfo = true;
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.getHasNfoFile()) {
+        nfo = false;
+        break;
+      }
+    }
+    return nfo;
   }
 
   public boolean isDummy() {
@@ -229,9 +273,9 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   public List<MediaFile> getMediaFiles() {
     ArrayList<MediaFile> mfs = new ArrayList<>();
     Set<MediaFile> unique = new LinkedHashSet<>(mfs);
-      for (TvShowEpisode episode : episodes) {
-          unique.addAll(episode.getMediaFiles());
-      }
+    for (TvShowEpisode episode : episodes) {
+      unique.addAll(episode.getMediaFiles());
+    }
     mfs.addAll(unique);
     return mfs;
   }
@@ -239,9 +283,9 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     ArrayList<MediaFile> mfs = new ArrayList<>();
     Set<MediaFile> unique = new LinkedHashSet<>(mfs);
-      for (TvShowEpisode episode : episodes) {
-          unique.addAll(episode.getMediaFiles(type));
-      }
+    for (TvShowEpisode episode : episodes) {
+      unique.addAll(episode.getMediaFiles(type));
+    }
     mfs.addAll(unique);
     return mfs;
   }

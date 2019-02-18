@@ -67,6 +67,7 @@ public class TvShowNfoParser {
   private final List<String>        supportedElements   = new ArrayList<>();
 
   public String                     title               = "";
+  public String                     originalTitle       = "";
   public String                     showTitle           = "";
   public int                        year                = 0;
   public String                     plot                = "";
@@ -122,6 +123,7 @@ public class TvShowNfoParser {
 
     // parse all supported fields
     parseTag(TvShowNfoParser::parseTitle);
+    parseTag(TvShowNfoParser::parseOriginalTitle);
     parseTag(TvShowNfoParser::parseShowTitle);
     parseTag(TvShowNfoParser::parseRatingAndVotes);
     parseTag(TvShowNfoParser::parseYear);
@@ -222,6 +224,20 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "title");
     if (element != null) {
       title = element.ownText();
+    }
+
+    return null;
+  }
+
+  /**
+   * the title usually comes in the original title tag
+   */
+  private Void parseOriginalTitle() {
+    supportedElements.add("originaltitle");
+
+    Element element = getSingleElement(root, "originaltitle");
+    if (element != null) {
+      originalTitle = element.ownText();
     }
 
     return null;
@@ -1084,7 +1100,7 @@ public class TvShowNfoParser {
   public TvShow toTvShow() {
     TvShow show = new TvShow();
     show.setTitle(title);
-    show.setOriginalTitle(showTitle);
+    show.setOriginalTitle(originalTitle);
 
     for (Map.Entry<String, TvShowNfoParser.Rating> entry : ratings.entrySet()) {
       TvShowNfoParser.Rating r = entry.getValue();
@@ -1093,6 +1109,7 @@ public class TvShowNfoParser {
 
     show.setYear(year);
     show.setFirstAired(releaseDate);
+    show.setDateAdded(dateadded);
     show.setPlot(plot);
     show.setRuntime(runtime);
 

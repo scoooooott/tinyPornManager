@@ -22,39 +22,66 @@ compile:
 
 test:jdk8:
   stage: test
-  image: maven:3-jdk-8-alpine
+  image: maven:3-jdk-8
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
+    # install libmediainfo for unit tests
+    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
+    - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk10:
   stage: test
   image: maven:3-jdk-10
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
+    # install libmediainfo for unit tests
+    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
+    - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk11:
   stage: test
   image: maven:3-jdk-11
   except:
-    - master
+    - master@tinyMediaManager/tinyMediaManager
+  only:
+    - pushes
   script:
+    # install libmediainfo for unit tests
+    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+    - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
+    - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
-test:jdk12:
-  stage: test
-  image: maven:3-jdk-12-alpine
-  except:
-    - master
-  script:
-    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
+#test:jdk12:
+#  stage: test
+#  image: maven:3-jdk-12
+#  except:
+#    - master
+#  script:
+#    # install libmediainfo for unit tests
+#    - apt-get update && apt-get install -y --no-install-recommends libmms0
+#    - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+#    - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
+#    - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
+#    - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
+#    - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+#  allow_failure: true
 
 deploy:nightly:
   stage: deploy
@@ -70,10 +97,16 @@ deploy:nightly:
     - ./generate_changelog.sh
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-nightly.txt -Dthread_pool_size=1 package
+
+    # deploy also to old HP until we've fully migrated to the new one
     # push the build to the webserver
     - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_NIGHTLY},${FTP_PASSWORD_NIGHTLY} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
     # and publish the files on the webserver
     - curl http://nightly.tinymediamanager.org/bin/publish_build_v3.php
+
+    # trigger the deployment on nightly.tinymediamanager.org (new HP)
+    - curl -X POST -F "token=${NIGHTLY_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/7895208/trigger/pipeline
+
   artifacts:
     paths:
       - build/
@@ -91,10 +124,16 @@ deploy:prerel:
     - dpkg --add-architecture i386 && apt-get update && apt-get install -y --no-install-recommends ant libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 lftp curl
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-prerelease.txt -Dthread_pool_size=1 package
+
+    # deploy also to old HP until we've fully migrated to the new one
     # push the build to the webserver
     - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
     # and publish the files on the webserver
-    - curl http://prerelase.tinymediamanager.org/bin/publish_build_v3.php
+    - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
+
+    # trigger the deployment on nightly.tinymediamanager.org (new HP)
+    - curl -X POST -F "token=${PREREL_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/7895208/trigger/pipeline
+
   artifacts:
     paths:
       - build/

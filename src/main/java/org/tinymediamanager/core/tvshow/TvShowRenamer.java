@@ -52,6 +52,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
@@ -101,6 +102,7 @@ public class TvShowRenamer {
     Map<String, String> tokenMap = new HashMap<>();
     // TV show tags
     tokenMap.put("showTitle", "tvShow.title");
+    tokenMap.put("showOriginalTitle", "tvShow.originalTitle");
     tokenMap.put("showTitleSortable", "tvShow.titleSortable");
     tokenMap.put("showYear", "tvShow.year");
 
@@ -114,6 +116,7 @@ public class TvShowRenamer {
     tokenMap.put("seasonNrDvd", "episode.dvdSeason");
     tokenMap.put("seasonNrDvd2", "episode.dvdSeason;number(%02d)");
     tokenMap.put("title", "episode.title");
+    tokenMap.put("originalTitle", "episode.originalTitle");
     tokenMap.put("titleSortable", "episode.titleSortable");
     tokenMap.put("year", "episode.year");
     tokenMap.put("airedDate", "episode.firstAired;date(yyyy-MM-dd)");
@@ -123,10 +126,13 @@ public class TvShowRenamer {
     tokenMap.put("videoResolution", "episode.mediaInfoVideoResolution");
     tokenMap.put("audioCodec", "episode.mediaInfoAudioCodec");
     tokenMap.put("audioCodecList", "episode.mediaInfoAudioCodecList");
+    tokenMap.put("audioCodecsAsString", "episode.mediaInfoAudioCodecList;array");
     tokenMap.put("audioChannels", "episode.mediaInfoAudioChannels");
     tokenMap.put("audioChannelList", "episode.mediaInfoAudioChannelList");
+    tokenMap.put("audioChannelsAsString", "episode.mediaInfoAudioChannelList;array");
     tokenMap.put("audioLanguage", "episode.mediaInfoAudioLanguage");
     tokenMap.put("audioLanguageList", "episode.mediaInfoAudioLanguageList");
+    tokenMap.put("audioLanguagesAsString", "episode.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "episode.video3DFormat");
     tokenMap.put("hdr", "episode.videoHDRFormat");
 
@@ -773,13 +779,6 @@ public class TvShowRenamer {
     Path seasonFolder = tvShow.getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = tvShow.getPathNIO().resolve(seasonFoldername);
-      if (!Files.exists(seasonFolder)) {
-        try {
-          Files.createDirectory(seasonFolder);
-        }
-        catch (IOException ignored) {
-        }
-      }
     }
 
     // no new filename? just move the file
@@ -1084,6 +1083,7 @@ public class TvShowRenamer {
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
+      engine.registerNamedRenderer(new NamedArrayRenderer());
       engine.setModelAdaptor(new TvShowRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("episode", episode);

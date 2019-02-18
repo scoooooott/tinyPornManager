@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="./DataTables/datatables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="./DataTables/datatables_addition.css"/>   
+	<script src="./DataTables/datatables.min.js"></script>   
+	<script src="./DataTables/datatables_addition.js"></script>
+	<title>Movie List</title>
+</head>
+<body style="background: #fff;">
+	<noscript>
+		<span style="background:#f93; color:#000;">This site needs Javascript to display the movie list.</span><br>&nbsp;
+	</noscript>
+	
+	<table id="myTable" style="width: 100%;" >
+	<thead>
+	<tr>
+		<th></th>
+		<th>Title</th>
+		<th>Original Title</th>
+		<th>Year</th> 
+		<th>Genre</th> 
+		<th>Content</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+${foreach movies movie}
+    <tr>
+	  <td></td>
+      <td>${movie.title}</td>
+      <td>${movie.originalTitle}</td>
+      <td>${movie.year}</td>
+      <td>${foreach movie.genres genre , }${genre}${end}</td>
+	  <td>
+	    <table style="border: 2px solid; border-color: #e0e0e0;">
+		  <tr>
+			<td>
+			  <img src="./images/${movie;copyArtwork(type=POSTER, thumb=true, width=180, escape=true, default=../nopicture.gif)}" width="180px" alt="Poster"/>
+			</td>
+			<td>${movie.plot}</td>
+		  </tr>
+		  <tr>
+		    <td style="vertical-align:top;"><strong>Cast:</strong>
+			</td>
+		    <td>${foreach movie.actors actor <br /> }${actor.role} - ${actor.name}${end}
+			</td>
+		  </tr>
+		  <tr>
+		    <td><strong>Writer:</strong>
+			</td>
+            <td>${foreach movie.writers writer <br /> }${writer.name}${end}</td>
+		  </tr>
+		  <tr>
+		    <td><strong>Director:</strong>
+			</td>
+            <td>${foreach movie.directors director <br /> }${director.name}${end}</td>
+		  </tr>
+		  <tr>
+		    <td><strong>Production:</strong>
+			</td>
+		    <td> ${movie.productionCompany}</td>
+		  </tr>${if movie.hasTrailer}
+		  <tr>
+		    <td style="vertical-align:top;"><strong>Trailer:</strong>
+			</td>
+		    <td>${foreach movie.trailer trail <br /> }${if trail.inNfo}
+			     <span>${trail.url}</span>
+				${else}Trailer in folder${end}${end}
+			</td>
+		  </tr> ${end}
+		</table>
+	  </td>
+    </tr>
+${end}
+	</tbody>
+	
+	<tfoot>
+	<tr>
+		<th></th>
+		<th>Title</th>
+		<th>Original Title</th>
+		<th>Year</th> 
+		<th>Genre</th> 
+		<th>Content</th>
+	</tr>
+	</tfoot>
+	</table>
+  <script>
+function main(){	// to display the trailer
+	var x = document.getElementsByTagName("SPAN");
+	var i;
+	for (i = 0; i < x.length; i++) {
+		var str=x[i].innerHTML;
+		if (str.search("youtube.com") > 0){
+			str = str.substring(str.search('v=')+2).replace('&amp;','&').replace('&hd=1','');
+			x[i].innerHTML = '<iframe src="https://www.youtube.com/embed/'+str+'?rel=0" width="640" height="480" gesture="media" allow="encrypted-media" allowfullscreen></iframe>';
+		}
+		else{
+			var n = str.search("http%3A");
+			if (n > 0){
+				str = str.substring(n).replace(/%3A/gi,':').replace(/%2F/gi,'/');
+				x[i].innerHTML = '<embed src="'+str+'" width="640" height="480" scale="tofit" autostart="false" autoplay="false" />';
+			}
+		}
+	}
+}
+window.onload = main();
+  </script>
+</body>
+</html>

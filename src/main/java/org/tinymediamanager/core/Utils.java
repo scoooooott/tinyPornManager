@@ -47,6 +47,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.CodeSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -938,13 +939,15 @@ public class Utils {
 
     // backup
     try {
+      Instant instant = Instant.now();
+      long timeStampSeconds = instant.getEpochSecond();
       // create path
-      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(folder).toString());
+      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(folder).toString() + timeStampSeconds);
       if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
-      deleteDirectoryRecursive(backup);
+      // deleteDirectoryRecursive(backup); // we timestamped our folder - no need for it
       return moveDirectorySafe(folder, backup);
     }
     catch (IOException e) {
@@ -1092,26 +1095,10 @@ public class Utils {
         return;
       }
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-      String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
+      String date = formatter.format(new Date());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
       if (!Files.exists(backup) || overwrite) {
-        // v1 - just copy
-        // FileUtils.copyFile(f, backup, true);
-
-        // v2 - zip'em
-        // ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(backup.toFile()));
-        // zos.setComment("backup from " + date);
-        // ZipEntry ze = new ZipEntry(f.getName());
-        // zos.putNextEntry(ze);
-        // FileInputStream in = new FileInputStream(f);
-        // IOUtils.copy(in, zos);
-        // in.close();
-        // zos.closeEntry();
-        // zos.close();
-
-        // v3 - Java 7 NIO file system zip
         createZip(backup, file, "/" + file.getFileName().toString()); // just put in main dir
-        // TODO: add timestamp to zipped file, to archive ALL of one day ;)
       }
     }
     catch (IOException e) {
@@ -1337,7 +1324,19 @@ public class Utils {
           Files.createDirectory(internalTargetPath.getParent());
         }
         // copy a file into the zip file
-        Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
+        if (Files.isDirectory(toBeAdded)) {
+          Files.walk(toBeAdded).forEach(source -> {
+            try {
+              Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()));
+            }
+            catch (Exception e) {
+              LOGGER.error("Failed to create zip file!" + e.getMessage());
+            }
+          });
+        }
+        else {
+          Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
+        }
       }
     }
     catch (Exception e) {

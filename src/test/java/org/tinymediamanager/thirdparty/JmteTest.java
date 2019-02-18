@@ -51,7 +51,7 @@ public class JmteTest extends BasicTest {
   public void testAllMovieTemplates() throws Exception {
     MovieList ml = MovieList.getInstance();
     for (ExportTemplate t : MovieExporter.findTemplates(TemplateType.MOVIE)) {
-      System.out.println("\nTEMPLATE: " + t.getName());
+      System.out.println("\nTEMPLATE: " + t.getPath());
       MovieExporter ex = new MovieExporter(Paths.get(t.getPath()));
       ex.export(ml.getMovies(), Paths.get(getSettingsFolder(), t.getName()));
     }
@@ -61,7 +61,7 @@ public class JmteTest extends BasicTest {
   public void testAllTvShowTemplates() throws Exception {
     TvShowList tv = TvShowList.getInstance();
     for (ExportTemplate t : TvShowExporter.findTemplates(TemplateType.TV_SHOW)) {
-      System.out.println("\nTEMPLATE: " + t.getName());
+      System.out.println("\nTEMPLATE: " + t.getPath());
       TvShowExporter ex = new TvShowExporter(Paths.get(t.getPath()));
       ex.export(tv.getTvShows(), Paths.get(getSettingsFolder(), t.getName()));
     }

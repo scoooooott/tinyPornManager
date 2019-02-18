@@ -37,6 +37,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -45,6 +46,7 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.converter.RatingConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
@@ -218,11 +220,6 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setPoster(TvShow tvShow) {
-    // only reset if there was a real change
-    if (tvShow.getArtworkFilename(MediaFileType.POSTER).equals(lblTvShowPoster.getImagePath())) {
-      return;
-    }
-
     lblTvShowPoster.clearImage();
     lblTvShowPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
     Dimension posterSize = tvShow.getArtworkDimension(MediaFileType.POSTER);
@@ -235,11 +232,6 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setFanart(TvShow tvShow) {
-    // only reset if there was a real change
-    if (tvShow.getArtworkFilename(MediaFileType.FANART).equals(lblTvShowBackground.getImagePath())) {
-      return;
-    }
-
     lblTvShowBackground.clearImage();
     lblTvShowBackground.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
     Dimension fanartSize = tvShow.getArtworkDimension(MediaFileType.FANART);
@@ -252,11 +244,6 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setBanner(TvShow tvShow) {
-    // only reset if there was a real change
-    if (tvShow.getArtworkFilename(MediaFileType.BANNER).equals(lblTvShowBanner.getImagePath())) {
-      return;
-    }
-
     lblTvShowBanner.clearImage();
     lblTvShowBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
     Dimension bannerSize = tvShow.getArtworkDimension(MediaFileType.BANNER);
@@ -281,14 +268,16 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_1, tpOverview, JTextAreaBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating.rating");
+    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating.ratingNormalized");
     BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
     AutoBinding<TvShowSelectionModel, Float, StarRater, Float> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_2, panelRatingStars, starRaterBeanProperty);
     autoBinding_2.bind();
     //
-    AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
+    BeanProperty<TvShowSelectionModel, Rating> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.rating");
+    AutoBinding<TvShowSelectionModel, Rating, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_5, lblRating, jLabelBeanProperty);
+    autoBinding_3.setConverter(new RatingConverter());
     autoBinding_3.bind();
     //
     BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.rating.votes");

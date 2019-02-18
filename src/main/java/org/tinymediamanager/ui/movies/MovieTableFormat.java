@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 
 import javax.swing.ImageIcon;
 
@@ -31,8 +32,9 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieComparator;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -58,6 +60,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<String> videoFormatComparator = new VideoFormatComparator();
     Comparator<String> fileSizeComparator = new FileSizeComparator();
     Comparator<Integer> integerComparator = new IntegerComparator();
+    Comparator<Certification> certificationComparator = new CertificationComparator();
 
     FontMetrics fontMetrics = getFontMetrics();
 
@@ -67,6 +70,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Column col = new Column(BUNDLE.getString("metatag.title"), "title", movie -> movie, Movie.class);
     col.setColumnComparator(movieComparator);
     col.setCellRenderer(new MovieBorderTableCellRenderer());
+    col.setColumnTooltip(Movie::getTitleSortable);
     addColumn(col);
 
     /*
@@ -75,6 +79,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.originaltitle"), "originalTitle", movie -> movie, Movie.class);
     col.setColumnComparator(movieComparator);
     col.setCellRenderer(new MovieBorderTableCellRenderer());
+    col.setColumnTooltip(Movie::getOriginalTitleSortable);
     addColumn(col);
 
     /*
@@ -89,37 +94,30 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * file name (hidden per default)
      */
-    col = new Column(BUNDLE.getString("metatag.filename"), "filename", movie -> {
-      MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
-      if (mf != null) {
-        return mf.getFilename();
-      }
-      return "";
-    }, String.class);
+    col = new Column(BUNDLE.getString("metatag.filename"), "filename", movie -> movie.getMainVideoFile().getFilename(), String.class);
     col.setColumnComparator(stringComparator);
     col.setColumnResizeable(true);
+    col.setColumnTooltip(movie -> movie.getMainVideoFile().getFilename());
     addColumn(col);
 
     /*
      * folder name (hidden per default)
      */
-    col = new Column(BUNDLE.getString("metatag.path"), "path", MediaEntity::getPathNIO, String.class);
+    Function<Movie, String> pathFunction = movie -> movie.getPathNIO().toString();
+    col = new Column(BUNDLE.getString("metatag.path"), "path", pathFunction, String.class);
     col.setColumnComparator(pathComparator);
     col.setColumnResizeable(true);
+    col.setColumnTooltip(pathFunction);
     addColumn(col);
 
     /*
      * movie set (hidden per default)
      */
-    col = new Column(BUNDLE.getString("metatag.movieset"), "movieset", movie -> {
-      MovieSet set = movie.getMovieSet();
-      if (set != null) {
-        return set.getTitle();
-      }
-      return "";
-    }, String.class);
+    Function<Movie, String> movieSetFunction = movie -> movie.getMovieSet() == null ? null : movie.getMovieSet().getTitle();
+    col = new Column(BUNDLE.getString("metatag.movieset"), "movieset", movieSetFunction, String.class);
     col.setColumnComparator(stringComparator);
     col.setColumnResizeable(true);
+    col.setColumnTooltip(movieSetFunction);
     addColumn(col);
 
     /*
@@ -130,6 +128,8 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.RATING);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
+    col.setColumnTooltip(
+        movie -> movie.getRating().getRating() + " (" + movie.getRating().getVotes() + " " + BUNDLE.getString("metatag.votes") + ")");
     addColumn(col);
 
     /*
@@ -140,6 +140,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.VOTES);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1000000") * 1.2f));
+    addColumn(col);
+
+    /*
+     * certification (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, Certification.class);
+    col.setColumnComparator(certificationComparator);
+    col.setHeaderIcon(IconManager.VOTES);
+    col.setColumnResizeable(true);
     addColumn(col);
 
     /*
@@ -207,6 +216,27 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setHeaderIcon(IconManager.FILE_SIZE);
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
+    addColumn(col);
+
+    /*
+     * Edition (hidden per default)
+     */
+    Function<Movie, String> movieEditionFunction = movie -> movie.getEdition() == null || movie.getEdition() == MovieEdition.NONE ? null
+        : movie.getEdition().toString();
+    col = new Column(BUNDLE.getString("metatag.edition"), "edition", movieEditionFunction, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.EDITION);
+    col.setColumnTooltip(movieEditionFunction);
+    addColumn(col);
+
+    /*
+     * Source (hidden per default)
+     */
+    Function<Movie, String> mediaSourceFunction = movie -> movie.getMediaSource() == null ? null : movie.getMediaSource().toString();
+    col = new Column(BUNDLE.getString("metatag.source"), "mediaSource", mediaSourceFunction, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setHeaderIcon(IconManager.SOURCE);
+    col.setColumnTooltip(mediaSourceFunction);
     addColumn(col);
 
     /*

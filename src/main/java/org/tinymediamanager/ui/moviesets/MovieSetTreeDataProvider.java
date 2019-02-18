@@ -20,6 +20,7 @@ import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
@@ -244,7 +245,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
         MovieSet MovieSet1 = (MovieSet) userObject1;
         MovieSet MovieSet2 = (MovieSet) userObject2;
         if (stringCollator != null) {
-          return stringCollator.compare(MovieSet1.getTitleSortable().toLowerCase(), MovieSet2.getTitleSortable().toLowerCase());
+          return stringCollator.compare(MovieSet1.getTitleSortable().toLowerCase(Locale.ROOT), MovieSet2.getTitleSortable().toLowerCase(Locale.ROOT));
         }
         return MovieSet1.getTitleSortable().compareToIgnoreCase(MovieSet2.getTitleSortable());
       }

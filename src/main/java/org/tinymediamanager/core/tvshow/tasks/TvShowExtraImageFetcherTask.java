@@ -99,7 +99,7 @@ public class TvShowExtraImageFetcherTask implements Runnable {
     Path folder = tvShow.getPathNIO().resolve("extrafanart");
     try {
       if (Files.isDirectory(folder)) {
-        Utils.deleteDirectoryRecursive(folder);
+        Utils.deleteDirectorySafely(folder, tvShow.getDataSource());
         tvShow.removeAllMediaFiles(MediaFileType.EXTRAFANART);
       }
       Files.createDirectory(folder);

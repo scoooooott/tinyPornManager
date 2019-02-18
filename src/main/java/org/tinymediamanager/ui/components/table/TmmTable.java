@@ -22,6 +22,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -366,5 +368,42 @@ public class TmmTable extends JTable {
 
       return this;
     }
+  }
+
+  /**
+   * provide table cell tooltips via our table model
+   * 
+   * @param e
+   *          the mouse event
+   * @return the tooltip or null
+   */
+  public String getToolTipText(MouseEvent e) {
+    if (!(getModel() instanceof TmmTableModel)) {
+      return super.getToolTipText(e);
+    }
+
+    TmmTableModel tableModel = ((TmmTableModel) getModel());
+    Point p = e.getPoint();
+    int rowIndex = rowAtPoint(p);
+    int colIndex = columnAtPoint(p);
+    int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+    return tableModel.getTooltipAt(rowIndex, realColumnIndex);
+  }
+
+  @Override
+  public Point getToolTipLocation(MouseEvent e) {
+    // do not return a coordinate if the tooltip text ist empty
+    if (StringUtils.isBlank(getToolTipText(e))) {
+      return null;
+    }
+
+    Point p = e.getPoint();
+    int rowIndex = rowAtPoint(p);
+    int colIndex = columnAtPoint(p);
+    Rectangle r = getCellRect(rowIndex, colIndex, false);
+
+    Point point = new Point(r.x + 20, r.y + (int) (1.2 * r.height));
+    return point;
   }
 }

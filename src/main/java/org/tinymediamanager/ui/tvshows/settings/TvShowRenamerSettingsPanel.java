@@ -171,6 +171,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
     // examples
     exampleEventList.add(new TvShowRenamerExample("${title}"));
+    exampleEventList.add(new TvShowRenamerExample("${originalTitle}"));
     exampleEventList.add(new TvShowRenamerExample("${titleSortable}"));
     exampleEventList.add(new TvShowRenamerExample("${seasonNr}"));
     exampleEventList.add(new TvShowRenamerExample("${seasonNr2}"));
@@ -184,14 +185,21 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("${year}"));
     exampleEventList.add(new TvShowRenamerExample("${showYear}"));
     exampleEventList.add(new TvShowRenamerExample("${showTitle}"));
+    exampleEventList.add(new TvShowRenamerExample("${showOriginalTitle}"));
     exampleEventList.add(new TvShowRenamerExample("${showTitleSortable}"));
     exampleEventList.add(new TvShowRenamerExample("${videoResolution}"));
     exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
     exampleEventList.add(new TvShowRenamerExample("${videoCodec}"));
     exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
     exampleEventList.add(new TvShowRenamerExample("${audioCodec}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioCodecList}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioCodecsAsString}"));
     exampleEventList.add(new TvShowRenamerExample("${audioChannels}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioChannelList}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioChannelsAsString}"));
     exampleEventList.add(new TvShowRenamerExample("${audioLanguage}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioLanguageList}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioLanguageAsString}"));
     exampleEventList.add(new TvShowRenamerExample("${mediaSource}"));
     exampleEventList.add(new TvShowRenamerExample("${hdr}"));
   }
@@ -502,7 +510,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return null;
+          return BUNDLE.getString("Settings.renamer.token.name"); //$NON-NLS-1$
 
         case 1:
           return BUNDLE.getString("Settings.renamer.token"); //$NON-NLS-1$

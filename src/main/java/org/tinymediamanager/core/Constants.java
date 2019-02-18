@@ -111,6 +111,7 @@ public final class Constants {
   public final static String TV_SHOW_COUNT          = "tvShowCount";
   public final static String TV_SHOWS               = "tvShows";
   public final static String VIDEO_CODEC            = "videoCodec";
+  public final static String VIDEO_CONTAINER        = "videoContainer";
   public final static String VIDEO_IN_3D            = "videoIn3D";
   public final static String VOTES                  = "votes";
   public final static String WATCHED                = "watched";

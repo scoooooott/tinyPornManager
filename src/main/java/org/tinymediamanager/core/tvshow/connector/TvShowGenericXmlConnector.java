@@ -132,6 +132,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
         // add well known tags
         addTitle();
+        addOriginalTitle();
         addShowTitle();
         addYear();
         addRating();
@@ -160,6 +161,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addTags();
         addActors();
         addTrailer();
+        addDateAdded();
 
         // add connector specific tags
         addOwnTags();
@@ -199,6 +201,15 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Element title = document.createElement("title");
     title.setTextContent(tvShow.getTitle());
     root.appendChild(title);
+  }
+
+  /**
+   * add the original title in the form <originaltitle>xxx</originaltitle>
+   */
+  protected void addOriginalTitle() {
+    Element originaltitle = document.createElement("originaltitle");
+    originaltitle.setTextContent(tvShow.getOriginalTitle());
+    root.appendChild(originaltitle);
   }
 
   /**
@@ -492,6 +503,17 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getFirstAired()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the dateAdded date in <dateadded>xxx</dateadded>
+   */
+  protected void addDateAdded() {
+    Element dateadded = document.createElement("dateadded");
+    if (tvShow.getDateAdded() != null) {
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getDateAdded()));
+    }
+    root.appendChild(dateadded);
   }
 
   /**

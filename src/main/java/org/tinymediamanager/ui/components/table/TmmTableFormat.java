@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +20,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.IconManager;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
@@ -73,6 +75,13 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return columns.get(i).columnValue.apply(e);
   }
 
+  public String getColumnTooltip(E e, int i) {
+    if (columns.get(i).columnTooltip != null) {
+      return columns.get(i).columnTooltip.apply(e);
+    }
+    return null;
+  }
+
   public String getColumnIdentifier(int i) {
     return columns.get(i).columnIdentifier;
   }
@@ -98,16 +107,17 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
   }
 
   protected class Column {
-    private String            columnTitle;
-    private String            columnIdentifier;
-    private Function<E, ?>    columnValue;
-    private Class             columnClass;
-    private Comparator<?>     columnComparator = null;
-    private TableCellRenderer cellRenderer     = null;
-    private ImageIcon         headerIcon       = null;
-    private boolean           columnResizeable = true;
-    private int               minWidth         = 0;
-    private int               maxWidth         = 0;
+    private String              columnTitle;
+    private String              columnIdentifier;
+    private Function<E, ?>      columnValue;
+    private Function<E, String> columnTooltip    = null;
+    private Class               columnClass;
+    private Comparator<?>       columnComparator = null;
+    private TableCellRenderer   cellRenderer     = null;
+    private ImageIcon           headerIcon       = null;
+    private boolean             columnResizeable = true;
+    private int                 minWidth         = 0;
+    private int                 maxWidth         = 0;
 
     public Column(String title, String identifier, Function<E, ?> value, Class clazz) {
       columnTitle = title;
@@ -140,25 +150,29 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     public void setMaxWidth(int maxWidth) {
       this.maxWidth = maxWidth;
     }
+
+    public void setColumnTooltip(Function<E, String> tooltip) {
+      this.columnTooltip = tooltip;
+    }
   }
 
   protected ImageIcon getCheckIcon(boolean bool) {
     if (bool) {
-      return IconManager.DOT_AVAILABLE;
+      return IconManager.TABLE_OK;
     }
-    return IconManager.DOT_UNAVAILABLE;
+    return IconManager.TABLE_NOT_OK;
   }
 
   public class StringComparator implements Comparator<String> {
     @Override
     public int compare(String arg0, String arg1) {
-      if (StringUtils.isEmpty(arg0)) {
+      if (StringUtils.isBlank(arg0)) {
         return -1;
       }
-      if (StringUtils.isEmpty(arg1)) {
+      if (StringUtils.isBlank(arg1)) {
         return 1;
       }
-      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+      return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));
     }
   }
 
@@ -201,7 +215,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       if (arg0 == arg1) {
         return 0;
       }
-      if (arg0 == IconManager.DOT_AVAILABLE) {
+      if (arg0 == IconManager.TABLE_OK) {
         return 1;
       }
       return -1;
@@ -256,6 +270,19 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       }
 
       return size;
+    }
+  }
+
+  public class CertificationComparator implements Comparator<Certification> {
+    @Override
+    public int compare(Certification arg0, Certification arg1) {
+      if (arg0 == null) {
+        return -1;
+      }
+      if (arg1 == null) {
+        return 1;
+      }
+      return arg0.toString().compareTo(arg1.toString());
     }
   }
 }

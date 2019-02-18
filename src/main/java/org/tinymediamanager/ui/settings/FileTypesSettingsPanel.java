@@ -51,11 +51,16 @@ class FileTypesSettingsPanel extends JPanel {
   private JList<String>               listVideoFiletypes;
   private JTextField                  tfSubtitleFiletype;
   private JList<String>               listSubtitleFiletypes;
-  private JList<String>               listAudioFiletypes;
   private JTextField                  tfAudioFiletype;
+  private JList<String>               listAudioFiletypes;
+  private JTextField                  tfCleanupFiletype;
+  private JList<String>               listCleanupFiletypes;
+
   private JButton                     btnAddAudioFiletype;
   private JButton                     btnAddSubtitleFiletype;
   private JButton                     btnAddVideoFiletype;
+  private JButton                     btnAddCleanupFiletype;
+  private JButton                     btnRemoveCleanupFiletype;
   private JButton                     btnRemoveAudioFiletype;
   private JButton                     btnRemoveSubtitleFiletype;
   private JButton                     btnRemoveVideoFiletype;
@@ -108,10 +113,23 @@ class FileTypesSettingsPanel extends JPanel {
         Globals.settings.removeAudioFileType(prefix);
       }
     });
+    btnAddCleanupFiletype.addActionListener(e -> {
+      if (StringUtils.isNotEmpty(tfCleanupFiletype.getText())) {
+        Globals.settings.addCleanupFileType(tfCleanupFiletype.getText());
+        tfCleanupFiletype.setText("");
+      }
+    });
+    btnRemoveCleanupFiletype.addActionListener(arg0 -> {
+      int row = listCleanupFiletypes.getSelectedIndex();
+      if (row != -1) {
+        String prefix = Globals.settings.getCleanupFileType().get(row);
+        Globals.settings.removeCleanupFileType(prefix);
+      }
+    });
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
+    setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][][15lp!][]"));
     {
       JPanel panelVideoFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
@@ -187,6 +205,31 @@ class FileTypesSettingsPanel extends JPanel {
         btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
       }
     }
+    {
+      JPanel panelCleanupFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
+
+      JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unwantedfiletypes"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelCleanupFiletypes, lblCleanupFiletypesT, true);
+      add(collapsiblePanel, "cell 0 6,growx,wmin 0");
+      {
+        JScrollPane scrollPaneCleanupFiletypes = new JScrollPane();
+        panelCleanupFiletypes.add(scrollPaneCleanupFiletypes, "cell 1 0,grow");
+
+        listCleanupFiletypes = new JList<>();
+        scrollPaneCleanupFiletypes.setViewportView(listCleanupFiletypes);
+
+        btnRemoveCleanupFiletype = new JButton(IconManager.REMOVE_INV);
+        panelCleanupFiletypes.add(btnRemoveCleanupFiletype, "cell 2 0,aligny bottom, growx");
+        btnRemoveCleanupFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+
+        tfCleanupFiletype = new JTextField();
+        panelCleanupFiletypes.add(tfCleanupFiletype, "cell 1 1,growx");
+
+        btnAddCleanupFiletype = new JButton(IconManager.ADD_INV);
+        panelCleanupFiletypes.add(btnAddCleanupFiletype, "cell 2 1, growx");
+        btnAddCleanupFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      }
+    }
   }
 
   @SuppressWarnings("rawtypes")
@@ -205,5 +248,10 @@ class FileTypesSettingsPanel extends JPanel {
     JListBinding<String, Settings, JList> jListBinding_3 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, listAudioFiletypes);
     jListBinding_3.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_12 = BeanProperty.create("cleanupFileType");
+    JListBinding<String, Settings, JList> jListBinding_4 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+            settingsBeanProperty_12, listCleanupFiletypes);
+    jListBinding_4.bind();
   }
 }

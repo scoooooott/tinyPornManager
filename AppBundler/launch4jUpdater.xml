@@ -14,6 +14,8 @@
   <manifest></manifest>
   <icon>tmm.ico</icon>
   <jre>
+    <path>%JAVA_HOME%</path> <!-- our "bundled" jre -->
+    <bundledJreAsFallback>true</bundledJreAsFallback> <!-- only used as fallback after normal search -->
     <minVersion>1.7.0</minVersion>
     <jdkPreference>preferJre</jdkPreference>
     <initialHeapSize>64</initialHeapSize>
@@ -21,7 +23,7 @@
     <opt>-Dsun.java2d.d3d=false</opt>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Dfile.encoding=UTF-8</opt>
-    <opt>-Dappbase=http://www.tinymediamanager.org/</opt><!-- backup url for getdown.txt -->
+      <opt>-Dappbase=https://www.tinymediamanager.org/</opt><!-- backup url for getdown.txt -->
   </jre>
   <versionInfo>
     <fileVersion>3.0.0.0</fileVersion>

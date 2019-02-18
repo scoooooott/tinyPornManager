@@ -15,8 +15,15 @@
  */
 package org.tinymediamanager;
 
+import static org.tinymediamanager.core.Utils.deleteFileSafely;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
 
@@ -74,13 +82,30 @@ public class UpgradeTasks {
     // ****************************************************
     // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
     // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
-    // SVN BUILD IS ALSO CONSIDERED AS LOWER !!!
+    // GIT BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
     // upgrade to v3
-    // if (StrgUtils.compareVersion(v, "3") < 0) {
-    // LOGGER.info("Performing database upgrade tasks to version 3");
-    // }
+    if (StrgUtils.compareVersion(v, "3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3");
+      // clean old style backup files
+      ArrayList<Path> al = new ArrayList<>();
+
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
+        for (Path path : directoryStream) {
+          if (path.getFileName().toString().matches("movies\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")
+              || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
+            al.add(path);
+          }
+        }
+      }
+      catch (IOException ignored) {
+      }
+
+      for (Path path : al) {
+        deleteFileSafely(path);
+      }
+    }
   }
 
   /**
@@ -104,7 +129,7 @@ public class UpgradeTasks {
     // exe launchers
     if (Platform.isWindows()) {
       file = new File("tinyMediaManager.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManager.exe");
         try {
           FileUtils.copyFile(file, cur);
@@ -114,7 +139,7 @@ public class UpgradeTasks {
         }
       }
       file = new File("tinyMediaManagerUpd.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManagerUpd.exe");
         try {
           FileUtils.copyFile(file, cur);
@@ -124,7 +149,7 @@ public class UpgradeTasks {
         }
       }
       file = new File("tinyMediaManagerCMD.new");
-      if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+      if (file.exists() && file.length() > 10000 && file.length() < 100000) {
         File cur = new File("tinyMediaManagerCMD.exe");
         try {
           FileUtils.copyFile(file, cur);

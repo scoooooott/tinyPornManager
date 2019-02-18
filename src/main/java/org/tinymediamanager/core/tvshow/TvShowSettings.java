@@ -266,7 +266,7 @@ public class TvShowSettings extends AbstractSettings {
 
     // set default languages based on java instance
     String defaultLang = Locale.getDefault().getLanguage();
-    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase(Locale.ROOT));
     if (cc != null) {
       setCertificationCountry(cc);
     }
@@ -500,14 +500,14 @@ public class TvShowSettings extends AbstractSettings {
   }
 
   public void addBadWord(String badWord) {
-    if (!badWords.contains(badWord.toLowerCase())) {
-      badWords.add(badWord.toLowerCase());
+    if (!badWords.contains(badWord.toLowerCase(Locale.ROOT))) {
+      badWords.add(badWord.toLowerCase(Locale.ROOT));
       firePropertyChange(BAD_WORD, null, badWords);
     }
   }
 
   public void removeBadWord(String badWord) {
-    badWords.remove(badWord.toLowerCase());
+    badWords.remove(badWord.toLowerCase(Locale.ROOT));
     firePropertyChange(BAD_WORD, null, badWords);
   }
 
@@ -515,7 +515,7 @@ public class TvShowSettings extends AbstractSettings {
     // convert to lowercase for easy contains checking
     ListIterator<String> iterator = badWords.listIterator();
     while (iterator.hasNext()) {
-      iterator.set(iterator.next().toLowerCase());
+      iterator.set(iterator.next().toLowerCase(Locale.ROOT));
     }
     return badWords;
   }

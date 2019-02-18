@@ -149,6 +149,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           }
 
           addTitle(episode, parserEpisode);
+          addOriginalTitle(episode, parserEpisode);
           addShowTitle(episode, parserEpisode);
           addSeason(episode, parserEpisode);
           addEpisode(episode, parserEpisode);
@@ -172,6 +173,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           addDirectors(episode, parserEpisode);
           addActors(episode, parserEpisode);
           addTrailer(episode, parserEpisode);
+          addDateAdded(episode, parserEpisode);
 
           // add connector specific tags
           addOwnTags(episode, parserEpisode);
@@ -225,6 +227,15 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     Element title = document.createElement("title");
     title.setTextContent(episode.getTitle());
     root.appendChild(title);
+  }
+
+  /**
+   * add the original title in the form <originaltitle>xxx</originaltitle>
+   */
+  protected void addOriginalTitle(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element originaltitle = document.createElement("originaltitle");
+    originaltitle.setTextContent(episode.getOriginalTitle());
+    root.appendChild(originaltitle);
   }
 
   /**
@@ -389,6 +400,17 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(episode.getFirstAired()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the dateAdded date in <dateadded>xxx</dateadded>
+   */
+  protected void addDateAdded(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element dateadded = document.createElement("dateadded");
+    if (episode.getDateAdded() != null) {
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(episode.getDateAdded()));
+    }
+    root.appendChild(dateadded);
   }
 
   /**

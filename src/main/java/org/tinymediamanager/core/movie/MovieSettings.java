@@ -279,13 +279,14 @@ public class MovieSettings extends AbstractSettings {
   protected void writeDefaultSettings() {
     // hidden columns
     setMovieTableHiddenColumns(
-        Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d", "videoFormat", "votes"));
+        Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d", "videoFormat", "votes", "edition",
+            "mediaSource", "certification"));
 
     addDefaultEntries();
 
     // set default languages based on java instance
     String defaultLang = Locale.getDefault().getLanguage();
-    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase(Locale.ROOT));
     if (cc != null) {
       setCertificationCountry(cc);
     }
