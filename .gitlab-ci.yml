@@ -132,7 +132,7 @@ deploy:prerel:
     - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
 
     # trigger the deployment on nightly.tinymediamanager.org (new HP)
-    - curl -X POST -F "token=${PREREL_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/7895208/trigger/pipeline
+    - curl -X POST -F "token=${PREREL_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/10869644/trigger/pipeline
 
   artifacts:
     paths:
