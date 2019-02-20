@@ -1879,7 +1879,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if ("dts".equalsIgnoreCase(audioCodec)) {
             // <Format_Profile>X / MA / Core</Format_Profile>
             if (audioAddition.contains("ES")) {
-              audioCodec = "DTSHD-ES";
+              audioCodec = "DTS-ES";
             }
             if (audioAddition.contains("HRA")) {
               audioCodec = "DTSHD-HRA";
@@ -1907,8 +1907,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if (commName.contains("high resolution audio")) {
             audioCodec = "DTSHD-HRA";
           }
-          if (commName.contains("extended")) {
-            audioCodec = "DTSHD-ES";
+          if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
+            audioCodec = "DTS-ES";
           }
           if (commName.contains("atmos")) {
             audioCodec = "Atmos";
@@ -1920,8 +1920,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       stream.setCodec(audioCodec);
 
       // AAC sometimes codes channels into Channel(s)_Original
-      String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)", "Channel(s)_Original");
-      stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels);
+      // and DTS-ES has an additional core channel
+      String ch = getMediaInfo(StreamKind.Audio, i, "Channel(s)").replaceAll("Object Based", "");
+      String ch2 = getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original").replaceAll("Object Based", "");
+      if (!ch.isEmpty() && !ch2.isEmpty()) {
+        // check for higher
+        int chi = parseToInt(ch);
+        int ch2i = parseToInt(ch2);
+        if (ch2i > chi) {
+          chi = ch2i;
+        }
+      }
+      stream.setChannels(ch);
 
       String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
 
