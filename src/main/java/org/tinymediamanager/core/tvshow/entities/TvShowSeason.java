@@ -84,7 +84,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return tvShow;
   }
 
-  public void addEpisode(TvShowEpisode episode) {
+  public synchronized void addEpisode(TvShowEpisode episode) {
     // do not add twice
     if (episodes.contains(episode)) {
       return;
