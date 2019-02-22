@@ -13,49 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.actions;
+package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
-import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
- * The class TvShowSetWatchedFlagAction. Set the watched flag to all selected episodes
+ * The MovieToggleWatchedFlagAction - to set the watched flag for all selected movies
  * 
  * @author Manuel Laggner
  */
-public class TvShowSetWatchedFlagAction extends TmmAction {
-  private static final long           serialVersionUID = 5762347331284295996L;
+public class MovieToggleWatchedFlagAction extends TmmAction {
+  private static final long           serialVersionUID = 2866581962767395824L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowSetWatchedFlagAction() {
-    putValue(NAME, BUNDLE.getString("tvshowepisode.setwatchedflag")); //$NON-NLS-1$
+  public MovieToggleWatchedFlagAction() {
+    putValue(NAME, BUNDLE.getString("movie.togglewatchedflag")); //$NON-NLS-1$
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }
 
   @Override
   protected void processAction(ActionEvent e) {
-    final List<TvShowEpisode> selectedEpisodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
+    final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    if (selectedEpisodes.isEmpty()) {
+    if (selectedMovies.isEmpty()) {
       JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
       return;
     }
 
-    for (TvShowEpisode episode : selectedEpisodes) {
-      episode.setWatched(true);
-      episode.writeNFO();
-      episode.saveToDb();
+    for (Movie movie : selectedMovies) {
+      movie.setWatched(!movie.isWatched());
+      movie.writeNFO();
+      movie.saveToDb();
     }
   }
 }
