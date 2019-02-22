@@ -159,7 +159,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private boolean                            dummy                 = false;
 
   /**
-   * Instantiates a new tv show episode. To initialize the propertychangesupport after loading
+   * Instantiates a new tv show episode. To initialize the propertychangesupport
+   * after loading
    */
   public TvShowEpisode() {
     // register for dirty flag listener
@@ -167,9 +168,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Overwrites all null/empty elements with "other" value (but might be also empty)<br>
+   * Overwrites all null/empty elements with "other" value (but might be also
+   * empty)<br>
    * For lists, check with 'contains' and add.<br>
-   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial
+   * properties!
    *
    * @param other
    *          the other episode to merge in
@@ -180,7 +183,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * Overwrites all elements with "other" value<br>
-   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial
+   * properties!
    *
    * @param other
    *          the other episode to merge in
@@ -220,7 +224,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
    * </p>
    *
    * @return the String result
@@ -253,7 +258,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the source episode
    */
   public TvShowEpisode(TvShowEpisode source) {
-    // the reference to the tv show and the media files are the only things we don't copy
+    // the reference to the tv show and the media files are the only things we don't
+    // copy
     tvShow = source.tvShow;
 
     // clone media files
@@ -609,7 +615,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
 
-    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+    // if that has been a local file, remove it from the artwork urls after we've
+    // already started the download(copy) task
     if (thumbUrl.startsWith("file:")) {
       removeArtworkUrl(MediaFileType.THUMB);
     }
@@ -804,7 +811,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * get the actors. These are the main actors of the TV show inclusive the guests of this episode
+   * get the actors. These are the main actors of the TV show inclusive the guests
+   * of this episode
    *
    * @return the actors of this episode
    */
@@ -1178,7 +1186,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * checks if this TV show has been scraped.<br>
-   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * On a fresh DB, just reading local files, everything is again "unscraped".
+   * <br>
    * detect minimum of filled values as "scraped"
    * 
    * @return isScraped
@@ -1355,7 +1364,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * <b>PHYSICALLY</b> deletes a complete episode by moving it to datasource backup folder<br>
+   * <b>PHYSICALLY</b> deletes a complete episode by moving it to datasource
+   * backup folder<br>
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
@@ -1517,7 +1527,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * get the runtime. Just a wrapper to tvShow.getRuntime() until we support separate runtimes for episodes
+   * get the runtime. Just a wrapper to tvShow.getRuntime() until we support
+   * separate runtimes for episodes
    *
    * @return the runtime in minutes
    */

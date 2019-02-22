@@ -48,13 +48,15 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   protected final HashMap<Object, E>     nodeCache            = new HashMap<>();
   // nodes cached states (parent -> children cached state).
   protected final Map<Object, Boolean>   nodeCached           = new HashMap<>();
-  // cache for children nodes returned by data provider (parent ID -> list of raw child nodes).
+  // cache for children nodes returned by data provider (parent ID -> list of raw
+  // child nodes).
   protected final Map<Object, List<E>>   rawNodeChildrenCache = new HashMap<>();
   // lock for accessing the cache
   protected final ReadWriteLock          readWriteLock        = new ReentrantReadWriteLock();
 
   /**
-   * Create a new instance of the TmmTreeModel for the given TmmTree and data provider
+   * Create a new instance of the TmmTreeModel for the given TmmTree and data
+   * provider
    * 
    * @param tree
    *          the TmmTree to create the model for
@@ -97,7 +99,11 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
       if (TmmTreeDataProvider.NODE_INSERTED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
         E child = (E) evt.getNewValue();
         E parent = dataProvider.getParent(child);
-        addChildNode(parent, child);
+
+        // only add if the child has not been added (yet)
+        if (child.getParent() == null) {
+          addChildNode(parent, child);
+        }
       }
       // a node has been removed
       if (TmmTreeDataProvider.NODE_REMOVED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
@@ -421,7 +427,8 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
     // Clearing node cache
     clearNodeChildrenCache(node, true);
 
-    // Removing node children so they won't mess up anything when we place node back into tree
+    // Removing node children so they won't mess up anything when we place node back
+    // into tree
     node.removeAllChildren();
 
     // Removing node from parent

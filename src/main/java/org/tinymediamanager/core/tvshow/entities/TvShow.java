@@ -29,6 +29,7 @@ import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
 import static org.tinymediamanager.core.Constants.IMDB;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SEASON;
 import static org.tinymediamanager.core.Constants.SEASON_COUNT;
 import static org.tinymediamanager.core.Constants.SORT_TITLE;
 import static org.tinymediamanager.core.Constants.STATUS;
@@ -168,8 +169,19 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // give tag events from episodes up to the TvShowList
     propertyChangeListener = evt -> {
-      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
-        firePropertyChange(evt);
+      if (evt.getSource() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+
+        switch (evt.getPropertyName()) {
+          case TAG:
+            firePropertyChange(evt);
+            break;
+
+          case SEASON:
+            removeFromSeason(episode);
+            addToSeason(episode);
+            break;
+        }
       }
     };
   }
