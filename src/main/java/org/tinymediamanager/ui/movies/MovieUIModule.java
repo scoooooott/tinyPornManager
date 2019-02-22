@@ -53,7 +53,7 @@ import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
 import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
-import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
+import org.tinymediamanager.ui.movies.actions.MovieToggleWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
@@ -193,7 +193,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
-    popupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    popupMenu.add(createAndRegisterAction(MovieToggleWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieRenameAction.class));
@@ -289,7 +289,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
-    editPopupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieToggleWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRenameAction.class));
