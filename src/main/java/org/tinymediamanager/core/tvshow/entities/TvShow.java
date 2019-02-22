@@ -167,7 +167,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // register for dirty flag listener
     super();
 
-    // give tag events from episodes up to the TvShowList
     propertyChangeListener = evt -> {
       if (evt.getSource() instanceof TvShowEpisode) {
         TvShowEpisode episode = (TvShowEpisode) evt.getSource();
@@ -271,9 +270,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
+   * Overwrites all null/empty elements with "other" value (but might be empty
+   * also)<br>
    * For lists, check with 'contains' and add.<br>
-   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial
+   * properties!
    *
    * @param other
    *          the other Tv show to merge in
@@ -284,7 +285,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Overwrites all elements with "other" value<br>
-   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial
+   * properties!
    *
    * @param other
    *          the other TV show to merge in
@@ -1345,7 +1347,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -1527,7 +1530,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *
    * @param artworkType
    *          the artwork type to get the artwork for
-   * @return a map containing all available season artwork filenames for the given type
+   * @return a map containing all available season artwork filenames for the given
+   *         type
    *
    */
   public Map<Integer, MediaFile> getSeasonArtworks(MediaArtworkType artworkType) {
@@ -1798,7 +1802,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * checks if this TV show has been scraped.<br>
-   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * On a fresh DB, just reading local files, everything is again "unscraped".
+   * <br>
    * detect minimum of filled values as "scraped"
    * 
    * @return isScraped
@@ -1849,7 +1854,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * <b>PHYSICALLY</b> deletes a complete TV show by moving it to datasource backup folder<br>
+   * <b>PHYSICALLY</b> deletes a complete TV show by moving it to datasource
+   * backup folder<br>
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
