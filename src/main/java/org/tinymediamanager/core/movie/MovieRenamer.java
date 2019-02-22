@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -50,7 +51,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
-import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -69,6 +69,8 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 import com.floreysoft.jmte.TemplateContext;
 import com.floreysoft.jmte.token.Token;
 
@@ -1143,7 +1145,7 @@ public class MovieRenamer {
       Engine engine = Engine.createEngine();
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
-      engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
+      engine.registerNamedRenderer(new MovieNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
@@ -1382,6 +1384,46 @@ public class MovieRenamer {
       }
 
       return value;
+    }
+  }
+
+  private static class MovieNamedFirstCharacterRenderer implements NamedRenderer {
+
+    @Override
+    public String render(Object o, String s, Locale locale, Map<String, Object> map) {
+      if (o instanceof String && StringUtils.isNotBlank((String) o)) {
+        String source = (String) o;
+        if (MovieModuleManager.SETTINGS.isAsciiReplacement()) {
+          source = StrgUtils.convertToAscii(source, false);
+        }
+        String first = source.trim().substring(0, 1);
+        if (first.matches("[\\p{L}]")) {
+          return first.toUpperCase(Locale.ROOT);
+        }
+        return "#";
+      }
+      if (o instanceof Number) {
+        return "#";
+      }
+      if (o instanceof Date) {
+        return "#";
+      }
+      return "";
+    }
+
+    @Override
+    public String getName() {
+      return "first";
+    }
+
+    @Override
+    public RenderFormatInfo getFormatInfo() {
+      return null;
+    }
+
+    @Override
+    public Class<?>[] getSupportedClasses() {
+      return new Class[] { Date.class, String.class, Integer.class, Long.class };
     }
   }
 }
