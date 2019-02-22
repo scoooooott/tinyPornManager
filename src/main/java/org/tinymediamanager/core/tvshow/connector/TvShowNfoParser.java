@@ -1109,7 +1109,10 @@ public class TvShowNfoParser {
 
     show.setYear(year);
     show.setFirstAired(releaseDate);
-    show.setDateAdded(dateadded);
+    if (dateadded != null) {
+      // set when in NFO, else use constructor date
+      show.setDateAdded(dateadded);
+    }
     show.setPlot(plot);
     show.setRuntime(runtime);
 

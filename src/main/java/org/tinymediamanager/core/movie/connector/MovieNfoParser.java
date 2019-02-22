@@ -1388,7 +1388,10 @@ public class MovieNfoParser {
     movie.setYear(year);
     movie.setTop250(top250);
     movie.setReleaseDate(releaseDate);
-    movie.setDateAdded(dateadded);
+    if (dateadded != null) {
+      // set when in NFO, else use constructor date
+      movie.setDateAdded(dateadded);
+    }
     movie.setPlot(plot);
     movie.setTagline(tagline);
     movie.setRuntime(runtime);
