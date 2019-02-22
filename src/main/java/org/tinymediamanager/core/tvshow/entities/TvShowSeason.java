@@ -85,6 +85,11 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   }
 
   public void addEpisode(TvShowEpisode episode) {
+    // do not add twice
+    if (episodes.contains(episode)) {
+      return;
+    }
+
     // when adding a new episode, check:
     for (TvShowEpisode e : episodes) {
       // - if that is a dummy episode; do not add it if a the real episode is available
