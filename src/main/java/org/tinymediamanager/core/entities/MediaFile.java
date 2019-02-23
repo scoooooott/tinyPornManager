@@ -1921,17 +1921,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
       // AAC sometimes codes channels into Channel(s)_Original
       // and DTS-ES has an additional core channel
-      String ch = getMediaInfo(StreamKind.Audio, i, "Channel(s)").replaceAll("Object Based", "");
-      String ch2 = getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original").replaceAll("Object Based", "");
-      if (!ch.isEmpty() && !ch2.isEmpty()) {
-        // check for higher
-        int chi = parseToInt(ch);
-        int ch2i = parseToInt(ch2);
-        if (ch2i > chi) {
-          chi = ch2i;
-        }
+      int ch = parseChannelsAsInt(getMediaInfo(StreamKind.Audio, i, "Channel(s)"));
+      int ch2 = parseChannelsAsInt(getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original"));
+      if (ch2 > ch) {
+        ch = ch2;
       }
-      stream.setChannels(ch);
+      stream.setChannels(String.valueOf(ch));
 
       String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
 
@@ -1965,6 +1960,44 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
       audioStreams.add(stream);
     }
+
+  }
+
+  /**
+   * workaround for not changing the var to int.<br>
+   * channels usually filled like "5.1ch" or "8 / 6". Take the higher
+   * 
+   * @return channels as int
+   */
+  private int parseChannelsAsInt(String channels) {
+    int highest = 0;
+    if (!channels.isEmpty()) {
+      try {
+        String[] parts = channels.split("/");
+        for (String p : parts) {
+          if (p.toLowerCase(Locale.ROOT).contains("object")) {
+            // "11 objects / 6 channels" - ignore objects
+            continue;
+          }
+          p = p.replaceAll("[a-zA-Z]", ""); // remove now all characters
+
+          int ch = 0;
+          String[] c = p.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
+          for (String s : c) {
+            if (s.matches("[0-9]+")) {
+              ch += Integer.parseInt(s);
+            }
+          }
+          if (ch > highest) {
+            highest = ch;
+          }
+        }
+      }
+      catch (NumberFormatException e) {
+        highest = 0;
+      }
+    }
+    return highest;
   }
 
   private void fetchVideoInformation() {
