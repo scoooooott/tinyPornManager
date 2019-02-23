@@ -756,12 +756,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    //country
+    // country
     if (config.isCountry()) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
     }
 
-    //studio
+    // studio
     if (config.isStudio()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
     }
@@ -2074,10 +2074,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public MediaFile getMainVideoFile() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (!videos.isEmpty()) {
-      return videos.get(0);
+    MediaFile vid = getBiggestMediaFile(MediaFileType.VIDEO);
+    if (vid != null) {
+      return vid;
     }
+    // cannot happen - movie MUST always have a video file
     return new MediaFile();
   }
 
