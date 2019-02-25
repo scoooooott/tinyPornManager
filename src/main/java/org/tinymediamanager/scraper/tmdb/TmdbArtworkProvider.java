@@ -68,7 +68,7 @@ class TmdbArtworkProvider {
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
-      tmdbId = new TmdbMovieMetadataProvider(api).getTmdbIdFromImdbId(imdbId);
+      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId);
     }
 
     if (tmdbId == 0) {

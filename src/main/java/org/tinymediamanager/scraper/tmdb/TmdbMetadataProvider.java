@@ -49,7 +49,9 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.TmdbInterceptor;
 import com.uwetrottmann.tmdb2.entities.Configuration;
+import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
@@ -239,11 +241,37 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     }
   }
 
-  public int getTmdbIdFromImdbId(String imdbId) throws ScrapeException {
-    // lazy initialization of the api
-    initAPI();
+  /**
+   * get the tmdbId via the imdbId
+   *
+   * @param imdbId
+   *          the imdbId
+   * @return the tmdbId or 0 if nothing has been found
+   */
+  public int getTmdbIdFromImdbId(String imdbId) {
+    try {
+      // lazy initialization of the api
+      initAPI();
 
-    return new TmdbMovieMetadataProvider(api).getTmdbIdFromImdbId(imdbId);
+      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
+      // movie
+      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
+        // and now get the full data
+        return findResults.movie_results.get(0).id;
+      }
+
+      // tv show
+      if (findResults != null && findResults.tv_results != null && !findResults.tv_results.isEmpty()) {
+        // and now get the full data
+        return findResults.tv_results.get(0).id;
+      }
+
+    }
+    catch (Exception e) {
+      LOGGER.debug("failed to get tmdb id: " + e.getMessage());
+    }
+
+    return 0;
   }
 
   /*

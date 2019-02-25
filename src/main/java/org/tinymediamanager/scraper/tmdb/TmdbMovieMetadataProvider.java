@@ -429,7 +429,7 @@ class TmdbMovieMetadataProvider {
       if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
         try {
           // get the tmdbId via the imdbId
-          int tempTmdbId = getTmdbIdFromImdbId(imdbId);
+          int tempTmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId);
           if (tempTmdbId > 0) {
             // and now get the full data
             movie = api.moviesService()
@@ -527,28 +527,6 @@ class TmdbMovieMetadataProvider {
     }
 
     return md;
-  }
-
-  /**
-   * get the tmdbId via the imdbId
-   *
-   * @param imdbId
-   *          the imdbId
-   * @return the tmdbId or 0 if nothing has been found
-   */
-  int getTmdbIdFromImdbId(String imdbId) {
-    try {
-      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
-      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
-        // and now get the full data
-        return findResults.movie_results.get(0).id;
-      }
-    }
-    catch (Exception e) {
-      LOGGER.debug("failed to get tmdb id: " + e.getMessage());
-    }
-
-    return 0;
   }
 
   private MediaSearchResult morphMovieToSearchResult(BaseMovie movie) {
