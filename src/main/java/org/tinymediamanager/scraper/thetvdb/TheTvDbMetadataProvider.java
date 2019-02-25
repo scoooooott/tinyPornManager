@@ -909,6 +909,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         result = Integer.compare(arg1.ratingsInfo.count, arg0.ratingsInfo.count);
       }
 
+      // if the result is still 0, we need to comprare by ID (returning a zero here will treat it as a duplicate and remove the previous one)
+      if (result == 0) {
+        result = Integer.compare(arg1.id, arg0.id);
+      }
+
       return result;
     }
   }
