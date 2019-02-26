@@ -113,7 +113,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
   private MovieList                     movieList             = MovieList.getInstance();
   private Movie                         movieToScrape;
-  private MovieScraperMetadataConfig    scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MovieScraperMetadataConfig    scraperMetadataConfig;
   private MediaScraper                  mediaScraper;
   private List<MediaScraper>            artworkScrapers;
   private List<MediaScraper>            trailerScrapers;
@@ -157,26 +157,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   public MovieChooserDialog(Movie movie, int queueIndex, int queueSize) {
     super(BUNDLE.getString("moviechooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "movieChooser"); //$NON-NLS-1$
 
-    // copy the values
-    MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
     mediaScraper = movieList.getDefaultMediaScraper();
     artworkScrapers = movieList.getDefaultArtworkScrapers();
     trailerScrapers = movieList.getDefaultTrailerScrapers();
 
-    scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
-    scraperMetadataConfig.setTagline(settings.isTagline());
-    scraperMetadataConfig.setPlot(settings.isPlot());
-    scraperMetadataConfig.setRating(settings.isRating());
-    scraperMetadataConfig.setRuntime(settings.isRuntime());
-    scraperMetadataConfig.setYear(settings.isYear());
-    scraperMetadataConfig.setCertification(settings.isCertification());
-    scraperMetadataConfig.setCast(settings.isCast());
-    scraperMetadataConfig.setGenres(settings.isGenres());
-    scraperMetadataConfig.setArtwork(settings.isArtwork());
-    scraperMetadataConfig.setTrailer(settings.isTrailer());
-    scraperMetadataConfig.setCollection(settings.isCollection());
-    scraperMetadataConfig.setTags(settings.isTags());
+    // copy the values
+    scraperMetadataConfig = new MovieScraperMetadataConfig(MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig());
 
     // table format for the search result
     searchResultEventList = new SortedList<>(

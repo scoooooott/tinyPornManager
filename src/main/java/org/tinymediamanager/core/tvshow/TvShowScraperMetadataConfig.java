@@ -65,6 +65,30 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   }
 
   /**
+   * copy constructor
+   * 
+   * @param original
+   *          the original object to inherit data from
+   */
+  public TvShowScraperMetadataConfig(TvShowScraperMetadataConfig original) {
+    title = original.title;
+    plot = original.plot;
+    rating = original.rating;
+    runtime = original.runtime;
+    year = original.year;
+    aired = original.aired;
+    status = original.status;
+    certification = original.certification;
+    country = original.country;
+    studio = original.studio;
+    cast = original.cast;
+    genres = original.genres;
+    artwork = original.artwork;
+    episodes = original.episodes;
+    episodeList = original.episodeList;
+  }
+
+  /**
    * custom constructor - set all fields to the given value
    *
    * @param value
