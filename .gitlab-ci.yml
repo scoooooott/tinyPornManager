@@ -98,11 +98,11 @@ deploy:nightly:
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-nightly.txt -Dthread_pool_size=1 package
 
-    # deploy also to old HP until we've fully migrated to the new one
-    # push the build to the webserver
-    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_NIGHTLY},${FTP_PASSWORD_NIGHTLY} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
-    # and publish the files on the webserver
-    - curl http://nightly.tinymediamanager.org/bin/publish_build_v3.php
+    #    # deploy also to old HP until we've fully migrated to the new one
+    #    # push the build to the webserver
+    #    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_NIGHTLY},${FTP_PASSWORD_NIGHTLY} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
+    #    # and publish the files on the webserver
+    #    - curl http://nightly.tinymediamanager.org/bin/publish_build_v3.php
 
     # trigger the deployment on nightly.tinymediamanager.org (new HP)
     - curl -X POST -F "token=${NIGHTLY_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/7895208/trigger/pipeline
@@ -125,11 +125,11 @@ deploy:prerel:
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-prerelease.txt -Dthread_pool_size=1 package
 
-    # deploy also to old HP until we've fully migrated to the new one
-    # push the build to the webserver
-    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
-    # and publish the files on the webserver
-    - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
+    #    # deploy also to old HP until we've fully migrated to the new one
+    #    # push the build to the webserver
+    #    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
+    #    # and publish the files on the webserver
+    #    - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
 
     # trigger the deployment on nightly.tinymediamanager.org (new HP)
     - curl -X POST -F "token=${PREREL_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/10869644/trigger/pipeline
