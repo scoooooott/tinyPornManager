@@ -315,7 +315,7 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
         audio.appendChild(language);
 
         Element channels = document.createElement("channels");
-        channels.setTextContent(Integer.toString(audioStream.getChannelsAsInt()));
+        channels.setTextContent(Integer.toString(audioStream.getAudioChannels()));
         audio.appendChild(channels);
 
         streamdetails.appendChild(audio);
@@ -336,7 +336,7 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
             audio.appendChild(language);
 
             Element channels = document.createElement("channels");
-            channels.setTextContent(Integer.toString(audioStream.getChannelsAsInt()));
+            channels.setTextContent(Integer.toString(audioStream.getAudioChannels()));
             audio.appendChild(channels);
 
             streamdetails.appendChild(audio);

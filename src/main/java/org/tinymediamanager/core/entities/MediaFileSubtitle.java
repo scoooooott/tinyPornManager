@@ -26,11 +26,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MediaFileSubtitle extends AbstractModelObject implements Comparable<MediaFileSubtitle> {
   @JsonProperty
-  private String  codec    = "";
+  private String  codec         = "";
   @JsonProperty
-  private String  language = "";
+  private String  language      = "";
   @JsonProperty
-  private boolean forced   = false;
+  private boolean forced        = false;
+  @JsonProperty
+  private boolean defaultStream = false;
 
   public MediaFileSubtitle() {
   }
@@ -41,6 +43,14 @@ public class MediaFileSubtitle extends AbstractModelObject implements Comparable
 
   public void setCodec(String codec) {
     this.codec = codec;
+  }
+
+  public boolean isDefaultStream() {
+    return defaultStream;
+  }
+
+  public void setDefaultStream(boolean defaultStream) {
+    this.defaultStream = defaultStream;
   }
 
   public String getLanguage() {

@@ -954,7 +954,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String codec = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
       codec = highestStream.getCodec();
     }
@@ -976,13 +976,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return audioCodecs;
   }
 
+  /**
+   * returns the "best" available audio stream (aka the one with most channels)
+   * 
+   * @return
+   */
   private MediaFileAudioStream getBestAudioStream() {
     MediaFileAudioStream highestStream = null;
     for (MediaFileAudioStream stream : audioStreams) {
       if (highestStream == null) {
         highestStream = stream;
       }
-      else if (highestStream.getChannelsAsInt() < stream.getChannelsAsInt()) {
+      else if (highestStream.getAudioChannels() < stream.getAudioChannels()) {
         highestStream = stream;
       }
     }
@@ -998,7 +1003,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String language = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
       language = highestStream.getLanguage();
     }
@@ -1208,9 +1213,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String channels = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
-      channels = highestStream.getChannelsAsInt() + "ch";
+      channels = highestStream.getAudioChannels() + "ch";
     }
 
     return channels;
@@ -1219,7 +1224,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public List<String> getAudioChannelsList() {
     List<String> audioChannels = new ArrayList<>();
     for (MediaFileAudioStream stream : audioStreams) {
-      audioChannels.add(stream.getChannelsAsInt() + "ch");
+      audioChannels.add(stream.getAudioChannels() + "ch");
     }
     return audioChannels;
   }
@@ -1563,6 +1568,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public List<MediaFileAudioStream> getAudioStreams() {
     return audioStreams;
+  }
+
+  /**
+   * Gets the audio stream marked as "default", or, if none, get the best with highest amount of channels
+   * 
+   * @return
+   */
+  public MediaFileAudioStream getDefaultOrBestAudioStream() {
+    MediaFileAudioStream ret = null;
+    for (MediaFileAudioStream as : audioStreams) {
+      if (ret == null && as.isDefaultStream()) {
+        // first default
+        ret = as;
+      }
+    }
+    if (ret == null) {
+      // no default? take the "best"
+      ret = getBestAudioStream();
+    }
+    return ret;
   }
 
   public void setAudioStreams(List<MediaFileAudioStream> audioStreams) {
@@ -1926,7 +1951,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       if (ch2 > ch) {
         ch = ch2;
       }
-      stream.setChannels(String.valueOf(ch));
+      stream.setAudioChannels(ch);
 
       String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
 
@@ -1958,6 +1983,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       else {
         stream.setLanguage(parseLanguageFromString(language));
       }
+
+      // "default" audio stream?
+      boolean def = Boolean.valueOf(getMediaInfo(StreamKind.Audio, i, "Default"));
+      if (def) {
+        stream.setDefaultStream(true);
+      }
+
       audioStreams.add(stream);
     }
 
@@ -1969,7 +2001,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * 
    * @return channels as int
    */
-  private int parseChannelsAsInt(String channels) {
+  public int parseChannelsAsInt(String channels) {
     int highest = 0;
     if (!channels.isEmpty()) {
       try {
@@ -2097,6 +2129,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       String forced = getMediaInfo(StreamKind.Text, i, "Forced");
       boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
       stream.setForced(b);
+
+      // "default" subtitle stream?
+      boolean def = Boolean.valueOf(getMediaInfo(StreamKind.Text, i, "Default"));
+      if (def) {
+        stream.setDefaultStream(true);
+      }
 
       subtitles.add(stream);
     }

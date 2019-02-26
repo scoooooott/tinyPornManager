@@ -151,7 +151,7 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
         audio.appendChild(language);
 
         Element channels = document.createElement("channels");
-        channels.setTextContent(String.valueOf(as.getChannelsAsInt()));
+        channels.setTextContent(String.valueOf(as.getAudioChannels()));
         audio.appendChild(channels);
 
         streamdetails.appendChild(audio);

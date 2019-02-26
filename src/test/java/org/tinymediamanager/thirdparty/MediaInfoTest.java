@@ -125,7 +125,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(8);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("eng");
 

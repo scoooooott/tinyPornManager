@@ -34,14 +34,14 @@ public class MovieRenamerTest extends BasicTest {
     mf.setVideoWidth(720);
     ArrayList<MediaFileAudioStream> audl = new ArrayList<>();
     MediaFileAudioStream aud = new MediaFileAudioStream();
-    aud.setChannels("6ch");
+    aud.setAudioChannels(6);
     aud.setCodec("AC3");
     aud.setLanguage("en");
     audl.add(aud);
     mf.setAudioStreams(audl);
 
     aud = new MediaFileAudioStream();
-    aud.setChannels("2ch");
+    aud.setAudioChannels(2);
     aud.setCodec("MP3");
     aud.setLanguage("de");
     audl.add(aud);
