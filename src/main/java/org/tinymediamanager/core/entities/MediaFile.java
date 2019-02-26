@@ -1581,6 +1581,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       if (ret == null && as.isDefaultStream()) {
         // first default
         ret = as;
+        break;
       }
     }
     if (ret == null) {
@@ -1985,8 +1986,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
 
       // "default" audio stream?
-      boolean def = Boolean.valueOf(getMediaInfo(StreamKind.Audio, i, "Default"));
-      if (def) {
+      String def = getMediaInfo(StreamKind.Audio, i, "Default");
+      if (def.equalsIgnoreCase("yes")) {
         stream.setDefaultStream(true);
       }
 
@@ -2131,8 +2132,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       stream.setForced(b);
 
       // "default" subtitle stream?
-      boolean def = Boolean.valueOf(getMediaInfo(StreamKind.Text, i, "Default"));
-      if (def) {
+      String def = getMediaInfo(StreamKind.Text, i, "Default");
+      if (def.equalsIgnoreCase("yes")) {
         stream.setDefaultStream(true);
       }
 
