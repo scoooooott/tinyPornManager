@@ -18,10 +18,12 @@ package org.tinymediamanager.ui.movies;
 import java.awt.FontMetrics;
 import java.nio.file.Path;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
@@ -52,6 +54,17 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
   public MovieTableFormat() {
 
     Comparator<Movie> movieComparator = new MovieComparator();
+    Comparator<Movie> originalTitleComparator = new MovieComparator() {
+      @Override
+      public int compare(Movie movie1, Movie movie2) {
+        if (stringCollator != null) {
+          String titleMovie1 = Normalizer.normalize(movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+          String titleMovie2 = Normalizer.normalize(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+          return stringCollator.compare(titleMovie1, titleMovie2);
+        }
+        return movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT).compareTo(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT));
+      }
+    };
     Comparator<Path> pathComparator = new PathComparator();
     Comparator<String> stringComparator = new StringComparator();
     Comparator<Float> floatComparator = new FloatComparator();
@@ -77,7 +90,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      * original title (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.originaltitle"), "originalTitle", movie -> movie, Movie.class);
-    col.setColumnComparator(movieComparator);
+    col.setColumnComparator(originalTitleComparator);
     col.setCellRenderer(new MovieBorderTableCellRenderer());
     col.setColumnTooltip(Movie::getOriginalTitleSortable);
     addColumn(col);
