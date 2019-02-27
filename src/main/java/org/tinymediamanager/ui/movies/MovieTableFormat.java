@@ -147,7 +147,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      */
     col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, Certification.class);
     col.setColumnComparator(certificationComparator);
-    col.setHeaderIcon(IconManager.VOTES);
+    col.setHeaderIcon(IconManager.CERTIFICATION);
     col.setColumnResizeable(true);
     addColumn(col);
 

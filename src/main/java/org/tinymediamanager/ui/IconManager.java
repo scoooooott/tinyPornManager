@@ -133,6 +133,7 @@ public class IconManager {
 
   // font awesome icons - column headers
   public final static ImageIcon            AUDIO                       = createFontAwesomeIcon('\uF028', 16);
+  public final static ImageIcon            CERTIFICATION               = createFontAwesomeIcon('\uF29A', 16);
   public final static ImageIcon            COUNT                       = createFontAwesomeIcon('\uF292', 16);
   public final static ImageIcon            DATE_ADDED                  = createFontAwesomeIcon('\uF271', 16);
   public final static ImageIcon            EDITION                     = createFontAwesomeIcon('\uF51F', 16);
