@@ -58,6 +58,7 @@ import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
+import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -113,9 +114,9 @@ public class TvShowRenamer {
     tokenMap.put("episodeNr2", "episode.episode;number(%02d)");
     tokenMap.put("episodeNrDvd", "episode.dvdEpisode");
     tokenMap.put("episodeNrDvd2", "episode.dvdEpisode;number(%02d)");
-    tokenMap.put("seasonNr", "episode.season");
+    tokenMap.put("seasonNr", "episode.season;number(%d)");
     tokenMap.put("seasonNr2", "episode.season;number(%02d)");
-    tokenMap.put("seasonNrDvd", "episode.dvdSeason");
+    tokenMap.put("seasonNrDvd", "episode.dvdSeason;number(%d)");
     tokenMap.put("seasonNrDvd2", "episode.dvdSeason;number(%02d)");
     tokenMap.put("title", "episode.title");
     tokenMap.put("originalTitle", "episode.originalTitle");
@@ -1081,6 +1082,7 @@ public class TvShowRenamer {
   public static String getTokenValue(TvShow show, TvShowEpisode episode, String token) {
     try {
       Engine engine = Engine.createEngine();
+      engine.registerRenderer(Number.class, new ZeroNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());

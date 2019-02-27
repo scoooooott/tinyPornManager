@@ -53,6 +53,7 @@ import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
+import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -1143,6 +1144,7 @@ public class MovieRenamer {
   public static String getTokenValue(Movie movie, String token) {
     try {
       Engine engine = Engine.createEngine();
+      engine.registerRenderer(Number.class, new ZeroNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new MovieNamedFirstCharacterRenderer());
