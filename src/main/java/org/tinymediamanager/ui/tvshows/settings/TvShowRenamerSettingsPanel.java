@@ -143,6 +143,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
     chckbxSpaceReplacement.addActionListener(renamerActionListener);
     chckbxAsciiReplacement.addActionListener(renamerActionListener);
+    chckbxSpecialSeason.addActionListener(renamerActionListener);
 
     cbTvShowForPreview.addActionListener(arg0 -> {
       buildAndInstallEpisodeArray();
