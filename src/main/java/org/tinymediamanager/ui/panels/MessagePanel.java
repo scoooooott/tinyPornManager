@@ -11,6 +11,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -35,7 +36,7 @@ public class MessagePanel extends JPanel {
     setOpaque(false);
     initComponents();
     // init data
-    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.DEFAULT);
+    DateFormat dateFormat = TmmDateFormat.SHORT_DATE_MEDIUM_TIME_FORMAT;
     lblDate.setText(dateFormat.format(message.getMessageDate()));
 
     String text = "";
