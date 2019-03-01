@@ -249,6 +249,7 @@ public class ImageCache {
     }
 
     try {
+      LOGGER.trace("downloading image to the image cache: " + url);
       Url u = new Url(url);
       boolean ok = u.download(cachedFile);
       if (ok) {

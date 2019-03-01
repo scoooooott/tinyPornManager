@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.Person;
@@ -64,7 +65,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
         Files.createDirectory(actorsDir);
       }
 
-      // first check which actors images can be deleted
+      // first - check which actors images can be deleted (images for actors which are not in this ME)
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(actorsDir)) {
         for (Path path : directoryStream) {
           // has tmm been shut down?
@@ -98,7 +99,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
       catch (IOException ignored) {
       }
 
-      // second download missing images
+      // second - download missing images
       for (Person actor : persons) {
         // has tmm been shut down?
         if (Thread.interrupted()) {
@@ -116,7 +117,17 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
           if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && !Files.exists(actorImage)) {
             Path cache = ImageCache.getCachedFile(actor.getThumbUrl());
             if (cache != null) {
+              LOGGER.debug("using cached version of: " + actor.getThumbUrl());
               Utils.copyFileSafe(cache, actorImage);
+              // last but not least clean/rebuild the image cache for the new file
+              ImageCache.invalidateCachedImage(actorImage);
+              if (Settings.getInstance().isImageCache()) {
+                try {
+                  ImageCache.cacheImage(actorImage);
+                }
+                catch (Exception ignored) {
+                }
+              }
             }
             else {
               // no cache file found - directly download it
@@ -169,6 +180,16 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
               if (!Utils.moveFileSafe(tempFile, actorImage)) {
                 throw new Exception("renaming temp file failed: " + actorImageFilename);
               }
+
+              // last but not least clean/rebuild the image cache for the new file
+              ImageCache.invalidateCachedImage(actorImage);
+              if (Settings.getInstance().isImageCache()) {
+                try {
+                  ImageCache.cacheImage(actorImage);
+                }
+                catch (Exception ignored) {
+                }
+              }
             }
           }
         }
@@ -182,9 +203,6 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
             Utils.deleteFileSafely(tempFile);
           }
         }
-        // else {
-        // LOGGER.warn("Cannot download actor image " + actor);
-        // }
       }
 
     }
