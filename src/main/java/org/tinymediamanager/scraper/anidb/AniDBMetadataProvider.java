@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,9 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
+import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
+import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.RingBuffer;
@@ -69,7 +72,9 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
   private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<>(2);
+  // flood: pager every 2 seconds
+  // protection: https://wiki.anidb.net/w/HTTP_API_Definition
+  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<>(1);
   private static MediaProviderInfo         providerInfo      = createMediaProviderInfo();
 
   private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<>();
@@ -120,10 +125,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     // http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
     Document doc = null;
     try {
-      CachedUrl cachedUrl = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-      if (!cachedUrl.isCached()) {
-        trackConnections();
-      }
+      trackConnections();
+      InMemoryCachedUrl cachedUrl = new InMemoryCachedUrl(
+          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {
@@ -461,10 +465,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     Document doc = null;
     try {
-      CachedUrl url = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-      if (!url.isCached()) {
-        trackConnections();
-      }
+      trackConnections();
+      InMemoryCachedUrl url = new InMemoryCachedUrl(
+          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {
@@ -513,19 +516,20 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
    */
   private void buildTitleHashMap() {
     // <aid>|<type>|<language>|<title>
-    // type: 1=primary title (one per anime), 2=synonyms (multiple per anime),
-    // 3=shorttitles (multiple per anime), 4=official title (one per
-    // language)
+    // type:
+    // 1=primary title (one per anime),
+    // 2=synonyms (multiple per anime),
+    // 3=shorttitles (multiple per anime),
+    // 4=official title (one per language)
     Pattern pattern = Pattern.compile("^(?!#)(\\d+)[|](\\d)[|]([\\w-]+)[|](.+)$");
     Scanner scanner = null;
     try {
-      CachedUrl animeList = new CachedUrl("http://anidb.net/api/anime-titles.dat.gz");
-      if (!animeList.isCached()) {
-        trackConnections();
-      }
+      // we are only allowed to fetch this file once per 24 hrs
+      // see https://wiki.anidb.net/w/API#Anime_Titles
+      Url animeList = new OnDiskCachedUrl("http://anidb.net/api/anime-titles.dat.gz", 1, TimeUnit.DAYS);
+
       // scanner = new Scanner(new GZIPInputStream(animeList.getInputStream()));
-      // DecompressingHttpClient is decompressing the gz from animedb due to
-      // wrong http-server configuration
+      // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
       scanner = new Scanner(animeList.getInputStream(), "UTF-8");
       while (scanner.hasNextLine()) {
         Matcher matcher = pattern.matcher(scanner.nextLine());
@@ -570,10 +574,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Long currentTime = System.currentTimeMillis();
     if (connectionCounter.count() == connectionCounter.maxSize()) {
       Long oldestConnection = connectionCounter.getTailItem();
-      if (oldestConnection > (currentTime - 4000)) {
+      if (oldestConnection > (currentTime - 2000)) {
         LOGGER.debug("connection limit reached, throttling " + connectionCounter);
         try {
-          Thread.sleep(5000 - (currentTime - oldestConnection));
+          Thread.sleep(2000 - (currentTime - oldestConnection));
         }
         catch (InterruptedException e) {
           LOGGER.warn(e.getMessage());
