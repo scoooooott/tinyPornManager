@@ -54,12 +54,12 @@ import okhttp3.Response;
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
  * is passed to the caller.
- * 
+ *
  * @author Manuel Laggner / Myron Boyle
  */
 public class Url {
   private static final Logger          LOGGER                = LoggerFactory.getLogger(Url.class);
-  protected static OkHttpClient        client;
+  protected OkHttpClient               client;
 
   protected static final String        USER_AGENT            = "User-Agent";
   // where is such a list in std java?
@@ -84,7 +84,7 @@ public class Url {
   /**
    * gets the specified header value from this connection<br>
    * You need to call this AFTER getInputstream().
-   * 
+   *
    * @param header
    *          the header you want to know (like Content-Length)
    * @return the header value
@@ -104,7 +104,7 @@ public class Url {
 
   /**
    * get all response headers
-   * 
+   *
    * @return the response headers
    */
   public Headers getHeadersResponse() {
@@ -113,14 +113,12 @@ public class Url {
 
   /**
    * Instantiates a new url / httpclient with default user-agent.
-   * 
+   *
    * @param url
    *          the url
    */
   public Url(String url) throws MalformedURLException {
-    if (client == null) {
-      client = TmmHttpClient.getHttpClient();
-    }
+    this.client = TmmHttpClient.getHttpClient();
     this.url = url;
 
     if (url.contains("|")) {
@@ -150,7 +148,6 @@ public class Url {
    * http://www.asdfcom/page?what=do|Referer=http://my.site.com<br>
    * http://de.clip-1.filmtrailer.com/2845_14749_a_4.flv?log_var=67|491100001-1|-<br>
    * split away from url, and add as header
-   * 
    */
   protected void splitHeadersFromUrl() {
     Pattern p = Pattern.compile(".*\\|(.*?)=(.*?)$");
@@ -166,7 +163,7 @@ public class Url {
 
   /**
    * morph the url (string) to an URI to check the syntax and escape the path
-   * 
+   *
    * @param urlToMorph
    *          the url to morph
    * @return the morphed URI
@@ -180,7 +177,7 @@ public class Url {
 
   /**
    * set a specified User-Agent
-   * 
+   *
    * @param userAgent
    *          the user agent to be set
    */
@@ -190,7 +187,7 @@ public class Url {
 
   /**
    * Gets the url.
-   * 
+   *
    * @return the url
    * @throws IOException
    *           Signals that an I/O exception has occurred.
@@ -201,7 +198,7 @@ public class Url {
 
   /**
    * Adds the header.
-   * 
+   *
    * @param key
    *          the key
    * @param value
@@ -233,7 +230,7 @@ public class Url {
 
   /**
    * Adds the header.
-   * 
+   *
    * @param header
    *          the header
    */
@@ -243,7 +240,7 @@ public class Url {
 
   /**
    * Adds the headers.
-   * 
+   *
    * @param headers
    *          the headers
    */
@@ -253,7 +250,7 @@ public class Url {
 
   /**
    * Gets the input stream.
-   * 
+   *
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
@@ -321,7 +318,7 @@ public class Url {
 
   /**
    * gets the url with the given amount of retries
-   * 
+   *
    * @param retries
    *          the amount of retries (>0)
    * @return the InputStream or null
@@ -373,7 +370,7 @@ public class Url {
 
   /**
    * is the HTTP status code a 4xx/5xx?
-   * 
+   *
    * @return true/false
    */
   public boolean isFault() {
@@ -396,7 +393,7 @@ public class Url {
 
   /**
    * Gets the bytes.
-   * 
+   *
    * @return the bytes
    * @throws IOException
    *           Signals that an I/O exception has occurred.
@@ -429,7 +426,7 @@ public class Url {
 
   /**
    * Download an Url to a file via NIO FileChannel (synchron)
-   * 
+   *
    * @param file
    * @return successful or not
    */
@@ -458,7 +455,7 @@ public class Url {
 
   /**
    * Download an Url to a file via NIO FileChannel (synchron)
-   * 
+   *
    * @param file
    * @return successful or not
    */
@@ -468,7 +465,7 @@ public class Url {
 
   /**
    * Gets the charset.
-   * 
+   *
    * @return the charset
    */
   public Charset getCharset() {
@@ -480,7 +477,7 @@ public class Url {
 
   /**
    * Gets the content encoding.
-   * 
+   *
    * @return the content encoding
    */
   public String getContentEncoding() {
@@ -490,7 +487,7 @@ public class Url {
   /**
    * the number of bytes of the content, or a negative number if unknown. If the content length is known but exceeds Long.MAX_VALUE, a negative number
    * is returned.
-   * 
+   *
    * @return the content length
    */
   public long getContentLength() {

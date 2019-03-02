@@ -14,7 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 
 public class SearchTitleWithGoogle {
@@ -64,7 +64,7 @@ public class SearchTitleWithGoogle {
 
     Document doc = null;
     try {
-      Url url = new CachedUrl(searchUrl);
+      Url url = new InMemoryCachedUrl(searchUrl);
       InputStream in = url.getInputStream();
       doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();

@@ -51,7 +51,7 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
 public class TmmHttpClient {
   private static final Logger LOGGER    = LoggerFactory.getLogger(TmmHttpClient.class);
   public static final String  CACHE_DIR = "cache/http";
-  private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 5 * 1024 * 1024);
+  private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 25 * 1024 * 1024);
   private static OkHttpClient client    = createHttpClient();
 
   /**

@@ -34,12 +34,15 @@ import org.tinymediamanager.scraper.util.Pair;
 import okhttp3.Headers;
 
 /**
- * The class CachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)
+ * The class InMemoryCachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)<br />
+ * this cache caches HTTP responses up to 600 secs
+ *
+ * @author Manuel Laggner
  */
-public class CachedUrl extends Url {
+public class InMemoryCachedUrl extends Url {
   private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<>(600, 5);
 
-  public CachedUrl(String url) throws MalformedURLException {
+  public InMemoryCachedUrl(String url) throws MalformedURLException {
     this.url = url;
     if (url.contains("|")) {
       splitHeadersFromUrl();
@@ -96,7 +99,7 @@ public class CachedUrl extends Url {
 
   /**
    * Is the url already cached?
-   * 
+   *
    * @param url
    *          the url to check
    * @return true/false
