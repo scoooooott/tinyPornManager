@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
@@ -107,7 +107,7 @@ class KodiUrl {
 
   private Url getUrl() throws Exception {
     if (url == null) {
-      url = new CachedUrl(urlString);
+      url = new InMemoryCachedUrl(urlString);
       // TODO: Add in the referer, etc
     }
 
