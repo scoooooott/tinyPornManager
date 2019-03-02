@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -417,7 +417,7 @@ public class ImageLabel extends JLabel {
       try {
         Url url;
         if (cacheUrl) {
-          url = new CachedUrl(imageUrl);
+          url = new InMemoryCachedUrl(imageUrl);
         }
         else {
           url = new Url(imageUrl);
