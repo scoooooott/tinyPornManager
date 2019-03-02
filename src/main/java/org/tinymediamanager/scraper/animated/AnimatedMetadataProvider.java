@@ -15,15 +15,11 @@
  */
 package org.tinymediamanager.scraper.animated;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Date;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +33,7 @@ import org.tinymediamanager.scraper.animated.entities.Movie;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -55,9 +52,6 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(AnimatedMetadataProvider.class);
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
   private static final String      BASE_URL     = "http://consiliumb.com/animatedgifs/";
-  private static final int         DAYS         = 7;                                                      // how long to cache?
-  private static final Path        JSON_FILE    = Paths.get("cache", "movies.json");
-  private static final Path        CACHE_FILE   = Paths.get("cache", "movies.json.cache");
   private Base                     json         = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
@@ -187,70 +181,16 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
 
   private Base loadJson() {
     Base b = null;
-
-    // check cache
-    try {
-      if (!Files.exists(JSON_FILE.getParent())) {
-        Files.createDirectories(JSON_FILE.getParent());
-      }
-    }
-    catch (Exception ignored) {
-    }
+    Gson gson = new Gson();
 
     try {
-      if (Files.exists(JSON_FILE) && Files.exists(CACHE_FILE)) {
-        String dateStr = readFileToString(CACHE_FILE);
-        long milliSeconds = Long.parseLong(dateStr);
-        Date d = new Date(milliSeconds);
-        // older than X days?
-        boolean older = System.currentTimeMillis() - d.getTime() > DAYS * 24 * 60 * 60 * 1000;
-        if (!older) {
-          LOGGER.debug("File young enough, read from cache.");
-          b = readJsonFile();
-        }
-      }
+      Url url = new OnDiskCachedUrl(BASE_URL + "movies.json", 1, TimeUnit.DAYS);
+      b = gson.fromJson(new InputStreamReader(url.getInputStream()), Base.class);
     }
     catch (Exception e) {
-      LOGGER.warn("Error reading json/cache", e);
-    }
-
-    // download
-    if (b == null) {
-      try {
-        Url u = new Url(BASE_URL + "movies.json");
-        u.download(JSON_FILE);
-        b = readJsonFile();
-
-        // write time stamp to cache file, if we could parse the json filw
-        writeStringToFile(CACHE_FILE, String.valueOf(System.currentTimeMillis()));
-      }
-      catch (Exception e) {
-        LOGGER.warn("Error downloading json", e);
-      }
+      LOGGER.warn("Error downloading json", e);
     }
 
     return b;
-  }
-
-  private Base readJsonFile() {
-    Gson gson = new Gson();
-    try {
-      String jsonStr = readFileToString(JSON_FILE);
-      return gson.fromJson(jsonStr, Base.class);
-    }
-    catch (Exception e) {
-      LOGGER.warn("Error reading json", e.getMessage());
-    }
-    return null;
-  }
-
-  public static String readFileToString(Path file) throws IOException {
-    byte[] fileArray = Files.readAllBytes(file);
-    return new String(fileArray, StandardCharsets.UTF_8);
-  }
-
-  public static void writeStringToFile(Path file, String text) throws IOException {
-    byte[] buf = text.getBytes(StandardCharsets.UTF_8);
-    Files.write(file, buf);
   }
 }
