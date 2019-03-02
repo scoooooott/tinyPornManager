@@ -55,7 +55,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -1002,7 +1002,7 @@ public abstract class ImdbParser {
       doc = null;
       try {
         Url url;
-        url = new CachedUrl(this.url);
+        url = new InMemoryCachedUrl(this.url);
         if (useCachedUrl) {
         }
         else {

@@ -47,7 +47,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -397,7 +397,7 @@ public class ImdbTvShowParser extends ImdbParser {
     // first the specials
     Document doc;
     try {
-      CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
+      InMemoryCachedUrl url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
       url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
     }
@@ -411,7 +411,7 @@ public class ImdbTvShowParser extends ImdbParser {
     // then parse every season
     for (int i = 1;; i++) {
       try {
-        CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
+        InMemoryCachedUrl url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
         url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
         doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
         // if the given season number and the parsed one does not match, break here
