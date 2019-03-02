@@ -533,6 +533,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return this.tags;
   }
 
+  /**
+   * Remove all Tags from List
+   */
+  public void removeAllTags() {
+    tags.clear();
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, tags);
+
+  }
   /** has movie local (or any mediafile inline) subtitles? */
   public boolean hasSubtitles() {
     if (this.subtitles) {
@@ -1316,6 +1325,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
       firePropertyChange(GENRE, null, genre);
       firePropertyChange(GENRES_AS_STRING, null, genre);
     }
+  }
+
+  /**
+   * Remove all genres from list
+   */
+  public void removeAllGenres() {
+    genres.clear();
+    firePropertyChange(GENRE,null, genres);
+    firePropertyChange(GENRES_AS_STRING, null, genres);
   }
 
   /**
