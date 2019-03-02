@@ -21,12 +21,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.EmptyFileException;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -34,37 +35,62 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class ImageCacheTask extends TmmTask {
+public class ImageCacheTask extends TmmThreadPool {
   private static final Logger         LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
   private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<Path>                  filesToCache = new ArrayList<>();
 
   public ImageCacheTask(String pathToFile) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
+    super(BUNDLE.getString("tmm.rebuildimagecache"));
     filesToCache.add(Paths.get(pathToFile));
   }
 
+  @Override
+  public void callback(Object obj) {
+    publishState(progressDone);
+  }
+
   public ImageCacheTask(Path file) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
+    super(BUNDLE.getString("tmm.rebuildimagecache"));
     filesToCache.add(file);
   }
 
   public ImageCacheTask(List<Path> files) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"), files.size(), TaskType.BACKGROUND_TASK);
+    super(BUNDLE.getString("tmm.rebuildimagecache"));
     filesToCache.addAll(files);
   }
 
   @Override
   protected void doInBackground() {
+    // distribute the work over all available cores
+    int threadCount = Runtime.getRuntime().availableProcessors() - 1;
+    if (threadCount < 2) {
+      threadCount = 2;
+    }
+
+    initThreadPool(threadCount, "imageCache");
+
     int i = 0;
     for (Path fileToCache : filesToCache) {
-      try {
-        if (cancel) {
-          return;
-        }
+      if (cancel) {
+        return;
+      }
+      submitTask(new CacheTask(fileToCache));
+    }
+    waitForCompletionOrCancel();
+  }
 
-        publishState(++i);
+  private class CacheTask implements Callable<Object> {
+    private final Path fileToCache;
+
+    public CacheTask(Path fileToCache) {
+      this.fileToCache = fileToCache;
+    }
+
+    @Override
+    public Object call() {
+      try {
         ImageCache.cacheImage(fileToCache);
       }
       catch (EmptyFileException e) {
@@ -76,6 +102,7 @@ public class ImageCacheTask extends TmmTask {
       catch (Exception e) {
         LOGGER.warn("failed to cache file: " + fileToCache, e);
       }
+      return null;
     }
   }
 }
