@@ -34,7 +34,7 @@ import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 
@@ -79,7 +79,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     try {
       LOGGER.debug("Guessed HD-Trailers Url: " + search);
 
-      Url url = new CachedUrl(search);
+      Url url = new InMemoryCachedUrl(search);
       InputStream in = url.getInputStream();
       if (in == null) {
         return trailers;
