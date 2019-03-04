@@ -89,6 +89,7 @@ sonarqube-qa:
     - devel@tinyMediaManager/tinyMediaManager
   except:
     - pushes
+  allow_failure: true
   script:
     - mvn $MAVEN_CLI_OPTS sonar:sonar -Dsonar.projectKey=org.tinymediamanager:tinyMediaManager -Dsonar.organization=tinymediamanager -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=19c25774c239fee6864a408f0dd4dd03f58e7d22
 
