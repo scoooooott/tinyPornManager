@@ -86,7 +86,8 @@ test:jdk11:
 sonarqube-qa:
   stage: test
   only:
-    - devel@tinyMediaManager/tinyMediaManager
+    variables:
+      - $QA_BUILD == "true"
   except:
     - pushes
   allow_failure: true
@@ -100,7 +101,8 @@ deploy:nightly:
     name: nightly
     url: https://nightly.tinymediamanager.org
   only:
-    - devel@tinyMediaManager/tinyMediaManager
+    variables:
+      - $NIGHTLY_BUILD == "true"
   except:
     - pushes                                          # do not run packaging on push-builds
   script:
