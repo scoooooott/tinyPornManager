@@ -95,6 +95,9 @@ sonarqube-qa:
 deploy:nightly:
   stage: deploy
   image: maven:3-jdk-8                                # stay with stretch
+  environment:
+    name: nightly
+    url: https://nightly.tinymediamanager.org
   only:
     - devel@tinyMediaManager/tinyMediaManager
   except:
@@ -125,6 +128,9 @@ deploy:nightly:
 deploy:prerel:
   stage: deploy
   image: maven:3-jdk-8  # stay with stretch
+  environment:
+    name: prerelease
+    url: https://prerelease.tinymediamanager.org
   only:
     - master@tinyMediaManager/tinyMediaManager
   when: manual
