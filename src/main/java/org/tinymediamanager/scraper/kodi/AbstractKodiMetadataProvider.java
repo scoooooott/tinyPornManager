@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -305,6 +306,14 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       md.setPlot(plot);
     }
 
+    String year = getInfoFromScraperFunctionOrBase("year", details, subDetails);
+    if (StringUtils.isNotBlank(year)) {
+      try {
+        md.setYear(Integer.parseInt(year));
+      }
+      catch (Exception ignored) {
+      }
+    }
     String aired = getInfoFromScraperFunctionOrBase("aired", details, subDetails);
     if (StringUtils.isNotBlank(aired)) {
       try {
@@ -321,14 +330,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       catch (ParseException ignored) {
       }
     }
-
-    String year = getInfoFromScraperFunctionOrBase("year", details, subDetails);
-    if (StringUtils.isNotBlank(year)) {
-      try {
-        md.setYear(Integer.parseInt(year));
-      }
-      catch (Exception ignored) {
-      }
+    if (md.getYear() == 0 && md.getReleaseDate() != null) {
+      // fallback - if we have no year set (like UniversalScraper)
+      md.setYear(LocalDate.fromDateFields(md.getReleaseDate()).getYear());
     }
 
     String tagline = getInfoFromScraperFunctionOrBase("tagline", details, subDetails);
