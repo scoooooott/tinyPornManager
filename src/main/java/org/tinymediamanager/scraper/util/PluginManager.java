@@ -41,9 +41,6 @@ public class PluginManager {
   private static PluginManagerUtil                   pmu;
   private static PluginManager                       instance;
 
-  public PluginManager() {
-  }
-
   public synchronized static PluginManager getInstance() {
     if (instance == null) {
       JSPFProperties props = new JSPFProperties();

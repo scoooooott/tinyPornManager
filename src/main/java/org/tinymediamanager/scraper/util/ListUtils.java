@@ -26,6 +26,10 @@ import java.util.List;
  */
 public class ListUtils {
 
+  private ListUtils() {
+    // hide the public constructor for utility classes
+  }
+
   /**
    * Get a nullsafe Iterable. You can pass here any iterable collection and get a iterable collection back. Also works with null
    * 

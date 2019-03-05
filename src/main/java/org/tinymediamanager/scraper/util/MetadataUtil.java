@@ -35,6 +35,10 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 public class MetadataUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUtil.class);
 
+  private MetadataUtil() {
+    // hide the public constructor for utility classes
+  }
+
   /**
    * Return the best score for a title when compared to the search string. It uses 2 passes to find the best match. the first pass uses the matchTitle
    * as is, and the second pass uses the matchTitle will non search characters removed.
@@ -94,8 +98,6 @@ public class MetadataUtil {
     if (s == null) {
       return null;
     }
-    // return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
-    // return s.replaceAll("[\\\\[\\\\]-–_.:|]", " ");
     return s.replaceAll("[\\\\[\\\\]_.:|]", " ");
   }
 
@@ -168,6 +170,7 @@ public class MetadataUtil {
       return md.getId(MediaMetadata.IMDB).toString();
     }
     catch (Exception ingored) {
+      // nothing to be done here
     }
 
     return "";

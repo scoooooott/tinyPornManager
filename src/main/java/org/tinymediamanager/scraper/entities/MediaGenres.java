@@ -197,6 +197,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
       }
     }
     catch (Exception ignored) {
+      // nothing to be done here
     }
     return Arrays.asList(new Locale("en", "US"));
   }
@@ -245,11 +246,10 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
             return genre;
           }
 
-          if (name.length() > 3) {
-            // match both names without prefix
-            if (notation.substring(3).equalsIgnoreCase(name.substring(3))) {
-              return genre;
-            }
+          // match both names without prefix
+          if (name.length() > 3 && notation.substring(3).equalsIgnoreCase(name.substring(3))) {
+            return genre;
+
           }
         }
       }

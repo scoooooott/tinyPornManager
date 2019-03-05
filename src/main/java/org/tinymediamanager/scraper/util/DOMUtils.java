@@ -29,6 +29,10 @@ import org.w3c.dom.NodeList;
  */
 public class DOMUtils {
 
+  private DOMUtils() {
+    // hide the public constructor for utility classes
+  }
+
   /**
    * Gets the element value.
    * 

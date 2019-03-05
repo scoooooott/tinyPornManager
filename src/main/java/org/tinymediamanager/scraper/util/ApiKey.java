@@ -27,6 +27,10 @@ public class ApiKey {
 
   private static final AesUtil AES_UTIL = new AesUtil(128, 100);
 
+  private ApiKey() {
+    // hide the public constructor for utility classes
+  }
+
   /**
    * decrypt the cryted API key
    * 

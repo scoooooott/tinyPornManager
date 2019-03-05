@@ -129,6 +129,7 @@ public class MediaSearchOptions {
           return Integer.parseInt((String) id);
         }
         catch (Exception ignored) {
+          // nothing to be done here
         }
     }
 

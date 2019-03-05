@@ -977,7 +977,7 @@ public enum CountryCode {
   // ZM("Zambia", "ZMB", 894),
   //
   // /** <a href="http://en.wikipedia.org/wiki/Zimbabwe">Zimbabwe</a> */
-  // ZW("Zimbabwe", "ZWE", 716), ;
+  // ZW("Zimbabwe", "ZWE", 716), ;                                              //NOSONAR
   // @formatter:on
 
   ;

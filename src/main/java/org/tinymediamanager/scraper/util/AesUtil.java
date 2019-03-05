@@ -42,7 +42,7 @@ public class AesUtil {
     this.keySize = keySize;
     this.iterationCount = iterationCount;
     try {
-      cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+      cipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); // NOSONAR
     }
     catch (Exception e) {
       throw fail(e);

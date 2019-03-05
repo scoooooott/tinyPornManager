@@ -2,6 +2,7 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -10,6 +11,10 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class JarUtils {
+
+  private JarUtils() {
+    // hide the public constructor for utility classes
+  }
 
   /**
    * gets manifest from JAR containing 'class'<br>
@@ -38,11 +43,7 @@ public class JarUtils {
         String basepath = jarURL.getPath().substring(0, jarURL.getPath().indexOf(classname));
 
         // assume there is already some generated manifest on filesystem
-        InputStream is = new FileInputStream(basepath + "/META-INF/MANIFEST.MF");
-
-        if (is != null) {
-          mf = new Manifest(is);
-        }
+        mf = readManifest(basepath + "/META-INF/MANIFEST.MF");
       }
     }
     catch (Exception e) {
@@ -50,6 +51,14 @@ public class JarUtils {
       mf = null;
     }
     return mf;
+  }
+
+  private static Manifest readManifest(String path) throws IOException {
+    Manifest manifest;
+    try (InputStream is = new FileInputStream(path)) {
+      manifest = new Manifest(is);
+    }
+    return manifest;
   }
 
   /**
@@ -106,10 +115,7 @@ public class JarUtils {
         String basepath = jarURL.getPath().substring(0, jarURL.getPath().indexOf(classname));
         File projectRoot = new File(basepath).getParentFile(); // go one level up
         // assume there is already some generated manifest on filesystem
-        InputStream is = new FileInputStream(projectRoot + "/maven-archiver/pom.properties");
-        Properties p = new Properties();
-        p.load(is);
-        v = p.getProperty("version");
+        v = readPomProperties(projectRoot + "/maven-archiver/pom.properties").getProperty("version");
       }
     }
     catch (Exception e) {
@@ -118,4 +124,12 @@ public class JarUtils {
     return v;
   }
 
+  private static Properties readPomProperties(String path) throws IOException {
+    Properties p;
+    try (InputStream is = new FileInputStream(path)) {
+      p = new Properties();
+      p.load(is);
+    }
+    return p;
+  }
 }

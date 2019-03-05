@@ -43,6 +43,10 @@ public class LanguageUtils {
     KEY_TO_COUNTRY_LOCALE_MAP = generateCountryArray();
   }
 
+  private LanguageUtils() {
+    // hide the public constructor for utility classes
+  }
+
   private static Map<Locale, String> createIso6392BExceptions() {
     Map<Locale, String> exceptions = new HashMap<>();
     exceptions.put(Locale.forLanguageTag("sq"), "alb");
@@ -86,6 +90,7 @@ public class LanguageUtils {
         langArray.putIfAbsent(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
       }
       catch (Exception ignore) {
+        // nothing to be done here
       }
 
       // and afterwards in all other languages
@@ -97,6 +102,7 @@ public class LanguageUtils {
           }
         }
         catch (Exception ignored) {
+          // nothing to be done here
         }
       }
 
@@ -147,6 +153,7 @@ public class LanguageUtils {
           }
         }
         catch (Exception ignored) {
+          // nothing to be done here
         }
       }
 

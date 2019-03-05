@@ -30,6 +30,11 @@ import java.util.Map;
  * @since 2.5
  */
 public class MapUtils {
+
+  private MapUtils() {
+    // hide the public constructor for utility classes
+  }
+
   /**
    * sort the given map by key and return a new map
    * 
@@ -39,11 +44,7 @@ public class MapUtils {
    */
   public static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
     List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-    Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
-      public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
-        return (o1.getKey()).compareTo(o2.getKey());
-      }
-    });
+    Collections.sort(list, Comparator.comparing(Map.Entry::getKey));
 
     Map<K, V> result = new LinkedHashMap<>();
     for (Map.Entry<K, V> entry : list) {
@@ -61,11 +62,7 @@ public class MapUtils {
    */
   public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
     List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-    Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
-      public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
-        return (o1.getValue()).compareTo(o2.getValue());
-      }
-    });
+    Collections.sort(list, Comparator.comparing(Map.Entry::getValue));
 
     Map<K, V> result = new LinkedHashMap<>();
     for (Map.Entry<K, V> entry : list) {

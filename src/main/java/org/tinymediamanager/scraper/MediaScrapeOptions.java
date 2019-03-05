@@ -110,6 +110,7 @@ public class MediaScrapeOptions {
           return Integer.parseInt((String) id);
         }
         catch (Exception ignored) {
+          // nothing to be done here
         }
     }
 

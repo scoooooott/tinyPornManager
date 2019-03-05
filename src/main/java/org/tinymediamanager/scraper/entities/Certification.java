@@ -222,7 +222,7 @@ public enum Certification {
     TH_15(CountryCode.TH, "15+", new String[] { "15+" }),
     TH_18(CountryCode.TH, "18+", new String[] { "18+" }),
     TH_20(CountryCode.TH, "20+", new String[] { "20+" }),
-    TH_Banned(CountryCode.TH, "Banned", new String[] { "Banned" }),
+    TH_Banned(CountryCode.TH, "Banned", new String[] { "Banned" }), //NOSONAR
 
     PT_0(CountryCode.PT, "Para todos os públicos", new String[] { "Para todos os públicos" }),
     PT_M3(CountryCode.PT, "M/3", new String[] { "M/3", "M_3" }),

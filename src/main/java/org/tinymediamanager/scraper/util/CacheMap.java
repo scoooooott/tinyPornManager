@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class CacheMap<K, T> {
   protected long                timeToLive;
-  protected Map<K, CacheObject> cacheMap;
+  protected Map<K, CacheObject> cachedObjects;
   protected ReadWriteLock       readWriteLock = new ReentrantReadWriteLock();
 
   /**
@@ -57,22 +57,20 @@ public class CacheMap<K, T> {
    */
   public CacheMap(final long timeToLive, final long cleanupInterval) {
     this.timeToLive = timeToLive;
-    this.cacheMap = new HashMap<K, CacheObject>();
+    this.cachedObjects = new HashMap<>();
 
     // the thread for cleanup
     if (timeToLive > 0 && cleanupInterval > 0) {
-      Thread t = new Thread(new Runnable() {
-        @Override
-        public void run() {
+      Thread t = new Thread(() -> {
+        try {
           while (true) {
-            try {
-              Thread.sleep(cleanupInterval * 1000);
-            }
-            catch (InterruptedException ex) {
-              break;
-            }
+            Thread.sleep(cleanupInterval * 1000);
             cleanup();
           }
+        }
+        catch (InterruptedException ignored) {
+          // just end the thread
+          Thread.currentThread().interrupt();
         }
       });
 
@@ -91,7 +89,7 @@ public class CacheMap<K, T> {
    */
   public void put(K key, T value) {
     readWriteLock.writeLock().lock();
-    cacheMap.put(key, new CacheObject(value));
+    cachedObjects.put(key, new CacheObject(value));
     readWriteLock.writeLock().unlock();
   }
 
@@ -104,7 +102,7 @@ public class CacheMap<K, T> {
    */
   public T get(K key) {
     readWriteLock.readLock().lock();
-    CacheObject c = cacheMap.get(key);
+    CacheObject c = cachedObjects.get(key);
     readWriteLock.readLock().unlock();
 
     if (c == null) {
@@ -117,7 +115,7 @@ public class CacheMap<K, T> {
   }
 
   public Set<K> keySet() {
-    return cacheMap.keySet();
+    return cachedObjects.keySet();
   }
 
   /**
@@ -128,7 +126,7 @@ public class CacheMap<K, T> {
    */
   public void remove(K key) {
     readWriteLock.writeLock().lock();
-    cacheMap.remove(key);
+    cachedObjects.remove(key);
     readWriteLock.writeLock().unlock();
   }
 
@@ -139,7 +137,7 @@ public class CacheMap<K, T> {
    */
   public int size() {
     readWriteLock.readLock().lock();
-    int size = cacheMap.size();
+    int size = cachedObjects.size();
     readWriteLock.readLock().unlock();
     return size;
   }
@@ -159,10 +157,10 @@ public class CacheMap<K, T> {
    */
   public void cleanup(boolean force) {
     long now = System.currentTimeMillis();
-    ArrayList<K> deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
+    ArrayList<K> deleteKey = new ArrayList<>((cachedObjects.size() / 2) + 1);
 
     readWriteLock.writeLock().lock();
-    for (Map.Entry<K, CacheObject> entry : cacheMap.entrySet()) {
+    for (Map.Entry<K, CacheObject> entry : cachedObjects.entrySet()) {
       K key = entry.getKey();
       CacheObject c = entry.getValue();
 
@@ -172,7 +170,7 @@ public class CacheMap<K, T> {
     }
 
     for (K key : deleteKey) {
-      cacheMap.remove(key);
+      cachedObjects.remove(key);
       Thread.yield();
     }
     readWriteLock.writeLock().unlock();
