@@ -17,6 +17,8 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.io.ByteArrayInputStream;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +33,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
-import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -332,7 +333,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     }
     if (md.getYear() == 0 && md.getReleaseDate() != null) {
       // fallback - if we have no year set (like UniversalScraper)
-      md.setYear(LocalDate.fromDateFields(md.getReleaseDate()).getYear());
+      LocalDate localDate = md.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+      md.setYear(localDate.getYear());
     }
 
     String tagline = getInfoFromScraperFunctionOrBase("tagline", details, subDetails);
