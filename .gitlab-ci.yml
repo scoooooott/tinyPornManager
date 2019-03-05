@@ -18,34 +18,51 @@ build:
 test:jdk8:
   stage: test
   image: maven:3-jdk-8-alpine
+  only:
+    - pushes
+  allow_failure: true
   script:
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk10:
   stage: test
   image: maven:3-jdk-10
+  only:
+    - pushes
+  allow_failure: true
   script:
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk11:
   stage: test
   image: maven:3-jdk-11
+  only:
+    - pushes
+  allow_failure: true
   script:
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
-  allow_failure: true
 
 test:jdk12:
   stage: test
   image: maven:3-jdk-12-alpine
+  only:
+    - pushes
+  allow_failure: true
   script:
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
+
+sonarqube-qa:
+  stage: test
+  only:
+    - pushes
   allow_failure: true
+  script:
+    - mvn $MAVEN_CLI_OPTS sonar:sonar -Dsonar.projectKey=org.tinymediamanager:api-scraper -Dsonar.organization=tinymediamanager -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONARCLOUD_API_TOKEN}
 
 deploy_snapshot:
   stage: deploy
-  environment: snapshot
+  environment:
+    name: snapshot
   script:
     - mvn $MAVEN_CLI_OPTS deploy
   only:
