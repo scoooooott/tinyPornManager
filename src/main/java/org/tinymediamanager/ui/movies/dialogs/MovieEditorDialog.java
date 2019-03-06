@@ -242,7 +242,11 @@ public class MovieEditorDialog extends TmmDialog {
     {
       int year = movieToEdit.getYear();
 
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
+      List<Certification> availableCertifications = Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      if (!availableCertifications.contains(movieToEdit.getCertification())) {
+        availableCertifications.add(0, movieToEdit.getCertification());
+      }
+      for (Certification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
 

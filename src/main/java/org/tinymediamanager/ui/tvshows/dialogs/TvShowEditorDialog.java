@@ -253,10 +253,14 @@ public class TvShowEditorDialog extends TmmDialog {
         extrafanarts = new ArrayList<>(tvShowToEdit.getExtraFanartUrls());
       }
 
-      for (Certification cert : Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry())) {
+      List<Certification> availableCertifications = Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      if (!availableCertifications.contains(tvShowToEdit.getCertification())) {
+        availableCertifications.add(0, tvShowToEdit.getCertification());
+      }
+      for (Certification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
-      cbCertification.setSelectedItem(tvShow.getCertification());
+      cbCertification.setSelectedItem(tvShowToEdit.getCertification());
 
       List<TvShowEpisode> epl = new ArrayList<>(tvShowToEdit.getEpisodes());
       // custom sort per filename (just this time)
