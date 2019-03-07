@@ -91,9 +91,10 @@ import retrofit2.Response;
  */
 @PluginImplementation
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
-  private static final Logger                          LOGGER      = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-  private static String                                artworkUrl  = "http://thetvdb.com/banners/";
-  private static final String                          TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
+  private static final Logger                          LOGGER            = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
+  private static String                                artworkUrl        = "http://thetvdb.com/banners/";
+  private static final String                          TMM_API_KEY       = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
+  private static final String                          FALLBACK_LANGUAGE = "fallbackLanguage";
 
   private final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap;
 
@@ -151,7 +152,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         tvdbLanguages = response.data;
       }
       catch (Exception e) {
-        LOGGER.warn("could not initialize API: " + e.getMessage());
+        LOGGER.warn("could not initialize API: {}", e.getMessage());
         throw new ScrapeException(e);
       }
     }
@@ -169,7 +170,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
       fallbackLanguages.add(mediaLanguages.toString());
     }
-    providerInfo.getConfig().addSelect("fallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
+    providerInfo.getConfig().addSelect(FALLBACK_LANGUAGE, fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
     providerInfo.getConfig().load();
 
     return providerInfo;
@@ -186,7 +187,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     // lazy initialization of the api
     initAPI();
 
-    LOGGER.debug("getting metadata: " + mediaScrapeOptions);
+    LOGGER.debug("getting metadata: {}", mediaScrapeOptions);
     switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(mediaScrapeOptions);
@@ -204,7 +205,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     // lazy initialization of the api
     initAPI();
 
-    LOGGER.debug("search() " + options.toString());
+    LOGGER.debug("search() {}", options);
     List<MediaSearchResult> results = new ArrayList<>();
 
     if (options.getMediaType() != MediaType.TV_SHOW) {
@@ -218,43 +219,65 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
     searchString = cleanString(searchString);
 
-    // return an empty search result if no query provided
-    if (StringUtils.isEmpty(searchString)) {
-      return results;
+    String imdbId = options.getImdbId().isEmpty() ? null : options.getImdbId(); // do not submit empty string!
+    if (MetadataUtil.isValidImdbId(searchString)) {
+      imdbId = searchString; // search via IMDBid only
+      searchString = null; // by setting empty searchterm
     }
 
+    int tvdbId = options.getIdAsInt(providerInfo.getId());
     String language = options.getLanguage().getLanguage();
 
-    // search via the api; 2 times if the language of the options and fallback language differ
     List<Series> series = new ArrayList<>();
-    // first with the desired scraping language
-    try {
-      Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, language).execute();
-      if (!httpResponse.isSuccessful()) {
-        throw new HttpException(httpResponse.message(), httpResponse.code());
+
+    // if we have an TVDB id, use that!
+    if (tvdbId != 0) {
+      LOGGER.debug("found TvDb ID {} - getting direct", tvdbId);
+      try {
+        Response<SeriesResponse> httpResponse = tvdb.series().series(tvdbId, language).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.message(), httpResponse.code());
+        }
+        series.add(httpResponse.body().data);
       }
-      series.addAll(httpResponse.body().data);
-    }
-    catch (Exception e) {
-      LOGGER.error("problem getting data vom tvdb: " + e.getMessage());
+      catch (Exception e) {
+        LOGGER.error("problem getting data vom tvdb via ID: {}", e.getMessage());
+      }
     }
 
-    // second with the fallback language
-    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
-    if (!fallbackLanguage.equals(language)) {
+    // only search when we did not find something by ID (and search string or IMDB is present)
+    if (series.isEmpty() && !(StringUtils.isEmpty(searchString) && StringUtils.isEmpty(imdbId))) {
+      // if (!StringUtils.isEmpty(searchString) && series.isEmpty()) {
+      // second with the desired scraping language
       try {
-        Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, null, null, fallbackLanguage).execute();
+        Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, language).execute();
         if (!httpResponse.isSuccessful()) {
           throw new HttpException(httpResponse.message(), httpResponse.code());
         }
         series.addAll(httpResponse.body().data);
       }
       catch (Exception e) {
-        LOGGER.error("problem getting data vom tvdb with fallback langauge: " + e.getMessage());
+        LOGGER.error("problem getting data vom tvdb: {}", e.getMessage());
       }
     }
 
-    LOGGER.debug("found " + series.size() + " results with TMDB id");
+    // third with the fallback language
+    if (series.isEmpty() && !(StringUtils.isEmpty(searchString) && StringUtils.isEmpty(imdbId))) {
+      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
+      if (!fallbackLanguage.equals(language)) {
+        try {
+          Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, fallbackLanguage).execute();
+          if (!httpResponse.isSuccessful()) {
+            throw new HttpException(httpResponse.message(), httpResponse.code());
+          }
+          series.addAll(httpResponse.body().data);
+        }
+        catch (Exception e) {
+          LOGGER.error("problem getting data vom tvdb with fallback langauge: {}", e.getMessage());
+        }
+      }
+      LOGGER.info("found {} results", series.size());
+    }
 
     if (series.isEmpty()) {
       return results;
@@ -277,6 +300,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         result.setYear(Integer.parseInt(show.firstAired.substring(0, 4)));
       }
       catch (Exception ignored) {
+        // ignore
       }
 
       // do not get banners instead of posters
@@ -296,13 +320,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         }
       }
       catch (Exception e) {
-        LOGGER.warn("could not get poster for search result: " + e.getMessage());
+        LOGGER.warn("could not get poster for search result: {}", e.getMessage());
       }
 
       float score = MetadataUtil.calculateScore(searchString, show.seriesName);
       if (yearDiffers(options.getYear(), result.getYear())) {
         float diff = (float) Math.abs(options.getYear() - result.getYear()) / 100;
-        LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
         score -= diff;
       }
       result.setScore(score);
@@ -341,7 +365,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       show = httpResponse.body().data;
     }
     catch (Exception e) {
-      LOGGER.error("failed to get meta data: " + e.getMessage());
+      LOGGER.error("failed to get meta data: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -350,7 +374,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // if there is no localized content and we have a fallback language, rescrape in the fallback language
-    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
     if (StringUtils.isAnyBlank(show.seriesName, show.overview) && !fallbackLanguage.equals(options.getLanguage().getLanguage())) {
       try {
         Response<SeriesResponse> httpResponse = tvdb.series().series(id, fallbackLanguage).execute();
@@ -365,7 +389,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         }
       }
       catch (Exception e) {
-        LOGGER.error("failed to get meta data: " + e.getMessage());
+        LOGGER.error("failed to get meta data: {}", e.getMessage());
       }
     }
 
@@ -406,7 +430,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       int y = calendar.get(Calendar.YEAR);
       md.setYear(y);
       if (y != 0 && md.getTitle().contains(String.valueOf(y))) {
-        LOGGER.debug("Weird TVDB entry - removing date " + y + " from title");
+        LOGGER.debug("Weird TVDB entry - removing date {} from title", y);
         String t = show.seriesName.replaceAll(String.valueOf(y), "").replaceAll("\\(\\)", "").trim();
         md.setTitle(t);
       }
@@ -426,7 +450,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       actors.addAll(httpResponse.body().data);
     }
     catch (Exception e) {
-      LOGGER.error("failed to get actors: " + e.getMessage());
+      LOGGER.error("failed to get actors: {}", e.getMessage());
     }
 
     for (Actor actor : actors) {
@@ -522,7 +546,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     // lazy initialization of the api
     initAPI();
 
-    LOGGER.debug("getting artwork: " + options);
+    LOGGER.debug("getting artwork: {}", options);
     List<MediaArtwork> artwork = new ArrayList<>();
 
     // do we have an id from the options?
@@ -553,13 +577,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             images.addAll(httpResponse.body().data);
           }
           catch (Exception e) {
-            LOGGER.error("could not get artwork from tvdb: " + e.getMessage());
+            LOGGER.error("could not get artwork from tvdb: {}", e.getMessage());
           }
         }
       }
     }
     catch (Exception e) {
-      LOGGER.error("failed to get artwork: " + e.getMessage());
+      LOGGER.error("failed to get artwork: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -590,7 +614,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             ma.setSeason(Integer.parseInt(image.subKey));
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season: " + image.subKey);
+            LOGGER.warn("could not parse season: {}", image.subKey);
           }
           break;
 
@@ -600,7 +624,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             ma.setSeason(Integer.parseInt(image.subKey));
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season: " + image.subKey);
+            LOGGER.warn("could not parse season: {}", image.subKey);
           }
           break;
 
@@ -660,7 +684,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           }
         }
         catch (Exception e) {
-          LOGGER.debug("could not extract size from artwork: " + image.resolution);
+          LOGGER.debug("could not extract size from artwork: {}", image.resolution);
         }
       }
 
@@ -693,7 +717,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     // lazy initialization of the api
     initAPI();
 
-    LOGGER.debug("getting episode list: " + options);
+    LOGGER.debug("getting episode list: {}", options);
     List<MediaMetadata> episodes = new ArrayList<>();
 
     // do we have an id from the options?
@@ -707,7 +731,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     List<Episode> eps = new ArrayList<>();
     List<Episode> fallbackEps = new ArrayList<>();
     try {
-      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue("fallbackLanguage")).getLanguage();
+      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
 
       // 100 results per page
       int counter = 1;
@@ -728,7 +752,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             fallbackEps.addAll(httpResponse.body().data);
           }
           catch (Exception e) {
-            LOGGER.warn("could not get data in fallback language: " + e.getMessage());
+            LOGGER.warn("could not get data in fallback language: {}", e.getMessage());
           }
         }
 
@@ -741,7 +765,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
     }
     catch (Exception e) {
-      LOGGER.error("failed to get episode list: " + e.getMessage());
+      LOGGER.error("failed to get episode list: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -843,8 +867,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   /**
    * Is i1 != i2 (when >0)
    */
-  private boolean yearDiffers(Integer i1, Integer i2) {
-    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  private boolean yearDiffers(int i1, int i2) {
+    return i1 != 0 && i2 != 0 && i1 != i2;
   }
 
   private String cleanString(String oldString) {

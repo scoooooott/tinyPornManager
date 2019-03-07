@@ -44,6 +44,47 @@ public class TheTvDbMetadataProviderTest {
     searchShow(metadataProvider, "What's the Big Idea?", "en", "268282", 2013);
     searchShow(metadataProvider, "Wallace & Gromit", "en", "78996", 1989);
     searchShow(metadataProvider, "SOKO Kitzbühel", "de", "101241", 2001);
+
+    searchShow(metadataProvider, "tt1288631", "fr", "", "211941", 0); // IMDB id entered as search term
+    searchShow(metadataProvider, "", "fr", "211941", "211941", 2009); // empty searchString, but valid ID!
+  }
+
+  private void searchShow(ITvShowMetadataProvider metadataProvider, String title, String language, String checkId, int year) {
+    searchShow(metadataProvider, title, language, null, checkId, year);
+  }
+
+  private void searchShow(ITvShowMetadataProvider metadataProvider, String title, String language, String setId, String checkId, int year) {
+    try {
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, title);
+      options.setLanguage(Locale.forLanguageTag(language));
+      if (setId != null) {
+        options.setId(metadataProvider.getProviderInfo().getId(), setId); // when set, just lookup, no search
+      }
+      // options.setCountry(CountryCode.valueOf(language.toUpperCase(Locale.ROOT)));
+      // options.setYear(year);
+
+      List<MediaSearchResult> results = metadataProvider.search(options);
+      if (results.isEmpty()) {
+        Assert.fail("Result empty!");
+      }
+
+      MediaSearchResult result = results.get(0);
+      assertThat(result.getTitle()).isNotEmpty();
+      if (!checkId.isEmpty()) {
+        assertThat(result.getId()).isEqualTo(checkId);
+      }
+      if (year > 0) {
+        assertThat(result.getYear()).isEqualTo(year);
+      }
+      else {
+        assertThat(result.getYear()).isGreaterThan(0);
+      }
+      assertThat(result.getPosterUrl()).isNotEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail(e.getMessage());
+    }
   }
 
   @Test
@@ -54,28 +95,6 @@ public class TheTvDbMetadataProviderTest {
 
     metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
     searchShow(metadataProvider, "SOKO Kitzbühel", "en", "101241", 2001);
-  }
-
-  private void searchShow(ITvShowMetadataProvider metadataProvider, String title, String language, String id, int year) {
-    try {
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, title);
-      options.setLanguage(Locale.forLanguageTag(language));
-
-      List<MediaSearchResult> results = metadataProvider.search(options);
-      if (results.isEmpty()) {
-        Assert.fail("Result empty!");
-      }
-
-      MediaSearchResult result = results.get(0);
-      assertThat(result.getTitle()).isNotEmpty();
-      assertThat(result.getId()).isEqualTo(id);
-      assertThat(result.getYear()).isEqualTo(year);
-      assertThat(result.getPosterUrl()).isNotEmpty();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      Assert.fail(e.getMessage());
-    }
   }
 
   @Test
