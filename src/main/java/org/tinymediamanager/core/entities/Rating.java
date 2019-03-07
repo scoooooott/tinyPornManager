@@ -77,14 +77,18 @@ public class Rating {
     this.id = id;
     this.rating = rating;
     this.votes = votes;
-    this.maxValue = maxValue;
+    if (maxValue > 0) {
+      this.maxValue = maxValue;
+    }
   }
 
   public Rating(String id, double rating, int votes, int maxValue) {
     this.id = id;
     this.rating = (float) rating;
     this.votes = votes;
-    this.maxValue = maxValue;
+    if (maxValue > 0) {
+      this.maxValue = maxValue;
+    }
   }
 
   public String getId() {

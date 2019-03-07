@@ -930,21 +930,19 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setStatus((MediaAiredStatus) cbStatus.getSelectedItem());
 
       // user rating
-      Map<String, Rating> ratings = new HashMap<>();
+      Map<String, Rating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
-        ratings.put(Rating.USER, userRating);
+        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
       for (MediaRating mediaRating : TvShowEditorDialog.this.ratings) {
-        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
-          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
-          ratings.put(mediaRating.key, rating);
+        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
+          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
-      tvShowToEdit.setRatings(ratings);
+      tvShowToEdit.setRatings(newRatings);
 
       // adapt episodes according to the episode table (in a 2 way sync)
       // remove episodes
