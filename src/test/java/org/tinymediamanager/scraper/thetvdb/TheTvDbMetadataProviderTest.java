@@ -50,6 +50,7 @@ public class TheTvDbMetadataProviderTest {
   }
 
   private void searchShow(ITvShowMetadataProvider metadataProvider, String title, String language, String checkId, int year) {
+    // this does not SET the id for lookup, but keeps if for assertion....
     searchShow(metadataProvider, title, language, null, checkId, year);
   }
 
