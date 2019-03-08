@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
-import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -288,12 +287,10 @@ public class TvShowSettings extends AbstractSettings {
     Path mig = Paths.get("cache", "migv3shows.ds");
     if (mig.toFile().exists()) {
       try {
-        Scanner scanner = new Scanner(mig);
-        while (scanner.hasNextLine()) {
-          String ds = scanner.nextLine();
+        List<String> datasources = Files.readAllLines(mig);
+        for (String ds : datasources) {
           addTvShowDataSources(ds);
         }
-        scanner.close();
         Files.delete(mig);
         saveSettings();
       }
