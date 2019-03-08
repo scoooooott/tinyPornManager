@@ -15,11 +15,16 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -278,9 +283,8 @@ public class MovieSettings extends AbstractSettings {
   @Override
   protected void writeDefaultSettings() {
     // hidden columns
-    setMovieTableHiddenColumns(
-        Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d", "videoFormat", "votes", "edition",
-            "mediaSource", "certification"));
+    setMovieTableHiddenColumns(Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d",
+        "videoFormat", "votes", "edition", "mediaSource", "certification"));
 
     addDefaultEntries();
 
@@ -295,8 +299,26 @@ public class MovieSettings extends AbstractSettings {
         setScraperLanguage(ml);
       }
     }
-
     saveSettings();
+
+    // V2-to-V3 datasource migration
+    Path mig = Paths.get("cache", "migv3movies.ds");
+    if (mig.toFile().exists()) {
+      try {
+        Scanner scanner = new Scanner(mig);
+        while (scanner.hasNextLine()) {
+          String ds = scanner.nextLine();
+          addMovieDataSources(ds);
+        }
+        scanner.close();
+        Files.delete(mig);
+        saveSettings();
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not migrate movie datasources! {}", e);
+      }
+    }
+
   }
 
   public void addMovieDataSources(String path) {
