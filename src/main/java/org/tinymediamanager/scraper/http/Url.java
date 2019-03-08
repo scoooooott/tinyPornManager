@@ -256,6 +256,21 @@ public class Url {
    *           Signals that an I/O exception has occurred.
    */
   public InputStream getInputStream() throws IOException, InterruptedException {
+    return getInputStream(false);
+  }
+
+  /**
+   * Gets the input stream
+   * 
+   * 
+   * @param headRequest
+   *          do you just want to send a HEAD request 8no content), for checking file availability?
+   * @return
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
+   */
+  public InputStream getInputStream(boolean headRequest) throws IOException, InterruptedException {
     // workaround for local files
     if (url.startsWith("file:")) {
       String newUrl = url.replace("file:/", "");
@@ -272,6 +287,9 @@ public class Url {
     Request.Builder requestBuilder = new Request.Builder();
     requestBuilder.url(url);
 
+    if (headRequest) {
+      requestBuilder.head();
+    }
     // set custom headers
     for (Pair<String, String> header : headersRequest) {
       requestBuilder.addHeader(header.first().toString(), header.second().toString());
