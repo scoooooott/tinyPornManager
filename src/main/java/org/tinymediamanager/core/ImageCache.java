@@ -208,6 +208,25 @@ public class ImageCache {
   }
 
   /**
+   * Cache image silently without throwing an exception.
+   *
+   * @param originalFile
+   *          the media file
+   */
+  public static void cacheImageSilently(Path originalFile) {
+    if (!Settings.getInstance().isImageCache()) {
+      return;
+    }
+
+    try {
+      cacheImage(originalFile);
+    }
+    catch (Exception e) {
+      LOGGER.warn("could not cache image: {}", e.getMessage());
+    }
+  }
+
+  /**
    * Invalidate cached image.
    * 
    * @param path
