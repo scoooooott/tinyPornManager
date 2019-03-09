@@ -20,6 +20,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -272,111 +273,127 @@ public class ImdbTvShowParser extends ImdbParser {
 
     // and finally the cast which needed to be fetched from the fullcredits page
     if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
+
+      Url url = null;
+
       try {
-        Url url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/fullcredits");
+        url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/fullcredits");
         url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
-        Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not get cast page: {}", e);
+      }
 
-        // director & writer
-        Element fullcredits = doc.getElementById("fullcredits_content");
-        if (fullcredits != null) {
-          Elements tables = fullcredits.getElementsByTag("table");
+      if (url != null) {
+        try (InputStream is = url.getInputStream()) {
+          Document doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
 
-          // first table are directors
-          if (tables.get(0) != null) {
-            for (Element director : tables.get(0).getElementsByClass("name")) {
-              MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-              cm.setName(director.text());
-              // profile path
-              Element anchor = director.getElementsByAttributeValueStarting("href", "/name/").first();
-              if (anchor != null) {
-                Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
-                if (matcher.find()) {
-                  if (matcher.group(0) != null) {
-                    cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
-                  }
-                  if (matcher.group(1) != null) {
-                    cm.setId(providerInfo.getId(), matcher.group(1));
+          // director & writer
+          Element fullcredits = doc.getElementById("fullcredits_content");
+          if (fullcredits != null) {
+            Elements tables = fullcredits.getElementsByTag("table");
+
+            // first table are directors
+            if (tables.get(0) != null) {
+              for (Element director : tables.get(0).getElementsByClass("name")) {
+                MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+                cm.setName(director.text());
+                // profile path
+                Element anchor = director.getElementsByAttributeValueStarting("href", "/name/").first();
+                if (anchor != null) {
+                  Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+                  if (matcher.find()) {
+                    if (matcher.group(0) != null) {
+                      cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+                    }
+                    if (matcher.group(1) != null) {
+                      cm.setId(providerInfo.getId(), matcher.group(1));
+                    }
                   }
                 }
+                md.addCastMember(cm);
               }
-              md.addCastMember(cm);
             }
-          }
 
-          // second table are writers
-          if (tables.get(1) != null) {
-            for (Element writer : tables.get(1).getElementsByClass("name")) {
-              MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-              cm.setName(writer.text());
-              // profile path
-              Element anchor = writer.getElementsByAttributeValueStarting("href", "/name/").first();
-              if (anchor != null) {
-                Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
-                if (matcher.find()) {
-                  if (matcher.group(0) != null) {
-                    cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
-                  }
-                  if (matcher.group(1) != null) {
-                    cm.setId(providerInfo.getId(), matcher.group(1));
+            // second table are writers
+            if (tables.get(1) != null) {
+              for (Element writer : tables.get(1).getElementsByClass("name")) {
+                MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+                cm.setName(writer.text());
+                // profile path
+                Element anchor = writer.getElementsByAttributeValueStarting("href", "/name/").first();
+                if (anchor != null) {
+                  Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+                  if (matcher.find()) {
+                    if (matcher.group(0) != null) {
+                      cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+                    }
+                    if (matcher.group(1) != null) {
+                      cm.setId(providerInfo.getId(), matcher.group(1));
+                    }
                   }
                 }
+                md.addCastMember(cm);
               }
-              md.addCastMember(cm);
+            }
+          }
+
+          // actors
+          Element castTableElement = doc.getElementsByClass("cast_list").first();
+          if (castTableElement != null) {
+            Elements tr = castTableElement.getElementsByTag("tr");
+            for (Element row : tr) {
+              MediaCastMember cm = parseCastMember(row);
+              if (cm != null && StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
+                cm.setType(MediaCastMember.CastType.ACTOR);
+                md.addCastMember(cm);
+              }
             }
           }
         }
+        catch (Exception ignored) {
+        }
+      }
 
-        // actors
-        Element castTableElement = doc.getElementsByClass("cast_list").first();
-        if (castTableElement != null) {
-          Elements tr = castTableElement.getElementsByTag("tr");
-          for (Element row : tr) {
-            MediaCastMember cm = parseCastMember(row);
-            if (cm != null && StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
-              cm.setType(MediaCastMember.CastType.ACTOR);
-              md.addCastMember(cm);
+      // get data from tmdb?
+      if (futureTmdb != null) {
+        try {
+          MediaMetadata tmdbMd = futureTmdb.get();
+          if (tmdbMd != null) {
+            // provide all IDs
+            for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
+              md.setId(entry.getKey(), entry.getValue());
+            }
+            // title
+            if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+              md.setTitle(tmdbMd.getTitle());
+            }
+            // original title
+            if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+              md.setOriginalTitle(tmdbMd.getOriginalTitle());
+            }
+            // tagline
+            if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+              md.setTagline(tmdbMd.getTagline());
+            }
+            // plot
+            if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+              md.setPlot(tmdbMd.getPlot());
+            }
+            // thumb (if nothing has been found in imdb)
+            if (md.getMediaArt(THUMB).isEmpty() && !tmdbMd.getMediaArt(THUMB).isEmpty()) {
+              MediaArtwork thumb = tmdbMd.getMediaArt(THUMB).get(0);
+              md.addMediaArt(thumb);
             }
           }
         }
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    // get data from tmdb?
-    if (futureTmdb != null) {
-      try {
-        MediaMetadata tmdbMd = futureTmdb.get();
-        if (tmdbMd != null) {
-          // provide all IDs
-          for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
-            md.setId(entry.getKey(), entry.getValue());
-          }
-          // title
-          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
-            md.setTitle(tmdbMd.getTitle());
-          }
-          // original title
-          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
-            md.setOriginalTitle(tmdbMd.getOriginalTitle());
-          }
-          // tagline
-          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
-            md.setTagline(tmdbMd.getTagline());
-          }
-          // plot
-          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
-            md.setPlot(tmdbMd.getPlot());
-          }
-          // thumb (if nothing has been found in imdb)
-          if (md.getMediaArt(THUMB).isEmpty() && !tmdbMd.getMediaArt(THUMB).isEmpty()) {
-            MediaArtwork thumb = tmdbMd.getMediaArt(THUMB).get(0);
-            md.addMediaArt(thumb);
-          }
+        catch (InterruptedException e) {
+          // do not swallow these Exceptions
+          Thread.currentThread().interrupt();
         }
-      }
-      catch (Exception ignored) {
+        catch (Exception e) {
+          LOGGER.warn("could not get cast page: {}", e);
+        }
       }
     }
 
@@ -396,28 +413,51 @@ public class ImdbTvShowParser extends ImdbParser {
     // we need to parse every season for its own _._
     // first the specials
     Document doc;
+    Url url;
     try {
-      InMemoryCachedUrl url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
+      url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
       url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
-      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
     }
     catch (Exception e) {
-      LOGGER.error("problem scraping: " + e.getMessage());
+      LOGGER.error("problem scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
-    parseEpisodeList(0, episodes, doc);
+    try (InputStream is = url.getInputStream()) {
+      doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
+      parseEpisodeList(0, episodes, doc);
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("problem scraping: {}", e.getMessage());
+      throw new ScrapeException(e);
+    }
 
     // then parse every season
     for (int i = 1;; i++) {
+      Url seasonUrl;
       try {
-        InMemoryCachedUrl url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
-        url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
-        doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+        seasonUrl = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
+        seasonUrl.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
+      }
+      catch (Exception e) {
+        LOGGER.error("problem scraping: {}", e.getMessage());
+        throw new ScrapeException(e);
+      }
+
+      try (InputStream is = seasonUrl.getInputStream()) {
+        doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
         // if the given season number and the parsed one does not match, break here
         if (!parseEpisodeList(i, episodes, doc)) {
           break;
         }
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
       }
       catch (Exception e) {
         LOGGER.warn("problem parsing ep list: " + e.getMessage());

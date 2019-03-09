@@ -22,6 +22,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -168,11 +169,24 @@ public abstract class ImdbParser {
     sb.append(getSearchCategory());
 
     getLogger().debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
-    Document doc;
+    Document doc = null;
+
+    Url url;
     try {
-      Url url = new Url(sb.toString());
+      url = new Url(sb.toString());
       url.addHeader("Accept-Language", getAcceptLanguage(language, country));
-      doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
+    }
+    catch (Exception e) {
+      getLogger().debug("tried to fetch search response", e);
+      throw new ScrapeException(e);
+    }
+
+    try (InputStream is = url.getInputStream()) {
+      doc = Jsoup.parse(is, "UTF-8", "");
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
     }
     catch (Exception e) {
       getLogger().debug("tried to fetch search response", e);
@@ -1000,21 +1014,35 @@ public abstract class ImdbParser {
     @Override
     public Document call() throws Exception {
       doc = null;
+
+      Url url;
+
       try {
-        Url url;
-        url = new InMemoryCachedUrl(this.url);
         if (useCachedUrl) {
+          url = new InMemoryCachedUrl(this.url);
         }
         else {
           url = new Url(this.url);
         }
         url.addHeader("Accept-Language", getAcceptLanguage(language, country));
-        doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
       }
       catch (Exception e) {
-        getLogger().debug("tried to fetch imdb page " + url, e);
+        getLogger().debug("tried to fetch imdb page {} - {}", this.url, e);
+        throw new ScrapeException(e);
+      }
+
+      try (InputStream is = url.getInputStream()) {
+        doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
+      catch (Exception e) {
+        getLogger().debug("tried to fetch imdb page {} - {}", this.url, e);
         throw e;
       }
+
       return doc;
     }
   }
