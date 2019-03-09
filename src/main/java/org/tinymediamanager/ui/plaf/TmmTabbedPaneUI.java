@@ -88,7 +88,6 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     }
 
     if (Boolean.FALSE.equals(this.tabPane.getClientProperty("bottomBorder"))) {
-      tabAreaInsets.bottom = 0;
       if (roundEdge) {
         contentBorderInsets.bottom = 10;
       }
@@ -98,7 +97,6 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     }
 
     if ("half".equals(this.tabPane.getClientProperty("bottomBorder"))) {
-      tabAreaInsets.bottom = tabAreaInsets.bottom / 2;
       contentBorderInsets.bottom = contentBorderInsets.bottom / 2;
     }
 
