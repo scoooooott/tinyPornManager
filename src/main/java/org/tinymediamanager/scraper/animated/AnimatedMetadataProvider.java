@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.animated;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +173,6 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
       ma.setDefaultUrl(BASE_URL + image.getOriginal());
       ma.setPreviewUrl(BASE_URL + image.getImage());
       ma.setAnimated(true);
-      // ma.setImdbId(m.getImdbid());
       ma.setLanguage(image.getLanguage().toLowerCase(Locale.ROOT));
       artworks.add(ma);
     }
@@ -183,12 +183,25 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     Base b = null;
     Gson gson = new Gson();
 
+    Url url;
     try {
-      Url url = new OnDiskCachedUrl(BASE_URL + "movies.json", 1, TimeUnit.DAYS);
-      b = gson.fromJson(new InputStreamReader(url.getInputStream()), Base.class);
+      url = new OnDiskCachedUrl(BASE_URL + "movies.json", 1, TimeUnit.DAYS);
     }
     catch (Exception e) {
-      LOGGER.warn("Error downloading json", e);
+      LOGGER.error("Error downloading json: {}", e);
+      return null;
+    }
+
+    try (InputStream is = url.getInputStream(); InputStreamReader ir = new InputStreamReader(is)) {
+      b = gson.fromJson(ir, Base.class);
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("Error downloading json: {}", e);
+      return null;
     }
 
     return b;
