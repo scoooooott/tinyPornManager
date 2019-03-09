@@ -15,13 +15,11 @@
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -34,9 +32,8 @@ import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
-import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -76,16 +73,11 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
 
     // best guess
     String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase(Locale.ROOT) + "/";
+
+    LOGGER.debug("Guessed HD-Trailers Url: {}", search);
+
     try {
-      LOGGER.debug("Guessed HD-Trailers Url: " + search);
-
-      Url url = new InMemoryCachedUrl(search);
-      InputStream in = url.getInputStream();
-      if (in == null) {
-        return trailers;
-      }
-
-      Document doc = Jsoup.parse(in, "UTF-8", "");
+      Document doc = UrlUtil.parseDocumentFromUrl(search);
       Elements tr = doc.getElementsByAttributeValue("itemprop", "trailer");
       /*
        * <tr style="" itemprop="trailer" itemscope itemtype="http://schema.org/VideoObject"> <td class="bottomTableDate" rowspan="2">2012-03-30</td>
@@ -152,8 +144,12 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
         }
       }
     }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
     catch (Exception e) {
-      LOGGER.error("cannot parse HD-Trailers movie: " + ot, e);
+      LOGGER.error("cannot parse HD-Trailers movie: {}", e);
       throw new ScrapeException(e);
     }
 
