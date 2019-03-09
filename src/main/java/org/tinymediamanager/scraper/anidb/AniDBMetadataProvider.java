@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.anidb;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,6 +61,7 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -124,19 +126,31 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     // call API
     // http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
     Document doc = null;
+
+    InMemoryCachedUrl cachedUrl;
     try {
-      trackConnections();
-      InMemoryCachedUrl cachedUrl = new InMemoryCachedUrl(
-          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-      doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+      cachedUrl = new InMemoryCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
     }
     catch (Exception e) {
-      LOGGER.error("failed to get TV show metadata: " + e.getMessage());
+      LOGGER.error("failed to get TV show metadata: {}", e.getMessage());
+      throw new ScrapeException(e);
+    }
+
+    trackConnections();
+    try (InputStream is = cachedUrl.getInputStream()) {
+      doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get TV show metadata: {}", e.getMessage());
       // pass the original exception to the caller
       throw new ScrapeException(e);
     }
 
-    if (doc == null || doc.children().size() == 0) {
+    if (doc == null || doc.children().isEmpty()) {
       throw new NothingFoundException();
     }
 
@@ -464,18 +478,30 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     Document doc = null;
+
+    InMemoryCachedUrl url;
     try {
-      trackConnections();
-      InMemoryCachedUrl url = new InMemoryCachedUrl(
-          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-      doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
+      url = new InMemoryCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
     }
     catch (Exception e) {
-      LOGGER.error("error getting episode list: " + e.getMessage());
+      LOGGER.error("error getting episode list: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
-    if (doc == null || doc.children().size() == 0) {
+    trackConnections();
+    try (InputStream is = url.getInputStream()) {
+      doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting episode list: {}", e.getMessage());
+      throw new ScrapeException(e);
+    }
+
+    if (doc == null || doc.children().isEmpty()) {
       return episodes;
     }
 
@@ -522,15 +548,21 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     // 3=shorttitles (multiple per anime),
     // 4=official title (one per language)
     Pattern pattern = Pattern.compile("^(?!#)(\\d+)[|](\\d)[|]([\\w-]+)[|](.+)$");
-    Scanner scanner = null;
-    try {
-      // we are only allowed to fetch this file once per 24 hrs
-      // see https://wiki.anidb.net/w/API#Anime_Titles
-      Url animeList = new OnDiskCachedUrl("http://anidb.net/api/anime-titles.dat.gz", 1, TimeUnit.DAYS);
 
-      // scanner = new Scanner(new GZIPInputStream(animeList.getInputStream()));
-      // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
-      scanner = new Scanner(animeList.getInputStream(), "UTF-8");
+    // we are only allowed to fetch this file once per 24 hrs
+    // see https://wiki.anidb.net/w/API#Anime_Titles
+    Url animeList;
+
+    try {
+      animeList = new OnDiskCachedUrl("http://anidb.net/api/anime-titles.dat.gz", 1, TimeUnit.DAYS);
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting AniDB index: {}", e.getMessage());
+      return;
+    }
+
+    // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
+    try (InputStream is = animeList.getInputStream(); Scanner scanner = new Scanner(is, UrlUtil.UTF_8)) {
       while (scanner.hasNextLine()) {
         Matcher matcher = pattern.matcher(scanner.nextLine());
 
@@ -540,30 +572,17 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
           show.language = matcher.group(3);
           show.title = matcher.group(4);
 
-          List<AniDBShow> shows = showsForLookup.get(show.title);
-          if (shows == null) {
-            shows = new ArrayList<>();
-            showsForLookup.put(show.title, shows);
-          }
-
+          List<AniDBShow> shows = showsForLookup.computeIfAbsent(show.title, k -> new ArrayList<>());
           shows.add(show);
         }
       }
     }
     catch (InterruptedException e) {
-      LOGGER.warn("interrupted image download");
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
     }
     catch (IOException e) {
-      LOGGER.error("error getting AniDB index");
-    }
-    finally {
-      if (scanner != null) {
-        try {
-          scanner.close();
-        }
-        catch (Exception ignored) {
-        }
-      }
+      LOGGER.error("error getting AniDB index: {}", e);
     }
   }
 
