@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.ofdb;
 
-import java.io.InputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -47,11 +45,11 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -147,145 +145,151 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       ofdbId = StrgUtils.substr(detailUrl, "fid=(\\d+)");
     }
 
-    Url url;
+    Document doc = null;
+    LOGGER.trace("get details page: {}", detailUrl);
     try {
-      LOGGER.trace("get details page");
-      url = new Url(detailUrl);
-      InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
-
-      if (doc.getAllElements().size() < 10) {
-        throw new ScrapeException(new Exception("we did not receive a valid web page"));
-      }
-
-      // parse details
-
-      // IMDB ID "http://www.imdb.com/Title?1194173"
-      el = doc.getElementsByAttributeValueContaining("href", "imdb.com");
-      if (!el.isEmpty()) {
-        md.setId(MediaMetadata.IMDB, "tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
-      }
-
-      // title / year
-      // <meta property="og:title" content="Bourne Vermächtnis, Das (2012)" />
-      el = doc.getElementsByAttributeValue("property", "og:title");
-      if (!el.isEmpty()) {
-        String[] ty = parseTitle(el.first().attr("content"));
-        md.setTitle(StrgUtils.removeCommonSortableName(ty[0]));
-        try {
-          md.setYear(Integer.parseInt(ty[1]));
-        }
-        catch (Exception ignored) {
-        }
-      }
-      // another year position
-      if (md.getYear() == 0) {
-        // <a href="view.php?page=blaettern&Kat=Jahr&Text=2012">2012</a>
-        el = doc.getElementsByAttributeValueContaining("href", "Kat=Jahr");
-        try {
-          md.setYear(Integer.parseInt(el.first().text()));
-        }
-        catch (Exception ignored) {
-        }
-      }
-
-      // original title (has to be searched with a regexp)
-      // <tr valign="top">
-      // <td nowrap=""><font class="Normal" face="Arial,Helvetica,sans-serif"
-      // size="2">Originaltitel:</font></td>
-      // <td>&nbsp;&nbsp;</td>
-      // <td width="99%"><font class="Daten" face="Arial,Helvetica,sans-serif"
-      // size="2"><b>Brave</b></font></td>
-      // </tr>
-      String originalTitle = StrgUtils.substr(doc.body().html(), "(?s)Originaltitel.*?<b>(.*?)</b>");
-      if (!originalTitle.isEmpty()) {
-        md.setOriginalTitle(StrgUtils.removeCommonSortableName(originalTitle));
-      }
-
-      // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
-      el = doc.getElementsByAttributeValueContaining("href", "page=genre");
-      for (Element g : el) {
-        md.addGenre(getTmmGenre(g.text()));
-      }
-
-      // rating
-      // <div itemtype="http://schema.org/AggregateRating" itemscope="" itemprop="aggregateRating">
-      // Note: <span itemprop="ratingValue">8.74</span><meta itemprop="worstRating" content="1"><meta itemprop="bestRating" content="10">
-      // &nbsp;•&nbsp;&nbsp;Stimmen: <span itemprop="ratingCount">2187</span>
-      // &nbsp;•&nbsp;&nbsp;Platz: 19 &nbsp;•&nbsp;&nbsp;Ihre Note: --</div>
-      try {
-        MediaRating rating = new MediaRating("odfb");
-        el = doc.getElementsByAttributeValue("itemprop", "ratingValue");
-        if (!el.isEmpty()) {
-          String r = el.text();
-          if (!r.isEmpty()) {
-            rating.setRating(Float.parseFloat(r));
-            rating.setMaxValue(10);
-          }
-        }
-        el = doc.getElementsByAttributeValue("itemprop", "ratingCount");
-        if (!el.isEmpty()) {
-          String r = el.text();
-          if (!r.isEmpty()) {
-            rating.setVoteCount(Integer.parseInt(r));
-          }
-        }
-        md.addRating(rating);
-      }
-      catch (Exception e) {
-        LOGGER.debug("could not parse rating");
-      }
-
-      // get PlotLink; open url and parse
-      // <a href="plot/22523,31360,Die-Bourne-Identität"><b>[mehr]</b></a>
-      LOGGER.trace("parse plot");
-      el = doc.getElementsByAttributeValueMatching("href", "plot\\/\\d+,");
-      if (!el.isEmpty()) {
-        String plotUrl = BASE_URL + "/" + el.first().attr("href");
-        try {
-          url = new Url(plotUrl);
-          in = url.getInputStream();
-          Document plot = Jsoup.parse(in, "UTF-8", "");
-          in.close();
-          Elements block = plot.getElementsByClass("Blocksatz"); // first
-          // Blocksatz
-          // is plot
-          String p = block.first().text(); // remove all html stuff
-          p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
-          md.setPlot(p);
-        }
-        catch (Exception e) {
-          LOGGER.error("failed to get plot page: " + e.getMessage());
-        }
-      }
-
-      // http://www.ofdb.de/view.php?page=film_detail&fid=226745
-      LOGGER.debug("parse actor detail");
-      String movieDetail = BASE_URL + "/view.php?page=film_detail&fid=" + ofdbId;
-      doc = null;
-      try {
-        url = new Url(movieDetail);
-        in = url.getInputStream();
-        doc = Jsoup.parse(in, "UTF-8", "");
-        in.close();
-      }
-      catch (Exception e) {
-        LOGGER.error("failed to get detail page: " + e.getMessage());
-      }
-
-      if (doc != null) {
-        parseCast(doc.getElementsContainingOwnText("Regie"), MediaCastMember.CastType.DIRECTOR, md);
-        parseCast(doc.getElementsContainingOwnText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingOwnText("Stimme/Sprecher"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingOwnText("Synchronstimme (deutsch)"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingOwnText("Drehbuchautor(in)"), MediaCastMember.CastType.WRITER, md);
-        parseCast(doc.getElementsContainingOwnText("Produzent(in)"), MediaCastMember.CastType.PRODUCER, md);
-      }
+      doc = UrlUtil.parseDocumentFromUrl(detailUrl);
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
     }
     catch (Exception e) {
-      LOGGER.error("Error parsing " + detailUrl);
+      LOGGER.error("could not fetch detail url: {}", e.getMessage());
       throw new ScrapeException(e);
+    }
+
+    if (doc.getAllElements().size() < 10) {
+      throw new ScrapeException(new Exception("we did not receive a valid web page"));
+    }
+
+    // parse details
+
+    // IMDB ID "http://www.imdb.com/Title?1194173"
+    el = doc.getElementsByAttributeValueContaining("href", "imdb.com");
+    if (!el.isEmpty()) {
+      md.setId(MediaMetadata.IMDB, "tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
+    }
+
+    // title / year
+    // <meta property="og:title" content="Bourne Vermächtnis, Das (2012)" />
+    el = doc.getElementsByAttributeValue("property", "og:title");
+    if (!el.isEmpty()) {
+      String[] ty = parseTitle(el.first().attr("content"));
+      md.setTitle(StrgUtils.removeCommonSortableName(ty[0]));
+      try {
+        md.setYear(Integer.parseInt(ty[1]));
+      }
+      catch (Exception ignored) {
+        // the default value is just fine
+      }
+    }
+    // another year position
+    if (md.getYear() == 0) {
+      // <a href="view.php?page=blaettern&Kat=Jahr&Text=2012">2012</a>
+      el = doc.getElementsByAttributeValueContaining("href", "Kat=Jahr");
+      try {
+        md.setYear(Integer.parseInt(el.first().text()));
+      }
+      catch (Exception ignored) {
+        // the default value is just fine
+      }
+    }
+
+    // original title (has to be searched with a regexp)
+    // <tr valign="top">
+    // <td nowrap=""><font class="Normal" face="Arial,Helvetica,sans-serif"
+    // size="2">Originaltitel:</font></td>
+    // <td>&nbsp;&nbsp;</td>
+    // <td width="99%"><font class="Daten" face="Arial,Helvetica,sans-serif"
+    // size="2"><b>Brave</b></font></td>
+    // </tr>
+    String originalTitle = StrgUtils.substr(doc.body().html(), "(?s)Originaltitel.*?<b>(.*?)</b>");
+    if (!originalTitle.isEmpty()) {
+      md.setOriginalTitle(StrgUtils.removeCommonSortableName(originalTitle));
+    }
+
+    // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
+    el = doc.getElementsByAttributeValueContaining("href", "page=genre");
+    for (Element g : el) {
+      md.addGenre(getTmmGenre(g.text()));
+    }
+
+    // rating
+    // <div itemtype="http://schema.org/AggregateRating" itemscope="" itemprop="aggregateRating">
+    // Note: <span itemprop="ratingValue">8.74</span><meta itemprop="worstRating" content="1"><meta itemprop="bestRating" content="10">
+    // &nbsp;•&nbsp;&nbsp;Stimmen: <span itemprop="ratingCount">2187</span>
+    // &nbsp;•&nbsp;&nbsp;Platz: 19 &nbsp;•&nbsp;&nbsp;Ihre Note: --</div>
+    try {
+      MediaRating rating = new MediaRating("odfb");
+      el = doc.getElementsByAttributeValue("itemprop", "ratingValue");
+      if (!el.isEmpty()) {
+        String r = el.text();
+        if (!r.isEmpty()) {
+          rating.setRating(Float.parseFloat(r));
+          rating.setMaxValue(10);
+        }
+      }
+      el = doc.getElementsByAttributeValue("itemprop", "ratingCount");
+      if (!el.isEmpty()) {
+        String r = el.text();
+        if (!r.isEmpty()) {
+          rating.setVoteCount(Integer.parseInt(r));
+        }
+      }
+      md.addRating(rating);
+    }
+    catch (Exception e) {
+      LOGGER.debug("could not parse rating");
+    }
+
+    // get PlotLink; open url and parse
+    // <a href="plot/22523,31360,Die-Bourne-Identität"><b>[mehr]</b></a>
+    LOGGER.trace("parse plot");
+    el = doc.getElementsByAttributeValueMatching("href", "plot\\/\\d+,");
+    if (!el.isEmpty()) {
+      String plotUrl = BASE_URL + "/" + el.first().attr("href");
+      try {
+        Document plot = UrlUtil.parseDocumentFromUrl(plotUrl);
+
+        Elements block = plot.getElementsByClass("Blocksatz"); // first
+        // "Blocksatz" is plot
+        String p = block.first().text(); // remove all html stuff
+        p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
+        md.setPlot(p);
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get plot page: {}", e.getMessage());
+      }
+    }
+
+    // http://www.ofdb.de/view.php?page=film_detail&fid=226745
+    String movieDetail = BASE_URL + "/view.php?page=film_detail&fid=" + ofdbId;
+    LOGGER.trace("parse movie detail: {}", movieDetail);
+
+    doc = null;
+    try {
+      doc = UrlUtil.parseDocumentFromUrl(movieDetail);
+    }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get detail page: {}", e.getMessage());
+    }
+
+    if (doc != null) {
+      parseCast(doc.getElementsContainingOwnText("Regie"), MediaCastMember.CastType.DIRECTOR, md);
+      parseCast(doc.getElementsContainingOwnText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
+      parseCast(doc.getElementsContainingOwnText("Stimme/Sprecher"), MediaCastMember.CastType.ACTOR, md);
+      parseCast(doc.getElementsContainingOwnText("Synchronstimme (deutsch)"), MediaCastMember.CastType.ACTOR, md);
+      parseCast(doc.getElementsContainingOwnText("Drehbuchautor(in)"), MediaCastMember.CastType.WRITER, md);
+      parseCast(doc.getElementsContainingOwnText("Produzent(in)"), MediaCastMember.CastType.PRODUCER, md);
     }
 
     return md;
@@ -534,18 +538,20 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       try {
         imdb = options.getImdbId();
         searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
-        LOGGER.debug("search with imdbId: " + imdb);
+        LOGGER.debug("search with imdbId: {}", imdb);
 
-        Url url = new Url(searchString);
-        InputStream in = url.getInputStream();
-        Document doc = Jsoup.parse(in, "UTF-8", "");
-        in.close();
+        Document doc = UrlUtil.parseDocumentFromUrl(searchString);
+
         // only look for movie links
         filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-        LOGGER.debug("found " + filme.size() + " search results");
+        LOGGER.debug("found {} search results", filme.size());
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
       }
       catch (Exception e) {
-        LOGGER.error("failed to search for imdb Id " + imdb + ": " + e.getMessage());
+        LOGGER.error("failed to search for imdb Id {}: {}", imdb, e.getMessage());
         savedException = e;
       }
     }
@@ -557,18 +563,20 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         searchQuery = query;
         query = MetadataUtil.removeNonSearchCharacters(query);
         searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
-        LOGGER.debug("search for everything: " + query);
+        LOGGER.debug("search for everything: {}", query);
 
-        Url url = new Url(searchString);
-        InputStream in = url.getInputStream();
-        Document doc = Jsoup.parse(in, "UTF-8", "");
-        in.close();
+        Document doc = UrlUtil.parseDocumentFromUrl(searchString);
+
         // only look for movie links
         filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-        LOGGER.debug("found " + filme.size() + " search results");
+        LOGGER.debug("found {} search results", filme.size());
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
       }
       catch (Exception e) {
-        LOGGER.error("failed to search for " + searchQuery + ": " + e.getMessage());
+        LOGGER.error("failed to search for: {} - {}", searchQuery, e.getMessage());
         savedException = e;
       }
     }
@@ -689,27 +697,23 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
      * <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_5.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
      * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.webm?log_var=72|491100001-1|-" >webm</a><br>'; } }
      */
-    Url url = null;
     String searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + options.getImdbId();
+    String url = "";
     try {
       // search with IMDB
-      url = new Url(searchString);
-      InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
+      url = searchString;
+      Document doc = UrlUtil.parseDocumentFromUrl(searchString);
+
       Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
       if (filme == null || filme.isEmpty()) {
         LOGGER.debug("found no search results");
         return trailers;
       }
-      LOGGER.debug("found " + filme.size() + " search results"); // hopefully
-                                                                 // only one
+      LOGGER.debug("found {} search results", filme.size()); // hopefully only one
 
       LOGGER.debug("get (trailer) details page");
-      url = new Url(BASE_URL + "/" + StrgUtils.substr(filme.first().toString(), "href=\\\"(.*?)\\\""));
-      in = url.getInputStream();
-      doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
+      url = BASE_URL + "/" + StrgUtils.substr(filme.first().toString(), "href=\\\"(.*?)\\\"");
+      doc = UrlUtil.parseDocumentFromUrl(url);
 
       // OLD STYLE
       // <b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo; 640px<br><br>Download:<br>&raquo; <a href=
@@ -722,7 +726,6 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         String s = m.group(1);
         String tname = StrgUtils.substr(s, "<b>(.*?)</b>");
         String tpix = StrgUtils.substr(s, "raquo; (.*?)x<br>");
-        // String tqual = StrgUtils.substr(s, "<i>\\((.*?)\\)</i>");
 
         // url + format
         Pattern lr = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>");
@@ -834,11 +837,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
     }
     catch (Exception e) {
-      if (url != null) {
-        LOGGER.error("Error parsing {}", url.toString());
+      if (StringUtils.isNotBlank(url)) {
+        LOGGER.error("Error parsing {} - {}", url, e.getMessage());
       }
       else {
-        LOGGER.error("Error parsing {}", searchString);
+        LOGGER.error("Error parsing {} - {}", searchString, e.getMessage());
       }
 
       throw new ScrapeException(e);
