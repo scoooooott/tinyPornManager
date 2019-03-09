@@ -42,6 +42,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.util.Pair;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
@@ -64,7 +65,7 @@ public class Url {
   protected static final String        USER_AGENT            = "User-Agent";
   // where is such a list in std java?
   // https://github.com/xbmc/xbmc/blob/master/xbmc/addons/kodi-addon-dev-kit/include/kodi/Filesystem.h#L195
-  public static final List<String>     KNOWN_HEADERS         = Arrays.asList("accept", "accept-charset", "accept-encoding", "accept-language",
+  protected static final List<String>  KNOWN_HEADERS         = Arrays.asList("accept", "accept-charset", "accept-encoding", "accept-language",
       "authorization", "cookie", "customrequest", "noshout", "postdata", "referer", "user-agent", "seekable", "sslcipherlist", "Via");
   protected int                        responseCode          = 0;
   protected String                     responseMessage       = "";
@@ -72,7 +73,7 @@ public class Url {
   protected String                     responseContentType   = "";
   protected long                       responseContentLength = -1;
 
-  protected String                     url                   = null;
+  protected String                     url                   = null;                                                                          // NOSONAR
   protected Headers                    headersResponse       = null;
   protected List<Pair<String, String>> headersRequest        = new ArrayList<>();
   protected URI                        uri                   = null;
@@ -152,12 +153,10 @@ public class Url {
   protected void splitHeadersFromUrl() {
     Pattern p = Pattern.compile(".*\\|(.*?)=(.*?)$");
     Matcher m = p.matcher(this.url);
-    if (m.find()) {
-      if (KNOWN_HEADERS.contains(m.group(1).toLowerCase(Locale.ROOT))) {
-        // ok, url might have a pipe, but we now have a recognized header - set it
-        this.url = this.url.substring(0, m.start(1) - 1); // -1 is pipe char
-        addHeader(m.group(1), m.group(2));
-      }
+    if (m.find() && KNOWN_HEADERS.contains(m.group(1).toLowerCase(Locale.ROOT))) {
+      // ok, url might have a pipe, but we now have a recognized header - set it
+      this.url = this.url.substring(0, m.start(1) - 1); // -1 is pipe char
+      addHeader(m.group(1), m.group(2));
     }
   }
 
@@ -171,8 +170,9 @@ public class Url {
    * @throws URISyntaxException
    */
   protected URI morphStringToUri(String urlToMorph) throws MalformedURLException, URISyntaxException {
-    URL url = new URL(urlToMorph);
-    return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+    URL newUrl = new URL(urlToMorph);
+    return new URI(newUrl.getProtocol(), newUrl.getUserInfo(), newUrl.getHost(), newUrl.getPort(), newUrl.getPath(), newUrl.getQuery(),
+        newUrl.getRef());
   }
 
   /**
@@ -192,7 +192,7 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public URL getUrl() throws IOException, InterruptedException {
+  public URL getUrl() throws IOException {
     return new URL(url);
   }
 
@@ -209,7 +209,7 @@ public class Url {
       return;
     }
 
-    LOGGER.trace("add HTTP header: " + key + "=" + value);
+    LOGGER.trace("add HTTP header: {}={}", key, value);
 
     // looks like there is no need for duplicate check since some headers can
     // occur several times
@@ -254,6 +254,8 @@ public class Url {
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
+   *           Signals that the thread has been interrupted
    */
   public InputStream getInputStream() throws IOException, InterruptedException {
     return getInputStream(false);
@@ -264,11 +266,12 @@ public class Url {
    * 
    * 
    * @param headRequest
-   *          do you just want to send a HEAD request 8no content), for checking file availability?
+   *          do you just want to send a HEAD request (no content), for checking file availability?
    * @return
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    * @throws InterruptedException
+   *           Signals that the thread has been interrupted
    */
   public InputStream getInputStream(boolean headRequest) throws IOException, InterruptedException {
     // workaround for local files
@@ -282,7 +285,7 @@ public class Url {
 
     // replace our API keys for logging...
     String logUrl = url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
-    LOGGER.debug("getting " + logUrl);
+    LOGGER.debug("getting {}", logUrl);
 
     Request.Builder requestBuilder = new Request.Builder();
     requestBuilder.url(url);
@@ -292,7 +295,7 @@ public class Url {
     }
     // set custom headers
     for (Pair<String, String> header : headersRequest) {
-      requestBuilder.addHeader(header.first().toString(), header.second().toString());
+      requestBuilder.addHeader(header.first(), header.second());
     }
 
     request = requestBuilder.build();
@@ -307,31 +310,42 @@ public class Url {
       // log any "connection problems"
       if (responseCode < 200 || responseCode >= 400) {
         cleanup();
-        LOGGER.error("bad http response: " + responseCode + " ; " + responseMessage);
-        return null;
+        LOGGER.error("bad http response: {} - {}", responseCode, responseMessage);
+        throw new HttpException(responseMessage, responseCode);
       }
 
       if (response.body().contentType() != null) { // could be null, see AnimeDB
         responseCharset = response.body().contentType().charset();
         responseContentType = response.body().contentType().toString();
       }
-      // response.body().bytes() closes the connection
-      is = new ByteArrayInputStream(response.body().bytes());
+
+      responseContentLength = response.body().contentLength();
+
+      is = getInputstreamInternal(response);
+    }
+    catch (HttpException e) {
+      // rethrow that to inform the caller that there was an HTTP-Exception
+      throw e;
     }
     catch (InterruptedIOException | IllegalStateException e) {
-      LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
+      LOGGER.info("aborted request: {} - {}", logUrl, e.getMessage());
       cleanup();
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
       cleanup();
-      LOGGER.error("proxy or host not found/reachable; " + e.getMessage());
+      LOGGER.error("proxy or host not found/reachable - {}", e.getMessage());
     }
     catch (Exception e) {
       cleanup();
-      LOGGER.error("Exception getting url " + logUrl + " ; " + e.getMessage(), e);
+      LOGGER.error("Unexpected exception getting url " + logUrl + " - " + e.getMessage(), e);
     }
     return is;
+  }
+
+  protected InputStream getInputstreamInternal(Response response) throws IOException {
+    // response.body().bytes() closes the connection
+    return new ByteArrayInputStream(response.body().bytes());
   }
 
   /**
@@ -341,7 +355,7 @@ public class Url {
    *          the amount of retries (>0)
    * @return the InputStream or null
    */
-  public InputStream getInputStreamWithRetry(int retries) {
+  public InputStream getInputStreamWithRetry(int retries) throws InterruptedException {
     if (retries <= 0) {
       return null;
     }
@@ -354,21 +368,24 @@ public class Url {
       try {
         is = getInputStream();
       }
-      catch (InterruptedIOException | IllegalStateException | InterruptedException e) {
-        // has this thread been interrupted?
-        return null;
+      catch (InterruptedException e) {
+        // this exception has already been logged in getInputStream()
+        throw e;
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        LOGGER.warn("problem fetching the url: {}", e.getMessage());
       }
-      if (is != null || (is == null && getStatusCode() > 0 && getStatusCode() < 500)) {
+      if (is != null || (getStatusCode() > 0 && getStatusCode() < 500)) {
         // we either got a response or a permanent failure
         return is;
       }
+
       // has this thread been interrupted?
       if (Thread.interrupted()) {
         return null;
       }
-      LOGGER.info("could not fetch: " + url + " - retrying");
+
+      LOGGER.info("could not fetch: {} - retrying", url);
     } while (counter <= retries);
 
     return null;
@@ -417,10 +434,9 @@ public class Url {
    *           Signals that an I/O exception has occurred.
    */
   public byte[] getBytes() throws IOException, InterruptedException {
-    InputStream is = getInputStream();
-    byte[] bytes = IOUtils.toByteArray(is);
-    IOUtils.closeQuietly(is);
-    return bytes;
+    try (InputStream is = getInputStream()) {
+      return IOUtils.toByteArray(is);
+    }
   }
 
   /**
@@ -432,14 +448,10 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public byte[] getBytesWithRetry(int retries) throws IOException {
-    InputStream is = getInputStreamWithRetry(retries);
-    if (is != null) {
-      byte[] bytes = IOUtils.toByteArray(is);
-      IOUtils.closeQuietly(is);
-      return bytes;
+  public byte[] getBytesWithRetry(int retries) throws IOException, InterruptedException {
+    try (InputStream is = getInputStreamWithRetry(retries)) {
+      return IOUtils.toByteArray(is);
     }
-    return new byte[0];
   }
 
   /**
@@ -449,24 +461,22 @@ public class Url {
    * @return successful or not
    */
   public boolean download(File file) {
-    try {
-      InputStream is = getInputStream();
+    try (InputStream is = getInputStream(); ReadableByteChannel rbc = Channels.newChannel(is); FileOutputStream fos = new FileOutputStream(file)) {
       if (is == null) {
         return false;
       }
-      ReadableByteChannel rbc = Channels.newChannel(is);
-      FileOutputStream fos = new FileOutputStream(file);
+
       fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-      fos.close();
       return true;
     }
     catch (IOException e) {
-      LOGGER.error("Error downloading " + this.url);
+      LOGGER.error("Error downloading {} - {}", this.url, e.getMessage());
     }
     catch (InterruptedException ignored) {
       if (call != null) {
         call.cancel();
       }
+      Thread.currentThread().interrupt();
     }
     return false;
   }

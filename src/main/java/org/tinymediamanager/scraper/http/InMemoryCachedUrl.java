@@ -64,20 +64,21 @@ public class InMemoryCachedUrl extends Url {
       // need to fetch it with a real request
       Url url = new Url(this.url);
       url.headersRequest = headersRequest;
-      InputStream is = url.getInputStream();
-      if (is == null) {
-        return null;
-      }
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
-      IOUtils.copy(is, gzip);
-      IOUtils.closeQuietly(gzip);
-      IOUtils.closeQuietly(outputStream);
+      try (InputStream is = url.getInputStream();
+          ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+          GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
+        if (is == null) {
+          return null;
+        }
 
-      // and now fill the CachedRequest object with the result
-      cachedRequest = new CachedRequest(url, outputStream.toByteArray());
-      if (url.responseCode >= 200 && url.responseCode < 300) {
-        CACHE.put(this.url, cachedRequest);
+        IOUtils.copy(is, gzip);
+        gzip.finish(); // finish writing of the gzip output stream
+
+        // and now fill the CachedRequest object with the result
+        cachedRequest = new CachedRequest(url, outputStream.toByteArray());
+        if (url.responseCode >= 200 && url.responseCode < 300) {
+          CACHE.put(this.url, cachedRequest);
+        }
       }
     }
 

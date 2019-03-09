@@ -16,13 +16,15 @@
 
 package org.tinymediamanager.scraper.exceptions;
 
+import java.io.IOException;
+
 /**
  * the class {@link HttpException} is thrown if there has been a HTTP exception while querying the external source
  *
  * @author Manuel Laggner
  * @since 3.0
  */
-public class HttpException extends Exception {
+public class HttpException extends IOException {
   private static final long serialVersionUID = 2161692612692312193L;
 
   private final int         statusCode;

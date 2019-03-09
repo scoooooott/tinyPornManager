@@ -92,6 +92,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- for HTTP testing -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- J9 / J10 / J11 deps -->
         <dependency>
             <groupId>com.sun.xml.bind</groupId>

@@ -35,7 +35,7 @@ public class SearchTitleWithGoogle {
    * @return MediaSearchResult, but NO id filled. Scraper MUST work with url-only!
    */
   public List<MediaSearchResult> search(String site, MediaProviderInfo mpi, MediaSearchOptions options) {
-    LOGGER.debug("SearchTitleWithGoogle() " + options.toString());
+    LOGGER.debug("SearchTitleWithGoogle() - {}", options);
     List<MediaSearchResult> resultList = new ArrayList<>();
 
     String searchUrl = "";
@@ -49,8 +49,8 @@ public class SearchTitleWithGoogle {
         site = new URL(site).getHost();
         searchTerm = options.getQuery();
         String lang = options.getLanguage().getLanguage();
-        searchUrl = "https://www.google." + lang + "/search?q=" + URLEncoder.encode("site:" + site + " " + searchTerm, "UTF-8");
-        LOGGER.debug("search for : " + searchTerm + " (" + searchUrl + ")");
+        searchUrl = "https://www.google." + lang + "/search?q=" + URLEncoder.encode("site:" + site + " " + searchTerm, PAGE_ENCODING);
+        LOGGER.debug("search for: {} ({})", searchTerm, searchUrl);
       }
       else {
         LOGGER.debug("empty searchString");
@@ -58,7 +58,7 @@ public class SearchTitleWithGoogle {
       }
     }
     catch (Exception e) {
-      LOGGER.warn("error searching " + e.getMessage());
+      LOGGER.warn("error searching {}", e.getMessage());
       return resultList;
     }
 
@@ -89,14 +89,14 @@ public class SearchTitleWithGoogle {
             }
           }
         }
-        sr.setUrl(URLDecoder.decode(gurl, "UTF-8"));
+        sr.setUrl(URLDecoder.decode(gurl, PAGE_ENCODING));
         // sr.setId(mpi.getId()); // we have no clue about ID!!
         sr.setTitle(a.text().replaceAll(site, "(via Google)"));
         resultList.add(sr);
       }
     }
     catch (Exception e) {
-      LOGGER.error("failed to search for " + searchTerm + ": " + e.getMessage());
+      LOGGER.error("failed to search for {} - {}", searchTerm, e.getMessage());
     }
 
     return resultList;

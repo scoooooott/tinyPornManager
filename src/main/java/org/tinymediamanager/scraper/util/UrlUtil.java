@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,10 +26,16 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
+import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
+import org.tinymediamanager.scraper.http.Url;
 
 /**
  * The class UrlUtil. This class is used for Url related tasks
@@ -37,6 +45,18 @@ import org.slf4j.LoggerFactory;
  */
 public class UrlUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(UrlUtil.class);
+
+  public static final String  UTF_8  = "UTF-8";
+
+  public enum UrlImpl {
+    DIRECT,
+    IN_MEMORY,
+    ON_DISK
+  }
+
+  private UrlUtil() {
+    // hide public constructor for utility classes
+  }
 
   /**
    * Casts url string to URI, and does the correct encoding (rfc2396) of query string ONLY (eg "|" character). URLEncoder encodes everything which
@@ -333,5 +353,131 @@ public class UrlUtil {
     }
 
     return l;
+  }
+
+  /**
+   * fetch the given url and parse it into a {@link Document}
+   * 
+   * @param urlAsString
+   *          the url as string
+   * @return the parsed {@link Document}
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static Document parseDocumentFromUrl(String urlAsString) throws IOException, InterruptedException {
+    return parseDocumentFromUrl(urlAsString, UrlImpl.DIRECT);
+  }
+
+  /**
+   * fetch the given url with the desired url type and parse it into a {@link Document}
+   *
+   * @param urlAsString
+   *          the url as string
+   * @param urlImpl
+   *          the desired url type
+   * @return the parsed {@link Document}
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static Document parseDocumentFromUrl(String urlAsString, UrlImpl urlImpl) throws IOException, InterruptedException {
+    try (InputStream in = getUrlFromUrlImpl(urlAsString, urlImpl).getInputStream()) {
+      return Jsoup.parse(in, UrlUtil.UTF_8, "");
+    }
+  }
+
+  /**
+   * fetch the given url and parse it into a {@link String}
+   *
+   * @param urlAsString
+   *          the url as string
+   * @return the parsed {@link String}
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static String getStringFromUrl(String urlAsString) throws IOException, InterruptedException {
+    return getStringFromUrl(urlAsString, UrlImpl.DIRECT);
+  }
+
+  /**
+   * fetch the given url and parse it into a {@link String}
+   *
+   * @param urlAsString
+   *          the url as string
+   * @param urlImpl
+   *          the desired url type
+   * @return the parsed {@link String}
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static String getStringFromUrl(String urlAsString, UrlImpl urlImpl) throws IOException, InterruptedException {
+    try (InputStream is = getUrlFromUrlImpl(urlAsString, urlImpl).getInputStream()) {
+      return IOUtils.toString(is, UrlUtil.UTF_8);
+    }
+  }
+
+  /**
+   * fetch the given url and return the content in a byte array
+   *
+   * @param urlAsString
+   *          the url as string
+   * @return a byte array of the content
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static byte[] getByteArrayFromUrl(String urlAsString) throws IOException, InterruptedException {
+    return getByteArrayFromUrl(urlAsString, UrlImpl.DIRECT);
+  }
+
+  /**
+   * fetch the given url and return the content in a byte array
+   *
+   * @param urlAsString
+   *          the url as string
+   * @param urlImpl
+   *          the desired url type
+   * @return a byte array of the content
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   * @throws InterruptedException
+   *           Indicates that this thread as been interrupted
+   */
+  public static byte[] getByteArrayFromUrl(String urlAsString, UrlImpl urlImpl) throws IOException, InterruptedException {
+    try (InputStream is = getUrlFromUrlImpl(urlAsString, urlImpl).getInputStream()) {
+      return IOUtils.toByteArray(is);
+    }
+  }
+
+  /**
+   * get the desired implementation for an {@link Url}
+   * 
+   * @param urlAsString
+   *          the url destination
+   * @param urlImpl
+   *          the desired implementation
+   * @return an instance of the desired {@link Url} implementation ({@link Url} as default)
+   * @throws IOException
+   *           Indicates that an {@link IOException} occurred
+   */
+  private static Url getUrlFromUrlImpl(String urlAsString, UrlImpl urlImpl) throws IOException {
+    switch (urlImpl) {
+      case IN_MEMORY:
+        return new InMemoryCachedUrl(urlAsString);
+
+      case ON_DISK:
+        return new OnDiskCachedUrl(urlAsString);
+
+      default:
+        return new Url(urlAsString);
+    }
   }
 }
