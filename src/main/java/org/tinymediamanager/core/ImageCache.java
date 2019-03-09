@@ -101,7 +101,7 @@ public class ImageCache {
   }
 
   /**
-   * Cache image.
+   * Cache image without overwriting an existing one
    * 
    * @param originalFile
    *          the media file
@@ -109,13 +109,27 @@ public class ImageCache {
    * @throws Exception
    */
   public static Path cacheImage(Path originalFile) throws Exception {
+    return cacheImage(originalFile, false);
+  }
+
+  /**
+   * Cache image.
+   *
+   * @param originalFile
+   *          the media file
+   * @param overwrite
+   *          indicator if we should overwrite any existing files
+   * @return the file the cached file
+   * @throws Exception
+   */
+  public static Path cacheImage(Path originalFile, boolean overwrite) throws Exception {
     MediaFile mf = new MediaFile(originalFile);
     if (!mf.isGraphic()) {
       throw new Exception("can only cache image files");
     }
 
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
-    if (!Files.exists(cachedFile)) {
+    if (overwrite || !Files.exists(cachedFile)) {
       // check if the original file exists && size > 0
       if (!Files.exists(originalFile)) {
         throw new FileNotFoundException("unable to cache file: " + originalFile + "; file does not exist");
@@ -219,7 +233,7 @@ public class ImageCache {
     }
 
     try {
-      cacheImage(originalFile);
+      cacheImage(originalFile, true);
     }
     catch (Exception e) {
       LOGGER.warn("could not cache image: {}", e.getMessage());

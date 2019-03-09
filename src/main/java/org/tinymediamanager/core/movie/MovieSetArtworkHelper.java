@@ -43,7 +43,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The class MovieSetArtworkHelper. A helper class for managing movie set artwork
@@ -92,8 +92,8 @@ public class MovieSetArtworkHelper {
       if (mf.isGraphic() && mf.getFile().getParent().endsWith(artworkFolder)) {
         try {
           String extension = FilenameUtils.getExtension(mf.getFilename());
-          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-"
-              + mf.getType().name().toLowerCase(Locale.ROOT) + "." + extension;
+          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + mf.getType().name().toLowerCase(Locale.ROOT)
+              + "." + extension;
           Path artworkFile = Paths.get(artworkFolder, artworkFileName);
           Utils.moveFileSafe(mf.getFileAsPath(), artworkFile);
 
@@ -125,8 +125,8 @@ public class MovieSetArtworkHelper {
 
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT)
-            + "." + fileType;
+        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "."
+            + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
@@ -563,7 +563,6 @@ public class MovieSetArtworkHelper {
     movieSet.saveToDb();
   }
 
-
   private static class MovieSetImageFetcherTask implements Runnable {
     private MovieSet        movieSet;
     private String          urlToArtwork;
@@ -624,14 +623,7 @@ public class MovieSetArtworkHelper {
     public void run() {
       // first, fetch image
       try {
-        Url url = new Url(urlToArtwork);
-        InputStream is = url.getInputStream();
-        if (url.isFault()) {
-          return;
-        }
-
-        byte[] bytes = IOUtils.toByteArray(is);
-        is.close();
+        byte[] bytes = UrlUtil.getByteArrayFromUrl(urlToArtwork);
 
         String extension = FilenameUtils.getExtension(urlToArtwork);
 
@@ -652,14 +644,12 @@ public class MovieSetArtworkHelper {
         movieSet.addToMediaFiles(writtenArtworkFiles);
         movieSet.saveToDb();
       }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
       catch (Exception e) {
-        if (e instanceof InterruptedException) {
-          // only warning
-          LOGGER.warn("interrupted image download");
-        }
-        else {
-          LOGGER.error("fetch image", e);
-        }
+        LOGGER.error("fetch image: {} - {}", urlToArtwork, e.getMessage());
       }
     }
 

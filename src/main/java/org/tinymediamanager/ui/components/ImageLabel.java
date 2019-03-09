@@ -245,7 +245,6 @@ public class ImageLabel extends JLabel {
         g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
         g.setColor(Color.WHITE);
         g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
-        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
         g.drawImage(scaledImage, offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else if (drawShadow && !drawFullWidth) {
@@ -293,8 +292,6 @@ public class ImageLabel extends JLabel {
 
         // when the image size differs too much - reload and rescale the original image
         recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, newWidth, newHeight);
-
-        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
         g.drawImage(scaledImage, offsetX, offsetY, newWidth, newHeight, this);
       }
     }
@@ -360,6 +357,7 @@ public class ImageLabel extends JLabel {
             Scalr.OP_ANTIALIAS);
       }
       catch (Exception ignored) {
+        scaledImage = null;
       }
     }
   }

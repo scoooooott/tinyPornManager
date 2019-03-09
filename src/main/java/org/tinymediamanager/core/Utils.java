@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1570,6 +1571,25 @@ public class Utils {
     }
 
     return filesFound;
+  }
+
+  /**
+   * flush the {@link FileOutputStream} to the disk
+   */
+  public static void flushFileOutputStreamToDisk(FileOutputStream fileOutputStream) {
+    if (fileOutputStream == null) {
+      return;
+    }
+
+    try {
+      fileOutputStream.flush();
+      fileOutputStream.getFD().sync(); // wait until file has been completely written
+      // give it a few milliseconds
+      Thread.sleep(150);
+    }
+    catch (Exception e) {
+      LOGGER.error("could not flush to disk: {}", e.getMessage());
+    }
   }
 
   /*
