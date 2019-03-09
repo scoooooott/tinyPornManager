@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.util.UrlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -132,24 +133,26 @@ class KodiUrl {
       Url u = getUrl();
 
       if (urlString.contains(".zip")) {
-        LOGGER.debug("Converting ZipFile to Text content for url: " + urlString);
+        LOGGER.debug("Converting ZipFile to Text content for url: {}", urlString);
         // turn the zip contents into a text file
-        ZipInputStream zis = new ZipInputStream(u.getInputStream());
-        ZipEntry ze = null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int MAX_LEN = 2048;
-        byte buf[] = new byte[MAX_LEN];
-        while ((ze = zis.getNextEntry()) != null) {
-          LOGGER.debug("Adding Zip Entry: " + ze.getName() + " to Text content");
-          int len = 0;
-          while ((len = zis.read(buf)) > 0) {
-            baos.write(buf, 0, len);
+        try (InputStream is = u.getInputStream();
+            ZipInputStream zis = new ZipInputStream(is);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+          ZipEntry ze = null;
+          int MAX_LEN = 2048;
+          byte buf[] = new byte[MAX_LEN];
+          while ((ze = zis.getNextEntry()) != null) {
+            LOGGER.debug("Adding Zip Entry ({}) to Text content", ze.getName());
+            int len;
+            while ((len = zis.read(buf)) > 0) {
+              baos.write(buf, 0, len);
+            }
           }
+          baos.flush();
+
+          LOGGER.debug("Returing Text Context as inputstream...");
+          return new ByteArrayInputStream(baos.toByteArray());
         }
-        baos.flush();
-        zis.close();
-        LOGGER.debug("Returing Text Context as inputstream...");
-        return new ByteArrayInputStream(baos.toByteArray());
       }
       else {
         return u.getInputStream();
@@ -166,13 +169,14 @@ class KodiUrl {
   }
 
   public String getTextContent() throws Exception {
-    InputStream is = getInputStream();
-    if (is == null) {
-      LOGGER.error("InputStream was NULL!!!");
-      return "";
+    try (InputStream is = getInputStream()) {
+      if (is == null) {
+        LOGGER.error("InputStream was NULL!!!");
+        return "";
+      }
+
+      return IOUtils.toString(is, UrlUtil.UTF_8); // let's try ;)
     }
-    // return IOUtils.toString(getInputStream()); // why call 2 times and not recycle IS?
-    return IOUtils.toString(is, "UTF-8"); // let's try ;)
   }
 
   @Override
