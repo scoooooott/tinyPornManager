@@ -1,7 +1,6 @@
 package org.tinymediamanager.ui.movies.panels;
 
 import static org.tinymediamanager.core.Constants.FANART;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Dimension;
@@ -156,26 +155,16 @@ public class MovieInformationPanel extends JPanel {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
       // react on selection of a movie and change of a movie
-      if (source instanceof MovieSelectionModel || (source instanceof Movie && MEDIA_FILES.equals(property))) {
+      if (source instanceof MovieSelectionModel) {
         Movie movie = null;
         if (source instanceof MovieSelectionModel) {
           movie = ((MovieSelectionModel) source).getSelectedMovie();
-        }
-        if (source instanceof Movie) {
-          movie = (Movie) source;
         }
 
         if (movie != null) {
           setPoster(movie);
           setFanart(movie);
           panelLogos.setMediaInformationSource(movie);
-
-          if (movie.isWatched()) {
-            // lblUnwatched.setIcon(imageEmtpy);
-          }
-          else {
-            // lblUnwatched.setIcon(imageUnwatched);
-          }
         }
       }
       if (source instanceof Movie || source instanceof MediaFile) {
