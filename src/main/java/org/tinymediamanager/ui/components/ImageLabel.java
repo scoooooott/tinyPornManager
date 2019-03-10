@@ -255,12 +255,16 @@ public class ImageLabel extends JLabel {
         // when the image size differs too much - reload and rescale the original image
         recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, this.getWidth() - 8, this.getHeight() - 8);
 
-        // draw shadow
-        ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
-        BufferedImage shadowImage = shadow.createShadow(scaledImage);
+        // did the image reset to null?
+        if (scaledImage != null) {
+          // draw shadow
+          ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
+          BufferedImage shadowImage = shadow.createShadow(scaledImage);
+          // draw shadow
+          g.drawImage(shadowImage, 8, 8, newWidth - 8, newHeight - 8, this);
 
-        // draw shadow
-        g.drawImage(shadowImage, 8, 8, newWidth - 8, newHeight - 8, this);
+        }
+
         // draw image
         g.drawImage(scaledImage, 0, 0, newWidth - 8, newHeight - 8, this);
       }
@@ -356,7 +360,7 @@ public class ImageLabel extends JLabel {
         scaledImage = Scalr.resize(ImageUtils.createImage(originalImageBytes), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight,
             Scalr.OP_ANTIALIAS);
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
         scaledImage = null;
       }
     }
