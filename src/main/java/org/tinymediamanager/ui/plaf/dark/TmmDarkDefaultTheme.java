@@ -54,7 +54,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     disabledForegroundColor = foregroundColor;
     disabledBackgroundColor = backgroundColorLight;
 
-    selectionForegroundColor = black;
+    selectionForegroundColor = white;
     selectionBackgroundColor = new ColorUIResource(85, 85, 85);
     // selectionBackgroundColor = new ColorUIResource(119, 153, 187);
 

@@ -102,7 +102,7 @@ public class TmmLightDefaultTheme extends TmmTheme {
     tabAreaBackgroundColor = new ColorUIResource(41, 41, 41);
     tabForegroundColor = foregroundColor;
     tabSelectionBackgroundColor = new ColorUIResource(141, 165, 179);
-    tabSelectionForegroundColor = new ColorUIResource(240, 240, 240);
+    tabSelectionForegroundColor = new ColorUIResource(Color.white);
     desktopColor = backgroundColor;
 
     gridColor = new ColorUIResource(206, 206, 206);
