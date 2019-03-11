@@ -106,7 +106,7 @@ public class IconManager {
   public final static ImageIcon            WARN_INTENSIFIED            = createFontAwesomeIcon('\uF071', Color.RED);
   public final static ImageIcon            INFO                        = createFontAwesomeIcon('\uF05A');
   public final static ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF672', new Color(255, 119, 0));
-  public final static ImageIcon            NEW                         = createTextIcon("new", DEFAULT_FONT_SIZE);
+  public final static ImageIcon            NEW                         = createTextIcon("new", DEFAULT_FONT_SIZE, new Color(31, 187, 0));
   public final static ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');
   public final static ImageIcon            STOP                        = createFontAwesomeIcon('\uF28D');
   public final static ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
