@@ -1328,7 +1328,9 @@ public class Utils {
         if (Files.isDirectory(toBeAdded)) {
           Files.walk(toBeAdded).forEach(source -> {
             try {
-              Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()));
+              if (!Files.isDirectory(source)) {
+                Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()), StandardCopyOption.REPLACE_EXISTING);
+              }
             }
             catch (Exception e) {
               LOGGER.error("Failed to create zip file!" + e.getMessage());
