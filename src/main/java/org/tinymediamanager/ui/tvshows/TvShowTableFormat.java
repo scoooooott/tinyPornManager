@@ -31,6 +31,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTableFormat;
+import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
  * The class TvShowTableFormat is used to define the columns for the TV show tree table
@@ -48,6 +49,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     Column col = new Column(BUNDLE.getString("metatag.seasons"), "seasons", this::getSeasons, String.class);
     col.setHeaderIcon(IconManager.SEASONS);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
@@ -57,6 +59,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.episodes"), "episodes", this::getEpisodes, String.class);
     col.setHeaderIcon(IconManager.EPISODES);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
@@ -66,6 +69,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", this::getRating, String.class);
     col.setHeaderIcon(IconManager.RATING);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
@@ -84,6 +88,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", this::getFileSize, String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);

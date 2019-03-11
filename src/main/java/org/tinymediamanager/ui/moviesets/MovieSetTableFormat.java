@@ -30,6 +30,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
  * The class MovieSetTableFormat is used to define the columns for the movie set tree table
@@ -57,6 +58,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", this::getRating, String.class);
     col.setHeaderIcon(IconManager.RATING);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
@@ -75,6 +77,7 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", this::getFileSize, String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);

@@ -23,8 +23,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableColumn;
 
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.renderer.BorderTableCellRenderer;
 
 /**
  * create the movie CellRenderer with the default inset (2 px left)

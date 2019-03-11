@@ -38,10 +38,11 @@ import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
+import org.tinymediamanager.ui.renderer.DateTableCellRenderer;
+import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
  * The MovieTableFormat. Used as definition for the movie table in the movie module
@@ -139,6 +140,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", movie -> movie.getRating().getRating(), Float.class);
     col.setColumnComparator(floatComparator);
     col.setHeaderIcon(IconManager.RATING);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     col.setColumnTooltip(
@@ -151,6 +153,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.votes"), "votes", movie -> movie.getRating().getVotes(), Integer.class);
     col.setColumnComparator(integerComparator);
     col.setHeaderIcon(IconManager.VOTES);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1000000") * 1.2f));
     addColumn(col);
@@ -217,16 +220,11 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
       for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
         size += mf.getFilesize();
       }
-
-      // looks better everything in M
-      // if (size > (2048L * 1024 * 1024)) {
-      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
-      // }
-
       return (int) (size / (1024.0 * 1024.0)) + " M";
     }, String.class);
     col.setColumnComparator(fileSizeComparator);
     col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);

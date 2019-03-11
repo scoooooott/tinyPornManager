@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.renderer;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
