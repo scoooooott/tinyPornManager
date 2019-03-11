@@ -18,6 +18,8 @@ package org.tinymediamanager.ui.components.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -95,8 +97,6 @@ public class ToolbarPanel extends JPanel {
   private ToolbarMenu                 menuEdit;
   private ToolbarMenu                 menuRename;
 
-  private JPanel                      panelEast;
-
   public ToolbarPanel() {
     putClientProperty("class", "toolbarPanel");
     setLayout(new BorderLayout());
@@ -161,13 +161,26 @@ public class ToolbarPanel extends JPanel {
     JLabel lblDonate = new ToolbarLabel(BUNDLE.getString("Toolbar.donate"), e -> btnDonate.getAction().actionPerformed(e));
     panelCenter.add(lblDonate, "cell 11 1,alignx center");
 
-    panelEast = new JPanel();
+    JPanel panelEast = new JPanel();
     add(panelEast, BorderLayout.EAST);
     panelEast.setOpaque(false);
     panelEast.setLayout(new MigLayout("insets 0", "[]", "[grow]"));
     // if we use our window decoration, place the window buttons here
     if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI) {
-      createWindowButtons();
+      TmmWindowDecorationPanel windowDecorationPanel = new TmmWindowDecorationPanel();
+      panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
+      panelEast.add(windowDecorationPanel, "cell 0 0, center, growy");
+
+      // react on double click in the toolbar to maximize/restore
+      panelCenter.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() == 2) {
+            windowDecorationPanel.triggerMaxButton();
+          }
+        }
+      });
+
     }
   }
 
@@ -323,10 +336,5 @@ public class ToolbarPanel extends JPanel {
     menu.add(new AboutAction());
 
     return menu;
-  }
-
-  private void createWindowButtons() {
-    panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
-    panelEast.add(new TmmWindowDecorationPanel(), "cell 0 0, center, growy");
   }
 }
