@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.moviesets;
+package org.tinymediamanager.ui.moviesets.filters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * 
  * @author Manuel Laggner
  */
-public abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements IMovieSetUIFilter<TmmTreeNode> {
+abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements IMovieSetUIFilter<TmmTreeNode> {
   @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?

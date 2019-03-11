@@ -491,6 +491,7 @@ public class TmmTreeTable extends TmmTable {
     }
 
     storeFilters();
+    firePropertyChange("filterChanged", null, treeFilters);
   }
 
   public void setFilterValues(List<AbstractSettings.UIFilters> values) {

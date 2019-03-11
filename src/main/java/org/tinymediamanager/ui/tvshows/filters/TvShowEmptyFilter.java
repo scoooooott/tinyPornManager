@@ -23,7 +23,6 @@ import javax.swing.JLabel;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
  * This class implements a filter to hide empty TV shows in the tree

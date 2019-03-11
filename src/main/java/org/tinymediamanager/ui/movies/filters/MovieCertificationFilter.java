@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
@@ -29,23 +27,20 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a watched movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieCertificationFilter extends AbstractMovieUIFilter {
-  private MovieList                movieList = MovieList.getInstance();
-
-  private JComboBox<Certification> comboBox;
+public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter<Certification> {
+  private MovieList movieList = MovieList.getInstance();
 
   public MovieCertificationFilter() {
     super();
     buildAndInstallCertificationArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallCertificationArray();
-    movieList.addPropertyChangeListener(Constants.AUDIO_CODEC, propertyChangeListener);
+    movieList.addPropertyChangeListener(Constants.CERTIFICATION, propertyChangeListener);
   }
 
   @Override
@@ -54,35 +49,9 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return ((Certification) comboBox.getSelectedItem()).name();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-    if (value instanceof Certification) {
-      comboBox.setSelectedItem(value);
-    }
-    else if (value instanceof String) {
-      Certification certification = Certification.valueOf((String) value);
-      if (certification != null) {
-        comboBox.setSelectedItem(certification);
-      }
-    }
-  }
-
-  @Override
   public boolean accept(Movie movie) {
-    Certification cert = (Certification) comboBox.getSelectedItem();
-    return cert == movie.getCertification();
+    List<Certification> selectedItems = checkComboBox.getSelectedItems();
+    return selectedItems.contains(movie.getCertification());
   }
 
   @Override
@@ -90,30 +59,20 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(Certification.values());
-    return comboBox;
-  }
-
   private void buildAndInstallCertificationArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
-
-    Certification oldValue = (Certification) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-
     List<Certification> certifications = new ArrayList<>(movieList.getCertificationsInMovies());
     Collections.sort(certifications);
-    for (Certification cert : certifications) {
-      comboBox.addItem(cert);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
+    setValues(certifications);
+  }
 
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(Certification type) throws Exception {
+    return type.name();
+  }
+
+  @Override
+  protected Certification parseStringToType(String string) throws Exception {
+    return Certification.valueOf(string);
   }
 }

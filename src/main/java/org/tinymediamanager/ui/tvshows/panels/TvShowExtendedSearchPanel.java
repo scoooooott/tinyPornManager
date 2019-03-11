@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.panels.RoundedPanel;
-import org.tinymediamanager.ui.tvshows.ITvShowUIFilter;
+import org.tinymediamanager.ui.tvshows.filters.ITvShowUIFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowCastFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowDatasourceFilter;

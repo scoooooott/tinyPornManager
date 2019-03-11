@@ -18,6 +18,8 @@ package org.tinymediamanager.core.movie;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
@@ -83,14 +86,16 @@ public class MovieList extends AbstractModelObject {
   private final MovieSettings          movieSettings;
   private final List<Movie>            movieList;
   private final List<MovieSet>         movieSetList;
-  private final List<String>           tagsObservable;
-  private final List<String>           videoCodecsObservable;
-  private final List<String>           videoContainersObservable;
-  private final List<String>           audioCodecsObservable;
-  private final List<Certification>    certificationsObservable;
-  private final List<Double>           frameRateObservable;
 
-  private final PropertyChangeListener tagListener;
+  private final Set<Integer>           yearsInMovies;
+  private final Set<String>            tagsInMovies;
+  private final Set<String>            videoCodecsInMovies;
+  private final Set<String>            videoContainersInMovies;
+  private final Set<String>            audioCodecsInMovies;
+  private final Set<Certification>     certificationsInMovies;
+  private final Set<Double>            frameRatesInMovies;
+
+  private final PropertyChangeListener movieListener;
   private final PropertyChangeListener movieSetListener;
   private final Comparator<MovieSet>   movieSetComparator = new MovieSetComparator();
 
@@ -101,27 +106,39 @@ public class MovieList extends AbstractModelObject {
     // create all lists
     movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Movie.class));
     movieSetList = new ObservableCopyOnWriteArrayList<>();
-    tagsObservable = new ObservableCopyOnWriteArrayList<>();
-    videoCodecsObservable = new ObservableCopyOnWriteArrayList<>();
-    videoContainersObservable = new ObservableCopyOnWriteArrayList<>();
-    audioCodecsObservable = new ObservableCopyOnWriteArrayList<>();
-    certificationsObservable = new ObservableCopyOnWriteArrayList<>();
-    frameRateObservable = new ObservableCopyOnWriteArrayList<>();
 
-    // the tag listener: its used to always have a full list of all tags used in tmm
-    tagListener = evt -> {
-      // listen to changes of tags
-      if ("tag".equals(evt.getPropertyName())) {
+    yearsInMovies = new CopyOnWriteArraySet<>();
+    tagsInMovies = new CopyOnWriteArraySet<>();
+    videoCodecsInMovies = new CopyOnWriteArraySet<>();
+    videoContainersInMovies = new CopyOnWriteArraySet<>();
+    audioCodecsInMovies = new CopyOnWriteArraySet<>();
+    certificationsInMovies = new CopyOnWriteArraySet<>();
+    frameRatesInMovies = new CopyOnWriteArraySet<>();
+
+    // movie listener: its used to always have a full list of all tags, codecs, years, ... used in tmm
+    movieListener = evt -> {
+      if (evt.getSource() instanceof Movie) {
         Movie movie = (Movie) evt.getSource();
-        updateTags(movie);
-      }
-      if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName())) {
-        Movie movie = (Movie) evt.getSource();
-        updateMediaInformationLists(movie);
-      }
-      if (CERTIFICATION.equals(evt.getPropertyName())) {
-        Movie movie = (Movie) evt.getSource();
-        updateCertifications(movie);
+
+        // do not update all list at the same time - could be a performance issue
+        switch (evt.getPropertyName()) {
+          case YEAR:
+            updateYear(movie);
+            break;
+
+          case CERTIFICATION:
+            updateCertifications(movie);
+            break;
+
+          case TAG:
+            updateTags(movie);
+            break;
+
+          case MEDIA_FILES:
+          case MEDIA_INFORMATION:
+            updateMediaInformationLists(movie);
+            break;
+        }
       }
     };
 
@@ -163,8 +180,8 @@ public class MovieList extends AbstractModelObject {
       int oldValue = movieList.size();
       movieList.add(movie);
 
-      updateTags(movie);
-      movie.addPropertyChangeListener(tagListener);
+      updateLists(movie);
+      movie.addPropertyChangeListener(movieListener);
       firePropertyChange("movies", null, movieList);
       firePropertyChange("movieCount", oldValue, movieList.size());
     }
@@ -382,10 +399,8 @@ public class MovieList extends AbstractModelObject {
     // 3. initialize movies/movie sets (e.g. link with each others)
     for (Movie movie : movieList) {
       movie.initializeAfterLoading();
-      updateTags(movie);
-      updateMediaInformationLists(movie);
-      updateCertifications(movie);
-      movie.addPropertyChangeListener(tagListener);
+      updateLists(movie);
+      movie.addPropertyChangeListener(movieListener);
     }
 
     for (MovieSet movieSet : movieSetList) {
@@ -778,13 +793,23 @@ public class MovieList extends AbstractModelObject {
     return count;
   }
 
+  private void updateLists(Movie movie) {
+    updateYear(movie);
+    updateTags(movie);
+    updateCertifications(movie);
+    updateMediaInformationLists(movie);
+  }
+
   /**
-   * Gets the tags in movies.
-   * 
-   * @return the tags in movies
+   * Update year in movies
+   *
+   * @param movie
+   *          the movie
    */
-  public List<String> getTagsInMovies() {
-    return tagsObservable;
+  private void updateYear(Movie movie) {
+    if (yearsInMovies.add(movie.getYear())) {
+      firePropertyChange(YEAR, null, yearsInMovies);
+    }
   }
 
   /**
@@ -794,17 +819,9 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateTags(Movie movie) {
-    List<String> availableTags = new ArrayList<>(tagsObservable);
-    for (String tagInMovie : new ArrayList<>(movie.getTags())) {
-      boolean tagFound = false;
-      for (String tag : availableTags) {
-        if (tagInMovie.equals(tag)) {
-          tagFound = true;
-          break;
-        }
-      }
-      if (!tagFound) {
-        addTag(tagInMovie);
+    for (String tag : movie.getTags()) {
+      if (tagsInMovies.add(tag)) {
+        firePropertyChange(TAG, null, tagsInMovies);
       }
     }
   }
@@ -818,123 +835,72 @@ public class MovieList extends AbstractModelObject {
   private void updateMediaInformationLists(Movie movie) {
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
-      String videoCodec = mf.getVideoCodec();
-      if (!videoCodecsObservable.contains(videoCodec)) {
-        addVideoCodec(videoCodec);
+      if (videoCodecsInMovies.add(mf.getVideoCodec())) {
+        firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsInMovies);
       }
 
       // frame rate
-      Double frameRate = mf.getFrameRate();
-      if (!frameRateObservable.contains(frameRate)) {
-        addFrameRate(frameRate);
+      if (frameRatesInMovies.add(mf.getFrameRate())) {
+        firePropertyChange(Constants.FRAME_RATE, null, frameRatesInMovies);
       }
 
       // video container
       String container = mf.getContainerFormat();
-      if (StringUtils.isNotBlank(container) && !videoContainersObservable.contains(container.toLowerCase(Locale.ROOT))) {
-        addVideoContainer(container.toLowerCase(Locale.ROOT));
+      if (StringUtils.isNotBlank(container) && videoContainersInMovies.add(container.toLowerCase(Locale.ROOT))) {
+        firePropertyChange(Constants.VIDEO_CONTAINER, null, videoContainersInMovies);
       }
 
       // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        String audioCodec = audio.getCodec();
-        if (!audioCodecsObservable.contains(audioCodec)) {
-          addAudioCodec(audioCodec);
+        if (audioCodecsInMovies.add(audio.getCodec())) {
+          firePropertyChange(Constants.AUDIO_CODEC, null, audioCodecsInMovies);
         }
       }
     }
   }
 
   private void updateCertifications(Movie movie) {
-    if (!certificationsObservable.contains(movie.getCertification())) {
+    if (!certificationsInMovies.contains(movie.getCertification())) {
       addCertification(movie.getCertification());
     }
   }
 
-  public List<String> getVideoCodecsInMovies() {
-    return videoCodecsObservable;
-  }
-
-  public List<String> getVideoContainersInMovies() {
-    return videoContainersObservable;
-  }
-
-  public List<String> getAudioCodecsInMovies() {
-    return audioCodecsObservable;
-  }
-
-  public List<Certification> getCertificationsInMovies() {
-    return certificationsObservable;
-  }
-
-  public List<Double> getFrameRatesInMovies() {
-    return frameRateObservable;
+  /**
+   * get a {@link Set} of all years in movies
+   * 
+   * @return a {@link Set} of all years
+   */
+  public Set<Integer> getYearsInMovies() {
+    return yearsInMovies;
   }
 
   /**
-   * Adds the tag.
+   * get a {@link Set} of all tags in movies.
    *
-   * @param newTag
-   *          the new tag
+   * @return a {@link Set} of all tags
    */
-  private void addTag(String newTag) {
-    if (StringUtils.isBlank(newTag)) {
-      return;
-    }
-
-    synchronized (tagsObservable) {
-      if (tagsObservable.contains(newTag)) {
-        return;
-      }
-      tagsObservable.add(newTag);
-    }
-
-    firePropertyChange("tag", null, tagsObservable);
+  public Set<String> getTagsInMovies() {
+    return tagsInMovies;
   }
 
-  private void addVideoCodec(String newCodec) {
-    if (StringUtils.isBlank(newCodec)) {
-      return;
-    }
-
-    synchronized (videoCodecsObservable) {
-      if (videoCodecsObservable.contains(newCodec)) {
-        return;
-      }
-      videoCodecsObservable.add(newCodec);
-    }
-
-    firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsObservable);
+  public Set<String> getVideoCodecsInMovies() {
+    return videoCodecsInMovies;
   }
 
-  private void addVideoContainer(String newContainer) {
-    if (StringUtils.isBlank(newContainer)) {
-      return;
-    }
-
-    synchronized (videoContainersObservable) {
-      if (videoContainersObservable.contains(newContainer)) {
-        return;
-      }
-      videoContainersObservable.add(newContainer);
-    }
-
-    firePropertyChange(Constants.VIDEO_CONTAINER, null, videoContainersObservable);
+  public Set<String> getVideoContainersInMovies() {
+    return videoContainersInMovies;
   }
 
-  private void addAudioCodec(String newCodec) {
-    if (StringUtils.isBlank(newCodec)) {
-      return;
-    }
+  public Set<String> getAudioCodecsInMovies() {
+    return audioCodecsInMovies;
+  }
 
-    synchronized (audioCodecsObservable) {
-      if (audioCodecsObservable.contains(newCodec)) {
-        return;
-      }
-      audioCodecsObservable.add(newCodec);
-    }
+  public Set<Certification> getCertificationsInMovies() {
+    return certificationsInMovies;
+  }
 
-    firePropertyChange(Constants.AUDIO_CODEC, null, audioCodecsObservable);
+  public Set<Double> getFrameRatesInMovies() {
+    return frameRatesInMovies;
   }
 
   private void addCertification(Certification newCert) {
@@ -942,29 +908,14 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    synchronized (certificationsObservable) {
-      if (certificationsObservable.contains(newCert)) {
+    synchronized (certificationsInMovies) {
+      if (certificationsInMovies.contains(newCert)) {
         return;
       }
-      certificationsObservable.add(newCert);
+      certificationsInMovies.add(newCert);
     }
 
-    firePropertyChange(Constants.CERTIFICATION, null, certificationsObservable);
-  }
-
-  private void addFrameRate(Double newFrameRate) {
-    if (newFrameRate == 0) {
-      return;
-    }
-
-    synchronized (frameRateObservable) {
-      if (frameRateObservable.contains(newFrameRate)) {
-        return;
-      }
-      frameRateObservable.add(newFrameRate);
-    }
-
-    firePropertyChange(Constants.FRAME_RATE, null, frameRateObservable);
+    firePropertyChange(Constants.CERTIFICATION, null, certificationsInMovies);
   }
 
   /**

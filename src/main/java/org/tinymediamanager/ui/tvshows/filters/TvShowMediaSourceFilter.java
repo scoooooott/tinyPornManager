@@ -15,11 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.filters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -27,16 +24,13 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
  * This class implements a media source filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
-  private TmmCheckComboBox<MediaSource> checkComboBox;
+public class TvShowMediaSourceFilter extends AbstractCheckComboBoxTvShowUIFilter<MediaSource> {
 
   public TvShowMediaSourceFilter() {
     super();
@@ -47,39 +41,6 @@ public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
   @Override
   public String getId() {
     return "tvShowMediaSource";
-  }
-
-  @Override
-  public String getFilterValueAsString() {
-    List<String> values = new ArrayList<>();
-    for (MediaSource mediaSource : checkComboBox.getSelectedItems()) {
-      values.add(mediaSource.name());
-    }
-    try {
-      return objectMapper.writeValueAsString(values);
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    List<MediaSource> selectedItems = new ArrayList<>();
-
-    try {
-      List<String> values = objectMapper.readValue((String) value, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
-
-      for (String source : values) {
-        MediaSource mediaSource = MediaSource.getMediaSource(source);
-        selectedItems.add(mediaSource);
-      }
-
-    }
-    catch (Exception ignored) {
-    }
-
-    checkComboBox.setSelectedItems(selectedItems);
   }
 
   @Override
@@ -100,25 +61,17 @@ public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    checkComboBox = new TmmCheckComboBox<>();
-    return checkComboBox;
+  private void buildAndInstallMediaSources() {
+    setValues(MediaSource.values());
   }
 
-  private void buildAndInstallMediaSources() {
-    // remove the listener to not firing unnecessary events
-    checkComboBox.removeActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(MediaSource type) throws Exception {
+    return type.name();
+  }
 
-    List<MediaSource> selectedItems = checkComboBox.getSelectedItems();
-
-    checkComboBox.setItems(Arrays.asList(MediaSource.values()));
-
-    if (!selectedItems.isEmpty()) {
-      checkComboBox.setSelectedItems(selectedItems);
-    }
-
-    // re-add the itemlistener
-    checkComboBox.addActionListener(actionListener);
+  @Override
+  protected MediaSource parseStringToType(String string) throws Exception {
+    return MediaSource.getMediaSource(string);
   }
 }

@@ -17,23 +17,29 @@
 package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.moviesets.IMovieSetUIFilter;
+import org.tinymediamanager.ui.moviesets.filters.IMovieSetUIFilter;
 import org.tinymediamanager.ui.moviesets.filters.MovieSetDatasourceFilter;
 import org.tinymediamanager.ui.moviesets.filters.MovieSetNewMoviesFilter;
 import org.tinymediamanager.ui.moviesets.filters.MovieSetWithMoreThanOneMovieFilter;
@@ -41,14 +47,18 @@ import org.tinymediamanager.ui.moviesets.filters.MovieSetWithMoreThanOneMovieFil
 import net.miginfocom.swing.MigLayout;
 
 public class MovieSetFilterDialog extends TmmDialog {
-  private static final long             serialVersionUID = 5003714573168481816L;
+  private static final long                         serialVersionUID = 5003714573168481816L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private static final float            FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
+  private static final float                        FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
 
-  private final TmmTreeTable            treeTable;
-  private final JPanel                  panelFilter;
+  private final TmmTreeTable                        treeTable;
+
+  // map for storing which filter is in which panel
+  private final Map<JPanel, Set<IMovieSetUIFilter>> filterMap;
+
+  private JTabbedPane                               tabbedPane;
 
   public MovieSetFilterDialog(TmmTreeTable treeTable) {
     super(BUNDLE.getString("movieextendedsearch.options"), "movieSetFilter");
@@ -56,24 +66,36 @@ public class MovieSetFilterDialog extends TmmDialog {
 
     this.treeTable = treeTable;
 
+    this.filterMap = new HashMap<>();
+    this.treeTable.addPropertyChangeListener("filterChanged", evt -> filterChanged());
+
     {
-      JPanel panelContent = new JPanel();
-      getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][10lp][100lp, grow]", "[][20lp:n,grow][][][]"));
+      tabbedPane = new MainTabbedPane() {
+        private static final long serialVersionUID = 9041548865608767661L;
 
-      JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
-      setComponentFont(lblFilterBy);
-      panelContent.add(lblFilterBy, "cell 0 0,growx,aligny top");
+        @Override
+        public void updateUI() {
+          putClientProperty("leftBorder", "half");
+          putClientProperty("rightBorder", "half");
+          putClientProperty("bottomBorder", Boolean.FALSE);
+          super.updateUI();
+        }
+      };
+      getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-      panelFilter = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+      {
+        // panel Main
+        JPanel panelMain = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+        JScrollPane scrollPaneMain = new JScrollPane(panelMain);
+        scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab(BUNDLE.getString("metatag.details"), scrollPaneMain);
 
-      JScrollPane scrollPane = new JScrollPane(panelFilter);
-      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      panelContent.add(scrollPane, "cell 0 1 3 1,grow");
+        panelMain.add(new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")), "cell 0 0 3 1, growx, aligny top, wrap");
 
-      addFilter(new MovieSetNewMoviesFilter());
-      addFilter(new MovieSetWithMoreThanOneMovieFilter());
-      addFilter(new MovieSetDatasourceFilter());
+        addFilter(new MovieSetNewMoviesFilter(), panelMain);
+        addFilter(new MovieSetWithMoreThanOneMovieFilter(), panelMain);
+        addFilter(new MovieSetDatasourceFilter(), panelMain);
+      }
     }
   }
 
@@ -82,23 +104,61 @@ public class MovieSetFilterDialog extends TmmDialog {
    *
    * @param filter
    *          the filter to be added
+   * @param panel
+   *          the panel to add the filter to
    */
-  private void addFilter(IMovieSetUIFilter<TmmTreeNode> filter) {
-    panelFilter.add(filter.getCheckBox(), "");
-    panelFilter.add(filter.getLabel(), "right");
+  private void addFilter(IMovieSetUIFilter<TmmTreeNode> filter, JPanel panel) {
+    panel.add(filter.getCheckBox(), "");
+    panel.add(filter.getLabel(), "right");
 
     if (filter.getFilterComponent() != null) {
-      panelFilter.add(filter.getFilterComponent(), "wmin 100, grow, wrap");
+      panel.add(filter.getFilterComponent(), "wmin 100, grow, wrap");
     }
     else {
-      panelFilter.add(Box.createGlue(), "wrap");
+      panel.add(Box.createGlue(), "wrap");
     }
+
+    Set<IMovieSetUIFilter> filters = filterMap.computeIfAbsent(panel, k -> new HashSet<>());
+    filters.add(filter);
 
     treeTable.addFilter(filter);
   }
 
-  private void setComponentFont(JComponent comp) {
-    comp.setFont(comp.getFont().deriveFont(FONT_SIZE));
+  /**
+   * re-calculate if the active filter icon should be displayed
+   */
+  private void filterChanged() {
+    for (Map.Entry<JPanel, Set<IMovieSetUIFilter>> entry : filterMap.entrySet()) {
+      boolean active = false;
+      for (IMovieSetUIFilter filter : entry.getValue()) {
+        switch (filter.getFilterState()) {
+          case ACTIVE:
+          case ACTIVE_NEGATIVE:
+            active = true;
+            break;
+
+          default:
+            break;
+        }
+
+        if (active) {
+          break;
+        }
+      }
+
+      for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+        if (SwingUtilities.isDescendingFrom(entry.getKey(), tabbedPane.getComponentAt(i))) {
+          if (active) {
+            tabbedPane.setIconAt(i, IconManager.FILTER_ACTIVE);
+          }
+          else {
+            tabbedPane.setIconAt(i, null);
+          }
+
+          break;
+        }
+      }
+    }
   }
 
   @Override

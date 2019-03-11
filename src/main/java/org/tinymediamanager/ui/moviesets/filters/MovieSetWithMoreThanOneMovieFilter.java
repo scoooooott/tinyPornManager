@@ -23,7 +23,6 @@ import javax.swing.JLabel;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.moviesets.AbstractMovieSetUIFilter;
 
 /**
  * this class is used for a movie set filter to show movie sets containing more than one movies

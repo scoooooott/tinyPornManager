@@ -21,11 +21,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmUIFilter;
+import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 
 import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;
@@ -89,8 +92,10 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
    * re-filter the list
    */
   private void updateFiltering() {
-    Matcher<Movie> matcher = new MovieMatcher(new HashSet<>(filters));
-    fireChanged(matcher);
+    SwingUtilities.invokeLater(() -> {
+      Matcher<Movie> matcher = new MovieMatcher(new HashSet<>(filters));
+      fireChanged(matcher);
+    });
 
     if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
       List<AbstractSettings.UIFilters> filterValues = new ArrayList<>();
@@ -106,6 +111,15 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
       MovieModuleManager.SETTINGS.setUiFilters(filterValues);
       MovieModuleManager.SETTINGS.saveSettings();
     }
+  }
+
+  /**
+   * get all filters
+   * 
+   * @return a {@link Set<IMovieUIFilter>} of all filters
+   */
+  public Set<IMovieUIFilter> getFilters() {
+    return filters;
   }
 
   /*

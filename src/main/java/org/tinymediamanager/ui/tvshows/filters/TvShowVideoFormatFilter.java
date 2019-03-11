@@ -17,24 +17,24 @@ package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
  * This class implements a video format filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
-  private JComboBox<String> comboBox;
+public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter<String> {
+
+  public TvShowVideoFormatFilter() {
+    super();
+    setValues(MediaFile.getVideoFormats());
+  }
 
   @Override
   public String getId() {
@@ -42,55 +42,34 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
-  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
-    String videoFormat = (String) comboBox.getSelectedItem();
+    List<String> selectedValues = checkComboBox.getSelectedItems();
 
-    if (StringUtils.isBlank(videoFormat)) {
-      return true;
-    }
+    for (String videoFormat : selectedValues) {
 
-    for (TvShowEpisode episode : episodes) {
-      if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
-        if (invert ^ (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
-          return true;
+      for (TvShowEpisode episode : episodes) {
+        if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
+          if (invert ^ (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
+            return true;
+          }
+          if (invert ^ (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
+            return true;
+          }
         }
-        if (invert ^ (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
-          return true;
+        else {
+          if (invert ^ videoFormat.equals(episode.getMediaInfoVideoFormat())) {
+            return true;
+          }
         }
       }
-      else {
-        if (invert ^ videoFormat.equals(episode.getMediaInfoVideoFormat())) {
-          return true;
-        }
-      }
     }
+
     return false;
   }
 
   @Override
   protected JLabel createLabel() {
     return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
-  }
-
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(getVideoFormats());
-    return comboBox;
   }
 
   private String[] getVideoFormats() {
@@ -112,5 +91,15 @@ public class TvShowVideoFormatFilter extends AbstractTvShowUIFilter {
       return true;
     }
     return false;
+  }
+
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
+
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

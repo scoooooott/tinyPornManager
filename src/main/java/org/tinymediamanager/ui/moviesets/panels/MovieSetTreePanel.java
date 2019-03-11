@@ -35,6 +35,7 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmListPanel;
@@ -63,6 +64,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
   private JLabel                      lblMovieCountTotal;
   private JLabel                      lblMovieSetCountFiltered;
   private JLabel                      lblMovieSetCountTotal;
+  private JButton                     btnFilter;
 
   public MovieSetTreePanel(MovieSetSelectionModel movieSetSelectionModel) {
     initComponents();
@@ -75,12 +77,12 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][400lp,grow]0[][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[200lp:n,grow][100lp:n,fill]", "[][400lp,grow]0[][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
 
-    final JButton btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     btnFilter.addActionListener(e -> MovieSetUIModule.getInstance().setFilterDialogVisible(true));
     add(btnFilter, "cell 1 0");
@@ -107,6 +109,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
         }
       }
     };
+    tree.addPropertyChangeListener("filterChanged", evt -> updateFilterIndicator());
 
     // restore hidden columns
     tree.readHiddenColumns(MovieModuleManager.SETTINGS.getMovieSetTableHiddenColumns());
@@ -234,6 +237,35 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
 
       lblMovieCountTotal = new JLabel("");
       add(lblMovieCountTotal, "cell 0 4 2 1");
+    }
+  }
+
+  private void updateFilterIndicator() {
+    boolean active = false;
+    for (ITmmTreeFilter<TmmTreeNode> filter : tree.getFilters()) {
+      if (filter instanceof ITmmUIFilter) {
+        ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
+        switch (uiFilter.getFilterState()) {
+          case ACTIVE:
+          case ACTIVE_NEGATIVE:
+            active = true;
+            break;
+
+          default:
+            break;
+        }
+
+        if (active) {
+          break;
+        }
+      }
+    }
+
+    if (active) {
+      btnFilter.setIcon(IconManager.FILTER_ACTIVE);
+    }
+    else {
+      btnFilter.setIcon(null);
     }
   }
 

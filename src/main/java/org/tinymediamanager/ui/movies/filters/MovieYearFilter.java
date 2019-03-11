@@ -15,24 +15,38 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.util.Calendar;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
+import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a year movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieYearFilter extends AbstractMovieUIFilter {
-  JSpinner spinner;
+public class MovieYearFilter extends AbstractCheckComboBoxMovieUIFilter<Integer> {
+  private MovieList movieList = MovieList.getInstance();
+
+  public MovieYearFilter() {
+    super();
+    buildAndInstallYears();
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallYears();
+    movieList.addPropertyChangeListener(Constants.YEAR, propertyChangeListener);
+  }
+
+  private void buildAndInstallYears() {
+    List<Integer> years = new ArrayList<>(movieList.getYearsInMovies());
+    Collections.sort(years);
+    setValues(years);
+  }
 
   @Override
   public String getId() {
@@ -40,43 +54,9 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return spinner.getValue().toString();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-
-    Integer year = null;
-    if (value instanceof Integer) {
-      year = (Integer) value;
-    }
-    else {
-      try {
-        year = Integer.parseInt(value.toString());
-      }
-      catch (NumberFormatException ignored) {
-
-      }
-    }
-
-    if (year != null) {
-      spinner.setValue(year);
-    }
-  }
-
-  @Override
   public boolean accept(Movie movie) {
-    Integer year = (Integer) spinner.getValue();
-    return movie.getYear() == year;
+    List<Integer> selectedItems = checkComboBox.getSelectedItems();
+    return selectedItems.contains(movie.getYear());
   }
 
   @Override
@@ -85,10 +65,12 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  protected JComponent createFilterComponent() {
-    int year = Calendar.getInstance().get(Calendar.YEAR);
-    spinner = new JSpinner(new SpinnerNumberModel(year, 0, 3000, 1));
-    spinner.setEditor(new JSpinner.NumberEditor(spinner, "#"));
-    return spinner;
+  protected String parseTypeToString(Integer type) throws Exception {
+    return type.toString();
+  }
+
+  @Override
+  protected Integer parseStringToType(String string) throws Exception {
+    return Integer.parseInt(string);
   }
 }

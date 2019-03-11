@@ -20,7 +20,6 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a missing subtitles movie filter

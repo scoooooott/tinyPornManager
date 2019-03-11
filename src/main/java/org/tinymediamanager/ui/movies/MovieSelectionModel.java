@@ -26,6 +26,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
@@ -69,6 +70,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     propertyChangeListener = evt -> {
       if (evt.getSource() == selectedMovie) {
         firePropertyChange(evt);
+      }
+      if (evt.getSource() instanceof IMovieUIFilter) {
+        firePropertyChange("filterChanged", null, evt.getSource());
       }
     };
   }
@@ -137,7 +141,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     }
 
     // display first selected movie
-    if (selectedMovies.size() > 0 && selectedMovie != selectedMovies.get(0)) {
+    if (!selectedMovies.isEmpty() && selectedMovie != selectedMovies.get(0)) {
       Movie oldValue = selectedMovie;
       selectedMovie = selectedMovies.get(0);
 
@@ -152,7 +156,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     }
 
     // display empty movie (i.e. when all movies are removed from the list)
-    if (selectedMovies.size() == 0) {
+    if (selectedMovies.isEmpty()) {
       Movie oldValue = selectedMovie;
       selectedMovie = initialMovie;
       // unregister propertychangelistener
@@ -241,6 +245,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public void addFilter(IMovieUIFilter filter) {
     matcherEditor.addFilter(filter);
+    filter.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**
@@ -249,7 +254,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param values
    *          the values to be set
    */
-  public void setFilterValues(List<AbstractSettings.UIFilters> values) {
+  void setFilterValues(List<AbstractSettings.UIFilters> values) {
     matcherEditor.setFilterValues(values);
+    firePropertyChange("filterChanged", null, values);
   }
 }

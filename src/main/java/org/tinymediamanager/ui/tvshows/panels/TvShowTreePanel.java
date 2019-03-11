@@ -48,6 +48,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmListPanel;
@@ -80,6 +81,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   private JLabel                      lblEpisodeCountTotal;
   private JLabel                      lblTvShowCountFiltered;
   private JLabel                      lblTvShowCountTotal;
+  private JButton                     btnFilter;
 
   public TvShowTreePanel(TvShowSelectionModel selectionModel) {
     initComponents();
@@ -105,15 +107,15 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:n,grow]0[][][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[200lp:n,grow][100lp:n,fill]", "[][200lp:n,grow]0[][][]"));
 
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
-    add(searchField, "cell 0 0,grow");
+    add(searchField, "cell 0 0,growx");
 
-    final JButton btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterDialogVisible(true));
-    add(btnFilter, "cell 1 0,alignx left,aligny bottom");
+    add(btnFilter, "cell 1 0");
 
     tree = new TmmTreeTable(new TvShowTreeDataProvider(), new TvShowTableFormat()) {
       private static final long serialVersionUID = 5889201999994512935L;
@@ -139,6 +141,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
         }
       }
     };
+    tree.addPropertyChangeListener("filterChanged", evt -> updateFilterIndicator());
 
     // restore hidden columns
     tree.readHiddenColumns(TvShowModuleManager.SETTINGS.getTvShowTableHiddenColumns());
@@ -277,6 +280,35 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
 
       lblEpisodeCountTotal = new JLabel("");
       add(lblEpisodeCountTotal, "cell 0 4 2 1");
+    }
+  }
+
+  private void updateFilterIndicator() {
+    boolean active = false;
+    for (ITmmTreeFilter<TmmTreeNode> filter : tree.getFilters()) {
+      if (filter instanceof ITmmUIFilter) {
+        ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
+        switch (uiFilter.getFilterState()) {
+          case ACTIVE:
+          case ACTIVE_NEGATIVE:
+            active = true;
+            break;
+
+          default:
+            break;
+        }
+
+        if (active) {
+          break;
+        }
+      }
+    }
+
+    if (active) {
+      btnFilter.setIcon(IconManager.FILTER_ACTIVE);
+    }
+    else {
+      btnFilter.setIcon(null);
     }
   }
 

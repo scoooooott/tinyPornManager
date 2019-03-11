@@ -53,13 +53,13 @@ import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
 import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
-import org.tinymediamanager.ui.movies.actions.MovieToggleWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieToggleWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateAction;
@@ -143,8 +143,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
 
     // further initializations
     init();
-
-    listPanel.setInitialSelection();
   }
 
   private void init() {
@@ -155,10 +153,14 @@ public class MovieUIModule extends AbstractTmmUIModule {
         selectionModel.setFilterValues(MovieModuleManager.SETTINGS.getUiFilters());
       });
     }
+
     // apply sorting
     if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
       selectionModel.sortMovies(MovieModuleManager.SETTINGS.getSortColumn(), MovieModuleManager.SETTINGS.isSortAscending());
     }
+
+    // init the table panel
+    listPanel.init();
   }
 
   public static MovieUIModule getInstance() {

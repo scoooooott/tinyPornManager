@@ -15,34 +15,30 @@
  */
 package org.tinymediamanager.ui.tvshows.filters;
 
+import static org.tinymediamanager.core.MediaFileType.AUDIO;
+import static org.tinymediamanager.core.MediaFileType.VIDEO;
+
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
  * This class implements a audio codec filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowAudioCodecFilter extends AbstractTvShowUIFilter {
-  private TvShowList        tvShowList = TvShowList.getInstance();
-
-  private JComboBox<String> comboBox;
+public class TvShowAudioCodecFilter extends AbstractCheckComboBoxTvShowUIFilter<String> {
+  private TvShowList tvShowList = TvShowList.getInstance();
 
   public TvShowAudioCodecFilter() {
     super();
@@ -57,36 +53,21 @@ public class TvShowAudioCodecFilter extends AbstractTvShowUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
-  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
-    String codec = (String) comboBox.getSelectedItem();
-    if (StringUtils.isBlank(codec)) {
-      return true;
-    }
+    List<String> codecs = checkComboBox.getSelectedItems();
 
     // search codec in the episodes
     for (TvShowEpisode episode : episodes) {
-      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      List<MediaFile> mfs = episode.getMediaFiles(VIDEO, AUDIO);
       for (MediaFile mf : mfs) {
-        if (invert ^ mf.getAudioCodec().equalsIgnoreCase(codec)) {
-          return true;
+        for (String audioCodec : mf.getAudioCodecList()) {
+          if (invert ^ codecs.contains(audioCodec)) {
+            return true;
+          }
         }
       }
     }
+
     return false;
   }
 
@@ -95,30 +76,20 @@ public class TvShowAudioCodecFilter extends AbstractTvShowUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
-  }
-
   private void buildAndInstallCodecArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
-
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-
     List<String> codecs = new ArrayList<>(tvShowList.getAudioCodecsInEpisodes());
     Collections.sort(codecs);
-    for (String codec : codecs) {
-      comboBox.addItem(codec);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
+    setValues(codecs);
+  }
 
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
+
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

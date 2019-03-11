@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
  * This class implements a production company/studio filter for the TV show tree

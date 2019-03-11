@@ -20,25 +20,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a video codec movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieVideoCodecFilter extends AbstractMovieUIFilter {
-  private MovieList         movieList = MovieList.getInstance();
-
-  private JComboBox<String> comboBox;
+public class MovieVideoCodecFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
+  private MovieList movieList = MovieList.getInstance();
 
   public MovieVideoCodecFilter() {
     super();
@@ -53,24 +48,9 @@ public class MovieVideoCodecFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
-  @Override
   public boolean accept(Movie movie) {
-    String videoCodec = (String) comboBox.getSelectedItem();
-    return videoCodec != null && videoCodec.equals(movie.getMediaInfoVideoCodec());
+    List<String> selectedValues = checkComboBox.getSelectedItems();
+    return selectedValues.contains(movie.getMediaInfoVideoCodec());
   }
 
   @Override
@@ -78,30 +58,20 @@ public class MovieVideoCodecFilter extends AbstractMovieUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
-  }
-
   private void buildAndInstallCodecArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
-
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-
     List<String> codecs = new ArrayList<>(movieList.getVideoCodecsInMovies());
     Collections.sort(codecs);
-    for (String codec : codecs) {
-      comboBox.addItem(codec);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
+    setValues(codecs);
+  }
 
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
+
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }
