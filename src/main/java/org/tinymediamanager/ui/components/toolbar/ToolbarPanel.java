@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.components.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,6 +70,7 @@ import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
+import com.jtattoo.plaf.TitlePane;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -82,10 +81,12 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Manuel Laggner
  */
-public class ToolbarPanel extends JPanel {
-  private static final long           serialVersionUID = 7969400170662870244L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+public class ToolbarPanel extends JPanel implements TitlePane {
+  private static final long           serialVersionUID      = 7969400170662870244L;
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());
+  private final static Logger         LOGGER                = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+
+  private TmmWindowDecorationPanel    windowDecorationPanel = null;
 
   private ToolbarButton               btnSearch;
   private ToolbarButton               btnEdit;
@@ -167,20 +168,9 @@ public class ToolbarPanel extends JPanel {
     panelEast.setLayout(new MigLayout("insets 0", "[]", "[grow]"));
     // if we use our window decoration, place the window buttons here
     if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI) {
-      TmmWindowDecorationPanel windowDecorationPanel = new TmmWindowDecorationPanel();
+      windowDecorationPanel = new TmmWindowDecorationPanel();
       panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
       panelEast.add(windowDecorationPanel, "cell 0 0, center, growy");
-
-      // react on double click in the toolbar to maximize/restore
-      panelCenter.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          if (e.getClickCount() == 2) {
-            windowDecorationPanel.triggerMaxButton();
-          }
-        }
-      });
-
     }
   }
 
@@ -317,6 +307,34 @@ public class ToolbarPanel extends JPanel {
     });
 
     return menu;
+  }
+
+  @Override
+  public void iconify() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.iconify();
+    }
+  }
+
+  @Override
+  public void maximize() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.maximize();
+    }
+  }
+
+  @Override
+  public void restore() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.restore();
+    }
+  }
+
+  @Override
+  public void close() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.close();
+    }
   }
 
   private JPopupMenu buildInfoMenu() {
