@@ -1320,15 +1320,23 @@ public class Utils {
       try (FileSystem zipfs = FileSystems.newFileSystem(zipUri, env)) {
         // Create internal path in the zipfs
         Path internalTargetPath = zipfs.getPath(internalPath);
-        if (!Files.exists(internalTargetPath.getParent())) {
+        if (!Files.exists(internalTargetPath)) {
           // Create directory
-          Files.createDirectory(internalTargetPath.getParent());
+          Files.createDirectory(internalTargetPath);
         }
         // copy a file into the zip file
         if (Files.isDirectory(toBeAdded)) {
           Files.walk(toBeAdded).forEach(source -> {
             try {
-              if (!Files.isDirectory(source)) {
+              if (Files.isSameFile(source, toBeAdded)) {
+                return;
+              }
+
+              if (Files.isDirectory(source)) {
+                // Create directory
+                Files.createDirectory(internalTargetPath.resolve(toBeAdded.relativize(source)));
+              }
+              else {
                 Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()), StandardCopyOption.REPLACE_EXISTING);
               }
             }
