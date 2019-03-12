@@ -167,7 +167,7 @@ public class ToolbarPanel extends JPanel implements TitlePane {
     panelEast.setOpaque(false);
     panelEast.setLayout(new MigLayout("insets 0", "[]", "[grow]"));
     // if we use our window decoration, place the window buttons here
-    if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI) {
+    if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI && !Globals.settings.isSystemWindowDecoration()) {
       windowDecorationPanel = new TmmWindowDecorationPanel();
       panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
       panelEast.add(windowDecorationPanel, "cell 0 0, center, growy");

@@ -506,13 +506,15 @@ public class TinyMediaManager {
     String fontString = fontFamily + " " + fontSize;
 
     // Get the native look and feel class name
-    // String laf = UIManager.getSystemLookAndFeelClassName();
     Properties props = new Properties();
     props.setProperty("controlTextFont", fontString);
     props.setProperty("systemTextFont", fontString);
     props.setProperty("userTextFont", fontString);
     props.setProperty("menuTextFont", fontString);
-    // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+    if (Globals.settings.isSystemWindowDecoration()) {
+      props.setProperty("windowDecoration", "system");
+    }
 
     fontSize = Math.round((float) (fontSize * 0.833));
     fontString = fontFamily + " " + fontSize;
