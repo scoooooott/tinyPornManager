@@ -531,7 +531,7 @@ public class MovieList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper mediaScraper, MediaLanguages langu) {
-    List<MediaSearchResult> sr = null;
+    List<MediaSearchResult> sr = new ArrayList<>();
     try {
       IMovieMetadataProvider provider;
       if (mediaScraper == null) {
@@ -606,7 +606,9 @@ public class MovieList extends AbstractModelObject {
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
     }
-    catch (UnsupportedMediaTypeException ignored) {
+    catch (UnsupportedMediaTypeException e) {
+      // the search was not supported here.. HOW/WHY?
+      LOGGER.error("unsupported media type exception: {}", e.getMessage());
     }
 
     return sr;
