@@ -33,62 +33,55 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 public class StrgUtils {
-  private static final Map<Integer, Replacement> REPLACEMENTS          = buildReplacementMap();
+  private static final Map<Integer, Replacement> REPLACEMENTS          = new HashMap<>(20);
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
-  private final static char[]                    HEX_ARRAY             = "0123456789ABCDEF".toCharArray();
+  private static final char[]                    HEX_ARRAY             = "0123456789ABCDEF".toCharArray();
+  private static final Map<String, String>       DATE_FORMAT_REGEXPS   = new HashMap<>(30);
+  static {
+    DATE_FORMAT_REGEXPS.put("^\\d{8}$", "yyyyMMdd");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\.\\d{1,2}\\.\\d{4}$", "dd.MM.yyyy");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}\\.\\d{1,2}\\.\\d{1,2}$", "yyyy.MM.dd");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
+    DATE_FORMAT_REGEXPS.put("^\\d{12}$", "yyyyMMddHHmm");
+    DATE_FORMAT_REGEXPS.put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
+    DATE_FORMAT_REGEXPS.put("^\\d{14}$", "yyyyMMddHHmmss");
+    DATE_FORMAT_REGEXPS.put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\.\\d{1,3}$", "dd-MM-yyyy HH:mm:ss.S");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\.\\d{1,3}$", "yyyy-MM-dd HH:mm:ss.S");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\.\\d{1,3}$", "MM/dd/yyyy HH:mm:ss.S");
+    DATE_FORMAT_REGEXPS.put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\.\\d{1,3}$", "yyyy/MM/dd HH:mm:ss.S");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
+    DATE_FORMAT_REGEXPS.put("^\\w{3} \\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "z yyyy-MM-dd HH:mm:ss"); // MediaInfo
+    DATE_FORMAT_REGEXPS.put("^\\w{3} \\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\.\\d{1,3}$", "z yyyy-MM-dd HH:mm:ss.S"); // MediaInfo
 
-  // @formatter:off
-  private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {
-  {
-    put("^\\d{8}$", "yyyyMMdd");
-    put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
-    put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
-    put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
-    put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
-    put("^\\d{1,2}\\.\\d{1,2}\\.\\d{4}$", "dd.MM.yyyy");
-    put("^\\d{4}\\.\\d{1,2}\\.\\d{1,2}$", "yyyy.MM.dd");
-    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
-    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
-    put("^\\d{12}$", "yyyyMMddHHmm");
-    put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
-    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
-    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
-    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
-    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
-    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
-    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
-    put("^\\d{14}$", "yyyyMMddHHmmss");
-    put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
-    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
-    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
-    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
-    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
-    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
-    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
-  }};
-  // @formatter:on
-
-  private StrgUtils() {
-  }
-
-  /*
-   * build a replacement map of characters, which are not handled right by the normalizer method
-   */
-  private static Map<Integer, Replacement> buildReplacementMap() {
-    Map<Integer, Replacement> replacements = new HashMap<>();
-    replacements.put(0xc6, new Replacement("AE", "Ae"));
-    replacements.put(0xe6, new Replacement("ae"));
-    replacements.put(0xd0, new Replacement("D"));
-    replacements.put(0x111, new Replacement("d"));
-    replacements.put(0xd8, new Replacement("O"));
-    replacements.put(0xf8, new Replacement("o"));
-    replacements.put(0x152, new Replacement("OE", "Oe"));
-    replacements.put(0x153, new Replacement("oe"));
-    replacements.put(0x166, new Replacement("T"));
-    replacements.put(0x167, new Replacement("t"));
-    replacements.put(0x141, new Replacement("L"));
-    replacements.put(0x142, new Replacement("l"));
-    return replacements;
+    REPLACEMENTS.put(0xc6, new Replacement("AE", "Ae"));
+    REPLACEMENTS.put(0xe6, new Replacement("ae"));
+    REPLACEMENTS.put(0xd0, new Replacement("D"));
+    REPLACEMENTS.put(0x111, new Replacement("d"));
+    REPLACEMENTS.put(0xd8, new Replacement("O"));
+    REPLACEMENTS.put(0xf8, new Replacement("o"));
+    REPLACEMENTS.put(0x152, new Replacement("OE", "Oe"));
+    REPLACEMENTS.put(0x153, new Replacement("oe"));
+    REPLACEMENTS.put(0x166, new Replacement("T"));
+    REPLACEMENTS.put(0x167, new Replacement("t"));
+    REPLACEMENTS.put(0x141, new Replacement("L"));
+    REPLACEMENTS.put(0x142, new Replacement("l"));
   }
 
   private static String[] buildCommonTitlePrefixes() {
@@ -99,6 +92,9 @@ public class StrgUtils {
         "El", "Los", "La", "Las", "Un", "Unos", "Una", "Unas" // spanish
     };
     // @formatter:on
+  }
+
+  private StrgUtils() {
   }
 
   /**
