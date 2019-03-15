@@ -69,7 +69,7 @@ public class TvShowNfoParser {
   public String                     title               = "";
   public String                     originalTitle       = "";
   public String                     showTitle           = "";
-  public int                        year                = 0;
+  public int                        year                = -1;
   public String                     plot                = "";
   public int                        runtime             = 0;
   public Certification              certification       = Certification.UNKNOWN;
@@ -204,7 +204,8 @@ public class TvShowNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    return !(year <= 0 || StringUtils.isBlank(title));
+    // since the initial year is -1, a value of 0 and higher must have been parsed successfully
+    return (year > -1 || releaseDate != null) && StringUtils.isNotBlank(title);
   }
 
   private Element getSingleElement(Element parent, String tag) {
@@ -1107,7 +1108,11 @@ public class TvShowNfoParser {
       show.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
     }
 
-    show.setYear(year);
+    // year is initially -1, only take parsed values which are higher than -1
+    if (year > -1) {
+      show.setYear(year);
+    }
+
     show.setFirstAired(releaseDate);
     if (dateadded != null) {
       // set when in NFO, else use constructor date
@@ -1145,7 +1150,6 @@ public class TvShowNfoParser {
     if (!fanarts.isEmpty()) {
       show.setArtworkUrl(fanarts.get(0), MediaFileType.FANART);
     }
-
     for (Map.Entry<String, Object> entry : ids.entrySet()) {
       show.setId(entry.getKey(), entry.getValue());
     }
