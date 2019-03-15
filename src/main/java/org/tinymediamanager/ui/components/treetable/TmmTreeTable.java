@@ -72,7 +72,7 @@ public class TmmTreeTable extends TmmTable {
 
   public TmmTreeTable(TmmTreeDataProvider<? extends TmmTreeNode> dataProvider, TmmTableFormat tableFormat) {
     treeFilters = new HashSet<>();
-    treeTableModel = new TmmTreeTableModel(new TmmTreeModel<>(dataProvider), tableFormat);
+    treeTableModel = new TmmTreeTableModel(new TmmTreeModelConnector<>(dataProvider), tableFormat);
     ((TmmTreeModel) treeTableModel.getTreeModel()).getDataProvider().setTreeFilters(treeFilters);
     filterChangeListener = evt -> updateFiltering();
     setModel(treeTableModel);
@@ -616,4 +616,36 @@ public class TmmTreeTable extends TmmTable {
       }
     }
   }
+
+  private class TmmTreeModelConnector<E extends TmmTreeNode> extends TmmTreeModel {
+
+    /**
+     * Create a new instance of the TmmTreeModel for the given TmmTree and data provider
+     *
+     * @param dataProvider
+     *          the data provider to create the model for
+     */
+    public TmmTreeModelConnector(final TmmTreeDataProvider<E> dataProvider) {
+      super(null, dataProvider);
+    }
+
+    @Override
+    public void updateSortingAndFiltering(TmmTreeNode parent) {
+      // store selected rows
+      int[] selectedRows = getSelectedRows();
+
+      // Updating root node children
+      boolean structureChanged = performFilteringAndSortingRecursively(parent);
+      if (structureChanged) {
+        nodeStructureChanged(getRoot());
+
+        // Restoring tree state including all selections and expansions
+        clearSelection();
+        for (int row : selectedRows) {
+          getSelectionModel().addSelectionInterval(row, row);
+        }
+      }
+    }
+  }
+
 }

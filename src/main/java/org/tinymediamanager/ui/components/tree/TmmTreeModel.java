@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.components.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,8 +56,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   protected final ReadWriteLock          readWriteLock        = new ReentrantReadWriteLock();
 
   /**
-   * Create a new instance of the TmmTreeModel for the given TmmTree and data
-   * provider
+   * Create a new instance of the TmmTreeModel for the given TmmTree and data provider
    * 
    * @param tree
    *          the TmmTree to create the model for
@@ -66,32 +66,6 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   public TmmTreeModel(final TmmTree<E> tree, final TmmTreeDataProvider<E> dataProvider) {
     super(null);
     this.tree = tree;
-    this.dataProvider = dataProvider;
-    dataProvider.addPropertyChangeListener(evt -> {
-      // a node has been inserted
-      if (TmmTreeDataProvider.NODE_INSERTED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
-        E child = (E) evt.getNewValue();
-        E parent = dataProvider.getParent(child);
-        addChildNode(parent, child);
-      }
-      // a node has been removed
-      if (TmmTreeDataProvider.NODE_REMOVED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
-        E child = (E) evt.getNewValue();
-        removeChildNode(child);
-      }
-    });
-    loadTreeData(getRoot());
-  }
-
-  /**
-   * Create a new instance of the TmmTreeModel for the given data provider
-   *
-   * @param dataProvider
-   *          the data provider to create the model for
-   */
-  public TmmTreeModel(final TmmTreeDataProvider<E> dataProvider) {
-    super(null);
-    this.tree = null;
     this.dataProvider = dataProvider;
     this.dataProvider.setTreeFilters(new HashSet<>());
     dataProvider.addPropertyChangeListener(evt -> {
@@ -127,7 +101,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
 
   /**
    * Get the data provider for this model
-   * 
+   *
    * @return the data provider set for this model
    */
   public TmmTreeDataProvider<E> getDataProvider() {
@@ -262,11 +236,13 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
    *          node to update
    */
   @SuppressWarnings("unchecked")
-  protected void performFilteringAndSortingRecursively(final E parentNode) {
-    performFilteringAndSorting(parentNode);
+  protected boolean performFilteringAndSortingRecursively(final E parentNode) {
+    boolean nodesChanged = false;
+    nodesChanged = performFilteringAndSorting(parentNode) || nodesChanged;
     for (int i = 0; i < parentNode.getChildCount(); i++) {
-      performFilteringAndSortingRecursively((E) parentNode.getChildAt(i));
+      nodesChanged = performFilteringAndSortingRecursively((E) parentNode.getChildAt(i)) || nodesChanged;
     }
+    return nodesChanged;
   }
 
   /**
@@ -275,12 +251,19 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
    * @param parentNode
    *          node to update
    */
-  protected void performFilteringAndSorting(final E parentNode) {
+  protected boolean performFilteringAndSorting(final E parentNode) {
+    boolean nodesChanged = false;
+
     // Retrieving raw children
     final List<E> children = rawNodeChildrenCache.get(parentNode.getId());
 
+    // get all _old_ children from the parent
+    final List<E> oldChildren = getChildren(parentNode);
+    final List<E> newChildren = filterAndSort(parentNode, children);
+
     // Process this action only if node children are already loaded and cached
-    if (children != null) {
+    if (children != null && !oldChildren.equals(newChildren)) {
+      nodesChanged = true;
       // Removing old children
       parentNode.removeAllChildren();
 
@@ -292,6 +275,25 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
         parentNode.add(child);
       }
     }
+    return nodesChanged;
+  }
+
+  /**
+   * get a list of all children from the given node
+   * 
+   * @param parent
+   *          the given node to get all children for
+   * @return a list of all children
+   */
+  private List<E> getChildren(final E parent) {
+    List<E> children = new ArrayList<>();
+
+    Enumeration<E> e = parent.children();
+    while (e.hasMoreElements()) {
+      children.add(e.nextElement());
+    }
+
+    return children;
   }
 
   /**
@@ -305,7 +307,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
    */
   protected List<E> filterAndSort(final E parentNode, List<E> children) {
     // Simply return an empty array if there is no children
-    if (children == null || children.size() == 0) {
+    if (children == null || children.isEmpty()) {
       return new ArrayList<>(0);
     }
 
