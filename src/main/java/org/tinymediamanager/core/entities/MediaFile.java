@@ -25,8 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -158,6 +160,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private int                                        stacking            = 0;
   @JsonProperty
   private String                                     stackingMarker      = "";
+  @JsonProperty
+  private String                                     title               = "";
 
   @JsonProperty
   private List<MediaFileAudioStream>                 audioStreams        = new CopyOnWriteArrayList<>();
@@ -197,6 +201,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.type = clone.type;
     this.audioStreams.addAll(clone.audioStreams);
     this.subtitles.addAll(clone.subtitles);
+    this.title = clone.title;
   }
 
   /**
@@ -915,6 +920,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public static boolean isEmptyValue(Object object) {
     return object == null || object.toString().length() == 0;
+  }
+
+  /**
+   * The embedded TITLE
+   * 
+   * @return
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   /**
@@ -2112,6 +2130,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (hdr.contains("2020")) {
       setHDR(true);
     }
+
+    // TODO: season/episode parsing
+    // int season = parseToInt(getMediaInfo(StreamKind.General, 0, "Season"));
+    // int part = parseToInt(getMediaInfo(StreamKind.General, 0, "Part"));
+    // System.out.println("*** S" + season + " E" + part);
+    // #here are the "magic codes" to know where apple tag stores the metadata for each file.
+    // $BOXTYPE_TVEN = "tven"; # episode name
+    // $BOXTYPE_TVES = "tves"; # episode number
+    // $BOXTYPE_TVSH = "tvsh"; # TV Show or series
+    // $BOXTYPE_DESC = "desc"; # short description - max is 255 characters
+    // $BOXTYPE_TVSN = "tvsn"; # season
+    // $BOXTYPE_STIK = "stik"; # "magic" to make it realize it's a TV show
+
   }
 
   private void fetchSubtitleInformation() {
@@ -2321,6 +2352,37 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           catch (NumberFormatException e) {
             setOverallBitRate(0);
           }
+        }
+
+        // get embedded title from general info
+        String miTitle = getMediaInfo(StreamKind.General, 0, "Title");
+        if (!miTitle.isEmpty()) {
+          setTitle(miTitle);
+        }
+
+        // try getting some real file dates from MI
+        try {
+          // @formatter:off
+          //    Released_Date             : The date/year that the item was released.
+          //    Original/Released_Date    : The date/year that the item was originaly released.
+          //    Recorded_Date             : The time/date/year that the recording began.
+          //    Encoded_Date              : The time/date/year that the encoding of this item was completed began.
+          //    Tagged_Date               : The time/date/year that the tags were done for this item.
+          //    Written_Date              : The time/date/year that the composition of the music/script began.
+          //    Mastered_Date             : The time/date/year that the item was tranfered to a digitalmedium.
+          //    File_Created_Date         : The time that the file was created on the file system
+          //    File_Modified_Date        : The time that the file was modified on the file system
+          // @formatter:on
+          String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
+              "Mastered_Date");
+          Date d = StrgUtils.parseDate(embeddedDate);
+          if (d.toInstant().toEpochMilli() < filedate) {
+            // so this is older than our file date - use it :)
+            filedate = d.toInstant().toEpochMilli();
+          }
+        }
+        catch (ParseException e) {
+          // could not parse MI date... ignore
         }
 
         // Duration;Play time of the stream in ms
