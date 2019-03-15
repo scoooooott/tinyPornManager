@@ -877,7 +877,8 @@ class TmdbTvShowMetadataProvider {
     }
 
     // calculate score
-    if (query.getImdbId().equals(result.getIMDBId()) || String.valueOf(query.getTmdbId()).equals(result.getId())) {
+    if ((StringUtils.isNotBlank(query.getImdbId()) && query.getImdbId().equals(result.getIMDBId()))
+        || String.valueOf(query.getTmdbId()).equals(result.getId())) {
       LOGGER.debug("perfect match by ID - set score to 1");
       result.setScore(1);
     }
