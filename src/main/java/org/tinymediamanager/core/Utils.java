@@ -1127,12 +1127,18 @@ public class Utils {
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.error("could not list files from the backup folder: {}", e.getMessage());
+      return;
     }
 
+    // sort files by creation date
+    al.sort((o1, o2) -> (int) (o1.toFile().lastModified() - o2.toFile().lastModified()));
+
     for (int i = 0; i < al.size() - keep; i++) {
-      // System.out.println("del " + al.get(i).getName());
-      deleteFileSafely(al.get(i));
+      Path backupFile = al.get(i);
+      LOGGER.debug("deleting old backup file {}", backupFile.getFileName());
+      deleteFileSafely(backupFile);
     }
 
   }
