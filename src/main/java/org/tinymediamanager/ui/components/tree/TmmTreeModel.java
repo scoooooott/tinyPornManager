@@ -288,9 +288,9 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   private List<E> getChildren(final E parent) {
     List<E> children = new ArrayList<>();
 
-    Enumeration<E> e = parent.children();
+    Enumeration e = parent.children();
     while (e.hasMoreElements()) {
-      children.add(e.nextElement());
+      children.add((E) e.nextElement());
     }
 
     return children;
