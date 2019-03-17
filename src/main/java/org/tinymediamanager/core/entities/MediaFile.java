@@ -69,113 +69,115 @@ import com.madgag.gif.fmsware.GifDecoder;
  * @author Manuel Laggner
  */
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
-  private static final Logger                        LOGGER              = LoggerFactory.getLogger(MediaFile.class);
+  private static final Logger                        LOGGER                   = LoggerFactory.getLogger(MediaFile.class);
 
-  private static final String                        PATH                = "path";
-  private static final String                        FILENAME            = "filename";
-  private static final String                        FILESIZE            = "filesize";
-  private static final String                        FILESIZE_IN_MB      = "filesizeInMegabytes";
-  private static final List<String>                  PLEX_EXTRA_FOLDERS  = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
-      "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
+  private static final String                        PATH                     = "path";
+  private static final String                        FILENAME                 = "filename";
+  private static final String                        FILESIZE                 = "filesize";
+  private static final String                        FILESIZE_IN_MB           = "filesizeInMegabytes";
+  private static final List<String>                  PLEX_EXTRA_FOLDERS       = Arrays.asList("behind the scenes", "behindthescenes",
+      "deleted scenes", "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
 
-  private static Pattern                             moviesetPattern     = Pattern
+  public static final Pattern                        MOVIESET_ARTWORK_PATTERN = Pattern
       .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
-  private static Pattern                             posterPattern       = Pattern
+  private static final Pattern                       POSTER_PATTERN           = Pattern
       .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-  private static Pattern                             fanartPattern       = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
-  private static Pattern                             bannerPattern       = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern                             thumbPattern        = Pattern
+  private static final Pattern                       FANART_PATTERN           = Pattern
+      .compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static final Pattern                       BANNER_PATTERN           = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+  private static final Pattern                       THUMB_PATTERN            = Pattern
       .compile("(?i)(.*-thumb|thumb|.*-landscape|landscape)[0-9]{0,2}\\..{2,4}");
-  private static Pattern                             seasonPosterPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
-  private static Pattern                             seasonBannerPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
-  private static Pattern                             seasonThumbPattern  = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
-  private static Pattern                             logoPattern         = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
-  private static Pattern                             clearlogoPattern    = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
+  private static final Pattern                       SEASON_POSTER_PATTERN    = Pattern
+      .compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
+  private static final Pattern                       SEASON_BANNER_PATTERN    = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
+  private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
+  private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
+  private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
   // be careful: disc.avi would be valid!
-  private static Pattern                             discartPattern      = Pattern
+  private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
-  private static Pattern                             clearartPattern     = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
+  private static final Pattern                       CLEARART_PATTERN         = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
-  public static final String                         VIDEO_FORMAT_96P    = "96p";
-  public static final String                         VIDEO_FORMAT_120P   = "120p";
-  public static final String                         VIDEO_FORMAT_144P   = "144p";
-  public static final String                         VIDEO_FORMAT_240P   = "240p";
-  public static final String                         VIDEO_FORMAT_288P   = "288p";
-  public static final String                         VIDEO_FORMAT_360P   = "360p";
-  public static final String                         VIDEO_FORMAT_480P   = "480p";
-  public static final String                         VIDEO_FORMAT_540P   = "540p";
-  public static final String                         VIDEO_FORMAT_576P   = "576p";
-  public static final String                         VIDEO_FORMAT_720P   = "720p";
-  public static final String                         VIDEO_FORMAT_1080P  = "1080p";
-  public static final String                         VIDEO_FORMAT_4K     = "4k";
-  public static final String                         VIDEO_FORMAT_8K     = "8k";
-  public static final List<String>                   VIDEO_FORMATS       = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
+  public static final String                         VIDEO_FORMAT_96P         = "96p";
+  public static final String                         VIDEO_FORMAT_120P        = "120p";
+  public static final String                         VIDEO_FORMAT_144P        = "144p";
+  public static final String                         VIDEO_FORMAT_240P        = "240p";
+  public static final String                         VIDEO_FORMAT_288P        = "288p";
+  public static final String                         VIDEO_FORMAT_360P        = "360p";
+  public static final String                         VIDEO_FORMAT_480P        = "480p";
+  public static final String                         VIDEO_FORMAT_540P        = "540p";
+  public static final String                         VIDEO_FORMAT_576P        = "576p";
+  public static final String                         VIDEO_FORMAT_720P        = "720p";
+  public static final String                         VIDEO_FORMAT_1080P       = "1080p";
+  public static final String                         VIDEO_FORMAT_4K          = "4k";
+  public static final String                         VIDEO_FORMAT_8K          = "8k";
+  public static final List<String>                   VIDEO_FORMATS            = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
       VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_4K, VIDEO_FORMAT_8K);
 
   // meta formats
-  public static final String                         VIDEO_FORMAT_LD     = "LD";
-  public static final String                         VIDEO_FORMAT_SD     = "SD";
-  public static final String                         VIDEO_FORMAT_HD     = "HD";
+  public static final String                         VIDEO_FORMAT_LD          = "LD";
+  public static final String                         VIDEO_FORMAT_SD          = "SD";
+  public static final String                         VIDEO_FORMAT_HD          = "HD";
 
   // 3D / side-by-side / top-and-bottom / H=half - http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
-  public static final String                         VIDEO_3D            = "3D";
-  public static final String                         VIDEO_3D_SBS        = "3D SBS";
-  public static final String                         VIDEO_3D_TAB        = "3D TAB";
-  public static final String                         VIDEO_3D_HSBS       = "3D HSBS";
-  public static final String                         VIDEO_3D_HTAB       = "3D HTAB";
+  public static final String                         VIDEO_3D                 = "3D";
+  public static final String                         VIDEO_3D_SBS             = "3D SBS";
+  public static final String                         VIDEO_3D_TAB             = "3D TAB";
+  public static final String                         VIDEO_3D_HSBS            = "3D HSBS";
+  public static final String                         VIDEO_3D_HTAB            = "3D HTAB";
 
   @JsonProperty
-  private MediaFileType                              type                = MediaFileType.UNKNOWN;
+  private MediaFileType                              type                     = MediaFileType.UNKNOWN;
   @JsonProperty
-  private String                                     path                = "";
+  private String                                     path                     = "";
   @JsonProperty
-  private String                                     filename            = "";
+  private String                                     filename                 = "";
   @JsonProperty
-  private long                                       filesize            = 0;
+  private long                                       filesize                 = 0;
   @JsonProperty
-  private long                                       filedate            = 0;
+  private long                                       filedate                 = 0;
   @JsonProperty
-  private String                                     videoCodec          = "";
+  private String                                     videoCodec               = "";
   @JsonProperty
-  private String                                     containerFormat     = "";
+  private String                                     containerFormat          = "";
   @JsonProperty
-  private String                                     exactVideoFormat    = "";
+  private String                                     exactVideoFormat         = "";
   @JsonProperty
-  private String                                     video3DFormat       = "";
+  private String                                     video3DFormat            = "";
   @JsonProperty
-  private int                                        videoWidth          = 0;
+  private int                                        videoWidth               = 0;
   @JsonProperty
-  private int                                        videoHeight         = 0;
+  private int                                        videoHeight              = 0;
   @JsonProperty
-  private float                                      aspectRatio         = 0f;
+  private float                                      aspectRatio              = 0f;
   @JsonProperty
-  private int                                        overallBitRate      = 0;
+  private int                                        overallBitRate           = 0;
   @JsonProperty
-  private int                                        bitDepth            = 0;
+  private int                                        bitDepth                 = 0;
   @JsonProperty
-  private double                                     frameRate           = 0.0d;
+  private double                                     frameRate                = 0.0d;
   @JsonProperty
-  private int                                        durationInSecs      = 0;
+  private int                                        durationInSecs           = 0;
   @JsonProperty
-  private int                                        stacking            = 0;
+  private int                                        stacking                 = 0;
   @JsonProperty
-  private String                                     stackingMarker      = "";
+  private String                                     stackingMarker           = "";
   @JsonProperty
-  private String                                     title               = "";
+  private String                                     title                    = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams        = new CopyOnWriteArrayList<>();
+  private List<MediaFileAudioStream>                 audioStreams             = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles           = new CopyOnWriteArrayList<>();
+  private List<MediaFileSubtitle>                    subtitles                = new CopyOnWriteArrayList<>();
 
   private MediaInfo                                  mediaInfo;
-  private Map<StreamKind, List<Map<String, String>>> miSnapshot          = null;
-  private Path                                       file                = null;
-  private boolean                                    isISO               = false;
+  private Map<StreamKind, List<Map<String, String>>> miSnapshot               = null;
+  private Path                                       file                     = null;
+  private boolean                                    isISO                    = false;
   @JsonProperty
-  private boolean                                    isAnimatedGraphic   = false;
+  private boolean                                    isAnimatedGraphic        = false;
   @JsonProperty
-  private boolean                                    HDR                 = false;
+  private boolean                                    HDR                      = false;
 
   /**
    * "clones" a new media file.
@@ -384,38 +386,38 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     // movieset artwork
-    Matcher matcher = moviesetPattern.matcher(name);
+    Matcher matcher = MOVIESET_ARTWORK_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.GRAPHIC;
     }
 
     // season(XX|-specials)-poster.*
     // seasonXX.*
-    matcher = seasonPosterPattern.matcher(name);
+    matcher = SEASON_POSTER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_POSTER;
     }
 
     // season(XX|-specials)-banner.*
-    matcher = seasonBannerPattern.matcher(name);
+    matcher = SEASON_BANNER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_BANNER;
     }
 
     // season(XX|-specials)-thumb.*
-    matcher = seasonThumbPattern.matcher(name);
+    matcher = SEASON_THUMB_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_THUMB;
     }
 
     // *-poster.* or poster.* or folder.* or movie.*
-    matcher = posterPattern.matcher(name);
+    matcher = POSTER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.POSTER;
     }
 
     // *-fanart.* or fanart.* or *-fanartXX.* or fanartXX.*
-    matcher = fanartPattern.matcher(name);
+    matcher = FANART_PATTERN.matcher(name);
     if (matcher.matches()) {
       // decide between fanart and extrafanart
       if (getPath().endsWith("extrafanart")) {
@@ -425,13 +427,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // *-banner.* or banner.*
-    matcher = bannerPattern.matcher(name);
+    matcher = BANNER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.BANNER;
     }
 
     // *-thumb.* or thumb.* or *-thumbXX.* or thumbXX.*
-    matcher = thumbPattern.matcher(name);
+    matcher = THUMB_PATTERN.matcher(name);
     if (matcher.matches()) {
       // decide between thumb and extrathumb
       if (getPath().endsWith("extrathumbs")) {
@@ -441,25 +443,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // clearart.*
-    matcher = clearartPattern.matcher(name);
+    matcher = CLEARART_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.CLEARART;
     }
 
     // logo.*
-    matcher = logoPattern.matcher(name);
+    matcher = LOGO_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.LOGO;
     }
 
     // clearlogo.*
-    matcher = clearlogoPattern.matcher(name);
+    matcher = CLEARLOGO_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.CLEARLOGO;
     }
 
     // discart.* / disc.*
-    matcher = discartPattern.matcher(name);
+    matcher = DISCART_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.DISC;
     }

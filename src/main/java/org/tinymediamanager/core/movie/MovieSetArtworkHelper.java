@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -51,13 +50,11 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner
  */
 public class MovieSetArtworkHelper {
+  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
+
   private static final List<MediaFileType> SUPPORTED_ARTWORK_TYPES     = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART,
       MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
-  private static Pattern                   artworkPattern              = Pattern
-      .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
-
-  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
    * Update the artwork for a given movie set. This should be triggered after every movie set change like creating, adding movies, removing movies
@@ -386,17 +383,16 @@ public class MovieSetArtworkHelper {
    *          the movie to strip out the movie set artwork
    */
   public static void cleanMovieSetArtworkInMovieFolder(Movie movie) {
-    try {
-      DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO());
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO())) {
       for (Path entry : stream) {
-        Matcher matcher = artworkPattern.matcher(entry.getFileName().toString());
+        Matcher matcher = MediaFile.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
         if (matcher.find()) {
           Utils.deleteFileSafely(entry);
         }
       }
     }
     catch (Exception e) {
-      LOGGER.error("remove movie set artwork: " + e.getMessage());
+      LOGGER.error("remove movie set artwork: {}", e.getMessage());
     }
   }
 
