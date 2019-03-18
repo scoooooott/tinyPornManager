@@ -243,7 +243,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    */
   protected void addShowTitle(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     Element title = document.createElement("showtitle");
-    title.setTextContent(episode.getTitle());
+    title.setTextContent(episode.getTvShow().getTitle());
     root.appendChild(title);
   }
 
