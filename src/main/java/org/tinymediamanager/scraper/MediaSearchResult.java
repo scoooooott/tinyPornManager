@@ -36,6 +36,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private String              providerId;
   private String              url;
   private String              title;
+  private String              overview;
   private int                 year;
   private String              originalTitle;
   private String              originalLanguage;
@@ -172,6 +173,14 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    */
   public void setTitle(String title) {
     this.title = StrgUtils.getNonNullString(title);
+  }
+
+  public String getOverview() {
+    return overview;
+  }
+
+  public void setOverview(String overview) {
+    this.overview = overview;
   }
 
   /**
