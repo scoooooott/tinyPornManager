@@ -112,6 +112,14 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     addColumn(col);
 
     /*
+     * subtitles
+     */
+    col = new Column(BUNDLE.getString("tmm.subtitles"), "subtitles", this::hasSubtitles, ImageIcon.class);
+    col.setHeaderIcon(IconManager.SUBTITLES);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
      * watched
      */
     col = new Column(BUNDLE.getString("metatag.watched"), "watched", this::isWatched, ImageIcon.class);
@@ -203,6 +211,23 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = ((TvShowEpisode) userObject);
       return getCheckIcon(episode.getHasImages());
+    }
+    return null;
+  }
+
+  private ImageIcon hasSubtitles(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShow) {
+      TvShow tvShow = (TvShow) userObject;
+      return getCheckIcon(tvShow.hasEpisodeSubtitles());
+    }
+    else if (userObject instanceof TvShowSeason) {
+      TvShowSeason season = ((TvShowSeason) userObject);
+      return getCheckIcon(season.hasEpisodeSubtitles());
+    }
+    else if (userObject instanceof TvShowEpisode) {
+      TvShowEpisode episode = ((TvShowEpisode) userObject);
+      return getCheckIcon(episode.hasSubtitles());
     }
     return null;
   }

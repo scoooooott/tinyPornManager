@@ -143,6 +143,24 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   }
 
   /**
+   * checks if all episode has subtitles
+   *
+   * @return true, is all episodes have subtitles
+   */
+  public boolean hasEpisodeSubtitles() {
+    boolean subtitles = true;
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.hasSubtitles()) {
+        subtitles = false;
+        break;
+      }
+    }
+
+    return subtitles;
+  }
+
+  /**
    * Checks if that season has artwork assigned
    * 
    * @return true if artwork is available

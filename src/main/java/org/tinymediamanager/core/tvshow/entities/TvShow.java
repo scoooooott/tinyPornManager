@@ -1392,6 +1392,24 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     return watched;
   }
 
+  /**
+   * checks if all episode has subtitles
+   *
+   * @return true, is all episodes have subtitles
+   */
+  public boolean hasEpisodeSubtitles() {
+    boolean subtitles = true;
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.hasSubtitles()) {
+        subtitles = false;
+        break;
+      }
+    }
+
+    return subtitles;
+  }
+
   public Date getLastWatched() {
     return lastWatched;
   }
