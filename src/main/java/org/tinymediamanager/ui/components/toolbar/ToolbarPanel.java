@@ -55,6 +55,7 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
+import org.tinymediamanager.ui.actions.ExportLogAction;
 import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.ForumAction;
@@ -268,8 +269,16 @@ public class ToolbarPanel extends JPanel implements TitlePane {
         MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
         LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
       });
-
       debugMenu.add(trace);
+
+      // JMenuItem traceLogs = new JMenuItem(BUNDLE.getString("tmm.tracelogs")); //$NON-NLS-1$
+      // debugMenu.add(traceLogs);
+      // traceLogs.addActionListener(arg0 -> {
+      // JDialog logDialog = new LogDialog();
+      // logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      // logDialog.setVisible(true);
+      // });
+
       menu.addSeparator();
       menu.add(debugMenu);
     }
@@ -305,6 +314,10 @@ public class ToolbarPanel extends JPanel implements TitlePane {
       public void popupMenuCanceled(PopupMenuEvent e) {
       }
     });
+
+    menu.addSeparator();
+    menu.add(new BugReportAction());
+    menu.add(new ExportLogAction());
 
     return menu;
   }

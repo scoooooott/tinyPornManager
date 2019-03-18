@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- https://logback.qos.ch/manual/appenders.html -->
 
+    <!-- we log to three different locations:
+        1) the console (for CMD and IDE) -> INFO in CMD and DEBUG in IDE
+        2) a log file (INFO)
+        3) a memory appender for providing more logs in case of bug reporting (TRACE)
+    -->
+
+    <!-- console appender; mainly for CMD and for the IDE -->
+    <!-- in the CMD the log level is reduced by the JVM arg -Dtmm.consoleloglevel=INFO -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- https://logback.qos.ch/manual/appenders.html -->
+    <!-- file appender - INFO and above -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
         <file>logs/tmm.log</file>
         <append>true</append>
         <encoder>
@@ -22,20 +37,32 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
-    
-    <appender name="ASYNC500" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>500</queueSize>
-        <discardingThreshold>0</discardingThreshold>
-        <appender-ref ref="FILE" />
-    </appender>
-    
-    <logger name="com.moviejukebox.themoviedb" level="ERROR" />
-    <logger name="org.tinymediamanager" level="DEBUG" />
-    <logger name="org.tinymediamanager.scraper.http.InMemoryCachedUrl" level="WARN"/>
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="ASYNC500" />
+    <appender name="ASYNC500" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>5000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- memory appender for collection of logs - TRACE and above -->
+    <appender name="INMEMORY" class="org.tinymediamanager.InMemoryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- default settings -->
+    <logger name="org.tinymediamanager" level="TRACE"/>
+
+
+    <!-- appender activation -->
+    <root>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC500"/>
+        <appender-ref ref="INMEMORY"/>
     </root>
 
 </configuration>

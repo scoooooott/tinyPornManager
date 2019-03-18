@@ -573,12 +573,13 @@ public class TinyMediaManager {
 
     LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-    // get the console appener
+    // get the console appender
     Appender consoleAppender = lc.getLogger("ROOT").getAppender("CONSOLE");
     if (consoleAppender instanceof ConsoleAppender) {
       // and set a filter to drop messages beneath the given level
       ThresholdLoggerFilter filter = new ThresholdLoggerFilter(level);
       filter.start();
+      consoleAppender.clearAllFilters();
       consoleAppender.addFilter(filter);
     }
   }
