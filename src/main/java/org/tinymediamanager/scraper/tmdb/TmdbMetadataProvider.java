@@ -55,8 +55,6 @@ import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import okhttp3.logging.HttpLoggingInterceptor.Level;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -123,14 +121,6 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
           @Override
           protected synchronized OkHttpClient okHttpClient() {
             OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
-
-            // log http calls
-            if (LOGGER.isTraceEnabled()) {
-              HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-              logging.setLevel(Level.BASIC);
-              builder.addInterceptor(logging);
-            }
-
             builder.addInterceptor(new TmdbInterceptor(this));
             return builder.build();
           }
@@ -142,7 +132,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         }
       }
       catch (Exception e) {
-        LOGGER.error("could not initialize the API: " + e.getMessage());
+        LOGGER.error("could not initialize the API: {}", e.getMessage());
         throw new ScrapeException(e);
       }
     }
