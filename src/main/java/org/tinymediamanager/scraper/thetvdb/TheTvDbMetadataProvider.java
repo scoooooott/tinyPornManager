@@ -143,7 +143,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         };
         Response<LanguagesResponse> httpResponse = tvdb.languages().allAvailable().execute();
         if (!httpResponse.isSuccessful()) {
-          throw new HttpException(httpResponse.message(), httpResponse.code());
+          throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         LanguagesResponse response = httpResponse.body();
         if (response == null) {
@@ -236,7 +236,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       try {
         Response<SeriesResponse> httpResponse = tvdb.series().series(tvdbId, language).execute();
         if (!httpResponse.isSuccessful()) {
-          throw new HttpException(httpResponse.message(), httpResponse.code());
+          throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         series.add(httpResponse.body().data);
       }
@@ -252,7 +252,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       try {
         Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, language).execute();
         if (!httpResponse.isSuccessful()) {
-          throw new HttpException(httpResponse.message(), httpResponse.code());
+          throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         series.addAll(httpResponse.body().data);
       }
@@ -268,12 +268,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         try {
           Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, fallbackLanguage).execute();
           if (!httpResponse.isSuccessful()) {
-            throw new HttpException(httpResponse.message(), httpResponse.code());
+            throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           series.addAll(httpResponse.body().data);
         }
         catch (Exception e) {
-          LOGGER.error("problem getting data vom tvdb with fallback langauge: {}", e.getMessage());
+          LOGGER.error("problem getting data vom tvdb with fallback language: {}", e.getMessage());
         }
       }
       LOGGER.info("found {} results", series.size());
@@ -360,7 +360,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     try {
       Response<SeriesResponse> httpResponse = tvdb.series().series(id, options.getLanguage().getLanguage()).execute();
       if (!httpResponse.isSuccessful()) {
-        throw new HttpException(httpResponse.message(), httpResponse.code());
+        throw new HttpException(httpResponse.code(), httpResponse.message());
       }
       show = httpResponse.body().data;
     }
@@ -445,7 +445,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     try {
       Response<ActorsResponse> httpResponse = tvdb.series().actors(id).execute();
       if (!httpResponse.isSuccessful()) {
-        throw new HttpException(httpResponse.message(), httpResponse.code());
+        throw new HttpException(httpResponse.code(), httpResponse.message());
       }
       actors.addAll(httpResponse.body().data);
     }
@@ -572,7 +572,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           try {
             Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(id, param.keyType, null, null, null).execute();
             if (!httpResponse.isSuccessful()) {
-              throw new HttpException(httpResponse.message(), httpResponse.code());
+              throw new HttpException(httpResponse.code(), httpResponse.message());
             }
             images.addAll(httpResponse.body().data);
           }
@@ -738,7 +738,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       while (true) {
         Response<EpisodesResponse> httpResponse = tvdb.series().episodes(id, counter, options.getLanguage().getLanguage()).execute();
         if (!httpResponse.isSuccessful()) {
-          throw new HttpException(httpResponse.message(), httpResponse.code());
+          throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         EpisodesResponse response = httpResponse.body();
 
@@ -747,7 +747,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           try {
             httpResponse = tvdb.series().episodes(id, counter, fallbackLanguage).execute();
             if (!httpResponse.isSuccessful()) {
-              throw new HttpException(httpResponse.message(), httpResponse.code());
+              throw new HttpException(httpResponse.code(), httpResponse.message());
             }
             fallbackEps.addAll(httpResponse.body().data);
           }
