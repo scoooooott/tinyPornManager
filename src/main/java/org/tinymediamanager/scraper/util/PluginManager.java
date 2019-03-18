@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
-import net.xeoh.plugins.base.options.addpluginsfrom.OptionReportAfter;
 import net.xeoh.plugins.base.util.JSPFProperties;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 import net.xeoh.plugins.base.util.uri.ClassURI;
@@ -59,12 +58,7 @@ public class PluginManager {
       // Use NIO2 Paths instead of file - not correctly generating scheme!!!
       // file:/C:/tmm instead of file:///C:/tmm
       // to load plugins from a path containing a + we've overridden the class FileLoader in the tmm classpath
-      if (LOGGER.isTraceEnabled()) {
-        pm.addPluginsFrom(Paths.get("plugins/").toUri(), new OptionReportAfter());
-      }
-      else {
-        pm.addPluginsFrom(Paths.get("plugins/").toUri());
-      }
+      pm.addPluginsFrom(Paths.get("plugins/").toUri());
       stopWatch.stop();
       LOGGER.debug("Done loading external plugins - took " + stopWatch);
     }
@@ -79,12 +73,7 @@ public class PluginManager {
     stopWatch.start();
     LOGGER.debug("loading classpath plugins...");
     // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
-    if (LOGGER.isTraceEnabled()) {
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**"), new OptionReportAfter()); // 4 secs
-    }
-    else {
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
-    }
+    pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
     stopWatch.stop();
     LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
   }
@@ -96,6 +85,7 @@ public class PluginManager {
   public void afterInitialization() {
     for (IMediaProvider p : getPluginsForInterface(IMediaProvider.class)) {
       p.afterInitialization();
+      LOGGER.trace("loaded plugin: {}", p.getClass().getName());
     }
   }
 

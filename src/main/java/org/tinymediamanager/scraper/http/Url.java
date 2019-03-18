@@ -311,7 +311,7 @@ public class Url {
       if (responseCode < 200 || responseCode >= 400) {
         cleanup();
         LOGGER.error("bad http response: {} - {}", responseCode, responseMessage);
-        throw new HttpException(responseMessage, responseCode);
+        throw new HttpException(url, responseCode, responseMessage);
       }
 
       if (response.body().contentType() != null) { // could be null, see AnimeDB

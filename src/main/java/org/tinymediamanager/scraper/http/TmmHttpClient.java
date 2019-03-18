@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.http;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.security.cert.X509Certificate;
@@ -31,14 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import okhttp3.Authenticator;
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 
@@ -173,12 +168,9 @@ public class TmmHttpClient {
     builder.proxy(proxyHost);
     // authenticate
     if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getUsername()) && StringUtils.isNotBlank(ProxySettings.INSTANCE.getPassword())) {
-      builder.authenticator(new Authenticator() {
-        @Override
-        public Request authenticate(Route route, Response response) throws IOException {
-          String credential = Credentials.basic(ProxySettings.INSTANCE.getUsername(), ProxySettings.INSTANCE.getPassword());
-          return response.request().newBuilder().header("Proxy-Authorization", credential).build();
-        }
+      builder.authenticator((route, response) -> {
+        String credential = Credentials.basic(ProxySettings.INSTANCE.getUsername(), ProxySettings.INSTANCE.getPassword());
+        return response.request().newBuilder().header("Proxy-Authorization", credential).build();
       });
     }
   }

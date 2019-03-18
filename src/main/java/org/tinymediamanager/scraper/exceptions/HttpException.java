@@ -18,6 +18,8 @@ package org.tinymediamanager.scraper.exceptions;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * the class {@link HttpException} is thrown if there has been a HTTP exception while querying the external source
  *
@@ -27,11 +29,21 @@ import java.io.IOException;
 public class HttpException extends IOException {
   private static final long serialVersionUID = 2161692612692312193L;
 
+  private final String      url;
   private final int         statusCode;
+  private final String      message;
 
-  public HttpException(String message, int statusCode) {
-    super(message);
+  public HttpException(int statusCode, String message) {
+    this.url = null;
     this.statusCode = statusCode;
+    this.message = message;
+  }
+
+  public HttpException(String url, int statusCode, String message) {
+    super();
+    this.url = url;
+    this.statusCode = statusCode;
+    this.message = message;
   }
 
   public int getStatusCode() {
@@ -40,6 +52,16 @@ public class HttpException extends IOException {
 
   @Override
   public String toString() {
-    return "HTTP " + statusCode + " - " + getMessage();
+    if (StringUtils.isNotBlank(url)) {
+      return "HTTP " + statusCode + " / " + message + " | " + url;
+    }
+    else {
+      return "HTTP " + statusCode + " / " + message;
+    }
+  }
+
+  @Override
+  public String getMessage() {
+    return toString();
   }
 }
