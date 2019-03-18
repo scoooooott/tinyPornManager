@@ -520,10 +520,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchTvShow(String searchTerm, TvShow show, MediaScraper mediaScraper, MediaLanguages language) {
-    // format searchstring
-    // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
-
-    List<MediaSearchResult> searchResult = null;
+    List<MediaSearchResult> searchResult = new ArrayList<>();
     try {
       ITvShowMetadataProvider provider;
 
@@ -545,6 +542,7 @@ public class TvShowList extends AbstractModelObject {
             options.setYear(show.getYear());
           }
           catch (Exception ignored) {
+            // ignore parsing errors here
           }
         }
       }
@@ -578,7 +576,9 @@ public class TvShowList extends AbstractModelObject {
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, this, "message.tvshow.searcherror", new String[] { ":", e.getLocalizedMessage() }));
     }
-    catch (UnsupportedMediaTypeException ignored) {
+    catch (UnsupportedMediaTypeException e) {
+      // the search was not supported here.. HOW/WHY?
+      LOGGER.error("unsupported media type exception: {}", e.getMessage());
     }
 
     return searchResult;

@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -148,15 +147,6 @@ public class TinyMediaManager {
       }
     }
 
-    // if (Globals.isDebug()) {
-    // ClassLoader cl = ClassLoader.getSystemClassLoader();
-    // URL[] urls = ((URLClassLoader) cl).getURLs();
-    // LOGGER.info("=== DEBUG CLASS LOADING =============================");
-    // for (URL url : urls) {
-    // LOGGER.info(url.getFile());
-    // }
-    // }
-
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2019 Manuel Laggner ===");
     LOGGER.info("=====================================================");
@@ -174,21 +164,9 @@ public class TinyMediaManager {
     }
 
     // START character encoding debug
-    debugCharacterEncoding("default encoding : ");
     System.setProperty("file.encoding", "UTF-8");
     System.setProperty("sun.jnu.encoding", "UTF-8");
-    Field charset;
-    try {
-      // we cannot (re)set the properties while running inside JVM
-      // so we trick it to reread it by setting them to null ;)
-      charset = Charset.class.getDeclaredField("defaultCharset");
-      charset.setAccessible(true);
-      charset.set(null, null);
-    }
-    catch (Exception e) {
-      LOGGER.warn("Error resetting to UTF-8", e);
-    }
-    debugCharacterEncoding("set encoding to  : ");
+    debugCharacterEncoding("current encoding : ");
     // END character encoding debug
 
     // set GUI default language
@@ -528,13 +506,15 @@ public class TinyMediaManager {
     String fontString = fontFamily + " " + fontSize;
 
     // Get the native look and feel class name
-    // String laf = UIManager.getSystemLookAndFeelClassName();
     Properties props = new Properties();
     props.setProperty("controlTextFont", fontString);
     props.setProperty("systemTextFont", fontString);
     props.setProperty("userTextFont", fontString);
     props.setProperty("menuTextFont", fontString);
-    // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+    if (Globals.settings.isSystemWindowDecoration()) {
+      props.setProperty("windowDecoration", "system");
+    }
 
     fontSize = Math.round((float) (fontSize * 0.833));
     fontString = fontFamily + " " + fontSize;
@@ -593,12 +573,13 @@ public class TinyMediaManager {
 
     LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-    // get the console appener
+    // get the console appender
     Appender consoleAppender = lc.getLogger("ROOT").getAppender("CONSOLE");
     if (consoleAppender instanceof ConsoleAppender) {
       // and set a filter to drop messages beneath the given level
       ThresholdLoggerFilter filter = new ThresholdLoggerFilter(level);
       filter.start();
+      consoleAppender.clearAllFilters();
       consoleAppender.addFilter(filter);
     }
   }

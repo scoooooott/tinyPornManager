@@ -18,10 +18,11 @@ package org.tinymediamanager.ui.movies;
 import java.awt.FontMetrics;
 import java.nio.file.Path;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
@@ -29,6 +30,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieComparator;
@@ -36,10 +38,11 @@ import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
+import org.tinymediamanager.ui.renderer.DateTableCellRenderer;
+import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
  * The MovieTableFormat. Used as definition for the movie table in the movie module
@@ -52,6 +55,17 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
   public MovieTableFormat() {
 
     Comparator<Movie> movieComparator = new MovieComparator();
+    Comparator<Movie> originalTitleComparator = new MovieComparator() {
+      @Override
+      public int compare(Movie movie1, Movie movie2) {
+        if (stringCollator != null) {
+          String titleMovie1 = Normalizer.normalize(movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+          String titleMovie2 = Normalizer.normalize(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+          return stringCollator.compare(titleMovie1, titleMovie2);
+        }
+        return movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT).compareTo(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT));
+      }
+    };
     Comparator<Path> pathComparator = new PathComparator();
     Comparator<String> stringComparator = new StringComparator();
     Comparator<Float> floatComparator = new FloatComparator();
@@ -77,7 +91,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      * original title (hidden per default)
      */
     col = new Column(BUNDLE.getString("metatag.originaltitle"), "originalTitle", movie -> movie, Movie.class);
-    col.setColumnComparator(movieComparator);
+    col.setColumnComparator(originalTitleComparator);
     col.setCellRenderer(new MovieBorderTableCellRenderer());
     col.setColumnTooltip(Movie::getOriginalTitleSortable);
     addColumn(col);
@@ -126,6 +140,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", movie -> movie.getRating().getRating(), Float.class);
     col.setColumnComparator(floatComparator);
     col.setHeaderIcon(IconManager.RATING);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     col.setColumnTooltip(
@@ -138,6 +153,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.votes"), "votes", movie -> movie.getRating().getVotes(), Integer.class);
     col.setColumnComparator(integerComparator);
     col.setHeaderIcon(IconManager.VOTES);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("1000000") * 1.2f));
     addColumn(col);
@@ -147,7 +163,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      */
     col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, Certification.class);
     col.setColumnComparator(certificationComparator);
-    col.setHeaderIcon(IconManager.VOTES);
+    col.setHeaderIcon(IconManager.CERTIFICATION);
     col.setColumnResizeable(true);
     addColumn(col);
 
@@ -157,7 +173,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
     col.setColumnComparator(dateComparator);
     col.setHeaderIcon(IconManager.DATE_ADDED);
-    DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
+    DateFormat dateFormat = TmmDateFormat.SHORT_DATE_FORMAT;
     col.setCellRenderer(new DateTableCellRenderer(dateFormat));
     col.setColumnResizeable(false);
     try {
@@ -204,16 +220,11 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
       for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
         size += mf.getFilesize();
       }
-
-      // looks better everything in M
-      // if (size > (2048L * 1024 * 1024)) {
-      // return (int) (size / (1024.0 * 1024.0 * 1024)) + " G";
-      // }
-
       return (int) (size / (1024.0 * 1024.0)) + " M";
     }, String.class);
     col.setColumnComparator(fileSizeComparator);
     col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);

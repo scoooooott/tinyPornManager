@@ -43,6 +43,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -55,6 +56,7 @@ import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieTableFormat;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
+import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ObservableElementList;
@@ -82,13 +84,13 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
   private TmmTable                    movieTable;
   private JLabel                      lblMovieCountFiltered;
   private JLabel                      lblMovieCountTotal;
+  private JButton                     btnExtendedFilter;
 
   public MovieListPanel() {
     initComponents();
   }
 
   private void initComponents() {
-    // putClientProperty("class", "roundedPanel");
     setOpaque(false);
 
     movieList = MovieList.getInstance();
@@ -96,7 +98,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
-    setLayout(new MigLayout("insets n n 0 n", "[300lp:300lp,grow][fill]", "[][200lp:300lp,grow]0[][]"));
+    setLayout(new MigLayout("insets n n 0 n", "[200lp:n,grow][100lp:n,fill]", "[][200lp:300lp,grow]0[][]"));
 
     searchField = EnhancedTextField.createSearchTextField();
     add(searchField, "cell 0 0,growx");
@@ -106,7 +108,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     FilterList<Movie> extendedFilteredMovies = new FilterList<>(sortedMovies, movieMatcherEditor);
     FilterList<Movie> textFilteredMovies = new FilterList<>(extendedFilteredMovies, textMatcherEditor);
     selectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
+    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<>(textFilteredMovies, new MovieTableFormat());
 
     // build the table
     movieTable = new TmmTable(movieTableModel);
@@ -162,9 +164,10 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     movieTable.configureScrollPane(scrollPane, new int[] { 0 });
     add(scrollPane, "cell 0 1 2 1,grow");
 
-    final JButton btnExtendedFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    btnExtendedFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     btnExtendedFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterDialogVisible(true));
+    selectionModel.addPropertyChangeListener("filterChanged", evt -> updateFilterIndicator());
     add(btnExtendedFilter, "cell 1 0");
 
     JSeparator separator = new JSeparator();
@@ -188,11 +191,37 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
   }
 
-  public MovieSelectionModel getSelectionModel() {
-    return selectionModel;
+  private void updateFilterIndicator() {
+    boolean active = false;
+    for (IMovieUIFilter filter : selectionModel.getMatcherEditor().getFilters()) {
+      switch (filter.getFilterState()) {
+        case ACTIVE:
+        case ACTIVE_NEGATIVE:
+          active = true;
+          break;
+
+        default:
+          break;
+      }
+
+      if (active) {
+        break;
+      }
+    }
+
+    if (active) {
+      btnExtendedFilter.setIcon(IconManager.FILTER_ACTIVE);
+    }
+    else {
+      btnExtendedFilter.setIcon(null);
+    }
   }
 
-  public void setInitialSelection() {
+  public void init() {
+    // set the filter indicator
+    updateFilterIndicator();
+
+    // set the initial selection
     movieTable.setSelectionModel(selectionModel.getSelectionModel());
     // selecting first movie at startup
     if (MovieList.getInstance().getMovies() != null && MovieList.getInstance().getMovies().size() > 0) {
@@ -204,6 +233,10 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     }
 
     SwingUtilities.invokeLater(() -> movieTable.requestFocus());
+  }
+
+  public MovieSelectionModel getSelectionModel() {
+    return selectionModel;
   }
 
   @Override

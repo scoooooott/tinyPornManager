@@ -53,13 +53,13 @@ import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
 import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
-import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieToggleWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateAction;
@@ -143,8 +143,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
 
     // further initializations
     init();
-
-    listPanel.setInitialSelection();
   }
 
   private void init() {
@@ -155,10 +153,14 @@ public class MovieUIModule extends AbstractTmmUIModule {
         selectionModel.setFilterValues(MovieModuleManager.SETTINGS.getUiFilters());
       });
     }
+
     // apply sorting
     if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
       selectionModel.sortMovies(MovieModuleManager.SETTINGS.getSortColumn(), MovieModuleManager.SETTINGS.isSortAscending());
     }
+
+    // init the table panel
+    listPanel.init();
   }
 
   public static MovieUIModule getInstance() {
@@ -193,7 +195,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
-    popupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    popupMenu.add(createAndRegisterAction(MovieToggleWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     popupMenu.add(createAndRegisterAction(MovieRenameAction.class));
@@ -289,7 +291,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(MovieEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieChangeDatasourceAction.class));
-    editPopupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieToggleWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieRenameAction.class));

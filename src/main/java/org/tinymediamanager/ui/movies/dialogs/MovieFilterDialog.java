@@ -18,29 +18,35 @@ package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.movies.IMovieUIFilter;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 import org.tinymediamanager.ui.movies.filters.MovieAudioCodecFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCastFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCertificationFilter;
@@ -69,86 +75,115 @@ import org.tinymediamanager.ui.movies.filters.MovieYearFilter;
 import net.miginfocom.swing.MigLayout;
 
 public class MovieFilterDialog extends TmmDialog {
-  private static final long             serialVersionUID = 2298540526428945319L;
+  private static final long                      serialVersionUID = 2298540526428945319L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private static final float            FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
+  private final MovieSelectionModel              selectionModel;
+  private final JComboBox<SortColumn>            cbSortColumn;
+  private final JComboBox<SortOrder>             cbSortOrder;
 
-  private final MovieSelectionModel     selectionModel;
-  private final JPanel                  panelFilter;
-  private final JComboBox<SortColumn>   cbSortColumn;
-  private final JComboBox<SortOrder>    cbSortOrder;
+  // map for storing which filter is in which panel
+  private final Map<JPanel, Set<IMovieUIFilter>> filterMap;
+
+  private JTabbedPane                            tabbedPane;
 
   public MovieFilterDialog(MovieSelectionModel selectionModel) {
     super(BUNDLE.getString("movieextendedsearch.options"), "movieFilter");
     setModalityType(ModalityType.MODELESS);
 
     this.selectionModel = selectionModel;
+    this.filterMap = new HashMap<>();
+    this.selectionModel.addPropertyChangeListener("filterChanged", evt -> filterChanged());
 
     {
-      JPanel panelContent = new JPanel();
-      getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][10lp][100lp,grow]", "[][400lp:n,grow][][][]"));
+      tabbedPane = new MainTabbedPane() {
+        private static final long serialVersionUID = 9041548865608767661L;
 
-      JLabel lblFilterBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
-      setComponentFont(lblFilterBy);
-      panelContent.add(lblFilterBy, "cell 0 0,growx,aligny top");
+        @Override
+        public void updateUI() {
+          putClientProperty("leftBorder", "half");
+          putClientProperty("rightBorder", "half");
+          putClientProperty("bottomBorder", Boolean.FALSE);
+          super.updateUI();
+        }
+      };
+      getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-      panelFilter = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+      {
+        // panel Main
+        JPanel panelMain = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+        JScrollPane scrollPaneMain = new JScrollPane(panelMain);
+        scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab(BUNDLE.getString("metatag.details"), scrollPaneMain);
 
-      JScrollPane scrollPane = new JScrollPane(panelFilter);
-      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      panelContent.add(scrollPane, "cell 0 1 3 1,grow");
+        panelMain.add(new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")), "cell 0 0 3 1, growx, aligny top, wrap");
 
-      addFilter(new MovieNewMoviesFilter());
-      addFilter(new MovieDuplicateFilter());
-      addFilter(new MovieWatchedFilter());
-      addFilter(new MovieGenreFilter());
-      addFilter(new MovieCertificationFilter());
-      addFilter(new MovieYearFilter());
-      addFilter(new MovieCastFilter());
-      addFilter(new MovieCountryFilter());
-      addFilter(new MovieLanguageFilter());
-      addFilter(new MovieProductionCompanyFilter());
-      addFilter(new MovieTagFilter());
-      addFilter(new MovieInMovieSetFilter());
-      addFilter(new MovieVideoFormatFilter());
-      addFilter(new MovieVideoCodecFilter());
-      addFilter(new MovieFrameRateFilter());
-      addFilter(new MovieVideo3DFilter());
-      addFilter(new MovieVideoContainerFilter());
-      addFilter(new MovieAudioCodecFilter());
-      addFilter(new MovieDatasourceFilter());
-      addFilter(new MovieMediaSourceFilter());
-      addFilter(new MovieVideoExtrasFilter());
-      addFilter(new MovieMissingMetadataFilter());
-      addFilter(new MovieMissingArtworkFilter());
-      addFilter(new MovieMissingSubtitlesFilter());
-
-      JSeparator separator = new JSeparator();
-      panelContent.add(separator, "cell 0 2 3 1,growx,aligny top");
-
-      JLabel lblSortBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
-      setComponentFont(lblSortBy);
-      panelContent.add(lblSortBy, "cell 0 3,growx,aligny top");
-
-      cbSortColumn = new JComboBox();
-      for (MovieExtendedComparator.SortColumn column : MovieExtendedComparator.SortColumn.values()) {
-        cbSortColumn.addItem(column);
+        addFilter(new MovieNewMoviesFilter(), panelMain);
+        addFilter(new MovieDuplicateFilter(), panelMain);
+        addFilter(new MovieWatchedFilter(), panelMain);
+        addFilter(new MovieGenreFilter(), panelMain);
+        addFilter(new MovieCertificationFilter(), panelMain);
+        addFilter(new MovieYearFilter(), panelMain);
+        addFilter(new MovieCastFilter(), panelMain);
+        addFilter(new MovieCountryFilter(), panelMain);
+        addFilter(new MovieLanguageFilter(), panelMain);
+        addFilter(new MovieProductionCompanyFilter(), panelMain);
+        addFilter(new MovieTagFilter(), panelMain);
+        addFilter(new MovieInMovieSetFilter(), panelMain);
       }
-      setComponentFont(cbSortColumn);
-      Action actionSort = new SortAction();
-      cbSortColumn.setAction(actionSort);
-      panelContent.add(cbSortColumn, "cell 0 4,growx,aligny top");
 
-      cbSortOrder = new JComboBox();
-      for (MovieExtendedComparator.SortOrder order : MovieExtendedComparator.SortOrder.values()) {
-        cbSortOrder.addItem(order);
+      {
+        // panel media data
+        JPanel panelMediaData = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+        JScrollPane scrollPaneMediaData = new JScrollPane(panelMediaData);
+        scrollPaneMediaData.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab(BUNDLE.getString("metatag.mediainformation"), scrollPaneMediaData);
+        panelMediaData.add(new TmmLabel(BUNDLE.getString("movieextendedsearch.filterby")), "cell 0 0 3 1, growx, aligny top, wrap");
+
+        addFilter(new MovieVideoFormatFilter(), panelMediaData);
+        addFilter(new MovieVideoCodecFilter(), panelMediaData);
+        addFilter(new MovieFrameRateFilter(), panelMediaData);
+        addFilter(new MovieVideo3DFilter(), panelMediaData);
+        addFilter(new MovieVideoContainerFilter(), panelMediaData);
+        addFilter(new MovieAudioCodecFilter(), panelMediaData);
+        addFilter(new MovieDatasourceFilter(), panelMediaData);
+        addFilter(new MovieMediaSourceFilter(), panelMediaData);
+        addFilter(new MovieVideoExtrasFilter(), panelMediaData);
+        addFilter(new MovieMissingMetadataFilter(), panelMediaData);
+        addFilter(new MovieMissingArtworkFilter(), panelMediaData);
+        addFilter(new MovieMissingSubtitlesFilter(), panelMediaData);
       }
-      setComponentFont(cbSortOrder);
-      cbSortOrder.setAction(actionSort);
-      panelContent.add(cbSortOrder, "cell 2 4,growx,aligny top");
+
+      {
+        // panel sort
+        JPanel panelSort = new JPanel();
+        panelSort.setLayout(new MigLayout("insets n 0 n 0", "[5lp!][10lp][100lp,grow][5lp!]", "[]"));
+
+        JSeparator separator = new JSeparator();
+        panelSort.add(separator, "cell 0 1 4 1,growx,aligny top");
+
+        JLabel lblSortBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
+        panelSort.add(lblSortBy, "cell 1 2,growx,aligny top");
+
+        cbSortColumn = new JComboBox();
+        for (MovieExtendedComparator.SortColumn column : MovieExtendedComparator.SortColumn.values()) {
+          cbSortColumn.addItem(column);
+        }
+
+        Action actionSort = new SortAction();
+        cbSortColumn.setAction(actionSort);
+        panelSort.add(cbSortColumn, "cell 1 3,growx,aligny top");
+
+        cbSortOrder = new JComboBox();
+        for (MovieExtendedComparator.SortOrder order : MovieExtendedComparator.SortOrder.values()) {
+          cbSortOrder.addItem(order);
+        }
+        cbSortOrder.setAction(actionSort);
+        panelSort.add(cbSortOrder, "cell 2 3,growx,aligny top");
+
+        getContentPane().add(panelSort, BorderLayout.SOUTH);
+      }
     }
   }
 
@@ -157,19 +192,61 @@ public class MovieFilterDialog extends TmmDialog {
    *
    * @param filter
    *          the filter to be added
+   * @param panel
+   *          the panel to add the filter to
    */
-  private void addFilter(IMovieUIFilter filter) {
-    panelFilter.add(filter.getCheckBox(), "");
-    panelFilter.add(filter.getLabel(), "right");
+  private void addFilter(IMovieUIFilter filter, JPanel panel) {
+    panel.add(filter.getCheckBox(), "");
+    panel.add(filter.getLabel(), "right");
 
     if (filter.getFilterComponent() != null) {
-      panelFilter.add(filter.getFilterComponent(), "wmin 100, grow, wrap");
+      panel.add(filter.getFilterComponent(), "wmin 100, grow, wrap");
     }
     else {
-      panelFilter.add(Box.createGlue(), "wrap");
+      panel.add(Box.createGlue(), "wrap");
     }
 
+    Set<IMovieUIFilter> filters = filterMap.computeIfAbsent(panel, k -> new HashSet<>());
+    filters.add(filter);
+
     selectionModel.addFilter(filter);
+  }
+
+  /**
+   * re-calculate if the active filter icon should be displayed
+   */
+  private void filterChanged() {
+    for (Map.Entry<JPanel, Set<IMovieUIFilter>> entry : filterMap.entrySet()) {
+      boolean active = false;
+      for (IMovieUIFilter filter : entry.getValue()) {
+        switch (filter.getFilterState()) {
+          case ACTIVE:
+          case ACTIVE_NEGATIVE:
+            active = true;
+            break;
+
+          default:
+            break;
+        }
+
+        if (active) {
+          break;
+        }
+      }
+
+      for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+        if (SwingUtilities.isDescendingFrom(entry.getKey(), tabbedPane.getComponentAt(i))) {
+          if (active) {
+            tabbedPane.setIconAt(i, IconManager.FILTER_ACTIVE);
+          }
+          else {
+            tabbedPane.setIconAt(i, null);
+          }
+
+          break;
+        }
+      }
+    }
   }
 
   private class SortAction extends AbstractAction {
@@ -184,10 +261,6 @@ public class MovieFilterDialog extends TmmDialog {
       // sort
       selectionModel.sortMovies(column, ascending);
     }
-  }
-
-  private void setComponentFont(JComponent comp) {
-    comp.setFont(comp.getFont().deriveFont(FONT_SIZE));
   }
 
   @Override

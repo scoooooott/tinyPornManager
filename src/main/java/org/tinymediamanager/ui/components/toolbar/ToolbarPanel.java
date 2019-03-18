@@ -55,6 +55,7 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
+import org.tinymediamanager.ui.actions.ExportLogAction;
 import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.ForumAction;
@@ -70,6 +71,7 @@ import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
 import com.jtattoo.plaf.BaseRootPaneUI;
+import com.jtattoo.plaf.TitlePane;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -80,10 +82,12 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Manuel Laggner
  */
-public class ToolbarPanel extends JPanel {
-  private static final long           serialVersionUID = 7969400170662870244L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+public class ToolbarPanel extends JPanel implements TitlePane {
+  private static final long           serialVersionUID      = 7969400170662870244L;
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());
+  private final static Logger         LOGGER                = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+
+  private TmmWindowDecorationPanel    windowDecorationPanel = null;
 
   private ToolbarButton               btnSearch;
   private ToolbarButton               btnEdit;
@@ -94,8 +98,6 @@ public class ToolbarPanel extends JPanel {
   private ToolbarMenu                 menuSearch;
   private ToolbarMenu                 menuEdit;
   private ToolbarMenu                 menuRename;
-
-  private JPanel                      panelEast;
 
   public ToolbarPanel() {
     putClientProperty("class", "toolbarPanel");
@@ -161,13 +163,15 @@ public class ToolbarPanel extends JPanel {
     JLabel lblDonate = new ToolbarLabel(BUNDLE.getString("Toolbar.donate"), e -> btnDonate.getAction().actionPerformed(e));
     panelCenter.add(lblDonate, "cell 11 1,alignx center");
 
-    panelEast = new JPanel();
+    JPanel panelEast = new JPanel();
     add(panelEast, BorderLayout.EAST);
     panelEast.setOpaque(false);
     panelEast.setLayout(new MigLayout("insets 0", "[]", "[grow]"));
     // if we use our window decoration, place the window buttons here
-    if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI) {
-      createWindowButtons();
+    if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI && !Globals.settings.isSystemWindowDecoration()) {
+      windowDecorationPanel = new TmmWindowDecorationPanel();
+      panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
+      panelEast.add(windowDecorationPanel, "cell 0 0, center, growy");
     }
   }
 
@@ -265,8 +269,16 @@ public class ToolbarPanel extends JPanel {
         MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
         LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
       });
-
       debugMenu.add(trace);
+
+      // JMenuItem traceLogs = new JMenuItem(BUNDLE.getString("tmm.tracelogs")); //$NON-NLS-1$
+      // debugMenu.add(traceLogs);
+      // traceLogs.addActionListener(arg0 -> {
+      // JDialog logDialog = new LogDialog();
+      // logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      // logDialog.setVisible(true);
+      // });
+
       menu.addSeparator();
       menu.add(debugMenu);
     }
@@ -303,7 +315,39 @@ public class ToolbarPanel extends JPanel {
       }
     });
 
+    menu.addSeparator();
+    menu.add(new BugReportAction());
+    menu.add(new ExportLogAction());
+
     return menu;
+  }
+
+  @Override
+  public void iconify() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.iconify();
+    }
+  }
+
+  @Override
+  public void maximize() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.maximize();
+    }
+  }
+
+  @Override
+  public void restore() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.restore();
+    }
+  }
+
+  @Override
+  public void close() {
+    if (windowDecorationPanel != null) {
+      windowDecorationPanel.close();
+    }
   }
 
   private JPopupMenu buildInfoMenu() {
@@ -323,10 +367,5 @@ public class ToolbarPanel extends JPanel {
     menu.add(new AboutAction());
 
     return menu;
-  }
-
-  private void createWindowButtons() {
-    panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
-    panelEast.add(new TmmWindowDecorationPanel(), "cell 0 0, center, growy");
   }
 }

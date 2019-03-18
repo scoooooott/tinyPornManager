@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * 
  * @author Manuel Laggner
  */
-public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements ITvShowUIFilter<TmmTreeNode> {
+abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements ITvShowUIFilter<TmmTreeNode> {
   @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?

@@ -189,13 +189,13 @@ public class KodiRPC {
           }
         }
         else {
-          SplitUri sp = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
+          SplitUri kodi = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
 
           for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
-            SplitUri tmmsp = entry.getKey();
+            SplitUri tmm = entry.getKey();
             UUID uuid = entry.getValue();
-            if (sp.equals(tmmsp)) {
-              LOGGER.trace(sp.toString());
+            if (kodi.equals(tmm)) {
+              LOGGER.trace(kodi.toString());
               moviemappings.put(uuid, res.movieid);
               break;
             }

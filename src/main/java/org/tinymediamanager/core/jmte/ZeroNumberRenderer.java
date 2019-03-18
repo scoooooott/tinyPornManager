@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
 
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.ITmmUIFilter;
+package org.tinymediamanager.core.jmte;
+
+import java.util.Locale;
+import java.util.Map;
+
+import com.floreysoft.jmte.Renderer;
 
 /**
- * The interface IMovieUIFilter is used for filtering movies in the JTable
+ * this renderer is used to render out numbers, but do not render a zero
  * 
  * @author Manuel Laggner
  */
-public interface IMovieUIFilter extends ITmmUIFilter<Movie> {
-
-  /**
-   * is the given accepted by the filter
-   * 
-   * @param movie
-   *          the movie to check
-   * @return true or false
-   */
-  boolean accept(Movie movie);
+public class ZeroNumberRenderer implements Renderer<Number> {
+  @Override
+  public String render(Number o, Locale locale, Map<String, Object> model) {
+    if (o != null && o.doubleValue() != 0) {
+      return o.toString();
+    }
+    return "";
+  }
 }

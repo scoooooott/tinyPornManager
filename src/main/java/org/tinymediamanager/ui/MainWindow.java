@@ -47,6 +47,7 @@ import javax.swing.text.JTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
@@ -193,7 +194,8 @@ public class MainWindow extends JFrame {
     toolbarPanel = new ToolbarPanel();
 
     // Customize the titlebar. This could only be done if one of the JTattoo look and feels is active. So check this first.
-    if (getRootPane().getUI() instanceof BaseRootPaneUI) {
+    // if the system window decorations are active we have to put the toolbar into the NORTH area too
+    if (getRootPane().getUI() instanceof BaseRootPaneUI && !Globals.settings.isSystemWindowDecoration()) {
       BaseRootPaneUI rootPaneUI = (BaseRootPaneUI) getRootPane().getUI();
       // Here is the magic. Just add the panel to the titlebar
       rootPaneUI.setTitlePane(getRootPane(), toolbarPanel);

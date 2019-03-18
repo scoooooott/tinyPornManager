@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tasks;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -195,7 +196,7 @@ public class DownloadTask extends TmmTask {
 
       while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1) {
         if (cancel) {
-          break;
+          Thread.currentThread().interrupt();
         }
 
         outputStream.write(buffer, 0, count);
@@ -264,6 +265,10 @@ public class DownloadTask extends TmmTask {
           LOGGER.warn("Download to '" + tempFile + "' was ok, but couldn't move to '" + file + "'");
         }
       } // end isCancelled
+    }
+    catch (InterruptedException | InterruptedIOException e) {
+      LOGGER.info("download of {} aborted", url);
+      Thread.currentThread().interrupt();
     }
     catch (Exception e) {
       LOGGER.error("problem downloading: ", e);

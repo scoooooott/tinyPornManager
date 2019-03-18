@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -243,9 +241,12 @@ public class MovieEditorDialog extends TmmDialog {
 
     {
       int year = movieToEdit.getYear();
-      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
+      List<Certification> availableCertifications = Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      if (!availableCertifications.contains(movieToEdit.getCertification())) {
+        availableCertifications.add(0, movieToEdit.getCertification());
+      }
+      for (Certification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
 
@@ -1286,21 +1287,19 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       // user rating
-      Map<String, Rating> ratings = new HashMap<>();
+      Map<String, Rating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
-        ratings.put(Rating.USER, userRating);
+        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
       for (MediaRating mediaRating : MovieEditorDialog.this.ratings) {
-        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
-          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
-          ratings.put(mediaRating.key, rating);
+        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
+          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
-      movieToEdit.setRatings(ratings);
+      movieToEdit.setRatings(newRatings);
 
       movieToEdit.writeNFO();
       movieToEdit.saveToDb();

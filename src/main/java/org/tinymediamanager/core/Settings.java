@@ -94,6 +94,7 @@ public class Settings extends AbstractSettings {
   private String    mediaPlayer            = "";
 
   private String    theme                  = "Light";
+  private boolean   systemWindowDecoration = true;
   private int       fontSize               = 12;
   private String    fontFamily             = "Dialog";
 
@@ -275,14 +276,12 @@ public class Settings extends AbstractSettings {
     addTitlePrefix("D`");
     Collections.sort(titlePrefixes);
 
-    //default cleanup postfix
+    // default cleanup postfix
     cleanupFileTypes.clear();
     addCleanupFileType(".txt");
     addCleanupFileType(".url");
     addCleanupFileType(".html");
     Collections.sort(cleanupFileTypes);
-
-
 
     setProxyFromSystem();
 
@@ -529,6 +528,7 @@ public class Settings extends AbstractSettings {
   public List<String> getCleanupFileType() {
     return cleanupFileTypes;
   }
+
   /**
    * Convenience method to get all supported file extensions
    * 
@@ -931,6 +931,16 @@ public class Settings extends AbstractSettings {
     String oldValue = this.fontFamily;
     this.theme = newValue;
     firePropertyChange("theme", oldValue, newValue);
+  }
+
+  public boolean isSystemWindowDecoration() {
+    return systemWindowDecoration;
+  }
+
+  public void setSystemWindowDecoration(boolean newValue) {
+    boolean oldValue = this.systemWindowDecoration;
+    this.systemWindowDecoration = newValue;
+    firePropertyChange("systemWindowDecoration", oldValue, newValue);
   }
 
   public void setFontSize(int newValue) {

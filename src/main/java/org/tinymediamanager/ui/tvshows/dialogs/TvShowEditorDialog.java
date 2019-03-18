@@ -78,7 +78,6 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.LeftDotTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -104,6 +103,7 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
 import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.renderer.LeftDotTableCellRenderer;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -253,10 +253,14 @@ public class TvShowEditorDialog extends TmmDialog {
         extrafanarts = new ArrayList<>(tvShowToEdit.getExtraFanartUrls());
       }
 
-      for (Certification cert : Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry())) {
+      List<Certification> availableCertifications = Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      if (!availableCertifications.contains(tvShowToEdit.getCertification())) {
+        availableCertifications.add(0, tvShowToEdit.getCertification());
+      }
+      for (Certification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
-      cbCertification.setSelectedItem(tvShow.getCertification());
+      cbCertification.setSelectedItem(tvShowToEdit.getCertification());
 
       List<TvShowEpisode> epl = new ArrayList<>(tvShowToEdit.getEpisodes());
       // custom sort per filename (just this time)
@@ -926,21 +930,19 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setStatus((MediaAiredStatus) cbStatus.getSelectedItem());
 
       // user rating
-      Map<String, Rating> ratings = new HashMap<>();
+      Map<String, Rating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
-        ratings.put(Rating.USER, userRating);
+        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
       for (MediaRating mediaRating : TvShowEditorDialog.this.ratings) {
-        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
-          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
-          ratings.put(mediaRating.key, rating);
+        if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
+          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
-      tvShowToEdit.setRatings(ratings);
+      tvShowToEdit.setRatings(newRatings);
 
       // adapt episodes according to the episode table (in a 2 way sync)
       // remove episodes

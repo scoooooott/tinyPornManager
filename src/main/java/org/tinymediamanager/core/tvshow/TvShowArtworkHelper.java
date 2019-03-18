@@ -27,25 +27,19 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -58,7 +52,6 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowExtraImageFetcherTask;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.http.Url;
 
 /**
  * The class TvShowArtworkHelper . A helper class for managing TV show artwork
@@ -348,9 +341,10 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonPosterNaming seasonPosterNaming : TvShowModuleManager.SETTINGS.getSeasonPosterFilenames()) {
-      String filename = show.getPathNIO() + File.separator + seasonPosterNaming.getFilename(show, season, Utils.getArtworkExtension(seasonPosterUrl));
+      Path destFile = Paths
+          .get(show.getPathNIO() + File.separator + seasonPosterNaming.getFilename(show, season, Utils.getArtworkExtension(seasonPosterUrl)));
 
-      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
+      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
 
@@ -381,9 +375,10 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonBannerNaming seasonBannerNaming : TvShowModuleManager.SETTINGS.getSeasonBannerFilenames()) {
-      String filename = show.getPathNIO() + File.separator + seasonBannerNaming.getFilename(show, season, Utils.getArtworkExtension(seasonBannerUrl));
+      Path destFile = Paths
+          .get(show.getPathNIO() + File.separator + seasonBannerNaming.getFilename(show, season, Utils.getArtworkExtension(seasonBannerUrl)));
 
-      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonBannerUrl, SEASON_BANNER);
+      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonBannerUrl, SEASON_BANNER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
 
@@ -414,9 +409,10 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonThumbNaming seasonThumbNaming : TvShowModuleManager.SETTINGS.getSeasonThumbFilenames()) {
-      String filename = show.getPathNIO() + File.separator + seasonThumbNaming.getFilename(show, season, Utils.getArtworkExtension(seasonThumbUrl));
+      Path destFile = Paths
+          .get(show.getPathNIO() + File.separator + seasonThumbNaming.getFilename(show, season, Utils.getArtworkExtension(seasonThumbUrl)));
 
-      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, filename, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
+      SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
 
@@ -430,12 +426,14 @@ public class TvShowArtworkHelper {
     private TvShow           tvShow;
     private TvShowSeason     tvShowSeason;
     private MediaArtworkType artworkType;
+    private Path             destinationPath;
     private String           filename;
     private String           url;
 
-    SeasonArtworkImageFetcher(TvShow show, String filename, TvShowSeason tvShowSeason, String url, MediaArtworkType type) {
+    SeasonArtworkImageFetcher(TvShow show, Path destFile, TvShowSeason tvShowSeason, String url, MediaArtworkType type) {
       this.tvShow = show;
-      this.filename = filename;
+      this.destinationPath = destFile.getParent();
+      this.filename = destFile.getFileName().toString();
       this.artworkType = type;
       this.tvShowSeason = tvShowSeason;
       this.url = url;
@@ -444,60 +442,38 @@ public class TvShowArtworkHelper {
     @Override
     public void run() {
       String oldFilename = "";
-      try {
-        if (tvShowSeason != null) {
-          oldFilename = tvShow.getSeasonArtwork(tvShowSeason.getSeason(), artworkType);
-          tvShowSeason.clearArtwork(artworkType);
-        }
 
-        LOGGER.debug("writing season artwork " + filename);
-
-        // fetch and store images
-        Url url1 = new Url(url);
-        FileOutputStream outputStream = new FileOutputStream(filename);
-        InputStream is = url1.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.close();
-        outputStream.flush();
-        try {
-          outputStream.getFD().sync(); // wait until file has been completely written
-        }
-        catch (Exception e) {
-          // empty here -> just not let the thread crash
-        }
-        is.close();
-
-        ImageCache.invalidateCachedImage(Paths.get(filename));
-        if (tvShowSeason != null) {
-          tvShowSeason.setArtwork(Paths.get(filename), artworkType);
-        }
-        // build up image cache
-        if (Settings.getInstance().isImageCache()) {
-          try {
-            ImageCache.cacheImage(Paths.get(filename));
-          }
-          catch (Exception ignored) {
-          }
-        }
+      if (tvShowSeason != null) {
+        oldFilename = tvShow.getSeasonArtwork(tvShowSeason.getSeason(), artworkType);
+        tvShowSeason.clearArtwork(artworkType);
       }
-      catch (IOException e) {
-        LOGGER.debug("fetch image", e);
+
+      LOGGER.debug("writing season artwork {}", filename);
+
+      // fetch and store images
+      try {
+        Path destFile = ImageUtils.downloadImage(url, destinationPath, filename);
+
+        // invalidate image cache
+        if (tvShowSeason != null) {
+          tvShowSeason.setArtwork(destFile, artworkType);
+        }
+
+        // build up image cache
+        ImageCache.cacheImageSilently(destFile);
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
+      catch (Exception e) {
+        LOGGER.error("fetch image {} - {}", this.url, e);
         // fallback
         if (tvShowSeason != null && !oldFilename.isEmpty()) {
           tvShowSeason.setArtwork(Paths.get(oldFilename), artworkType);
         }
         // build up image cache
-        if (Settings.getInstance().isImageCache()) {
-          try {
-            ImageCache.cacheImage(Paths.get(oldFilename));
-          }
-          catch (Exception ignored) {
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error("Thread crashed", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, this, "message.scrape.tvshowartworkfailed"));
+        ImageCache.cacheImageSilently(Paths.get(oldFilename));
       }
       finally {
         tvShow.saveToDb();

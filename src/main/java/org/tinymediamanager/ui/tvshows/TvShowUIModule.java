@@ -58,7 +58,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesWoArtworkActi
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowToggleWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleDownloadAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleSearchAction;
@@ -231,7 +231,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     popupMenu.add(createAndRegisterAction(TvShowChangeDatasourceAction.class));
     popupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
-    popupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowToggleWatchedFlagAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
     popupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     popupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
@@ -310,7 +310,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowChangeDatasourceAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonArtworkAction.class));
-    editPopupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowToggleWatchedFlagAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowReadNfoAction.class));
     editPopupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));

@@ -29,6 +29,7 @@ import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
 import static org.tinymediamanager.core.Constants.IMDB;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SEASON;
 import static org.tinymediamanager.core.Constants.SEASON_COUNT;
 import static org.tinymediamanager.core.Constants.SORT_TITLE;
 import static org.tinymediamanager.core.Constants.STATUS;
@@ -44,7 +45,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -71,6 +70,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -166,10 +166,25 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // register for dirty flag listener
     super();
 
-    // give tag events from episodes up to the TvShowList
     propertyChangeListener = evt -> {
-      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
-        firePropertyChange(evt);
+      if (evt.getSource() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+
+        switch (evt.getPropertyName()) {
+          case TAG:
+            firePropertyChange(evt);
+            break;
+
+          case SEASON:
+            // remove from any season which is not the desired season
+            for (TvShowSeason season : seasons) {
+              if (season.getEpisodes().contains(episode) && season.getSeason() != episode.getSeason()) {
+                season.removeEpisode(episode);
+              }
+            }
+            addToSeason(episode);
+            break;
+        }
       }
     };
   }
@@ -191,10 +206,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // load dummy episodes
     for (TvShowEpisode episode : dummyEpisodes) {
+      episode.setTvShow(this);
       if (episode.getSeason() == 0 && !TvShowModuleManager.SETTINGS.isDisplayMissingSpecials()) {
         continue;
       }
-      episode.setTvShow(this);
       if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
         addToSeason(episode);
       }
@@ -1111,7 +1126,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     if (this.firstAired == null) {
       return "";
     }
-    return SimpleDateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(firstAired);
+    return TmmDateFormat.SHORT_DATE_FORMAT.format(firstAired);
   }
 
   /**
@@ -1375,6 +1390,24 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     return watched;
+  }
+
+  /**
+   * checks if all episode has subtitles
+   *
+   * @return true, is all episodes have subtitles
+   */
+  public boolean hasEpisodeSubtitles() {
+    boolean subtitles = true;
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.hasSubtitles()) {
+        subtitles = false;
+        break;
+      }
+    }
+
+    return subtitles;
   }
 
   public Date getLastWatched() {

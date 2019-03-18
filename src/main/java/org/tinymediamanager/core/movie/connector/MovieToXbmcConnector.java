@@ -19,7 +19,6 @@ package org.tinymediamanager.core.movie.connector;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,26 +162,25 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
     Element fileinfo = document.createElement("fileinfo");
     Element streamdetails = document.createElement("streamdetails");
 
-    List<MediaFile> videos = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (!videos.isEmpty()) {
-      MediaFile mediaFile = videos.get(0);
+    MediaFile vid = movie.getMainVideoFile();
+    if (vid != null) {
       {
         Element video = document.createElement("video");
 
         Element codec = document.createElement("codec");
-        codec.setTextContent(mediaFile.getVideoCodec());
+        codec.setTextContent(vid.getVideoCodec());
         video.appendChild(codec);
 
         Element aspect = document.createElement("aspect");
-        aspect.setTextContent(Float.toString(mediaFile.getAspectRatio()));
+        aspect.setTextContent(Float.toString(vid.getAspectRatio()));
         video.appendChild(aspect);
 
         Element width = document.createElement("width");
-        width.setTextContent(Integer.toString(mediaFile.getVideoWidth()));
+        width.setTextContent(Integer.toString(vid.getVideoWidth()));
         video.appendChild(width);
 
         Element height = document.createElement("height");
-        height.setTextContent(Integer.toString(mediaFile.getVideoHeight()));
+        height.setTextContent(Integer.toString(vid.getVideoHeight()));
         video.appendChild(height);
 
         Element durationinseconds = document.createElement("durationinseconds");
@@ -191,10 +189,10 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
-        if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
+        if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
           stereomode.setTextContent("left_right");
         }
-        else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
+        else if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
           stereomode.setTextContent("top_bottom"); // maybe?
         }
         video.appendChild(stereomode);
@@ -202,7 +200,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         streamdetails.appendChild(video);
       }
 
-      for (MediaFileAudioStream audioStream : mediaFile.getAudioStreams()) {
+      for (MediaFileAudioStream audioStream : vid.getAudioStreams()) {
         Element audio = document.createElement("audio");
 
         Element codec = document.createElement("codec");
@@ -214,7 +212,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         audio.appendChild(language);
 
         Element channels = document.createElement("channels");
-        channels.setTextContent(Integer.toString(audioStream.getChannelsAsInt()));
+        channels.setTextContent(Integer.toString(audioStream.getAudioChannels()));
         audio.appendChild(channels);
 
         streamdetails.appendChild(audio);
@@ -223,7 +221,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
       // also include external audio files if set
       if (MovieModuleManager.SETTINGS.isIncludeExternalAudioStreams()) {
         for (MediaFile audioFile : movie.getMediaFiles(MediaFileType.AUDIO)) {
-          for (MediaFileAudioStream audioStream : mediaFile.getAudioStreams()) {
+          for (MediaFileAudioStream audioStream : vid.getAudioStreams()) {
             Element audio = document.createElement("audio");
 
             Element codec = document.createElement("codec");
@@ -235,7 +233,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
             audio.appendChild(language);
 
             Element channels = document.createElement("channels");
-            channels.setTextContent(Integer.toString(audioStream.getChannelsAsInt()));
+            channels.setTextContent(Integer.toString(audioStream.getAudioChannels()));
             audio.appendChild(channels);
 
             streamdetails.appendChild(audio);
@@ -243,7 +241,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         }
       }
 
-      for (MediaFileSubtitle sub : mediaFile.getSubtitles()) {
+      for (MediaFileSubtitle sub : vid.getSubtitles()) {
         Element subtitle = document.createElement("subtitle");
 
         Element language = document.createElement("language");

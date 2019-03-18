@@ -28,10 +28,10 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
  *
  * @author Manuel laggner
  */
-public class TmmTableModel<E> extends DefaultEventTableModel {
+public class TmmTableModel<E> extends DefaultEventTableModel<E> {
   private TmmTableFormat<? super E> tmmTableFormat;
 
-  public TmmTableModel(EventList<? super E> source, TmmTableFormat<? super E> tableFormat) {
+  public TmmTableModel(EventList<E> source, TmmTableFormat<? super E> tableFormat) {
     super(source, tableFormat);
     tmmTableFormat = tableFormat;
   }

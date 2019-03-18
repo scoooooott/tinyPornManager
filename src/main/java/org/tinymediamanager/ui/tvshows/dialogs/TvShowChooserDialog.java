@@ -72,7 +72,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -86,6 +85,7 @@ import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.renderer.BorderTableCellRenderer;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
@@ -110,7 +110,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private TvShow                         tvShowToScrape;
   private SortedList<TvShowChooserModel> searchResultEventList = null;
   private TvShowChooserModel             selectedResult        = null;
-  private TvShowScraperMetadataConfig    scraperMetadataConfig = new TvShowScraperMetadataConfig();
+  private TvShowScraperMetadataConfig    scraperMetadataConfig;
   private MediaScraper                   mediaScraper;
   private List<MediaScraper>             artworkScrapers;
   private boolean                        continueQueue         = true;
@@ -144,22 +144,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   public TvShowChooserDialog(TvShow tvShow, int queueIndex, int queueSize) {
     super(BUNDLE.getString("tvshowchooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowChooser"); //$NON-NLS-1$
 
-    // copy the values
-    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
     mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
 
-    scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setPlot(settings.isPlot());
-    scraperMetadataConfig.setRating(settings.isRating());
-    scraperMetadataConfig.setRuntime(settings.isRuntime());
-    scraperMetadataConfig.setYear(settings.isYear());
-    scraperMetadataConfig.setAired(settings.isAired());
-    scraperMetadataConfig.setStatus(settings.isStatus());
-    scraperMetadataConfig.setCertification(settings.isCertification());
-    scraperMetadataConfig.setCast(settings.isCast());
-    scraperMetadataConfig.setGenres(settings.isGenres());
-    scraperMetadataConfig.setArtwork(settings.isArtwork());
+    // copy the values from the settings
+    scraperMetadataConfig = new TvShowScraperMetadataConfig(TvShowModuleManager.SETTINGS.getScraperMetadataConfig());
 
     // tableSearchResults format for the search result
     searchResultEventList = new SortedList<>(

@@ -20,25 +20,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a video container movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieVideoContainerFilter extends AbstractMovieUIFilter {
-  private MovieList         movieList = MovieList.getInstance();
-
-  private JComboBox<String> comboBox;
+public class MovieVideoContainerFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
+  private MovieList movieList = MovieList.getInstance();
 
   public MovieVideoContainerFilter() {
     super();
@@ -54,9 +49,8 @@ public class MovieVideoContainerFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    String videoContainer = (String) comboBox.getSelectedItem();
-
-    return videoContainer != null && videoContainer.equalsIgnoreCase(movie.getMediaInfoContainerFormat());
+    List<String> selectedValues = checkComboBox.getSelectedItems();
+    return selectedValues.contains(movie.getMediaInfoContainerFormat());
   }
 
   @Override
@@ -64,45 +58,20 @@ public class MovieVideoContainerFilter extends AbstractMovieUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.container")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
-  }
-
-  @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
   private void buildAndInstallContainerArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
-
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-
     List<String> containers = new ArrayList<>(movieList.getVideoContainersInMovies());
     Collections.sort(containers);
-    for (String container : containers) {
-      comboBox.addItem(container);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
+    setValues(containers);
+  }
 
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
+
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

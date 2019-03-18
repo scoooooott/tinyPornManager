@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = https://nightly.tinymediamanager.org/v3/build/
+appbase = http://nightly.tinymediamanager.org/v3/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
@@ -27,10 +27,10 @@ resource = progress.jpg
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update
-resource = [!windows] tinyMediaManagerCMD.sh
-resource = [!windows] tinyMediaManager.sh
-resource = [!windows] tinyMediaManagerUpdater.sh
-resource = [mac os x] tinyMediaManagerOSX.sh
+xresource = [!windows] tinyMediaManagerCMD.sh
+xresource = [!windows] tinyMediaManager.sh
+xresource = [!windows] tinyMediaManagerUpdater.sh
+xresource = [mac os x] tinyMediaManagerOSX.sh
 resource = [mac os x] JavaApplicationStub.new       #rename to new, for self-update
 resource = [mac os x] Info.plist
 resource = [mac os x] tmm.icns

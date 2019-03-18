@@ -184,7 +184,6 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           // add tinyMediaManagers own data
           addTinyMediaManagerTags(episode, parserEpisode);
 
-          first = false;
           // serialize to string
           Writer out = new StringWriter();
           Transformer transformer = getTransformer();
@@ -196,6 +195,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           transformer.transform(new DOMSource(document), new StreamResult(out));
 
           xmlString.append(out.toString().replaceAll("(?<!\r)\n", "\r\n")); // windows conform line endings
+          first = false;
         }
 
         // write to file
@@ -243,7 +243,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    */
   protected void addShowTitle(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     Element title = document.createElement("showtitle");
-    title.setTextContent(episode.getTitle());
+    title.setTextContent(episode.getTvShow().getTitle());
     root.appendChild(title);
   }
 

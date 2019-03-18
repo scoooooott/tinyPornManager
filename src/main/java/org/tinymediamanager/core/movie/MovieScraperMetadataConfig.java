@@ -78,6 +78,31 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
     tags = value;
   }
 
+  /**
+   * copy constructor
+   *
+   * @param original
+   *          the original object to inherit data from
+   */
+  public MovieScraperMetadataConfig(MovieScraperMetadataConfig original) {
+    title = original.title;
+    originalTitle = original.originalTitle;
+    tagline = original.tagline;
+    plot = original.plot;
+    rating = original.rating;
+    runtime = original.runtime;
+    year = original.year;
+    certification = original.certification;
+    cast = original.cast;
+    country = original.country;
+    studio = original.studio;
+    genres = original.genres;
+    artwork = original.artwork;
+    trailer = original.trailer;
+    collection = original.collection;
+    tags = original.tags;
+  }
+
   public boolean isMetadata() {
     return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || country
             || studio || genres || collection || tags;
@@ -336,7 +361,8 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   /**
    * Sets the country
    *
-   * @param newValue the new country
+   * @param newValue
+   *          the new country
    */
   public void setCountry(boolean newValue) {
     boolean oldValue = this.country;
@@ -346,8 +372,9 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
 
   /**
    * Sets the studio
-
-   * @param newValue the new studio
+   * 
+   * @param newValue
+   *          the new studio
    */
   public void setStudio(boolean newValue) {
     boolean oldValue = this.studio;

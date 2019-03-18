@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
-import org.tinymediamanager.scraper.http.CachedUrl;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -245,7 +245,6 @@ public class ImageLabel extends JLabel {
         g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
         g.setColor(Color.WHITE);
         g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
-        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
         g.drawImage(scaledImage, offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else if (drawShadow && !drawFullWidth) {
@@ -256,12 +255,16 @@ public class ImageLabel extends JLabel {
         // when the image size differs too much - reload and rescale the original image
         recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, this.getWidth() - 8, this.getHeight() - 8);
 
-        // draw shadow
-        ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
-        BufferedImage shadowImage = shadow.createShadow(scaledImage);
+        // did the image reset to null?
+        if (scaledImage != null) {
+          // draw shadow
+          ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
+          BufferedImage shadowImage = shadow.createShadow(scaledImage);
+          // draw shadow
+          g.drawImage(shadowImage, 8, 8, newWidth - 8, newHeight - 8, this);
 
-        // draw shadow
-        g.drawImage(shadowImage, 8, 8, newWidth - 8, newHeight - 8, this);
+        }
+
         // draw image
         g.drawImage(scaledImage, 0, 0, newWidth - 8, newHeight - 8, this);
       }
@@ -293,8 +296,6 @@ public class ImageLabel extends JLabel {
 
         // when the image size differs too much - reload and rescale the original image
         recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, newWidth, newHeight);
-
-        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
         g.drawImage(scaledImage, offsetX, offsetY, newWidth, newHeight, this);
       }
     }
@@ -359,7 +360,8 @@ public class ImageLabel extends JLabel {
         scaledImage = Scalr.resize(ImageUtils.createImage(originalImageBytes), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight,
             Scalr.OP_ANTIALIAS);
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        scaledImage = null;
       }
     }
   }
@@ -417,7 +419,7 @@ public class ImageLabel extends JLabel {
       try {
         Url url;
         if (cacheUrl) {
-          url = new CachedUrl(imageUrl);
+          url = new InMemoryCachedUrl(imageUrl);
         }
         else {
           url = new Url(imageUrl);

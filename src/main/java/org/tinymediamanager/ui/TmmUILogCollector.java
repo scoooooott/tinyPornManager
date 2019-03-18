@@ -43,7 +43,7 @@ public class TmmUILogCollector {
     encoder.setPattern("%d{HH:mm:ss.SSS} %-5level %logger{60} - %msg%n");
     encoder.start();
 
-    logAppender = new TmmUILogAppender();
+    logAppender = new TmmUILogAppender("WARN");
     logAppender.setContext(rootLogger.getLoggerContext());
     logAppender.setEncoder(encoder);
     logAppender.start();

@@ -428,7 +428,7 @@ public class MovieChooserModel extends AbstractModelObject {
           }
         }
         catch (ScrapeException e) {
-          LOGGER.error("getTrailers", e);
+          LOGGER.error("getTrailers {}", e.getMessage());
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
         }

@@ -296,7 +296,7 @@ public class MovieMediaInformationPanel extends JPanel {
         }
 
         panelAudioStreamDetails.add(new JLabel(audioStream.getCodec()));
-        panelAudioStreamDetails.add(new JLabel(audioStream.getChannels()));
+        panelAudioStreamDetails.add(new JLabel(String.valueOf(audioStream.getAudioChannels())));
         panelAudioStreamDetails.add(new JLabel(audioStream.getBitrateInKbps()));
         panelAudioStreamDetails.add(new JLabel(audioStream.getLanguage()));
       }

@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.ui.moviesets.filters;
 
-package org.tinymediamanager.ui;
-
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+import org.tinymediamanager.ui.ITmmUIFilter;
+import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
 /**
- * The class LeftDotTableCellRenderer is used to draw a table column which left side gets truncated if the space for the whole string is too small
+ * The interface IMovieSetUIFilter just combines the interfaces ITmmUIFilter and ITmmTreeFilter
  * 
  * @author Manuel Laggner
+ *
+ * @param <E>
  */
-public class LeftDotTableCellRenderer extends DefaultTableCellRenderer {
-
-  public LeftDotTableCellRenderer() {
-    super();
-    putClientProperty("clipPosition", SwingConstants.LEFT);
-  }
+public interface IMovieSetUIFilter<E extends TmmTreeNode> extends ITmmUIFilter<E>, ITmmTreeFilter<E> {
 }

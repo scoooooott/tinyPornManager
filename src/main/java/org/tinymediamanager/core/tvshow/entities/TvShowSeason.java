@@ -22,6 +22,7 @@ import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.POSTER_URL;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.SEASON;
 import static org.tinymediamanager.core.Constants.THUMB;
 import static org.tinymediamanager.core.Constants.THUMB_URL;
 
@@ -57,8 +58,20 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     this.season = season;
     this.tvShow = tvShow;
     listener = evt -> {
-      if (evt.getSource() instanceof TvShowEpisode && MEDIA_FILES.equals(evt.getPropertyName())) {
-        firePropertyChange(MEDIA_FILES, null, evt.getNewValue());
+      if (evt.getSource() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+
+        switch (evt.getPropertyName()) {
+          case MEDIA_FILES:
+            firePropertyChange(MEDIA_FILES, null, evt.getNewValue());
+            break;
+
+          case SEASON:
+            if (episode.getSeason() != season) {
+              removeEpisode(episode);
+            }
+            break;
+        }
       }
     };
   }
@@ -71,7 +84,12 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return tvShow;
   }
 
-  public void addEpisode(TvShowEpisode episode) {
+  public synchronized void addEpisode(TvShowEpisode episode) {
+    // do not add twice
+    if (episodes.contains(episode)) {
+      return;
+    }
+
     // when adding a new episode, check:
     for (TvShowEpisode e : episodes) {
       // - if that is a dummy episode; do not add it if a the real episode is available
@@ -122,6 +140,24 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
 
     return watched;
+  }
+
+  /**
+   * checks if all episode has subtitles
+   *
+   * @return true, is all episodes have subtitles
+   */
+  public boolean hasEpisodeSubtitles() {
+    boolean subtitles = true;
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.hasSubtitles()) {
+        subtitles = false;
+        break;
+      }
+    }
+
+    return subtitles;
   }
 
   /**

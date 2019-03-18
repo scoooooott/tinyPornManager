@@ -18,7 +18,6 @@ package org.tinymediamanager.core;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,13 +26,12 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * UpdaterTasks checks if there's a new update for TMM
@@ -41,11 +39,9 @@ import org.tinymediamanager.scraper.http.Url;
  * @author Myron BOyle
  */
 public class UpdaterTask extends SwingWorker<Boolean, Void> {
-  private static final Logger LOGGER       = LoggerFactory.getLogger(UpdaterTask.class);
-  private static final String REGULAR_PATH = "/build";
-  private static final String LEGACY_PATH  = "/java6";
-  private String              changelog    = "";
-  private boolean             forceUpdate  = false;
+  private static final Logger LOGGER      = LoggerFactory.getLogger(UpdaterTask.class);
+  private String              changelog   = "";
+  private boolean             forceUpdate = false;
 
   /**
    * Instantiates a new updater task.
@@ -76,42 +72,31 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
 
       boolean valid = false;
-      boolean changeReleasePath = false;
       String remoteDigest = "";
       String remoteUrl = "";
       // try to download from all our mirrors
       for (String uu : updateUrls) {
+        if (!uu.endsWith("/")) {
+          uu += '/';
+        }
+
+        String url = uu + "digest.txt";
+
+        LOGGER.trace("Checking {}", uu);
         try {
-          if (!uu.endsWith("/")) {
-            uu += '/';
-          }
-
-          // we're on legacy update path, but no java6 -> use regular release
-          if (uu.contains(LEGACY_PATH)) {
-            if (!SystemUtils.IS_JAVA_1_6) {
-              changeReleasePath = true;
-              uu = uu.replace(LEGACY_PATH, REGULAR_PATH);
-            }
-          }
-          else {
-            // we're on regular update path, but java6 -> use legacy release
-            if (SystemUtils.IS_JAVA_1_6) {
-              changeReleasePath = true;
-              uu = uu.replace(REGULAR_PATH, LEGACY_PATH);
-            }
-          }
-
-          Url upd = new Url(uu + "digest.txt");
-          LOGGER.trace("Checking " + uu);
-          remoteDigest = IOUtils.toString(upd.getInputStream(), "UTF-8");
+          remoteDigest = UrlUtil.getStringFromUrl(url);
           if (remoteDigest != null && remoteDigest.contains("tmm.jar")) {
             remoteDigest = remoteDigest.trim();
             valid = true; // bingo!
             remoteUrl = uu;
           }
         }
+        catch (InterruptedException e) {
+          // do not swallow these Exceptions
+          Thread.currentThread().interrupt();
+        }
         catch (Exception e) {
-          LOGGER.warn("Unable to download from mirror: " + e.getMessage());
+          LOGGER.warn("Unable to download from url {} - {}", url, e.getMessage());
         }
         if (valid) {
           break; // no exception - step out :)
@@ -130,37 +115,30 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       if (!localDigest.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
 
-        Url gd = new Url(remoteUrl + "getdown.txt");
-        String remoteGD = IOUtils.toString(gd.getInputStream(), "UTF-8");
+        String remoteGD = UrlUtil.getStringFromUrl(remoteUrl + "getdown.txt");
         if (remoteGD.contains("forceUpdate")) {
           forceUpdate = true;
         }
-        if (changeReleasePath) {
-          // we're up/downgrading dist - DL txts..
-          LOGGER.debug("Switching distribution due to java versoin, preloading correct files.");
-          Utils.writeStringToFile(getdownFile, remoteGD);
-          Utils.writeStringToFile(digestFile, remoteDigest);
-        }
 
         // download changelog.txt for preview
-        Url upd = new Url(remoteUrl + "changelog.txt");
-        changelog = IOUtils.toString(upd.getInputStream(), "UTF-8");
+        changelog = UrlUtil.getStringFromUrl(remoteUrl + "changelog.txt");
         return true;
       }
       else {
         LOGGER.info("Already up2date :)");
       }
     }
+    catch (InterruptedException e) {
+      // do not swallow these Exceptions
+      Thread.currentThread().interrupt();
+    }
     catch (Exception e) {
-      LOGGER.error("Update task failed badly! " + e.getMessage());
+      LOGGER.error("Update task failed badly! {}", e.getMessage());
 
       try {
         // try a hardcoded "backup url" for GD.txt, where we could specify a new location :)
         LOGGER.info("Trying fallback...");
         String fallback = "https://www.tinymediamanager.org";
-        if (SystemUtils.IS_JAVA_1_6) {
-          fallback += LEGACY_PATH;
-        }
         if (ReleaseInfo.isPreRelease()) {
           fallback += "/getdown_prerelease.txt";
         }
@@ -170,20 +148,20 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         else {
           fallback += "/getdown.txt";
         }
-        Url upd = new Url(fallback);
-        InputStream is = upd.getInputStream();
-        if (is == null) {
-          throw new Exception("Server returned " + upd.getStatusCode() + "\nIf this error persists, please check forum!");
-        }
-        String gd = IOUtils.toString(is, "UTF-8");
-        if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
+
+        String gd = UrlUtil.getStringFromUrl(fallback);
+        if (StringUtils.isBlank(gd) || !gd.contains("appbase")) {
           throw new Exception("could not even download our fallback");
         }
         Utils.writeStringToFile(getdownFile, gd);
         return true;
       }
+      catch (InterruptedException e2) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
       catch (Exception e2) {
-        LOGGER.error("Update fallback failed!" + e2.getMessage());
+        LOGGER.error("Update fallback failed! {}", e2.getMessage());
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Update check failed :(", e2.getMessage()));
       }
     }

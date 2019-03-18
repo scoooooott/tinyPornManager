@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
@@ -180,22 +181,30 @@ public class SplitUri {
       return false;
     SplitUri other = (SplitUri) obj;
 
-    if (file == null || file.isEmpty()) {
+    if (file == null || file.isEmpty() || other.file == null || other.file.isEmpty()) {
       return false;
     }
-    else {
-      // 1: mandatory file does not match - step out
-      if (!file.equals(other.file)) {
-        return false;
-      }
+
+    // 1: same? - step directly out
+    if (file.equals(other.file)) {
+      return true;
     }
 
-    // 2: - check either matching IP or hostname
-    if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
-      return true;
-    }
-    if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
-      return true;
+    // 2: at least filename AND parent folder match
+    Path p1 = Paths.get(file);
+    Path p2 = Paths.get(other.file);
+    if (p1.getFileName().toString().equals(p2.getFileName().toString()) && p1.getParent().toString().equals(p2.getParent().toString())) {
+      // filename AND parent folder match
+      LOGGER.trace("1: {}", file);
+      LOGGER.trace("2: {}", other.file);
+
+      // 2: - check either matching IP or hostname
+      if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
+        return true;
+      }
+      if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
+        return true;
+      }
     }
 
     // 3: did not match? return false

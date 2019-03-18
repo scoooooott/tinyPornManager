@@ -29,7 +29,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
  * @author Manuel Laggner
  */
 public class MovieComparator implements Comparator<Movie> {
-  private Collator stringCollator;
+  protected Collator stringCollator;
 
   public MovieComparator() {
     RuleBasedCollator defaultCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();

@@ -17,22 +17,23 @@ package org.tinymediamanager.ui.movies.filters;
 
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a video format movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
-  private JComboBox<String> comboBox;
+public class MovieVideoFormatFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
+
+  public MovieVideoFormatFilter() {
+    super();
+    setValues(MediaFile.getVideoFormats());
+  }
 
   @Override
   public String getId() {
@@ -40,39 +41,27 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
-  @Override
   public boolean accept(Movie movie) {
-    String videoFormat = (String) comboBox.getSelectedItem();
+    List<String> selectedValues = checkComboBox.getSelectedItems();
+
     MediaFile mf = movie.getMainVideoFile();
-    if (mf == null || videoFormat == null) {
+    if (mf == null) {
       return false;
     }
 
-    if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && mf.isVideoDefinitionHD()) {
-      return true;
-    }
-    else if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && mf.isVideoDefinitionSD()) {
-      return true;
-    }
-    else if (MediaFile.VIDEO_FORMAT_LD.equals(videoFormat) && mf.isVideoDefinitionLD()) {
-      return true;
-    }
-    else if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {
-      return true;
+    for (String videoFormat : selectedValues) {
+      if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && mf.isVideoDefinitionHD()) {
+        return true;
+      }
+      else if (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && mf.isVideoDefinitionSD()) {
+        return true;
+      }
+      else if (MediaFile.VIDEO_FORMAT_LD.equals(videoFormat) && mf.isVideoDefinitionLD()) {
+        return true;
+      }
+      else if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {
+        return true;
+      }
     }
 
     return false;
@@ -84,13 +73,12 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(getVideoFormats());
-    return comboBox;
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
   }
 
-  private String[] getVideoFormats() {
-    List<String> videoFormats = MediaFile.getVideoFormats();
-    return videoFormats.toArray(new String[videoFormats.size()]);
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

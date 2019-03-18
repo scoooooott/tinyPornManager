@@ -21,17 +21,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+
+import org.tinymediamanager.core.TmmDateFormat;
 
 /**
  * The class DateTextField is a special JTextField for editing dates
@@ -130,7 +130,7 @@ class DateTextField extends JFormattedTextField implements CaretListener, FocusL
       dateFormatter.applyPattern(dateFormatString);
     }
     catch (RuntimeException e) {
-      dateFormatter = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+      dateFormatter = (SimpleDateFormat) TmmDateFormat.SHORT_DATE_FORMAT;
       dateFormatter.setLenient(false);
     }
     this.datePattern = dateFormatter.toPattern();
@@ -181,20 +181,6 @@ class DateTextField extends JFormattedTextField implements CaretListener, FocusL
 
   @Override
   public void focusGained(FocusEvent e) {
-  }
-
-  @Override
-  public void setLocale(Locale locale) {
-    if (locale == getLocale()) {
-      return;
-    }
-
-    super.setLocale(locale);
-    dateFormatter = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-    setToolTipText(dateFormatter.toPattern());
-
-    setDate(date, false);
-    doLayout();
   }
 
   private String createMaskFromDatePattern(String datePattern) {

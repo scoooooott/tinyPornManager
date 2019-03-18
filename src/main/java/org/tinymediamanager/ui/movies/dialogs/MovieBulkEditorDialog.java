@@ -21,13 +21,16 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -131,6 +134,21 @@ public class MovieBulkEditorDialog extends TmmDialog {
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
         panelContent.add(btnRemoveGenre, "cell 3 0");
+
+        JButton btnRemoveAllGenres = new JButton("");
+        btnRemoveAllGenres.setIcon(IconManager.DELETE);
+        btnRemoveAllGenres.setMargin(new Insets(2,2,2,2));
+        btnRemoveAllGenres.addActionListener(e -> {
+          if (isDeleteConfirmed(BUNDLE.getString("metatag.genre"))) {
+            changed = true;
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            for (Movie movie : moviesToEdit) {
+              movie.removeAllGenres();
+            }
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+        });
+        panelContent.add(btnRemoveAllGenres, "cell 4 0");
       }
       {
         JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -171,6 +189,21 @@ public class MovieBulkEditorDialog extends TmmDialog {
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
         panelContent.add(btnRemoveTag, "cell 3 1");
+
+        JButton btnRemoveAllTags = new JButton("");
+        btnRemoveAllTags.setIcon(IconManager.DELETE);
+        btnRemoveAllTags.setMargin(new Insets(2,2,2,2));
+        btnRemoveAllTags.addActionListener(e -> {
+          if(isDeleteConfirmed(BUNDLE.getString("metatag.tags"))) {
+            changed = true;
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            for (Movie movie : moviesToEdit) {
+              movie.removeAllTags();
+            }
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+        });
+        panelContent.add(btnRemoveAllTags,"cell 4 1");
       }
       {
         JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
@@ -233,7 +266,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         JButton btnNewMovieset = new JButton("");
         btnNewMovieset.setMargin(new Insets(2, 2, 2, 2));
         btnNewMovieset.setAction(new MovieSetAddAction());
-        panelContent.add(btnNewMovieset, "cell 3 3,growx");
+        panelContent.add(btnNewMovieset, "cell 3 3 2 1,growx");
       }
       {
         JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
@@ -441,6 +474,18 @@ public class MovieBulkEditorDialog extends TmmDialog {
 
     if (selectedMovieSet != null) {
       cbMovieSet.setSelectedItem(selectedMovieSet);
+    }
+  }
+
+  private boolean isDeleteConfirmed(String attribute) {
+    int dialogResult = JOptionPane.showConfirmDialog(
+            null,
+            MessageFormat.format(BUNDLE.getString("message.bulkedit.delete"),attribute),
+            BUNDLE.getString("message.bulkedit.warning"),JOptionPane.YES_NO_OPTION);
+    if (dialogResult == 0) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

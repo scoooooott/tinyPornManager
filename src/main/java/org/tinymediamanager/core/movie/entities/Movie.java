@@ -51,14 +51,12 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -77,6 +75,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -534,6 +533,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return this.tags;
   }
 
+  /**
+   * Remove all Tags from List
+   */
+  public void removeAllTags() {
+    tags.clear();
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, tags);
+
+  }
   /** has movie local (or any mediafile inline) subtitles? */
   public boolean hasSubtitles() {
     if (this.subtitles) {
@@ -756,12 +764,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    //country
+    // country
     if (config.isCountry()) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
     }
 
-    //studio
+    // studio
     if (config.isStudio()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
     }
@@ -1320,6 +1328,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * Remove all genres from list
+   */
+  public void removeAllGenres() {
+    genres.clear();
+    firePropertyChange(GENRE,null, genres);
+    firePropertyChange(GENRES_AS_STRING, null, genres);
+  }
+
+  /**
    * Gets the certifications.
    * 
    * @return the certifications
@@ -1701,7 +1718,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     if (this.releaseDate == null) {
       return "";
     }
-    return SimpleDateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(releaseDate);
+    return TmmDateFormat.SHORT_DATE_FORMAT.format(releaseDate);
   }
 
   /**
@@ -2074,10 +2091,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public MediaFile getMainVideoFile() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (!videos.isEmpty()) {
-      return videos.get(0);
+    MediaFile vid = getBiggestMediaFile(MediaFileType.VIDEO);
+    if (vid != null) {
+      return vid;
     }
+    // cannot happen - movie MUST always have a video file
     return new MediaFile();
   }
 

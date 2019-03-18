@@ -1,7 +1,7 @@
 tinyMediaManager
 ========================
 
-tinyMediaManager (https://www.tinymediamanager.org) is a media management tool written in Java/Swing. It is written to provide metadata for the XBOX Media Center (XBMC). Due to the fact that it is written in Java, tinyMediaManager will run on Windows, Linux and Mac OSX (and possible more OS).
+tinyMediaManager (https://www.tinymediamanager.org) is a media management tool written in Java/Swing. It is written to provide metadata for Kodi (formerly known as XBMC), MediaPortal, Plex and other compatible media centers. Due to the fact that it is written in Java, tinyMediaManager will run on Windows, Linux and Mac OSX (and possible more OS).
 
 tinyMediaManager is free and will stay free. If you appreciate all the effort that has gone into this application then consider a donation. While it's neither expected nor required it is highly appreciated!
 [![Donate][1]][2]

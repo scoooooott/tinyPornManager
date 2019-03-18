@@ -47,7 +47,7 @@ public class FeedbackAction extends TmmAction {
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("http://forum.xbmc.org/forumdisplay.php?fid=204");
+    String url = StringEscapeUtils.unescapeHtml4("https://forum.kodi.tv/forumdisplay.php?fid=204");
     try {
       TmmUIHelper.browseUrl(url);
     }

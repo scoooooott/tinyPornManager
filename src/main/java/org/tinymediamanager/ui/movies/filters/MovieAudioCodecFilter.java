@@ -15,30 +15,29 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
+import static org.tinymediamanager.core.MediaFileType.AUDIO;
+import static org.tinymediamanager.core.MediaFileType.VIDEO;
+
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a audio codec movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
-  private MovieList         movieList = MovieList.getInstance();
-
-  private JComboBox<String> comboBox;
+public class MovieAudioCodecFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
+  private MovieList movieList = MovieList.getInstance();
 
   public MovieAudioCodecFilter() {
     super();
@@ -54,10 +53,18 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    String audioCodec = (String) comboBox.getSelectedItem();
+    List<String> audioCodecs = checkComboBox.getSelectedItems();
 
-    return audioCodec != null && audioCodec.equals(movie.getMediaInfoAudioCodec());
+    // check all audio codecs of all VIDEO and AUDIO files
+    for (MediaFile mf : movie.getMediaFiles(VIDEO, AUDIO)) {
+      for (String audioCodec : mf.getAudioCodecList()) {
+        if (audioCodecs.contains(audioCodec)) {
+          return true;
+        }
+      }
+    }
 
+    return false;
   }
 
   @Override
@@ -65,45 +72,20 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
-  }
-
-  @Override
-  public String getFilterValueAsString() {
-    try {
-      return (String) comboBox.getSelectedItem();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
-  }
-
   private void buildAndInstallCodecArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
+    List<String> audioCodecs = new ArrayList<>(movieList.getAudioCodecsInMovies());
+    Collections.sort(audioCodecs);
 
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
+    setValues(audioCodecs);
+  }
 
-    List<String> codecs = new ArrayList<>(movieList.getAudioCodecsInMovies());
-    Collections.sort(codecs);
-    for (String codec : codecs) {
-      comboBox.addItem(codec);
-    }
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
-
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

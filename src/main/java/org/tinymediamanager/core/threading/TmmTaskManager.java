@@ -80,7 +80,7 @@ public class TmmTaskManager implements TmmTaskListener {
 
   private ThreadPoolExecutor createImageDownloadExecutor() {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
-            new TmmThreadFactory("image-download-task")) {
+        new TmmThreadFactory("image-download-task")) {
       @Override
       protected void beforeExecute(Thread d, Runnable r) {
         super.beforeExecute(d, r);
@@ -102,7 +102,12 @@ public class TmmTaskManager implements TmmTaskListener {
   }
 
   private ThreadPoolExecutor createUnnamedTaskExecutor() {
-    ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
+    // create enough thread to keep the system busy ;)
+    int threadCount = Runtime.getRuntime().availableProcessors() - 1;
+    if (threadCount < 3) {
+      threadCount = 3;
+    }
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
         new TmmThreadFactory("unnamed-task")) {
       // @Override
       // protected void beforeExecute(Thread d, Runnable r) {
@@ -160,8 +165,7 @@ public class TmmTaskManager implements TmmTaskListener {
    */
   public void addDownloadTask(TmmTask task) {
     if (downloadExecutor == null) {
-      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
-          new TmmThreadFactory("download-task"));
+      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new TmmThreadFactory("download-task"));
       downloadExecutor.allowCoreThreadTimeOut(true);
     }
     task.addListener(this);
@@ -205,7 +209,7 @@ public class TmmTaskManager implements TmmTaskListener {
   private ThreadPoolExecutor createMainTaskQueue() {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, // max threads
         1, TimeUnit.SECONDS, // time to wait before closing idle workers
-            new LinkedBlockingQueue<>(), // our queue
+        new LinkedBlockingQueue<>(), // our queue
         new TmmThreadFactory("main-task"));
     executor.allowCoreThreadTimeOut(true);
     return executor;

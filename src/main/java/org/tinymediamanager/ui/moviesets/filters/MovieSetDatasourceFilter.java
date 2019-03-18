@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
@@ -29,18 +28,14 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
-import org.tinymediamanager.ui.moviesets.AbstractMovieSetUIFilter;
 
 /**
  * this class is used for a movie set data source filter
  * 
  * @author Manuel Laggner
  */
-public class MovieSetDatasourceFilter extends AbstractMovieSetUIFilter {
-  private MovieSettings            movieSettings = MovieModuleManager.SETTINGS;
-
-  private TmmCheckComboBox<String> checkComboBox;
+public class MovieSetDatasourceFilter extends AbstractCheckComboBoxMovieSetUIFilter<String> {
+  private MovieSettings movieSettings = MovieModuleManager.SETTINGS;
 
   public MovieSetDatasourceFilter() {
     super();
@@ -52,27 +47,6 @@ public class MovieSetDatasourceFilter extends AbstractMovieSetUIFilter {
   @Override
   public String getId() {
     return "movieDatasource";
-  }
-
-  @Override
-  public String getFilterValueAsString() {
-    try {
-      return objectMapper.writeValueAsString(checkComboBox.getSelectedItems());
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    try {
-      List<String> selectedItems = objectMapper.readValue((String) value,
-          objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
-      checkComboBox.setSelectedItems(selectedItems);
-    }
-    catch (Exception ignored) {
-    }
   }
 
   @Override
@@ -92,28 +66,20 @@ public class MovieSetDatasourceFilter extends AbstractMovieSetUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    checkComboBox = new TmmCheckComboBox<>();
-    return checkComboBox;
-  }
-
   private void buildAndInstallDatasourceArray() {
-    // remove the listener to not firing unnecessary events
-    checkComboBox.removeActionListener(actionListener);
-
-    List<String> selectedItems = checkComboBox.getSelectedItems();
-
     List<String> datasources = new ArrayList<>(movieSettings.getMovieDataSource());
     Collections.sort(datasources);
 
-    checkComboBox.setItems(datasources);
+    setValues(datasources);
+  }
 
-    if (!selectedItems.isEmpty()) {
-      checkComboBox.setSelectedItems(selectedItems);
-    }
+  @Override
+  protected String parseTypeToString(String type) throws Exception {
+    return type;
+  }
 
-    // re-add the itemlistener
-    checkComboBox.addActionListener(actionListener);
+  @Override
+  protected String parseStringToType(String string) throws Exception {
+    return string;
   }
 }

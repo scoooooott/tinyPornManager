@@ -194,13 +194,13 @@ public class MovieJmteTests {
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
     audio.setLanguage("en");
-    audio.setChannels("6");
+    audio.setAudioChannels(6);
     audl.add(audio);
 
     audio = new MediaFileAudioStream();
     audio.setCodec("MP3");
     audio.setLanguage("de");
-    audio.setChannels("2ch");
+    audio.setAudioChannels(2);
     audl.add(audio);
 
     mf.setAudioStreams(audl);

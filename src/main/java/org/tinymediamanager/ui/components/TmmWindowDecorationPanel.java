@@ -111,13 +111,13 @@ public class TmmWindowDecorationPanel extends JPanel {
     if (frame != null) {
       validateMaximizedBounds();
       PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-        for (PropertyChangeListener aPcl1 : pcl) {
-            aPcl1.propertyChange(new PropertyChangeEvent(this, "windowMaximize", Boolean.FALSE, Boolean.FALSE));
-        }
+      for (PropertyChangeListener aPcl1 : pcl) {
+        aPcl1.propertyChange(new PropertyChangeEvent(this, "windowMaximize", Boolean.FALSE, Boolean.FALSE));
+      }
       DecorationHelper.setExtendedState(frame, state | BaseRootPaneUI.MAXIMIZED_BOTH);
-        for (PropertyChangeListener aPcl : pcl) {
-            aPcl.propertyChange(new PropertyChangeEvent(this, "windowMaximized", Boolean.FALSE, Boolean.FALSE));
-        }
+      for (PropertyChangeListener aPcl : pcl) {
+        aPcl.propertyChange(new PropertyChangeEvent(this, "windowMaximized", Boolean.FALSE, Boolean.FALSE));
+      }
 
     }
   }
@@ -127,18 +127,18 @@ public class TmmWindowDecorationPanel extends JPanel {
     if (frame != null) {
       wasMaximizeError = false;
       PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-        for (PropertyChangeListener aPcl1 : pcl) {
-            aPcl1.propertyChange(new PropertyChangeEvent(this, "windowRestore", Boolean.FALSE, Boolean.FALSE));
-        }
+      for (PropertyChangeListener aPcl1 : pcl) {
+        aPcl1.propertyChange(new PropertyChangeEvent(this, "windowRestore", Boolean.FALSE, Boolean.FALSE));
+      }
       if ((state & Frame.ICONIFIED) != 0) {
         DecorationHelper.setExtendedState(frame, state & ~Frame.ICONIFIED);
       }
       else {
         DecorationHelper.setExtendedState(frame, state & ~BaseRootPaneUI.MAXIMIZED_BOTH);
       }
-        for (PropertyChangeListener aPcl : pcl) {
-            aPcl.propertyChange(new PropertyChangeEvent(this, "windowRestored", Boolean.FALSE, Boolean.FALSE));
-        }
+      for (PropertyChangeListener aPcl : pcl) {
+        aPcl.propertyChange(new PropertyChangeEvent(this, "windowRestored", Boolean.FALSE, Boolean.FALSE));
+      }
     }
   }
 
@@ -329,6 +329,10 @@ public class TmmWindowDecorationPanel extends JPanel {
   private void updateMaxButton(Action action, Icon icon) {
     maxButton.setAction(action);
     maxButton.setIcon(icon);
+  }
+
+  public void triggerMaxButton() {
+    maxButton.getAction().actionPerformed(new ActionEvent(TmmWindowDecorationPanel.this, ActionEvent.ACTION_PERFORMED, null));
   }
 
   @Override

@@ -20,25 +20,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
  * this class is used for a frame rate movie filter
  * 
  * @author Manuel Laggner
  */
-public class MovieFrameRateFilter extends AbstractMovieUIFilter {
-  private MovieList         movieList = MovieList.getInstance();
-
-  private JComboBox<Double> comboBox;
+public class MovieFrameRateFilter extends AbstractCheckComboBoxMovieUIFilter<Double> {
+  private MovieList movieList = MovieList.getInstance();
 
   public MovieFrameRateFilter() {
     super();
@@ -53,37 +48,9 @@ public class MovieFrameRateFilter extends AbstractMovieUIFilter {
   }
 
   @Override
-  public String getFilterValueAsString() {
-    try {
-      return comboBox.getSelectedItem().toString();
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  @Override
-  public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-    if (value instanceof Double) {
-      comboBox.setSelectedItem(value);
-    }
-    else if (value instanceof String) {
-      try {
-        Double doubleValue = Double.valueOf((String) value);
-        comboBox.setSelectedItem(doubleValue);
-      }
-      catch (Exception ignored) {
-      }
-    }
-  }
-
-  @Override
   public boolean accept(Movie movie) {
-    Double frameRate = (Double) comboBox.getSelectedItem();
-    return frameRate != null && frameRate == movie.getMediaInfoFrameRate();
+    List<Double> selectedItems = checkComboBox.getSelectedItems();
+    return selectedItems.contains(movie.getMediaInfoFrameRate());
   }
 
   @Override
@@ -91,30 +58,20 @@ public class MovieFrameRateFilter extends AbstractMovieUIFilter {
     return new TmmLabel(BUNDLE.getString("metatag.framerate")); //$NON-NLS-1$
   }
 
-  @Override
-  protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
-  }
-
   private void buildAndInstallCodecArray() {
-    // remove the listener to not firing unnecessary events
-    comboBox.removeActionListener(actionListener);
-
-    Double oldValue = (Double) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-
     List<Double> frameRates = new ArrayList<>(movieList.getFrameRatesInMovies());
     Collections.sort(frameRates);
-    for (Double frameRate : frameRates) {
-      comboBox.addItem(frameRate);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
-    }
+    setValues(frameRates);
+  }
 
-    // re-add the itemlistener
-    comboBox.addActionListener(actionListener);
+  @Override
+  protected String parseTypeToString(Double type) throws Exception {
+    return type.toString();
+  }
+
+  @Override
+  protected Double parseStringToType(String string) throws Exception {
+    return Double.parseDouble(string);
   }
 }

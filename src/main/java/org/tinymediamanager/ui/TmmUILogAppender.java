@@ -23,35 +23,27 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
 
 /**
- * The Class TmmUILogAppender, recieve logs from logback and forward it to the UI.
+ * The Class TmmUILogAppender, receive logs from logback and forward it to the UI.
+ *
+ * @author Manuel Laggner
  */
 public class TmmUILogAppender extends OutputStreamAppender<ILoggingEvent> {
-  private final CopyableByteArrayOutputStream BUFFER = new CopyableByteArrayOutputStream(512 * 1024);
+  private final CopyableByteArrayOutputStream BUFFER = new CopyableByteArrayOutputStream(2 * 1024 * 1024);
 
-  public TmmUILogAppender() {
+  public TmmUILogAppender(String level) {
     super();
     ThresholdFilter filter = new ThresholdFilter();
-    filter.setLevel("WARN");
+    filter.setLevel(level);
     filter.start();
     addFilter(filter);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ch.qos.logback.core.OutputStreamAppender#start()
-   */
   @Override
   public void start() {
     setOutputStream(BUFFER);
     super.start();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ch.qos.logback.core.OutputStreamAppender#setOutputStream(java.io.OutputStream)
-   */
   @Override
   public void setOutputStream(final OutputStream outputStream) {
     if (outputStream != BUFFER) {

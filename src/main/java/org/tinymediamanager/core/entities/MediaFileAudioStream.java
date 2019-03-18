@@ -27,14 +27,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MediaFileAudioStream extends AbstractModelObject {
+  /**
+   * "channels" String was a MediaInfo 1:1 text output<br>
+   * since output got changed quite hefty over different version<br>
+   * we now try to parse while getting MI, and not on every access.
+   */
+  @Deprecated
   @JsonProperty
-  private String codec    = "";
+  private String  channels      = "";
   @JsonProperty
-  private String channels = "";
+  private int     audioChannels = 0;
   @JsonProperty
-  private int    bitrate  = 0;
+  private String  codec         = "";
   @JsonProperty
-  private String language = "";
+  private int     bitrate       = 0;
+  @JsonProperty
+  private String  language      = "";
+  @JsonProperty
+  private boolean defaultStream = false;
 
   public MediaFileAudioStream() {
   }
@@ -43,6 +53,23 @@ public class MediaFileAudioStream extends AbstractModelObject {
     return codec;
   }
 
+  public int getAudioChannels() {
+    return audioChannels;
+  }
+
+  public void setAudioChannels(int audiochannels) {
+    this.audioChannels = audiochannels;
+  }
+
+  public boolean isDefaultStream() {
+    return defaultStream;
+  }
+
+  public void setDefaultStream(boolean defaultStream) {
+    this.defaultStream = defaultStream;
+  }
+
+  @Deprecated
   public String getChannels() {
     return channels;
   }
@@ -53,6 +80,7 @@ public class MediaFileAudioStream extends AbstractModelObject {
    * 
    * @return channels as int
    */
+  @Deprecated
   public int getChannelsAsInt() {
     int highest = 0;
     if (!channels.isEmpty()) {
@@ -100,6 +128,7 @@ public class MediaFileAudioStream extends AbstractModelObject {
     this.codec = codec;
   }
 
+  @Deprecated
   public void setChannels(String channels) {
     this.channels = channels;
   }

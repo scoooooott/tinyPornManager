@@ -74,7 +74,7 @@ public class MovieNfoParser {
   public String               title               = "";
   public String               originaltitle       = "";
   public String               sorttitle           = "";
-  public int                  year                = 0;
+  public int                  year                = -1;
   public Set                  set                 = null;
   public int                  top250              = 0;
   public String               plot                = "";
@@ -219,7 +219,8 @@ public class MovieNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    return !(year <= 0 || StringUtils.isBlank(title));
+    // since the initial year is -1, a value of 0 and higher must have been parsed successfully
+    return (year > -1 || releaseDate != null) && StringUtils.isNotBlank(title);
   }
 
   private Element getSingleElement(Element parent, String tag) {
@@ -1385,10 +1386,17 @@ public class MovieNfoParser {
       movie.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
     }
 
-    movie.setYear(year);
+    // year is initially -1, only take parsed values which are higher than -1
+    if (year > -1) {
+      movie.setYear(year);
+    }
+
     movie.setTop250(top250);
     movie.setReleaseDate(releaseDate);
-    movie.setDateAdded(dateadded);
+    if (dateadded != null) {
+      // set when in NFO, else use constructor date
+      movie.setDateAdded(dateadded);
+    }
     movie.setPlot(plot);
     movie.setTagline(tagline);
     movie.setRuntime(runtime);

@@ -75,6 +75,11 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       TvShowSeason season;
       TvShowEpisode episode;
 
+      // only process events from the TV show itself
+      if (!(evt.getSource() instanceof TvShow)) {
+        return;
+      }
+
       switch (evt.getPropertyName()) {
         case Constants.ADDED_SEASON:
           season = (TvShowSeason) evt.getNewValue();
@@ -108,6 +113,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           episode = (TvShowEpisode) evt.getSource();
           removeTvShowEpisode(episode);
           addTvShowEpisode(episode);
+          break;
 
         default:
           nodeChanged(evt.getSource());
@@ -277,8 +283,15 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       TvShowSeason season = (TvShowSeason) parent.getUserObject();
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
       for (TvShowEpisode episode : season.getEpisodesForDisplay()) {
-        TmmTreeNode node = new TvShowEpisodeTreeNode(episode, this);
-        putNodeToCache(episode, node);
+        // look if a node of this episode already exist
+        TmmTreeNode node = getNodeFromCache(episode);
+
+        if (node == null) {
+          // create a new one
+          node = new TvShowEpisodeTreeNode(episode, this);
+          putNodeToCache(episode, node);
+        }
+
         nodes.add(node);
 
         // add a propertychangelistener for this episode
@@ -377,6 +390,13 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     episode.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
+
+    // okay, we've removed the episode; now check which seasons we have to remove too
+    for (TvShowSeason season : episode.getTvShow().getSeasons()) {
+      if (season.getEpisodes().isEmpty()) {
+        removeTvShowSeason(season);
+      }
+    }
   }
 
   private void removeTvShowSeason(TvShowSeason season) {

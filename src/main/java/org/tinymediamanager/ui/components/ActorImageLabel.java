@@ -40,9 +40,9 @@ public class ActorImageLabel extends ImageLabel {
   private Person                  actor            = null;
 
   public void setActor(MediaEntity mediaEntity, Person actor) {
-    if (mediaEntity != null && actor != null && actor != this.actor) {
-      clearImage();
+    clearImage();
 
+    if (mediaEntity != null && actor != null && actor != this.actor) {
       if (actorWorker != null && !actorWorker.isDone()) {
         actorWorker.cancel(true);
       }
@@ -120,8 +120,7 @@ public class ActorImageLabel extends ImageLabel {
         }
       }
 
-      // no file found, try to cache url (if visible, otherwise load on demand
-      // in paintComponent)
+      // no file found, try to cache url (if visible, otherwise load on demand in paintComponent)
       if (isShowing()) {
         Path p = ImageCache.getCachedFile(actor.getThumbUrl());
         if (p != null) {

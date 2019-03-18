@@ -132,7 +132,7 @@ public class BasicTest {
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
     audio.setLanguage("en");
-    audio.setChannels("6");
+    audio.setAudioChannels(6);
     mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();
@@ -223,7 +223,7 @@ public class BasicTest {
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
     audio.setLanguage("en");
-    audio.setChannels("6");
+    audio.setAudioChannels(6);
     mf.setAudioStreams(Collections.singletonList(audio));
 
     MediaFileSubtitle sub = new MediaFileSubtitle();

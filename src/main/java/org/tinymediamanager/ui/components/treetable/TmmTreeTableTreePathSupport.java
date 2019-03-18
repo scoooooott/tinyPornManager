@@ -107,8 +107,9 @@ final class TmmTreeTableTreePathSupport {
 
   boolean isExpanded(TreePath path) {
     assert SwingUtilities.isEventDispatchThread();
-    if (path == null)
+    if (path == null) {
       return false;
+    }
 
     if (!layout.isRootVisible() && path.getParentPath() == null) {
       return true; // Invisible root is always expanded

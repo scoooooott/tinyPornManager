@@ -23,9 +23,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -34,10 +37,18 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.thirdparty.ImageLoader;
 
 public class ImageUtils {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtils.class);
+
   /**
    * Scale image to fit in the given width.
    *
@@ -237,5 +248,99 @@ public class ImageUtils {
 
   public static BufferedImage createImage(Image img) {
     return ImageLoader.createImage(img);
+  }
+
+  public static Path downloadImage(String urlAsString, Path destinationFolder, String filename) throws InterruptedException, IOException {
+    return downloadImage(urlAsString, destinationFolder, filename, false, 0);
+  }
+
+  public static Path downloadImage(String urlAsString, Path destinationFolder, String filename, boolean rescale, int newWidth)
+      throws InterruptedException, IOException {
+
+    // don't write jpeg -> write jpg
+    if (FilenameUtils.getExtension(filename).equalsIgnoreCase("JPEG")) {
+      filename = FilenameUtils.getBaseName(filename) + ".jpg";
+    }
+
+    Path destFile = destinationFolder.resolve(filename);
+
+    // check if old and new file are the same (possible if you select it in the imagechooser)
+    if (urlAsString.startsWith("file:")) {
+      String newUrl = urlAsString.replace("file:/", "");
+      Path file = Paths.get(newUrl);
+      if (file.equals(destFile)) {
+        return destFile;
+      }
+    }
+
+    LOGGER.debug("downloading {} to {}", urlAsString, destFile);
+
+    Path tempFile = null;
+    try {
+      long timestamp = System.currentTimeMillis();
+
+      try {
+        // create a temp file/folder inside the tmm folder
+        Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+        if (!Files.exists(tempFolder)) {
+          Files.createDirectory(tempFolder);
+        }
+        tempFile = tempFolder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+      }
+      catch (Exception e) {
+        // could not create the temp folder somehow - put the files into the entity dir
+        tempFile = destFile.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+      }
+
+      // fetch and store images
+      Url url;
+      try {
+        url = new Url(urlAsString);
+      }
+      catch (Exception e) {
+        LOGGER.error("downloading {} - {}", urlAsString, e.getMessage());
+        throw e;
+      }
+
+      if (!rescale || newWidth == 0) {
+        try (InputStream is = url.getInputStreamWithRetry(5); FileOutputStream outputStream = new FileOutputStream(tempFile.toFile())) {
+
+          IOUtils.copy(is, outputStream);
+          Utils.flushFileOutputStreamToDisk(outputStream);
+        }
+      }
+      else {
+        try (InputStream is = url.getInputStreamWithRetry(5);
+            InputStream scaledIs = ImageUtils.scaleImage(IOUtils.toByteArray(is), newWidth);
+            FileOutputStream outputStream = new FileOutputStream(tempFile.toFile())) {
+
+          IOUtils.copy(scaledIs, outputStream);
+          Utils.flushFileOutputStreamToDisk(outputStream);
+        }
+      }
+
+      // check if the file has been downloaded
+      if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
+        // cleanup the file
+        FileUtils.deleteQuietly(tempFile.toFile());
+        throw new IOException("0byte file downloaded: " + filename);
+      }
+
+      // delete new destination if existing
+      Utils.deleteFileSafely(destFile);
+
+      // move the temp file to the expected filename
+      if (!Utils.moveFileSafe(tempFile, destFile)) {
+        throw new IOException("renaming temp file failed: " + filename);
+      }
+    }
+    finally {
+      // remove temp file
+      if (tempFile != null && Files.exists(tempFile)) {
+        Utils.deleteFileSafely(tempFile);
+      }
+    }
+
+    return destFile;
   }
 }

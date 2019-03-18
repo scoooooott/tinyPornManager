@@ -31,6 +31,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTableFormat;
+import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
  * The class TvShowTableFormat is used to define the columns for the TV show tree table
@@ -48,6 +49,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     Column col = new Column(BUNDLE.getString("metatag.seasons"), "seasons", this::getSeasons, String.class);
     col.setHeaderIcon(IconManager.SEASONS);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
@@ -57,6 +59,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.episodes"), "episodes", this::getEpisodes, String.class);
     col.setHeaderIcon(IconManager.EPISODES);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
     addColumn(col);
@@ -66,6 +69,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.rating"), "rating", this::getRating, String.class);
     col.setHeaderIcon(IconManager.RATING);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
     addColumn(col);
@@ -84,6 +88,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
      */
     col = new Column(BUNDLE.getString("metatag.size"), "fileSize", this::getFileSize, String.class);
     col.setHeaderIcon(IconManager.FILE_SIZE);
+    col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("50000M") * 1.2f));
     addColumn(col);
@@ -104,6 +109,14 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     col.setHeaderIcon(IconManager.IMAGES);
     col.setColumnResizeable(false);
     col.setColumnTooltip(this::hasImageTooltip);
+    addColumn(col);
+
+    /*
+     * subtitles
+     */
+    col = new Column(BUNDLE.getString("tmm.subtitles"), "subtitles", this::hasSubtitles, ImageIcon.class);
+    col.setHeaderIcon(IconManager.SUBTITLES);
+    col.setColumnResizeable(false);
     addColumn(col);
 
     /*
@@ -198,6 +211,23 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = ((TvShowEpisode) userObject);
       return getCheckIcon(episode.getHasImages());
+    }
+    return null;
+  }
+
+  private ImageIcon hasSubtitles(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShow) {
+      TvShow tvShow = (TvShow) userObject;
+      return getCheckIcon(tvShow.hasEpisodeSubtitles());
+    }
+    else if (userObject instanceof TvShowSeason) {
+      TvShowSeason season = ((TvShowSeason) userObject);
+      return getCheckIcon(season.hasEpisodeSubtitles());
+    }
+    else if (userObject instanceof TvShowEpisode) {
+      TvShowEpisode episode = ((TvShowEpisode) userObject);
+      return getCheckIcon(episode.hasSubtitles());
     }
     return null;
   }

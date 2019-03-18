@@ -42,6 +42,11 @@ public class MediaInfoTest extends BasicTest {
     assertThat(mf.getAudioChannels()).isEqualTo("8ch");
     assertThat(mf.getAudioLanguage()).isEqualTo("eng");
 
+    mf = new MediaFile(Paths.get("src/test/resources/samples/DTS-ES_Discrete.ts"));
+    mf.gatherMediaInformation();
+    assertThat(mf.getAudioCodec()).isEqualTo("DTS-ES");
+    assertThat(mf.getAudioChannels()).isEqualTo("7ch");
+
     mf = new MediaFile(Paths.get("src/test/resources/samples/DTSHD-HRA.mka"));
     mf.gatherMediaInformation();
     assertThat(mf.getAudioCodec()).isEqualTo("DTSHD-HRA");
@@ -120,7 +125,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(8);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("eng");
 
@@ -146,7 +151,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(8);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("eng");
 
@@ -172,7 +177,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(1);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("eng");
 
@@ -198,7 +203,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(4);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(8);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(8);
       assertThat(audioStream.getCodec()).isEqualTo("DTSHD-MA");
       assertThat(audioStream.getLanguage()).isEqualTo("eng");
 
@@ -224,7 +229,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(1);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("DTSHD-MA");
       assertThat(audioStream.getLanguage()).isEqualTo("deu");
 
@@ -250,7 +255,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(1);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("deu");
 
@@ -273,7 +278,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(1);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(2);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(2);
       assertThat(audioStream.getCodec()).isEqualTo("MPEG Audio");
       assertThat(audioStream.getLanguage()).isEmpty();
 
@@ -296,7 +301,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getAudioStreams().size()).isEqualTo(1);
       // first audio stream is AC-3 english/5.1
       MediaFileAudioStream audioStream = mf.getAudioStreams().get(0);
-      assertThat(audioStream.getChannelsAsInt()).isEqualTo(6);
+      assertThat(audioStream.getAudioChannels()).isEqualTo(6);
       assertThat(audioStream.getCodec()).isEqualTo("AC3");
       assertThat(audioStream.getLanguage()).isEqualTo("deu");
 
@@ -343,7 +348,7 @@ public class MediaInfoTest extends BasicTest {
   public void mediaFile() {
     setTraceLogging();
 
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/E-AC3.ac3"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/h265.mp4"));
     mf.gatherMediaInformation();
 
     System.out.println("----------------------");
@@ -378,7 +383,7 @@ public class MediaInfoTest extends BasicTest {
    */
   @Test
   public void testDirect() throws Exception {
-    String FileName = "src/test/resources/samples/E-AC3.eac3";
+    String FileName = "src/test/resources/samples/DTS-X.mka";
     String To_Display = "";
 
     // Info about the library

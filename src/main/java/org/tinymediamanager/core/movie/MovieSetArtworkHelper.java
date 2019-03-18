@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +42,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The class MovieSetArtworkHelper. A helper class for managing movie set artwork
@@ -51,13 +50,11 @@ import org.tinymediamanager.scraper.http.Url;
  * @author Manuel Laggner
  */
 public class MovieSetArtworkHelper {
+  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
+
   private static final List<MediaFileType> SUPPORTED_ARTWORK_TYPES     = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART,
       MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
-  private static Pattern                   artworkPattern              = Pattern
-      .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
-
-  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
    * Update the artwork for a given movie set. This should be triggered after every movie set change like creating, adding movies, removing movies
@@ -92,8 +89,8 @@ public class MovieSetArtworkHelper {
       if (mf.isGraphic() && mf.getFile().getParent().endsWith(artworkFolder)) {
         try {
           String extension = FilenameUtils.getExtension(mf.getFilename());
-          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-"
-              + mf.getType().name().toLowerCase(Locale.ROOT) + "." + extension;
+          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + mf.getType().name().toLowerCase(Locale.ROOT)
+              + "." + extension;
           Path artworkFile = Paths.get(artworkFolder, artworkFileName);
           Utils.moveFileSafe(mf.getFileAsPath(), artworkFile);
 
@@ -125,8 +122,8 @@ public class MovieSetArtworkHelper {
 
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT)
-            + "." + fileType;
+        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "."
+            + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
@@ -386,17 +383,16 @@ public class MovieSetArtworkHelper {
    *          the movie to strip out the movie set artwork
    */
   public static void cleanMovieSetArtworkInMovieFolder(Movie movie) {
-    try {
-      DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO());
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO())) {
       for (Path entry : stream) {
-        Matcher matcher = artworkPattern.matcher(entry.getFileName().toString());
+        Matcher matcher = MediaFile.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
         if (matcher.find()) {
           Utils.deleteFileSafely(entry);
         }
       }
     }
     catch (Exception e) {
-      LOGGER.error("remove movie set artwork: " + e.getMessage());
+      LOGGER.error("remove movie set artwork: {}", e.getMessage());
     }
   }
 
@@ -563,7 +559,6 @@ public class MovieSetArtworkHelper {
     movieSet.saveToDb();
   }
 
-
   private static class MovieSetImageFetcherTask implements Runnable {
     private MovieSet        movieSet;
     private String          urlToArtwork;
@@ -624,14 +619,7 @@ public class MovieSetArtworkHelper {
     public void run() {
       // first, fetch image
       try {
-        Url url = new Url(urlToArtwork);
-        InputStream is = url.getInputStream();
-        if (url.isFault()) {
-          return;
-        }
-
-        byte[] bytes = IOUtils.toByteArray(is);
-        is.close();
+        byte[] bytes = UrlUtil.getByteArrayFromUrl(urlToArtwork);
 
         String extension = FilenameUtils.getExtension(urlToArtwork);
 
@@ -652,14 +640,12 @@ public class MovieSetArtworkHelper {
         movieSet.addToMediaFiles(writtenArtworkFiles);
         movieSet.saveToDb();
       }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
       catch (Exception e) {
-        if (e instanceof InterruptedException) {
-          // only warning
-          LOGGER.warn("interrupted image download");
-        }
-        else {
-          LOGGER.error("fetch image", e);
-        }
+        LOGGER.error("fetch image: {} - {}", urlToArtwork, e.getMessage());
       }
     }
 

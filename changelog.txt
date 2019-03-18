@@ -1,4 +1,16 @@
+Version 3.0 - RC3
+=======================
+
+changes since RC2: https://goo.gl/RKqRGL
+
+
 Version 3.0 - RC2
+=======================
+
+changes since RC1: https://goo.gl/i66R6E
+
+
+Version 3.0 - RC1
 =======================
 
 + completely rewritten UI (thx to @joostzilla)

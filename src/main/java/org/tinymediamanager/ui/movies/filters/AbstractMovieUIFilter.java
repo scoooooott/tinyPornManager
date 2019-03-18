@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.moviesets;
+package org.tinymediamanager.ui.movies.filters;
 
-import org.tinymediamanager.ui.ITmmUIFilter;
-import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
-import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.AbstractTmmUIFilter;
 
 /**
- * The interface IMovieSetUIFilter just combines the interfaces ITmmUIFilter and ITmmTreeFilter
+ * this abstract class is only used for easier movie filter setup
  * 
  * @author Manuel Laggner
- *
- * @param <E>
  */
-public interface IMovieSetUIFilter<E extends TmmTreeNode> extends ITmmUIFilter<E>, ITmmTreeFilter<E> {
+abstract class AbstractMovieUIFilter extends AbstractTmmUIFilter<Movie> implements IMovieUIFilter {
 }

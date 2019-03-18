@@ -25,8 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,111 +69,115 @@ import com.madgag.gif.fmsware.GifDecoder;
  * @author Manuel Laggner
  */
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
-  private static final Logger                        LOGGER              = LoggerFactory.getLogger(MediaFile.class);
+  private static final Logger                        LOGGER                   = LoggerFactory.getLogger(MediaFile.class);
 
-  private static final String                        PATH                = "path";
-  private static final String                        FILENAME            = "filename";
-  private static final String                        FILESIZE            = "filesize";
-  private static final String                        FILESIZE_IN_MB      = "filesizeInMegabytes";
-  private static final List<String>                  PLEX_EXTRA_FOLDERS  = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
-      "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
+  private static final String                        PATH                     = "path";
+  private static final String                        FILENAME                 = "filename";
+  private static final String                        FILESIZE                 = "filesize";
+  private static final String                        FILESIZE_IN_MB           = "filesizeInMegabytes";
+  private static final List<String>                  PLEX_EXTRA_FOLDERS       = Arrays.asList("behind the scenes", "behindthescenes",
+      "deleted scenes", "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
 
-  private static Pattern                             moviesetPattern     = Pattern
+  public static final Pattern                        MOVIESET_ARTWORK_PATTERN = Pattern
       .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
-  private static Pattern                             posterPattern       = Pattern
+  private static final Pattern                       POSTER_PATTERN           = Pattern
       .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-  private static Pattern                             fanartPattern       = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
-  private static Pattern                             bannerPattern       = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern                             thumbPattern        = Pattern
+  private static final Pattern                       FANART_PATTERN           = Pattern
+      .compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static final Pattern                       BANNER_PATTERN           = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+  private static final Pattern                       THUMB_PATTERN            = Pattern
       .compile("(?i)(.*-thumb|thumb|.*-landscape|landscape)[0-9]{0,2}\\..{2,4}");
-  private static Pattern                             seasonPosterPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
-  private static Pattern                             seasonBannerPattern = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
-  private static Pattern                             seasonThumbPattern  = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
-  private static Pattern                             logoPattern         = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
-  private static Pattern                             clearlogoPattern    = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
+  private static final Pattern                       SEASON_POSTER_PATTERN    = Pattern
+      .compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
+  private static final Pattern                       SEASON_BANNER_PATTERN    = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
+  private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
+  private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
+  private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
   // be careful: disc.avi would be valid!
-  private static Pattern                             discartPattern      = Pattern
+  private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
-  private static Pattern                             clearartPattern     = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
+  private static final Pattern                       CLEARART_PATTERN         = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
-  public static final String                         VIDEO_FORMAT_96P    = "96p";
-  public static final String                         VIDEO_FORMAT_120P   = "120p";
-  public static final String                         VIDEO_FORMAT_144P   = "144p";
-  public static final String                         VIDEO_FORMAT_240P   = "240p";
-  public static final String                         VIDEO_FORMAT_288P   = "288p";
-  public static final String                         VIDEO_FORMAT_360P   = "360p";
-  public static final String                         VIDEO_FORMAT_480P   = "480p";
-  public static final String                         VIDEO_FORMAT_540P   = "540p";
-  public static final String                         VIDEO_FORMAT_576P   = "576p";
-  public static final String                         VIDEO_FORMAT_720P   = "720p";
-  public static final String                         VIDEO_FORMAT_1080P  = "1080p";
-  public static final String                         VIDEO_FORMAT_4K     = "4k";
-  public static final String                         VIDEO_FORMAT_8K     = "8k";
-  public static final List<String>                   VIDEO_FORMATS       = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
+  public static final String                         VIDEO_FORMAT_96P         = "96p";
+  public static final String                         VIDEO_FORMAT_120P        = "120p";
+  public static final String                         VIDEO_FORMAT_144P        = "144p";
+  public static final String                         VIDEO_FORMAT_240P        = "240p";
+  public static final String                         VIDEO_FORMAT_288P        = "288p";
+  public static final String                         VIDEO_FORMAT_360P        = "360p";
+  public static final String                         VIDEO_FORMAT_480P        = "480p";
+  public static final String                         VIDEO_FORMAT_540P        = "540p";
+  public static final String                         VIDEO_FORMAT_576P        = "576p";
+  public static final String                         VIDEO_FORMAT_720P        = "720p";
+  public static final String                         VIDEO_FORMAT_1080P       = "1080p";
+  public static final String                         VIDEO_FORMAT_4K          = "4k";
+  public static final String                         VIDEO_FORMAT_8K          = "8k";
+  public static final List<String>                   VIDEO_FORMATS            = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
       VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_4K, VIDEO_FORMAT_8K);
 
   // meta formats
-  public static final String                         VIDEO_FORMAT_LD     = "LD";
-  public static final String                         VIDEO_FORMAT_SD     = "SD";
-  public static final String                         VIDEO_FORMAT_HD     = "HD";
+  public static final String                         VIDEO_FORMAT_LD          = "LD";
+  public static final String                         VIDEO_FORMAT_SD          = "SD";
+  public static final String                         VIDEO_FORMAT_HD          = "HD";
 
   // 3D / side-by-side / top-and-bottom / H=half - http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
-  public static final String                         VIDEO_3D            = "3D";
-  public static final String                         VIDEO_3D_SBS        = "3D SBS";
-  public static final String                         VIDEO_3D_TAB        = "3D TAB";
-  public static final String                         VIDEO_3D_HSBS       = "3D HSBS";
-  public static final String                         VIDEO_3D_HTAB       = "3D HTAB";
+  public static final String                         VIDEO_3D                 = "3D";
+  public static final String                         VIDEO_3D_SBS             = "3D SBS";
+  public static final String                         VIDEO_3D_TAB             = "3D TAB";
+  public static final String                         VIDEO_3D_HSBS            = "3D HSBS";
+  public static final String                         VIDEO_3D_HTAB            = "3D HTAB";
 
   @JsonProperty
-  private MediaFileType                              type                = MediaFileType.UNKNOWN;
+  private MediaFileType                              type                     = MediaFileType.UNKNOWN;
   @JsonProperty
-  private String                                     path                = "";
+  private String                                     path                     = "";
   @JsonProperty
-  private String                                     filename            = "";
+  private String                                     filename                 = "";
   @JsonProperty
-  private long                                       filesize            = 0;
+  private long                                       filesize                 = 0;
   @JsonProperty
-  private long                                       filedate            = 0;
+  private long                                       filedate                 = 0;
   @JsonProperty
-  private String                                     videoCodec          = "";
+  private String                                     videoCodec               = "";
   @JsonProperty
-  private String                                     containerFormat     = "";
+  private String                                     containerFormat          = "";
   @JsonProperty
-  private String                                     exactVideoFormat    = "";
+  private String                                     exactVideoFormat         = "";
   @JsonProperty
-  private String                                     video3DFormat       = "";
+  private String                                     video3DFormat            = "";
   @JsonProperty
-  private int                                        videoWidth          = 0;
+  private int                                        videoWidth               = 0;
   @JsonProperty
-  private int                                        videoHeight         = 0;
+  private int                                        videoHeight              = 0;
   @JsonProperty
-  private float                                      aspectRatio         = 0f;
+  private float                                      aspectRatio              = 0f;
   @JsonProperty
-  private int                                        overallBitRate      = 0;
+  private int                                        overallBitRate           = 0;
   @JsonProperty
-  private int                                        bitDepth            = 0;
+  private int                                        bitDepth                 = 0;
   @JsonProperty
-  private double                                     frameRate           = 0.0d;
+  private double                                     frameRate                = 0.0d;
   @JsonProperty
-  private int                                        durationInSecs      = 0;
+  private int                                        durationInSecs           = 0;
   @JsonProperty
-  private int                                        stacking            = 0;
+  private int                                        stacking                 = 0;
   @JsonProperty
-  private String                                     stackingMarker      = "";
+  private String                                     stackingMarker           = "";
+  @JsonProperty
+  private String                                     title                    = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams        = new CopyOnWriteArrayList<>();
+  private List<MediaFileAudioStream>                 audioStreams             = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles           = new CopyOnWriteArrayList<>();
+  private List<MediaFileSubtitle>                    subtitles                = new CopyOnWriteArrayList<>();
 
   private MediaInfo                                  mediaInfo;
-  private Map<StreamKind, List<Map<String, String>>> miSnapshot          = null;
-  private Path                                       file                = null;
-  private boolean                                    isISO               = false;
+  private Map<StreamKind, List<Map<String, String>>> miSnapshot               = null;
+  private Path                                       file                     = null;
+  private boolean                                    isISO                    = false;
   @JsonProperty
-  private boolean                                    isAnimatedGraphic   = false;
+  private boolean                                    isAnimatedGraphic        = false;
   @JsonProperty
-  private boolean                                    HDR                 = false;
+  private boolean                                    HDR                      = false;
 
   /**
    * "clones" a new media file.
@@ -197,6 +203,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.type = clone.type;
     this.audioStreams.addAll(clone.audioStreams);
     this.subtitles.addAll(clone.subtitles);
+    this.title = clone.title;
   }
 
   /**
@@ -379,38 +386,38 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     // movieset artwork
-    Matcher matcher = moviesetPattern.matcher(name);
+    Matcher matcher = MOVIESET_ARTWORK_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.GRAPHIC;
     }
 
     // season(XX|-specials)-poster.*
     // seasonXX.*
-    matcher = seasonPosterPattern.matcher(name);
+    matcher = SEASON_POSTER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_POSTER;
     }
 
     // season(XX|-specials)-banner.*
-    matcher = seasonBannerPattern.matcher(name);
+    matcher = SEASON_BANNER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_BANNER;
     }
 
     // season(XX|-specials)-thumb.*
-    matcher = seasonThumbPattern.matcher(name);
+    matcher = SEASON_THUMB_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.SEASON_THUMB;
     }
 
     // *-poster.* or poster.* or folder.* or movie.*
-    matcher = posterPattern.matcher(name);
+    matcher = POSTER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.POSTER;
     }
 
     // *-fanart.* or fanart.* or *-fanartXX.* or fanartXX.*
-    matcher = fanartPattern.matcher(name);
+    matcher = FANART_PATTERN.matcher(name);
     if (matcher.matches()) {
       // decide between fanart and extrafanart
       if (getPath().endsWith("extrafanart")) {
@@ -420,13 +427,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // *-banner.* or banner.*
-    matcher = bannerPattern.matcher(name);
+    matcher = BANNER_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.BANNER;
     }
 
     // *-thumb.* or thumb.* or *-thumbXX.* or thumbXX.*
-    matcher = thumbPattern.matcher(name);
+    matcher = THUMB_PATTERN.matcher(name);
     if (matcher.matches()) {
       // decide between thumb and extrathumb
       if (getPath().endsWith("extrathumbs")) {
@@ -436,25 +443,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // clearart.*
-    matcher = clearartPattern.matcher(name);
+    matcher = CLEARART_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.CLEARART;
     }
 
     // logo.*
-    matcher = logoPattern.matcher(name);
+    matcher = LOGO_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.LOGO;
     }
 
     // clearlogo.*
-    matcher = clearlogoPattern.matcher(name);
+    matcher = CLEARLOGO_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.CLEARLOGO;
     }
 
     // discart.* / disc.*
-    matcher = discartPattern.matcher(name);
+    matcher = DISCART_PATTERN.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.DISC;
     }
@@ -918,6 +925,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * The embedded TITLE
+   * 
+   * @return
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  /**
    * gets the first token of video codec<br>
    * (e.g. DivX 5 => DivX)
    *
@@ -954,7 +974,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String codec = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
       codec = highestStream.getCodec();
     }
@@ -976,13 +996,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return audioCodecs;
   }
 
+  /**
+   * returns the "best" available audio stream (aka the one with most channels)
+   * 
+   * @return
+   */
   private MediaFileAudioStream getBestAudioStream() {
     MediaFileAudioStream highestStream = null;
     for (MediaFileAudioStream stream : audioStreams) {
       if (highestStream == null) {
         highestStream = stream;
       }
-      else if (highestStream.getChannelsAsInt() < stream.getChannelsAsInt()) {
+      else if (highestStream.getAudioChannels() < stream.getAudioChannels()) {
         highestStream = stream;
       }
     }
@@ -998,7 +1023,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String language = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
       language = highestStream.getLanguage();
     }
@@ -1208,9 +1233,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String channels = "";
 
     // get audio stream with highest channel count
-    MediaFileAudioStream highestStream = getBestAudioStream();
+    MediaFileAudioStream highestStream = getDefaultOrBestAudioStream();
     if (highestStream != null) {
-      channels = highestStream.getChannelsAsInt() + "ch";
+      channels = highestStream.getAudioChannels() + "ch";
     }
 
     return channels;
@@ -1219,7 +1244,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public List<String> getAudioChannelsList() {
     List<String> audioChannels = new ArrayList<>();
     for (MediaFileAudioStream stream : audioStreams) {
-      audioChannels.add(stream.getChannelsAsInt() + "ch");
+      audioChannels.add(stream.getAudioChannels() + "ch");
     }
     return audioChannels;
   }
@@ -1565,6 +1590,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return audioStreams;
   }
 
+  /**
+   * Gets the audio stream marked as "default", or, if none, get the best with highest amount of channels
+   * 
+   * @return
+   */
+  public MediaFileAudioStream getDefaultOrBestAudioStream() {
+    MediaFileAudioStream ret = null;
+    for (MediaFileAudioStream as : audioStreams) {
+      if (ret == null && as.isDefaultStream()) {
+        // first default
+        ret = as;
+        break;
+      }
+    }
+    if (ret == null) {
+      // no default? take the "best"
+      ret = getBestAudioStream();
+    }
+    return ret;
+  }
+
   public void setAudioStreams(List<MediaFileAudioStream> audioStreams) {
     this.audioStreams = audioStreams;
   }
@@ -1879,7 +1925,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if ("dts".equalsIgnoreCase(audioCodec)) {
             // <Format_Profile>X / MA / Core</Format_Profile>
             if (audioAddition.contains("ES")) {
-              audioCodec = "DTSHD-ES";
+              audioCodec = "DTS-ES";
             }
             if (audioAddition.contains("HRA")) {
               audioCodec = "DTSHD-HRA";
@@ -1907,8 +1953,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if (commName.contains("high resolution audio")) {
             audioCodec = "DTSHD-HRA";
           }
-          if (commName.contains("extended")) {
-            audioCodec = "DTSHD-ES";
+          if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
+            audioCodec = "DTS-ES";
           }
           if (commName.contains("atmos")) {
             audioCodec = "Atmos";
@@ -1920,8 +1966,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       stream.setCodec(audioCodec);
 
       // AAC sometimes codes channels into Channel(s)_Original
-      String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)", "Channel(s)_Original");
-      stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels);
+      // and DTS-ES has an additional core channel
+      int ch = parseChannelsAsInt(getMediaInfo(StreamKind.Audio, i, "Channel(s)"));
+      int ch2 = parseChannelsAsInt(getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original"));
+      if (ch2 > ch) {
+        ch = ch2;
+      }
+      stream.setAudioChannels(ch);
 
       String br = getMediaInfo(StreamKind.Audio, i, "BitRate", "BitRate_Maximum", "BitRate_Minimum", "BitRate_Nominal");
 
@@ -1953,8 +2004,53 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       else {
         stream.setLanguage(parseLanguageFromString(language));
       }
+
+      // "default" audio stream?
+      String def = getMediaInfo(StreamKind.Audio, i, "Default");
+      if (def.equalsIgnoreCase("yes")) {
+        stream.setDefaultStream(true);
+      }
+
       audioStreams.add(stream);
     }
+
+  }
+
+  /**
+   * workaround for not changing the var to int.<br>
+   * channels usually filled like "5.1ch" or "8 / 6". Take the higher
+   * 
+   * @return channels as int
+   */
+  public int parseChannelsAsInt(String channels) {
+    int highest = 0;
+    if (!channels.isEmpty()) {
+      try {
+        String[] parts = channels.split("/");
+        for (String p : parts) {
+          if (p.toLowerCase(Locale.ROOT).contains("object")) {
+            // "11 objects / 6 channels" - ignore objects
+            continue;
+          }
+          p = p.replaceAll("[a-zA-Z]", ""); // remove now all characters
+
+          int ch = 0;
+          String[] c = p.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
+          for (String s : c) {
+            if (s.matches("[0-9]+")) {
+              ch += Integer.parseInt(s);
+            }
+          }
+          if (ch > highest) {
+            highest = ch;
+          }
+        }
+      }
+      catch (NumberFormatException e) {
+        highest = 0;
+      }
+    }
+    return highest;
   }
 
   private void fetchVideoInformation() {
@@ -2036,6 +2132,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (hdr.contains("2020")) {
       setHDR(true);
     }
+
+    // TODO: season/episode parsing
+    // int season = parseToInt(getMediaInfo(StreamKind.General, 0, "Season"));
+    // int part = parseToInt(getMediaInfo(StreamKind.General, 0, "Part"));
+    // System.out.println("*** S" + season + " E" + part);
+    // #here are the "magic codes" to know where apple tag stores the metadata for each file.
+    // $BOXTYPE_TVEN = "tven"; # episode name
+    // $BOXTYPE_TVES = "tves"; # episode number
+    // $BOXTYPE_TVSH = "tvsh"; # TV Show or series
+    // $BOXTYPE_DESC = "desc"; # short description - max is 255 characters
+    // $BOXTYPE_TVSN = "tvsn"; # season
+    // $BOXTYPE_STIK = "stik"; # "magic" to make it realize it's a TV show
+
   }
 
   private void fetchSubtitleInformation() {
@@ -2054,6 +2163,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       String forced = getMediaInfo(StreamKind.Text, i, "Forced");
       boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
       stream.setForced(b);
+
+      // "default" subtitle stream?
+      String def = getMediaInfo(StreamKind.Text, i, "Default");
+      if (def.equalsIgnoreCase("yes")) {
+        stream.setDefaultStream(true);
+      }
 
       subtitles.add(stream);
     }
@@ -2239,6 +2354,37 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           catch (NumberFormatException e) {
             setOverallBitRate(0);
           }
+        }
+
+        // get embedded title from general info
+        String miTitle = getMediaInfo(StreamKind.General, 0, "Title");
+        if (!miTitle.isEmpty()) {
+          setTitle(miTitle);
+        }
+
+        // try getting some real file dates from MI
+        try {
+          // @formatter:off
+          //    Released_Date             : The date/year that the item was released.
+          //    Original/Released_Date    : The date/year that the item was originaly released.
+          //    Recorded_Date             : The time/date/year that the recording began.
+          //    Encoded_Date              : The time/date/year that the encoding of this item was completed began.
+          //    Tagged_Date               : The time/date/year that the tags were done for this item.
+          //    Written_Date              : The time/date/year that the composition of the music/script began.
+          //    Mastered_Date             : The time/date/year that the item was tranfered to a digitalmedium.
+          //    File_Created_Date         : The time that the file was created on the file system
+          //    File_Modified_Date        : The time that the file was modified on the file system
+          // @formatter:on
+          String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
+              "Mastered_Date");
+          Date d = StrgUtils.parseDate(embeddedDate);
+          if (d.toInstant().toEpochMilli() < filedate) {
+            // so this is older than our file date - use it :)
+            filedate = d.toInstant().toEpochMilli();
+          }
+        }
+        catch (ParseException e) {
+          // could not parse MI date... ignore
         }
 
         // Duration;Play time of the stream in ms

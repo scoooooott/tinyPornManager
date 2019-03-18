@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -278,6 +282,23 @@ public class TvShowSettings extends AbstractSettings {
 
     addDefaultEntries();
     saveSettings();
+
+    // V2-to-V3 datasource migration
+    Path mig = Paths.get("cache", "migv3shows.ds");
+    if (mig.toFile().exists()) {
+      try {
+        List<String> datasources = Files.readAllLines(mig);
+        for (String ds : datasources) {
+          addTvShowDataSources(ds);
+        }
+        Files.delete(mig);
+        saveSettings();
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not migrate movie datasources! {}", e);
+      }
+    }
+
   }
 
   public void addTvShowDataSources(String path) {

@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1126,12 +1127,18 @@ public class Utils {
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.error("could not list files from the backup folder: {}", e.getMessage());
+      return;
     }
 
+    // sort files by creation date
+    al.sort((o1, o2) -> (int) (o1.toFile().lastModified() - o2.toFile().lastModified()));
+
     for (int i = 0; i < al.size() - keep; i++) {
-      // System.out.println("del " + al.get(i).getName());
-      deleteFileSafely(al.get(i));
+      Path backupFile = al.get(i);
+      LOGGER.debug("deleting old backup file {}", backupFile.getFileName());
+      deleteFileSafely(backupFile);
     }
 
   }
@@ -1319,15 +1326,25 @@ public class Utils {
       try (FileSystem zipfs = FileSystems.newFileSystem(zipUri, env)) {
         // Create internal path in the zipfs
         Path internalTargetPath = zipfs.getPath(internalPath);
-        if (!Files.exists(internalTargetPath.getParent())) {
+        if (!Files.exists(internalTargetPath)) {
           // Create directory
-          Files.createDirectory(internalTargetPath.getParent());
+          Files.createDirectory(internalTargetPath);
         }
         // copy a file into the zip file
         if (Files.isDirectory(toBeAdded)) {
           Files.walk(toBeAdded).forEach(source -> {
             try {
-              Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()));
+              if (Files.isSameFile(source, toBeAdded)) {
+                return;
+              }
+
+              if (Files.isDirectory(source)) {
+                // Create directory
+                Files.createDirectory(internalTargetPath.resolve(toBeAdded.relativize(source)));
+              }
+              else {
+                Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()), StandardCopyOption.REPLACE_EXISTING);
+              }
             }
             catch (Exception e) {
               LOGGER.error("Failed to create zip file!" + e.getMessage());
@@ -1570,6 +1587,25 @@ public class Utils {
     }
 
     return filesFound;
+  }
+
+  /**
+   * flush the {@link FileOutputStream} to the disk
+   */
+  public static void flushFileOutputStreamToDisk(FileOutputStream fileOutputStream) {
+    if (fileOutputStream == null) {
+      return;
+    }
+
+    try {
+      fileOutputStream.flush();
+      fileOutputStream.getFD().sync(); // wait until file has been completely written
+      // give it a few milliseconds
+      Thread.sleep(150);
+    }
+    catch (Exception e) {
+      LOGGER.error("could not flush to disk: {}", e.getMessage());
+    }
   }
 
   /*
