@@ -260,14 +260,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (sub.getLanguage().isEmpty() && this.filename.endsWith(".sub")) {
       // not found in name, try to parse from idx
-      BufferedReader br;
-      try {
-        Path idx = Paths.get(this.path, this.filename.replaceFirst("sub$", "idx"));
-        br = new BufferedReader(new FileReader(idx.toFile()));
+      Path idx = Paths.get(this.path, this.filename.replaceFirst("sub$", "idx"));
+
+      try (FileReader fr = new FileReader(idx.toFile()); BufferedReader br = new BufferedReader(fr)) {
         String line;
         while ((line = br.readLine()) != null) {
           String lang = "";
-          // System.out.println("line: " + line);
+
           if (line.startsWith("id:")) {
             lang = StrgUtils.substr(line, "id: (.*?),");
           }
@@ -279,10 +278,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             break;
           }
         }
-        br.close();
       }
       catch (IOException e) {
-        // ignore
+        LOGGER.debug("could not read idx file: {}", e.getMessage());
       }
     }
     sub.setCodec(getExtension());
@@ -1059,7 +1057,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public void setContainerFormatDirect() {
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
-    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
+  }
+
+  /**
+   * use a scanner to get the first entry
+   * 
+   * @param string
+   *          the string to parse
+   * @return the first entry or an empty string
+   */
+  private String getFirstEntryViaScanner(String string) {
+    if (StringUtils.isBlank(string)) {
+      return "";
+    }
+    try (Scanner scanner = new Scanner(string)) {
+      return scanner.next();
+    }
+    catch (Exception e) {
+      LOGGER.error("could not parse string {} with a Scanner: {}", string, e.getMessage());
+    }
+    return "";
   }
 
   /**
@@ -2088,11 +2106,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     setVideoWidth(width);
     setVideoHeight(height);
-    setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
+    setVideoCodec(getFirstEntryViaScanner(videoCodec));
 
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
     // get first extension
-    setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
     // if container format is still empty -> insert the extension
     if (StringUtils.isBlank(containerFormat)) {
@@ -2103,7 +2121,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
       video3DFormat = VIDEO_3D;
       String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase(Locale.ROOT);
-      LOGGER.debug("3D detected :) " + mvl);
+      LOGGER.debug("3D detected :) - {}", mvl);
       if (!StringUtils.isEmpty(mvl) && mvl.contains("top") && mvl.contains("bottom")) {
         video3DFormat = VIDEO_3D_HTAB; // assume HalfTAB as default
         if (height > width) {
@@ -2182,11 +2200,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     setVideoHeight(height);
     setVideoWidth(width);
-    setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
+    setVideoCodec(getFirstEntryViaScanner(videoCodec));
 
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
     // get first extension
-    setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
     String bd = getMediaInfo(StreamKind.Image, 0, "BitDepth");
     setBitDepth(parseToInt(bd));
@@ -2231,7 +2249,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
     catch (IOException e) {
       if (miSnapshot == null) { // maybe we set it already (from ISO) so only display message when empty
-        LOGGER.warn("could not get file information (size/date): " + e.getMessage());
+        LOGGER.warn("could not get file information (size/date): {}", e.getMessage());
       }
       // do not set/return here - we might have set it already... and the next check does check for a 0-byte file
       // setContainerFormat(getExtension());
@@ -2240,7 +2258,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
-      LOGGER.warn("0 Byte file detected: " + this.filename);
+      LOGGER.warn("0 Byte file detected: {}", this.filename);
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
       return;
@@ -2254,7 +2272,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // get media info
-    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    LOGGER.debug("start MediaInfo for {}", this.getFileAsPath());
     long discFilesSizes = 0L;
     if (isISO) {
       discFilesSizes = getMediaInfoSnapshotFromISO();
@@ -2265,7 +2283,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (miSnapshot == null) {
       // MI could not be opened
-      LOGGER.error("error getting MediaInfo for " + this.filename);
+      LOGGER.error("error getting MediaInfo for {}", this.filename);
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
       closeMediaInfo();
@@ -2320,7 +2338,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       default:
-        LOGGER.warn("no mediainformation handling for MediaFile type " + getType() + " yet.");
+        LOGGER.warn("no mediainformation handling for MediaFile type {} yet.", getType());
         break;
     }
 
@@ -2331,7 +2349,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
       // get first extension
-      setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+      setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
       // if container format is still empty -> insert the extension
       if (StringUtils.isBlank(containerFormat)) {
