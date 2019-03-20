@@ -25,10 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -2381,8 +2379,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
 
         // try getting some real file dates from MI
-        try {
-          // @formatter:off
+        // try {
+        // @formatter:off
           //    Released_Date             : The date/year that the item was released.
           //    Original/Released_Date    : The date/year that the item was originaly released.
           //    Recorded_Date             : The time/date/year that the recording began.
@@ -2393,17 +2391,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           //    File_Created_Date         : The time that the file was created on the file system
           //    File_Modified_Date        : The time that the file was modified on the file system
           // @formatter:on
-          String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
-              "Mastered_Date");
-          Date d = StrgUtils.parseDate(embeddedDate);
-          if (d.toInstant().toEpochMilli() < filedate) {
-            // so this is older than our file date - use it :)
-            filedate = d.toInstant().toEpochMilli();
-          }
-        }
-        catch (ParseException e) {
-          // could not parse MI date... ignore
-        }
+        // String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
+        // "Mastered_Date");
+        // Date d = StrgUtils.parseDate(embeddedDate);
+        // if (d.toInstant().toEpochMilli() < filedate) {
+        // // so this is older than our file date - use it :)
+        // filedate = d.toInstant().toEpochMilli();
+        // }
+        // }
+        // catch (ParseException e) {
+        // // could not parse MI date... ignore
+        // }
 
         // Duration;Play time of the stream in ms
         // Duration/String;Play time in format : XXx YYy only, YYy omited if zero
