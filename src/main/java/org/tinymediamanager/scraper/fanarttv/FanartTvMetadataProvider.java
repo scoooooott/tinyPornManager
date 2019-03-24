@@ -323,6 +323,10 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         artworks.addAll(prepareArtwork(images.tvthumb, ImageType.TVTHUMB));
         break;
 
+      case CHARACTERART:
+        artworks.addAll(prepareArtwork(images.characterart, ImageType.CHARACTERART));
+        break;
+
       case ALL:
         artworks.addAll(prepareArtwork(images.movieposter, ImageType.MOVIEPOSTER));
         artworks.addAll(prepareArtwork(images.tvposter, ImageType.TVPOSTER));
@@ -351,6 +355,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
         artworks.addAll(prepareArtwork(images.moviethumb, ImageType.MOVIETHUMB));
         artworks.addAll(prepareArtwork(images.tvthumb, ImageType.TVTHUMB));
+
+        artworks.addAll(prepareArtwork(images.characterart, ImageType.CHARACTERART));
         break;
 
       default:
@@ -415,7 +421,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     MOVIELOGO(400, 155, MediaArtworkType.CLEARLOGO, FanartSizes.SMALL.getOrder()),
     CLEARART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
     MOVIEART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
-    MOVIEDISC(1000, 1000, MediaArtworkType.DISC, FanartSizes.MEDIUM.getOrder());
+    MOVIEDISC(1000, 1000, MediaArtworkType.DISC, FanartSizes.MEDIUM.getOrder()),
+    CHARACTERART(512,512, MediaArtworkType.CHARACTERART, FanartSizes.MEDIUM.getOrder());
     // @formatter:on
 
     ImageType(int width, int height, MediaArtworkType type, int sizeOrder) {
