@@ -327,6 +327,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         artworks.addAll(prepareArtwork(images.characterart, ImageType.CHARACTERART));
         break;
 
+      case KEYART:
+        artworks.addAll(prepareArtwork(images.movieposter, ImageType.MOVIEKEYART));
+        artworks.addAll(prepareArtwork(images.tvposter, ImageType.TVKEYART));
+        break;
+
       case ALL:
         artworks.addAll(prepareArtwork(images.movieposter, ImageType.MOVIEPOSTER));
         artworks.addAll(prepareArtwork(images.tvposter, ImageType.TVPOSTER));
@@ -357,6 +362,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         artworks.addAll(prepareArtwork(images.tvthumb, ImageType.TVTHUMB));
 
         artworks.addAll(prepareArtwork(images.characterart, ImageType.CHARACTERART));
+
+        artworks.addAll(prepareArtwork(images.movieposter, ImageType.MOVIEKEYART));
+        artworks.addAll(prepareArtwork(images.tvposter, ImageType.TVKEYART));
         break;
 
       default:
@@ -370,6 +378,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     List<MediaArtwork> artworks = new ArrayList<>();
 
     for (Image image : ListUtils.nullSafe(images)) {
+      // -keyart is actually a poster with the language '00'
+      if ((type == ImageType.MOVIEKEYART || type == ImageType.TVKEYART) && !"00".equals(image.lang)) {
+        continue;
+      }
+
       MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type.type);
       ma.setDefaultUrl(image.url);
       ma.setPreviewUrl(image.url.replace("/fanart/", "/preview/"));
@@ -385,7 +398,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         try {
           ma.setSeason(Integer.valueOf(image.season));
         }
-        catch (Exception ignored) {
+        catch (Exception e) {
+          LOGGER.trace("could not parse int: {}", e.getMessage());
         }
       }
       artworks.add(ma);
@@ -410,7 +424,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
     SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
     MOVIEPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
+    MOVIEKEYART(1000, 1426, MediaArtworkType.KEYART, PosterSizes.LARGE.getOrder()),
     TVPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
+    TVKEYART(1000, 1426, MediaArtworkType.KEYART, PosterSizes.LARGE.getOrder()),
     SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON_POSTER, MediaArtwork.PosterSizes.LARGE.getOrder()),
     TVBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
     MOVIEBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
