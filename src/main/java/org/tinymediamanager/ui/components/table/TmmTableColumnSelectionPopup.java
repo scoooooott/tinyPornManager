@@ -52,84 +52,95 @@ public class TmmTableColumnSelectionPopup {
     Map<String, Object> displayNameToCheckBox = new HashMap<>();
     List<String> displayNames = new ArrayList<>();
 
-      for (final TableColumn etc : columns) {
-          String columnName = "";
-          if (etc.getHeaderValue() instanceof String) {
-              columnName = etc.getHeaderValue().toString();
-          } else {
-              if (etc.getHeaderRenderer() instanceof DefaultTableCellRenderer) {
-                  columnName = ((DefaultTableCellRenderer) etc.getHeaderRenderer()).getToolTipText();
-              }
-          }
+    for (final TableColumn etc : columns) {
+      String columnName = "";
+      if (etc.getHeaderValue() instanceof String) {
+        columnName = etc.getHeaderValue().toString();
+      }
+      else {
+        if (etc.getHeaderRenderer() instanceof DefaultTableCellRenderer) {
+          columnName = ((DefaultTableCellRenderer) etc.getHeaderRenderer()).getToolTipText();
+        }
+      }
+
+      // prevent removing of the Nodes column in the Tree-Table
+      if ("Nodes".equals(columnName) && etc.getModelIndex() == 0) {
+        continue;
+      }
 
       // header value
       if (StringUtils.isBlank(columnName) && etc.getHeaderValue() != null) {
         columnName = etc.getHeaderValue().toString();
       }
 
-          // fallback
+      // fallback
       if (StringUtils.isBlank(columnName) && etc.getIdentifier() != null) {
         columnName = etc.getIdentifier().toString();
-          }
-
-          JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem();
-          checkBox.setText(columnName);
-          checkBox.setSelected(!tmmTableColumnModel.isColumnHidden(etc));
-          // checkBox.setEnabled(etc.isHidingAllowed());
-
-          final JCheckBoxMenuItem checkBoxMenuItem = checkBox;
-          checkBox.addActionListener(evt -> {
-              tmmTableColumnModel.setColumnHidden(etc, !checkBoxMenuItem.isSelected());
-              // table.updateColumnSelectionMouseListener();
-          });
-
-          if (!displayNames.contains(columnName)) {
-              // the expected case
-              displayNameToCheckBox.put(columnName, checkBox);
-          } else {
-              // the same display name is used for more columns - fuj
-              ArrayList<JCheckBoxMenuItem> al = null;
-              Object theFirstOne = displayNameToCheckBox.get(columnName);
-              if (theFirstOne instanceof JCheckBoxMenuItem) {
-                  JCheckBoxMenuItem firstCheckBox = (JCheckBoxMenuItem) theFirstOne;
-                  al = new ArrayList<>();
-                  al.add(firstCheckBox);
-              } else {
-                  // already a list there
-                  if (theFirstOne instanceof ArrayList) {
-                      al = (ArrayList<JCheckBoxMenuItem>) theFirstOne;
-                  } else {
-                      throw new IllegalStateException("Wrong object theFirstOne is " + theFirstOne);
-                  }
-              }
-              al.add(checkBox);
-              displayNameToCheckBox.put(columnName, al);
-          }
-          displayNames.add(columnName);
       }
+
+      JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem();
+      checkBox.setText(columnName);
+      checkBox.setSelected(!tmmTableColumnModel.isColumnHidden(etc));
+      // checkBox.setEnabled(etc.isHidingAllowed());
+
+      final JCheckBoxMenuItem checkBoxMenuItem = checkBox;
+      checkBox.addActionListener(evt -> {
+        tmmTableColumnModel.setColumnHidden(etc, !checkBoxMenuItem.isSelected());
+        // table.updateColumnSelectionMouseListener();
+      });
+
+      if (!displayNames.contains(columnName)) {
+        // the expected case
+        displayNameToCheckBox.put(columnName, checkBox);
+      }
+      else {
+        // the same display name is used for more columns - fuj
+        ArrayList<JCheckBoxMenuItem> al = null;
+        Object theFirstOne = displayNameToCheckBox.get(columnName);
+        if (theFirstOne instanceof JCheckBoxMenuItem) {
+          JCheckBoxMenuItem firstCheckBox = (JCheckBoxMenuItem) theFirstOne;
+          al = new ArrayList<>();
+          al.add(firstCheckBox);
+        }
+        else {
+          // already a list there
+          if (theFirstOne instanceof ArrayList) {
+            al = (ArrayList<JCheckBoxMenuItem>) theFirstOne;
+          }
+          else {
+            throw new IllegalStateException("Wrong object theFirstOne is " + theFirstOne);
+          }
+        }
+        al.add(checkBox);
+        displayNameToCheckBox.put(columnName, al);
+      }
+      displayNames.add(columnName);
+    }
 
     // Collections.sort(displayNames, Collator.getInstance());
     int index = 0;
-      for (String displayName : displayNames) {
-          Object obj = displayNameToCheckBox.get(displayName);
-          JCheckBoxMenuItem checkBox = null;
-          if (obj instanceof JCheckBoxMenuItem) {
-              checkBox = (JCheckBoxMenuItem) obj;
-          } else {
-              // in case there are duplicate names we store ArrayLists
-              // of JCheckBoxes
-              if (obj instanceof ArrayList) {
-                  ArrayList<JCheckBoxMenuItem> al = (ArrayList<JCheckBoxMenuItem>) obj;
-                  if (index >= al.size()) {
-                      index = 0;
-                  }
-                  checkBox = al.get(index++);
-              } else {
-                  throw new IllegalStateException("Wrong object obj is " + obj);
-              }
-          }
-          popup.add(checkBox);
+    for (String displayName : displayNames) {
+      Object obj = displayNameToCheckBox.get(displayName);
+      JCheckBoxMenuItem checkBox = null;
+      if (obj instanceof JCheckBoxMenuItem) {
+        checkBox = (JCheckBoxMenuItem) obj;
       }
+      else {
+        // in case there are duplicate names we store ArrayLists
+        // of JCheckBoxes
+        if (obj instanceof ArrayList) {
+          ArrayList<JCheckBoxMenuItem> al = (ArrayList<JCheckBoxMenuItem>) obj;
+          if (index >= al.size()) {
+            index = 0;
+          }
+          checkBox = al.get(index++);
+        }
+        else {
+          throw new IllegalStateException("Wrong object obj is " + obj);
+        }
+      }
+      popup.add(checkBox);
+    }
 
     popup.show(c, 8, 8);
   }
