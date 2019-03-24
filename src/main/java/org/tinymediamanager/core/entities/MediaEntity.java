@@ -16,11 +16,17 @@
 package org.tinymediamanager.core.entities;
 
 import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.CHARACTERART;
+import static org.tinymediamanager.core.Constants.CLEARART;
+import static org.tinymediamanager.core.Constants.CLEARLOGO;
 import static org.tinymediamanager.core.Constants.DATA_SOURCE;
 import static org.tinymediamanager.core.Constants.DATE_ADDED;
 import static org.tinymediamanager.core.Constants.DATE_ADDED_AS_STRING;
+import static org.tinymediamanager.core.Constants.DISC;
 import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.KEYART;
+import static org.tinymediamanager.core.Constants.LOGO;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.NEWLY_ADDED;
@@ -285,9 +291,9 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the dimension of the artwork or a zero dimension if no artwork has been found
    */
   public Dimension getArtworkDimension(MediaFileType type) {
-    List<MediaFile> mediaFiles = getMediaFiles(type);
-    if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = mediaFiles.get(0);
+    List<MediaFile> artworks = getMediaFiles(type);
+    if (!artworks.isEmpty()) {
+      MediaFile mediaFile = artworks.get(0);
       return new Dimension(mediaFile.getVideoWidth(), mediaFile.getVideoHeight());
     }
     return new Dimension(0, 0);
@@ -301,9 +307,9 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the file name of the artwork or an empty string if nothing has been found
    */
   public String getArtworkFilename(MediaFileType type) {
-    List<MediaFile> mediaFiles = getMediaFiles(type);
-    if (!mediaFiles.isEmpty()) {
-      return mediaFiles.get(0).getFile().toString();
+    List<MediaFile> artworks = getMediaFiles(type);
+    if (!artworks.isEmpty()) {
+      return artworks.get(0).getFile().toString();
     }
     return "";
   }
@@ -430,6 +436,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       case LOGO:
       case CLEARLOGO:
       case CHARACTERART:
+      case KEYART:
         if (StringUtils.isBlank(url)) {
           artworkUrlMap.remove(type);
         }
@@ -478,7 +485,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void setArtwork(Path file, MediaFileType type) {
     List<MediaFile> images = getMediaFiles(type);
     MediaFile mediaFile = null;
-    if (images.size() > 0) {
+    if (!images.isEmpty()) {
       mediaFile = images.get(0);
       mediaFile.setFile(file);
       mediaFile.gatherMediaInformation(true);
@@ -499,8 +506,8 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public Map<MediaFileType, MediaFile> getArtworkMap() {
     Map<MediaFileType, MediaFile> artworkMap = new HashMap<>();
-    List<MediaFile> mediaFiles = getMediaFiles();
-    for (MediaFile mf : mediaFiles) {
+    List<MediaFile> mfs = getMediaFiles();
+    for (MediaFile mf : mfs) {
       if (!mf.isGraphic()) {
         continue;
       }
@@ -548,7 +555,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       }
     }
     catch (Exception ignored) {
-      LOGGER.warn("could not read filedate" + ignored);
+      LOGGER.warn("could not read filedate: {}", ignored);
     }
   }
 
@@ -665,6 +672,7 @@ public abstract class MediaEntity extends AbstractModelObject {
         return Integer.parseInt((String) obj);
       }
       catch (Exception e) {
+        LOGGER.trace("could not parse int: {}", e.getMessage());
       }
     }
 
@@ -722,6 +730,36 @@ public abstract class MediaEntity extends AbstractModelObject {
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
+      case CLEARART:
+        firePropertyChange(CLEARART, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case DISC:
+        firePropertyChange(DISC, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case LOGO:
+        firePropertyChange(LOGO, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case CLEARLOGO:
+        firePropertyChange(CLEARLOGO, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case CHARACTERART:
+        firePropertyChange(CHARACTERART, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case KEYART:
+        firePropertyChange(KEYART, null, mediaFile.getPath());
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
       default:
         break;
     }
@@ -747,6 +785,36 @@ public abstract class MediaEntity extends AbstractModelObject {
       case THUMB:
         firePropertyChange(THUMB, null, "");
         firePropertyChange(HAS_IMAGES, true, false);
+        break;
+
+      case CLEARART:
+        firePropertyChange(CLEARART, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case DISC:
+        firePropertyChange(DISC, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case LOGO:
+        firePropertyChange(LOGO, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case CLEARLOGO:
+        firePropertyChange(CLEARLOGO, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case CHARACTERART:
+        firePropertyChange(CHARACTERART, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
+        break;
+
+      case KEYART:
+        firePropertyChange(KEYART, null, "");
+        firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       default:
@@ -940,9 +1008,9 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void gatherMediaFileInformation(boolean force) {
     readWriteLock.readLock().lock();
-    List<MediaFile> mediaFiles = new ArrayList<>(this.mediaFiles);
+    List<MediaFile> mfs = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
-    for (MediaFile mediaFile : mediaFiles) {
+    for (MediaFile mediaFile : mfs) {
       mediaFile.gatherMediaInformation(force);
     }
 

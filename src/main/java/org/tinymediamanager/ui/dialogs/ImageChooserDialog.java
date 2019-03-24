@@ -107,7 +107,8 @@ public class ImageChooserDialog extends TmmDialog {
     CLEARART,
     CHARACTERART,
     DISC,
-    THUMB
+    THUMB,
+    KEYART
   }
 
   private Map<String, Object> ids;
@@ -282,6 +283,10 @@ public class ImageChooserDialog extends TmmDialog {
       case THUMB:
         setTitle(BUNDLE.getString("image.choose.thumb")); //$NON-NLS-1$
         break;
+
+      case KEYART:
+        setTitle(BUNDLE.getString("image.choose.keyart")); //$NON-NLS-1$
+        break;
     }
 
     /* UI components */
@@ -455,6 +460,7 @@ public class ImageChooserDialog extends TmmDialog {
         break;
 
       case POSTER:
+      case KEYART:
       default:
         gbl.columnWidths = new int[] { 180 };
         gbl.rowHeights = new int[] { 270 };
@@ -606,6 +612,10 @@ public class ImageChooserDialog extends TmmDialog {
           case THUMB:
             art = new MediaArtwork("", MediaArtworkType.THUMB);
             break;
+          case KEYART:
+            art = new MediaArtwork("", MediaArtworkType.KEYART);
+            break;
+
           default:
             return;
         }
@@ -625,7 +635,7 @@ public class ImageChooserDialog extends TmmDialog {
         tfImageUrl.setText("");
       }
       catch (Exception e) {
-        LOGGER.error("could not download manually entered image url: " + tfImageUrl.getText());
+        LOGGER.error("could not download manually entered image url: {} - {}", tfImageUrl.getText(), e.getMessage());
       }
     };
     task.run();
@@ -898,7 +908,7 @@ public class ImageChooserDialog extends TmmDialog {
         startProgressBar(BUNDLE.getString("image.download.progress")); //$NON-NLS-1$
       });
 
-      if (artworkScrapers == null || artworkScrapers.size() == 0) {
+      if (artworkScrapers == null || artworkScrapers.isEmpty()) {
         return null;
       }
 
@@ -963,6 +973,11 @@ public class ImageChooserDialog extends TmmDialog {
 
             case CHARACTERART:
               options.setArtworkType(MediaArtworkType.CLEARART);
+              break;
+
+            case KEYART:
+              options.setArtworkType(MediaArtworkType.KEYART);
+              break;
 
             case THUMB:
               options.setArtworkType(MediaArtworkType.THUMB);

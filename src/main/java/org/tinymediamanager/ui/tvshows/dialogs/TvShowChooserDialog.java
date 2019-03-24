@@ -438,6 +438,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               chooseArtwork(MediaFileType.CLEARLOGO);
               chooseArtwork(MediaFileType.CLEARART);
               chooseArtwork(MediaFileType.THUMB);
+              chooseArtwork(MediaFileType.CHARACTERART);
+              chooseArtwork(MediaFileType.KEYART);
             }
             else {
               // get artwork asynchronous
@@ -548,6 +550,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         imageType = ImageType.THUMB;
         break;
 
+      case KEYART:
+        if (TvShowModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.KEYART;
+        break;
+
       default:
         return;
     }
@@ -630,7 +639,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     public void done() {
       if (!cancel) {
         searchResultEventList.clear();
-        if (searchResult.size() == 0) {
+        if (searchResult.isEmpty()) {
           // display empty result
           searchResultEventList.add(TvShowChooserModel.emptyResult);
         }

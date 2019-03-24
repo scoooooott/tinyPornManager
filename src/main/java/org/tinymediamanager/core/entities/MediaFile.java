@@ -96,6 +96,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
   private static final Pattern                       CLEARART_PATTERN         = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
+  private static final Pattern                       KEYART_PATTERN           = Pattern.compile("(?i)(.*-keyart|keyart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_96P         = "96p";
   public static final String                         VIDEO_FORMAT_120P        = "120p";
@@ -467,6 +468,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.CHARACTERART;
     }
 
+    // keyart.*
+    matcher = KEYART_PATTERN.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.KEYART;
+    }
+
     // folder style as last chance
     if (foldername.equalsIgnoreCase("extrafanarts") || foldername.equalsIgnoreCase("extrafanart")) {
       return MediaFileType.EXTRAFANART;
@@ -504,6 +511,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case CLEARLOGO:
       case CLEARART:
       case CHARACTERART:
+      case KEYART:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:
@@ -2336,6 +2344,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case CHARACTERART:
       case DISC:
       case EXTRATHUMB:
+      case KEYART:
         fetchImageInformation();
         break;
 

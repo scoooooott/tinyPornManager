@@ -45,6 +45,7 @@ public enum MediaFileType {
   CLEARLOGO, // gfx
   THUMB, // gfx
   CHARACTERART, //gfx
+  KEYART, // gfx
   SEASON_POSTER, // gfx
   SEASON_BANNER, // gfx
   SEASON_THUMB, // gfx
@@ -103,6 +104,9 @@ public enum MediaFileType {
       case DISC:
         return MediaFileType.DISC;
 
+      case KEYART:
+        return MediaFileType.KEYART;
+
       default:
         return MediaFileType.GRAPHIC;
     }
@@ -153,6 +157,9 @@ public enum MediaFileType {
       case DISC:
         return MediaArtworkType.DISC;
 
+      case KEYART:
+        return MediaArtworkType.KEYART;
+
       default:
         throw new IllegalStateException();
     }
@@ -175,6 +182,7 @@ public enum MediaFileType {
         MediaFileType.CLEARLOGO,
         MediaFileType.THUMB,
         MediaFileType.CHARACTERART,
+        MediaFileType.KEYART,
         MediaFileType.SEASON_POSTER,
         MediaFileType.SEASON_BANNER,
         MediaFileType.SEASON_THUMB,

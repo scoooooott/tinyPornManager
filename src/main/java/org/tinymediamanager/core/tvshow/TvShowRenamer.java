@@ -380,11 +380,7 @@ public class TvShowRenamer {
     if (Settings.getInstance().isImageCache()) {
       for (MediaFile gfx : tvShow.getMediaFiles()) {
         if (gfx.isGraphic()) {
-          try {
-            ImageCache.cacheImage(gfx.getFileAsPath());
-          }
-          catch (Exception ignored) {
-          }
+          ImageCache.cacheImageSilently(gfx.getFileAsPath());
         }
       }
     }
@@ -461,6 +457,7 @@ public class TvShowRenamer {
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.CLEARLOGO));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.DISC));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.CHARACTERART));
+    mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.KEYART));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
@@ -486,7 +483,7 @@ public class TvShowRenamer {
 
     if (nfo.getFiledate() > 0) { // one valid found? copy our NFO to all variants
       List<MediaFile> newNFOs = generateEpisodeFilenames(episode.getTvShow(), nfo); // 1:N
-      if (newNFOs.size() > 0) {
+      if (!newNFOs.isEmpty()) {
         // ok, at least one has been set up
         for (MediaFile newNFO : newNFOs) {
           boolean ok = copyFile(nfo.getFileAsPath(), newNFO.getFileAsPath());
@@ -522,7 +519,7 @@ public class TvShowRenamer {
     // ######################################################################
     mfs = new ArrayList<>(episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART,
         MediaFileType.BANNER, MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC,
-        MediaFileType.CHARACTERART, MediaFileType.SUBTITLE));
+        MediaFileType.CHARACTERART, MediaFileType.KEYART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
@@ -976,6 +973,7 @@ public class TvShowRenamer {
       case LOGO:
       case POSTER:
       case CHARACTERART:
+      case KEYART:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:
@@ -1097,7 +1095,7 @@ public class TvShowRenamer {
       return engine.transform(morphTemplate(token), root);
     }
     catch (Exception e) {
-      LOGGER.warn("unable to process token: " + token);
+      LOGGER.warn("unable to process token: {}", token);
       return token;
     }
   }

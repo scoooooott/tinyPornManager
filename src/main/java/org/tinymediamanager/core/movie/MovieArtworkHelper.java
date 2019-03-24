@@ -29,6 +29,7 @@ import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieDiscartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieKeyartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
@@ -44,6 +45,10 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  * @author Manuel Laggner
  */
 public class MovieArtworkHelper {
+
+  private MovieArtworkHelper() {
+    // hide public constructor for utility classes
+  }
 
   /**
    * Manage downloading of the chosen artwork type
@@ -99,6 +104,10 @@ public class MovieArtworkHelper {
 
       case DISC:
         fileNamings.addAll(getDiscartNamesForMovie(movie));
+        break;
+
+      case KEYART:
+        fileNamings.addAll(getKeyartNamesForMovie(movie));
         break;
 
       default:
@@ -207,6 +216,12 @@ public class MovieArtworkHelper {
             }
             break;
 
+          case KEYART:
+            if (!MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty() || force) {
+              download = true;
+            }
+            break;
+
           case EXTRAFANART:
             if (MovieModuleManager.SETTINGS.isImageExtraFanart() || force) {
               download = true;
@@ -282,6 +297,11 @@ public class MovieArtworkHelper {
       setBestArtwork(movie, artwork, MediaArtworkType.DISC, !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty());
     }
 
+    // keyart
+    if (movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
+      setBestArtwork(movie, artwork, MediaArtworkType.KEYART, !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty());
+    }
+
     // extrathumbs
     List<String> extrathumbs = new ArrayList<>();
     if (movie.getMediaFiles(MediaFileType.EXTRATHUMB).isEmpty() && MovieModuleManager.SETTINGS.isImageExtraThumbs()
@@ -296,7 +316,7 @@ public class MovieArtworkHelper {
         }
       }
       movie.setExtraThumbs(extrathumbs);
-      if (extrathumbs.size() > 0) {
+      if (!extrathumbs.isEmpty()) {
         if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRATHUMB);
         }
@@ -316,7 +336,7 @@ public class MovieArtworkHelper {
         }
       }
       movie.setExtraFanarts(extrafanarts);
-      if (extrafanarts.size() > 0) {
+      if (!extrafanarts.isEmpty()) {
         if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRAFANART);
         }
@@ -359,13 +379,16 @@ public class MovieArtworkHelper {
     if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
       return true;
     }
+    if (!MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
+      return true;
+    }
 
     return false;
   }
 
   public static String getArtworkFilename(Movie movie, IFileNaming fileNaming, String extension) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
+    if (mfs != null && !mfs.isEmpty()) {
       return fileNaming.getFilename(movie.getVideoBasenameWithoutStacking(), extension);
     }
     else {
@@ -559,6 +582,43 @@ public class MovieArtworkHelper {
   }
 
   /**
+   * Keyart format is not empty, so we want at least one ;)<br>
+   * Idea is, to check whether the preferred format is set in settings<br>
+   * and if not, take some default (since we want keyarts)
+   *
+   * @param movie
+   *          the movie to get the keyart names for
+   * @return list of MovieKeyartNaming (can be empty!)
+   */
+  public static List<MovieKeyartNaming> getKeyartNamesForMovie(Movie movie) {
+    List<MovieKeyartNaming> keyartnames = new ArrayList<>();
+    if (MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+      return keyartnames;
+    }
+
+    if (movie.isMultiMovieDir()) {
+      if (MovieModuleManager.SETTINGS.getKeyartFilenames().contains(MovieKeyartNaming.FILENAME_KEYART)) {
+        keyartnames.add(MovieKeyartNaming.FILENAME_KEYART);
+      }
+      if (keyartnames.isEmpty() && !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+        keyartnames.add(MovieKeyartNaming.FILENAME_KEYART);
+      }
+    }
+    else if (movie.isDisc()) {
+      if (MovieModuleManager.SETTINGS.getKeyartFilenames().contains(MovieKeyartNaming.KEYART)) {
+        keyartnames.add(MovieKeyartNaming.KEYART);
+      }
+      if (keyartnames.isEmpty() && !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+        keyartnames.add(MovieKeyartNaming.KEYART);
+      }
+    }
+    else {
+      keyartnames.addAll(MovieModuleManager.SETTINGS.getKeyartFilenames());
+    }
+    return keyartnames;
+  }
+
+  /**
    * Logo format is not empty, so we want at least one ;)<br>
    * Idea is, to check whether the preferred format is set in settings<br>
    * and if not, take some default (since we want logos)
@@ -714,6 +774,7 @@ public class MovieArtworkHelper {
     setBestArtwork(movie, artwork, MediaArtworkType.BANNER, !MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty());
     setBestArtwork(movie, artwork, MediaArtworkType.THUMB, !MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty());
     setBestArtwork(movie, artwork, MediaArtworkType.DISC, !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty());
+    setBestArtwork(movie, artwork, MediaArtworkType.KEYART, !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty());
 
     // extrathumbs
     List<String> extrathumbs = new ArrayList<>();
@@ -728,7 +789,7 @@ public class MovieArtworkHelper {
         }
       }
       movie.setExtraThumbs(extrathumbs);
-      if (extrathumbs.size() > 0) {
+      if (!extrathumbs.isEmpty()) {
         if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRATHUMB);
         }
@@ -748,7 +809,7 @@ public class MovieArtworkHelper {
         }
       }
       movie.setExtraFanarts(extrafanarts);
-      if (extrafanarts.size() > 0) {
+      if (!extrafanarts.isEmpty()) {
         if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRAFANART);
         }

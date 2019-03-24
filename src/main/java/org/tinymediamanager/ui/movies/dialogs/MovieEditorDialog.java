@@ -189,6 +189,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                         tfClearArt;
   private JTextField                         tfThumb;
   private JTextField                         tfDisc;
+  private JTextField                         tfKeyart;
 
   private ImageLabel                         lblLogo;
   private ImageLabel                         lblClearlogo;
@@ -196,6 +197,7 @@ public class MovieEditorDialog extends TmmDialog {
   private ImageLabel                         lblClearart;
   private ImageLabel                         lblThumb;
   private ImageLabel                         lblDisc;
+  private ImageLabel                         lblKeyart;
 
   private TmmTable                           tableIds;
   private TmmTable                           tableRatings;
@@ -263,6 +265,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfThumb.setText(movieToEdit.getArtworkUrl(MediaFileType.THUMB));
       tfDisc.setText(movieToEdit.getArtworkUrl(MediaFileType.DISC));
       tfBanner.setText(movieToEdit.getArtworkUrl(MediaFileType.BANNER));
+      tfKeyart.setText(movieToEdit.getArtworkUrl(MediaFileType.KEYART));
       lblPoster.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.POSTER));
       lblFanart.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.FANART));
       lblLogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.LOGO));
@@ -271,6 +274,7 @@ public class MovieEditorDialog extends TmmDialog {
       lblThumb.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.THUMB));
       lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISC));
       lblBanner.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.BANNER));
+      lblKeyart.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.KEYART));
       cbEdition.setSelectedItem(movieToEdit.getEdition());
       cbCertification.setSelectedItem(movieToEdit.getCertification());
       chckbxVideo3D.setSelected(movieToEdit.isVideoIn3D());
@@ -866,6 +870,24 @@ public class MovieEditorDialog extends TmmDialog {
         artworkPanel.add(lblLogo, "cell 0 1,grow");
       }
       {
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        artworkPanel.add(lblKeyartT, "cell 4 0");
+
+        lblKeyart = new ImageLabel();
+        lblKeyart.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(MovieEditorDialog.this, movieToEdit.getIds(), ImageType.KEYART,
+                movieList.getDefaultArtworkScrapers(), lblKeyart, null, null, MediaType.MOVIE);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            updateArtworkUrl(lblKeyart, tfKeyart);
+          }
+        });
+        lblKeyart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        artworkPanel.add(lblKeyart, "cell 4 1 1 4,grow");
+      }
+      {
         JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
         artworkPanel.add(lblClearlogoT, "cell 2 0");
 
@@ -963,7 +985,7 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JPanel artworkAndTrailerPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("edit.artworkandtrailer"), null, artworkAndTrailerPanel, null);
-      artworkAndTrailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][20lp:n][250lp]"));
+      artworkAndTrailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][20lp:n][250lp]"));
       {
         JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
         artworkAndTrailerPanel.add(lblPosterT, "cell 0 0,alignx right");
@@ -1020,21 +1042,28 @@ public class MovieEditorDialog extends TmmDialog {
         tfDisc = new JTextField();
         artworkAndTrailerPanel.add(tfDisc, "cell 1 7,growx");
       }
+      {
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        artworkAndTrailerPanel.add(lblKeyartT, "cell 0 8,alignx trailing");
+
+        tfKeyart = new JTextField();
+        artworkAndTrailerPanel.add(tfKeyart, "cell 1 8,growx");
+      }
 
       {
         JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-        artworkAndTrailerPanel.add(lblTrailer, "flowy,cell 0 9,alignx right,aligny top");
+        artworkAndTrailerPanel.add(lblTrailer, "flowy,cell 0 10,alignx right,aligny top");
 
         JButton btnAddTrailer = new JButton(new AddTrailerAction());
         btnAddTrailer.setMargin(BUTTON_MARGIN);
-        artworkAndTrailerPanel.add(btnAddTrailer, "cell 0 9,alignx right,aligny top");
+        artworkAndTrailerPanel.add(btnAddTrailer, "cell 0 10,alignx right,aligny top");
 
         JButton btnRemoveTrailer = new JButton(new RemoveTrailerAction());
         btnRemoveTrailer.setMargin(BUTTON_MARGIN);
-        artworkAndTrailerPanel.add(btnRemoveTrailer, "cell 0 9,alignx right,aligny top");
+        artworkAndTrailerPanel.add(btnRemoveTrailer, "cell 0 10,alignx right,aligny top");
 
         JScrollPane scrollPaneTrailer = new JScrollPane();
-        artworkAndTrailerPanel.add(scrollPaneTrailer, "cell 1 9 7 1,grow");
+        artworkAndTrailerPanel.add(scrollPaneTrailer, "cell 1 10 7 1,grow");
         tableTrailer = new TmmTable();
         tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tableTrailer.configureScrollPane(scrollPaneTrailer);
@@ -1238,19 +1267,24 @@ public class MovieEditorDialog extends TmmDialog {
         movieToEdit.removeArtworkUrl(MediaFileType.DISC);
       }
 
+      if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.KEYART))) {
+        movieToEdit.setArtworkUrl(tfKeyart.getText(), MediaFileType.KEYART);
+        movieToEdit.downloadArtwork(MediaFileType.KEYART);
+      }
+      else if (StringUtils.isEmpty(tfKeyart.getText())) {
+        movieToEdit.removeArtworkUrl(MediaFileType.KEYART);
+      }
+
       // set extrathumbs
       if (extrathumbs != null && (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
           || !movieToEdit.getExtraThumbs().containsAll(extrathumbs))) {
-        // movieToEdit.downloadExtraThumbs(extrathumbs);
         movieToEdit.setExtraThumbs(extrathumbs);
         movieToEdit.downloadArtwork(MediaFileType.EXTRATHUMB);
       }
 
       // set extrafanarts
       if (extrafanarts != null && (extrafanarts.size() != movieToEdit.getExtraFanarts().size()
-          || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
-          || !movieToEdit.getExtraFanarts().containsAll(extrafanarts))) {
-        // movieToEdit.downloadExtraFanarts(extrafanarts);
+          || !extrafanarts.containsAll(movieToEdit.getExtraFanarts()) || !movieToEdit.getExtraFanarts().containsAll(extrafanarts))) {
         movieToEdit.setExtraFanarts(extrafanarts);
         movieToEdit.downloadArtwork(MediaFileType.EXTRAFANART);
       }
