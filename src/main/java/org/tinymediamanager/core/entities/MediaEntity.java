@@ -301,9 +301,9 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the file name of the artwork or an empty string if nothing has been found
    */
   public String getArtworkFilename(MediaFileType type) {
-    List<MediaFile> thumbs = getMediaFiles(type);
-    if (thumbs.size() > 0) {
-      return thumbs.get(0).getFile().toString();
+    List<MediaFile> mediaFiles = getMediaFiles(type);
+    if (!mediaFiles.isEmpty()) {
+      return mediaFiles.get(0).getFile().toString();
     }
     return "";
   }
@@ -429,6 +429,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       case DISC:
       case LOGO:
       case CLEARLOGO:
+      case CHARACTERART:
         if (StringUtils.isBlank(url)) {
           artworkUrlMap.remove(type);
         }

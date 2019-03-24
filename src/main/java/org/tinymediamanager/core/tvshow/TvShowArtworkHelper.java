@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BACKGROUND;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CHARACTERART;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CLEARART;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.CLEARLOGO;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.LOGO;
@@ -102,6 +103,10 @@ public class TvShowArtworkHelper {
 
       case CLEARLOGO:
         fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearlogoFilenames());
+        break;
+
+      case CHARACTERART:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getCharacterartFilenames());
         break;
 
       case CLEARART:
@@ -192,6 +197,11 @@ public class TvShowArtworkHelper {
       setBestArtwork(tvShow, artwork, MediaArtworkType.DISC);
     }
 
+    // characterart
+    if (tvShow.getMediaFiles(MediaFileType.CHARACTERART).isEmpty()) {
+      setBestArtwork(tvShow, artwork, CHARACTERART);
+    }
+
     for (TvShowSeason season : tvShow.getSeasons()) {
       if (StringUtils.isBlank(season.getArtworkFilename(SEASON_POSTER))) {
         for (MediaArtwork art : artwork) {
@@ -273,6 +283,9 @@ public class TvShowArtworkHelper {
       return true;
     }
     if (tvShow.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.CHARACTERART).isEmpty()) {
       return true;
     }
     for (TvShowSeason season : tvShow.getSeasons()) {
@@ -559,6 +572,17 @@ public class TvShowArtworkHelper {
       }
     }
 
+    // characterart
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == CHARACTERART) {
+        // set url
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.CHARACTERART);
+        // and download it
+        downloadArtwork(tvShow, MediaFileType.CHARACTERART);
+        break;
+      }
+    }
+
     // season poster
     HashMap<Integer, String> seasonPosters = new HashMap<>();
     for (MediaArtwork art : artwork) {
@@ -614,7 +638,7 @@ public class TvShowArtworkHelper {
         }
       }
       tvShow.setExtraFanartUrls(extrafanarts);
-      if (extrafanarts.size() > 0) {
+      if (!extrafanarts.isEmpty()) {
         downloadArtwork(tvShow, MediaFileType.EXTRAFANART);
       }
     }

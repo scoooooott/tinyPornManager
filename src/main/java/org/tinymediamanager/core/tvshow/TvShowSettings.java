@@ -36,6 +36,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.tvshow.connector.TvShowConnectors;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowCharacterartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearlogoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
@@ -91,6 +92,7 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  THUMB_FILENAME                 = "thumbFilename";
   private final static String                  LOGO_FILENAME                  = "logoFilename";
   private final static String                  CLEARLOGO_FILENAME             = "clearlogoFilename";
+  private final static String                  CHARACTERART_FILENAME          = "characterartFilename";
   private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
   private final static String                  SEASON_BANNER_FILENAME         = "seasonBannerFilename";
   private final static String                  SEASON_THUMB_FILENAME          = "seasonThumbFilename";
@@ -110,6 +112,7 @@ public class TvShowSettings extends AbstractSettings {
   private final List<TvShowThumbNaming>        thumbFilenames                 = new ArrayList<>();
   private final List<TvShowClearlogoNaming>    clearlogoFilenames             = new ArrayList<>();
   private final List<TvShowLogoNaming>         logoFilenames                  = new ArrayList<>();
+  private final List<TvShowCharacterartNaming> characterartFilenames          = new ArrayList<>();
   private final List<TvShowSeasonPosterNaming> seasonPosterFilenames          = new ArrayList<>();
   private final List<TvShowSeasonBannerNaming> seasonBannerFilenames          = new ArrayList<>();
   private final List<TvShowSeasonThumbNaming>  seasonThumbFilenames           = new ArrayList<>();
@@ -193,6 +196,9 @@ public class TvShowSettings extends AbstractSettings {
 
     logoFilenames.clear();
     addLogoFilename(TvShowLogoNaming.LOGO);
+
+    characterartFilenames.clear();
+    addCharacterartFilename(TvShowCharacterartNaming.CHARACTERART);
 
     clearlogoFilenames.clear();
     addClearlogoFilename(TvShowClearlogoNaming.CLEARLOGO);
@@ -765,6 +771,21 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange(LOGO_FILENAME, null, logoFilenames);
   }
 
+  public void addCharacterartFilename(TvShowCharacterartNaming filename) {
+    if (!characterartFilenames.contains(filename)) {
+      characterartFilenames.add(filename);
+      firePropertyChange(CHARACTERART_FILENAME, null, characterartFilenames);
+    }
+  }
+
+  public void clearCharacterartFilenames() {
+    characterartFilenames.clear();
+  }
+
+  public List<TvShowCharacterartNaming> getCharacterartFilenames() {
+    return characterartFilenames;
+  }
+
   public List<TvShowLogoNaming> getLogoFilenames() {
     return new ArrayList<>(this.logoFilenames);
   }
@@ -988,6 +1009,9 @@ public class TvShowSettings extends AbstractSettings {
     clearlogoFilenames.clear();
     clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
 
+    characterartFilenames.clear();
+    characterartFilenames.add(TvShowCharacterartNaming.CHARACTERART);
+
     thumbFilenames.clear();
     thumbFilenames.add(TvShowThumbNaming.THUMB);
 
@@ -1040,6 +1064,9 @@ public class TvShowSettings extends AbstractSettings {
 
     clearlogoFilenames.clear();
     clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    characterartFilenames.clear();
+    characterartFilenames.add(TvShowCharacterartNaming.CHARACTERART);
 
     thumbFilenames.clear();
     thumbFilenames.add(TvShowThumbNaming.THUMB);
@@ -1094,6 +1121,9 @@ public class TvShowSettings extends AbstractSettings {
     clearlogoFilenames.clear();
     clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
 
+    characterartFilenames.clear();
+    characterartFilenames.add(TvShowCharacterartNaming.CHARACTERART);
+
     thumbFilenames.clear();
     thumbFilenames.add(TvShowThumbNaming.THUMB);
 
@@ -1146,6 +1176,9 @@ public class TvShowSettings extends AbstractSettings {
 
     clearlogoFilenames.clear();
     clearlogoFilenames.add(TvShowClearlogoNaming.CLEARLOGO);
+
+    characterartFilenames.clear();
+    characterartFilenames.add(TvShowCharacterartNaming.CHARACTERART);
 
     thumbFilenames.clear();
     thumbFilenames.add(TvShowThumbNaming.THUMB);

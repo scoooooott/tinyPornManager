@@ -534,6 +534,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         imageType = ImageType.CLEARART;
         break;
 
+      case CHARACTERART:
+        if (TvShowModuleManager.SETTINGS.getCharacterartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CHARACTERART;
+        break;
+
       case THUMB:
         if (TvShowModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
           return;
@@ -556,7 +563,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     // set extrafanarts
     if (mediaFileType == MediaFileType.FANART) {
       tvShowToScrape.setExtraFanartUrls(extrafanarts);
-      if (extrafanarts.size() > 0) {
+      if (!extrafanarts.isEmpty()) {
         tvShowToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
       }
     }

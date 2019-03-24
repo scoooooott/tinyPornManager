@@ -105,6 +105,7 @@ public class ImageChooserDialog extends TmmDialog {
     LOGO,
     CLEARLOGO,
     CLEARART,
+    CHARACTERART,
     DISC,
     THUMB
   }
@@ -274,6 +275,10 @@ public class ImageChooserDialog extends TmmDialog {
         setTitle(BUNDLE.getString("image.choose.clearlogo")); //$NON-NLS-1$
         break;
 
+      case CHARACTERART:
+        setTitle(BUNDLE.getString("image.choose.characterart")); //$NON-NLS-1$
+        break;
+
       case THUMB:
         setTitle(BUNDLE.getString("image.choose.thumb")); //$NON-NLS-1$
         break;
@@ -435,6 +440,7 @@ public class ImageChooserDialog extends TmmDialog {
       case CLEARART:
       case THUMB:
       case DISC:
+      case CHARACTERART:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 180 };
         size = ImageUtils.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
@@ -495,7 +501,7 @@ public class ImageChooserDialog extends TmmDialog {
     gbc.insets = new Insets(0, 5, 0, 0);
 
     JComboBox cb = null;
-    if (artwork.getImageSizes().size() > 0) {
+    if (!artwork.getImageSizes().isEmpty()) {
       cb = new JComboBox(artwork.getImageSizes().toArray());
     }
     else {
@@ -581,6 +587,9 @@ public class ImageChooserDialog extends TmmDialog {
             break;
           case CLEARLOGO:
             art = new MediaArtwork("", MediaArtworkType.CLEARLOGO);
+            break;
+          case CHARACTERART:
+            art = new MediaArtwork("", MediaArtworkType.CHARACTERART);
             break;
           case POSTER:
             art = new MediaArtwork("", MediaArtworkType.POSTER);
@@ -952,6 +961,9 @@ public class ImageChooserDialog extends TmmDialog {
               options.setArtworkType(MediaArtworkType.CLEARLOGO);
               break;
 
+            case CHARACTERART:
+              options.setArtworkType(MediaArtworkType.CLEARART);
+
             case THUMB:
               options.setArtworkType(MediaArtworkType.THUMB);
               break;
@@ -987,10 +999,9 @@ public class ImageChooserDialog extends TmmDialog {
               chunk.image = bufferedImage;
               publish(chunk);
               imagesFound = true;
-              // addImage(bufferedImage, art);
             }
             catch (Exception e) {
-              LOGGER.error("DownloadTask displaying", e.getMessage());
+              LOGGER.error("DownloadTask displaying: {}", e.getMessage());
             }
 
           }
@@ -999,7 +1010,8 @@ public class ImageChooserDialog extends TmmDialog {
           LOGGER.error("getArtwork", e);
           MessageDialog.showExceptionWindow(e);
         }
-        catch (MissingIdException ignored) {
+        catch (MissingIdException e) {
+          LOGGER.debug("could not fetch artwork: {}", e.getIds());
         }
       } // end foreach scraper
 

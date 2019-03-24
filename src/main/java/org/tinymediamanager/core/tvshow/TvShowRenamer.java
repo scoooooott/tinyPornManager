@@ -460,6 +460,7 @@ public class TvShowRenamer {
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.LOGO));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.CLEARLOGO));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.DISC));
+    mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.CHARACTERART));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
@@ -519,9 +520,9 @@ public class TvShowRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>(
-        episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
-            MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
+    mfs = new ArrayList<>(episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART,
+        MediaFileType.BANNER, MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC,
+        MediaFileType.CHARACTERART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
@@ -974,6 +975,7 @@ public class TvShowRenamer {
       case GRAPHIC:
       case LOGO:
       case POSTER:
+      case CHARACTERART:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:

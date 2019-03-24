@@ -91,6 +91,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
   private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
+  private static final Pattern                       CHARACTERART_PATTERN     = Pattern.compile("(?i)(.*-characterart|characterart)\\..{2,4}");
   // be careful: disc.avi would be valid!
   private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
@@ -377,8 +378,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private MediaFileType parseImageType() {
     String name = getFilename();
-    // String ext = getExtension().toLowerCase(Locale.ROOT);
-    // String basename = FilenameUtils.getBaseName(getFilename());
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     // movieset artwork
@@ -462,6 +461,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.DISC;
     }
 
+    // characterart.*
+    matcher = CHARACTERART_PATTERN.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.CHARACTERART;
+    }
+
     // folder style as last chance
     if (foldername.equalsIgnoreCase("extrafanarts") || foldername.equalsIgnoreCase("extrafanart")) {
       return MediaFileType.EXTRAFANART;
@@ -498,6 +503,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case LOGO:
       case CLEARLOGO:
       case CLEARART:
+      case CHARACTERART:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:
@@ -2327,6 +2333,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case LOGO:
       case CLEARLOGO:
       case CLEARART:
+      case CHARACTERART:
       case DISC:
       case EXTRATHUMB:
         fetchImageInformation();
