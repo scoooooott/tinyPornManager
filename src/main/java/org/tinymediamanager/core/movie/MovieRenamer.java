@@ -118,6 +118,7 @@ public class MovieRenamer {
     tokenMap.put("videoCodec", "movie.mediaInfoVideoCodec");
     tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
+    tokenMap.put("videoBitDepth", "movie.mediaInfoVideoBitDepth");
     tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
     tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList");
     tokenMap.put("audioCodecsAsString", "movie.mediaInfoAudioCodecList;array");

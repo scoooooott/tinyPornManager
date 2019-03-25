@@ -1953,6 +1953,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public int getMediaInfoVideoBitDepth() {
+    return 0;
+  }
+
+  @Override
   public MediaSource getMediaInfoSource() {
     return MediaSource.UNKNOWN;
   }

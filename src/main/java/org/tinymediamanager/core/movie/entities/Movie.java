@@ -542,6 +542,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(TAGS_AS_STRING, null, tags);
 
   }
+
   /** has movie local (or any mediafile inline) subtitles? */
   public boolean hasSubtitles() {
     if (this.subtitles) {
@@ -1332,7 +1333,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void removeAllGenres() {
     genres.clear();
-    firePropertyChange(GENRE,null, genres);
+    firePropertyChange(GENRE, null, genres);
     firePropertyChange(GENRES_AS_STRING, null, genres);
   }
 
@@ -1550,25 +1551,22 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public int getMediaInfoVideoBitrate() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getOverallBitRate();
-    }
+    return getMainVideoFile().getOverallBitRate();
+  }
 
-    return 0;
+  @Override
+  public int getMediaInfoVideoBitDepth() {
+    return getMainVideoFile().getBitDepth();
   }
 
   /**
    * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
    */
   public String getMediaInfoAudioCodecAndChannels() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
+    MediaFile mf = getMainVideoFile();
+    if (!mf.getAudioCodec().isEmpty()) {
+      return mf.getAudioCodec() + "_" + mf.getAudioChannels();
     }
-
     return "";
   }
 
