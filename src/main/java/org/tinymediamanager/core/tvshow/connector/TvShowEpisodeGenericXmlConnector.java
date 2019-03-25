@@ -493,10 +493,10 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
   }
 
   /**
-   * add actors in <actor><name>xxx</name><role>xxx</role><thumb>xxx</thumb></actor>
+   * add actors (guests) in <actor><name>xxx</name><role>xxx</role><thumb>xxx</thumb></actor>
    */
   protected void addActors(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
-    for (Person tvShowActor : episode.getActors()) {
+    for (Person tvShowActor : episode.getGuests()) {
       Element actor = document.createElement("actor");
 
       Element name = document.createElement("name");
