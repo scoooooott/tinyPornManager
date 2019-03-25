@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.entities;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,6 +27,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.ApiResourceBundle;
 import org.tinymediamanager.scraper.DynaEnum;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -188,13 +188,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   @SuppressWarnings("unchecked")
   private static List<Locale> getLanguages() {
     try {
-      Class<?> clazz = Class.forName("org.tinymediamanager.core.Utils");
-      Object obj = clazz.newInstance();
-
-      Method method = clazz.getDeclaredMethod("getLanguages");
-      if (method.getReturnType() == List.class) {
-        return (List<Locale>) method.invoke(obj);
-      }
+      return LanguageUtils.getLanguages();
     }
     catch (Exception ignored) {
       // nothing to be done here
