@@ -49,7 +49,7 @@ public interface IMediaInformation {
   String getMediaInfoVideoFormat();
 
   /**
-   * Returns the bit rate of video (eg 8 / 10)
+   * Returns the bit depth of video (eg 8 / 10)
    * 
    * @return
    */
