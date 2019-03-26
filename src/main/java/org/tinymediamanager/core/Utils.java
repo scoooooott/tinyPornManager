@@ -563,8 +563,9 @@ public class Utils {
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists"); // NOSONAR
       }
-      if (!Files.exists(destDir.getParent())) {
+      if (destDir.getParent() != null && !Files.exists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
+        // NULL parent means, that we just have one relative folder like Paths.get("bla") - no need to create anything
         try {
           Files.createDirectories(destDir.getParent());
         }
