@@ -32,8 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -151,6 +153,16 @@ public class UpgradeTasks {
             ep.saveToDb();
           }
         }
+      }
+
+      // has been expanded to space
+      if (MovieSettings.getInstance().getRenamerColonReplacement().equals("")) {
+        MovieSettings.getInstance().setRenamerColonReplacement(" ");
+        MovieSettings.getInstance().saveSettings();
+      }
+      if (TvShowSettings.getInstance().getRenamerColonReplacement().equals("")) {
+        TvShowSettings.getInstance().setRenamerColonReplacement(" ");
+        TvShowSettings.getInstance().saveSettings();
       }
     }
   }
