@@ -92,7 +92,7 @@ public class TheTvDbMetadataProviderTest {
   public void testSearchWithFallback() throws Exception {
     ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
     metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.en.toString());
-    searchShow(metadataProvider, "Wonderfalls", "de", "78845", 2004);
+    searchShow(metadataProvider, "Wonderfalls", "de", "78845", 2004); // 404 with DE, but found with EN
 
     metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
     searchShow(metadataProvider, "SOKO Kitzbühel", "en", "101241", 2001);

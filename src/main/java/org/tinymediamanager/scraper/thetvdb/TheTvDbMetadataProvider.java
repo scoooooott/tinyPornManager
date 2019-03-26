@@ -265,7 +265,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       try {
         Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, language).execute();
         if (!httpResponse.isSuccessful()) {
-          throw new HttpException(httpResponse.code(), httpResponse.message());
+          // when not found in language -> 404
+          if (!fallbackLanguage.equals(language)) {
+            httpResponse = tvdb.search().series(searchString, imdbId, null, null, fallbackLanguage).execute();
+          }
+          if (!httpResponse.isSuccessful()) {
+            if (!fallbackLanguage.equals("en") && !language.equals("en")) {
+              httpResponse = tvdb.search().series(searchString, imdbId, null, null, "en").execute();
+            }
+            if (!httpResponse.isSuccessful()) {
+              throw new HttpException(httpResponse.code(), httpResponse.message());
+            }
+          }
         }
         List<Series> res = httpResponse.body().data;
         for (Series s : res) {
