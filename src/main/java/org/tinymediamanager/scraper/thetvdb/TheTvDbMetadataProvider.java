@@ -22,6 +22,7 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +70,7 @@ import com.uwetrottmann.thetvdb.TheTvdb;
 import com.uwetrottmann.thetvdb.entities.Actor;
 import com.uwetrottmann.thetvdb.entities.ActorsResponse;
 import com.uwetrottmann.thetvdb.entities.Episode;
+import com.uwetrottmann.thetvdb.entities.EpisodeResponse;
 import com.uwetrottmann.thetvdb.entities.EpisodesResponse;
 import com.uwetrottmann.thetvdb.entities.Language;
 import com.uwetrottmann.thetvdb.entities.LanguagesResponse;
@@ -224,21 +226,34 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       imdbId = searchString; // search via IMDBid only
       searchString = null; // by setting empty searchterm
     }
+    if (!StringUtils.isEmpty(imdbId)) {
+      searchString = null; // null-out search string, when searching with IMDB, else 405
+    }
 
     int tvdbId = options.getIdAsInt(providerInfo.getId());
     String language = options.getLanguage().getLanguage();
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage(); // just 2 char
 
     List<Series> series = new ArrayList<>();
+
+    // FALLBACK:
+    // Accept-Language:
+    // Records are returned with the Episode name and Overview in the desired language, if it exists.
+    // If there is no translation for the given language, then the record is still returned but with empty values for the translated fields.
 
     // if we have an TVDB id, use that!
     if (tvdbId != 0) {
       LOGGER.debug("found TvDb ID {} - getting direct", tvdbId);
       try {
+
+        // check with submitted language
         Response<SeriesResponse> httpResponse = tvdb.series().series(tvdbId, language).execute();
         if (!httpResponse.isSuccessful()) {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
-        series.add(httpResponse.body().data);
+        Series res = httpResponse.body().data;
+        fillFallbackLanguages(language, fallbackLanguage, res);
+        series.add(res);
       }
       catch (Exception e) {
         LOGGER.error("problem getting data vom tvdb via ID: {}", e.getMessage());
@@ -247,36 +262,20 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // only search when we did not find something by ID (and search string or IMDB is present)
     if (series.isEmpty() && !(StringUtils.isEmpty(searchString) && StringUtils.isEmpty(imdbId))) {
-      // if (!StringUtils.isEmpty(searchString) && series.isEmpty()) {
-      // second with the desired scraping language
       try {
         Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, language).execute();
         if (!httpResponse.isSuccessful()) {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
-        series.addAll(httpResponse.body().data);
+        List<Series> res = httpResponse.body().data;
+        for (Series s : res) {
+          fillFallbackLanguages(language, fallbackLanguage, s);
+        }
+        series.addAll(res);
       }
       catch (Exception e) {
         LOGGER.error("problem getting data vom tvdb: {}", e.getMessage());
       }
-    }
-
-    // third with the fallback language
-    if (series.isEmpty() && !(StringUtils.isEmpty(searchString) && StringUtils.isEmpty(imdbId))) {
-      String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
-      if (!fallbackLanguage.equals(language)) {
-        try {
-          Response<SeriesResultsResponse> httpResponse = tvdb.search().series(searchString, imdbId, null, null, fallbackLanguage).execute();
-          if (!httpResponse.isSuccessful()) {
-            throw new HttpException(httpResponse.code(), httpResponse.message());
-          }
-          series.addAll(httpResponse.body().data);
-        }
-        catch (Exception e) {
-          LOGGER.error("problem getting data vom tvdb with fallback language: {}", e.getMessage());
-        }
-      }
-      LOGGER.info("found {} results", series.size());
     }
 
     if (series.isEmpty()) {
@@ -296,6 +295,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), options.getMediaType());
       result.setId(show.id.toString());
       result.setTitle(show.seriesName);
+      result.setOverview(show.overview);
       try {
         result.setYear(Integer.parseInt(show.firstAired.substring(0, 4)));
       }
@@ -345,16 +345,68 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     return results;
   }
 
+  private void fillFallbackLanguages(String language, String fallbackLanguage, Series serie) throws IOException {
+    // check with fallback language
+    Response<SeriesResponse> httpResponse;
+    if ((StringUtils.isEmpty(serie.seriesName) || StringUtils.isEmpty(serie.overview)) && !fallbackLanguage.equals(language)) {
+      LOGGER.trace("Getting show in fallback language {}", fallbackLanguage);
+      httpResponse = tvdb.series().series(serie.id, fallbackLanguage).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      serie.seriesName = StringUtils.isEmpty(serie.seriesName) ? httpResponse.body().data.seriesName : serie.seriesName;
+      serie.overview = StringUtils.isEmpty(serie.overview) ? httpResponse.body().data.overview : serie.overview;
+    }
+
+    // STILL empty? check with EN language...
+    if ((StringUtils.isEmpty(serie.seriesName) || StringUtils.isEmpty(serie.overview)) && !fallbackLanguage.equals("en") && !language.equals("en")) {
+      LOGGER.trace("Getting show in fallback language {}", "en");
+      httpResponse = tvdb.series().series(serie.id, "en").execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      serie.seriesName = StringUtils.isEmpty(serie.seriesName) ? httpResponse.body().data.seriesName : serie.seriesName;
+      serie.overview = StringUtils.isEmpty(serie.overview) ? httpResponse.body().data.overview : serie.overview;
+    }
+  }
+
+  private void fillFallbackLanguages(String language, String fallbackLanguage, Episode episode) throws IOException {
+    // check with fallback language
+    Response<EpisodeResponse> httpResponse;
+    if ((StringUtils.isEmpty(episode.episodeName) || StringUtils.isEmpty(episode.overview)) && !fallbackLanguage.equals(language)) {
+      LOGGER.trace("Getting episode S{}E{} in fallback language {}", episode.airedSeason, episode.airedEpisodeNumber, fallbackLanguage);
+      httpResponse = tvdb.episodes().get(episode.id, fallbackLanguage).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      episode.episodeName = StringUtils.isEmpty(episode.episodeName) ? httpResponse.body().data.episodeName : episode.episodeName;
+      episode.overview = StringUtils.isEmpty(episode.overview) ? httpResponse.body().data.overview : episode.overview;
+    }
+
+    // STILL empty? check with EN language...
+    if ((StringUtils.isEmpty(episode.episodeName) || StringUtils.isEmpty(episode.overview)) && !fallbackLanguage.equals("en")
+        && !language.equals("en")) {
+      LOGGER.trace("Getting episode S{}E{} in fallback language {}", episode.airedSeason, episode.airedEpisodeNumber, "en");
+      httpResponse = tvdb.episodes().get(episode.id, "en").execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      episode.episodeName = StringUtils.isEmpty(episode.episodeName) ? httpResponse.body().data.episodeName : episode.episodeName;
+      episode.overview = StringUtils.isEmpty(episode.overview) ? httpResponse.body().data.overview : episode.overview;
+    }
+  }
+
   private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     // do we have an id from the options?
     Integer id = options.getIdAsInteger(providerInfo.getId());
-
     if (id == null || id == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
+    String language = options.getLanguage().getLanguage();
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage(); // just 2 char
 
     Series show = null;
     try {
@@ -363,6 +415,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         throw new HttpException(httpResponse.code(), httpResponse.message());
       }
       show = httpResponse.body().data;
+      fillFallbackLanguages(language, fallbackLanguage, show);
     }
     catch (Exception e) {
       LOGGER.error("failed to get meta data: {}", e.getMessage());
@@ -371,26 +424,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     if (show == null) {
       throw new NothingFoundException();
-    }
-
-    // if there is no localized content and we have a fallback language, rescrape in the fallback language
-    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
-    if (StringUtils.isAnyBlank(show.seriesName, show.overview) && !fallbackLanguage.equals(options.getLanguage().getLanguage())) {
-      try {
-        Response<SeriesResponse> httpResponse = tvdb.series().series(id, fallbackLanguage).execute();
-        if (httpResponse.isSuccessful()) {
-          Series fallBackShow = httpResponse.body().data;
-          if (StringUtils.isBlank(show.seriesName) && StringUtils.isNotBlank(fallBackShow.seriesName)) {
-            show.seriesName = fallBackShow.seriesName;
-          }
-          if (StringUtils.isBlank(show.overview) && StringUtils.isNotBlank(fallBackShow.overview)) {
-            show.overview = fallBackShow.overview;
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error("failed to get meta data: {}", e.getMessage());
-      }
     }
 
     // populate metadata
@@ -479,9 +512,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     boolean useDvdOrder = false;
 
     // do we have an id from the options?
-    Integer id = options.getIdAsInteger(providerInfo.getId());
+    Integer showId = options.getIdAsInteger(providerInfo.getId());
 
-    if (id == null || id == 0) {
+    if (showId == null || showId == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
@@ -506,7 +539,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // get the episode via the episodesList() (is cached and contains all data with 1 call per 100 eps)
-    List<MediaMetadata> episodes = episodeListCacheMap.get(id);
+    List<MediaMetadata> episodes = episodeListCacheMap.get(showId);
     if (episodes == null) {
       episodes = getEpisodeList(options);
     }
@@ -720,40 +753,30 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     LOGGER.debug("getting episode list: {}", options);
     List<MediaMetadata> episodes = new ArrayList<>();
 
-    // do we have an id from the options?
-    Integer id = options.getIdAsInteger(providerInfo.getId());
-
-    if (id == null || id == 0) {
+    // do we have an show id from the options?
+    Integer showId = options.getIdAsInteger(providerInfo.getId());
+    if (showId == null || showId == 0) {
       LOGGER.warn("no id available");
       throw new MissingIdException(providerInfo.getId());
     }
 
     List<Episode> eps = new ArrayList<>();
-    List<Episode> fallbackEps = new ArrayList<>();
     try {
+      String language = options.getLanguage().getLanguage();
       String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage();
 
       // 100 results per page
       int counter = 1;
       while (true) {
-        Response<EpisodesResponse> httpResponse = tvdb.series().episodes(id, counter, options.getLanguage().getLanguage()).execute();
+        Response<EpisodesResponse> httpResponse = tvdb.series().episodes(showId, counter, language).execute();
         if (!httpResponse.isSuccessful()) {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         EpisodesResponse response = httpResponse.body();
 
-        // and get the episode listing in the fallback language too
-        if (!fallbackLanguage.equals(options.getLanguage().getLanguage())) {
-          try {
-            httpResponse = tvdb.series().episodes(id, counter, fallbackLanguage).execute();
-            if (!httpResponse.isSuccessful()) {
-              throw new HttpException(httpResponse.code(), httpResponse.message());
-            }
-            fallbackEps.addAll(httpResponse.body().data);
-          }
-          catch (Exception e) {
-            LOGGER.warn("could not get data in fallback language: {}", e.getMessage());
-          }
+        // fallback language
+        for (Episode ep : response.data) {
+          fillFallbackLanguages(language, fallbackLanguage, ep);
         }
 
         eps.addAll(response.data);
@@ -769,12 +792,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       throw new ScrapeException(e);
     }
 
-    // build the fallback language episode map for faster lookup
-    Map<String, Episode> fallbackEpsMap = new HashMap<>();
-    for (Episode ep : fallbackEps) {
-      fallbackEpsMap.put("S" + ep.airedSeason + "E" + ep.airedEpisodeNumber, ep);
-    }
-
     for (Episode ep : eps) {
       MediaMetadata episode = new MediaMetadata(providerInfo.getId());
 
@@ -783,26 +800,14 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       episode.setEpisodeNumber(TvUtils.getEpisodeNumber(ep.airedEpisodeNumber));
       episode.setDvdSeasonNumber(TvUtils.getSeasonNumber(ep.dvdSeason));
       episode.setDvdEpisodeNumber(TvUtils.getEpisodeNumber(ep.dvdEpisodeNumber));
-
-      Episode fallbackEpisode = fallbackEpsMap.get("S" + ep.airedSeason + "E" + ep.airedEpisodeNumber);
-      if (StringUtils.isNotBlank(ep.episodeName)) {
-        episode.setTitle(ep.episodeName);
-      }
-      else if (fallbackEpisode != null && StringUtils.isNotBlank(fallbackEpisode.episodeName)) {
-        episode.setTitle(fallbackEpisode.episodeName);
-      }
-
-      if (StringUtils.isNotBlank(ep.overview)) {
-        episode.setPlot(ep.overview);
-      }
-      else if (fallbackEpisode != null && StringUtils.isNotBlank(fallbackEpisode.overview)) {
-        episode.setPlot(fallbackEpisode.overview);
-      }
+      episode.setTitle(ep.episodeName);
+      episode.setPlot(ep.overview);
 
       try {
         episode.setReleaseDate(StrgUtils.parseDate(ep.firstAired));
       }
       catch (Exception ignored) {
+        LOGGER.warn("Could not parse date: {}", ep.firstAired);
       }
 
       MediaRating rating = new MediaRating(getProviderInfo().getId());
@@ -817,7 +822,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           String[] multiple = director.split(",");
           for (String g2 : multiple) {
             MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
-            cm.setName(director);
+            cm.setName(g2.trim());
             episode.addCastMember(cm);
           }
         }
@@ -829,7 +834,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           String[] multiple = writer.split(",");
           for (String g2 : multiple) {
             MediaCastMember cm = new MediaCastMember(CastType.WRITER);
-            cm.setName(writer);
+            cm.setName(g2.trim());
             episode.addCastMember(cm);
           }
         }
@@ -859,7 +864,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // cache for further fast access
-    episodeListCacheMap.put(id, episodes);
+    episodeListCacheMap.put(showId, episodes);
 
     return episodes;
   }
