@@ -1975,7 +1975,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
 
         // newer 18.12 style
-        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial").toLowerCase(Locale.ROOT); // since 18.08
+        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
         if (!commName.isEmpty()) {
           if (commName.contains("master audio")) {
             audioCodec = "DTSHD-MA";
