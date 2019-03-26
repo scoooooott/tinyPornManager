@@ -86,7 +86,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
   private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
   private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList("", "-"));
+  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList(" ", "-"));
   private EventList<TvShowRenamerExample>          exampleEventList;
 
   /*
