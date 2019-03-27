@@ -1912,7 +1912,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
       // workaround for DTS & TrueHD variant detection
       // search for well known String in defined keys (changes between different MI versions!)
-      String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "CodecID", "Codec" };
+      String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "Format_Commercial_IfAny", "CodecID", "Codec" };
       String audioCodec = getMediaInfoContains(StreamKind.Audio, i, "TrueHD", acSearch);
       if (audioCodec.isEmpty()) {
         audioCodec = getMediaInfoContains(StreamKind.Audio, i, "Atmos", acSearch);
