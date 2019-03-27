@@ -74,6 +74,7 @@ public class MediaProviderConfig {
     Path conf = Paths.get(folder, "scraper_" + id + ".conf");
     try (InputStream stream = Files.newInputStream(conf)) {
       p.load(stream);
+      LOGGER.info("load settings '" + conf + "'");
       for (MediaProviderConfigObject co : settings.values()) {
         String value = p.getProperty(co.getKey());
         if (co.isEncrypt()) {
@@ -83,7 +84,7 @@ public class MediaProviderConfig {
       }
     }
     catch (Exception e) {
-      LOGGER.warn("Cannot load settings '" + conf + "' - using defaults");
+      LOGGER.trace("Cannot load settings '" + conf + "' - using defaults");
     }
   }
 
