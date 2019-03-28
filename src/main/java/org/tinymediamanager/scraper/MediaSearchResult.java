@@ -293,6 +293,18 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   /**
+   * Set an media id for a provider id
+   * 
+   * @param providerId
+   *          the provider id
+   * @param id
+   *          the media id
+   */
+  public void setId(String providerId, String id) {
+    ids.put(providerId, StrgUtils.getNonNullString(id));
+  }
+
+  /**
    * Get the IMDB id
    * 
    * @return the IMDB id
