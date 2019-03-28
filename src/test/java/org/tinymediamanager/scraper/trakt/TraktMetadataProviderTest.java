@@ -29,6 +29,26 @@ public class TraktMetadataProviderTest {
   }
 
   @Test
+  public void testLookup() {
+    TraktMetadataProvider mp;
+    List<MediaSearchResult> results;
+
+    try {
+      mp = new TraktMetadataProvider();
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter and the Philosopher's Stone");
+      options.setLanguage(Locale.ENGLISH);
+      options.setImdbId("tt0241527");
+      options.setTmdbId(671);
+      // options.setId("trakt", "-2");
+      mp.lookupWithId(options);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
   public void testMovieSearch() {
     TraktMetadataProvider mp;
     List<MediaSearchResult> results;

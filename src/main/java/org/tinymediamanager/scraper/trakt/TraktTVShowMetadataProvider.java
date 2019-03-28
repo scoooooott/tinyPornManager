@@ -35,7 +35,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -55,6 +55,8 @@ import com.uwetrottmann.trakt5.entities.Show;
 import com.uwetrottmann.trakt5.entities.Translation;
 import com.uwetrottmann.trakt5.enums.Extended;
 
+import retrofit2.Response;
+
 /**
  * The class TraktTvShowMetadataProvider is used to provide metadata for movies from trakt.tv
  */
@@ -70,44 +72,33 @@ class TraktTVShowMetadataProvider {
 
   // Search
   List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
-    LOGGER.debug("search() " + options.toString());
-
-    if (options.getMediaType() != MediaType.TV_SHOW) {
-      throw new UnsupportedMediaTypeException(options.getMediaType());
-    }
 
     String searchString = "";
-    int year = 0;
-
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
+    if (StringUtils.isNotEmpty(options.getQuery())) {
       searchString = options.getQuery();
     }
+    // searchString = cleanString(searchString);
 
-    if (options.getYear() != 0) {
-      try {
-        year = options.getYear();
-      }
-      catch (Exception e) {
-        year = 0;
-      }
+    String year = null;
+    if (options.getYear() > 1800) {
+      year = String.valueOf(options.getYear());
     }
 
     List<MediaSearchResult> results = new ArrayList<>();
     List<SearchResult> searchResults = null;
     String lang = options.getLanguage().getLanguage();
-    lang = lang + ",en"; // fallback search
+    lang = lang + ",en"; // fallback search (does this still work?)
 
     synchronized (api) {
       try {
-        if (year != 0) {
-          searchResults = api.search()
-              .textQueryShow(searchString, String.valueOf(year), null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25).execute()
-              .body();
+        Response<List<SearchResult>> response = api.search()
+            .textQueryShow(searchString, year, null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          throw new HttpException(response.code(), response.message());
         }
-        else {
-          searchResults = api.search().textQueryShow(searchString, null, null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25)
-              .execute().body();
-        }
+        searchResults = response.body();
+
       }
       catch (Exception e) {
         LOGGER.debug("failed to search: " + e.getMessage());
@@ -120,18 +111,10 @@ class TraktTVShowMetadataProvider {
       return results;
     }
 
-    // set SearchResult Data for every Entry of the result
     for (SearchResult result : searchResults) {
-      MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId(), MediaType.TV_SHOW);
-
-      mediaSearchResult.setTitle(result.show.title);
-      mediaSearchResult.setYear(result.show.year);
-      mediaSearchResult.setId(result.show.ids.trakt.toString());
-      mediaSearchResult.setIMDBId(result.show.ids.imdb);
-
-      mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
-
-      results.add(mediaSearchResult);
+      MediaSearchResult m = TraktUtils.morphTraktResultToTmmResult(options, result);
+      m.setScore(MetadataUtil.calculateScore(searchString, m.getTitle()));
+      results.add(m);
     }
 
     return results;
@@ -157,7 +140,12 @@ class TraktTVShowMetadataProvider {
     List<Season> seasons = null;
     synchronized (api) {
       try {
-        seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+        Response<List<Season>> response = api.seasons().summary(id, Extended.FULLEPISODES).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          throw new HttpException(response.code(), response.message());
+        }
+        seasons = response.body();
       }
       catch (Exception e) {
         LOGGER.debug("failed to get episode list: " + e.getMessage());
@@ -242,7 +230,12 @@ class TraktTVShowMetadataProvider {
     Credits credits = null;
     synchronized (api) {
       try {
-        show = api.shows().summary(id, Extended.FULL).execute().body();
+        Response<Show> response = api.shows().summary(id, Extended.FULL).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          throw new HttpException(response.code(), response.message());
+        }
+        show = response.body();
         if (!"en".equals(lang)) {
           // only call translation when we're not already EN ;)
           translations = api.shows().translation(id, lang).execute().body();
@@ -276,7 +269,7 @@ class TraktTVShowMetadataProvider {
     }
 
     // if foreign language, get new values and overwrite
-    Translation trans = translations == null ? null : translations.get(0);
+    Translation trans = translations == null || translations.isEmpty() ? null : translations.get(0);
     if (trans != null) {
       md.setTitle(trans.title.isEmpty() ? show.title : trans.title);
       md.setPlot(trans.overview.isEmpty() ? show.overview : trans.overview);
@@ -310,123 +303,29 @@ class TraktTVShowMetadataProvider {
     // cast&crew
     if (credits != null) {
       for (CastMember cast : ListUtils.nullSafe(credits.cast)) {
-        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
-        cm.setId(TraktMetadataProvider.providerInfo.getId(), cast.person.ids.trakt);
-        cm.setId(MediaMetadata.IMDB, cast.person.ids.imdb);
-        cm.setId(MediaMetadata.TMDB, cast.person.ids.tmdb);
-        cm.setName(cast.person.name);
-        cm.setCharacter(cast.character);
-
-        if (StringUtils.isNotBlank(cast.person.ids.slug)) {
-          cm.setProfileUrl("https://trakt.tv/people/" + cast.person.ids.slug);
-        }
-
-        md.addCastMember(cm);
+        md.addCastMember(TraktUtils.toTmmCast(cast, MediaCastMember.CastType.ACTOR));
       }
       if (credits.crew != null) {
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.directing)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.DIRECTOR));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.production)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.PRODUCER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.writing)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.WRITER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.costumeAndMakeUp)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.sound)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.camera)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.art)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
       }
     }
@@ -467,7 +366,12 @@ class TraktTVShowMetadataProvider {
     List<Season> seasons = null;
     synchronized (api) {
       try {
-        seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+        Response<List<Season>> response = api.seasons().summary(id, Extended.FULLEPISODES).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          throw new HttpException(response.code(), response.message());
+        }
+        seasons = response.body();
       }
       catch (Exception e) {
         LOGGER.debug("failed to get meta data: " + e.getMessage());

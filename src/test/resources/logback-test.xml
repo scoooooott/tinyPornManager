@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.tinymediamanager" level="DEBUG" />
+    <logger name="org.tinymediamanager" level="TRACE" />
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />

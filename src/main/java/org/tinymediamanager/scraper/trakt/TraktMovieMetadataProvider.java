@@ -18,7 +18,6 @@ package org.tinymediamanager.scraper.trakt;
 import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
 import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -66,11 +66,6 @@ class TraktMovieMetadataProvider {
   }
 
   List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
-    LOGGER.debug("search() " + options.toString());
-
-    if (options.getMediaType() != MediaType.MOVIE) {
-      throw new UnsupportedMediaTypeException(options.getMediaType());
-    }
 
     String searchString = "";
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
@@ -91,14 +86,8 @@ class TraktMovieMetadataProvider {
       Response<List<SearchResult>> response;
       response = api.search().textQueryMovie(searchString, year, null, lang, null, null, null, null, Extended.FULL, 1, 25).execute();
       if (!response.isSuccessful()) {
-        String message = "";
-        try {
-          message = response.errorBody().string();
-        }
-        catch (IOException e) {
-          // ignore
-        }
-        LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), message);
+        LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+        throw new HttpException(response.code(), response.message());
       }
       searchResults = response.body();
     }
@@ -112,18 +101,10 @@ class TraktMovieMetadataProvider {
       return results;
     }
 
-    // set SearchResult Data for every Entry of the result
     for (SearchResult result : searchResults) {
-      MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
-
-      mediaSearchResult.setTitle(result.movie.title);
-      mediaSearchResult.setYear((result.movie.year));
-      mediaSearchResult.setId((result.movie.ids.trakt).toString());
-      mediaSearchResult.setIMDBId(result.movie.ids.imdb);
-
-      mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
-
-      results.add(mediaSearchResult);
+      MediaSearchResult m = TraktUtils.morphTraktResultToTmmResult(options, result);
+      m.setScore(MetadataUtil.calculateScore(searchString, m.getTitle()));
+      results.add(m);
     }
 
     return results;
@@ -159,7 +140,12 @@ class TraktMovieMetadataProvider {
     Credits credits = null;
     synchronized (api) {
       try {
-        movie = api.movies().summary(id, Extended.FULL).execute().body();
+        Response<Movie> response = api.movies().summary(id, Extended.FULL).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          throw new HttpException(response.code(), response.message());
+        }
+        movie = response.body();
         if (!"en".equals(lang)) {
           // only call translation when we're not already EN ;)
           translations = api.movies().translation(id, lang).execute().body();
@@ -178,7 +164,7 @@ class TraktMovieMetadataProvider {
     }
 
     // if foreign language, get new values and overwrite
-    MovieTranslation trans = translations == null ? null : translations.get(0);
+    MovieTranslation trans = translations == null || translations.isEmpty() ? null : translations.get(0);
     if (trans != null) {
       md.setTitle(trans.title.isEmpty() ? movie.title : trans.title);
       md.setTagline(trans.tagline.isEmpty() ? movie.tagline : trans.tagline);
@@ -217,123 +203,29 @@ class TraktMovieMetadataProvider {
     // cast&crew
     if (credits != null) {
       for (CastMember cast : ListUtils.nullSafe(credits.cast)) {
-        MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
-        cm.setId(TraktMetadataProvider.providerInfo.getId(), cast.person.ids.trakt);
-        cm.setId(MediaMetadata.IMDB, cast.person.ids.imdb);
-        cm.setId(MediaMetadata.TMDB, cast.person.ids.tmdb);
-        cm.setName(cast.person.name);
-        cm.setCharacter(cast.character);
-
-        if (StringUtils.isNotBlank(cast.person.ids.slug)) {
-          cm.setProfileUrl("https://trakt.tv/people/" + cast.person.ids.slug);
-        }
-
-        md.addCastMember(cm);
+        md.addCastMember(TraktUtils.toTmmCast(cast, MediaCastMember.CastType.ACTOR));
       }
       if (credits.crew != null) {
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.directing)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.DIRECTOR));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.production)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.PRODUCER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.writing)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.WRITER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.costumeAndMakeUp)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.sound)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.camera)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
-
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.art)) {
-          MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
-          cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-          cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-          cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-          cm.setName(crew.person.name);
-          cm.setPart(crew.job);
-
-          if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-            cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
-          }
-
-          md.addCastMember(cm);
+          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
         }
       }
     }

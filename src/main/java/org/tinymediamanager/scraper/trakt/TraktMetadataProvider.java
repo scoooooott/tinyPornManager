@@ -15,9 +15,15 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -31,15 +37,22 @@ import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.trakt5.TraktV2;
 import com.uwetrottmann.trakt5.TraktV2Interceptor;
+import com.uwetrottmann.trakt5.entities.SearchResult;
+import com.uwetrottmann.trakt5.enums.Extended;
+import com.uwetrottmann.trakt5.enums.IdType;
+import com.uwetrottmann.trakt5.enums.Type;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
+import retrofit2.Response;
 
 @PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
+  private static final Logger    LOGGER       = LoggerFactory.getLogger(TraktMetadataProvider.class);
   private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -100,11 +113,91 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     return providerInfo;
   }
 
+  /**
+   * Looks up a Trakt entity and provides a list of search results
+   * 
+   * @param options
+   * @return
+   */
+  public List<MediaSearchResult> lookupWithId(MediaSearchOptions options) {
+    List<SearchResult> results = new ArrayList<SearchResult>();
+
+    // get known IDs
+    String imdbId = options.getImdbId().isEmpty() ? null : options.getImdbId();
+    if (MetadataUtil.isValidImdbId(options.getQuery())) {
+      imdbId = options.getQuery();
+    }
+    String traktId = options.getIdAsString(providerInfo.getId());
+    String tmdbId = options.getIdAsString(TMDB);
+    String tvdbId = options.getIdAsString(TVDB);
+    String tvrageId = options.getIdAsString("tvrage");
+
+    // derive trakt type from ours
+    Type type = null;
+    switch (options.getMediaType()) {
+      case MOVIE:
+        type = Type.MOVIE;
+        break;
+      case TV_SHOW:
+        type = Type.SHOW;
+        break;
+      case TV_EPISODE:
+        type = Type.EPISODE;
+        break;
+      default:
+    }
+
+    // lookup until one has been found
+    results = lookupWithId(results, IdType.TRAKT, traktId, type);
+    results = lookupWithId(results, IdType.IMDB, imdbId, type);
+    results = lookupWithId(results, IdType.TMDB, tmdbId, type);
+    results = lookupWithId(results, IdType.TVDB, tvdbId, type);
+    results = lookupWithId(results, IdType.TVRAGE, tvrageId, type);
+
+    List<MediaSearchResult> msr = new ArrayList<>();
+    for (SearchResult sr : results) {
+      MediaSearchResult m = TraktUtils.morphTraktResultToTmmResult(options, sr);
+      m.setScore(1.0f); // ID lookup
+      msr.add(m);
+    }
+    return msr;
+  }
+
+  private List<SearchResult> lookupWithId(List<SearchResult> results, IdType id, String value, Type type) {
+    // lazy initialization of the api
+    initAPI();
+
+    if (results.isEmpty() && value != null) {
+      LOGGER.debug("found {} id {} - direct lookup", id, value);
+      try {
+        Response<List<SearchResult>> response = api.search().idLookup(id, value, type, Extended.FULL, 1, 25).execute();
+        if (!response.isSuccessful()) {
+          LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
+          return results;
+        }
+        results = response.body();
+        LOGGER.debug("Found {} result with ID lookup", results.size());
+      }
+      catch (Exception e) {
+        LOGGER.warn("request was NOT successful: {}", e.getMessage());
+      }
+    }
+    return results;
+  }
+
   // Searching
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
+    LOGGER.debug("search() " + options.toString());
+
     // lazy initialization of the api
     initAPI();
+
+    // search first with known IDs - is for all types the same ;)
+    List<MediaSearchResult> results = lookupWithId(options);
+    if (!results.isEmpty()) {
+      return results;
+    }
 
     switch (options.getMediaType()) {
       case MOVIE:
@@ -118,7 +211,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     }
   }
 
-  // Scraping Movie
+  // Scraping
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options)
       throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
