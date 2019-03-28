@@ -219,7 +219,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     if (StringUtils.isNotEmpty(options.getQuery())) {
       searchString = options.getQuery();
     }
-    searchString = cleanString(searchString);
+    // searchString = cleanString(searchString);
 
     String imdbId = options.getImdbId().isEmpty() ? null : options.getImdbId(); // do not submit empty string!
     if (MetadataUtil.isValidImdbId(searchString)) {
@@ -267,10 +267,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         if (!httpResponse.isSuccessful()) {
           // when not found in language -> 404
           if (!fallbackLanguage.equals(language)) {
+            LOGGER.debug("not found - trying with fallback language {}", fallbackLanguage);
             httpResponse = tvdb.search().series(searchString, imdbId, null, null, fallbackLanguage).execute();
           }
           if (!httpResponse.isSuccessful()) {
             if (!fallbackLanguage.equals("en") && !language.equals("en")) {
+              LOGGER.debug("not found - trying with EN language");
               httpResponse = tvdb.search().series(searchString, imdbId, null, null, "en").execute();
             }
             if (!httpResponse.isSuccessful()) {
@@ -887,6 +889,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     return i1 != 0 && i2 != 0 && i1 != i2;
   }
 
+  // unneeded, tested it, and (semi)colons in query work well
+  @Deprecated
   private String cleanString(String oldString) {
     if (StringUtils.isEmpty(oldString)) {
       return "";

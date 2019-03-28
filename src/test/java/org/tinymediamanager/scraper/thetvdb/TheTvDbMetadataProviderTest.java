@@ -89,9 +89,18 @@ public class TheTvDbMetadataProviderTest {
   }
 
   @Test
+  public void testSpecialCharacters() throws Exception {
+    // (semi)colons are not removed anylonger
+    ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
+    searchShow(metadataProvider, "X-Men: The Animated Series", "de", "76115", 1992);
+    searchShow(metadataProvider, "ChäoS;Child", "de", "320459", 2017);
+    searchShow(metadataProvider, "Steins:;Gate", "de", "244061", 2011);
+  }
+
+  @Test
   public void testSearchWithFallback() throws Exception {
     ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
-    metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.en.toString());
+    metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.el.toString());
     searchShow(metadataProvider, "Wonderfalls", "de", "78845", 2004); // 404 with DE, but found with EN
 
     metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
