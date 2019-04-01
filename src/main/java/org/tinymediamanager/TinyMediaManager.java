@@ -28,6 +28,7 @@ import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
@@ -39,10 +40,13 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.commons.io.IOUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -539,6 +543,26 @@ public class TinyMediaManager {
 
   public static void shutdownLogger() {
     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+    // dump the traces into a file tmm_trace.zip
+    Appender appender = loggerContext.getLogger("ROOT").getAppender("INMEMORY");
+    if (appender instanceof InMemoryAppender) {
+      File file = new File("logs/tmm_trace.zip");
+      try (FileOutputStream os = new FileOutputStream(file);
+          ZipOutputStream zos = new ZipOutputStream(os);
+          InputStream is = new ByteArrayInputStream(((InMemoryAppender) appender).getLog().getBytes())) {
+
+        ZipEntry ze = new ZipEntry("trace.log");
+        zos.putNextEntry(ze);
+
+        IOUtils.copy(is, zos);
+        zos.closeEntry();
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not store traces log file: {}", e.getMessage());
+      }
+    }
+
     loggerContext.stop();
   }
 
