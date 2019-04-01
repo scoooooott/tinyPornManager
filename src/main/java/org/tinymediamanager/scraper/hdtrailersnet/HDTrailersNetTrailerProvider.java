@@ -29,6 +29,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
@@ -60,7 +61,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
 
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
-    LOGGER.debug("getTrailers() " + options.toString());
+    LOGGER.debug("getTrailers() - {}", options);
     List<MediaTrailer> trailers = new ArrayList<>();
     MediaMetadata md = options.getMetadata();
 
@@ -113,7 +114,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
           trailer.setUrl(tr0url);
           trailer.setQuality(tr0qual);
           trailer.setProvider(getProviderFromUrl(tr0url));
-          LOGGER.debug(trailer.toString());
+          LOGGER.trace("found trailer: {}", trailer);
           trailers.add(trailer);
 
           String tr1qual = t.select("td.bottomTableResolution > a").get(1).text();
@@ -124,7 +125,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
           trailer.setUrl(tr1url);
           trailer.setQuality(tr1qual);
           trailer.setProvider(getProviderFromUrl(tr1url));
-          LOGGER.debug(trailer.toString());
+          LOGGER.debug("found trailer: {}", trailer);
           trailers.add(trailer);
 
           String tr2qual = t.select("td.bottomTableResolution > a").get(2).text();
@@ -135,7 +136,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
           trailer.setUrl(tr2url);
           trailer.setQuality(tr2qual);
           trailer.setProvider(getProviderFromUrl(tr2url));
-          LOGGER.debug(trailer.toString());
+          LOGGER.debug("found trailer: {}", trailer);
           trailers.add(trailer);
         }
         catch (IndexOutOfBoundsException i) {
@@ -147,6 +148,9 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     catch (InterruptedException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
+    }
+    catch (HttpException e) {
+      LOGGER.info("could not find a trailer on hd-trailers.net");
     }
     catch (Exception e) {
       LOGGER.error("cannot parse HD-Trailers movie: {}", e);
