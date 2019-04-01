@@ -57,11 +57,17 @@ public class TmmHttpClient {
   private static OkHttpClient createHttpClient() {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-    // default logging: just req/resp when TMM is on TRACE!
-    HttpLoggingInterceptor logging = new HttpLoggingInterceptor(
+    // default logging: just req/resp when TMM is on DEBUG
+    HttpLoggingInterceptor log_debug = new HttpLoggingInterceptor(
+        message -> LOGGER.debug(message.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>")));
+    log_debug.setLevel(Level.BASIC);
+    builder.addInterceptor(log_debug);
+
+    // and FULL BODY logging for TRACE (duplicating the 2 BASIC log liens)
+    HttpLoggingInterceptor log_trace = new HttpLoggingInterceptor(
         message -> LOGGER.trace(message.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>")));
-    logging.setLevel(Level.BASIC);
-    builder.addInterceptor(logging);
+    log_trace.setLevel(Level.BODY);
+    builder.addInterceptor(log_trace);
 
     // pool
     builder.connectionPool(new ConnectionPool(5, 5000, TimeUnit.MILLISECONDS));
