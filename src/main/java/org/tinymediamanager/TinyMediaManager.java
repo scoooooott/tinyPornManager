@@ -566,7 +566,7 @@ public class TinyMediaManager {
     loggerContext.stop();
   }
 
-  private static void setConsoleLogLevel() {
+  public static void setConsoleLogLevel() {
     String loglevelAsString = System.getProperty("tmm.consoleloglevel", "");
     Level level;
 
