@@ -14,7 +14,7 @@ fi
 # And they wonder why Java gets a bad rap...
 PARAMS+=(
     "-classpath tmm.jar:lib/*" "-Djava.net.preferIPv4Stack=true" "-Xms64m"
-    "-Dfile.encoding=UTF-8" "-Dappbase=http://www.tinymediamanager.org/"
+    "-Dfile.encoding=UTF-8" "-Dappbase=https://www.tinymediamanager.org/"
     "-Djava.awt.headless=true" "-XX:+IgnoreUnrecognizedVMOptions" "-Xmx512m"
     "-Djavax.accessibility.assistive_technologies=" "" "-Xss512k"
     "-Dtmm.consoleloglevel=INFO" "--add-modules=java.xml.bind"
@@ -28,4 +28,3 @@ TMM_DIR="$(dirname "$(test -L "${BASH_SOURCE[0]}" && \
 # What are you waiting for? An introduction??
 cd "$TMM_DIR" || return 1
 java "${PARAMS[@]}" org.tinymediamanager.TinyMediaManager "$@"
-
