@@ -58,13 +58,13 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesWoArtworkActi
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowToggleWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleDownloadAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleSearchAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowToggleWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
@@ -135,13 +135,32 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     dataPanel.add(tvShowDetailPanel, "tvShow");
 
     // panel for seasons
-    JTabbedPane tvShowSeasonDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowSeasonDetailPanel = new MainTabbedPane() {
+      private static final long serialVersionUID = 3134567895608767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", "half");
+        putClientProperty("bottomBorder", Boolean.FALSE);
+        super.updateUI();
+      }
+    };
     tvShowSeasonDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowSeasonInformationPanel(tvShowSeasonSelectionModel));//$NON-NLS-1$
     tvShowSeasonDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowSeasonMediaFilesPanel(tvShowSeasonSelectionModel)); //$NON-NLS-1$
     dataPanel.add(tvShowSeasonDetailPanel, "tvShowSeason");
 
     // panel for episodes
-    JTabbedPane tvShowEpisodeDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowEpisodeDetailPanel = new MainTabbedPane() {
+      private static final long serialVersionUID = 3344548905108767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", "half");
+        putClientProperty("bottomBorder", Boolean.FALSE);
+        super.updateUI();
+      }
+    };
+
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowEpisodeInformationPanel(tvShowEpisodeSelectionModel));//$NON-NLS-1$
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowEpisodeCastPanel(tvShowEpisodeSelectionModel)); //$NON-NLS-1$
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel));//$NON-NLS-1$
