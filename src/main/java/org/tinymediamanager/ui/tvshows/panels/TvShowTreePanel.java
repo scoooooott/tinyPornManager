@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -75,6 +76,9 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowList                  tvShowList       = TvShowList.getInstance();
+
+  private int                         rowcount;
+  private long                        rowcountLastUpdate;
 
   private TmmTreeTable                tree;
   private JLabel                      lblEpisodeCountFiltered;
@@ -314,9 +318,10 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
 
   private void updateTotals() {
     lblTvShowCountTotal.setText(String.valueOf(tvShowList.getTvShowCount()));
-    if (tvShowList.hasDummyEpisodes()) {
+    int dummyEpisodeCount = tvShowList.getDummyEpisodeCount();
+    if (dummyEpisodeCount > 0) {
       int episodeCount = tvShowList.getEpisodeCount();
-      lblEpisodeCountTotal.setText(episodeCount + " (" + String.valueOf(episodeCount + tvShowList.getDummyEpisodeCount()) + ")");
+      lblEpisodeCountTotal.setText(episodeCount + " (" + (episodeCount + dummyEpisodeCount) + ")");
     }
     else {
       lblEpisodeCountTotal.setText(String.valueOf(tvShowList.getEpisodeCount()));
@@ -328,38 +333,49 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     int episodeCount = 0;
     int virtualEpisodeCount = 0;
 
-    for (int i = 0; i < tree.getTreeTableModel().getRowCount(); i++) {
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(i, 0);
-      // tv show node
-      if (node != null && node.getUserObject() instanceof TvShow) {
+    // check rowcount if there has been a change in the display
+    // if the row count from the last run matches with this, we assume that the tree did not change
+    // the biggest error we can create here is to show a wrong count of filtered TV shows/episodes,
+    // but we gain a ton of performance if we do not re-evaluate the count at every change
+    int rowcount = tree.getTreeTableModel().getRowCount();
+    long rowcountLastUpdate = System.currentTimeMillis();
+
+    // update if the rowcount changed or at least after 2 seconds after the last update
+    if (this.rowcount == rowcount && (rowcountLastUpdate - this.rowcountLastUpdate) < 2000) {
+      return;
+    }
+
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getTreeTableModel().getRoot();
+    Enumeration enumeration = root.depthFirstEnumeration();
+    while (enumeration.hasMoreElements()) {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
+
+      Object userObject = node.getUserObject();
+
+      if (userObject instanceof TvShow) {
         tvShowCount++;
-        for (int j = 0; j < node.getChildCount(); j++) {
-          DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(j);
-          // season node
-          for (int k = 0; k < child.getChildCount(); k++) {
-            DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) child.getChildAt(k);
-            // episode node
-            Object userObject = leaf.getUserObject();
-            if (userObject instanceof TvShowEpisode) {
-              if (((TvShowEpisode) userObject).isDummy()) {
-                virtualEpisodeCount++;
-              }
-              else {
-                episodeCount++;
-              }
-            }
-          }
+      }
+      else if (userObject instanceof TvShowEpisode) {
+        if (((TvShowEpisode) userObject).isDummy()) {
+          virtualEpisodeCount++;
+        }
+        else {
+          episodeCount++;
         }
       }
     }
+
     lblTvShowCountFiltered.setText(String.valueOf(tvShowCount));
 
     if (tvShowList.hasDummyEpisodes()) {
-      lblEpisodeCountFiltered.setText(String.valueOf(episodeCount) + " (" + String.valueOf(episodeCount + virtualEpisodeCount) + ")");
+      lblEpisodeCountFiltered.setText(episodeCount + " (" + (episodeCount + virtualEpisodeCount) + ")");
     }
     else {
       lblEpisodeCountFiltered.setText(String.valueOf(episodeCount));
     }
+
+    this.rowcount = rowcount;
+    this.rowcountLastUpdate = rowcountLastUpdate;
   }
 
   @Override
