@@ -96,6 +96,11 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
     });
   }
 
+  @Override
+  public boolean isActive() {
+    return StringUtils.isNotBlank(filterText);
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public boolean accept(E node) {

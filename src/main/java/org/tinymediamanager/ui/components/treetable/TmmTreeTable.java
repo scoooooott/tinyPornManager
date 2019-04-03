@@ -25,9 +25,9 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -71,7 +71,7 @@ public class TmmTreeTable extends TmmTable {
   private int[]                              lastEditPosition;
 
   public TmmTreeTable(TmmTreeDataProvider<? extends TmmTreeNode> dataProvider, TmmTableFormat tableFormat) {
-    treeFilters = new HashSet<>();
+    treeFilters = new CopyOnWriteArraySet<>();
     treeTableModel = new TmmTreeTableModel(new TmmTreeModelConnector<>(dataProvider), tableFormat);
     ((TmmTreeModel) treeTableModel.getTreeModel()).getDataProvider().setTreeFilters(treeFilters);
     filterChangeListener = evt -> updateFiltering();

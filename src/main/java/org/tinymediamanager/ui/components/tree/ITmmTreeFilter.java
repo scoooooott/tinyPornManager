@@ -28,6 +28,13 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
   String TREE_FILTER_CHANGED = "treeFilterChanged";
 
   /**
+   * is this filter active?
+   *
+   * @return true if this filter is active
+   */
+  boolean isActive();
+
+  /**
    * Returns whether the specified object is accepted by this filter or not.
    *
    * @param object

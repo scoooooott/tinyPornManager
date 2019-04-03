@@ -1480,7 +1480,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   public boolean isDummy() {
-    return dummy || getMediaFiles().isEmpty();
+    return dummy || !hasMediaFiles();
   }
 
   public void setDummy(boolean dummy) {

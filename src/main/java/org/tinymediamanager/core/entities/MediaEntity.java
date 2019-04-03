@@ -834,6 +834,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     return mf;
   }
 
+  public boolean hasMediaFiles() {
+    return !mediaFiles.isEmpty();
+  }
+
   /**
    * gets all MediaFiles from specific type<br>
    * <b>Can be one or multiple types!</b>
