@@ -163,7 +163,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     }
     {
       JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-      add(lblAudioT, "cell 0 3");
+      add(lblAudioT, "cell 0 3,aligny top");
 
       panelAudioStreamT = new JPanel();
       panelAudioStreamT.setLayout(new GridLayout(0, 1));
@@ -175,7 +175,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     }
     {
       JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-      add(lblSubtitle, "cell 0 4");
+      add(lblSubtitle, "cell 0 4,aligny top");
 
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

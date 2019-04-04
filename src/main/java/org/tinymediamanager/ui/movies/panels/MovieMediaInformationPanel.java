@@ -191,7 +191,7 @@ public class MovieMediaInformationPanel extends JPanel {
     }
     {
       JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-      add(lblAudioT, "cell 0 3");
+      add(lblAudioT, "cell 0 3,aligny top");
 
       panelAudioStreamT = new JPanel();
       panelAudioStreamT.setLayout(new GridLayout(0, 1));
