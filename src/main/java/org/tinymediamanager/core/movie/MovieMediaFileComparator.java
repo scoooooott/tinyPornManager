@@ -25,17 +25,25 @@ import org.tinymediamanager.core.entities.MediaFile;
  * @author Manuel Laggner
  */
 public class MovieMediaFileComparator implements Comparator<MediaFile> {
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-   */
+
   @Override
   public int compare(MediaFile mf1, MediaFile mf2) {
     if (mf1.getType().ordinal() != mf2.getType().ordinal()) {
       return mf1.getType().ordinal() - mf2.getType().ordinal();
     }
 
-    return mf1.getFilename().compareTo(mf2.getFilename());
+    // starting from here we have the same MediaFileType
+    // sort according to different criteria based on the type
+    switch (mf1.getType()) {
+      // sort all video files / extra artwork and by name
+      case VIDEO:
+      case EXTRAFANART:
+      case EXTRATHUMB:
+        return mf1.getFilename().compareTo(mf2.getFilename());
+
+      // sort the rest by filesize (descending)
+      default:
+        return Long.compare(mf2.getFilesize(), mf1.getFilesize());
+    }
   }
 }
