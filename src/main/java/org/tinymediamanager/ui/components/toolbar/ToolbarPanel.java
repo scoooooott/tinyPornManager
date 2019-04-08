@@ -67,6 +67,7 @@ import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.ShowChangelogAction;
 import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
+import org.tinymediamanager.ui.dialogs.FullLogDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
@@ -270,13 +271,13 @@ public class ToolbarPanel extends JPanel implements TitlePane {
       });
       debugMenu.add(trace);
 
-      // JMenuItem traceLogs = new JMenuItem(BUNDLE.getString("tmm.tracelogs")); //$NON-NLS-1$
-      // debugMenu.add(traceLogs);
-      // traceLogs.addActionListener(arg0 -> {
-      // JDialog logDialog = new LogDialog();
-      // logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      // logDialog.setVisible(true);
-      // });
+      JMenuItem traceLogs = new JMenuItem("Show all logs from this session"); //$NON-NLS-1$
+      debugMenu.add(traceLogs);
+      traceLogs.addActionListener(arg0 -> {
+        JDialog logDialog = new FullLogDialog();
+        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        logDialog.setVisible(true);
+      });
 
       menu.addSeparator();
       menu.add(debugMenu);
