@@ -32,8 +32,6 @@ import net.miginfocom.swing.MigLayout;
 public class FullLogDialog extends TmmDialog {
   private static final long   serialVersionUID = -5054005564554148578L;
 
-  private JTextArea           taLogs;
-
   public FullLogDialog() {
     super(BUNDLE.getString("logwindow.title"), "fullLog"); //$NON-NLS-1$
     setBounds(5, 5, 1000, 590);
@@ -45,7 +43,7 @@ public class FullLogDialog extends TmmDialog {
     JScrollPane scrollPane = new JScrollPane();
     panelContent.add(scrollPane, "cell 0 0,grow");
 
-    taLogs = new JTextArea();
+    JTextArea taLogs = new JTextArea();
     scrollPane.setViewportView(taLogs);
     taLogs.setEditable(false);
     taLogs.setWrapStyleWord(true);
