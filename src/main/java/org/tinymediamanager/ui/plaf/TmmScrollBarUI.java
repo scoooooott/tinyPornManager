@@ -77,20 +77,20 @@ public class TmmScrollBarUI extends BasicScrollBarUI {
   @Override
   protected Dimension getMinimumThumbSize() {
     if (scrollbar.getOrientation() == JScrollBar.VERTICAL) {
-      return new Dimension(TRACK_WIDTH, SCROLL_BAR_WIDTH * 2);
+      return new Dimension(TRACK_WIDTH - 2, SCROLL_BAR_WIDTH * 2);
     }
     else {
-      return new Dimension(SCROLL_BAR_WIDTH * 2, TRACK_WIDTH);
+      return new Dimension(SCROLL_BAR_WIDTH * 2, TRACK_WIDTH - 2);
     }
   }
 
   @Override
   protected Dimension getMaximumThumbSize() {
     if (scrollbar.getOrientation() == JScrollBar.VERTICAL) {
-      return new Dimension(TRACK_WIDTH, SCROLL_BAR_WIDTH * 3 + 16);
+      return new Dimension(TRACK_WIDTH - 2, SCROLL_BAR_WIDTH * 3);
     }
     else {
-      return new Dimension(SCROLL_BAR_WIDTH * 3 + 16, TRACK_WIDTH);
+      return new Dimension(SCROLL_BAR_WIDTH * 3, TRACK_WIDTH - 2);
     }
   }
 
