@@ -19,21 +19,17 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -41,49 +37,26 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.panels.MediaFilesPanel;
+import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.panels.MediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEpisodeMediaInformationPanel.
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisodeMediaInformationPanel extends JPanel {
+public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisodeSelectionModel selectionModel;
-  private EventList<MediaFile>        mediaFileEventList;
-
-  private JLabel                      lblRuntime;
-  private JCheckBox                   chckbxWatched;
-  private JPanel                      panelVideoStreamDetails;
-  private JLabel                      lblVideoCodec;
-  private JLabel                      lblVideoResolution;
-  private JLabel                      lblVideoBitrate;
-  private JLabel                      lblVideoBitDepth;
-  private JLabel                      lblFrameRate;
-  private JPanel                      panelAudioStreamT;
-  private JPanel                      panelAudioStreamDetails;
-  private JPanel                      panelSubtitle;
-  private JLabel                      lblSourceT;
-  private JLabel                      lblSource;
-  private MediaFilesPanel             panelMediaFiles;
 
   public TvShowEpisodeMediaInformationPanel(TvShowEpisodeSelectionModel model) {
-    this.selectionModel = model;
-    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
+    super();
 
-    initComponents();
+    this.selectionModel = model;
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
@@ -112,195 +85,122 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
         panelMediaFiles.adjustColumns();
       }
     };
+
     selectionModel.addPropertyChangeListener(propertyChangeListener);
+    initDataBindings();
   }
 
-  private void initComponents() {
-    setLayout(new MigLayout("", "[][][][grow]", "[][][][][][shrink 0][80lp,grow]"));
-    {
-      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      add(lblRuntimeT, "cell 0 0");
-
-      lblRuntime = new JLabel("");
-      add(lblRuntime, "cell 1 0");
-    }
-    {
-      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      add(lblWatchedT, "flowx,cell 3 0");
-    }
-    {
-      lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      add(lblSourceT, "cell 0 1");
-
-      lblSource = new JLabel("");
-      add(lblSource, "cell 1 1 2 1");
-    }
-    {
-      JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
-      add(lblVideoT, "cell 0 2");
-
-      JLabel lblEpisodeT = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-      add(lblEpisodeT, "cell 1 2");
-
-      panelVideoStreamDetails = new JPanel();
-      panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
-      add(panelVideoStreamDetails, "cell 3 2,growx");
-
-      lblVideoCodec = new JLabel("");
-      panelVideoStreamDetails.add(lblVideoCodec);
-
-      lblVideoResolution = new JLabel("");
-      panelVideoStreamDetails.add(lblVideoResolution);
-
-      lblVideoBitrate = new JLabel("");
-      panelVideoStreamDetails.add(lblVideoBitrate);
-
-      lblVideoBitDepth = new JLabel("");
-      panelVideoStreamDetails.add(lblVideoBitDepth);
-
-      lblFrameRate = new JLabel("");
-      panelVideoStreamDetails.add(lblFrameRate);
-    }
-    {
-      JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-      add(lblAudioT, "cell 0 3,aligny top");
-
-      panelAudioStreamT = new JPanel();
-      panelAudioStreamT.setLayout(new GridLayout(0, 1));
-      add(panelAudioStreamT, "cell 1 3");
-
-      panelAudioStreamDetails = new JPanel();
-      panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-      add(panelAudioStreamDetails, "cell 3 3");
-    }
-    {
-      JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-      add(lblSubtitle, "cell 0 4,aligny top");
-
-      JScrollPane scrollPane = new JScrollPane();
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      add(scrollPane, "cell 1 4 2 1,growy");
-
-      panelSubtitle = new JPanel();
-      scrollPane.setViewportView(panelSubtitle);
-      panelSubtitle.setLayout(new GridBagLayout());
-    }
-    {
-      JSeparator separator = new JSeparator();
-      add(separator, "cell 0 5 4 1,growx");
-    }
-    {
-      panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
-        private static final long serialVersionUID = 8834986141071361388L;
-
-        @Override
-        public MediaEntity getMediaEntity() {
-          return selectionModel.getSelectedTvShowEpisode();
-        }
-      };
-      add(panelMediaFiles, "cell 0 6 4 1,grow");
-    }
-
-    chckbxWatched = new JCheckBox("");
-    add(chckbxWatched, "cell 3 0");
+  @Override
+  protected MediaEntity getMediaEntity() {
+    return selectionModel.getSelectedTvShowEpisode();
   }
 
-  private void fillVideoStreamDetails() {
-    List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO);
-    if (mediaFiles.size() == 0) {
+  @Override
+  protected void fillVideoStreamDetails() {
+    TvShowEpisode tvShowEpisode = selectionModel.getSelectedTvShowEpisode();
+    List<MediaFile> mediaFiles = tvShowEpisode.getMediaFiles(MediaFileType.VIDEO);
+
+    if (mediaFiles.isEmpty()) {
       return;
     }
 
-    int runtime = selectionModel.getSelectedTvShowEpisode().getRuntimeFromMediaFiles();
+    MediaFile mediaFile = tvShowEpisode.getMainVideoFile();
+
+    int runtime = 0;
+    for (MediaFile mf : mediaFiles) {
+      runtime += mf.getDuration();
+    }
+
     if (runtime == 0) {
       lblRuntime.setText("");
     }
     else {
-      long h = TimeUnit.SECONDS.toHours(runtime);
-      long m = TimeUnit.SECONDS.toMinutes(runtime - TimeUnit.HOURS.toSeconds(h));
-      long s = TimeUnit.SECONDS.toSeconds(runtime - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
-      if (s > 30) {
-        m += 1; // round seconds
-      }
-      lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
+      int minutes = (int) (runtime / 60) % 60;
+      int hours = (int) (runtime / (60 * 60)) % 24;
+      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
     }
 
-    MediaFile mediaFile = selectionModel.getSelectedTvShowEpisode().getBiggestMediaFile(MediaFileType.VIDEO);
-    chckbxWatched.setSelected(selectionModel.getSelectedTvShowEpisode().isWatched());
-    if (mediaFile != null) {
-      lblVideoCodec.setText(mediaFile.getVideoCodec());
-      lblVideoResolution.setText(mediaFile.getVideoResolution());
-      lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
-      lblVideoBitDepth.setText(mediaFile.getBitDepthString());
-      lblFrameRate.setText(String.format("%.2f fps", mediaFile.getFrameRate()));
-    }
-    lblSource.setText(selectionModel.getSelectedTvShowEpisode().getMediaSource().toString());
+    chckbxWatched.setSelected(tvShowEpisode.isWatched());
+
+    lblVideoCodec.setText(mediaFile.getVideoCodec());
+    lblVideoResolution.setText(mediaFile.getVideoResolution());
+    lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    lblVideoBitDepth.setText(mediaFile.getBitDepthString());
+    lblSource.setText(tvShowEpisode.getMediaSource().toString());
+    lblFrameRate.setText(String.format("%.2f fps", mediaFile.getFrameRate()));
   }
 
-  private void buildAudioStreamDetails() {
-    panelAudioStreamT.removeAll();
-    panelAudioStreamDetails.removeAll();
+  @Override
+  protected void buildAudioStreamDetails() {
+    audioStreamEventList.clear();
 
-    List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingAudioStreams();
+    TvShowEpisode tvShowEpisode = selectionModel.getSelectedTvShowEpisode();
+    List<MediaFile> mediaFiles = tvShowEpisode.getMediaFilesContainingAudioStreams();
 
     for (MediaFile mediaFile : mediaFiles) {
       for (int i = 0; i < mediaFile.getAudioStreams().size(); i++) {
         MediaFileAudioStream audioStream = mediaFile.getAudioStreams().get(i);
 
+        AudioStreamContainer container = new AudioStreamContainer();
+        container.audioStream = audioStream;
+
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.internal"); //$NON-NLS-1$
         }
         else {
-          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.external"); //$NON-NLS-1$
         }
 
-        panelAudioStreamDetails.add(new JLabel(audioStream.getCodec()));
-        panelAudioStreamDetails.add(new JLabel(String.valueOf(audioStream.getAudioChannels())));
-        panelAudioStreamDetails.add(new JLabel(audioStream.getBitrateInKbps()));
-        panelAudioStreamDetails.add(new JLabel(audioStream.getLanguage()));
+        audioStreamEventList.add(container);
       }
     }
-    panelAudioStreamDetails.revalidate();
-    panelAudioStreamT.revalidate();
   }
 
-  private void buildSubtitleStreamDetails() {
-    panelSubtitle.removeAll();
+  @Override
+  protected void buildSubtitleStreamDetails() {
+    subtitleEventList.clear();
 
-    List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingSubtitles();
-    int row = 0;
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.anchor = GridBagConstraints.LINE_START;
-
-    Insets defaultInsets = constraints.insets;
-    Insets rightInsets = new Insets(0, 50, 0, 50);
+    TvShowEpisode tvShowEpisode = selectionModel.getSelectedTvShowEpisode();
+    List<MediaFile> mediaFiles = tvShowEpisode.getMediaFilesContainingSubtitles();
 
     for (MediaFile mediaFile : mediaFiles) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
-        constraints.gridy = row;
-        constraints.insets = defaultInsets;
+
+        SubtitleContainer container = new SubtitleContainer();
+        container.subtitle = subtitle;
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          constraints.gridx = 0;
-          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.internal")), constraints); //$NON-NLS-1$
-
-          constraints.gridx = 1;
-          constraints.insets = rightInsets;
-          String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
-          panelSubtitle.add(new JLabel(info), constraints);
+          container.source = BUNDLE.getString("metatag.internal"); //$NON-NLS-1$
         }
         else {
-          constraints.gridx = 0;
-          panelSubtitle.add(new JLabel(BUNDLE.getString("metatag.external")), constraints); //$NON-NLS-1$
-
-          constraints.gridx = 1;
-          constraints.insets = rightInsets;
-          panelSubtitle.add(new JLabel(mediaFile.getFilename()), constraints);
+          container.source = BUNDLE.getString("metatag.external"); //$NON-NLS-1$
         }
 
-        row++;
+        subtitleEventList.add(container);
       }
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty.create("selectedTvShowEpisode.path");
+    BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowEpisodeSelectionModel, String, LinkLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty, this.lblPath, linkLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_1 = BeanProperty
+        .create("selectedTvShowEpisode.dateAddedAsString");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_1, this.lblDateAdded, jLabelBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, Boolean> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty
+        .create("selectedTvShowEpisode.watched");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<TvShowEpisodeSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        selectionModel, tvShowEpisodeSelectionModelBeanProperty_2, this.chckbxWatched, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }
