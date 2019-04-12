@@ -164,6 +164,7 @@ public class Settings extends AbstractSettings {
     addVideoFileType(".m2v");
     addVideoFileType(".m4v");
     addVideoFileType(".mkv");
+    addVideoFileType(".mk3d");
     addVideoFileType(".mov");
     addVideoFileType(".mp4");
     addVideoFileType(".mpeg");
