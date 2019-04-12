@@ -1928,17 +1928,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         audioCodec = audioCodec.replaceAll("\\p{Punct}", "");
       }
 
-      // see https://github.com/MediaArea/MediaInfo/issues/286
-      // since 18.08
+      // https://github.com/Radarr/Radarr/blob/develop/src/NzbDrone.Core/MediaFiles/MediaInfo/MediaInfoFormatter.cs#L35
       String addFeature = getMediaInfo(StreamKind.Audio, i, "Format_AdditionalFeatures");
       if (!addFeature.isEmpty()) {
         if ("dts".equalsIgnoreCase(audioCodec)) {
-          if (addFeature.equalsIgnoreCase("XLL X")) {
-            audioCodec = "DTS-X";
+          if (addFeature.startsWith("XLL")) {
+            if (addFeature.endsWith("X")) {
+              audioCodec = "DTS-X";
+            }
+            else {
+              audioCodec = "DTSHD-MA";
+            }
           }
-          else if (addFeature.equalsIgnoreCase("XLL")) {
-            audioCodec = "DTSHD-MA";
+          if (addFeature.equals("ES")) {
+            audioCodec = "DTS-ES";
           }
+          if (addFeature.equals("XBR")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          // stays DTS
         }
         if ("TrueHD".equalsIgnoreCase(audioCodec)) {
           if (addFeature.equalsIgnoreCase("16-ch")) {
@@ -1948,48 +1956,50 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
 
       // old 18.05 style
-      String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
-      if (!audioAddition.isEmpty()) {
+      String audioProfile = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
+      if (!audioProfile.isEmpty()) {
         if ("dts".equalsIgnoreCase(audioCodec)) {
           // <Format_Profile>X / MA / Core</Format_Profile>
-          if (audioAddition.contains("ES")) {
+          if (audioProfile.contains("ES")) {
             audioCodec = "DTS-ES";
           }
-          if (audioAddition.contains("HRA")) {
+          if (audioProfile.contains("HRA")) {
             audioCodec = "DTSHD-HRA";
           }
-          if (audioAddition.contains("MA")) {
+          if (audioProfile.contains("MA")) {
             audioCodec = "DTSHD-MA";
           }
-          if (audioAddition.contains("X")) {
+          if (audioProfile.contains("X")) {
             audioCodec = "DTS-X";
           }
         }
         if ("TrueHD".equalsIgnoreCase(audioCodec)) {
-          if (audioAddition.contains("Atmos")) {
+          if (audioProfile.contains("Atmos")) {
             audioCodec = "Atmos";
           }
         }
       }
 
       // newer 18.12 style
-      String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
-      if (!commName.isEmpty()) {
-        if (commName.contains("master audio")) {
-          audioCodec = "DTSHD-MA";
-        }
-        if (commName.contains("high resolution audio")) {
-          audioCodec = "DTSHD-HRA";
-        }
-        if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
-          audioCodec = "DTS-ES";
-        }
-        if (commName.contains("atmos")) {
-          audioCodec = "Atmos";
-        }
-        // Dolby Digital EX
-        if (commName.contains("ex audio")) {
-          audioCodec = "AC3EX";
+      if ("ac3".equalsIgnoreCase(audioCodec) || "dts".equalsIgnoreCase(audioCodec) || "TrueHD".equalsIgnoreCase(audioCodec)) {
+        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
+        if (!commName.isEmpty()) {
+          if (commName.contains("master audio")) {
+            audioCodec = "DTSHD-MA";
+          }
+          if (commName.contains("high resolution audio")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
+            audioCodec = "DTS-ES";
+          }
+          if (commName.contains("atmos")) {
+            audioCodec = "Atmos";
+          }
+          // Dolby Digital EX
+          if (commName.contains("ex audio")) {
+            audioCodec = "AC3EX";
+          }
         }
       }
 
