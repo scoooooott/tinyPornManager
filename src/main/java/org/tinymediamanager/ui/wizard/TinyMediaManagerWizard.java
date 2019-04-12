@@ -68,6 +68,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
     panels = new ArrayList<>();
     panels.add(new EntrancePanel());
     panels.add(new DisclaimerPanel());
+    panels.add(new UiSettingsPanel());
     panels.add(new MovieSourcePanel());
     panels.add(new MovieScraperPanel());
     panels.add(new TvShowSourcePanel());
