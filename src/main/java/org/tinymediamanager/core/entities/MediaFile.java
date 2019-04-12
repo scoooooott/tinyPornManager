@@ -1900,6 +1900,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return 0;
   }
 
+  // https://github.com/MediaArea/MediaInfoLib/tree/master/Source/MediaInfo/Audio
   private void fetchAudioInformation() {
     int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
     if (streams == 0) {
@@ -1946,49 +1947,49 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
       }
 
-      // STILL not found a sub format?
-      if ("dts".equalsIgnoreCase(audioCodec) || "truehd".equalsIgnoreCase(audioCodec)) {
-
-        // old 18.05 style
-        String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
-        if (!audioAddition.isEmpty()) {
-          if ("dts".equalsIgnoreCase(audioCodec)) {
-            // <Format_Profile>X / MA / Core</Format_Profile>
-            if (audioAddition.contains("ES")) {
-              audioCodec = "DTS-ES";
-            }
-            if (audioAddition.contains("HRA")) {
-              audioCodec = "DTSHD-HRA";
-            }
-            if (audioAddition.contains("MA")) {
-              audioCodec = "DTSHD-MA";
-            }
-            if (audioAddition.contains("X")) {
-              audioCodec = "DTS-X";
-            }
-          }
-          if ("TrueHD".equalsIgnoreCase(audioCodec)) {
-            if (audioAddition.contains("Atmos")) {
-              audioCodec = "Atmos";
-            }
-          }
-        }
-
-        // newer 18.12 style
-        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
-        if (!commName.isEmpty()) {
-          if (commName.contains("master audio")) {
-            audioCodec = "DTSHD-MA";
-          }
-          if (commName.contains("high resolution audio")) {
-            audioCodec = "DTSHD-HRA";
-          }
-          if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
+      // old 18.05 style
+      String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
+      if (!audioAddition.isEmpty()) {
+        if ("dts".equalsIgnoreCase(audioCodec)) {
+          // <Format_Profile>X / MA / Core</Format_Profile>
+          if (audioAddition.contains("ES")) {
             audioCodec = "DTS-ES";
           }
-          if (commName.contains("atmos")) {
+          if (audioAddition.contains("HRA")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          if (audioAddition.contains("MA")) {
+            audioCodec = "DTSHD-MA";
+          }
+          if (audioAddition.contains("X")) {
+            audioCodec = "DTS-X";
+          }
+        }
+        if ("TrueHD".equalsIgnoreCase(audioCodec)) {
+          if (audioAddition.contains("Atmos")) {
             audioCodec = "Atmos";
           }
+        }
+      }
+
+      // newer 18.12 style
+      String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
+      if (!commName.isEmpty()) {
+        if (commName.contains("master audio")) {
+          audioCodec = "DTSHD-MA";
+        }
+        if (commName.contains("high resolution audio")) {
+          audioCodec = "DTSHD-HRA";
+        }
+        if (commName.contains("extended") || commName.contains("es matrix") || commName.contains("es discrete")) {
+          audioCodec = "DTS-ES";
+        }
+        if (commName.contains("atmos")) {
+          audioCodec = "Atmos";
+        }
+        // Dolby Digital EX
+        if (commName.contains("ex audio")) {
+          audioCodec = "AC3EX";
         }
       }
 
