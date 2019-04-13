@@ -171,7 +171,7 @@ class TvShowImageTypeSettingsPanel extends JPanel {
         JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart"));
         panelFileNaming.add(lblKeyartT, "cell 1 16");
 
-        chckbxKeyart1 = new JCheckBox("New check box");
+        chckbxKeyart1 = new JCheckBox("keyart.ext");
         panelFileNaming.add(chckbxKeyart1, "cell 2 16");
 
         JLabel lblSeasonPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.season_poster"));
