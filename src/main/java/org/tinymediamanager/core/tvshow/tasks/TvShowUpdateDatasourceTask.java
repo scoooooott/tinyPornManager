@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,6 +78,11 @@ import com.sun.jna.Platform;
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER              = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+
+  // constants
+  private static final String         VIDEO_TS            = "VIDEO_TS";
+  private static final String         BDMV                = "BDMV";
+  private static final String         HVDVD_TS            = "HVDVD_TS";
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders         = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
@@ -144,9 +150,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
       return;
     }
-    preDir = 0;
-    postDir = 0;
-    visFile = 0;
+
+    resetCounters();
 
     try {
       StopWatch stopWatch = new StopWatch();
@@ -165,7 +170,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       if (tvShowFolders.isEmpty()) {
         // update selected data sources
         for (String ds : dataSources) {
-          LOGGER.info("Start UDS on datasource: " + ds);
+          LOGGER.info("Start UDS on datasource: {}", ds);
           Path dsAsPath = Paths.get(ds);
 
           // first of all check if the DS is available; we can take the
@@ -174,7 +179,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           // true
           if (!Files.exists(dsAsPath)) {
             // error - continue with next datasource
-            LOGGER.warn("Datasource not available/empty " + ds);
+            LOGGER.warn("Datasource not available/empty {}", ds);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
             continue;
@@ -243,7 +248,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           // true
           if (!Files.exists(path)) {
             // error - continue with next datasource
-            LOGGER.warn("Datasource not available/empty " + path.toAbsolutePath().toString());
+            LOGGER.warn("Datasource not available/empty - {}", path.toAbsolutePath());
             MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
                 new String[] { path.toAbsolutePath().toString() }));
             continue;
@@ -293,17 +298,15 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       stopWatch.stop();
-      LOGGER.info("Done updating datasource :) - took " + stopWatch);
+      LOGGER.info("Done updating datasource :) - took {}", stopWatch);
 
-      LOGGER.debug("FilesFound " + filesFound.size());
-      LOGGER.debug("tvShowsFound " + tvShowList.getTvShowCount());
-      LOGGER.debug("episodesFound " + tvShowList.getEpisodeCount());
-      LOGGER.debug("PreDir " + preDir);
-      LOGGER.debug("PostDir " + postDir);
-      LOGGER.debug("VisFile " + visFile);
-      preDir = 0;
-      postDir = 0;
-      visFile = 0;
+      LOGGER.debug("FilesFound: {}", filesFound.size());
+      LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
+      LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
+      LOGGER.debug("PreDir: {}", preDir);
+      LOGGER.debug("PostDir: {}", postDir);
+      LOGGER.debug("VisFile: {}", visFile);
+      resetCounters();
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -401,7 +404,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
         // lets have a look if there is at least one video file for this episode
         List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
-        if (mfs.size() == 0) {
+        if (mfs.isEmpty()) {
           tvShow.removeEpisode(episode);
           dirty = true;
         }
@@ -440,8 +443,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * @author Manuel Laggner
    */
   private class FindTvShowTask implements Callable<Object> {
-    private Path showDir    = null;
-    private Path datasource = null;
+    private Path showDir;
+    private Path datasource;
     private long uniqueId;
 
     /**
@@ -467,17 +470,19 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       name = name.replaceAll("\\-G\\d+", "-G" + uniqueId);
       Thread.currentThread().setName(name);
 
-      LOGGER.info("start parsing " + showDir);
       if (showDir.getFileName().toString().matches(skipRegex)) {
-        LOGGER.debug("Skipping dir: " + showDir);
+        LOGGER.debug("Skipping dir: {}", showDir);
         return "";
       }
 
-      HashSet<Path> allFiles = getAllFilesRecursive(showDir, Integer.MAX_VALUE);
+      Set<Path> allFiles = getAllFilesRecursive(showDir, Integer.MAX_VALUE);
       if (allFiles == null || allFiles.isEmpty()) {
-        LOGGER.info("skip empty directory " + showDir);
+        LOGGER.info("skip empty directory: {}", showDir);
         return "";
       }
+
+      LOGGER.info("start parsing {}", showDir);
+
       filesFound.add(showDir.toAbsolutePath()); // our global cache
       filesFound.addAll(allFiles); // our global cache
 
@@ -485,13 +490,28 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       ArrayList<MediaFile> mfs = new ArrayList<>();
       for (Path file : allFiles) {
         if (!file.getFileName().toString().matches(skipRegex)) {
-          mfs.add(new MediaFile(file));
+          MediaFile mf = new MediaFile(file);
+
+          // now check posters: if the poster is in s subfolder of the TV show, we assume it is a seaon poster
+          // otherwise just add it as generic graphic
+          if (mf.getType() == MediaFileType.POSTER && !mf.getFileAsPath().getParent().equals(showDir)) {
+            if (mf.getFileAsPath().getParent().getParent().equals(showDir)) {
+              // a direct subfolder of the TV show dir
+              mf.setType(MediaFileType.SEASON_POSTER);
+            }
+            else {
+              // somewhere else beneath the TV show folder
+              mf.setType(MediaFileType.GRAPHIC);
+            }
+          }
+
+          mfs.add(mf);
         }
       }
       allFiles.clear();
 
-      if (getMediaFiles(mfs, MediaFileType.VIDEO).size() == 0) {
-        LOGGER.info("no video file found in directory " + showDir);
+      if (getMediaFiles(mfs, MediaFileType.VIDEO).isEmpty()) {
+        LOGGER.info("no video file found in directory {}", showDir);
         return "";
       }
 
@@ -519,7 +539,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             try {
               tvShow.setYear(Integer.parseInt(ty[1]));
             }
-            catch (Exception ignored) {
+            catch (Exception e) {
+              LOGGER.trace("could not parse int: {}", e.getMessage());
             }
           }
         }
@@ -527,7 +548,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (tvShow != null) {
           tvShow.setPath(showDir.toAbsolutePath().toString());
           tvShow.setDataSource(datasource.toString());
-          // tvShow.saveToDb();
           tvShow.setNewlyAdded(true);
           tvShowList.addTvShow(tvShow);
         }
@@ -546,7 +566,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           // find EP root folder, and do not walk lower than showDir!
           Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
           String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-          while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
+          while (folder.contains(BDMV) || folder.contains(VIDEO_TS) || folder.contains(HVDVD_TS)) {
             discRoot = discRoot.getParent();
             folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
           }
@@ -568,7 +588,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         else {
           // normal episode file - get all same named files
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
-          LOGGER.trace("UDS: basename: " + basename);
+          LOGGER.trace("UDS: basename - {}", basename);
           for (MediaFile em : mfs) {
             String emBasename = FilenameUtils.getBaseName(em.getFilename());
             String epNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
@@ -579,7 +599,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 em.setType(MediaFileType.THUMB);
               }
               epFiles.add(em);
-              LOGGER.trace("UDS: found matching MF: " + em);
+              LOGGER.trace("UDS: found matching MF - {}", em);
             }
           }
         }
@@ -588,7 +608,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // STEP 2.1 - is this file already assigned to another episode?
         // ******************************
         List<TvShowEpisode> episodes = TvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
-        if (episodes.size() == 0) {
+        if (episodes.isEmpty()) {
 
           // ******************************
           // STEP 2.1.1 - parse EP NFO (has precedence over files)
@@ -603,7 +623,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
           if (epNfo != null) {
-            LOGGER.info("found episode NFO - try to parse '" + showDir.relativize(epNfo.getFileAsPath()) + "'");
+            LOGGER.info("found episode NFO - try to parse '{}'", showDir.relativize(epNfo.getFileAsPath()));
             List<TvShowEpisode> episodesInNfo = new ArrayList<>();
 
             TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(epNfo.getFileAsPath());
@@ -612,7 +632,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             }
 
             // did we find any episodes in the NFO?
-            if (episodesInNfo.size() > 0) {
+            if (!episodesInNfo.isEmpty()) {
               // these have priority!
               for (TvShowEpisode episode : episodesInNfo) {
                 episode.setPath(mf.getPath());
@@ -630,7 +650,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                   // set correct EP path in case of disc files
                   Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
                   String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-                  while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
+                  while (folder.contains(BDMV) || folder.contains(VIDEO_TS) || folder.contains(HVDVD_TS)) {
                     discRoot = discRoot.getParent();
                     folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
                   }
@@ -671,7 +691,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               continue;
             }
           }
-          if (result.episodes.size() > 0) {
+          if (!result.episodes.isEmpty()) {
             // something found with the season detection?
             for (int ep : result.episodes) {
               TvShowEpisode episode = new TvShowEpisode();
@@ -698,7 +718,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 // set correct EP path in case of disc files
                 Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
                 String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-                while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
+                while (folder.contains(BDMV) || folder.contains(VIDEO_TS) || folder.contains(HVDVD_TS)) {
                   discRoot = discRoot.getParent();
                   folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
                 }
@@ -733,7 +753,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               // set correct EP path in case of disc files
               Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
               String folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
-              while (folder.contains("BDMV") || folder.contains("VIDEO_TS") || folder.contains("HVDVD_TS")) {
+              while (folder.contains(BDMV) || folder.contains(VIDEO_TS) || folder.contains(HVDVD_TS)) {
                 discRoot = discRoot.getParent();
                 folder = showDir.relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
               }
@@ -783,8 +803,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       // tvShow.addToMediaFiles(mfs); // add remaining
       // not so fast - try to parse S/E from remaining first!
       for (MediaFile mf : mfs) {
-        // a season poster does not belong to any episode
-        if (mf.getType() == MediaFileType.SEASON_POSTER) {
+        // a season poster/banner/thumb does not belong to any episode
+        if (mf.getType() == MediaFileType.SEASON_POSTER || mf.getType() == MediaFileType.SEASON_BANNER
+            || mf.getType() == MediaFileType.SEASON_THUMB) {
           continue;
         }
 
@@ -793,8 +814,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (result.season > 0 && !result.episodes.isEmpty()) {
           for (int epnr : result.episodes) {
             TvShowEpisode ep = tvShow.getEpisode(result.season, epnr);
-            if (ep != null && mf.getType() != MediaFileType.SEASON_POSTER && mf.getType() != MediaFileType.SEASON_BANNER
-                && mf.getType() != MediaFileType.SEASON_THUMB) {
+            if (ep != null) {
               ep.addToMediaFiles(mf);
             }
           }
@@ -815,11 +835,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             else {
               season = Integer.parseInt(matcher.group(1));
             }
-            LOGGER.debug("found season poster " + mf.getFileAsPath());
+            LOGGER.debug("found season poster - {}", mf.getFileAsPath());
             tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season number: " + e.getMessage());
+            LOGGER.warn("could not parse season number: {}", e.getMessage());
           }
         }
       }
@@ -835,11 +855,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             else {
               season = Integer.parseInt(matcher.group(1));
             }
-            LOGGER.debug("found season banner " + mf.getFileAsPath());
+            LOGGER.debug("found season banner {}", mf.getFileAsPath());
             tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season number: " + e.getMessage());
+            LOGGER.warn("could not parse season number: {}", e.getMessage());
           }
         }
       }
@@ -855,11 +875,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             else {
               season = Integer.parseInt(matcher.group(1));
             }
-            LOGGER.debug("found season thumb " + mf.getFileAsPath());
+            LOGGER.debug("found season thumb {}", mf.getFileAsPath());
             tvShow.setSeasonArtwork(season, mf);
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season number: " + e.getMessage());
+            LOGGER.warn("could not parse season number: {}", e.getMessage());
           }
         }
       }
@@ -875,81 +895,101 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       return showDir.getFileName().toString();
     }
 
-  }
-
-  /**
-   * gets mediaFile of specific type
-   * 
-   * @param mfs
-   *          the MF list to search
-   * @param types
-   *          the MediaFileTypes
-   * @return MF or NULL
-   */
-  private MediaFile getMediaFile(List<MediaFile> mfs, MediaFileType... types) {
-    MediaFile mf = null;
-    for (MediaFile mediaFile : mfs) {
-      boolean match = false;
-      for (MediaFileType type : types) {
-        if (mediaFile.getType().equals(type)) {
-          match = true;
+    /**
+     * gets mediaFile of specific type
+     *
+     * @param mfs
+     *          the MF list to search
+     * @param types
+     *          the MediaFileTypes
+     * @return MF or NULL
+     */
+    private MediaFile getMediaFile(List<MediaFile> mfs, MediaFileType... types) {
+      MediaFile mf = null;
+      for (MediaFile mediaFile : mfs) {
+        boolean match = false;
+        for (MediaFileType type : types) {
+          if (mediaFile.getType().equals(type)) {
+            match = true;
+          }
+        }
+        if (match) {
+          mf = new MediaFile(mediaFile);
         }
       }
-      if (match) {
-        mf = new MediaFile(mediaFile);
-      }
+      return mf;
     }
-    return mf;
-  }
 
-  /**
-   * gets all mediaFiles of specific type
-   * 
-   * @param mfs
-   *          the MF list to search
-   * @param types
-   *          the MediaFileTypes
-   * @return list of matching MFs
-   */
-  private List<MediaFile> getMediaFiles(List<MediaFile> mfs, MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<>();
-    for (MediaFile mediaFile : mfs) {
-      boolean match = false;
-      for (MediaFileType type : types) {
-        if (mediaFile.getType().equals(type)) {
-          match = true;
+    /**
+     * gets all mediaFiles of specific type
+     *
+     * @param mfs
+     *          the MF list to search
+     * @param types
+     *          the MediaFileTypes
+     * @return list of matching MFs
+     */
+    private List<MediaFile> getMediaFiles(List<MediaFile> mfs, MediaFileType... types) {
+      List<MediaFile> mf = new ArrayList<>();
+      for (MediaFile mediaFile : mfs) {
+        boolean match = false;
+        for (MediaFileType type : types) {
+          if (mediaFile.getType().equals(type)) {
+            match = true;
+          }
+        }
+        if (match) {
+          mf.add(new MediaFile(mediaFile));
         }
       }
-      if (match) {
-        mf.add(new MediaFile(mediaFile));
-      }
+      return mf;
     }
-    return mf;
-  }
 
-  /**
-   * returns all MFs NOT matching specified type
-   * 
-   * @param mfs
-   *          array to search
-   * @param types
-   *          MF types to exclude
-   * @return list of matching MFs
-   */
-  private List<MediaFile> getMediaFilesExceptType(List<MediaFile> mfs, MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<>();
-    for (MediaFile mediaFile : mfs) {
-      boolean match = false;
-      for (MediaFileType type : types) {
-        if (mediaFile.getType().equals(type)) {
-          match = true;
+    /**
+     * returns all MFs NOT matching specified type
+     *
+     * @param mfs
+     *          array to search
+     * @param types
+     *          MF types to exclude
+     * @return list of matching MFs
+     */
+    private List<MediaFile> getMediaFilesExceptType(List<MediaFile> mfs, MediaFileType... types) {
+      List<MediaFile> mf = new ArrayList<>();
+      for (MediaFile mediaFile : mfs) {
+        boolean match = false;
+        for (MediaFileType type : types) {
+          if (mediaFile.getType().equals(type)) {
+            match = true;
+          }
+        }
+        if (!match) {
+          mf.add(new MediaFile(mediaFile));
         }
       }
-      if (!match) {
-        mf.add(new MediaFile(mediaFile));
-      }
+      return mf;
     }
-    return mf;
+
+    /**
+     * gets all files recursive
+     * 
+     * @param path
+     *          the folder to search for
+     * @param deep
+     *          how much levels to search for
+     * @return a {@link Set} of all found {@link Path}s
+     */
+    private Set<Path> getAllFilesRecursive(Path path, int deep) {
+      Path folder = path.toAbsolutePath();
+      AllFilesRecursive visitor = new AllFilesRecursive();
+      try {
+        Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
+      }
+      catch (IOException e) {
+        // can not happen, since we've overridden visitFileFailed, which throws no exception ;)
+      }
+      return visitor.fFound;
+    }
   }
 
   @Override
@@ -961,42 +1001,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
-   * 
-   * @param directory
-   *          the folder to list the files for
-   * @return list of files&folders
-   */
-  public static List<Path> listFilesOnly(Path directory) {
-    List<Path> fileNames = new ArrayList<>();
-    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-      for (Path path : directoryStream) {
-        if (Utils.isRegularFile(path)) {
-          String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
-          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !TvShowModuleManager.SETTINGS.getSkipFolder().contains(path.toFile().getAbsolutePath())) {
-            fileNames.add(path.toAbsolutePath());
-          }
-          else {
-            LOGGER.debug("Skipping: " + path);
-          }
-        }
-      }
-    }
-    catch (IOException ignored) {
-    }
-    return fileNames;
-  }
-
-  /**
-   * simple NIO File.listFiles() replacement<br>
    * returns all files & folders in specified dir (NOT recursive)
    * 
    * @param directory
    *          the folder to list the items for
    * @return list of files&folders
    */
-  public static List<Path> listFilesAndDirs(Path directory) {
+  private static List<Path> listFilesAndDirs(Path directory) {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
@@ -1006,29 +1017,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           fileNames.add(path.toAbsolutePath());
         }
         else {
-          LOGGER.debug("Skipping: " + path);
+          LOGGER.debug("Skipping: {}", path);
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.error(e.getMessage());
     }
     return fileNames;
-  }
-
-  // **************************************
-  // gets all files recursive,
-  // **************************************
-  public static HashSet<Path> getAllFilesRecursive(Path folder, int deep) {
-    folder = folder.toAbsolutePath();
-    AllFilesRecursive visitor = new AllFilesRecursive();
-    try {
-      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
-    }
-    catch (IOException e) {
-      // can not happen, since we overrided visitFileFailed, which throws no
-      // exception ;)
-    }
-    return visitor.fFound;
   }
 
   private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
@@ -1036,24 +1032,22 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-      visFile++;
+      incVisFile();
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
-      // System.out.println("(" + attr.size() + "bytes)");
-      // System.out.println("(" + attr.creationTime() + " date)");
       return CONTINUE;
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-      preDir++;
+      incPreDir();
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
           || TvShowModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
-        LOGGER.debug("Skipping dir: " + dir);
+        LOGGER.debug("Skipping dir: {}", dir);
         return SKIP_SUBTREE;
       }
       return CONTINUE;
@@ -1061,17 +1055,43 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-      postDir++;
+      incPostDir();
       return CONTINUE;
     }
 
     // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is
-    // thrown.
+    // If you don't override this method and an error occurs, an IOException is thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("" + exc);
+      LOGGER.error(exc.getMessage());
       return CONTINUE;
     }
+  }
+
+  private static void resetCounters() {
+    visFile = 0;
+    preDir = 0;
+    postDir = 0;
+  }
+
+  /**
+   * synchronized increment of visFile
+   */
+  private static synchronized void incVisFile() {
+    visFile++;
+  }
+
+  /**
+   * synchronized increment of preDir
+   */
+  private static synchronized void incPreDir() {
+    preDir++;
+  }
+
+  /**
+   * synchronized increment of postDir
+   */
+  private static synchronized void incPostDir() {
+    postDir++;
   }
 }

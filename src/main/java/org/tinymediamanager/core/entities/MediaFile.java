@@ -302,7 +302,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       parentparent = FilenameUtils.getBaseName(getFileAsPath().getParent().getParent().toString()).toLowerCase(Locale.ROOT);
     }
     catch (Exception e) {
-      // could happen if we are no 2 levels deep;
+      // could happen if we are no 2 levels deep
       LOGGER.debug("way to up");
     }
 
