@@ -2105,9 +2105,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
       videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
     }
+
+    // workaround for XVID
     if (codecId.equalsIgnoreCase("XVID")) {
       // XVID is open source variant MP4, only detectable through codecId
       videoCodec = "XVID";
+    }
+
+    // detect the right MPEG version
+    if (StringUtils.containsIgnoreCase(videoCodec, "MPEG")) {
+      // search for the version
+      try {
+        int version = Integer.parseInt(getMediaInfo(StreamKind.Video, 0, "Format_Version"));
+        videoCodec = "MPEG-" + version;
+      }
+      catch (Exception e) {
+        LOGGER.trace("could not parse MPEG version: {}", e.getMessage());
+      }
     }
 
     String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
