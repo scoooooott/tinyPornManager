@@ -126,7 +126,7 @@ class ExternalDevicesSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      JPanel panelWol = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][400lp][]", "[]"));
+      JPanel panelWol = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][400lp][]", "[100lp]"));
 
       JLabel lblWolT = new TmmLabel(BUNDLE.getString("tmm.wakeonlan"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelWol, lblWolT, true);

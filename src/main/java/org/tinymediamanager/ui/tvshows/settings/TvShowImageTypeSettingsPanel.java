@@ -108,7 +108,7 @@ class TvShowImageTypeSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[]"));
     {
-      JPanel panelFileNaming = new JPanel(new MigLayout("", "[25lp,shrink 0][][][500lp,grow][]",
+      JPanel panelFileNaming = new JPanel(new MigLayout("", "[25lp,shrink 0][][][100lp,grow][]",
           "[][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][][10lp!][][10lp!][10lp][][10lp!][10lp][10lp!][10lp][10lp!][10lp][][][20lp][]"));
 
       JLabel lblFiletypes = new TmmLabel(BUNDLE.getString("Settings.artwork.naming"), H3); //$NON-NLS-1$

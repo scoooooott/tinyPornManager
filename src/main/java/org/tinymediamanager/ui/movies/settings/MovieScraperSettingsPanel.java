@@ -163,7 +163,7 @@ class MovieScraperSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[400lp,grow]", "[400lp,grow]"));
     {
-      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:200lp,grow][][200lp:300lp,grow]"));
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[150lp:300lp,grow][][150lp:200lp,grow]"));
 
       JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.metadata"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
