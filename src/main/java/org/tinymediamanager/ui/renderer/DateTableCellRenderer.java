@@ -22,6 +22,8 @@ import java.util.Date;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.tinymediamanager.core.TmmDateFormat;
+
 /**
  * This renderer is used to display Dates in a customizeable way
  * 
@@ -30,16 +32,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class DateTableCellRenderer extends DefaultTableCellRenderer {
   private static final long serialVersionUID = 2136302874452711571L;
 
-  private DateFormat        dateFormat       = null;
+  private DateFormat        dateFormat;
 
   /**
    * Create a new DateTableCellRenderer that renders Dates as formatted Strings.
-   *
-   * @param dateFormat
-   *          a String specifying how to format the date, in the format specified by {@link DateFormat}.
    */
-  public DateTableCellRenderer(DateFormat dateFormat) {
-    this.dateFormat = dateFormat;
+  public DateTableCellRenderer() {
+    this.dateFormat = TmmDateFormat.SHORT_DATE_FORMAT;
   }
 
   /**

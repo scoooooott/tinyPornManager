@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.FontMetrics;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.Date;
@@ -173,12 +172,11 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
     col.setColumnComparator(dateComparator);
     col.setHeaderIcon(IconManager.DATE_ADDED);
-    DateFormat dateFormat = TmmDateFormat.SHORT_DATE_FORMAT;
-    col.setCellRenderer(new DateTableCellRenderer(dateFormat));
+    col.setCellRenderer(new DateTableCellRenderer());
     col.setColumnResizeable(false);
     try {
       Date date = StrgUtils.parseDate("2012-12-12");
-      col.setMinWidth((int) (fontMetrics.stringWidth(dateFormat.format(date)) * 1.2f));
+      col.setMinWidth((int) (fontMetrics.stringWidth(TmmDateFormat.SHORT_DATE_FORMAT.format(date)) * 1.2f));
     }
     catch (Exception ignored) {
     }
