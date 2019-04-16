@@ -310,7 +310,7 @@ public class Url {
       // log any "connection problems"
       if (responseCode < 200 || responseCode >= 400) {
         cleanup();
-        LOGGER.error("bad http response: {} - {}", responseCode, responseMessage);
+        LOGGER.debug("bad http response: {} - {}", responseCode, responseMessage);
         throw new HttpException(url, responseCode, responseMessage);
       }
 
@@ -328,7 +328,7 @@ public class Url {
       throw e;
     }
     catch (InterruptedIOException | IllegalStateException e) {
-      LOGGER.info("aborted request: {} - {}", logUrl, e.getMessage());
+      LOGGER.debug("aborted request: {} - {}", logUrl, e.getMessage());
       cleanup();
       throw new InterruptedException();
     }
