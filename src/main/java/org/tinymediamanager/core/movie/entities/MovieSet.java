@@ -102,11 +102,11 @@ public class MovieSet extends MediaEntity {
 
     firePropertyChange(TITLE_FOR_UI, oldValue, newValue);
 
-    oldValue = this.titleSortable;
+    String oldValueTitleSortable = this.titleSortable;
     titleSortable = "";
-    firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
+    firePropertyChange(TITLE_SORTABLE, oldValueTitleSortable, titleSortable);
 
-    if (StringUtils.isNotBlank(oldValue)) {
+    if (!StringUtils.equals(oldValue, newValue)) {
       // update artwork
       MovieSetArtworkHelper.renameArtwork(this);
 

@@ -468,7 +468,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       // sort movies in the right order
       for (Movie movie : moviesInSet) {
         movie.saveToDb();
-        movie.writeNFO();
       }
 
       // remove removed movies

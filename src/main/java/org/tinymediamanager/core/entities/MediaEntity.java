@@ -424,7 +424,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void setArtworkUrl(String url, MediaFileType type) {
-    String oldValue = getArtworkFilename(type);
+    String oldValue = getArtworkUrl(type);
 
     switch (type) {
       case POSTER:
