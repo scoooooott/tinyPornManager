@@ -132,10 +132,9 @@ public class MovieSetEditorDialog extends TmmDialog {
         enabledScrapers.add(Constants.FANART_TV);
       }
       artworkScrapers.addAll(movieList.getArtworkScrapers(enabledScrapers));
-      // artworkScrapers.addAll(movieList.getArtworkScrapers(Arrays.asList(Constants.TMDB, Constants.FANART_TV)));
     }
     catch (Exception e2) {
-      LOGGER.warn("error getting IMediaArtworkProvider " + e2.getMessage());
+      LOGGER.warn("error getting IMediaArtworkProvider - {}", e2.getMessage());
     }
 
     {
@@ -162,6 +161,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       tfName.setColumns(10);
 
       lblPoster = new ImageLabel();
+      lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -173,7 +173,6 @@ public class MovieSetEditorDialog extends TmmDialog {
           }
           HashMap<String, Object> ids = new HashMap<>(movieSetToEdit.getIds());
           ids.put(Constants.TMDB, tmdbId);
-          // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
           ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, ids, ImageType.POSTER, artworkScrapers, lblPoster, null, null,
               MediaType.MOVIE_SET);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
@@ -209,6 +208,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       scrollPaneMovies.setViewportView(tableMovies);
 
       lblFanart = new ImageLabel();
+      lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {

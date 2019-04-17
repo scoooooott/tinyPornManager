@@ -667,7 +667,14 @@ public class MovieSetArtworkHelper {
         String filename = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-";
         filename += type.name().toLowerCase(Locale.ROOT) + "." + extension;
 
-        writeImage(bytes, artworkFolder.resolve(filename));
+        Path imageFile = artworkFolder.resolve(filename);
+        writeImage(bytes, imageFile);
+
+        ImageCache.invalidateCachedImage(imageFile);
+
+        MediaFile artwork = new MediaFile(imageFile, type);
+        artwork.gatherMediaInformation();
+        writtenArtworkFiles.add(artwork);
       }
       catch (Exception e) {
         LOGGER.warn("could not write file", e);
@@ -686,7 +693,14 @@ public class MovieSetArtworkHelper {
       for (Movie movie : movies) {
         try {
           if (!movie.isMultiMovieDir()) {
-            writeImage(bytes, movie.getPathNIO().resolve(filename));
+            Path imageFile = movie.getPathNIO().resolve(filename);
+            writeImage(bytes, imageFile);
+
+            ImageCache.invalidateCachedImage(imageFile);
+
+            MediaFile artwork = new MediaFile(imageFile, type);
+            artwork.gatherMediaInformation();
+            writtenArtworkFiles.add(artwork);
           }
         }
         catch (Exception e) {
@@ -719,12 +733,6 @@ public class MovieSetArtworkHelper {
       }
       outputStream.close();
       is.close();
-
-      ImageCache.invalidateCachedImage(pathAndFilename);
-
-      MediaFile artwork = new MediaFile(pathAndFilename, type);
-      artwork.gatherMediaInformation();
-      writtenArtworkFiles.add(artwork);
     }
   }
 }
