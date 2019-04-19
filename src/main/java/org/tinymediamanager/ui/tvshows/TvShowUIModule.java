@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowDownloadMissingArtworkActio
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowMissingEpisodeListAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowReadEpisodeNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowReadNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRemoveAction;
@@ -69,6 +70,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowFilterDialog;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowMissingEpisodeListDialog;
 import org.tinymediamanager.ui.tvshows.panels.TvShowTreePanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeInformationPanel;
@@ -239,6 +241,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowMissingEpisodeListAction.class));
 
     popupMenu.addSeparator();
 
