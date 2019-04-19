@@ -258,13 +258,13 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
 
   private String hasImageTooltip(TmmTreeNode node) {
     if (node.getUserObject() instanceof TvShow) {
-      ImageIcon nfoIcon = hasNfo(node);
+      ImageIcon nfoIcon = hasImages(node);
       if (nfoIcon == IconManager.TABLE_PROBLEM) {
         return BUNDLE.getString("tvshow.tree.tvshow.image.problem");
       }
     }
     else if (node.getUserObject() instanceof TvShowSeason) {
-      ImageIcon nfoIcon = hasNfo(node);
+      ImageIcon nfoIcon = hasImages(node);
       if (nfoIcon == IconManager.TABLE_PROBLEM) {
         return BUNDLE.getString("tvshow.tree.season.image.problem");
       }

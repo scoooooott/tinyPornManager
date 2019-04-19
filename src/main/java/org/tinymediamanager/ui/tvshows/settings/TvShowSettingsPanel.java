@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.tvshows.settings;
 
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -34,6 +35,7 @@ import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -70,10 +72,28 @@ class TvShowSettingsPanel extends JPanel {
   private JCheckBox                    chckbxRenameAfterScrape;
   private JCheckBox                    chckbxShowMissingSpecials;
 
+  private JCheckBox                    chckbxTvShowCheckPoster;
+  private JCheckBox                    chckbxTvShowCheckFanart;
+  private JCheckBox                    chckbxTvShowCheckBanner;
+  private JCheckBox                    chckbxTvShowCheckClearart;
+  private JCheckBox                    chckbxTvShowCheckThumb;
+  private JCheckBox                    chckbxTvShowCheckLogo;
+  private JCheckBox                    chckbxTvShowCheckClearlogo;
+
+  private JCheckBox                    chckbxTvShowSeasonCheckPoster;
+  private JCheckBox                    chckbxTvShowSeasonCheckBanner;
+  private JCheckBox                    chckbxTvShowSeasonCheckThumb;
+
+  private JCheckBox                    chckbxTvShowEpisodeCheckThumb;
+
+  private ItemListener                 checkBoxListener;
+
   /**
    * Instantiates a new tv show settings panel.
    */
   TvShowSettingsPanel() {
+    checkBoxListener = e -> checkChanges();
+
     // UI initializations
     initComponents();
     initDataBindings();
@@ -93,6 +113,157 @@ class TvShowSettingsPanel extends JPanel {
     btnPresetMediaPortal1.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal());
     btnPresetMediaPortal2.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal());
     btnPresetPlex.addActionListener(evt -> settings.setDefaultSettingsForPlex());
+
+    buildCheckBoxes();
+  }
+
+  /**
+   * Check changes.
+   */
+  private void checkChanges() {
+    settings.clearTvShowCheckImages();
+    if (chckbxTvShowCheckPoster.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.POSTER);
+    }
+    if (chckbxTvShowCheckFanart.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.BACKGROUND);
+    }
+    if (chckbxTvShowCheckBanner.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.BANNER);
+    }
+    if (chckbxTvShowCheckClearart.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.CLEARART);
+    }
+    if (chckbxTvShowCheckThumb.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.THUMB);
+    }
+    if (chckbxTvShowCheckLogo.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.LOGO);
+    }
+    if (chckbxTvShowCheckClearlogo.isSelected()) {
+      settings.addTvShowCheckImages(MediaArtwork.MediaArtworkType.CLEARLOGO);
+    }
+
+    settings.clearSeasonCheckImages();
+    if (chckbxTvShowSeasonCheckPoster.isSelected()) {
+      settings.addSeasonCheckImages(MediaArtwork.MediaArtworkType.SEASON_POSTER);
+    }
+    if (chckbxTvShowSeasonCheckBanner.isSelected()) {
+      settings.addSeasonCheckImages(MediaArtwork.MediaArtworkType.SEASON_BANNER);
+    }
+    if (chckbxTvShowSeasonCheckThumb.isSelected()) {
+      settings.addSeasonCheckImages(MediaArtwork.MediaArtworkType.SEASON_THUMB);
+    }
+
+    settings.clearEpisodeCheckImages();
+    if (chckbxTvShowEpisodeCheckThumb.isSelected()) {
+      settings.addEpisodeCheckImages(MediaArtwork.MediaArtworkType.THUMB);
+    }
+  }
+
+  private void buildCheckBoxes() {
+    chckbxTvShowCheckPoster.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckFanart.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckBanner.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckClearart.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckThumb.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckLogo.removeItemListener(checkBoxListener);
+    chckbxTvShowCheckClearlogo.removeItemListener(checkBoxListener);
+    clearSelection(chckbxTvShowCheckPoster, chckbxTvShowCheckFanart, chckbxTvShowCheckBanner, chckbxTvShowCheckClearart, chckbxTvShowCheckThumb,
+        chckbxTvShowCheckLogo, chckbxTvShowCheckClearlogo);
+
+    chckbxTvShowSeasonCheckPoster.removeItemListener(checkBoxListener);
+    chckbxTvShowSeasonCheckBanner.removeItemListener(checkBoxListener);
+    chckbxTvShowSeasonCheckThumb.removeItemListener(checkBoxListener);
+    clearSelection(chckbxTvShowSeasonCheckPoster, chckbxTvShowSeasonCheckBanner, chckbxTvShowSeasonCheckThumb);
+
+    chckbxTvShowEpisodeCheckThumb.removeItemListener(checkBoxListener);
+    clearSelection(chckbxTvShowEpisodeCheckThumb);
+
+    for (MediaArtwork.MediaArtworkType type : settings.getTvShowCheckImages()) {
+      switch (type) {
+        case POSTER:
+          chckbxTvShowCheckPoster.setSelected(true);
+          break;
+
+        case BACKGROUND:
+          chckbxTvShowCheckFanart.setSelected(true);
+          break;
+
+        case BANNER:
+          chckbxTvShowCheckBanner.setSelected(true);
+          break;
+
+        case CLEARART:
+          chckbxTvShowCheckClearart.setSelected(true);
+          break;
+
+        case THUMB:
+          chckbxTvShowCheckThumb.setSelected(true);
+          break;
+
+        case LOGO:
+          chckbxTvShowCheckLogo.setSelected(true);
+          break;
+
+        case CLEARLOGO:
+          chckbxTvShowCheckClearlogo.setSelected(true);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    for (MediaArtwork.MediaArtworkType type : settings.getSeasonCheckImages()) {
+      switch (type) {
+        case SEASON_POSTER:
+          chckbxTvShowSeasonCheckPoster.setSelected(true);
+          break;
+
+        case SEASON_BANNER:
+          chckbxTvShowSeasonCheckBanner.setSelected(true);
+          break;
+
+        case SEASON_THUMB:
+          chckbxTvShowSeasonCheckThumb.setSelected(true);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    for (MediaArtwork.MediaArtworkType type : settings.getEpisodeCheckImages()) {
+      switch (type) {
+        case THUMB:
+          chckbxTvShowEpisodeCheckThumb.setSelected(true);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    chckbxTvShowCheckPoster.addItemListener(checkBoxListener);
+    chckbxTvShowCheckFanart.addItemListener(checkBoxListener);
+    chckbxTvShowCheckBanner.addItemListener(checkBoxListener);
+    chckbxTvShowCheckClearart.addItemListener(checkBoxListener);
+    chckbxTvShowCheckThumb.addItemListener(checkBoxListener);
+    chckbxTvShowCheckLogo.addItemListener(checkBoxListener);
+    chckbxTvShowCheckClearlogo.addItemListener(checkBoxListener);
+
+    chckbxTvShowSeasonCheckPoster.addItemListener(checkBoxListener);
+    chckbxTvShowSeasonCheckBanner.addItemListener(checkBoxListener);
+    chckbxTvShowSeasonCheckThumb.addItemListener(checkBoxListener);
+
+    chckbxTvShowEpisodeCheckThumb.addItemListener(checkBoxListener);
+  }
+
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkBox : checkBoxes) {
+      checkBox.setSelected(false);
+    }
   }
 
   private void initComponents() {
@@ -157,6 +328,57 @@ class TvShowSettingsPanel extends JPanel {
         JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
         lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
         panelMisc.add(lblBuildImageCacheHint, "cell 1 0");
+
+        JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages")); //$NON-NLS-1$
+        panelMisc.add(lblCheckImages, "cell 1 1 2 1");
+
+        {
+          JPanel panelCheckImages = new JPanel();
+          panelCheckImages.setLayout(new MigLayout("hidemode 1, insets 0", "[][][][]", ""));
+          panelMisc.add(panelCheckImages, "cell 2 2");
+
+          JLabel lblTvShowCheckImages = new JLabel(BUNDLE.getString("metatag.tvshow"));//$NON-NLS-1$
+          panelCheckImages.add(lblTvShowCheckImages, "cell 0 0");
+
+          chckbxTvShowCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowCheckPoster, "cell 1 0");
+
+          chckbxTvShowCheckFanart = new JCheckBox(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowCheckFanart, "cell 2 0");
+
+          chckbxTvShowCheckBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowCheckBanner, "cell 3 0");
+
+          chckbxTvShowCheckClearart = new JCheckBox(BUNDLE.getString("mediafiletype.clearart"));
+          panelCheckImages.add(chckbxTvShowCheckClearart, "cell 4 0");
+
+          chckbxTvShowCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb"));
+          panelCheckImages.add(chckbxTvShowCheckThumb, "cell 5 0");
+
+          chckbxTvShowCheckLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo"));
+          panelCheckImages.add(chckbxTvShowCheckLogo, "cell 6 0");
+
+          chckbxTvShowCheckClearlogo = new JCheckBox(BUNDLE.getString("mediafiletype.clearlogo"));
+          panelCheckImages.add(chckbxTvShowCheckClearlogo, "cell 7 0");
+
+          JLabel lblTvShowSeasonCheckImages = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+          panelCheckImages.add(lblTvShowSeasonCheckImages, "cell 0 1");
+
+          chckbxTvShowSeasonCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowSeasonCheckPoster, "cell 1 1");
+
+          chckbxTvShowSeasonCheckBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowSeasonCheckBanner, "cell 2 1");
+
+          chckbxTvShowSeasonCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowSeasonCheckThumb, "cell 3 1");
+
+          JLabel lblTvShowEpisodeCheckImages = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+          panelCheckImages.add(lblTvShowEpisodeCheckImages, "cell 0 2");
+
+          chckbxTvShowEpisodeCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+          panelCheckImages.add(chckbxTvShowEpisodeCheckThumb, "cell 1 2");
+        }
       }
     }
     {

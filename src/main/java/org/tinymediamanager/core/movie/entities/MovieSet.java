@@ -365,21 +365,16 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Gets the check mark for images.<br>
-   * Assumes true, but when PosterFilename is set and we do not have a poster, return false<br>
-   * same for fanarts.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER))) {
-      return false;
+    for (MediaArtworkType type : MovieModuleManager.SETTINGS.getCheckImagesMovie()) {
+      if (StringUtils.isEmpty(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
     }
-
-    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      return false;
-    }
-
     return true;
   }
 
