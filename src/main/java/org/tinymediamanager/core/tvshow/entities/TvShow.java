@@ -989,29 +989,31 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the checks for images.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    return StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER)) && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))
-        && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.BANNER));
+    for (MediaArtworkType type : TvShowModuleManager.SETTINGS.getTvShowCheckImages()) {
+      if (StringUtils.isBlank(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
-   * Checks if all seasaons and episodes of that TV show have artwork assigned
+   * Checks if all seasons and episodes of that TV show have artwork assigned
    *
    * @return true if artwork is available
    */
   public Boolean getHasSeasonAndEpisodeImages() {
-    boolean images = true;
     for (TvShowSeason season : seasons) {
       if (!season.getHasImages() || !season.getHasEpisodeImages()) {
-        images = false;
-        break;
+        return false;
       }
     }
-    return images;
+    return true;
   }
 
   /**

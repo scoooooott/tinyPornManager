@@ -53,13 +53,14 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowThumbNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * The Class TvShowSettings.
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShowSettings extends AbstractSettings {
@@ -100,6 +101,9 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  SEASON_THUMB_FILENAME          = "seasonThumbFilename";
   private final static String                  EPISODE_NFO_FILENAME           = "episodeNfoFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
+  private final static String                  EPISODE_CHECK_IMAGES           = "episodeCheckImages";
+  private final static String                  SEASON_CHECK_IMAGES            = "seasonCheckImages";
+  private final static String                  TVSHOW_CHECK_IMAGES            = "TvShowCheckImages";
 
   private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<>());
@@ -121,6 +125,9 @@ public class TvShowSettings extends AbstractSettings {
   private final List<TvShowSeasonThumbNaming>  seasonThumbFilenames           = new ArrayList<>();
   private final List<TvShowEpisodeNfoNaming>   episodeNfoFilenames            = new ArrayList<>();
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
+  private final List<MediaArtworkType>         episodeCheckImages             = new ArrayList<>();
+  private final List<MediaArtworkType>         seasonCheckImages              = new ArrayList<>();
+  private final List<MediaArtworkType>         tvShowCheckImages              = new ArrayList<>();
 
   private List<UIFilters>                      uiFilters                      = new ArrayList<>();
   private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
@@ -226,6 +233,20 @@ public class TvShowSettings extends AbstractSettings {
 
     episodeThumbFilenames.clear();
     addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
+
+    episodeCheckImages.clear();
+    addEpisodeCheckImages(MediaArtworkType.THUMB);
+
+    seasonCheckImages.clear();
+    addSeasonCheckImages(MediaArtworkType.SEASON_POSTER);
+    addSeasonCheckImages(MediaArtworkType.SEASON_BANNER);
+    addSeasonCheckImages(MediaArtworkType.SEASON_THUMB);
+
+    tvShowCheckImages.clear();
+    addTvShowCheckImages(MediaArtworkType.POSTER);
+    addTvShowCheckImages(MediaArtworkType.BACKGROUND);
+    addTvShowCheckImages(MediaArtworkType.BANNER);
+
   }
 
   @Override
@@ -890,6 +911,54 @@ public class TvShowSettings extends AbstractSettings {
 
   public List<TvShowEpisodeNfoNaming> getEpisodeNfoFilenames() {
     return new ArrayList<>(this.episodeNfoFilenames);
+  }
+
+  public void addEpisodeCheckImages(MediaArtworkType type) {
+    if (!episodeCheckImages.contains(type)) {
+      episodeCheckImages.add(type);
+      firePropertyChange(EPISODE_CHECK_IMAGES, null, episodeCheckImages);
+    }
+  }
+
+  public void clearEpisodeCheckImages() {
+    episodeCheckImages.clear();
+    firePropertyChange(EPISODE_CHECK_IMAGES, null, episodeCheckImages);
+  }
+
+  public List<MediaArtworkType> getEpisodeCheckImages() {
+    return new ArrayList<>(this.episodeCheckImages);
+  }
+
+  public void addSeasonCheckImages(MediaArtworkType type) {
+    if (!seasonCheckImages.contains(type)) {
+      seasonCheckImages.add(type);
+      firePropertyChange(SEASON_CHECK_IMAGES, null, seasonCheckImages);
+    }
+  }
+
+  public void clearSeasonCheckImages() {
+    seasonCheckImages.clear();
+    firePropertyChange(SEASON_CHECK_IMAGES, null, seasonCheckImages);
+  }
+
+  public List<MediaArtworkType> getSeasonCheckImages() {
+    return new ArrayList<>(this.seasonCheckImages);
+  }
+
+  public void addTvShowCheckImages(MediaArtworkType type) {
+    if (!tvShowCheckImages.contains(type)) {
+      tvShowCheckImages.add(type);
+      firePropertyChange(TVSHOW_CHECK_IMAGES, null, tvShowCheckImages);
+    }
+  }
+
+  public void clearTvShowCheckImages() {
+    tvShowCheckImages.clear();
+    firePropertyChange(TVSHOW_CHECK_IMAGES, null, tvShowCheckImages);
+  }
+
+  public List<MediaArtworkType> getTvShowCheckImages() {
+    return new ArrayList<>(this.tvShowCheckImages);
   }
 
   public CertificationStyle getCertificationStyle() {

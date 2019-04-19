@@ -50,6 +50,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
@@ -93,6 +94,7 @@ public class MovieSettings extends AbstractSettings {
   private final static String              UI_FILTERS                          = "uiFilters";
   private final static String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
   private final static String              SKIP_FOLDER                         = "skipFolder";
+  private final static String              CHECK_IMAGES_MOVIE                  = "checkImagesMovie";
 
   private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<>());
   private final List<MovieNfoNaming>       nfoFilenames                        = new ArrayList<>();
@@ -106,6 +108,7 @@ public class MovieSettings extends AbstractSettings {
   private final List<MovieDiscartNaming>   discartFilenames                    = new ArrayList<>();
   private final List<MovieKeyartNaming>    keyartFilenames                     = new ArrayList<>();
   private final List<MovieTrailerNaming>   trailerFilenames                    = new ArrayList<>();
+  private final List<MediaArtworkType>     checkImagesMovie                    = new ArrayList<>();
   private final List<String>               badWords                            = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>               artworkScrapers                     = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>               trailerScrapers                     = ObservableCollections.observableList(new ArrayList<>());
@@ -227,6 +230,10 @@ public class MovieSettings extends AbstractSettings {
 
     trailerFilenames.clear();
     addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
+    checkImagesMovie.clear();
+    addCheckImagesMovie(MediaArtworkType.POSTER);
+    addCheckImagesMovie(MediaArtworkType.BACKGROUND);
 
     // activate default scrapers
     artworkScrapers.clear();
@@ -503,6 +510,22 @@ public class MovieSettings extends AbstractSettings {
   public void clearDiscartFilenames() {
     discartFilenames.clear();
     firePropertyChange(DISCART_FILENAME, null, discartFilenames);
+  }
+
+  public void clearCheckImagesMovie() {
+    checkImagesMovie.clear();
+    firePropertyChange(CHECK_IMAGES_MOVIE, null, checkImagesMovie);
+  }
+
+  public List<MediaArtworkType> getCheckImagesMovie() {
+    return new ArrayList<>(this.checkImagesMovie);
+  }
+
+  public void addCheckImagesMovie(MediaArtworkType type) {
+    if (!checkImagesMovie.contains(type)) {
+      checkImagesMovie.add(type);
+      firePropertyChange(CHECK_IMAGES_MOVIE, null, checkImagesMovie);
+    }
   }
 
   public List<MovieDiscartNaming> getDiscartFilenames() {

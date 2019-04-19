@@ -774,12 +774,17 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Gets the checks for images.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    return StringUtils.isNotBlank(getArtworkFilename(MediaFileType.THUMB));
+    for (MediaArtworkType type : TvShowModuleManager.SETTINGS.getEpisodeCheckImages()) {
+      if (StringUtils.isBlank(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
