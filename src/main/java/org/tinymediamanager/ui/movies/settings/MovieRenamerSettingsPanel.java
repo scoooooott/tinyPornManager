@@ -553,7 +553,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieRenamerCreateMoviesetForSingleMovie");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("renamerCreateMoviesetForSingleMovie");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxMoviesetSingleMovie, jCheckBoxBeanProperty);
     autoBinding_4.bind();
