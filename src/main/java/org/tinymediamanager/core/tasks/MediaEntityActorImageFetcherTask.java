@@ -123,7 +123,6 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
       return;
     }
 
-    Path tempFile = null;
     Path actorImage = Paths.get(mediaEntity.getPath(), Person.ACTOR_DIR, actorImageFilename);
 
     if (StringUtils.isNotEmpty(person.getThumbUrl())) {
@@ -139,6 +138,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
         ImageUtils.downloadImage(person.getThumbUrl(), actorImage.getParent(), actorImageFilename);
 
         // last but not least clean/rebuild the image cache for the new file
+        ImageCache.invalidateCachedImage(actorImage);
         ImageCache.cacheImageSilently(actorImage);
       }
     }

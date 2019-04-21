@@ -486,6 +486,7 @@ public class TvShowArtworkHelper {
         }
 
         // build up image cache
+        ImageCache.invalidateCachedImage(destFile);
         ImageCache.cacheImageSilently(destFile);
       }
       catch (InterruptedException e) {
@@ -499,6 +500,7 @@ public class TvShowArtworkHelper {
           tvShowSeason.setArtwork(Paths.get(oldFilename), artworkType);
         }
         // build up image cache
+        ImageCache.invalidateCachedImage(Paths.get(oldFilename));
         ImageCache.cacheImageSilently(Paths.get(oldFilename));
       }
       finally {

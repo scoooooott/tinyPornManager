@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -24,6 +23,7 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -54,7 +54,8 @@ public class RebuildImageCacheAction extends TmmAction {
       return;
     }
 
-    List<Path> imageFiles = new ArrayList<>();
+    List<MediaFile> imageFiles = new ArrayList<>();
+
     // movie list
     List<Movie> movies = new ArrayList<>(MovieList.getInstance().getMovies());
     for (Movie movie : movies) {

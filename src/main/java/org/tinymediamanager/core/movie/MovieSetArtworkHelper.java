@@ -670,11 +670,12 @@ public class MovieSetArtworkHelper {
         Path imageFile = artworkFolder.resolve(filename);
         writeImage(bytes, imageFile);
 
-        ImageCache.invalidateCachedImage(imageFile);
-
         MediaFile artwork = new MediaFile(imageFile, type);
         artwork.gatherMediaInformation();
         writtenArtworkFiles.add(artwork);
+
+        ImageCache.invalidateCachedImage(artwork);
+        ImageCache.cacheImageSilently(artwork);
       }
       catch (Exception e) {
         LOGGER.warn("could not write file", e);
@@ -696,11 +697,12 @@ public class MovieSetArtworkHelper {
             Path imageFile = movie.getPathNIO().resolve(filename);
             writeImage(bytes, imageFile);
 
-            ImageCache.invalidateCachedImage(imageFile);
-
             MediaFile artwork = new MediaFile(imageFile, type);
             artwork.gatherMediaInformation();
             writtenArtworkFiles.add(artwork);
+
+            ImageCache.invalidateCachedImage(artwork);
+            ImageCache.cacheImageSilently(artwork);
           }
         }
         catch (Exception e) {

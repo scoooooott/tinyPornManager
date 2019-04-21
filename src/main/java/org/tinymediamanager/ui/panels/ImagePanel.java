@@ -149,13 +149,12 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             return null;
           }
           try {
-            Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());
+            Path file = ImageCache.getCachedFile(mediaFile);
             if (file == null) {
               file = mediaFile.getFileAsPath();
             }
             BufferedImage bufferedImage = ImageUtils.createImage(file);
             Point size = ImageUtils.calculateSize(maxWidth, maxHeight, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
-            // BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
             BufferedImage img = Scalr.resize(bufferedImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
             bufferedImage = null;
 
@@ -166,7 +165,8 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             publish(new ImageChunk(mediaFile.getFileAsPath().toString(), img));
             img = null;
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.trace("scaling image failed: {}", e.getMessage());
           }
         }
       }

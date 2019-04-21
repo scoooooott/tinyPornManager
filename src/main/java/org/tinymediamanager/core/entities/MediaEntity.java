@@ -1003,7 +1003,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     for (MediaFile mf : mfs) {
       // invalidate image cache
       if (mf.isGraphic()) {
-        ImageCache.invalidateCachedImage(mf.getFileAsPath());
+        ImageCache.invalidateCachedImage(mf);
       }
 
       mf.replacePathForRenamedFolder(oldPath, newPath);

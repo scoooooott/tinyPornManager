@@ -70,7 +70,7 @@ public class ImageCache {
         Files.createDirectories(CACHE_DIR);
       }
       catch (IOException e) {
-        LOGGER.warn("Could not create cache dir " + CACHE_DIR + " - " + e.getMessage());
+        LOGGER.warn("Could not create cache dir {} - {}", CACHE_DIR, e.getMessage());
       }
     }
     return CACHE_DIR;
@@ -95,38 +95,41 @@ public class ImageCache {
       return StrgUtils.bytesToHex(key);
     }
     catch (Exception e) {
-      LOGGER.error("Failed to create cached filename for image: " + path, e);
-      throw new RuntimeException(e);
+      LOGGER.error("Failed to create cached filename for image: {} - {}", path, e);
     }
+    return "";
   }
 
   /**
    * Cache image without overwriting an existing one
    * 
-   * @param originalFile
+   * @param mediaFile
    *          the media file
    * @return the file the cached file
    * @throws Exception
+   *           any exception occurred while caching
    */
-  public static Path cacheImage(Path originalFile) throws Exception {
-    return cacheImage(originalFile, false);
+  public static Path cacheImage(MediaFile mediaFile) throws Exception {
+    return cacheImage(mediaFile, false);
   }
 
   /**
    * Cache image.
    *
-   * @param originalFile
+   * @param mediaFile
    *          the media file
    * @param overwrite
    *          indicator if we should overwrite any existing files
    * @return the file the cached file
    * @throws Exception
+   *           any exception occurred while caching
    */
-  public static Path cacheImage(Path originalFile, boolean overwrite) throws Exception {
-    MediaFile mf = new MediaFile(originalFile);
-    if (!mf.isGraphic()) {
-      throw new Exception("can only cache image files");
+  private static Path cacheImage(MediaFile mediaFile, boolean overwrite) throws Exception {
+    if (!mediaFile.isGraphic()) {
+      throw new InvalidFileTypeException(mediaFile.getFileAsPath());
     }
+
+    Path originalFile = mediaFile.getFileAsPath();
 
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
     if (overwrite || !Files.exists(cachedFile)) {
@@ -140,13 +143,7 @@ public class ImageCache {
 
       // recreate cache dir if needed
       // rescale & cache
-      BufferedImage originalImage = null;
-      try {
-        originalImage = ImageUtils.createImage(originalFile);
-      }
-      catch (Exception e) {
-        throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
-      }
+      BufferedImage originalImage = ImageUtils.createImage(originalFile);
 
       // calculate width based on MF type
       int desiredWidth = originalImage.getWidth(); // initialize with fallback
@@ -222,18 +219,32 @@ public class ImageCache {
   }
 
   /**
+   * Cache image silently without throwing an exception. Use the method {@link #cacheImageSilently(MediaFile)} if possible!
+   *
+   * @param path
+   *          the path to this image
+   */
+  public static void cacheImageSilently(Path path) {
+    cacheImageSilently(new MediaFile(path));
+  }
+
+  /**
    * Cache image silently without throwing an exception.
    *
-   * @param originalFile
+   * @param mediaFile
    *          the media file
    */
-  public static void cacheImageSilently(Path originalFile) {
+  public static void cacheImageSilently(MediaFile mediaFile) {
     if (!Settings.getInstance().isImageCache()) {
       return;
     }
 
+    if (!mediaFile.isGraphic()) {
+      return;
+    }
+
     try {
-      cacheImage(originalFile, true);
+      cacheImage(mediaFile, true);
     }
     catch (Exception e) {
       LOGGER.warn("could not cache image: {}", e.getMessage());
@@ -241,12 +252,27 @@ public class ImageCache {
   }
 
   /**
-   * Invalidate cached image.
-   * 
+   * Invalidate cached image. Use the method {@link #invalidateCachedImage(MediaFile)} is possible!
+   *
    * @param path
-   *          the path
+   *          the path to this image
    */
   public static void invalidateCachedImage(Path path) {
+    invalidateCachedImage(new MediaFile(path));
+  }
+
+  /**
+   * Invalidate cached image.
+   * 
+   * @param mediaFile
+   *          the media file
+   */
+  public static void invalidateCachedImage(MediaFile mediaFile) {
+    if (!mediaFile.isGraphic()) {
+      return;
+    }
+
+    Path path = mediaFile.getFileAsPath();
     Path cachedFile = getCacheDir().resolve(ImageCache.getMD5(path.toAbsolutePath().toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
       Utils.deleteFileSafely(cachedFile);
@@ -254,7 +280,7 @@ public class ImageCache {
   }
 
   /**
-   * Gets the cached image for "string".<br>
+   * Gets the cached image for "string" location (mostly an url).<br>
    * If not found AND it is a valid url, download and cache first.<br>
    * 
    * @param url
@@ -272,7 +298,7 @@ public class ImageCache {
     }
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(url) + "." + ext);
     if (Files.exists(cachedFile)) {
-      LOGGER.trace("found cached url :) " + url);
+      LOGGER.trace("found cached url :) {}", url);
       return cachedFile;
     }
 
@@ -282,43 +308,57 @@ public class ImageCache {
     }
 
     try {
-      LOGGER.trace("downloading image to the image cache: " + url);
+      LOGGER.trace("downloading image to the image cache: {}", url);
       Url u = new Url(url);
       boolean ok = u.download(cachedFile);
       if (ok) {
-        LOGGER.trace("cached url successfully :) " + url);
+        LOGGER.trace("cached url successfully :) {}", url);
         return cachedFile;
       }
     }
     catch (MalformedURLException e) {
-      LOGGER.trace("Problem getting cached file for url " + e.getMessage());
+      LOGGER.trace("Problem getting cached file for url {}", e.getMessage());
     }
 
-    LOGGER.trace("Problem getting cached file for url " + url);
+    LOGGER.trace("Problem getting cached file for url {}", url);
     return null;
   }
 
   /**
-   * Gets the cached file, if ImageCache is activated<br>
-   * If not found, cache original first
+   * Gets the cached file for the given {@link Path} - if ImageCache is activated<br>
+   * Use the method {@link #getCachedFile(MediaFile)} is possible!<br>
    * 
+   * If not found, cache original first
+   *
    * @param path
-   *          the path
+   *          the path to the image
    * @return the cached file
    */
   public static Path getCachedFile(Path path) {
-    if (path == null) {
+    return getCachedFile(new MediaFile(path));
+  }
+
+  /**
+   * Gets the cached file for the given {@link MediaFile} - if ImageCache is activated<br>
+   * If not found, cache original first
+   * 
+   * @param mediaFile
+   *          the mediaFile
+   * @return the cached file
+   */
+  public static Path getCachedFile(MediaFile mediaFile) {
+    if (mediaFile == null || !mediaFile.isGraphic()) {
       return null;
     }
-    path = path.toAbsolutePath();
+
+    Path path = mediaFile.getFileAsPath().toAbsolutePath();
 
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(path.toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
-      LOGGER.trace("found cached file :) " + path);
+      LOGGER.trace("found cached file :) {}", path);
       return cachedFile;
     }
 
-    // TODO: when does this happen?!?!
     // is the path already inside the cache dir? serve direct
     if (path.startsWith(CACHE_DIR.toAbsolutePath())) {
       return path;
@@ -328,28 +368,22 @@ public class ImageCache {
     if (!Globals.settings.isImageCache()) {
       LOGGER.trace("ImageCache not activated!");
       // need to return null, else the caller couldn't distinguish between cached/original file
-      // return path;
       return null;
     }
 
     try {
-      Path p = ImageCache.cacheImage(path);
-      LOGGER.trace("cached file successfully :) " + p);
+      Path p = ImageCache.cacheImage(mediaFile);
+      LOGGER.trace("cached file successfully :) {}", p);
       return p;
     }
     catch (EmptyFileException e) {
-      LOGGER.warn("failed to cache file (file is empty): " + path);
-    }
-    catch (FileNotFoundException e) {
-      LOGGER.trace(e.getMessage());
+      LOGGER.warn("failed to cache file (file is empty): {}", path);
     }
     catch (Exception e) {
-      LOGGER.warn("problem caching file: " + e.getMessage());
+      LOGGER.warn("problem caching file: {}", e.getMessage());
     }
 
-    // fallback
     // need to return null, else the caller couldn't distinguish between cached/original file
-    // return path;
     return null;
   }
 
@@ -380,7 +414,7 @@ public class ImageCache {
     List<MediaFile> mediaFiles = new ArrayList<>(entity.getMediaFiles());
     for (MediaFile mediaFile : mediaFiles) {
       if (mediaFile.isGraphic()) {
-        Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());
+        Path file = ImageCache.getCachedFile(mediaFile);
         if (file != null) {
           Utils.deleteFileSafely(file);
         }

@@ -391,16 +391,16 @@ public class MovieSet extends MediaEntity {
     return true;
   }
 
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER))) {
-      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.POSTER)));
+      filesToCache.add(new MediaFile(Paths.get(getArtworkFilename(MediaFileType.POSTER))));
     }
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))) {
-      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.FANART)));
+      filesToCache.add(new MediaFile(Paths.get(getArtworkFilename(MediaFileType.FANART))));
     }
 
     return filesToCache;

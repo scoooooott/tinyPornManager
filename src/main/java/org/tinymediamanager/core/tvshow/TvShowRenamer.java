@@ -202,23 +202,18 @@ public class TvShowRenamer {
     String oldPathname = show.getPathNIO().toString();
 
     if (!newPathname.isEmpty()) {
-      // newPathname = show.getDataSource() + File.separator + newPathname;
       Path srcDir = Paths.get(oldPathname);
       Path destDir = Paths.get(newPathname);
       // move directory if needed
-      // if (!srcDir.equals(destDir)) {
       if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
         try {
           // ######################################################################
           // ## invalidate image cache
           // ######################################################################
           for (MediaFile gfx : show.getMediaFiles()) {
-            if (gfx.isGraphic()) {
-              ImageCache.invalidateCachedImage(gfx.getFileAsPath());
-            }
+            ImageCache.invalidateCachedImage(gfx);
           }
 
-          // FileUtils.moveDirectory(srcDir, destDir);
           // create parent if needed
           if (!Files.exists(destDir.getParent())) {
             Files.createDirectory(destDir.getParent());
@@ -239,19 +234,13 @@ public class TvShowRenamer {
             // ######################################################################
             if (Settings.getInstance().isImageCache()) {
               for (MediaFile gfx : show.getMediaFiles()) {
-                if (gfx.isGraphic()) {
-                  try {
-                    ImageCache.cacheImage(gfx.getFileAsPath());
-                  }
-                  catch (Exception ignored) {
-                  }
-                }
+                ImageCache.cacheImageSilently(gfx);
               }
             }
           }
         }
         catch (Exception e) {
-          LOGGER.error("error moving folder: ", e.getMessage());
+          LOGGER.error("error moving folder: {}", e.getMessage());
           MessageManager.instance
               .pushMessage(new Message(MessageLevel.ERROR, srcDir, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
         }
@@ -338,9 +327,7 @@ public class TvShowRenamer {
     // ## invalidate image cache
     // ######################################################################
     for (MediaFile gfx : tvShow.getMediaFiles()) {
-      if (gfx.isGraphic()) {
-        ImageCache.invalidateCachedImage(gfx.getFileAsPath());
-      }
+      ImageCache.invalidateCachedImage(gfx);
     }
 
     // remove duplicate MediaFiles
@@ -358,19 +345,19 @@ public class TvShowRenamer {
       if (!needed.contains(cleanup.get(i))) {
         MediaFile cl = cleanup.get(i);
         if (existingFiles.contains(cl.getFileAsPath())) {
-          LOGGER.debug("Deleting " + cl.getFileAsPath());
+          LOGGER.debug("Deleting {}", cl.getFileAsPath());
           Utils.deleteFileWithBackup(cl.getFileAsPath(), tvShow.getDataSource());
         }
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(cl.getFileAsPath().getParent())) {
           if (!directoryStream.iterator().hasNext()) {
             // no iterator = empty
-            LOGGER.debug("Deleting empty Directory " + cl.getFileAsPath().getParent());
+            LOGGER.debug("Deleting empty Directory {}", cl.getFileAsPath().getParent());
             Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
           }
         }
         catch (IOException e) {
-          LOGGER.error("cleanup of " + cl.getFileAsPath().toString() + " : " + e.getMessage());
+          LOGGER.error("cleanup of {} - {}", cl.getFileAsPath(), e.getMessage());
         }
       }
     }
@@ -380,9 +367,7 @@ public class TvShowRenamer {
     // ######################################################################
     if (Settings.getInstance().isImageCache()) {
       for (MediaFile gfx : tvShow.getMediaFiles()) {
-        if (gfx.isGraphic()) {
-          ImageCache.cacheImageSilently(gfx.getFileAsPath());
-        }
+        ImageCache.cacheImageSilently(gfx);
       }
     }
 
@@ -523,7 +508,7 @@ public class TvShowRenamer {
         MediaFileType.CHARACTERART, MediaFileType.KEYART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
-      LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
+      LOGGER.trace("Rename 1:1 {} - {}", other.getType(), other.getFileAsPath());
 
       List<MediaFile> newMFs = generateEpisodeFilenames(episode.getTvShow(), other); // 1:N
       newMFs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
@@ -544,9 +529,7 @@ public class TvShowRenamer {
     // ## invalidate image cache
     // ######################################################################
     for (MediaFile gfx : episode.getMediaFiles()) {
-      if (gfx.isGraphic()) {
-        ImageCache.invalidateCachedImage(gfx.getFileAsPath());
-      }
+      ImageCache.invalidateCachedImage(gfx);
     }
 
     // remove duplicate MediaFiles
@@ -563,14 +546,14 @@ public class TvShowRenamer {
       if (!needed.contains(cleanup.get(i))) {
         MediaFile cl = cleanup.get(i);
         if (Files.exists(cl.getFileAsPath())) { // unneeded, but for not displaying wrong deletes in logger...
-          LOGGER.debug("Deleting " + cl.getFileAsPath());
+          LOGGER.debug("Deleting {}", cl.getFileAsPath());
           Utils.deleteFileWithBackup(cl.getFileAsPath(), episode.getTvShow().getDataSource());
         }
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(cl.getFileAsPath().getParent())) {
           if (!directoryStream.iterator().hasNext()) {
             // no iterator = empty
-            LOGGER.debug("Deleting empty Directory " + cl.getFileAsPath().getParent());
+            LOGGER.debug("Deleting empty Directory {}", cl.getFileAsPath().getParent());
             Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
           }
         }
@@ -598,13 +581,7 @@ public class TvShowRenamer {
       // ######################################################################
       if (Settings.getInstance().isImageCache()) {
         for (MediaFile gfx : e.getMediaFiles()) {
-          if (gfx.isGraphic()) {
-            try {
-              ImageCache.cacheImage(gfx.getFileAsPath());
-            }
-            catch (Exception ignored) {
-            }
-          }
+          ImageCache.cacheImageSilently(gfx);
         }
       }
     }

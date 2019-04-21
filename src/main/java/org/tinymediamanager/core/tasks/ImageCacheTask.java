@@ -15,9 +15,6 @@
  */
 package org.tinymediamanager.core.tasks;
 
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.EmptyFileException;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -39,24 +37,14 @@ public class ImageCacheTask extends TmmThreadPool {
   private static final Logger         LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
   private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<Path>                  filesToCache = new ArrayList<>();
-
-  public ImageCacheTask(String pathToFile) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"));
-    filesToCache.add(Paths.get(pathToFile));
-  }
+  private List<MediaFile>             filesToCache = new ArrayList<>();
 
   @Override
   public void callback(Object obj) {
     publishState(progressDone);
   }
 
-  public ImageCacheTask(Path file) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"));
-    filesToCache.add(file);
-  }
-
-  public ImageCacheTask(List<Path> files) {
+  public ImageCacheTask(List<MediaFile> files) {
     super(BUNDLE.getString("tmm.rebuildimagecache"));
     filesToCache.addAll(files);
   }
@@ -71,8 +59,7 @@ public class ImageCacheTask extends TmmThreadPool {
 
     initThreadPool(threadCount, "imageCache");
 
-    int i = 0;
-    for (Path fileToCache : filesToCache) {
+    for (MediaFile fileToCache : filesToCache) {
       if (cancel) {
         return;
       }
@@ -82,9 +69,9 @@ public class ImageCacheTask extends TmmThreadPool {
   }
 
   private class CacheTask implements Callable<Object> {
-    private final Path fileToCache;
+    private final MediaFile fileToCache;
 
-    public CacheTask(Path fileToCache) {
+    CacheTask(MediaFile fileToCache) {
       this.fileToCache = fileToCache;
     }
 
@@ -94,13 +81,10 @@ public class ImageCacheTask extends TmmThreadPool {
         ImageCache.cacheImage(fileToCache);
       }
       catch (EmptyFileException e) {
-        LOGGER.warn("failed to cache file (file is empty): " + fileToCache);
-      }
-      catch (FileNotFoundException e) {
-        LOGGER.warn("failed to cache file (file not found): " + fileToCache);
+        LOGGER.warn("failed to cache file (file is empty): {}", fileToCache);
       }
       catch (Exception e) {
-        LOGGER.warn("failed to cache file: " + fileToCache, e);
+        LOGGER.warn("failed to cache file: {} - {}", fileToCache, e);
       }
       return null;
     }

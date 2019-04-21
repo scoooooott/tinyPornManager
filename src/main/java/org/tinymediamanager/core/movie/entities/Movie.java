@@ -1598,12 +1598,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * Gets the images to cache.
    */
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // image files
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
     for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFileAsPath());
+        filesToCache.add(mf);
       }
     }
 
@@ -1622,21 +1622,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * @return list of actor images on filesystem
    */
-  private List<Path> listActorFiles() {
-    List<Path> fileNames = new ArrayList<>();
+  private List<MediaFile> listActorFiles() {
+    List<MediaFile> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(Person.ACTOR_DIR))) {
       for (Path path : directoryStream) {
         if (Utils.isRegularFile(path)) {
           // only get graphics
           MediaFile mf = new MediaFile(path);
           if (mf.isGraphic()) {
-            fileNames.add(path.toAbsolutePath());
+            fileNames.add(mf);
           }
         }
       }
     }
     catch (IOException e) {
-      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(Person.ACTOR_DIR));
+      LOGGER.warn("Cannot get actors: {}", getPathNIO().resolve(Person.ACTOR_DIR));
     }
     return fileNames;
   }

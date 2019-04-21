@@ -631,7 +631,7 @@ public class MovieRenamer {
     // ######################################################################
     for (MediaFile gfx : movie.getMediaFiles()) {
       if (gfx.isGraphic()) {
-        ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+        ImageCache.invalidateCachedImage(gfx);
       }
     }
 
@@ -717,9 +717,10 @@ public class MovieRenamer {
       for (MediaFile gfx : movie.getMediaFiles()) {
         if (gfx.isGraphic()) {
           try {
-            ImageCache.cacheImage(gfx.getFileAsPath());
+            ImageCache.cacheImage(gfx);
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.debug("could not create a cached image: {}", e.getMessage());
           }
         }
       }

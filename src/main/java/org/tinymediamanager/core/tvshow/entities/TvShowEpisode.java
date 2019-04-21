@@ -1033,13 +1033,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * 
    * @return the images to cache
    */
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
 
     for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFileAsPath());
+        filesToCache.add(mf);
       }
     }
 

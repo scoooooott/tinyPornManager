@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.tinymediamanager.core;
 
 import java.nio.file.Path;
 
 /**
- * The class EmptyFileException. It is thrown when we try to work with an empty file
- * 
+ * The class {@link InvalidFileTypeException} is used to indicate that the given file is invalid
+ *
  * @author Manuel Laggner
  */
-public class EmptyFileException extends Exception {
-  private static final long    serialVersionUID = -7369038801049706860L;
+public class InvalidFileTypeException extends Exception {
+  private static final long    serialVersionUID = -1369038811049706860L;
 
   private final transient Path file;
 
-  public EmptyFileException(Path file) {
+  public InvalidFileTypeException(Path file) {
     this.file = file;
   }
 
