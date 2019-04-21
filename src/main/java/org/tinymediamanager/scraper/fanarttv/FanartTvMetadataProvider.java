@@ -110,7 +110,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
-    LOGGER.debug("getArtwork() " + options.toString());
+    LOGGER.debug("getArtwork() - {}", options);
 
     // lazy initialization of the api
     initAPI();
@@ -133,7 +133,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     // buffer the artwork
     MediaMetadata md = options.getMetadata();
-    if (md != null && artwork.size() > 0) {
+    if (md != null && !artwork.isEmpty()) {
       md.addMediaArt(artwork);
     }
 
@@ -165,28 +165,32 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     if (StringUtils.isNotBlank(imdbId)) {
       try {
-        LOGGER.debug("getArtwork with IMDB id: " + imdbId);
+        LOGGER.debug("getArtwork with IMDB id: {}", imdbId);
         images = api.getMovieService().getMovieImages(imdbId).execute();
       }
       catch (Exception e) {
-        LOGGER.debug("failed to get artwork: " + e.getMessage());
+        LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
     }
 
     if (images == null && tmdbId != 0) {
       try {
-        LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
+        LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
         images = api.getMovieService().getMovieImages(Integer.toString(tmdbId)).execute();
       }
       catch (Exception e) {
-        LOGGER.debug("failed to get artwork: " + e.getMessage());
+        LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
     }
 
     // if there has been an exception and nothing has been found, throw this exception
     if ((images == null || !images.isSuccessful()) && savedException != null) {
+      // if the thread has been interrupted, to no rethrow that exception
+      if (savedException instanceof InterruptedException) {
+        return returnArtwork;
+      }
       throw new ScrapeException(savedException);
     }
 
@@ -238,11 +242,16 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     Response<Images> images = null;
     try {
-      LOGGER.debug("getArtwork with TVDB id: " + tvdbId);
+      LOGGER.debug("getArtwork with TVDB id: {}", tvdbId);
       images = api.getTvShowService().getTvShowImages(tvdbId).execute();
     }
     catch (Exception e) {
-      LOGGER.debug("failed to get artwork: " + e.getMessage());
+      LOGGER.debug("failed to get artwork: {}", e.getMessage());
+      // if the thread has been interrupted, to no rethrow that exception
+      if (e instanceof InterruptedException) {
+        return returnArtwork;
+      }
+
       throw new ScrapeException(e);
     }
 
