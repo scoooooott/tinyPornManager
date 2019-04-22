@@ -548,8 +548,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           return;
         }
         imageType = ImageType.FANART;
-        extrathumbs = new ArrayList<>();
-        extrafanarts = new ArrayList<>();
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+          extrathumbs = new ArrayList<>();
+        }
+        if (MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+          extrafanarts = new ArrayList<>();
+        }
         break;
 
       case BANNER:

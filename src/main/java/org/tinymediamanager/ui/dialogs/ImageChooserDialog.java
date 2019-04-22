@@ -516,18 +516,22 @@ public class ImageChooserDialog extends TmmDialog {
     button.putClientProperty("MediaArtworkSize", cb);
     imagePanel.add(cb, gbc);
 
+    int row = 0;
+
     // should we provide an option for extrathumbs
     if (type == ImageType.FANART && extraThumbs != null) {
+      row++;
+
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
-      gbc.gridy = 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JLabel label = new JLabel("Extrathumb");
       imagePanel.add(label, gbc);
 
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrathumb", chkbx);
@@ -536,16 +540,18 @@ public class ImageChooserDialog extends TmmDialog {
 
     // should we provide an option for extrafanart
     if (type == ImageType.FANART && extraFanarts != null) {
+      row++;
+
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
-      gbc.gridy = MovieModuleManager.SETTINGS.isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JLabel label = new JLabel("Extrafanart");
       imagePanel.add(label, gbc);
 
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = MovieModuleManager.SETTINGS.isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrafanart", chkbx);
