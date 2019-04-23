@@ -38,7 +38,7 @@ public class ListUtils {
    * @return the same iterable collection (if <i>it</i> was not null) or an empty iterable collection of the same type
    */
   public static <T> Iterable<T> nullSafe(Iterable<T> it) {
-    return it != null ? it : Collections.<T> emptySet();
+    return it != null ? it : Collections.emptySet();
   }
 
   /**
@@ -55,6 +55,11 @@ public class ListUtils {
    *          the new entries which should be merged into the the existing list
    */
   public static <T> void mergeLists(List<T> baseList, List<T> newItems) {
+    // if any of these lists is null, we cannot do anything here
+    if (baseList == null || newItems == null) {
+      return;
+    }
+
     // first remove old ones
     for (int i = baseList.size() - 1; i >= 0; i--) {
       T entry = baseList.get(i);
