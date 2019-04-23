@@ -618,15 +618,17 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     }
 
     // set extrathumbs and extrafanarts
-    if (mediaFileType == MediaFileType.FANART) {
+    if (extrathumbs != null) {
       movieToScrape.setExtraThumbs(extrathumbs);
+      if (!extrathumbs.isEmpty()) {
+        movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
+      }
+    }
+
+    if (extrafanarts != null) {
       movieToScrape.setExtraFanarts(extrafanarts);
       if (!extrafanarts.isEmpty()) {
         movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
-      }
-
-      if (!extrathumbs.isEmpty()) {
-        movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
       }
     }
   }
