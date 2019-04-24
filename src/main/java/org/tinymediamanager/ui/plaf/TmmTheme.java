@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.ui.plaf;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.io.InputStream;
+
 import com.jtattoo.plaf.AbstractTheme;
 
 /**
@@ -23,5 +27,22 @@ import com.jtattoo.plaf.AbstractTheme;
  * @author Manuel Laggner
  */
 abstract public class TmmTheme extends AbstractTheme {
-  public static final String FONT = "Dialog";
+  public static final String FONT = loadDefaultFont();
+
+  private static String loadDefaultFont() {
+    try (InputStream fsRegular = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
+        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
+      Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fsRegular);
+      GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuRegular);
+
+      Font dejavuMono = Font.createFont(Font.TRUETYPE_FONT, fsMono);
+      GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuMono);
+
+      return "DejaVu Sans";
+    }
+    catch (Exception ignored) {
+      // just fall back to Dialog if we could not load DejaVuSans
+    }
+    return "Dialog";
+  }
 }
