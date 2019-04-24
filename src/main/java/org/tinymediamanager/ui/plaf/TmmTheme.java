@@ -27,9 +27,9 @@ import com.jtattoo.plaf.AbstractTheme;
  * @author Manuel Laggner
  */
 abstract public class TmmTheme extends AbstractTheme {
-  public static final String FONT = loadDefaultFont();
+  public static final String FONT = "Dialog";
 
-  private static String loadDefaultFont() {
+  static {
     try (InputStream fsRegular = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
         InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
       Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fsRegular);
@@ -38,11 +38,9 @@ abstract public class TmmTheme extends AbstractTheme {
       Font dejavuMono = Font.createFont(Font.TRUETYPE_FONT, fsMono);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuMono);
 
-      return "DejaVu Sans";
     }
     catch (Exception ignored) {
-      // just fall back to Dialog if we could not load DejaVuSans
+      // nothing to be done here
     }
-    return "Dialog";
   }
 }
