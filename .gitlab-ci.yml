@@ -15,11 +15,6 @@ build:
   script:
     - mvn $MAVEN_CLI_OPTS -U clean compile
 
-test:
-  stage: test
-  script:
-    - mvn $MAVEN_CLI_OPTS -DskipTests=false -Dmaven.test.failure.ignore=false test
-
 deploy_snapshot:
   stage: deploy
   environment: snapshot
