@@ -162,7 +162,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   private MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
-        "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork",
+        "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork</html>",
         TheTvDbMetadataProvider.class.getResource("/thetvdb_com.png"));
     providerInfo.setVersion(TheTvDbMetadataProvider.class);
 
