@@ -15,12 +15,6 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.security.CodeSource;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,13 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is a helper class for language related tasks
@@ -48,10 +36,6 @@ public class LanguageUtils {
   public final static LinkedHashMap<String, Locale> KEY_TO_COUNTRY_LOCALE_MAP;
 
   private final static Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
-
-  private static final Pattern                      localePattern    = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
-      Pattern.CASE_INSENSITIVE);
-  private static List<Locale>                       availableLocales = new ArrayList<>();
 
   static {
     ISO_639_2B_EXCEPTIONS = createIso6392BExceptions();
@@ -386,116 +370,4 @@ public class LanguageUtils {
   public static boolean doesStringEndWithLanguage(String string, String language) {
     return string.equalsIgnoreCase(language) || string.matches("(?i).*[ _.-]+" + Pattern.quote(language) + "$");
   }
-
-  /**
-   * returns a list of all available GUI languages
-   * 
-   * @return List of Locales
-   */
-  public static List<Locale> getLanguages() {
-    if (!availableLocales.isEmpty()) {
-      // do not return the original list to avoid external manipulation
-      return new ArrayList<>(availableLocales);
-    }
-
-    availableLocales.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
-    try {
-      // list all properties files from the classpath
-      InputStream is = LanguageUtils.class.getResourceAsStream("/");
-      if (is != null) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String resource;
-        while ((resource = br.readLine()) != null) {
-          parseLocaleFromFilename(resource);
-        }
-      }
-      else {
-        // we may be in a .jar file
-        CodeSource src = LanguageUtils.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-          URL jar = src.getLocation();
-          try (InputStream jarInputStream = jar.openStream(); ZipInputStream zip = new ZipInputStream(jarInputStream)) {
-            while (true) {
-              ZipEntry e = zip.getNextEntry();
-              if (e == null) {
-                break;
-              }
-              parseLocaleFromFilename(e.getName());
-            }
-          }
-        }
-      }
-    }
-    catch (Exception ignore) {
-      // ignore
-    }
-
-    // do not return the original list to avoid external manipulation
-    return new ArrayList<>(availableLocales);
-  }
-
-  private static void parseLocaleFromFilename(String filename) {
-    Matcher matcher = localePattern.matcher(filename);
-    if (matcher.matches()) {
-      Locale myloc;
-
-      String language = matcher.group(1);
-      String country = matcher.group(2);
-
-      if (country != null) {
-        // found language & country
-        myloc = new Locale(language, country);
-      }
-      else {
-        // found only language
-        myloc = getLocaleFromLanguage(language);
-      }
-      if (myloc != null && !availableLocales.contains(myloc)) {
-        availableLocales.add(myloc);
-      }
-    }
-  }
-
-  /**
-   * Gets a correct Locale (language + country) from given language.
-   * 
-   * @param language
-   *          as 2char
-   * @return Locale
-   */
-  public static Locale getLocaleFromLanguage(String language) {
-    if (StringUtils.isBlank(language)) {
-      return Locale.getDefault();
-    }
-    // do we have a newer locale settings style?
-    if (language.length() > 2) {
-      try {
-        return LocaleUtils.toLocale(language);
-      }
-      catch (Exception e) {
-        // Whoopsie. try to fix string....
-        if (language.matches("^\\w\\w_\\w\\w.*")) {
-          return LocaleUtils.toLocale(language.substring(0, 5));
-        }
-      }
-    }
-    if (language.equalsIgnoreCase("en")) {
-      return new Locale("en", "US"); // don't mess around; at least fixtate this
-    }
-    Locale l = null;
-    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
-    for (Locale locale : countries) {
-      if (locale.getCountry().equalsIgnoreCase(language)) {
-        // map to main countries; de->de_DE (and not de_CH)
-        l = locale;
-      }
-    }
-    if (l == null && !countries.isEmpty()) {
-      // well, take the first one
-      l = countries.get(0);
-    }
-
-    return l;
-  }
-
 }
