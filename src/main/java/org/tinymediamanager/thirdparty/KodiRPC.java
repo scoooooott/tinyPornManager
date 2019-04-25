@@ -466,16 +466,23 @@ public class KodiRPC {
     if (isConnected()) {
       cm.disconnect();
     }
-    LOGGER.info("Connecting...");
-    cm.connect(config);
-
-    if (isConnected()) {
-      getAndSetKodiVersion();
-      getAndSetVideoDataSources();
-      getAndSetAudioDataSources();
-      getAndSetMovieMappings();
-      getAndSetTvShowMappings();
-    }
+    new Thread(() -> {
+      try {
+        LOGGER.info("Connecting...");
+        cm.connect(config);
+      }
+      catch (ApiException e) {
+        LOGGER.error("Error connecting to Kodi", e);
+        return;
+      }
+      if (isConnected()) {
+        getAndSetKodiVersion();
+        getAndSetVideoDataSources();
+        getAndSetAudioDataSources();
+        getAndSetMovieMappings();
+        getAndSetTvShowMappings();
+      }
+    }).start();
   }
 
   public void connect() throws ApiException {

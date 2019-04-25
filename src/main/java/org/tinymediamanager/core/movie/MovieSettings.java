@@ -40,6 +40,7 @@ import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieDiscartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieKeyartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
@@ -49,6 +50,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
@@ -83,6 +85,7 @@ public class MovieSettings extends AbstractSettings {
   private final static String              LOGO_FILENAME                       = "logoFilename";
   private final static String              CLEARLOGO_FILENAME                  = "clearlogoFilename";
   private final static String              DISCART_FILENAME                    = "discartFilename";
+  private final static String              KEYART_FILENAME                     = "keyartFilename";
   private final static String              TRAILER_FILENAME                    = "trailerFilename";
   private final static String              ARTWORK_SCRAPERS                    = "artworkScrapers";
   private final static String              TRAILER_SCRAPERS                    = "trailerScrapers";
@@ -91,6 +94,7 @@ public class MovieSettings extends AbstractSettings {
   private final static String              UI_FILTERS                          = "uiFilters";
   private final static String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
   private final static String              SKIP_FOLDER                         = "skipFolder";
+  private final static String              CHECK_IMAGES_MOVIE                  = "checkImagesMovie";
 
   private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<>());
   private final List<MovieNfoNaming>       nfoFilenames                        = new ArrayList<>();
@@ -102,7 +106,9 @@ public class MovieSettings extends AbstractSettings {
   private final List<MovieClearlogoNaming> clearlogoFilenames                  = new ArrayList<>();
   private final List<MovieLogoNaming>      logoFilenames                       = new ArrayList<>();
   private final List<MovieDiscartNaming>   discartFilenames                    = new ArrayList<>();
+  private final List<MovieKeyartNaming>    keyartFilenames                     = new ArrayList<>();
   private final List<MovieTrailerNaming>   trailerFilenames                    = new ArrayList<>();
+  private final List<MediaArtworkType>     checkImagesMovie                    = new ArrayList<>();
   private final List<String>               badWords                            = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>               artworkScrapers                     = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>               trailerScrapers                     = ObservableCollections.observableList(new ArrayList<>());
@@ -219,8 +225,15 @@ public class MovieSettings extends AbstractSettings {
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
 
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
+
     trailerFilenames.clear();
     addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
+    checkImagesMovie.clear();
+    addCheckImagesMovie(MediaArtworkType.POSTER);
+    addCheckImagesMovie(MediaArtworkType.BACKGROUND);
 
     // activate default scrapers
     artworkScrapers.clear();
@@ -499,8 +512,40 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange(DISCART_FILENAME, null, discartFilenames);
   }
 
+  public void clearCheckImagesMovie() {
+    checkImagesMovie.clear();
+    firePropertyChange(CHECK_IMAGES_MOVIE, null, checkImagesMovie);
+  }
+
+  public List<MediaArtworkType> getCheckImagesMovie() {
+    return new ArrayList<>(this.checkImagesMovie);
+  }
+
+  public void addCheckImagesMovie(MediaArtworkType type) {
+    if (!checkImagesMovie.contains(type)) {
+      checkImagesMovie.add(type);
+      firePropertyChange(CHECK_IMAGES_MOVIE, null, checkImagesMovie);
+    }
+  }
+
   public List<MovieDiscartNaming> getDiscartFilenames() {
     return new ArrayList<>(this.discartFilenames);
+  }
+
+  public void addKeyartFilename(MovieKeyartNaming filename) {
+    if (!keyartFilenames.contains(filename)) {
+      keyartFilenames.add(filename);
+      firePropertyChange(KEYART_FILENAME, null, keyartFilenames);
+    }
+  }
+
+  public void clearKeyartFilenames() {
+    keyartFilenames.clear();
+    firePropertyChange(KEYART_FILENAME, null, keyartFilenames);
+  }
+
+  public List<MovieKeyartNaming> getKeyartFilenames() {
+    return keyartFilenames;
   }
 
   public PosterSizes getImagePosterSize() {
@@ -1190,6 +1235,9 @@ public class MovieSettings extends AbstractSettings {
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
 
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
+
     // other settings
     setMovieConnector(MovieConnectors.XBMC);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1230,6 +1278,9 @@ public class MovieSettings extends AbstractSettings {
 
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
+
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
 
     // other settings
     setMovieConnector(MovieConnectors.KODI);
@@ -1272,6 +1323,9 @@ public class MovieSettings extends AbstractSettings {
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
 
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
+
     // other settings
     setMovieConnector(MovieConnectors.MP);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1313,6 +1367,9 @@ public class MovieSettings extends AbstractSettings {
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
 
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
+
     // other settings
     setMovieConnector(MovieConnectors.KODI);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1353,6 +1410,9 @@ public class MovieSettings extends AbstractSettings {
 
     discartFilenames.clear();
     addDiscartFilename(MovieDiscartNaming.DISC);
+
+    keyartFilenames.clear();
+    addKeyartFilename(MovieKeyartNaming.KEYART);
 
     // other settings
     setMovieConnector(MovieConnectors.XBMC);

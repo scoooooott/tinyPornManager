@@ -49,6 +49,13 @@ public interface IMediaInformation {
   String getMediaInfoVideoFormat();
 
   /**
+   * Returns the bit depth of video (eg 8 / 10)
+   * 
+   * @return
+   */
+  int getMediaInfoVideoBitDepth();
+
+  /**
    * get the video resolution (e.g. 1920x1080)
    *
    * @return the video resolution

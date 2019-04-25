@@ -149,11 +149,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      List<Path> imageFiles = new ArrayList<>();
+      List<MediaFile> imageFiles = new ArrayList<>();
 
       if (movieFolders.isEmpty()) {
         for (String ds : dataSources) {
-          LOGGER.info("Start UDS on datasource: " + ds);
+          LOGGER.info("Start UDS on datasource: {}", ds);
           initThreadPool(3, "update");
           setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
           publishState();
@@ -175,8 +175,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           List<Path> existingMovieDirs = new ArrayList<>();
           List<Path> rootList = listFilesAndDirs(dsAsPath);
 
-          // when there is _nothing_ found in the ds root, it might be offline -
-          // skip further processing;
+          // when there is _nothing_ found in the ds root, it might be offline - skip further processing
           // not in Windows since that won't happen there
           if (rootList.isEmpty() && !Platform.isWindows()) {
             // error - continue with next datasource

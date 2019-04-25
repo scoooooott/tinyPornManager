@@ -86,7 +86,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
   private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
   private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList("", "-"));
+  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList(" ", "-"));
   private EventList<TvShowRenamerExample>          exampleEventList;
 
   /*
@@ -192,6 +192,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
     exampleEventList.add(new TvShowRenamerExample("${videoCodec}"));
     exampleEventList.add(new TvShowRenamerExample("${videoFormat}"));
+    exampleEventList.add(new TvShowRenamerExample("${videoBitDepth}"));
     exampleEventList.add(new TvShowRenamerExample("${audioCodec}"));
     exampleEventList.add(new TvShowRenamerExample("${audioCodecList}"));
     exampleEventList.add(new TvShowRenamerExample("${audioCodecsAsString}"));

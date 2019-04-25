@@ -25,10 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -93,10 +91,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
   private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
+  private static final Pattern                       CHARACTERART_PATTERN     = Pattern.compile("(?i)(.*-characterart|characterart)\\..{2,4}");
   // be careful: disc.avi would be valid!
   private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
   private static final Pattern                       CLEARART_PATTERN         = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
+  private static final Pattern                       KEYART_PATTERN           = Pattern.compile("(?i)(.*-keyart|keyart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_96P         = "96p";
   public static final String                         VIDEO_FORMAT_120P        = "120p";
@@ -260,14 +260,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (sub.getLanguage().isEmpty() && this.filename.endsWith(".sub")) {
       // not found in name, try to parse from idx
-      BufferedReader br;
-      try {
-        Path idx = Paths.get(this.path, this.filename.replaceFirst("sub$", "idx"));
-        br = new BufferedReader(new FileReader(idx.toFile()));
+      Path idx = Paths.get(this.path, this.filename.replaceFirst("sub$", "idx"));
+
+      try (FileReader fr = new FileReader(idx.toFile()); BufferedReader br = new BufferedReader(fr)) {
         String line;
         while ((line = br.readLine()) != null) {
           String lang = "";
-          // System.out.println("line: " + line);
+
           if (line.startsWith("id:")) {
             lang = StrgUtils.substr(line, "id: (.*?),");
           }
@@ -279,10 +278,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             break;
           }
         }
-        br.close();
       }
       catch (IOException e) {
-        // ignore
+        LOGGER.debug("could not read idx file: {}", e.getMessage());
       }
     }
     sub.setCodec(getExtension());
@@ -304,7 +302,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       parentparent = FilenameUtils.getBaseName(getFileAsPath().getParent().getParent().toString()).toLowerCase(Locale.ROOT);
     }
     catch (Exception e) {
-      // could happen if we are no 2 levels deep;
+      // could happen if we are no 2 levels deep
       LOGGER.debug("way to up");
     }
 
@@ -381,8 +379,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private MediaFileType parseImageType() {
     String name = getFilename();
-    // String ext = getExtension().toLowerCase(Locale.ROOT);
-    // String basename = FilenameUtils.getBaseName(getFilename());
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     // movieset artwork
@@ -466,6 +462,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.DISC;
     }
 
+    // characterart.*
+    matcher = CHARACTERART_PATTERN.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.CHARACTERART;
+    }
+
+    // keyart.*
+    matcher = KEYART_PATTERN.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.KEYART;
+    }
+
     // folder style as last chance
     if (foldername.equalsIgnoreCase("extrafanarts") || foldername.equalsIgnoreCase("extrafanart")) {
       return MediaFileType.EXTRAFANART;
@@ -502,6 +510,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case LOGO:
       case CLEARLOGO:
       case CLEARART:
+      case CHARACTERART:
+      case KEYART:
       case SEASON_POSTER:
       case SEASON_BANNER:
       case SEASON_THUMB:
@@ -1059,7 +1069,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public void setContainerFormatDirect() {
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
-    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
+  }
+
+  /**
+   * use a scanner to get the first entry
+   * 
+   * @param string
+   *          the string to parse
+   * @return the first entry or an empty string
+   */
+  private String getFirstEntryViaScanner(String string) {
+    if (StringUtils.isBlank(string)) {
+      return "";
+    }
+    try (Scanner scanner = new Scanner(string)) {
+      return scanner.next();
+    }
+    catch (Exception e) {
+      LOGGER.error("could not parse string {} with a Scanner: {}", string, e.getMessage());
+    }
+    return "";
   }
 
   /**
@@ -1870,6 +1900,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return 0;
   }
 
+  // https://github.com/MediaArea/MediaInfoLib/tree/master/Source/MediaInfo/Audio
   private void fetchAudioInformation() {
     int streams = parseToInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
     if (streams == 0) {
@@ -1882,7 +1913,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
       // workaround for DTS & TrueHD variant detection
       // search for well known String in defined keys (changes between different MI versions!)
-      String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "CodecID", "Codec" };
+      String[] acSearch = new String[] { "Format", "Format_Profile", "Format_Commercial", "Format_Commercial_IfAny", "CodecID", "Codec" };
       String audioCodec = getMediaInfoContains(StreamKind.Audio, i, "TrueHD", acSearch);
       if (audioCodec.isEmpty()) {
         audioCodec = getMediaInfoContains(StreamKind.Audio, i, "Atmos", acSearch);
@@ -1897,17 +1928,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         audioCodec = audioCodec.replaceAll("\\p{Punct}", "");
       }
 
-      // see https://github.com/MediaArea/MediaInfo/issues/286
-      // since 18.08
+      // https://github.com/Radarr/Radarr/blob/develop/src/NzbDrone.Core/MediaFiles/MediaInfo/MediaInfoFormatter.cs#L35
       String addFeature = getMediaInfo(StreamKind.Audio, i, "Format_AdditionalFeatures");
       if (!addFeature.isEmpty()) {
         if ("dts".equalsIgnoreCase(audioCodec)) {
-          if (addFeature.equalsIgnoreCase("XLL X")) {
-            audioCodec = "DTS-X";
+          if (addFeature.startsWith("XLL")) {
+            if (addFeature.endsWith("X")) {
+              audioCodec = "DTS-X";
+            }
+            else {
+              audioCodec = "DTSHD-MA";
+            }
           }
-          else if (addFeature.equalsIgnoreCase("XLL")) {
-            audioCodec = "DTSHD-MA";
+          if (addFeature.equals("ES")) {
+            audioCodec = "DTS-ES";
           }
+          if (addFeature.equals("XBR")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          // stays DTS
         }
         if ("TrueHD".equalsIgnoreCase(audioCodec)) {
           if (addFeature.equalsIgnoreCase("16-ch")) {
@@ -1916,36 +1955,34 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
       }
 
-      // STILL not found a sub format?
-      if ("dts".equalsIgnoreCase(audioCodec) || "truehd".equalsIgnoreCase(audioCodec)) {
-
-        // old 18.05 style
-        String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
-        if (!audioAddition.isEmpty()) {
-          if ("dts".equalsIgnoreCase(audioCodec)) {
-            // <Format_Profile>X / MA / Core</Format_Profile>
-            if (audioAddition.contains("ES")) {
-              audioCodec = "DTS-ES";
-            }
-            if (audioAddition.contains("HRA")) {
-              audioCodec = "DTSHD-HRA";
-            }
-            if (audioAddition.contains("MA")) {
-              audioCodec = "DTSHD-MA";
-            }
-            if (audioAddition.contains("X")) {
-              audioCodec = "DTS-X";
-            }
+      // old 18.05 style
+      String audioProfile = getMediaInfo(StreamKind.Audio, i, "Format_Profile", "Format_profile"); // different case in XML
+      if (!audioProfile.isEmpty()) {
+        if ("dts".equalsIgnoreCase(audioCodec)) {
+          // <Format_Profile>X / MA / Core</Format_Profile>
+          if (audioProfile.contains("ES")) {
+            audioCodec = "DTS-ES";
           }
-          if ("TrueHD".equalsIgnoreCase(audioCodec)) {
-            if (audioAddition.contains("Atmos")) {
-              audioCodec = "Atmos";
-            }
+          if (audioProfile.contains("HRA")) {
+            audioCodec = "DTSHD-HRA";
+          }
+          if (audioProfile.contains("MA")) {
+            audioCodec = "DTSHD-MA";
+          }
+          if (audioProfile.contains("X")) {
+            audioCodec = "DTS-X";
           }
         }
+        if ("TrueHD".equalsIgnoreCase(audioCodec)) {
+          if (audioProfile.contains("Atmos")) {
+            audioCodec = "Atmos";
+          }
+        }
+      }
 
-        // newer 18.12 style
-        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial").toLowerCase(Locale.ROOT); // since 18.08
+      // newer 18.12 style
+      if ("ac3".equalsIgnoreCase(audioCodec) || "dts".equalsIgnoreCase(audioCodec) || "TrueHD".equalsIgnoreCase(audioCodec)) {
+        String commName = getMediaInfo(StreamKind.Audio, i, "Format_Commercial", "Format_Commercial_IfAny").toLowerCase(Locale.ROOT); // since 18.08
         if (!commName.isEmpty()) {
           if (commName.contains("master audio")) {
             audioCodec = "DTSHD-MA";
@@ -1958,6 +1995,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
           if (commName.contains("atmos")) {
             audioCodec = "Atmos";
+          }
+          // Dolby Digital EX
+          if (commName.contains("ex audio")) {
+            audioCodec = "AC3EX";
           }
         }
       }
@@ -2064,9 +2105,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
       videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
     }
+
+    // workaround for XVID
     if (codecId.equalsIgnoreCase("XVID")) {
       // XVID is open source variant MP4, only detectable through codecId
       videoCodec = "XVID";
+    }
+
+    // detect the right MPEG version
+    if (StringUtils.containsIgnoreCase(videoCodec, "MPEG")) {
+      // search for the version
+      try {
+        int version = Integer.parseInt(getMediaInfo(StreamKind.Video, 0, "Format_Version"));
+        videoCodec = "MPEG-" + version;
+      }
+      catch (Exception e) {
+        LOGGER.trace("could not parse MPEG version: {}", e.getMessage());
+      }
     }
 
     String bd = getMediaInfo(StreamKind.Video, 0, "BitDepth");
@@ -2088,11 +2143,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     setVideoWidth(width);
     setVideoHeight(height);
-    setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
+    setVideoCodec(getFirstEntryViaScanner(videoCodec));
 
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
     // get first extension
-    setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
     // if container format is still empty -> insert the extension
     if (StringUtils.isBlank(containerFormat)) {
@@ -2103,7 +2158,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
       video3DFormat = VIDEO_3D;
       String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase(Locale.ROOT);
-      LOGGER.debug("3D detected :) " + mvl);
+      LOGGER.debug("3D detected :) - {}", mvl);
       if (!StringUtils.isEmpty(mvl) && mvl.contains("top") && mvl.contains("bottom")) {
         video3DFormat = VIDEO_3D_HTAB; // assume HalfTAB as default
         if (height > width) {
@@ -2182,11 +2237,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     setVideoHeight(height);
     setVideoWidth(width);
-    setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
+    setVideoCodec(getFirstEntryViaScanner(videoCodec));
 
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
     // get first extension
-    setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+    setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
     String bd = getMediaInfo(StreamKind.Image, 0, "BitDepth");
     setBitDepth(parseToInt(bd));
@@ -2231,7 +2286,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
     catch (IOException e) {
       if (miSnapshot == null) { // maybe we set it already (from ISO) so only display message when empty
-        LOGGER.warn("could not get file information (size/date): " + e.getMessage());
+        LOGGER.warn("could not get file information (size/date): {}", e.getMessage());
       }
       // do not set/return here - we might have set it already... and the next check does check for a 0-byte file
       // setContainerFormat(getExtension());
@@ -2240,7 +2295,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
-      LOGGER.warn("0 Byte file detected: " + this.filename);
+      LOGGER.warn("0 Byte file detected: {}", this.filename);
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
       return;
@@ -2254,7 +2309,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // get media info
-    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    LOGGER.debug("start MediaInfo for {}", this.getFileAsPath());
     long discFilesSizes = 0L;
     if (isISO) {
       discFilesSizes = getMediaInfoSnapshotFromISO();
@@ -2265,7 +2320,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (miSnapshot == null) {
       // MI could not be opened
-      LOGGER.error("error getting MediaInfo for " + this.filename);
+      LOGGER.error("error getting MediaInfo for {}", this.filename);
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
       closeMediaInfo();
@@ -2311,8 +2366,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case LOGO:
       case CLEARLOGO:
       case CLEARART:
+      case CHARACTERART:
       case DISC:
       case EXTRATHUMB:
+      case KEYART:
         fetchImageInformation();
         break;
 
@@ -2320,7 +2377,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       default:
-        LOGGER.warn("no mediainformation handling for MediaFile type " + getType() + " yet.");
+        LOGGER.warn("no mediainformation handling for MediaFile type {} yet.", getType());
         break;
     }
 
@@ -2331,7 +2388,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
       // get first extension
-      setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
+      setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
 
       // if container format is still empty -> insert the extension
       if (StringUtils.isBlank(containerFormat)) {
@@ -2363,8 +2420,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
 
         // try getting some real file dates from MI
-        try {
-          // @formatter:off
+        // try {
+        // @formatter:off
           //    Released_Date             : The date/year that the item was released.
           //    Original/Released_Date    : The date/year that the item was originaly released.
           //    Recorded_Date             : The time/date/year that the recording began.
@@ -2375,17 +2432,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           //    File_Created_Date         : The time that the file was created on the file system
           //    File_Modified_Date        : The time that the file was modified on the file system
           // @formatter:on
-          String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
-              "Mastered_Date");
-          Date d = StrgUtils.parseDate(embeddedDate);
-          if (d.toInstant().toEpochMilli() < filedate) {
-            // so this is older than our file date - use it :)
-            filedate = d.toInstant().toEpochMilli();
-          }
-        }
-        catch (ParseException e) {
-          // could not parse MI date... ignore
-        }
+        // String embeddedDate = getMediaInfo(StreamKind.General, 0, "Released_Date", "Original/Released_Date", "Recorded_Date", "Encoded_Date",
+        // "Mastered_Date");
+        // Date d = StrgUtils.parseDate(embeddedDate);
+        // if (d.toInstant().toEpochMilli() < filedate) {
+        // // so this is older than our file date - use it :)
+        // filedate = d.toInstant().toEpochMilli();
+        // }
+        // }
+        // catch (ParseException e) {
+        // // could not parse MI date... ignore
+        // }
 
         // Duration;Play time of the stream in ms
         // Duration/String;Play time in format : XXx YYy only, YYy omited if zero

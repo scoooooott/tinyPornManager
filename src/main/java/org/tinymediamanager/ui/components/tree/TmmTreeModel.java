@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  * The class TmmTreeModel is the base class for the tree model of the TmmTree
@@ -88,7 +89,11 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
       if (TmmTreeDataProvider.NODE_CHANGED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
         E child = (E) evt.getNewValue();
         nodeChanged(child);
-        updateSortingAndFiltering(rootNode);
+
+        TreeNode[] path = child.getPath();
+        if (path != null && path.length > 1) {
+          updateSortingAndFiltering((E) path[1]);
+        }
       }
       // the structure has been changed
       if (TmmTreeDataProvider.NODE_STRUCTURE_CHANGED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
@@ -210,6 +215,24 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   }
 
   /**
+   * check if there are any active filters
+   *
+   * @return true if there is at least one active filter
+   */
+  protected boolean hasActiveFilters() {
+    if (dataProvider.getTreeFilters() == null) {
+      return false;
+    }
+
+    for (ITmmTreeFilter<E> filter : dataProvider.getTreeFilters()) {
+      if (filter.isActive()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Updates nodes sorting and filtering for the specified parent and its children
    */
   public void updateSortingAndFiltering(E parent) {
@@ -311,14 +334,13 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
       return new ArrayList<>(0);
     }
 
-    // Filter and sort children
-    final Set<ITmmTreeFilter<E>> filters = new HashSet<>(dataProvider.getTreeFilters());
-    final Comparator<E> comparator = dataProvider.getTreeComparator();
-
+    // Filter children
     final List<E> filteredAndSorted = new ArrayList<>();
 
-    // filter
-    if (filters != null && !filters.isEmpty()) {
+    if (hasActiveFilters()) {
+      final Set<ITmmTreeFilter<E>> filters = dataProvider.getTreeFilters();
+
+      // filter
       for (final E element : children) {
         // filter over all set filters
         boolean accepted = true;
@@ -331,13 +353,13 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
           filteredAndSorted.add(element);
         }
       }
-
     }
     else {
       filteredAndSorted.addAll(children);
     }
 
     // sort
+    final Comparator<E> comparator = dataProvider.getTreeComparator();
     if (comparator != null) {
       filteredAndSorted.sort(comparator);
     }

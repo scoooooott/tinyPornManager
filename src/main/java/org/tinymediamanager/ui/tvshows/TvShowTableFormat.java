@@ -61,7 +61,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     col.setHeaderIcon(IconManager.EPISODES);
     col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
-    col.setMinWidth((int) (fontMetrics.stringWidth("99") * 1.2f));
+    col.setMinWidth((int) (fontMetrics.stringWidth("999") * 1.2f));
     addColumn(col);
 
     /*
@@ -258,13 +258,13 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
 
   private String hasImageTooltip(TmmTreeNode node) {
     if (node.getUserObject() instanceof TvShow) {
-      ImageIcon nfoIcon = hasNfo(node);
+      ImageIcon nfoIcon = hasImages(node);
       if (nfoIcon == IconManager.TABLE_PROBLEM) {
         return BUNDLE.getString("tvshow.tree.tvshow.image.problem");
       }
     }
     else if (node.getUserObject() instanceof TvShowSeason) {
-      ImageIcon nfoIcon = hasNfo(node);
+      ImageIcon nfoIcon = hasImages(node);
       if (nfoIcon == IconManager.TABLE_PROBLEM) {
         return BUNDLE.getString("tvshow.tree.season.image.problem");
       }

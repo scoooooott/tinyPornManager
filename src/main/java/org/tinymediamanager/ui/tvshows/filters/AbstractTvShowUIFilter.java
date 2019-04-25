@@ -35,6 +35,18 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  */
 abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements ITvShowUIFilter<TmmTreeNode> {
   @Override
+  public boolean isActive() {
+    switch (getFilterState()) {
+      case ACTIVE:
+      case ACTIVE_NEGATIVE:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?
     if (getFilterState() == FilterState.INACTIVE) {

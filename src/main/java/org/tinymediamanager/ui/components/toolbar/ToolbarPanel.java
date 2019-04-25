@@ -40,6 +40,7 @@ import javax.swing.event.PopupMenuListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.TinyMediaManager;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -66,6 +67,7 @@ import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.ShowChangelogAction;
 import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
+import org.tinymediamanager.ui.dialogs.FullLogDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
@@ -73,8 +75,6 @@ import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.TitlePane;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -262,22 +262,22 @@ public class ToolbarPanel extends JPanel implements TitlePane {
     if (Globals.isDebug()) {
       final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
 
-      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
+      JMenuItem trace = new JMenuItem("set Console Logger to TRACE"); //$NON-NLS-1$
       trace.addActionListener(arg0 -> {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
-        MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
+        System.setProperty("tmm.consoleloglevel", "TRACE");
+        TinyMediaManager.setConsoleLogLevel();
+        MessageManager.instance.pushMessage(new Message("Trace levels set!", "Test"));
         LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
       });
       debugMenu.add(trace);
 
-      // JMenuItem traceLogs = new JMenuItem(BUNDLE.getString("tmm.tracelogs")); //$NON-NLS-1$
-      // debugMenu.add(traceLogs);
-      // traceLogs.addActionListener(arg0 -> {
-      // JDialog logDialog = new LogDialog();
-      // logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      // logDialog.setVisible(true);
-      // });
+      JMenuItem traceLogs = new JMenuItem("Show all logs from this session"); //$NON-NLS-1$
+      debugMenu.add(traceLogs);
+      traceLogs.addActionListener(arg0 -> {
+        JDialog logDialog = new FullLogDialog();
+        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        logDialog.setVisible(true);
+      });
 
       menu.addSeparator();
       menu.add(debugMenu);

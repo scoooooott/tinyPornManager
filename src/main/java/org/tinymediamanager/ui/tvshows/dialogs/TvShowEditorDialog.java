@@ -178,11 +178,15 @@ public class TvShowEditorDialog extends TmmDialog {
   private ImageLabel                        lblClearlogo;
   private ImageLabel                        lblClearart;
   private ImageLabel                        lblThumb;
+  private ImageLabel                        lblCharacterart;
+  private ImageLabel                        lblKeyart;
 
   private TmmTable                          tableIds;
   private TmmTable                          tableRatings;
   private JTextField                        tfOriginalTitle;
   private JTextField                        tfCountry;
+  private JTextField                        tfCharacterart;
+  private JTextField                        tfKeyart;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -225,6 +229,8 @@ public class TvShowEditorDialog extends TmmDialog {
       lblClearart.setImagePath(tvShow.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(tvShow.getArtworkFilename(MediaFileType.THUMB));
       lblBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
+      lblCharacterart.setImagePath(tvShow.getArtworkFilename(MediaFileType.CHARACTERART));
+      lblKeyart.setImagePath(tvShow.getArtworkFilename(MediaFileType.KEYART));
 
       tfPoster.setText(tvShow.getArtworkUrl(MediaFileType.POSTER));
       tfFanart.setText(tvShow.getArtworkUrl(MediaFileType.FANART));
@@ -233,6 +239,8 @@ public class TvShowEditorDialog extends TmmDialog {
       tfClearArt.setText(tvShow.getArtworkUrl(MediaFileType.CLEARART));
       tfThumb.setText(tvShow.getArtworkUrl(MediaFileType.THUMB));
       tfBanner.setText(tvShow.getArtworkUrl(MediaFileType.BANNER));
+      tfCharacterart.setText(tvShow.getArtworkUrl(MediaFileType.CHARACTERART));
+      tfKeyart.setText(tvShow.getArtworkUrl(MediaFileType.KEYART));
 
       tfStudio.setText(tvShow.getProductionCompany());
       tfCountry.setText(tvShow.getCountry());
@@ -588,29 +596,12 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel artworkPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.extraartwork"), null, artworkPanel, null);
-      artworkPanel.setLayout(new MigLayout("", "[200lp:300lp,grow][20lp:n][200lp:300lp,grow]",
+      artworkPanel.setLayout(new MigLayout("", "[200lp:300lp,grow][20lp:n][200lp:300lp,grow][20lp:n][100lp:200lp,grow]",
           "[][100lp:125lp,grow][20lp:n][][100lp:125lp,grow][20lp:n][][100lp:150lp,grow]"));
-      {
-        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
-        artworkPanel.add(lblLogoT, "cell 0 0");
 
-        lblLogo = new ImageLabel();
-        lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLogo.addMouseListener(new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.LOGO,
-                tvShowList.getAvailableArtworkScrapers(), lblLogo, null, null, MediaType.TV_SHOW);
-            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-            dialog.setVisible(true);
-            updateArtworkUrl(lblLogo, tfLogo);
-          }
-        });
-        artworkPanel.add(lblLogo, "cell 0 1,grow");
-      }
       {
         JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
-        artworkPanel.add(lblClearlogoT, "cell 2 0");
+        artworkPanel.add(lblClearlogoT, "cell 0 0");
 
         lblClearlogo = new ImageLabel();
         lblClearlogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -624,11 +615,11 @@ public class TvShowEditorDialog extends TmmDialog {
             updateArtworkUrl(lblClearlogo, tfClearLogo);
           }
         });
-        artworkPanel.add(lblClearlogo, "cell 2 1,grow");
+        artworkPanel.add(lblClearlogo, "cell 0 1,grow");
       }
       {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
-        artworkPanel.add(lblBannerT, "cell 0 3");
+        artworkPanel.add(lblBannerT, "cell 2 0 3 1");
 
         lblBanner = new ImageLabel();
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -642,9 +633,11 @@ public class TvShowEditorDialog extends TmmDialog {
             updateArtworkUrl(lblBanner, tfBanner);
           }
         });
-        artworkPanel.add(lblBanner, "cell 0 4 3 1,grow");
+        artworkPanel.add(lblBanner, "cell 2 1 3 1,grow");
       }
       {
+        JLabel lblClearartT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+        artworkPanel.add(lblClearartT, "cell 2 3");
 
         lblClearart = new ImageLabel();
         lblClearart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -658,14 +651,48 @@ public class TvShowEditorDialog extends TmmDialog {
             updateArtworkUrl(lblClearart, tfClearArt);
           }
         });
+        artworkPanel.add(lblClearart, "cell 2 4,grow");
 
-        JLabel lblClearartT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
-        artworkPanel.add(lblClearartT, "cell 0 6");
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-        artworkPanel.add(lblThumbT, "cell 2 6");
-        artworkPanel.add(lblClearart, "cell 0 7,grow");
       }
       {
+        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+        artworkPanel.add(lblLogoT, "cell 0 3");
+
+        lblLogo = new ImageLabel();
+        lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblLogo.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.LOGO,
+                tvShowList.getAvailableArtworkScrapers(), lblLogo, null, null, MediaType.TV_SHOW);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            updateArtworkUrl(lblLogo, tfLogo);
+          }
+        });
+        artworkPanel.add(lblLogo, "cell 0 4,grow");
+      }
+      {
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        artworkPanel.add(lblKeyartT, "cell 4 3");
+
+        lblKeyart = new ImageLabel();
+        lblKeyart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblKeyart.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.KEYART,
+                tvShowList.getAvailableArtworkScrapers(), lblKeyart, null, null, MediaType.TV_SHOW);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            updateArtworkUrl(lblKeyart, tfKeyart);
+          }
+        });
+        artworkPanel.add(lblKeyart, "cell 4 4 1 4,grow");
+      }
+      {
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        artworkPanel.add(lblThumbT, "cell 0 6");
 
         lblThumb = new ImageLabel();
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -679,8 +706,25 @@ public class TvShowEditorDialog extends TmmDialog {
             updateArtworkUrl(lblThumb, tfThumb);
           }
         });
+        artworkPanel.add(lblThumb, "cell 0 7,grow");
+      }
+      {
+        JLabel lblCharacterartT = new TmmLabel(BUNDLE.getString("mediafiletype.characterart")); //$NON-NLS-1$
+        artworkPanel.add(lblCharacterartT, "cell 2 6");
 
-        artworkPanel.add(lblThumb, "cell 2 7,grow");
+        lblCharacterart = new ImageLabel();
+        lblCharacterart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblCharacterart.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.CHARACTERART,
+                tvShowList.getAvailableArtworkScrapers(), lblCharacterart, null, null, MediaType.TV_SHOW);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            updateArtworkUrl(lblCharacterart, tfCharacterart);
+          }
+        });
+        artworkPanel.add(lblCharacterart, "cell 2 7, grow");
       }
     }
 
@@ -690,7 +734,7 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel artworkPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("edit.artwork"), null, artworkPanel, null);
-      artworkPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
+      artworkPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][]"));
       {
         JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
         artworkPanel.add(lblPosterT, "cell 0 0,alignx right");
@@ -739,6 +783,20 @@ public class TvShowEditorDialog extends TmmDialog {
 
         tfThumb = new JTextField();
         artworkPanel.add(tfThumb, "cell 1 6,growx");
+      }
+      {
+        JLabel lblCharacterartT = new TmmLabel(BUNDLE.getString("mediafiletype.characterart")); //$NON-NLS-1$
+        artworkPanel.add(lblCharacterartT, "cell 0 7,alignx trailing");
+
+        tfCharacterart = new JTextField();
+        artworkPanel.add(tfCharacterart, "cell 1 7,growx");
+      }
+      {
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        artworkPanel.add(lblKeyartT, "cell 0 8,alignx trailing");
+
+        tfKeyart = new JTextField();
+        artworkPanel.add(tfKeyart, "cell 1 8,growx");
       }
     }
 
@@ -910,10 +968,26 @@ public class TvShowEditorDialog extends TmmDialog {
         tvShowToEdit.removeArtworkUrl(MediaFileType.THUMB);
       }
 
+      if (StringUtils.isNotEmpty(tfCharacterart.getText())
+          && !tfCharacterart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CHARACTERART))) {
+        tvShowToEdit.setArtworkUrl(tfCharacterart.getText(), MediaFileType.CHARACTERART);
+        tvShowToEdit.downloadArtwork(MediaFileType.CHARACTERART);
+      }
+      else if (StringUtils.isEmpty(tfCharacterart.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.CHARACTERART);
+      }
+
+      if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.KEYART))) {
+        tvShowToEdit.setArtworkUrl(tfKeyart.getText(), MediaFileType.KEYART);
+        tvShowToEdit.downloadArtwork(MediaFileType.KEYART);
+      }
+      else if (StringUtils.isEmpty(tfKeyart.getText())) {
+        tvShowToEdit.removeArtworkUrl(MediaFileType.KEYART);
+      }
+
       // set extrafanarts
       if (extrafanarts != null && (extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size()
           || !extrafanarts.containsAll(tvShowToEdit.getExtraFanartUrls()) || !tvShowToEdit.getExtraFanartUrls().containsAll(extrafanarts))) {
-        // movieToEdit.downloadExtraFanarts(extrafanarts);
         tvShowToEdit.setExtraFanartUrls(extrafanarts);
         tvShowToEdit.downloadArtwork(MediaFileType.EXTRAFANART);
       }

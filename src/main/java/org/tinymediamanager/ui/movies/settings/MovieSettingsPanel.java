@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies.settings;
 
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -34,6 +35,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -72,7 +74,21 @@ public class MovieSettingsPanel extends JPanel {
   private AutocompleteComboBox<String> cbRating;
   private JCheckBox                    chckbxIncludeExternalAudioStreams;
 
+  private JCheckBox                    chckbxCheckPoster;
+  private JCheckBox                    chckbxCheckFanart;
+  private JCheckBox                    chckbxCheckBanner;
+  private JCheckBox                    chckbxCheckClearart;
+  private JCheckBox                    chckbxCheckThumb;
+  private JCheckBox                    chckbxCheckLogo;
+  private JCheckBox                    chckbxCheckClearlogo;
+  private JCheckBox                    chckbxCheckDiscart;
+
+  private ItemListener                 checkBoxListener;
+
   public MovieSettingsPanel() {
+
+    checkBoxListener = e -> checkChanges();
+
     // UI initializations
     initComponents();
     initDataBindings();
@@ -92,6 +108,102 @@ public class MovieSettingsPanel extends JPanel {
     btnPresetMediaPortal1.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal1());
     btnPresetMediaPortal2.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal2());
     btnPresetPlex.addActionListener(evt -> settings.setDefaultSettingsForPlex());
+
+    buildCheckBoxes();
+  }
+
+  private void checkChanges() {
+    settings.clearCheckImagesMovie();
+    if (chckbxCheckPoster.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.POSTER);
+    }
+    if (chckbxCheckFanart.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.BACKGROUND);
+    }
+    if (chckbxCheckBanner.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.BANNER);
+    }
+    if (chckbxCheckClearart.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.CLEARART);
+    }
+    if (chckbxCheckThumb.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.THUMB);
+    }
+    if (chckbxCheckLogo.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.LOGO);
+    }
+    if (chckbxCheckClearlogo.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.CLEARLOGO);
+    }
+    if (chckbxCheckDiscart.isSelected()) {
+      settings.addCheckImagesMovie(MediaArtwork.MediaArtworkType.DISC);
+    }
+  }
+
+  private void buildCheckBoxes() {
+    chckbxCheckPoster.removeItemListener(checkBoxListener);
+    chckbxCheckFanart.removeItemListener(checkBoxListener);
+    chckbxCheckBanner.removeItemListener(checkBoxListener);
+    chckbxCheckClearart.removeItemListener(checkBoxListener);
+    chckbxCheckThumb.removeItemListener(checkBoxListener);
+    chckbxCheckLogo.removeItemListener(checkBoxListener);
+    chckbxCheckClearlogo.removeItemListener(checkBoxListener);
+    chckbxCheckDiscart.removeItemListener(checkBoxListener);
+    clearSelection(chckbxCheckPoster, chckbxCheckFanart, chckbxCheckBanner, chckbxCheckClearart, chckbxCheckThumb, chckbxCheckLogo,
+        chckbxCheckClearlogo, chckbxCheckDiscart);
+
+    for (MediaArtwork.MediaArtworkType type : settings.getCheckImagesMovie()) {
+      switch (type) {
+        case POSTER:
+          chckbxCheckPoster.setSelected(true);
+          break;
+        case BACKGROUND:
+          chckbxCheckFanart.setSelected(true);
+          break;
+
+        case BANNER:
+          chckbxCheckBanner.setSelected(true);
+          break;
+
+        case CLEARART:
+          chckbxCheckClearart.setSelected(true);
+          break;
+
+        case THUMB:
+          chckbxCheckThumb.setSelected(true);
+          break;
+
+        case LOGO:
+          chckbxCheckLogo.setSelected(true);
+          break;
+
+        case CLEARLOGO:
+          chckbxCheckClearlogo.setSelected(true);
+          break;
+
+        case DISC:
+          chckbxCheckDiscart.setSelected(true);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    chckbxCheckPoster.addItemListener(checkBoxListener);
+    chckbxCheckFanart.addItemListener(checkBoxListener);
+    chckbxCheckBanner.addItemListener(checkBoxListener);
+    chckbxCheckClearart.addItemListener(checkBoxListener);
+    chckbxCheckThumb.addItemListener(checkBoxListener);
+    chckbxCheckLogo.addItemListener(checkBoxListener);
+    chckbxCheckClearlogo.addItemListener(checkBoxListener);
+    chckbxCheckDiscart.addItemListener(checkBoxListener);
+  }
+
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkbox : checkBoxes) {
+      checkbox.setSelected(false);
+    }
   }
 
   private void initComponents() {
@@ -134,13 +246,13 @@ public class MovieSettingsPanel extends JPanel {
 
         JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
         lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
-        panelAutomaticTasks.add(lblAutomaticRenameHint, "cell 2 0");
+        panelAutomaticTasks.add(lblAutomaticRenameHint, "cell 1 0 2 1");
 
         chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
         panelAutomaticTasks.add(chckbxTraktSync, "cell 1 1 2 1");
 
         btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
-        panelAutomaticTasks.add(btnClearTraktData, "cell 2 1");
+        panelAutomaticTasks.add(btnClearTraktData, "cell 1 1 2 1");
       }
     }
     {
@@ -155,13 +267,45 @@ public class MovieSettingsPanel extends JPanel {
 
         JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
         lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-        panelMisc.add(lblBuildImageCacheHint, "cell 2 0");
+        panelMisc.add(lblBuildImageCacheHint, "cell 1 0 2 1");
 
         chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
         panelMisc.add(chckbxRuntimeFromMi, "cell 1 1 2 1");
 
         chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo")); //$NON-NLS-1$
-        panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 2");
+        panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 2 2 1");
+      }
+      JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
+      panelMisc.add(lblCheckImages, "cell 1 3 2 1");
+
+      {
+        JPanel panelCheckImages = new JPanel();
+        panelCheckImages.setLayout(new MigLayout("hidemode 1, insets 0", "", ""));
+        panelMisc.add(panelCheckImages, "cell 2 4");
+
+        chckbxCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster"));
+        panelCheckImages.add(chckbxCheckPoster, "cell 0 0");
+
+        chckbxCheckFanart = new JCheckBox(BUNDLE.getString("mediafiletype.fanart"));
+        panelCheckImages.add(chckbxCheckFanart, "cell 1 0");
+
+        chckbxCheckBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner"));
+        panelCheckImages.add(chckbxCheckBanner, "cell 2 0");
+
+        chckbxCheckClearart = new JCheckBox(BUNDLE.getString("mediafiletype.clearart"));
+        panelCheckImages.add(chckbxCheckClearart, "cell 3 0");
+
+        chckbxCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb"));
+        panelCheckImages.add(chckbxCheckThumb, "cell 4 0");
+
+        chckbxCheckLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo"));
+        panelCheckImages.add(chckbxCheckLogo, "cell 5 0");
+
+        chckbxCheckClearlogo = new JCheckBox(BUNDLE.getString("mediafiletype.clearlogo"));
+        panelCheckImages.add(chckbxCheckClearlogo, "cell 6 0");
+
+        chckbxCheckDiscart = new JCheckBox(BUNDLE.getString("mediafiletype.disc"));
+        panelCheckImages.add(chckbxCheckDiscart, "cell 7 0");
       }
     }
     {

@@ -123,28 +123,24 @@ public class TvShowMediaInformationPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[][80lp:n][43px][150lp,grow]", "[21px][14px][80lp,grow]"));
+    setLayout(new MigLayout("", "[][150lp][grow]", "[][][80lp,grow]"));
+    JLabel lblTvShowPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    add(lblTvShowPathT, "cell 0 0");
+    {
+
+      lblTvShowPath = new LinkLabel("");
+      add(lblTvShowPath, "cell 1 0 2 1,growx,wmin 0");
+    }
     {
       JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      add(lblDateAddedT, "cell 0 0");
+      add(lblDateAddedT, "cell 0 1");
 
       lblDateAdded = new JLabel("");
-      add(lblDateAdded, "cell 1 0");
+      add(lblDateAdded, "cell 1 1");
     }
     {
       JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      add(lblWatchedT, "cell 2 0");
-
-      cbWatched = new JCheckBox("");
-      cbWatched.setEnabled(false);
-      add(cbWatched, "cell 3 0");
-    }
-    {
-      JLabel lblTvShowPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      add(lblTvShowPathT, "cell 0 1");
-
-      lblTvShowPath = new LinkLabel("");
-      add(lblTvShowPath, "cell 1 1 3 1,growx, wmin 0");
+      add(lblWatchedT, "flowx,cell 2 1");
     }
     {
       panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
@@ -153,8 +149,12 @@ public class TvShowMediaInformationPanel extends JPanel {
           return selectionModel.getSelectedTvShow();
         }
       };
-      add(panelMediaFiles, "cell 0 2 4 1,grow");
+      add(panelMediaFiles, "cell 0 2 3 1,grow");
     }
+
+    cbWatched = new JCheckBox("");
+    cbWatched.setEnabled(false);
+    add(cbWatched, "cell 2 1");
   }
 
   protected void initDataBindings() {

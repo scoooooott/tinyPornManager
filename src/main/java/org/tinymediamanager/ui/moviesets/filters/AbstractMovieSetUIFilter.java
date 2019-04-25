@@ -34,6 +34,18 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  */
 abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements IMovieSetUIFilter<TmmTreeNode> {
   @Override
+  public boolean isActive() {
+    switch (getFilterState()) {
+      case ACTIVE:
+      case ACTIVE_NEGATIVE:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?
     if (getFilterState() == FilterState.INACTIVE) {
@@ -71,8 +83,7 @@ abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTreeNode>
    *          the movie set of this node
    * @param movies
    *          all movies of this node
-   * @return
-   *          whether we should or not accept it.
+   * @return whether we should or not accept it.
    */
   protected abstract boolean accept(MovieSet movieSet, List<Movie> movies);
 

@@ -438,6 +438,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               chooseArtwork(MediaFileType.CLEARLOGO);
               chooseArtwork(MediaFileType.CLEARART);
               chooseArtwork(MediaFileType.THUMB);
+              chooseArtwork(MediaFileType.CHARACTERART);
+              chooseArtwork(MediaFileType.KEYART);
             }
             else {
               // get artwork asynchronous
@@ -534,11 +536,25 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         imageType = ImageType.CLEARART;
         break;
 
+      case CHARACTERART:
+        if (TvShowModuleManager.SETTINGS.getCharacterartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.CHARACTERART;
+        break;
+
       case THUMB:
         if (TvShowModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
           return;
         }
         imageType = ImageType.THUMB;
+        break;
+
+      case KEYART:
+        if (TvShowModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.KEYART;
         break;
 
       default:
@@ -556,7 +572,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     // set extrafanarts
     if (mediaFileType == MediaFileType.FANART) {
       tvShowToScrape.setExtraFanartUrls(extrafanarts);
-      if (extrafanarts.size() > 0) {
+      if (!extrafanarts.isEmpty()) {
         tvShowToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
       }
     }
@@ -623,7 +639,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     public void done() {
       if (!cancel) {
         searchResultEventList.clear();
-        if (searchResult.size() == 0) {
+        if (searchResult.isEmpty()) {
           // display empty result
           searchResultEventList.add(TvShowChooserModel.emptyResult);
         }

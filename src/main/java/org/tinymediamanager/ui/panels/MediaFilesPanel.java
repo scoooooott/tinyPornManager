@@ -56,18 +56,16 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public abstract class MediaFilesPanel extends JPanel {
-  private static final long                 serialVersionUID = -4929581173434859034L;
-  private static final Logger               LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -4929581173434859034L;
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TmmTable                          tableFiles;
+  private TmmTable                    tableFiles;
 
-  private EventList<MediaFile>              mediaFileEventList;
-  private DefaultEventTableModel<MediaFile> mediaFileTableModel;
+  private EventList<MediaFile>        mediaFileEventList;
 
   public MediaFilesPanel(EventList<MediaFile> mediaFiles) {
     this.mediaFileEventList = mediaFiles;
-    mediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
 
     initComponents();
   }
@@ -75,7 +73,7 @@ public abstract class MediaFilesPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[450lp,grow]", "[300lp,grow]"));
     {
-      tableFiles = new TmmTable(mediaFileTableModel);
+      tableFiles = new TmmTable(new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat()));
       tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
       LinkListener linkListener = new LinkListener();

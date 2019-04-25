@@ -82,5 +82,30 @@ public enum TvShowSeasonPosterNaming implements ITvShowSeasonFileNaming {
       }
       return filename + "." + extension;
     }
+  },
+
+  /** season_folder/folder.* */
+  FOLDER {
+    public String getFilename(TvShow tvShow, int season, String extension) {
+      // just fake an episode here, since the real foldername can only be generated out of the episode
+      // create a dummy episode to inject the season number
+      TvShowEpisode episode = new TvShowEpisode();
+      episode.setSeason(season);
+
+      String seasonFoldername = TvShowRenamer.getSeasonFoldername(tvShow, episode);
+
+      // check whether the season folder name exists or not; do not create it just for the artwork!
+      if (StringUtils.isBlank(seasonFoldername) || !Files.exists(Paths.get(tvShow.getPath(), seasonFoldername))) {
+        // does not exist - do not create a folder.* here
+        return "";
+      }
+
+      String filename = "";
+      if (StringUtils.isNotBlank(seasonFoldername)) {
+        filename = seasonFoldername + File.separator;
+      }
+
+      return filename + "folder." + extension;
+    }
   }
 }

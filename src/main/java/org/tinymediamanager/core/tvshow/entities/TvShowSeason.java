@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 /**
@@ -161,14 +162,17 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   }
 
   /**
-   * Checks if that season has artwork assigned
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return true if artwork is available
    */
   public Boolean getHasImages() {
-    return StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_POSTER))
-        && StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_BANNER))
-        && StringUtils.isNotBlank(getArtworkFilename(MediaArtworkType.SEASON_THUMB));
+    for (MediaArtworkType type : TvShowModuleManager.SETTINGS.getSeasonCheckImages()) {
+      if (StringUtils.isBlank(getArtworkFilename(type))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -177,14 +181,12 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
    * @return true if artwork is available
    */
   public Boolean getHasEpisodeImages() {
-    boolean images = true;
     for (TvShowEpisode episode : episodes) {
       if (!episode.getHasImages()) {
-        images = false;
-        break;
+        return false;
       }
     }
-    return images;
+    return true;
   }
 
   /**

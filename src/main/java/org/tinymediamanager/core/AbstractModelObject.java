@@ -62,7 +62,11 @@ public abstract class AbstractModelObject {
    *          the listener
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
-    propertyChangeSupport.removePropertyChangeListener(listener);
+    try {
+      propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+    catch (AssertionError ignored) {
+    }
   }
 
   /**
@@ -93,7 +97,9 @@ public abstract class AbstractModelObject {
    */
   public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     try {
-      propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+      if (propertyChangeSupport.getPropertyChangeListeners().length > 0) {
+        propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+      }
     }
     catch (AssertionError ignored) {
     }
@@ -106,6 +112,12 @@ public abstract class AbstractModelObject {
    *          the evt
    */
   public void firePropertyChange(PropertyChangeEvent evt) {
-    propertyChangeSupport.firePropertyChange(evt);
+    try {
+      if (propertyChangeSupport.getPropertyChangeListeners().length > 0) {
+        propertyChangeSupport.firePropertyChange(evt);
+      }
+    }
+    catch (AssertionError ignored) {
+    }
   }
 }

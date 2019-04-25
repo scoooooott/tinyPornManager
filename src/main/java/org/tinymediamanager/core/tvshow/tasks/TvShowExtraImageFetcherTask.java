@@ -113,7 +113,8 @@ public class TvShowExtraImageFetcherTask implements Runnable {
         tvShow.addToMediaFiles(mf);
 
         // build up image cache
-        ImageCache.cacheImageSilently(destFile);
+        ImageCache.invalidateCachedImage(mf);
+        ImageCache.cacheImageSilently(mf);
 
         i++;
       }

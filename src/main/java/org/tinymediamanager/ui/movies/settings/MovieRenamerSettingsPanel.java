@@ -83,7 +83,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
   private List<String>                   spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private List<String>                   colonReplacement = new ArrayList<>(Arrays.asList("", "-"));
+  private List<String>                   colonReplacement = new ArrayList<>(Arrays.asList(" ", "-"));
   private EventList<MovieRenamerExample> exampleEventList;
 
   /**
@@ -200,6 +200,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("${videoResolution}"));
     exampleEventList.add(new MovieRenamerExample("${videoCodec}"));
     exampleEventList.add(new MovieRenamerExample("${videoFormat}"));
+    exampleEventList.add(new MovieRenamerExample("${videoBitDepth}"));
     exampleEventList.add(new MovieRenamerExample("${audioCodec}"));
     exampleEventList.add(new MovieRenamerExample("${audioCodecList}"));
     exampleEventList.add(new MovieRenamerExample("${audioCodecsAsString}"));
@@ -235,7 +236,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         TmmFontHelper.changeFont(lblDefault, L2);
 
         JTextArea tpDefaultFolderPattern = new ReadOnlyTextArea(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
-        panelPatterns.add(tpDefaultFolderPattern, "cell 3 1,growx");
+        panelPatterns.add(tpDefaultFolderPattern, "cell 3 1,growx,wmin 0");
         TmmFontHelper.changeFont(tpDefaultFolderPattern, L2);
       }
       {
@@ -250,18 +251,18 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         TmmFontHelper.changeFont(lblDefault, L2);
 
         JTextArea tpDefaultFilePattern = new ReadOnlyTextArea(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
-        panelPatterns.add(tpDefaultFilePattern, "cell 3 3,growx");
+        panelPatterns.add(tpDefaultFilePattern, "cell 3 3,growx,wmin 0");
         TmmFontHelper.changeFont(tpDefaultFilePattern, L2);
       }
       {
         JTextArea tpChooseAFolder = new ReadOnlyTextArea(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
-        panelPatterns.add(tpChooseAFolder, "cell 2 4 2 1,growx,wmin 0");
+        panelPatterns.add(tpChooseAFolder, "cell 3 4,growx,wmin 0");
         TmmFontHelper.changeFont(tpChooseAFolder, L2);
       }
       {
         taMMDWarning = new ReadOnlyTextArea(BUNDLE.getString("Settings.renamer.folder.warning"));
         taMMDWarning.setForeground(Color.red);
-        panelPatterns.add(taMMDWarning, "cell 1 5 3 1,growx,wmin 0");
+        panelPatterns.add(taMMDWarning, "cell 3 5,growx,wmin 0");
       }
     }
     {
@@ -324,7 +325,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPaneExamples);
-        panelExample.add(scrollPaneExamples, "cell 1 2 2 1, grow");
+        panelExample.add(scrollPaneExamples, "cell 1 2 2 1,grow");
       }
     }
   }
@@ -552,7 +553,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieRenamerCreateMoviesetForSingleMovie");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("renamerCreateMoviesetForSingleMovie");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxMoviesetSingleMovie, jCheckBoxBeanProperty);
     autoBinding_4.bind();

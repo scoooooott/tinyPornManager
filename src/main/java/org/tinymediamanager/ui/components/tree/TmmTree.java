@@ -17,9 +17,9 @@ package org.tinymediamanager.ui.components.tree;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
@@ -47,7 +47,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
    */
   public TmmTree(TmmTreeDataProvider<E> dataProvider) {
     super();
-    treeFilters = new HashSet<>();
+    treeFilters = new CopyOnWriteArraySet<>();
     filterChangeListener = evt -> updateFiltering();
     setOpaque(false);
     setDataProvider(dataProvider);

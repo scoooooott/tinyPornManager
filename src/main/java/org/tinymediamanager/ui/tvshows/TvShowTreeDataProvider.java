@@ -65,6 +65,11 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           break;
 
         default:
+          // do not react on other events of the tvShowList
+          if (evt.getSource() instanceof TvShowList) {
+            break;
+          }
+
           nodeChanged(evt.getSource());
           break;
       }
@@ -96,6 +101,11 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           removeTvShowEpisode(episode);
           break;
 
+        case Constants.EPISODE_COUNT:
+        case Constants.SEASON_COUNT:
+          // do not react on change of the episode count
+          break;
+
         default:
           nodeChanged(evt.getSource());
           break;
@@ -113,6 +123,10 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           episode = (TvShowEpisode) evt.getSource();
           removeTvShowEpisode(episode);
           addTvShowEpisode(episode);
+          break;
+
+        case Constants.TV_SHOW:
+          // do not react on change of the TV show itself
           break;
 
         default:

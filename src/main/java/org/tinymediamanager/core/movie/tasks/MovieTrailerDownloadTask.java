@@ -15,9 +15,14 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.core.tasks.DownloadTask;
 
 /**
@@ -28,7 +33,22 @@ import org.tinymediamanager.core.tasks.DownloadTask;
 public class MovieTrailerDownloadTask extends DownloadTask {
 
   public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) throws Exception {
-    super(trailer.getDownloadUrl(), movie.getPathNIO().resolve(movie.getTrailerBasename() + "-trailer"), movie, MediaFileType.TRAILER);
+    super(trailer.getDownloadUrl(), movie.getPathNIO().resolve(movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER)), movie,
+        MediaFileType.TRAILER);
+
+    List<MovieTrailerNaming> trailernames = new ArrayList<>();
+    if (movie.isMultiMovieDir()) {
+      trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+    }
+    else {
+      trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
+    }
+
+    // hmm.. we can only download ONE trailer, so both patterns won't work
+    for (MovieTrailerNaming name : trailernames) {
+      file = movie.getPathNIO().resolve(movie.getTrailerFilename(name));
+    }
+
     if ("apple".equalsIgnoreCase(trailer.getProvider())) {
       setSpecialUserAgent("QuickTime");
     }

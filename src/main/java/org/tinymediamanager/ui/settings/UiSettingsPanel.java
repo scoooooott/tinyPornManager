@@ -239,11 +239,13 @@ class UiSettingsPanel extends JPanel {
    */
   private void checkChanges() {
     LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
-    Locale locale = loc.loc;
-    Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
-    if (!locale.equals(actualLocale)) {
-      Globals.settings.setLanguage(locale.toString());
-      lblLanguageChangeHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+    if (loc != null) {
+      Locale locale = loc.loc;
+      Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
+      if (!locale.equals(actualLocale)) {
+        Globals.settings.setLanguage(locale.toString());
+        lblLanguageChangeHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+      }
     }
 
     // theme
@@ -255,13 +257,13 @@ class UiSettingsPanel extends JPanel {
 
     // fonts
     Integer fontSize = (Integer) cbFontSize.getSelectedItem();
-    if (fontSize != Globals.settings.getFontSize()) {
+    if (fontSize != null && fontSize != Globals.settings.getFontSize()) {
       Globals.settings.setFontSize(fontSize);
       lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }
 
     String fontFamily = (String) cbFontFamily.getSelectedItem();
-    if (!fontFamily.equals(Globals.settings.getFontFamily())) {
+    if (fontFamily != null && !fontFamily.equals(Globals.settings.getFontFamily())) {
       Globals.settings.setFontFamily(fontFamily);
       lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }

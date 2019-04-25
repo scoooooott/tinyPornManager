@@ -366,21 +366,16 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the check mark for images.<br>
-   * Assumes true, but when PosterFilename is set and we do not have a poster, return false<br>
-   * same for fanarts.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER))) {
-      return false;
+    for (MediaArtworkType type : MovieModuleManager.SETTINGS.getCheckImagesMovie()) {
+      if (StringUtils.isEmpty(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
     }
-
-    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      return false;
-    }
-
     return true;
   }
 
@@ -542,6 +537,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(TAGS_AS_STRING, null, tags);
 
   }
+
   /** has movie local (or any mediafile inline) subtitles? */
   public boolean hasSubtitles() {
     if (this.subtitles) {
@@ -1332,7 +1328,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void removeAllGenres() {
     genres.clear();
-    firePropertyChange(GENRE,null, genres);
+    firePropertyChange(GENRE, null, genres);
     firePropertyChange(GENRES_AS_STRING, null, genres);
   }
 
@@ -1550,25 +1546,22 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public int getMediaInfoVideoBitrate() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getOverallBitRate();
-    }
+    return getMainVideoFile().getOverallBitRate();
+  }
 
-    return 0;
+  @Override
+  public int getMediaInfoVideoBitDepth() {
+    return getMainVideoFile().getBitDepth();
   }
 
   /**
    * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
    */
   public String getMediaInfoAudioCodecAndChannels() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
+    MediaFile mf = getMainVideoFile();
+    if (!mf.getAudioCodec().isEmpty()) {
+      return mf.getAudioCodec() + "_" + mf.getAudioChannels();
     }
-
     return "";
   }
 
@@ -1605,12 +1598,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * Gets the images to cache.
    */
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // image files
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
     for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFileAsPath());
+        filesToCache.add(mf);
       }
     }
 
@@ -1629,21 +1622,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * @return list of actor images on filesystem
    */
-  private List<Path> listActorFiles() {
-    List<Path> fileNames = new ArrayList<>();
+  private List<MediaFile> listActorFiles() {
+    List<MediaFile> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(Person.ACTOR_DIR))) {
       for (Path path : directoryStream) {
         if (Utils.isRegularFile(path)) {
           // only get graphics
           MediaFile mf = new MediaFile(path);
           if (mf.isGraphic()) {
-            fileNames.add(path.toAbsolutePath());
+            fileNames.add(mf);
           }
         }
       }
     }
     catch (IOException e) {
-      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(Person.ACTOR_DIR));
+      LOGGER.warn("Cannot get actors: {}", getPathNIO().resolve(Person.ACTOR_DIR));
     }
     return fileNames;
   }

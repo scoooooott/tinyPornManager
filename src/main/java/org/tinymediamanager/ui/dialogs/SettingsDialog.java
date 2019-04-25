@@ -95,7 +95,9 @@ public class SettingsDialog extends TmmDialog {
         if (node.getUserObject() instanceof TmmSettingsNode) {
           TmmSettingsNode tmmSettingsNode = (TmmSettingsNode) node.getUserObject();
           if (tmmSettingsNode.getComponent() != null) {
-            splitPane.setRightComponent(tmmSettingsNode.getComponent());
+            JScrollPane scrollPane = new JScrollPane(tmmSettingsNode.getComponent());
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+            splitPane.setRightComponent(scrollPane);
             revalidate();
           }
         }
@@ -140,6 +142,9 @@ public class SettingsDialog extends TmmDialog {
       tree = new TmmTree<>(new TmmSettingsDataProvider());
       scrollPaneLeft.setViewportView(tree);
       scrollPaneLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    }
+    {
+
     }
     {
       JPanel southPanel = new JPanel();

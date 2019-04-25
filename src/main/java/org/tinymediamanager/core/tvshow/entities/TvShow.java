@@ -989,29 +989,31 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the checks for images.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    return StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER)) && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))
-        && StringUtils.isNotBlank(getArtworkFilename(MediaFileType.BANNER));
+    for (MediaArtworkType type : TvShowModuleManager.SETTINGS.getTvShowCheckImages()) {
+      if (StringUtils.isBlank(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
-   * Checks if all seasaons and episodes of that TV show have artwork assigned
+   * Checks if all seasons and episodes of that TV show have artwork assigned
    *
    * @return true if artwork is available
    */
   public Boolean getHasSeasonAndEpisodeImages() {
-    boolean images = true;
     for (TvShowSeason season : seasons) {
       if (!season.getHasImages() || !season.getHasEpisodeImages()) {
-        images = false;
-        break;
+        return false;
       }
     }
-    return images;
+    return true;
   }
 
   /**
@@ -1756,13 +1758,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @return the images to cache
    */
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
 
     for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFileAsPath());
+        filesToCache.add(mf);
       }
     }
 
@@ -1850,21 +1852,21 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * @return list of actor images on filesystem
    */
-  private List<Path> listActorFiles() {
-    List<Path> fileNames = new ArrayList<>();
+  private List<MediaFile> listActorFiles() {
+    List<MediaFile> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO().resolve(Person.ACTOR_DIR))) {
       for (Path path : directoryStream) {
         if (Utils.isRegularFile(path)) {
           // only get graphics
           MediaFile mf = new MediaFile(path);
           if (mf.isGraphic()) {
-            fileNames.add(path.toAbsolutePath());
+            fileNames.add(mf);
           }
         }
       }
     }
     catch (IOException e) {
-      LOGGER.warn("Cannot get actors: " + getPathNIO().resolve(Person.ACTOR_DIR));
+      LOGGER.warn("Cannot get actors: {}", getPathNIO().resolve(Person.ACTOR_DIR));
     }
     return fileNames;
   }
@@ -1950,6 +1952,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public String getMediaInfoContainerFormat() {
     return "";
+  }
+
+  @Override
+  public int getMediaInfoVideoBitDepth() {
+    return 0;
   }
 
   @Override

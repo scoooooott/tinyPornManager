@@ -60,6 +60,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -104,6 +105,10 @@ public class Utils {
       Pattern.CASE_INSENSITIVE);
 
   private static List<Locale>  availableLocales      = new ArrayList<>();
+
+  private Utils() {
+    // hide public constructor for utility classes
+  }
 
   /**
    * gets the filename part, and returns last extension
@@ -163,7 +168,7 @@ public class Utils {
    *          the object to dump
    */
   public static void dumpObject(Object o) {
-    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5)));
+    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5))); // NOSONAR
   }
 
   /**
@@ -444,7 +449,7 @@ public class Utils {
       return false;
     }
 
-    return imdbId.matches("tt\\d{7}");
+    return imdbId.matches("tt\\d{6,8}");
   }
 
   /**
@@ -506,7 +511,6 @@ public class Utils {
       Matcher matcher = pattern.matcher(result);
       if (matcher.find()) {
         try {
-          // int index = Integer.parseInt(matcher.group(1));
           if (replacements.length > index) {
             result = result.replaceFirst(pattern.pattern(), StringEscapeUtils.escapeJava(replacements[index]));
           }
@@ -544,28 +548,29 @@ public class Utils {
     // rip-off from
     // http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
     if (srcDir == null) {
-      throw new NullPointerException("Source must not be null");
+      throw new NullPointerException("Source must not be null"); // NOSONAR
     }
     if (destDir == null) {
-      throw new NullPointerException("Destination must not be null");
+      throw new NullPointerException("Destination must not be null"); // NOSONAR
     }
     if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
-      LOGGER.debug("try to move folder " + srcDir + " to " + destDir);
+      LOGGER.debug("try to move folder {} to {}", srcDir, destDir);
       if (!Files.isDirectory(srcDir)) {
-        throw new FileNotFoundException("Source '" + srcDir + "' does not exist, or is not a directory");
+        throw new FileNotFoundException("Source '{}" + srcDir + "' does not exist, or is not a directory"); // NOSONAR
       }
       if (Files.exists(destDir) && !Files.isSameFile(destDir, srcDir)) {
         // extra check for Windows/OSX, where the File.equals is case insensitive
         // so we know now, that the Dir is the same, but the absolute name does not match
-        throw new FileExistsException("Destination '" + destDir + "' already exists");
+        throw new FileExistsException("Destination '" + destDir + "' already exists"); // NOSONAR
       }
-      if (!Files.exists(destDir.getParent())) {
+      if (destDir.getParent() != null && !Files.exists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
+        // NULL parent means, that we just have one relative folder like Paths.get("bla") - no need to create anything
         try {
           Files.createDirectories(destDir.getParent());
         }
         catch (Exception e) {
-          LOGGER.error("could not create directory structure " + destDir.getParent());
+          LOGGER.error("could not create directory structure {}", destDir.getParent());
           // but we try a move anyway...
         }
       }
@@ -593,21 +598,23 @@ public class Utils {
              */
             // in this case we do a recursive copy & delete
             // copy all files (with re-creating symbolic links if there are some)
-            Iterator<Path> srcFiles = Files.walk(srcDir).iterator();
-            while (srcFiles.hasNext()) {
-              Path source = srcFiles.next();
-              Path destination = destDir.resolve(srcDir.relativize(source));
-              if (Files.isSymbolicLink(source)) {
-                Files.createSymbolicLink(destination, source.toRealPath());
-                continue;
-              }
-              if (Files.isDirectory(source)) {
-                if (!Files.exists(destination)) {
-                  Files.createDirectory(destination);
+            try (Stream<Path> stream = Files.walk(srcDir)) {
+              Iterator<Path> srcFiles = stream.iterator();
+              while (srcFiles.hasNext()) {
+                Path source = srcFiles.next();
+                Path destination = destDir.resolve(srcDir.relativize(source));
+                if (Files.isSymbolicLink(source)) {
+                  Files.createSymbolicLink(destination, source.toRealPath());
+                  continue;
                 }
-                continue;
+                if (Files.isDirectory(source)) {
+                  if (!Files.exists(destination)) {
+                    Files.createDirectory(destination);
+                  }
+                  continue;
+                }
+                Files.copy(source, destination);// use flag to override existing
               }
-              Files.copy(source, destination);// use flag to override existing
             }
 
             // delete source files
@@ -615,22 +622,22 @@ public class Utils {
             rename = true;
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem: " + e.getMessage());
+            LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
             Utils.deleteDirectoryRecursive(destDir);
           }
         }
         catch (IOException e) {
-          LOGGER.warn("rename problem: " + e.getMessage());
+          LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
         }
         if (rename) {
           break; // ok it worked, step out
         }
         try {
-          LOGGER.debug("rename did not work - sleep a while and try again...");
+          LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
         catch (InterruptedException e) {
-          LOGGER.warn("I'm so excited - could not sleep");
+          LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
         }
       }
 
@@ -639,13 +646,13 @@ public class Utils {
       // NOOO - we don't like to have some files copied and some not.
 
       if (!rename) {
-        LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir);
+        LOGGER.error("Failed to rename directory {} to {}", srcDir, destDir);
         LOGGER.error("Movie renaming aborted.");
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir, "message.renamer.failedrename"));
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir, "message.renamer.failedrename")); // NOSONAR
         return false;
       }
       else {
-        LOGGER.info("Successfully moved folder " + srcDir + " to " + destDir);
+        LOGGER.info("Successfully moved folder {} to {}", srcDir, destDir);
         return true;
       }
     }
@@ -678,18 +685,17 @@ public class Utils {
     if (destFile == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
-      LOGGER.debug("try to move file " + srcFile + " to " + destFile);
+      LOGGER.debug("try to move file {} to {}", srcFile, destFile);
       if (!Files.exists(srcFile)) {
         // allow moving of symlinks
         // https://github.com/tinyMediaManager/tinyMediaManager/issues/410
         if (!Files.isSymbolicLink(srcFile)) {
-          throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+          throw new FileNotFoundException("Source '" + srcFile + "' does not exist"); // NOSONAR
         }
       }
       if (Files.isDirectory(srcFile)) {
-        throw new IOException("Source '" + srcFile + "' is a directory");
+        throw new IOException("Source '" + srcFile + "' is a directory"); // NOSONAR
       }
       if (Files.exists(destFile) && !Files.isSameFile(destFile, srcFile)) {
         // extra check for windows, where the File.equals is case insensitive
@@ -715,11 +721,11 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem: " + e.getMessage());
+            LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
-          LOGGER.warn("rename problem: " + e.getMessage());
+          LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
         }
         if (rename) {
           break; // ok it worked, step out
@@ -734,12 +740,12 @@ public class Utils {
       }
 
       if (!rename) {
-        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename"));
+        LOGGER.error("Failed to rename file {} to {}", srcFile, destFile);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename")); // NOSONAR
         return false;
       }
       else {
-        LOGGER.info("Successfully moved file from " + srcFile + " to " + destFile);
+        LOGGER.info("Successfully moved file from {} to {}", srcFile, destFile);
         return true;
       }
     }
@@ -793,9 +799,8 @@ public class Utils {
     if (destFile == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
-      LOGGER.debug("try to copy file " + srcFile + " to " + destFile);
+      LOGGER.debug("try to copy file {} to {}", srcFile, destFile);
       if (!Files.exists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
@@ -822,28 +827,28 @@ public class Utils {
           rename = true;// no exception
         }
         catch (IOException e) {
-          LOGGER.warn("copy did not work" + e.getMessage());
+          LOGGER.warn("copy did not work: {}", e.getMessage());
         }
 
         if (rename) {
           break; // ok it worked, step out
         }
         try {
-          LOGGER.debug("rename did not work - sleep a while and try again...");
+          LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
         catch (InterruptedException e) {
-          LOGGER.warn("I'm so excited - could not sleep");
+          LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
         }
       }
 
       if (!rename) {
-        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename"));
+        LOGGER.error("Failed to rename file {} to {}", srcFile, destFile);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename")); // NOSONAR
         return false;
       }
       else {
-        LOGGER.info("Successfully moved file from " + srcFile + " to " + destFile);
+        LOGGER.info("Successfully moved file from {} to {}", srcFile, destFile);
         return true;
       }
     }
@@ -865,11 +870,11 @@ public class Utils {
     Path ds = Paths.get(datasource);
 
     if (!file.startsWith(ds)) { // safety
-      LOGGER.warn("could not delete file '" + file + "': datasource '" + datasource + "' does not match");
+      LOGGER.warn("could not delete file '{}': datasource '{}' does not match", file, datasource);
       return false;
     }
     if (Files.isDirectory(file)) {
-      LOGGER.warn("could not delete file '" + file + "': file is a directory!");
+      LOGGER.warn("could not delete file '{}': file is a directory!", file);
       return false;
     }
 
@@ -885,7 +890,7 @@ public class Utils {
       return moveFileSafe(file, backup);
     }
     catch (IOException e) {
-      LOGGER.warn("Could not delete file: " + e.getMessage());
+      LOGGER.warn("Could not delete file: {}", e.getMessage());
       return false;
     }
   }
@@ -901,14 +906,14 @@ public class Utils {
   public static boolean deleteFileSafely(Path file) {
     file = file.toAbsolutePath();
     if (Files.isDirectory(file)) {
-      LOGGER.warn("Will not delete file '" + file + "': file is a directory!");
+      LOGGER.warn("Will not delete file '{}': file is a directory!", file);
       return false;
     }
     try {
       Files.deleteIfExists(file);
     }
     catch (Exception e) {
-      LOGGER.warn("Could not delete file: " + e.getMessage());
+      LOGGER.warn("Could not delete file: {}", e.getMessage());
       return false;
     }
     return true;
@@ -930,11 +935,11 @@ public class Utils {
     Path ds = Paths.get(datasource);
 
     if (!Files.isDirectory(folder)) {
-      LOGGER.warn("Will not delete folder '" + folder + "': folder is a file, NOT a directory!");
+      LOGGER.warn("Will not delete folder '{}': folder is a file, NOT a directory!", folder);
       return false;
     }
     if (!folder.startsWith(ds)) { // safety
-      LOGGER.warn("Will not delete folder '" + folder + "': datasource '" + datasource + "' does not match");
+      LOGGER.warn("Will not delete folder '{}': datasource '{}' does not match", folder, datasource);
       return false;
     }
 
@@ -952,7 +957,7 @@ public class Utils {
       return moveDirectorySafe(folder, backup);
     }
     catch (IOException e) {
-      LOGGER.warn("could not delete directory: " + e.getMessage());
+      LOGGER.warn("could not delete directory: {}", e.getMessage());
       return false;
     }
   }
@@ -984,13 +989,14 @@ public class Utils {
         CodeSource src = Utils.class.getProtectionDomain().getCodeSource();
         if (src != null) {
           URL jar = src.getLocation();
-          ZipInputStream zip = new ZipInputStream(jar.openStream());
-          while (true) {
-            ZipEntry e = zip.getNextEntry();
-            if (e == null) {
-              break;
+          try (InputStream jarInputStream = jar.openStream(); ZipInputStream zip = new ZipInputStream(jarInputStream)) {
+            while (true) {
+              ZipEntry e = zip.getNextEntry();
+              if (e == null) {
+                break;
+              }
+              parseLocaleFromFilename(e.getName());
             }
-            parseLocaleFromFilename(e.getName());
           }
         }
       }
@@ -1059,7 +1065,7 @@ public class Utils {
         l = locale;
       }
     }
-    if (l == null && countries.size() > 0) {
+    if (l == null && !countries.isEmpty()) {
       // well, take the first one
       l = countries.get(0);
     }
@@ -1103,7 +1109,7 @@ public class Utils {
       }
     }
     catch (IOException e) {
-      LOGGER.error("Could not backup file " + file + ": " + e.getMessage());
+      LOGGER.error("Could not backup file {}: {}", file, e.getMessage());
     }
 
   }
@@ -1172,14 +1178,14 @@ public class Utils {
       // Send UDP packet here
       final InetAddress address = InetAddress.getByName(IP);
       final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
-      final DatagramSocket socket = new DatagramSocket();
-      socket.send(packet);
-      socket.close();
+      try (DatagramSocket socket = new DatagramSocket()) {
+        socket.send(packet);
+      }
 
-      LOGGER.info("Sent WOL packet to " + macAddr);
+      LOGGER.info("Sent WOL packet to {}", macAddr);
     }
     catch (final Exception e) {
-      LOGGER.error("Error sending WOL packet to " + macAddr, e);
+      LOGGER.error("Error sending WOL packet to {} - {}", macAddr, e.getMessage());
     }
   }
 
@@ -1198,7 +1204,7 @@ public class Utils {
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
     arguments.add("-Dsilent=noupdate"); // start GD.jar instead of TMM.jar, since we don't have the libs in manifest
     arguments.add("-jar");
-    arguments.add("getdown.jar");
+    arguments.add("getdown.jar"); // NOSONAR
     arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
     pb.directory(Paths.get("").toAbsolutePath().toFile()); // set working directory (current TMM dir)
@@ -1219,7 +1225,7 @@ public class Utils {
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
     arguments.add("-jar");
-    arguments.add("getdown.jar");
+    arguments.add("getdown.jar"); // NOSONAR
     arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
     pb.directory(Paths.get("").toAbsolutePath().toFile()); // set working directory (current TMM dir)
@@ -1258,7 +1264,7 @@ public class Utils {
       return;
     }
 
-    LOGGER.info("Deleting complete directory: " + dir);
+    LOGGER.info("Deleting complete directory: {}", dir);
     Files.walkFileTree(dir, new FileVisitor<Path>() {
 
       @Override
@@ -1280,7 +1286,7 @@ public class Utils {
 
       @Override
       public FileVisitResult visitFileFailed(Path file, IOException exc) {
-        LOGGER.warn("Could not delete " + file + "; " + exc.getMessage());
+        LOGGER.warn("Could not delete {} - {}", file, exc.getMessage());
         return FileVisitResult.CONTINUE;
       }
 
@@ -1319,8 +1325,7 @@ public class Utils {
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
-      // System.out.println(zipUri);
-      // URI uri = URI.create("jar:file:"+zipLocation); // here creates the
+
       // zip
       // try with resource
       try (FileSystem zipfs = FileSystems.newFileSystem(zipUri, env)) {
@@ -1332,24 +1337,26 @@ public class Utils {
         }
         // copy a file into the zip file
         if (Files.isDirectory(toBeAdded)) {
-          Files.walk(toBeAdded).forEach(source -> {
-            try {
-              if (Files.isSameFile(source, toBeAdded)) {
-                return;
-              }
+          try (Stream<Path> files = Files.walk(toBeAdded)) {
+            files.forEach(source -> {
+              try {
+                if (Files.isSameFile(source, toBeAdded)) {
+                  return;
+                }
 
-              if (Files.isDirectory(source)) {
-                // Create directory
-                Files.createDirectory(internalTargetPath.resolve(toBeAdded.relativize(source)));
+                if (Files.isDirectory(source)) {
+                  // Create directory
+                  Files.createDirectory(internalTargetPath.resolve(toBeAdded.relativize(source)));
+                }
+                else {
+                  Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()), StandardCopyOption.REPLACE_EXISTING);
+                }
               }
-              else {
-                Files.copy(source, internalTargetPath.resolve(toBeAdded.relativize(source).toString()), StandardCopyOption.REPLACE_EXISTING);
+              catch (Exception e) {
+                LOGGER.error("Failed to create zip file: {}", e.getMessage()); // NOSONAR
               }
-            }
-            catch (Exception e) {
-              LOGGER.error("Failed to create zip file!" + e.getMessage());
-            }
-          });
+            });
+          }
         }
         else {
           Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
@@ -1357,7 +1364,7 @@ public class Utils {
       }
     }
     catch (Exception e) {
-      LOGGER.error("Failed to create zip file!" + e.getMessage());
+      LOGGER.error("Failed to create zip file: {}", e.getMessage()); // NOSONAR
     }
   }
 
@@ -1411,7 +1418,7 @@ public class Utils {
       }
     }
     catch (Exception e) {
-      LOGGER.error("Failed to create zip file!" + e.getMessage());
+      LOGGER.error("Failed to create zip file: {}", e.getMessage()); // NOSONAR
     }
   }
 
@@ -1444,7 +1451,7 @@ public class Utils {
       }
     }
     catch (IOException e) {
-      LOGGER.warn("failed to extract templates: " + e.getMessage());
+      LOGGER.warn("failed to extract templates: {}", e.getMessage());
     }
   }
 
@@ -1488,7 +1495,7 @@ public class Utils {
    *           any {@link IOException} thrown
    */
   public static void copyDirectoryRecursive(Path from, Path to) throws IOException {
-    LOGGER.info("Copyin complete directory from " + from + " to " + to);
+    LOGGER.info("Copyin complete directory from {} to {}", from, to);
     Files.walkFileTree(from, new CopyFileVisitor(to));
   }
 
@@ -1512,24 +1519,24 @@ public class Utils {
               Utils.deleteFileSafely(path);
             }
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.debug("could not clean old logs: {}", e.getMessage());
           }
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.debug("could not clean old logs: {}", e.getMessage());
     }
   }
 
   public static String getArtworkExtension(String url) {
     String ext = FilenameUtils.getExtension(url);
-    if (StringUtils.isBlank(ext)) {
-      // no extension? fall back to jpg
+    if (StringUtils.isBlank(ext) || "tbn".equals(ext)) {
+      // no extension or tbn? fall back to jpg
       ext = "jpg";
     }
-    else if ("tbn".equals(ext)) {
-      ext = "jpg";
-    }
+
     return ext.toLowerCase(Locale.ROOT);
   }
 
@@ -1553,7 +1560,7 @@ public class Utils {
       }
     }
     catch (IOException e) {
-      LOGGER.warn("could not get a file listing: " + e.getMessage());
+      LOGGER.warn("could not get a file listing: {}", e.getMessage());
     }
 
     return filesFound;
@@ -1583,7 +1590,7 @@ public class Utils {
       });
     }
     catch (Exception e) {
-      LOGGER.warn("could not get a file listing: " + e.getMessage());
+      LOGGER.warn("could not get a file listing: {}", e.getMessage());
     }
 
     return filesFound;
@@ -1608,8 +1615,9 @@ public class Utils {
     }
   }
 
-  /*
-   * Visitor for copying a directory recursively<br> Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
+  /**
+   * Visitor for copying a directory recursively<br>
+   * Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
    */
   public static class CopyFileVisitor extends SimpleFileVisitor<Path> {
     private final Path targetPath;

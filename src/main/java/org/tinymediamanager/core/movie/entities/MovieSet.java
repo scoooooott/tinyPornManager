@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
 import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TMDB;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -103,11 +102,11 @@ public class MovieSet extends MediaEntity {
 
     firePropertyChange(TITLE_FOR_UI, oldValue, newValue);
 
-    oldValue = this.titleSortable;
+    String oldValueTitleSortable = this.titleSortable;
     titleSortable = "";
-    firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
+    firePropertyChange(TITLE_SORTABLE, oldValueTitleSortable, titleSortable);
 
-    if (StringUtils.isNotBlank(oldValue)) {
+    if (!StringUtils.equals(oldValue, newValue)) {
       // update artwork
       MovieSetArtworkHelper.renameArtwork(this);
 
@@ -175,12 +174,9 @@ public class MovieSet extends MediaEntity {
 
     // we did not find an image - get the cached file from the url
     if (StringUtils.isBlank(artworkFilename)) {
-      final String artworkUrl = getArtworkUrl(type);
-      if (StringUtils.isNotBlank(artworkUrl)) {
-        Path artworkFile = ImageCache.getCacheDir().resolve(ImageCache.getMD5(artworkUrl));
-        if (Files.exists(artworkFile)) {
-          artworkFilename = artworkFile.toAbsolutePath().toString();
-        }
+      Path cachedFile = ImageCache.getCachedFile(getArtworkUrl(type));
+      if (cachedFile != null && cachedFile.toFile().exists()) {
+        return cachedFile.toAbsolutePath().toString();
       }
     }
 
@@ -369,21 +365,16 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Gets the check mark for images.<br>
-   * Assumes true, but when PosterFilename is set and we do not have a poster, return false<br>
-   * same for fanarts.
+   * Gets the check mark for images. What to be checked is configurable
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER))) {
-      return false;
+    for (MediaArtworkType type : MovieModuleManager.SETTINGS.getCheckImagesMovie()) {
+      if (StringUtils.isEmpty(getArtworkFilename(MediaFileType.getMediaFileType(type)))) {
+        return false;
+      }
     }
-
-    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      return false;
-    }
-
     return true;
   }
 
@@ -400,16 +391,16 @@ public class MovieSet extends MediaEntity {
     return true;
   }
 
-  public List<Path> getImagesToCache() {
+  public List<MediaFile> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<>();
+    List<MediaFile> filesToCache = new ArrayList<>();
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER))) {
-      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.POSTER)));
+      filesToCache.add(new MediaFile(Paths.get(getArtworkFilename(MediaFileType.POSTER))));
     }
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))) {
-      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.FANART)));
+      filesToCache.add(new MediaFile(Paths.get(getArtworkFilename(MediaFileType.FANART))));
     }
 
     return filesToCache;

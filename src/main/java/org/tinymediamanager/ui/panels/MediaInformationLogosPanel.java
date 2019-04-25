@@ -59,7 +59,7 @@ public class MediaInformationLogosPanel extends JPanel {
   public MediaInformationLogosPanel() {
     imageSource = "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images";
 
-    setLayout(new MigLayout("hidemode 3, insets n n n 15lp", "[][][][][][10lp][][][10lp][][]", "[]"));
+    setLayout(new MigLayout("hidemode 2, insets n n n 15lp", "[][][][][][10lp][][][10lp][][]", "[]"));
 
     add(lblCertification, "cell 0 0, gapright 15lp");
 

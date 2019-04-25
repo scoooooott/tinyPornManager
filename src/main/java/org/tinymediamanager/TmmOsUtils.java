@@ -28,6 +28,7 @@ import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The class TmmOsUtils. Utility class for OS specific tasks
@@ -73,12 +74,12 @@ public class TmmOsUtils {
     sb.append("/tmm.png\n");
     sb.append("Categories=AudioVideo;Video;Database;Java;");
     sb.append("\n");
-    FileWriterWithEncoding writer;
-    try {
-      writer = new FileWriterWithEncoding(desktop, "UTF-8");
+
+    try (FileWriterWithEncoding writer = new FileWriterWithEncoding(desktop, UrlUtil.UTF_8)) {
       writer.write(sb.toString());
-      writer.close();
-      desktop.setExecutable(true);
+      if (!desktop.setExecutable(true)) {
+        LOGGER.warn("could not make {} executable", desktop.getName());
+      }
     }
     catch (IOException e) {
       LOGGER.warn(e.getMessage());

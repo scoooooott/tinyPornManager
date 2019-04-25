@@ -11,6 +11,7 @@ public class VSMetaTest extends BasicTest {
 
   @Test
   public void checkEmpty() {
+    setTraceLogging();
     Path file = Paths.get("src/test/resources/empty.vsmeta");
     VSMeta vsmeta = new VSMeta();
     vsmeta.parseFile(file);
@@ -20,6 +21,7 @@ public class VSMetaTest extends BasicTest {
 
   @Test
   public void checkAvatar() {
+    setTraceLogging();
     Path file = Paths.get("src/test/resources/Avatar.mkv.vsmeta");
     VSMeta vsmeta = new VSMeta();
     vsmeta.parseFile(file);

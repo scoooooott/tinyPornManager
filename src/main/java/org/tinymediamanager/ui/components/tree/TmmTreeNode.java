@@ -27,13 +27,16 @@ public class TmmTreeNode extends DefaultMutableTreeNode {
 
   protected TmmTreeDataProvider dataProvider;
 
+  private final String          id;
+
   public TmmTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
     super.setUserObject(userObject);
     this.dataProvider = dataProvider;
+    this.id = "" + userObject.hashCode();
   }
 
   public String getId() {
-    return "" + userObject.hashCode();
+    return id;
   }
 
   public TmmTreeDataProvider getDataProvider() {

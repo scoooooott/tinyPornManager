@@ -105,8 +105,10 @@ public class ImageChooserDialog extends TmmDialog {
     LOGO,
     CLEARLOGO,
     CLEARART,
+    CHARACTERART,
     DISC,
-    THUMB
+    THUMB,
+    KEYART
   }
 
   private Map<String, Object> ids;
@@ -274,8 +276,16 @@ public class ImageChooserDialog extends TmmDialog {
         setTitle(BUNDLE.getString("image.choose.clearlogo")); //$NON-NLS-1$
         break;
 
+      case CHARACTERART:
+        setTitle(BUNDLE.getString("image.choose.characterart")); //$NON-NLS-1$
+        break;
+
       case THUMB:
         setTitle(BUNDLE.getString("image.choose.thumb")); //$NON-NLS-1$
+        break;
+
+      case KEYART:
+        setTitle(BUNDLE.getString("image.choose.keyart")); //$NON-NLS-1$
         break;
     }
 
@@ -435,6 +445,7 @@ public class ImageChooserDialog extends TmmDialog {
       case CLEARART:
       case THUMB:
       case DISC:
+      case CHARACTERART:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 180 };
         size = ImageUtils.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
@@ -449,6 +460,7 @@ public class ImageChooserDialog extends TmmDialog {
         break;
 
       case POSTER:
+      case KEYART:
       default:
         gbl.columnWidths = new int[] { 180 };
         gbl.rowHeights = new int[] { 270 };
@@ -495,7 +507,7 @@ public class ImageChooserDialog extends TmmDialog {
     gbc.insets = new Insets(0, 5, 0, 0);
 
     JComboBox cb = null;
-    if (artwork.getImageSizes().size() > 0) {
+    if (!artwork.getImageSizes().isEmpty()) {
       cb = new JComboBox(artwork.getImageSizes().toArray());
     }
     else {
@@ -504,18 +516,22 @@ public class ImageChooserDialog extends TmmDialog {
     button.putClientProperty("MediaArtworkSize", cb);
     imagePanel.add(cb, gbc);
 
+    int row = 0;
+
     // should we provide an option for extrathumbs
     if (type == ImageType.FANART && extraThumbs != null) {
+      row++;
+
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
-      gbc.gridy = 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JLabel label = new JLabel("Extrathumb");
       imagePanel.add(label, gbc);
 
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrathumb", chkbx);
@@ -524,16 +540,18 @@ public class ImageChooserDialog extends TmmDialog {
 
     // should we provide an option for extrafanart
     if (type == ImageType.FANART && extraFanarts != null) {
+      row++;
+
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
-      gbc.gridy = MovieModuleManager.SETTINGS.isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JLabel label = new JLabel("Extrafanart");
       imagePanel.add(label, gbc);
 
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = MovieModuleManager.SETTINGS.isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = row;
       gbc.anchor = GridBagConstraints.LINE_END;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrafanart", chkbx);
@@ -582,6 +600,9 @@ public class ImageChooserDialog extends TmmDialog {
           case CLEARLOGO:
             art = new MediaArtwork("", MediaArtworkType.CLEARLOGO);
             break;
+          case CHARACTERART:
+            art = new MediaArtwork("", MediaArtworkType.CHARACTERART);
+            break;
           case POSTER:
             art = new MediaArtwork("", MediaArtworkType.POSTER);
             break;
@@ -597,6 +618,10 @@ public class ImageChooserDialog extends TmmDialog {
           case THUMB:
             art = new MediaArtwork("", MediaArtworkType.THUMB);
             break;
+          case KEYART:
+            art = new MediaArtwork("", MediaArtworkType.KEYART);
+            break;
+
           default:
             return;
         }
@@ -616,7 +641,7 @@ public class ImageChooserDialog extends TmmDialog {
         tfImageUrl.setText("");
       }
       catch (Exception e) {
-        LOGGER.error("could not download manually entered image url: " + tfImageUrl.getText());
+        LOGGER.error("could not download manually entered image url: {} - {}", tfImageUrl.getText(), e.getMessage());
       }
     };
     task.run();
@@ -889,7 +914,7 @@ public class ImageChooserDialog extends TmmDialog {
         startProgressBar(BUNDLE.getString("image.download.progress")); //$NON-NLS-1$
       });
 
-      if (artworkScrapers == null || artworkScrapers.size() == 0) {
+      if (artworkScrapers == null || artworkScrapers.isEmpty()) {
         return null;
       }
 
@@ -952,6 +977,14 @@ public class ImageChooserDialog extends TmmDialog {
               options.setArtworkType(MediaArtworkType.CLEARLOGO);
               break;
 
+            case CHARACTERART:
+              options.setArtworkType(MediaArtworkType.CLEARART);
+              break;
+
+            case KEYART:
+              options.setArtworkType(MediaArtworkType.KEYART);
+              break;
+
             case THUMB:
               options.setArtworkType(MediaArtworkType.THUMB);
               break;
@@ -987,10 +1020,9 @@ public class ImageChooserDialog extends TmmDialog {
               chunk.image = bufferedImage;
               publish(chunk);
               imagesFound = true;
-              // addImage(bufferedImage, art);
             }
             catch (Exception e) {
-              LOGGER.error("DownloadTask displaying", e.getMessage());
+              LOGGER.error("DownloadTask displaying: {}", e.getMessage());
             }
 
           }
@@ -999,7 +1031,8 @@ public class ImageChooserDialog extends TmmDialog {
           LOGGER.error("getArtwork", e);
           MessageDialog.showExceptionWindow(e);
         }
-        catch (MissingIdException ignored) {
+        catch (MissingIdException e) {
+          LOGGER.debug("could not fetch artwork: {}", e.getIds());
         }
       } // end foreach scraper
 

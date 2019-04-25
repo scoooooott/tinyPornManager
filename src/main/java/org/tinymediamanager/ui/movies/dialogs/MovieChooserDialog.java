@@ -486,6 +486,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               chooseArtwork(MediaFileType.CLEARART);
               chooseArtwork(MediaFileType.DISC);
               chooseArtwork(MediaFileType.THUMB);
+              chooseArtwork(MediaFileType.KEYART);
             }
             else {
               // get artwork asynchronous
@@ -547,8 +548,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           return;
         }
         imageType = ImageType.FANART;
-        extrathumbs = new ArrayList<>();
-        extrafanarts = new ArrayList<>();
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbs()) {
+          extrathumbs = new ArrayList<>();
+        }
+        if (MovieModuleManager.SETTINGS.isImageExtraFanart()) {
+          extrafanarts = new ArrayList<>();
+        }
         break;
 
       case BANNER:
@@ -593,6 +598,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         imageType = ImageType.THUMB;
         break;
 
+      case KEYART:
+        if (MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty()) {
+          return;
+        }
+        imageType = ImageType.KEYART;
+        break;
+
       default:
         return;
     }
@@ -606,15 +618,17 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     }
 
     // set extrathumbs and extrafanarts
-    if (mediaFileType == MediaFileType.FANART) {
+    if (extrathumbs != null) {
       movieToScrape.setExtraThumbs(extrathumbs);
-      movieToScrape.setExtraFanarts(extrafanarts);
-      if (extrafanarts.size() > 0) {
-        movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
-      }
-
-      if (extrathumbs.size() > 0) {
+      if (!extrathumbs.isEmpty()) {
         movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
+      }
+    }
+
+    if (extrafanarts != null) {
+      movieToScrape.setExtraFanarts(extrafanarts);
+      if (!extrafanarts.isEmpty()) {
+        movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
       }
     }
   }
@@ -704,7 +718,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     public void done() {
       if (!cancel) {
         searchResultEventList.clear();
-        if (searchResult == null || searchResult.size() == 0) {
+        if (searchResult == null || searchResult.isEmpty()) {
           // display empty result
           searchResultEventList.add(MovieChooserModel.emptyResult);
         }

@@ -59,7 +59,7 @@ public abstract class TmmThreadPool extends TmmTask {
     this.poolname = name;
     pool = new ThreadPoolExecutor(threads, threads, // max threads
         2, TimeUnit.SECONDS, // time to wait before closing idle workers
-            new LinkedBlockingQueue<>(), // our queue
+        new LinkedBlockingQueue<>(), // our queue
         new TmmThreadFactory(name) // our thread settings
     );
     pool.allowCoreThreadTimeOut(true);
@@ -104,24 +104,25 @@ public abstract class TmmThreadPool extends TmmTask {
         callback(future.get());
       }
       catch (InterruptedException e) {
-        LOGGER.error("ThreadPool " + this.poolname + " interrupted!");
+        LOGGER.error("ThreadPool {} interrupted!", poolname);
+        Thread.currentThread().interrupt();
       }
       catch (ExecutionException e) {
-        LOGGER.error("ThreadPool " + this.poolname + ": Error getting result!", e);
+        LOGGER.error("ThreadPool {}: Error getting result! - {}", poolname, e);
       }
     }
     if (cancel) {
       try {
-        LOGGER.info("Abort queue (discarding " + (workUnits - progressDone) + " tasks)");
+        LOGGER.info("Abort queue (discarding {} tasks", workUnits - progressDone);
         pool.getQueue().clear();
         pool.awaitTermination(3, TimeUnit.SECONDS);
 
         // shutdown now can cause a inconsistency because it will call Thread.interrupt which can cause a (sub)thread to crash
-        // pool.shutdownNow();
         pool.shutdown();
       }
       catch (InterruptedException e) {
-        LOGGER.error("ThreadPool " + this.poolname + " interrupted in shutdown!", e);
+        LOGGER.error("ThreadPool {} interrupted in shutdown! - {}", poolname, e);
+        Thread.currentThread().interrupt();
       }
     }
   }

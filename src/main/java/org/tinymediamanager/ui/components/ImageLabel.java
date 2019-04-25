@@ -110,6 +110,16 @@ public class ImageLabel extends JLabel {
     this.drawShadow = drawShadow;
   }
 
+  public void setOriginalImage(byte[] originalImageBytes) {
+    this.originalImageBytes = originalImageBytes;
+    BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
+    this.originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+    this.scaledImage = Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, this.getSize().width, this.getSize().height,
+        Scalr.OP_ANTIALIAS);
+
+    repaint();
+  }
+
   public String getImagePath() {
     return imagePath;
   }
@@ -448,6 +458,7 @@ public class ImageLabel extends JLabel {
       catch (Exception e) {
         scaledImage = null;
       }
+      revalidate();
       repaint();
     }
   }

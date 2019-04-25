@@ -84,6 +84,9 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
       // unmarshal it
       TvShowEpisodeNfoParser tvShowEpisodeNfoParser = TvShowEpisodeNfoParser.parseNfo(nfoFile);
       List<TvShowEpisode> newEpisodes = tvShowEpisodeNfoParser.toTvShowEpisodes();
+      for (TvShowEpisode episode : newEpisodes) {
+        episode.setTvShow(tvShow);
+      }
       compareEpisodes(episodes, newEpisodes);
     }
     catch (Exception e) {
@@ -117,6 +120,9 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
       // unmarshal it
       TvShowEpisodeNfoParser tvShowEpisodeNfoParser = TvShowEpisodeNfoParser.parseNfo(nfoFile);
       List<TvShowEpisode> newEpisodes = tvShowEpisodeNfoParser.toTvShowEpisodes();
+      for (TvShowEpisode episode : newEpisodes) {
+        episode.setTvShow(tvShow);
+      }
       compareEpisodes(episodes, newEpisodes);
     }
     catch (Exception e) {
@@ -223,8 +229,13 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
       assertThat(newEpisode.isWatched()).isEqualTo(episode.isWatched());
       assertThat(newEpisode.getFirstAired()).isEqualTo(episode.getFirstAired());
       assertThat(newEpisode.getTags()).isEqualTo(episode.getTags());
-      assertThat(newEpisode.getActors().size()).isEqualTo(episode.getActors().size());
-      assertThat(newEpisode.getActors().get(0)).isEqualTo(episode.getActors().get(0));
+
+      // since we do not write show actors to the episodes, we need to adopt this test
+      for (Person person : newEpisode.getGuests()) {
+        assertThat(episode.getActors()).contains(person);
+        assertThat(newEpisode.getTvShow().getActors()).doesNotContain(person);
+      }
+
       assertThat(newEpisode.getDirectors().size()).isEqualTo(episode.getDirectors().size());
       assertThat(newEpisode.getDirectors().get(0)).isEqualTo(episode.getDirectors().get(0));
       assertThat(newEpisode.getWriters().size()).isEqualTo(episode.getWriters().size());

@@ -44,6 +44,8 @@ public enum MediaFileType {
   LOGO, // gfx
   CLEARLOGO, // gfx
   THUMB, // gfx
+  CHARACTERART, //gfx
+  KEYART, // gfx
   SEASON_POSTER, // gfx
   SEASON_BANNER, // gfx
   SEASON_THUMB, // gfx
@@ -96,8 +98,14 @@ public enum MediaFileType {
       case CLEARLOGO:
         return MediaFileType.CLEARLOGO;
 
+      case CHARACTERART:
+        return MediaFileType.CHARACTERART;
+
       case DISC:
         return MediaFileType.DISC;
+
+      case KEYART:
+        return MediaFileType.KEYART;
 
       default:
         return MediaFileType.GRAPHIC;
@@ -143,8 +151,14 @@ public enum MediaFileType {
       case CLEARLOGO:
         return MediaArtworkType.CLEARLOGO;
 
+      case CHARACTERART:
+        return MediaArtworkType.CHARACTERART;
+
       case DISC:
         return MediaArtworkType.DISC;
+
+      case KEYART:
+        return MediaArtworkType.KEYART;
 
       default:
         throw new IllegalStateException();
@@ -167,7 +181,11 @@ public enum MediaFileType {
         MediaFileType.LOGO,
         MediaFileType.CLEARLOGO,
         MediaFileType.THUMB,
+        MediaFileType.CHARACTERART,
+        MediaFileType.KEYART,
         MediaFileType.SEASON_POSTER,
+        MediaFileType.SEASON_BANNER,
+        MediaFileType.SEASON_THUMB,
         MediaFileType.EXTRAFANART,
         MediaFileType.EXTRATHUMB
     };

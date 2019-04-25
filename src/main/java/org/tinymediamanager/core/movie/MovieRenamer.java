@@ -61,6 +61,7 @@ import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieDiscartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieKeyartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
@@ -117,6 +118,7 @@ public class MovieRenamer {
     tokenMap.put("videoCodec", "movie.mediaInfoVideoCodec");
     tokenMap.put("videoFormat", "movie.mediaInfoVideoFormat");
     tokenMap.put("videoResolution", "movie.mediaInfoVideoResolution");
+    tokenMap.put("videoBitDepth", "movie.mediaInfoVideoBitDepth");
     tokenMap.put("audioCodec", "movie.mediaInfoAudioCodec");
     tokenMap.put("audioCodecList", "movie.mediaInfoAudioCodecList");
     tokenMap.put("audioCodecsAsString", "movie.mediaInfoAudioCodecList;array");
@@ -205,8 +207,7 @@ public class MovieRenamer {
         for (String s : langArray) {
           if (LanguageUtils.doesStringEndWithLanguage(shortname, s)) {
             originalLang = s;
-            // lang = Utils.getIso3LanguageFromLocalizedString(s);
-            // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+            LOGGER.trace("found language '{}' in subtitle", s);
             break;
           }
         }
@@ -441,6 +442,7 @@ public class MovieRenamer {
     fileNamings.addAll(Arrays.asList(MovieClearlogoNaming.values()));
     fileNamings.addAll(Arrays.asList(MovieThumbNaming.values()));
     fileNamings.addAll(Arrays.asList(MovieDiscartNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieKeyartNaming.values()));
 
     for (IFileNaming fileNaming : fileNamings) {
       for (String ext : KNOWN_IMAGE_FILE_EXTENSIONS) {
@@ -522,7 +524,7 @@ public class MovieRenamer {
     }
 
     // ######################################################################
-    // ## rename POSTER, FANART, BANNER, CLEARART, THUMB, LOGO, CLEARLOGO, DISCART (copy 1:N)
+    // ## rename POSTER, FANART, BANNER, CLEARART, THUMB, LOGO, CLEARLOGO, DISCART, KEYART (copy 1:N)
     // ######################################################################
     // we can have multiple ones, just get the newest one and copy(overwrite) them to all needed
     ArrayList<MediaFile> mfs = new ArrayList<>();
@@ -534,9 +536,10 @@ public class MovieRenamer {
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.LOGO));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.CLEARLOGO));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.DISC));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.KEYART));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
-      LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
+      LOGGER.trace("Rename 1:N {} - {}", mf.getType(), mf.getFileAsPath());
       ArrayList<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
       for (MediaFile newMF : newMFs) {
         posterRenamed = true;
@@ -561,7 +564,7 @@ public class MovieRenamer {
 
     if (nfo.getFiledate() > 0) { // one valid found? copy our NFO to all variants
       ArrayList<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
-      if (newNFOs.size() > 0) {
+      if (!newNFOs.isEmpty()) {
         // ok, at least one has been set up
         for (MediaFile newNFO : newNFOs) {
           boolean ok = copyFile(nfo.getFileAsPath(), newNFO.getFileAsPath());
@@ -597,12 +600,12 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<>(
-        movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
-            MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
+    mfs = new ArrayList<>(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART,
+        MediaFileType.BANNER, MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC,
+        MediaFileType.KEYART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
-      LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
+      LOGGER.trace("Rename 1:1 {} - {}", other.getType(), other.getFileAsPath());
 
       ArrayList<MediaFile> newMFs = generateFilename(movie, other, newVideoBasename); // 1:N
       newMFs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -628,7 +631,7 @@ public class MovieRenamer {
     // ######################################################################
     for (MediaFile gfx : movie.getMediaFiles()) {
       if (gfx.isGraphic()) {
-        ImageCache.invalidateCachedImage(gfx.getFileAsPath());
+        ImageCache.invalidateCachedImage(gfx);
       }
     }
 
@@ -690,18 +693,19 @@ public class MovieRenamer {
         }
 
         if (existingFiles.contains(cl.getFileAsPath())) {
-          LOGGER.debug("Deleting " + cl.getFileAsPath());
+          LOGGER.debug("Deleting {}", cl.getFileAsPath());
           Utils.deleteFileWithBackup(cl.getFileAsPath(), movie.getDataSource());
         }
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(cl.getFileAsPath().getParent())) {
           if (!directoryStream.iterator().hasNext()) {
             // no iterator = empty
-            LOGGER.debug("Deleting empty Directory " + cl.getFileAsPath().getParent());
+            LOGGER.debug("Deleting empty Directory {}", cl.getFileAsPath().getParent());
             Files.delete(cl.getFileAsPath().getParent()); // do not use recursive her
           }
         }
-        catch (IOException ignored) {
+        catch (IOException e) {
+          LOGGER.warn("could not search for empty dir: {}", e.getMessage());
         }
       }
     }
@@ -713,9 +717,10 @@ public class MovieRenamer {
       for (MediaFile gfx : movie.getMediaFiles()) {
         if (gfx.isGraphic()) {
           try {
-            ImageCache.cacheImage(gfx.getFileAsPath());
+            ImageCache.cacheImage(gfx);
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.debug("could not create a cached image: {}", e.getMessage());
           }
         }
       }
@@ -1009,6 +1014,17 @@ public class MovieRenamer {
         }
         break;
 
+      case KEYART:
+        for (MovieKeyartNaming name : MovieArtworkHelper.getKeyartNamesForMovie(movie)) {
+          String newKeyartName = name.getFilename(newFilename, getArtworkExtension(mf));
+          if (StringUtils.isNotBlank(newKeyartName)) {
+            MediaFile key = new MediaFile(mf);
+            key.setFile(newMovieDir.resolve(newKeyartName));
+            newFiles.add(key);
+          }
+        }
+        break;
+
       // *************
       // OK, from here we check only the settings
       // *************
@@ -1155,7 +1171,7 @@ public class MovieRenamer {
       return engine.transform(morphTemplate(token), root);
     }
     catch (Exception e) {
-      LOGGER.warn("unable to process token: " + token);
+      LOGGER.warn("unable to process token: {}", token);
       return token;
     }
   }
