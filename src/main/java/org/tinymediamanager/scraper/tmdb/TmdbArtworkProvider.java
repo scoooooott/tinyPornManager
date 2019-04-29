@@ -107,7 +107,13 @@ class TmdbArtworkProvider {
         LOGGER.info("nothing found");
       }
       catch (Exception e) {
-        LOGGER.error("could not get data: " + e.getMessage());
+        LOGGER.debug("failed to get artwork: {}", e.getMessage());
+
+        // if the thread has been interrupted, to no rethrow that exception
+        if (e instanceof InterruptedException) {
+          return new ArrayList<>();
+        }
+
         throw new ScrapeException(e);
       }
     }
