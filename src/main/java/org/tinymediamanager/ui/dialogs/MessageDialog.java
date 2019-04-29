@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 
 import net.miginfocom.swing.MigLayout;
@@ -50,6 +49,8 @@ public class MessageDialog extends TmmDialog {
 
   public MessageDialog(Window owner, String title) {
     super(owner, title, "messageDialog");
+    setModal(false);
+    setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 
     {
       JPanel panelContent = new JPanel();
@@ -67,6 +68,7 @@ public class MessageDialog extends TmmDialog {
       }
       {
         tpDescription = new ReadOnlyTextPane("");
+        tpDescription.setEditable(true);
         tpDescription.setVisible(false);
         panelContent.add(tpDescription, "cell 1 1,growx");
       }
@@ -113,14 +115,14 @@ public class MessageDialog extends TmmDialog {
   }
 
   public static void showExceptionWindow(Throwable ex) {
-    MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.problemdetected")); //$NON-NLS-1$
+    MessageDialog dialog = new MessageDialog(null, BUNDLE.getString("tmm.problemdetected")); //$NON-NLS-1$
 
     dialog.setImage(IconManager.ERROR);
     String msg = ex.getLocalizedMessage();
     dialog.setText(msg != null ? msg : "");
     dialog.setDescription(BUNDLE.getString("tmm.uicrash")); //$NON-NLS-1$
     dialog.setDetails(stackStraceAsString(ex));
-
+    dialog.setAlwaysOnTop(true);
     dialog.setVisible(true);
   }
 
