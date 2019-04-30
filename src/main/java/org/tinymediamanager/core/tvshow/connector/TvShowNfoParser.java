@@ -846,9 +846,12 @@ public class TvShowNfoParser {
       try {
         watched = Boolean.parseBoolean(element.ownText());
         element = getSingleElement(root, "playcount");
-        playcount = MetadataUtil.parseInt(element.ownText());
+        if (element != null) {
+          playcount = MetadataUtil.parseInt(element.ownText());
+        }
       }
       catch (Exception ignored) {
+        // nothing to be catched here
       }
     }
 
