@@ -537,10 +537,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // is there any rating?
     if (rating == null && !ratings.isEmpty()) {
-      for (Rating r : ratings.values()) {
-        rating = r;
-        break;
-      }
+      rating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
@@ -698,10 +695,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     if (config.isArtwork()) {
-      for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
-        setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
+      List<MediaArtwork> mas = metadata.getMediaArt(MediaArtworkType.THUMB);
+      if (!mas.isEmpty()) {
+        setArtworkUrl(mas.get(0).getDefaultUrl(), MediaFileType.THUMB);
         writeNewThumb = true;
-        break;
       }
     }
 

@@ -17,7 +17,6 @@ package org.tinymediamanager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.text.Format;
@@ -27,25 +26,18 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The Class ReleaseInfo.
  * 
  * @author Manuel Laggner
  */
 public class ReleaseInfo {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseInfo.class);
-
-  private static String       version;
-  private static String       build;
-  private static String       buildDate;
+  private static String version;
+  private static String build;
+  private static String buildDate;
 
   static {
-    FileInputStream fileInputStream = null;
-    try {
-      fileInputStream = new FileInputStream("version");
+    try (FileInputStream fileInputStream = new FileInputStream("version")) { // NOSONAR
       Properties releaseInfoProp = new Properties();
       releaseInfoProp.load(fileInputStream);
       version = releaseInfoProp.getProperty("version");
@@ -53,8 +45,7 @@ public class ReleaseInfo {
       buildDate = releaseInfoProp.getProperty("date");
     }
     catch (IOException e) {
-      try {
-        fileInputStream = new FileInputStream("target/classes/eclipse.properties");
+      try (FileInputStream fileInputStream = new FileInputStream("target/classes/eclipse.properties")) {
         Properties releaseInfoProp = new Properties();
         releaseInfoProp.load(fileInputStream);
         version = releaseInfoProp.getProperty("version");
@@ -68,16 +59,10 @@ public class ReleaseInfo {
         buildDate = "";
       }
     }
-    finally {
-      try {
-        if (fileInputStream != null) {
-          fileInputStream.close();
-        }
-      }
-      catch (IOException e) {
-        LOGGER.warn(e.getMessage());
-      }
-    }
+  }
+
+  private ReleaseInfo() {
+    // hide contructor for utility classes
   }
 
   /**
@@ -251,11 +236,7 @@ public class ReleaseInfo {
         String basepath = jarURL.getPath().substring(0, jarURL.getPath().indexOf(classname));
 
         // assume there is already some generated manifest on filesystem
-        InputStream is = new FileInputStream(basepath + "/META-INF/MANIFEST.MF");
-
-        if (is != null) {
-          mf = new Manifest(is);
-        }
+        new Manifest(new FileInputStream(basepath + "/META-INF/MANIFEST.MF"));
       }
     }
     catch (Exception e) {
@@ -276,12 +257,14 @@ public class ReleaseInfo {
    * @return value of manifest entry
    */
   @SuppressWarnings("rawtypes")
-  public static String getManifestEntry(Class c, String entry) {
+  private static String getManifestEntry(Class c, String entry) {
     String s = "";
     try {
       Manifest mf = ReleaseInfo.getManifest(c);
-      Attributes attr = mf.getMainAttributes();
-      s = attr.getValue(entry);
+      if (mf != null) {
+        Attributes attr = mf.getMainAttributes();
+        s = attr.getValue(entry);
+      }
     }
     catch (Exception e) {
       // NPE if no manifest found

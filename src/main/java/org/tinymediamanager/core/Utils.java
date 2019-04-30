@@ -636,8 +636,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
+          break;
         }
       }
 
@@ -734,8 +736,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again...");
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep");
+          break;
         }
       }
 
@@ -837,8 +841,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
+          break;
         }
       }
 
