@@ -570,7 +570,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     }
 
     // set extrafanarts
-    if (mediaFileType == MediaFileType.FANART) {
+    if (mediaFileType == MediaFileType.FANART && extrafanarts != null) {
       tvShowToScrape.setExtraFanartUrls(extrafanarts);
       if (!extrafanarts.isEmpty()) {
         tvShowToScrape.downloadArtwork(MediaFileType.EXTRAFANART);

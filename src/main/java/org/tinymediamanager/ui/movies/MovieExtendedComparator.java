@@ -164,11 +164,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case WATCHED:
-          Boolean watched1 = movie1.isWatched();
-          Boolean watched2 = movie2.isWatched();
-          sortOrder = compareNullFirst(watched1, watched2);
+          sortOrder = compareNullFirst(movie1.isWatched(), movie2.isWatched());
           if (sortOrder == 0) {
-            sortOrder = watched1.compareTo(watched2);
+            sortOrder = Boolean.compare(movie1.isWatched(), movie2.isWatched());
           }
           break;
 
@@ -180,29 +178,23 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case RUNTIME:
-          Integer runtime1 = movie1.getRuntime();
-          Integer runtime2 = movie2.getRuntime();
-          sortOrder = compareNullFirst(runtime1, runtime2);
+          sortOrder = compareNullFirst(movie1.getRuntime(), movie2.getRuntime());
           if (sortOrder == 0) {
-            sortOrder = runtime1.compareTo(runtime2);
+            sortOrder = Integer.compare(movie1.getRuntime(), movie2.getRuntime());
           }
           break;
 
         case VIDEO_BITRATE:
-          Integer videoBitrate1 = movie1.getMediaInfoVideoBitrate();
-          Integer videoBitrate2 = movie2.getMediaInfoVideoBitrate();
-          sortOrder = compareNullFirst(videoBitrate1, videoBitrate2);
+          sortOrder = compareNullFirst(movie1.getMediaInfoVideoBitrate(), movie2.getMediaInfoVideoBitrate());
           if (sortOrder == 0) {
-            sortOrder = videoBitrate1.compareTo(videoBitrate2);
+            sortOrder = Integer.compare(movie1.getMediaInfoVideoBitrate(), movie2.getMediaInfoVideoBitrate());
           }
           break;
 
         case FRAME_RATE:
-          Double frameRate1 = movie1.getMediaInfoFrameRate();
-          Double frameRate2 = movie2.getMediaInfoFrameRate();
-          sortOrder = compareNullFirst(frameRate1, frameRate2);
+          sortOrder = compareNullFirst(movie1.getMediaInfoFrameRate(), movie2.getMediaInfoFrameRate());
           if (sortOrder == 0) {
-            sortOrder = frameRate1.compareTo(frameRate2);
+            sortOrder = Double.compare(movie1.getMediaInfoFrameRate(), movie2.getMediaInfoFrameRate());
           }
           break;
 
@@ -231,7 +223,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   private Integer compareNullFirst(Object o1, Object o2) {
-    Integer sort = 0;
+    Integer sort;
     if (o1 == null && o2 == null) {
       sort = null;
     }

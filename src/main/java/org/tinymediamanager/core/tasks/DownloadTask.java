@@ -132,7 +132,7 @@ public class DownloadTask extends TmmTask {
         }
       }
 
-      LOGGER.info("Downloading " + url);
+      LOGGER.info("Downloading {}", url);
       StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       if (StringUtils.isNotBlank(userAgent)) {
         u.setUserAgent(userAgent);
@@ -149,10 +149,10 @@ public class DownloadTask extends TmmTask {
       InputStream is = u.getInputStream();
 
       // trace server headers
-      LOGGER.trace("Server returned: " + u.getStatusLine());
+      LOGGER.trace("Server returned: {}", u.getStatusLine());
       Headers headers = u.getHeadersResponse();
       for (String name : headers.names()) {
-        LOGGER.trace(" < " + name + ": " + headers.get(name));
+        LOGGER.trace(" < {} : {}", name, headers.get(name));
       }
 
       if (u.isFault()) {
@@ -182,48 +182,48 @@ public class DownloadTask extends TmmTask {
         ext = "dat";
       }
 
-      LOGGER.info("Downloading to " + file);
+      LOGGER.info("Downloading to {}", file);
 
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-      FileOutputStream outputStream = new FileOutputStream(tempFile.toFile(), resume);
-      int count = 0;
-      byte buffer[] = new byte[2048];
-      Long timestamp1 = System.nanoTime();
-      Long timestamp2;
-      long bytesDone = 0;
-      long bytesDonePrevious = 0;
-      double speed = 0;
 
-      while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1) {
-        if (cancel) {
-          Thread.currentThread().interrupt();
-        }
+      try (FileOutputStream outputStream = new FileOutputStream(tempFile.toFile(), resume)) {
+        int count = 0;
+        byte buffer[] = new byte[2048];
+        Long timestamp1 = System.nanoTime();
+        Long timestamp2;
+        long bytesDone = 0;
+        long bytesDonePrevious = 0;
+        double speed = 0;
 
-        outputStream.write(buffer, 0, count);
-        bytesDone += count;
-
-        // we push the progress only once per 250ms (to use less performance and get a better download speed)
-        timestamp2 = System.nanoTime();
-        if (timestamp2 - timestamp1 > 250000000) {
-          // avg. speed between the actual and the previous
-          speed = (speed + (bytesDone - bytesDonePrevious) / ((double) (timestamp2 - timestamp1) / 1000000000)) / 2;
-
-          timestamp1 = timestamp2;
-          bytesDonePrevious = bytesDone;
-
-          if (length > 0) {
-            publishState(formatBytesForOutput(bytesDone) + "/" + formatBytesForOutput(length) + " @" + formatSpeedForOutput(speed),
-                (int) (bytesDone * 100 / length));
-          }
-          else {
-            setWorkUnits(0);
-            publishState(formatBytesForOutput(bytesDone) + " @" + formatSpeedForOutput(speed), 0);
+        while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1) {
+          if (cancel) {
+            Thread.currentThread().interrupt();
           }
 
+          outputStream.write(buffer, 0, count);
+          bytesDone += count;
+
+          // we push the progress only once per 250ms (to use less performance and get a better download speed)
+          timestamp2 = System.nanoTime();
+          if (timestamp2 - timestamp1 > 250000000) {
+            // avg. speed between the actual and the previous
+            speed = (speed + (bytesDone - bytesDonePrevious) / ((double) (timestamp2 - timestamp1) / 1000000000)) / 2;
+
+            timestamp1 = timestamp2;
+            bytesDonePrevious = bytesDone;
+
+            if (length > 0) {
+              publishState(formatBytesForOutput(bytesDone) + "/" + formatBytesForOutput(length) + " @" + formatSpeedForOutput(speed),
+                  (int) (bytesDone * 100 / length));
+            }
+            else {
+              setWorkUnits(0);
+              publishState(formatBytesForOutput(bytesDone) + " @" + formatSpeedForOutput(speed), 0);
+            }
+
+          }
         }
       }
-
-      outputStream.close();
 
       // we must not close the input stream on cancel(the rest will be downloaded if we close it on cancel)
       if (!cancel) {
@@ -262,7 +262,7 @@ public class DownloadTask extends TmmTask {
           }
         }
         else {
-          LOGGER.warn("Download to '" + tempFile + "' was ok, but couldn't move to '" + file + "'");
+          LOGGER.warn("Download to '{}' was ok, but couldn't move to '{}'", tempFile, file);
         }
       } // end isCancelled
     }

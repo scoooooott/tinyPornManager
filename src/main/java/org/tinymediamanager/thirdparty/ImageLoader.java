@@ -40,6 +40,9 @@ import java.util.Properties;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class can convert an abstract <code>Image</code> into a ARGB <code>BufferedImage</code>.
  * <P>
@@ -52,7 +55,8 @@ import javax.swing.event.ChangeListener;
  * 
  */
 public class ImageLoader {
-  private static boolean                debug     = false;
+  private static final Logger           LOGGER    = LoggerFactory.getLogger(ImageLoader.class);
+
   private static final DirectColorModel ARGBModel = (DirectColorModel) ColorModel.getRGBdefault();
   private static final DirectColorModel RGBModel  = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0);
 
@@ -63,7 +67,7 @@ public class ImageLoader {
       return createImage(Toolkit.getDefaultToolkit().createImage(url), url.toString());
     }
     catch (RuntimeException e) {
-      System.err.println("url: " + url);
+      LOGGER.debug("could not create image: {}", e.getMessage());
       throw e;
     }
   }
@@ -210,15 +214,18 @@ public class ImageLoader {
 
   /** Fires all change listeners */
   protected void fireChangeListeners() {
-    if (listeners == null)
+    if (listeners == null) {
       return;
-      for (ChangeListener l : listeners) {
-          try {
-              l.stateChanged(new ChangeEvent(this));
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
+    }
+
+    for (ChangeListener l : listeners) {
+      try {
+        l.stateChanged(new ChangeEvent(this));
       }
+      catch (Exception e) {
+        LOGGER.warn("failed to inform listener: {}", e.getMessage());
+      }
+    }
   }
 
   /**
@@ -271,7 +278,7 @@ public class ImageLoader {
     }
     while (!finished) {
       try {
-        t.wait(500);
+        Thread.sleep(500);
       }
       catch (Exception e) {
         Thread.yield();
@@ -294,9 +301,9 @@ public class ImageLoader {
         waitingThread.interrupt();
       }
       if (waitingThreads != null) {
-          for (Thread t : waitingThreads) {
-              t.interrupt();
-          }
+        for (Thread t : waitingThreads) {
+          t.interrupt();
+        }
       }
     }
   }
@@ -312,18 +319,6 @@ public class ImageLoader {
     }
 
     public void imageComplete(int completionStatus) {
-      if (debug) {
-        System.err.println("imageComplete(): ");
-        if ((completionStatus == IMAGEABORTED))
-          System.err.println("\tIMAGEABORTED");
-        if ((completionStatus == IMAGEERROR))
-          System.err.println("\tIMAGEERROR");
-        if ((completionStatus == SINGLEFRAMEDONE))
-          System.err.println("\tSINGLEFRAMEDONE");
-        if ((completionStatus == STATICIMAGEDONE))
-          System.err.println("\tSTATICIMAGEDONE");
-      }
-
       producer.removeConsumer(this);
 
       status = completionStatus;
@@ -336,8 +331,6 @@ public class ImageLoader {
 
     public void setColorModel(ColorModel cm) {
       try {
-        if (debug)
-          System.err.println("setColorModel( " + cm + " )");
         lastCM = cm;
         indexed = null;
         if (cm instanceof IndexColorModel) {
@@ -352,16 +345,13 @@ public class ImageLoader {
             }
             int t = i.getTransparentPixel();
             if (i.hasAlpha() && t >= 0 && t < indexed.length) {
-              if (debug)
-                System.err.println("i.getTransparentPixel: " + i.getTransparentPixel());
               indexed[t] = 0;
             }
           }
         }
       }
       catch (RuntimeException | Error e) {
-        System.err.println("setColorModel( " + cm + " )");
-        System.err.println(description);
+        LOGGER.debug("could not set color model: {}", e.getMessage());
         throw e;
       }
     }
@@ -370,8 +360,6 @@ public class ImageLoader {
 
     public void setDimensions(int w, int h) {
       try {
-        if (debug)
-          System.err.println("setDimensions(" + w + "," + h + ")");
         if (w <= 0)
           throw new IllegalArgumentException("Width must be greater than zero.  (" + w + ")");
         if (h <= 0)
@@ -391,26 +379,12 @@ public class ImageLoader {
         fireChangeListeners();
       }
       catch (RuntimeException | Error e) {
-        System.err.println("setDimensions( " + w + ", " + h + " )");
-        System.err.println(description);
+        LOGGER.debug("could not set dimensions: {}", e.getMessage());
         throw e;
       }
     }
 
     public void setHints(int hints) {
-      if (debug) {
-        System.err.println("setHints():");
-        if ((hints & COMPLETESCANLINES) > 0)
-          System.err.println("\tCOMPLETESCANLINES");
-        if ((hints & RANDOMPIXELORDER) > 0)
-          System.err.println("\tSINGLEFRAME");
-        if ((hints & SINGLEFRAME) > 0)
-          System.err.println("\tSINGLEFRAME");
-        if ((hints & SINGLEPASS) > 0)
-          System.err.println("\tSINGLEPASS");
-        if ((hints & TOPDOWNLEFTRIGHT) > 0)
-          System.err.println("\tTOPDOWNLEFTRIGHT");
-      }
     }
 
     public void setPixels(int x, int y, int w, int h, ColorModel cm, byte[] data, int offset, int scanSize) {
@@ -418,10 +392,6 @@ public class ImageLoader {
         if (size == null)
           throw new RuntimeException(
               "The dimensions of this image are not yet defined.  Cannot write image data until the dimensions of the image are known.");
-
-        if (debug)
-          System.err.println(Thread.currentThread().getName() + " setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset
-              + ", " + scanSize + ") (byte[])");
 
         if (cm == lastCM && indexed != null) {
           int argb;
@@ -464,8 +434,7 @@ public class ImageLoader {
         setProgress(x + w, y + h);
       }
       catch (RuntimeException | Error e) {
-        System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (byte[])");
-        System.err.println(description);
+        LOGGER.debug("could not set pixels: {}", e.getMessage());
         throw e;
       }
     }
@@ -476,9 +445,6 @@ public class ImageLoader {
 
     public void setPixels(int x, int y, int w, int h, ColorModel cm, int[] data, int offset, int scanSize) {
       try {
-        if (debug)
-          System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (int[])");
-
         if (size == null)
           throw new RuntimeException(
               "The dimensions of this image are not yet defined.  Cannot write image data until the dimensions of the image are known.");
@@ -536,8 +502,7 @@ public class ImageLoader {
         setProgress(x + w, y + h);
       }
       catch (RuntimeException | Error e) {
-        System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (int[])");
-        System.err.println(description);
+        LOGGER.debug("could not set pixels: {}", e.getMessage());
         throw e;
       }
     }
@@ -552,15 +517,9 @@ public class ImageLoader {
         if (properties == null)
           properties = new Properties();
         properties.putAll(p);
-        if (debug) {
-          System.err.println("setProperties():");
-          properties.list(System.err);
-        }
       }
       catch (RuntimeException | Error e) {
-        System.err.println("setProperties():");
-        properties.list(System.err);
-        System.err.println(description);
+        LOGGER.warn("could not set properties: {}", e.getMessage());
         throw e;
       }
     }
