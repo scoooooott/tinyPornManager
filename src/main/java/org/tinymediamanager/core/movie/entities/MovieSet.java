@@ -204,10 +204,8 @@ public class MovieSet extends MediaEntity {
     }
 
     // write images
-    List<Movie> movies = new ArrayList<>(1);
-    movies.add(movie);
     if (MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
-      MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
+      MovieSetArtworkHelper.writeImagesToMovieFolder(this, Collections.singletonList(movie));
     }
 
     firePropertyChange(Constants.ADDED_MOVIE, null, movie);
@@ -232,7 +230,7 @@ public class MovieSet extends MediaEntity {
         movies.add(-index - 1, movie);
         movieIds.add(-index - 1, movie.getDbId());
       }
-      else if (index >= 0) {
+      else {
         movies.add(index, movie);
         movieIds.add(index, movie.getDbId());
       }
@@ -244,10 +242,8 @@ public class MovieSet extends MediaEntity {
     }
 
     // write images
-    List<Movie> movies = new ArrayList<>(1);
-    movies.add(movie);
     if (MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
-      MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
+      MovieSetArtworkHelper.writeImagesToMovieFolder(this, Collections.singletonList(movie));
     }
 
     firePropertyChange(Constants.ADDED_MOVIE, null, movie);
