@@ -123,7 +123,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
         // add well known tags
         for (TvShowEpisode episode : episodes) {
           // create the new NFO file according to the specifications
-          DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+          DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
           document = factory.newDocumentBuilder().newDocument();
           document.setXmlStandalone(true);
 
@@ -206,13 +206,13 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write " + firstEpisode.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
+        getLogger().error("write {}: {}", firstEpisode.getPathNIO().resolve(nfoFilename), e.getMessage());
         MessageManager.instance.pushMessage(
             new Message(Message.MessageLevel.ERROR, firstEpisode, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
-    if (newNfos.size() > 0) {
+    if (!newNfos.isEmpty()) {
       for (TvShowEpisode episode : episodes) {
         episode.removeAllMediaFiles(MediaFileType.NFO);
         episode.addToMediaFiles(newNfos);
@@ -552,7 +552,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    */
   protected void addUnsupportedTags(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     if (parser != null) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
 
       for (String unsupportedString : parser.unsupportedElements) {
         try {
@@ -560,7 +560,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           root.appendChild(document.importNode(unsupported.getFirstChild(), true));
         }
         catch (Exception e) {
-          getLogger().error("import unsupported tags: " + e.getMessage());
+          getLogger().error("import unsupported tags: {}", e.getMessage());
         }
       }
     }
@@ -592,7 +592,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    *           any Exception that has been thrown
    */
   protected Transformer getTransformer() throws Exception {
-    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    Transformer transformer = TransformerFactory.newInstance().newTransformer(); // NOSONAR
 
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");

@@ -115,7 +115,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
       try {
         // create the new NFO file according to the specifications
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
         document = factory.newDocumentBuilder().newDocument();
         document.setXmlStandalone(true);
 
@@ -183,7 +183,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write " + movie.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
+        getLogger().error("write {}: {}", movie.getPathNIO().resolve(nfoFilename), e.getMessage());
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -595,7 +595,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addUnsupportedTags() {
     if (parser != null) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
 
       for (String unsupportedString : parser.unsupportedElements) {
         try {
@@ -603,7 +603,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
           root.appendChild(document.importNode(unsupported.getFirstChild(), true));
         }
         catch (Exception e) {
-          getLogger().error("import unsupported tags: " + e.getMessage());
+          getLogger().error("import unsupported tags: {}", e.getMessage());
         }
       }
     }
@@ -653,7 +653,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    *           any Exception that has been thrown
    */
   protected Transformer getTransformer() throws Exception {
-    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    Transformer transformer = TransformerFactory.newInstance().newTransformer(); // NOSONAR
 
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");

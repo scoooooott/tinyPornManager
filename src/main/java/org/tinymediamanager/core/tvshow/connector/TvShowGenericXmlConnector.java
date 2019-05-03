@@ -118,7 +118,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
       try {
         // create the new NFO file according to the specifications
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
         document = factory.newDocumentBuilder().newDocument();
         document.setXmlStandalone(true);
 
@@ -182,13 +182,13 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write " + tvShow.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
+        getLogger().error("write {}: {}", tvShow.getPathNIO().resolve(nfoFilename), e.getMessage());
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
-    if (newNfos.size() > 0) {
+    if (!newNfos.isEmpty()) {
       tvShow.removeAllMediaFiles(MediaFileType.NFO);
       tvShow.addToMediaFiles(newNfos);
     }
@@ -438,7 +438,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     }
     // or even import it from the parser
     else if (parser != null && StringUtils.isNotBlank(parser.episodeguide)) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
       try {
         Element episodeguide = document.createElement("episodeguide");
 
@@ -625,7 +625,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addUnsupportedTags() {
     if (parser != null) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // NOSONAR
 
       for (String unsupportedString : parser.unsupportedElements) {
         try {
@@ -633,7 +633,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
           root.appendChild(document.importNode(unsupported.getFirstChild(), true));
         }
         catch (Exception e) {
-          getLogger().error("import unsupported tags: " + e.getMessage());
+          getLogger().error("import unsupported tags: {}", e.getMessage());
         }
       }
     }
