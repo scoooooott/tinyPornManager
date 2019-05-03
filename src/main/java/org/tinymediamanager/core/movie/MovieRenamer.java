@@ -88,6 +88,10 @@ public class MovieRenamer {
 
   public static final Map<String, String> TOKEN_MAP                   = createTokenMap();
 
+  private MovieRenamer() {
+    // hide public constructor for utility classes
+  }
+
   /**
    * initialize the token map for the renamer
    *
@@ -102,7 +106,6 @@ public class MovieRenamer {
     tokenMap.put("releaseDate", "movie.releaseDate;date(yyyy-MM-dd)");
     tokenMap.put("titleSortable", "movie.titleSortable");
     tokenMap.put("rating", "movie.rating.rating");
-    tokenMap.put("movieset", "movie.movieSet");
     tokenMap.put("imdb", "movie.imdbId");
     tokenMap.put("certification", "movie.certification");
     tokenMap.put("language", "movie.spokenLanguages");
@@ -304,9 +307,8 @@ public class MovieRenamer {
       return;
     }
 
-    // if (!movie.isScraped()) {
     if (movie.getTitle().isEmpty()) {
-      LOGGER.error("won't rename movie '" + movie.getPathNIO() + "' / '" + movie.getTitle() + "' not even title is set?");
+      LOGGER.error("won't rename movie '{}' / '{}' not even title is set?", movie.getPathNIO(), movie.getTitle());
       return;
     }
 
@@ -314,16 +316,16 @@ public class MovieRenamer {
     ArrayList<MediaFile> needed = new ArrayList<>();
     ArrayList<MediaFile> cleanup = new ArrayList<>();
 
-    LOGGER.info("Renaming movie: " + movie.getTitle());
-    LOGGER.debug("movie year: " + movie.getYear());
-    LOGGER.debug("movie path: " + movie.getPathNIO());
-    LOGGER.debug("movie isDisc?: " + movie.isDisc());
-    LOGGER.debug("movie isMulti?: " + movie.isMultiMovieDir());
+    LOGGER.info("Renaming movie: {}", movie.getTitle());
+    LOGGER.debug("movie year: {}", movie.getYear());
+    LOGGER.debug("movie path: {}", movie.getPathNIO());
+    LOGGER.debug("movie isDisc?: {}", movie.isDisc());
+    LOGGER.debug("movie isMulti?: {}", movie.isMultiMovieDir());
     if (movie.getMovieSet() != null) {
-      LOGGER.debug("movieset: " + movie.getMovieSet().getTitle());
+      LOGGER.debug("movieset: {}", movie.getMovieSet().getTitle());
     }
-    LOGGER.debug("path expression: " + MovieModuleManager.SETTINGS.getRenamerPathname());
-    LOGGER.debug("file expression: " + MovieModuleManager.SETTINGS.getRenamerFilename());
+    LOGGER.debug("path expression: {}", MovieModuleManager.SETTINGS.getRenamerPathname());
+    LOGGER.debug("file expression: {}", MovieModuleManager.SETTINGS.getRenamerFilename());
 
     String newPathname = createDestinationForFoldername(MovieModuleManager.SETTINGS.getRenamerPathname(), movie);
     String oldPathname = movie.getPathNIO().toString();
@@ -343,7 +345,7 @@ public class MovieRenamer {
           newDestIsMultiMovieDir = true;
         }
         // FIXME: add warning to GUI if downgrade!!!!!!
-        LOGGER.debug("movie willBeMulti?: " + newDestIsMultiMovieDir);
+        LOGGER.debug("movie willBeMulti?: {}", newDestIsMultiMovieDir);
 
         // ######################################################################
         // ## 1) old = separate movie dir, and new too -> move folder
@@ -366,7 +368,7 @@ public class MovieRenamer {
           }
           if (!ok) {
             // FIXME: when we were not able to rename folder, display error msg and abort!!!
-            LOGGER.error("Could not move to destination '" + destDir + "' - NOT renaming folder");
+            LOGGER.error("Could not move to destination '{}' - NOT renaming folder", destDir);
             return;
           }
         }
@@ -374,19 +376,19 @@ public class MovieRenamer {
           // ######################################################################
           // ## 2) MMD movie -> normal movie (upgrade)
           // ######################################################################
-          LOGGER.trace("Upgrading movie into it's own dir :) " + newPathname);
+          LOGGER.trace("Upgrading movie into it's own dir :) - {}", newPathname);
           if (!Files.exists(destDir)) {
             try {
               Files.createDirectories(destDir);
             }
             catch (Exception e) {
-              LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+              LOGGER.error("Could not create destination '{}' - NOT renaming folder ('upgrade' movie)", destDir);
               // well, better not to rename
               return;
             }
           }
           else {
-            LOGGER.error("Directory already exists! '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+            LOGGER.error("Directory already exists! '{}' - NOT renaming folder ('upgrade' movie)", destDir);
             // well, better not to rename
             return;
           }
@@ -400,13 +402,13 @@ public class MovieRenamer {
           // ## 4) normal movie -> MMD movie (downgrade)
           // ## either way - check & create dest folder
           // ######################################################################
-          LOGGER.trace("New movie path is a MMD :( " + newPathname);
+          LOGGER.trace("New movie path is a MMD :( - {}", newPathname);
           if (!Files.exists(destDir)) { // if existent, all is good -> MMD (FIXME: kinda, we *might* have another full movie in there)
             try {
               Files.createDirectories(destDir);
             }
             catch (Exception e) {
-              LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('MMD' movie)");
+              LOGGER.error("Could not create destination '{}' - NOT renaming folder ('MMD' movie)", destDir);
               // well, better not to rename
               return;
             }
@@ -470,51 +472,13 @@ public class MovieRenamer {
       MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
       newVideoBasename = FilenameUtils.getBaseName(ftr.getFilenameWithoutStacking());
     }
-    LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
-
-    // unneeded / more reliable with with java 7?
-    // // ######################################################################
-    // // ## test VIDEO rename
-    // // ######################################################################
-    // for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
-    // LOGGER.debug("testing file " + vid.getFileAsPath());
-    // Path f = vid.getFileAsPath();
-    // boolean testRenameOk = false;
-    // for (int i = 0; i < 5; i++) {
-    // testRenameOk = f.renameTo(f); // haahaa, try to rename to itself :P
-    // if (testRenameOk) {
-    // break; // ok it worked, step out
-    // }
-    // // we had the case, that the renaemoTo didn't work,
-    // // and even the exists did not work!
-    // // so we skip this additional check, which results in not removing the movie file
-    // // if (!f.exists()) {
-    // // LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
-    // // // delete from MF or ignore for later cleanup (but better now!)
-    // // movie.removeFromMediaFiles(vid);
-    // // testRenameOk = true; // we "tested" this ok
-    // // break;
-    // // }
-    // try {
-    // LOGGER.debug("rename did not work - sleep a while and try again...");
-    // Thread.sleep(1000);
-    // }
-    // catch (InterruptedException e) {
-    // LOGGER.warn("I'm so excited - could not sleep");
-    // }
-    // }
-    // if (!testRenameOk) {
-    // LOGGER.warn("File " + vid.getFileAsPath() + " is not accessible!");
-    // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename"));
-    // return;
-    // }
-    // }
+    LOGGER.debug("Our new basename for renaming: {}", newVideoBasename);
 
     // ######################################################################
     // ## rename VIDEO (move 1:1)
     // ######################################################################
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
-      LOGGER.trace("Rename 1:1 " + vid.getType() + " " + vid.getFileAsPath());
+      LOGGER.trace("Rename 1:1 {} - {}", vid.getType(), vid.getFileAsPath());
       MediaFile newMF = generateFilename(movie, vid, newVideoBasename).get(0); // there can be only one
       boolean ok = moveFile(vid.getFileAsPath(), newMF.getFileAsPath());
       if (ok) {
@@ -683,12 +647,9 @@ public class MovieRenamer {
       if (!needed.contains(cl)) {
         if (cl.getFileAsPath().equals(Paths.get(movie.getDataSource())) || cl.getFileAsPath().equals(movie.getPathNIO())
             || cl.getFileAsPath().equals(Paths.get(oldPathname))) {
-          LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": " + cl.getFileAsPath());
+          LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! {}: {}", cl.getType(), cl.getFileAsPath());
           // happens when iterating eg over the getNFONaming and we return a "" string.
           // then the path+filename = movie path and we want to delete :/
-          // do not show an error anylonger, just silently ignore...
-          // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, cl.getFile(), "message.renamer.failedrename"));
-          // return; // rename failed
           continue;
         }
 
@@ -781,12 +742,8 @@ public class MovieRenamer {
 
     // extra clone, just for easy adding the "default" ones ;)
     MediaFile defaultMF = null;
-    String defaultMFext = "";
-    // if (!newDestIsMultiMovieDir) {
     defaultMF = new MediaFile(mf);
     defaultMF.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
-    defaultMFext = "." + FilenameUtils.getExtension(defaultMF.getFilename());
-    // }
 
     switch (mf.getType()) {
       case VIDEO:
@@ -1168,6 +1125,13 @@ public class MovieRenamer {
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
+
+      // only offer movie set for movies with more than 1 movies or if setting is set
+      if (movie.getMovieSet() != null
+          && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isRenamerCreateMoviesetForSingleMovie())) {
+        root.put("movieSet", movie.getMovieSet());
+      }
+
       return engine.transform(morphTemplate(token), root);
     }
     catch (Exception e) {
@@ -1248,7 +1212,7 @@ public class MovieRenamer {
       String replacement = MovieModuleManager.SETTINGS.getRenamerSpaceReplacement();
       newDestination = newDestination.replace(" ", replacement);
 
-      // also replace now multiple replacements with one to avoid strange looking results;
+      // also replace now multiple replacements with one to avoid strange looking results
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
       newDestination = newDestination.replaceAll(Pattern.quote(replacement) + "+", replacement);
@@ -1310,7 +1274,7 @@ public class MovieRenamer {
    */
   private static boolean copyFile(Path oldFilename, Path newFilename) {
     if (!oldFilename.toAbsolutePath().toString().equals(newFilename.toAbsolutePath().toString())) {
-      LOGGER.info("copy file " + oldFilename + " to " + newFilename);
+      LOGGER.info("copy file {} to {}", oldFilename, newFilename);
       if (oldFilename.equals(newFilename)) {
         // windows: name differs, but File() is the same!!!
         // use move in this case, which handles this
