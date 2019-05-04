@@ -6,19 +6,24 @@
 #
 # Control the execution parameters for tmm via the command line
 
+# And they wonder why Java gets a bad rap...
+PARAMS=(
+	"-classpath"
+	"tmm.jar:lib/*"
+)
+
 # If invoked on Linux system, add 'jna.nosys' to the exec parameters
 if [ "$OSTYPE" == "linux-gnu" ]; then
-	PARAMS="-Djna.nosys=true"
+	PARAMS+=(
+		"-Djna.nosys=true"
+	)
 fi
 
-# And they wonder why Java gets a bad rap...
 PARAMS+=(
-    "-classpath tmm.jar:lib/*" "-Djava.net.preferIPv4Stack=true" "-Xms64m"
+	"-Djava.net.preferIPv4Stack=true" "-Xms64m"
     "-Dfile.encoding=UTF-8" "-Dappbase=https://www.tinymediamanager.org/"
-    "-Djava.awt.headless=true" "-XX:+IgnoreUnrecognizedVMOptions" "-Xmx512m"
-    "-Djavax.accessibility.assistive_technologies=" "" "-Xss512k"
-    "-Dtmm.consoleloglevel=INFO" "--add-modules=java.xml.bind"
-    "--add-modules=java.xml.ws"
+    "-Djava.awt.headless=true" "-Xmx512m" "-Xss512k"
+    "-Dtmm.consoleloglevel=INFO"
 )
 
 # Allow the script to be called from any directory and through symlinks
