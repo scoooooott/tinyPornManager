@@ -30,6 +30,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -561,8 +562,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       return;
     }
 
-    // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
-    try (InputStream is = animeList.getInputStream(); Scanner scanner = new Scanner(is, UrlUtil.UTF_8)) {
+    try (InputStream is = animeList.getInputStream(); Scanner scanner = new Scanner(new GZIPInputStream(is), UrlUtil.UTF_8)) {
       while (scanner.hasNextLine()) {
         Matcher matcher = pattern.matcher(scanner.nextLine());
 
