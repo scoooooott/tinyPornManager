@@ -459,11 +459,12 @@ public enum Certification {
   }
 
   /**
-   * gets the MPAA String from any US (!) movie certification<br>
+   * gets the MPAA String from any US (!) movie/TV show certification<br>
    */
   public static String getMPAAString(Certification cert) {
     // http://en.wikipedia.org/wiki/Motion_picture_rating_system#Comparison
     switch (cert) {
+      // movies
       case US_G:
         return "Rated G";
       case US_PG:
@@ -476,6 +477,16 @@ public enum Certification {
         return "Rated NC-17";
       case NOT_RATED:
         return "NR";
+
+      // TV shows
+      case US_TVY7:
+      case US_TV14:
+      case US_TVPG:
+      case US_TVMA:
+      case US_TVG:
+      case US_TVY:
+        return cert.name();
+
       default:
         return "";
     }
