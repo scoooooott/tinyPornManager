@@ -665,7 +665,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    *           any Exception that has been thrown
    */
   protected Transformer getTransformer() throws Exception {
-    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    Transformer transformer = TransformerFactory.newInstance().newTransformer(); // NOSONAR
 
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
