@@ -65,7 +65,7 @@ class TmdbTrailerProvider {
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
-      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId);
+      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
     }
 
     if (tmdbId == 0) {

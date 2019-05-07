@@ -429,7 +429,7 @@ class TmdbMovieMetadataProvider {
       if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
         try {
           // get the tmdbId via the imdbId
-          int tempTmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId);
+          int tempTmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
           if (tempTmdbId > 0) {
             // and now get the full data
             movie = api.moviesService()

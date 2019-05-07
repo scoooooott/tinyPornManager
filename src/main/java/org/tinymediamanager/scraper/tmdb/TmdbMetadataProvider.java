@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -236,23 +237,25 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
    *
    * @param imdbId
    *          the imdbId
+   * @param type
+   *          the MediaType to look for (we cannot search for movie, and take the TV entry!
    * @return the tmdbId or 0 if nothing has been found
    */
-  public int getTmdbIdFromImdbId(String imdbId) {
+  public int getTmdbIdFromImdbId(String imdbId, MediaType type) {
     try {
       // lazy initialization of the api
       initAPI();
 
       FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
       // movie
-      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
-        // and now get the full data
+      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()
+          && (type == MediaType.MOVIE || type == MediaType.MOVIE_SET)) {
         return findResults.movie_results.get(0).id;
       }
 
       // tv show
-      if (findResults != null && findResults.tv_results != null && !findResults.tv_results.isEmpty()) {
-        // and now get the full data
+      if (findResults != null && findResults.tv_results != null && !findResults.tv_results.isEmpty()
+          && (type == MediaType.TV_SHOW || type == MediaType.TV_EPISODE)) {
         return findResults.tv_results.get(0).id;
       }
 
