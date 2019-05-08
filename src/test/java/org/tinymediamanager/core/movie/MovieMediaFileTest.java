@@ -66,7 +66,7 @@ public class MovieMediaFileTest extends BasicTest {
     checkExtra("", mft);
 
     // video_extra
-    mft = MediaFileType.VIDEO_EXTRA;
+    mft = MediaFileType.EXTRA;
     checkExtra("Red.Shoe.Diaries.S01.EXTRAS.DVDRip.X264", mft);
     checkExtra("Extra/extras/some-trailer", mft);
     checkExtra("extras/someExtForSomeMovie-trailer", mft);

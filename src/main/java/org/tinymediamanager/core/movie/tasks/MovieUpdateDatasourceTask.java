@@ -912,7 +912,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             break;
 
-          case VIDEO_EXTRA:
+          case EXTRA:
           case SAMPLE:
           case NFO:
           case TEXT:

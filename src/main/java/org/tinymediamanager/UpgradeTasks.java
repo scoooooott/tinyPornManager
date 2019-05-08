@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieList;
@@ -128,6 +129,11 @@ public class UpgradeTasks {
               }
             }
           }
+          // migrate ENUMs
+          if (mf.getType() == MediaFileType.VIDEO_EXTRA) {
+            mf.setType(MediaFileType.EXTRA);
+            updated = true;
+          }
         }
         if (updated) {
           m.saveToDb();
@@ -147,6 +153,11 @@ public class UpgradeTasks {
                   updated = true;
                 }
               }
+            }
+            // migrate ENUMs
+            if (mf.getType() == MediaFileType.VIDEO_EXTRA) {
+              mf.setType(MediaFileType.EXTRA);
+              updated = true;
             }
           }
           if (updated) {

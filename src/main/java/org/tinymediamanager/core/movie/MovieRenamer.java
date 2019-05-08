@@ -1005,7 +1005,7 @@ public class MovieRenamer {
       case SEASON_POSTER:
       case TEXT:
       case UNKNOWN:
-      case VIDEO_EXTRA:
+      case EXTRA:
       default:
         newFiles.add(defaultMF);
         break;
