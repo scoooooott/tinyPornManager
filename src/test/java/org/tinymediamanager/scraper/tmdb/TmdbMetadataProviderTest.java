@@ -15,7 +15,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -105,7 +104,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, "Recrutas da Pesada");
+      // FIXME: pt_BR != pt_PT, and since we only submit locale w/o country....
+      options = new MediaSearchOptions(MediaType.MOVIE, "Recrutas da Pesada"); // O Pelotão Chanfrado
       options.setLanguage(MediaLanguages.pt_BR.toLocale());
       results = mp.search(options);
       // did we get a result?
@@ -248,9 +248,7 @@ public class TmdbMetadataProviderTest {
       // did we get a result?
       assertNotNull("Result", results);
 
-      // result count
-      assertEquals("Result count", 1, results.size());
-
+      assertThat(results).isNotEmpty();
       assertEquals("1st result title", "Harry Potter Collection", results.get(0).getTitle());
     }
     catch (Exception e) {
@@ -349,7 +347,7 @@ public class TmdbMetadataProviderTest {
       results = metadataProvider.search(options);
 
       assertNotNull(results);
-      assertEquals(1, results.size());
+      assertEquals(2, results.size());
       assertEquals("Die Simpsons", results.get(0).getTitle());
       assertEquals("The Simpsons", results.get(0).getOriginalTitle());
       assertEquals("456", results.get(0).getId());
@@ -371,7 +369,6 @@ public class TmdbMetadataProviderTest {
       mp = new TmdbMetadataProvider();
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setLanguage(MediaLanguages.en.toLocale());
-      options.setCountry(CountryCode.US);
       options.setId(mp.getProviderInfo().getId(), "1447");
 
       episodes = mp.getEpisodeList(options);
@@ -402,7 +399,6 @@ public class TmdbMetadataProviderTest {
       mp = new TmdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setTmdbId(1447);
-      options.setCountry(CountryCode.US);
       options.setLanguage(MediaLanguages.en.toLocale());
       md = mp.getMetadata(options);
 
@@ -446,7 +442,6 @@ public class TmdbMetadataProviderTest {
       mp = new TmdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setTmdbId(1447);
-      options.setCountry(CountryCode.US);
       options.setLanguage(MediaLanguages.en.toLocale());
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "1");

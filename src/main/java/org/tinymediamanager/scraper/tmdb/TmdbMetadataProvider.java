@@ -15,9 +15,9 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,7 +29,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
@@ -52,6 +51,8 @@ import com.uwetrottmann.tmdb2.TmdbInterceptor;
 import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.entities.Translations;
+import com.uwetrottmann.tmdb2.entities.Translations.Translation;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -65,12 +66,21 @@ import okhttp3.OkHttpClient;
 @PluginImplementation
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
     ITvShowArtworkProvider, IMovieTrailerProvider, IMovieTmdbMetadataProvider, IMovieImdbMetadataProvider {
-  private static final Logger LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
-  private static final String TMM_API_KEY  = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
+  private static final Logger   LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
+  private static final String   TMM_API_KEY  = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
 
-  static Tmdb                 api;
-  static MediaProviderInfo    providerInfo = createMediaProviderInfo();
-  static Configuration        configuration;
+  // Use primary translations, not just our internal MediaLanguages (we need the country!)
+  // https://api.themoviedb.org/3/configuration/primary_translations?api_key=XXXX
+  // And keep on duplicate languages the main country on first position!
+  private static final String[] PT           = new String[] { "ar-AE", "ar-SA", "be-BY", "bg-BG", "bn-BD", "ca-ES", "ch-GU", "cs-CZ", "da-DK",
+      "de-DE", "el-GR", "en-US", "en-AU", "en-CA", "en-GB", "eo-EO", "es-ES", "es-MX", "eu-ES", "fr-FR", "fa-IR", "fi-FI", "fr-CA", "gl-ES", "he-IL",
+      "hi-IN", "hu-HU", "id-ID", "it-IT", "ja-JP", "ka-GE", "kn-IN", "ko-KR", "lt-LT", "ml-IN", "nb-NO", "nl-NL", "no-NO", "pl-PL", "pt-BR", "pt-PT",
+      "ro-RO", "ru-RU", "si-LK", "sk-SK", "sl-SI", "sr-RS", "sv-SE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-HK",
+      "zh-TW" };
+
+  static Tmdb                   api;
+  static MediaProviderInfo      providerInfo = createMediaProviderInfo();
+  static Configuration          configuration;
 
   public TmdbMetadataProvider() {
   }
@@ -84,15 +94,10 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     providerInfo.getConfig().addText("apiKey", "", true);
     providerInfo.getConfig().addBoolean("includeAdult", false);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
-
-    ArrayList<String> fallbackLanguages = new ArrayList<>();
-
-    for (MediaLanguages mediaLanguages : MediaLanguages.values()) {
-      fallbackLanguages.add(mediaLanguages.toString());
-    }
     providerInfo.getConfig().addBoolean("titleFallback", false);
-    providerInfo.getConfig().addSelect("titleFallbackLanguage", fallbackLanguages.toArray(new String[0]), MediaLanguages.en.toString());
+    providerInfo.getConfig().addSelect("titleFallbackLanguage", PT, "en-US");
     providerInfo.getConfig().load();
+
     return providerInfo;
   }
 
@@ -150,6 +155,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     initAPI();
 
     List<MediaSearchResult> searchResults;
+
     switch (query.getMediaType()) {
       case MOVIE:
         searchResults = new TmdbMovieMetadataProvider(api).search(query);
@@ -265,6 +271,62 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     }
 
     return 0;
+  }
+
+  /**
+   * tries to find correct title & overview from all the translations<br>
+   * everything can be null/empty
+   * 
+   * @param translations
+   * @param locale
+   * @return
+   */
+  static Translation getFullTranslationWithFallback(Translations translations, Locale locale) {
+    Translation ret = new Translation();
+    ret.data = new Translation.Data();
+
+    if (translations != null && translations.translations != null && !translations.translations.isEmpty()) {
+      for (Translation tr : translations.translations) {
+        // check with language AND country
+        if (tr.iso_639_1.equals(locale.getLanguage()) && tr.iso_3166_1.equals(locale.getCountry())) {
+          mergeIfEmpty(ret, tr);
+          break;
+        }
+      }
+      // check with language OR country
+      for (Translation tr : translations.translations) {
+        if (tr.iso_639_1.equals(locale.getLanguage()) || tr.iso_3166_1.equals(locale.getCountry())) {
+          mergeIfEmpty(ret, tr);
+          break;
+        }
+      }
+      // use en_US
+      for (Translation tr : translations.translations) {
+        if (tr.iso_639_1.equals("en") && tr.iso_3166_1.equals("US")) {
+          mergeIfEmpty(ret, tr);
+          break;
+        }
+      }
+      for (Translation tr : translations.translations) {
+        if (tr.iso_639_1.equals("en")) {
+          mergeIfEmpty(ret, tr);
+          break;
+        }
+      }
+    }
+    return ret;
+  }
+
+  private static void mergeIfEmpty(Translation orig, Translation merge) {
+    if (StringUtils.isEmpty(orig.data.title)) {
+      orig.data.title = merge.data.title;
+    }
+    if (StringUtils.isEmpty(orig.data.name)) {
+      orig.data.name = merge.data.name;
+    }
+    if (StringUtils.isEmpty(orig.data.overview)) {
+      orig.data.overview = merge.data.overview;
+    }
   }
 
   /*

@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.tmdb;
 
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,9 +35,9 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
@@ -54,15 +55,17 @@ import com.uwetrottmann.tmdb2.entities.Country;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
-import com.uwetrottmann.tmdb2.entities.Keywords;
 import com.uwetrottmann.tmdb2.entities.Movie;
 import com.uwetrottmann.tmdb2.entities.MovieResultsPage;
 import com.uwetrottmann.tmdb2.entities.ReleaseDate;
 import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
 import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
+import com.uwetrottmann.tmdb2.entities.Translations.Translation;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
+
+import retrofit2.Response;
 
 /**
  * The class {@link TmdbMovieMetadataProvider} is used to provide metadata for movies from tmdb
@@ -81,127 +84,123 @@ class TmdbMovieMetadataProvider {
   /**
    * searches a movie with the given query parameters
    *
-   * @param query
+   * @param options
    *          the query parameters
    * @return a list of found movies
    * @throws ScrapeException
    *           any exception which can be thrown while searching
    */
-  List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException {
+  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException {
     Exception savedException = null;
-    LOGGER.debug("search() " + query.toString());
+    LOGGER.debug("search() " + options.toString());
 
     List<MediaSearchResult> resultList = new ArrayList<>();
 
+    // detect the string to search
     String searchString = "";
+    if (StringUtils.isNotEmpty(options.getQuery())) {
+      searchString = options.getQuery();
+    }
+    searchString = MetadataUtil.removeNonSearchCharacters(searchString);
+
+    String imdbId = options.getImdbId();
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = "";
+    }
+    if (MetadataUtil.isValidImdbId(searchString)) {
+      imdbId = searchString;
+    }
+
+    int tmdbId = options.getTmdbId();
+
     Integer year = null;
-
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
-      searchString = query.getQuery();
-    }
-
-    if (query.getYear() != 0) {
-      year = query.getYear();
-    }
-
-    if (StringUtils.isEmpty(searchString)) {
-      LOGGER.debug("TMDB Scraper: empty searchString");
-      return resultList;
+    if (options.getYear() > 1800) {
+      year = options.getYear();
     }
 
     boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
 
-    searchString = MetadataUtil.removeNonSearchCharacters(searchString);
-    String language = query.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(query.getLanguage().getCountry())) {
-      language += "-" + query.getLanguage().getCountry();
-    }
-    String imdbId = "";
-    int tmdbId = 0;
+    String language = options.getLanguage().toLanguageTag();
 
     // begin search
-    LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
+    LOGGER.info("========= BEGIN TMDB Scraper Search for: {}", searchString);
     synchronized (api) {
       // 1. try with TMDBid
-      if (query.getTmdbId() != 0) {
-        // if we have already an ID, get this result and do not search
-        tmdbId = query.getTmdbId();
+      if (tmdbId != 0) {
+        LOGGER.debug("found TMDB ID {} - getting direct", tmdbId);
         try {
-          // /movie/{id}
-          Movie movie = api.moviesService().summary(tmdbId, language).execute().body();
-          verifyMovieTitleLanguage(query, movie);
+          Response<Movie> httpResponse = api.moviesService().summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.TRANSLATIONS))
+              .execute();
+          if (!httpResponse.isSuccessful()) {
+            throw new HttpException(httpResponse.code(), httpResponse.message());
+          }
+          Movie movie = httpResponse.body();
+          verifyMovieTitleLanguage(options.getLanguage(), movie);
           MediaSearchResult result = morphMovieToSearchResult(movie);
           resultList.add(result);
-          LOGGER.debug("found " + resultList.size() + " results with TMDB id");
+          LOGGER.debug("found {} results with TMDB id", resultList.size());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
           savedException = e;
         }
       }
 
       // 2. try with IMDBid
-      if (resultList.size() == 0 && StringUtils.isNotEmpty(query.getImdbId())) {
-        imdbId = query.getImdbId();
+      if (resultList.isEmpty() && StringUtils.isNotEmpty(imdbId)) {
+        LOGGER.debug("found IMDB ID {} - getting direct", imdbId);
         try {
-          // /find/{id}
-          FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, language).execute().body();
-          if (findResults != null && findResults.movie_results != null) {
-            for (BaseMovie movie : findResults.movie_results) {
-              if (verifyMovieTitleLanguage(query, new ArrayList<>(findResults.movie_results), resultList, true)) {
-                break;
-              }
-              resultList.add(morphMovieToSearchResult(movie));
-            }
+          Response<FindResults> httpResponse = api.findService().find(imdbId, ExternalSource.IMDB_ID, language).execute();
+          if (!httpResponse.isSuccessful()) {
+            throw new HttpException(httpResponse.code(), httpResponse.message());
+          }
+          for (BaseMovie movie : httpResponse.body().movie_results) { // should be only one
+            verifyMovieTitleLanguage(options.getLanguage(), movie);
+            resultList.add(morphMovieToSearchResult(movie));
           }
           LOGGER.debug("found " + resultList.size() + " results with IMDB id");
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
           savedException = e;
         }
       }
 
       // 3. try with search string and year
-      if (resultList.size() == 0) {
+      if (resultList.isEmpty()) {
         try {
-          // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute().body();
-          if (resultsPage != null && resultsPage.results != null) {
-            for (BaseMovie movie : resultsPage.results) {
-              if (verifyMovieTitleLanguage(query, resultsPage.results, resultList, false)) {
-                break;
-              }
-              resultList.add(morphMovieToSearchResult(movie));
-            }
+          Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute();
+          if (!httpResponse.isSuccessful()) {
+            throw new HttpException(httpResponse.code(), httpResponse.message());
           }
-          LOGGER.debug("found " + resultList.size() + " results with search string");
+          for (BaseMovie movie : httpResponse.body().results) {
+            verifyMovieTitleLanguage(options.getLanguage(), movie);
+            resultList.add(morphMovieToSearchResult(movie));
+          }
+          LOGGER.debug("found {} results with search string", resultList.size());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
           savedException = e;
         }
       }
 
       // 4. if the last token in search string seems to be a year, try without :)
-      if (resultList.size() == 0) {
+      if (resultList.isEmpty()) {
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
         try {
           // /search/movie
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
-              if (verifyMovieTitleLanguage(query, resultsPage.results, resultList, false)) {
-                break;
-              }
-
+              verifyMovieTitleLanguage(options.getLanguage(), movie);
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          LOGGER.debug("found " + resultList.size() + " results with search string without year");
+          LOGGER.debug("found {} results with search string without year", resultList.size());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
           savedException = e;
         }
       }
@@ -224,11 +223,13 @@ class TmdbMovieMetadataProvider {
         result.setScore(1);
       }
       else {
-        float score = MetadataUtil.calculateScore(searchString, result.getTitle());
+        // since we're dealing with translated content, also checkoriginal title!!
+        float score = Math.max(MetadataUtil.calculateScore(searchString, result.getTitle()),
+            MetadataUtil.calculateScore(searchString, result.getOriginalTitle()));
 
         if (year != null && yearDiffers(year, result.getYear())) {
           float diff = (float) Math.abs(year - result.getYear()) / 100;
-          LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+          LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
           score -= diff;
         }
 
@@ -246,116 +247,61 @@ class TmdbMovieMetadataProvider {
   }
 
   /**
-   * Fallback Language Mechanism - For IMDB Id.
-   *
-   * @param query
-   *          the query options
-   * @param movie
-   *          the already found movie
+   * Fallback Language Mechanism - for direct TMDB lookup<br>
+   * Title always gets returned in en-US, if translation has not been found.<br>
+   * But overview IS EMPTY!<br>
+   * So, when getting empty overview, we're doing another lookup...
+   * 
+   * @throws IOException
    */
-  private void verifyMovieTitleLanguage(MediaSearchOptions query, BaseMovie movie) {
+  private void verifyMovieTitleLanguage(Locale language, Movie movie) throws IOException {
     if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
-      Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+      Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
+      if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(language.getLanguage()))
+          && !language.equals(fallbackLanguage)) {
+        LOGGER.debug("checking for title fallback {} for movie {}", fallbackLanguage, movie.title);
 
-      // tmdb provides title = originalTitle if no title in the requested language has been found,
-      // so get the title in a alternative language
-      if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage()))
-          && !query.getLanguage().equals(fallbackLanguage)) {
-        try {
-          String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
-
-          Movie fallbackMovie = api.moviesService().summary(movie.id, lang).execute().body();
-
-          if (fallbackMovie == null) {
-            return;
-          }
-
-          if (!StringUtils.isBlank(fallbackMovie.title)) {
-            movie.title = fallbackMovie.title;
-          }
-        }
-        catch (Exception ignored) {
-        }
+        // overwrite with ones from table (if found)
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, fallbackLanguage);
+        movie.title = tr.data.title == null ? movie.title : tr.data.title;
+        movie.overview = tr.data.overview == null ? movie.original_language : tr.data.overview;
       }
     }
   }
 
   /**
-   * Fallback Language Mechanism - For Search.
+   * Fallback Language Mechanism - For IMDB & searches
    *
    * @param query
    *          the query options
-   * @param original
-   *          the movie list retrieved with primary language.
-   * @param resultList
-   *          the list that results will be added.
-   * @param findService
-   *          is it called by findService?
+   * @param movie
+   *          the already found movie
+   * @throws IOException
    */
-  private Boolean verifyMovieTitleLanguage(MediaSearchOptions query, List<BaseMovie> original, List<MediaSearchResult> resultList,
-      Boolean findService) {
+  private void verifyMovieTitleLanguage(Locale language, BaseMovie movie) throws IOException {
     if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
-      Locale fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
+      Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
 
-      for (BaseMovie movie : original) {
-        // tmdb provides title = originalTitle if no title in the requested language has been found,
-        // so get the title in a alternative language
-        if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(query.getLanguage().getLanguage()))
-            && !query.getLanguage().equals(fallbackLanguage)) {
-
-          LOGGER.debug("Fallback: Title Inconsistency Found. Bypassing default functionality and Initiating Fallback Mechanism.");
-
-          try {
-            String lang = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
-
-            List<BaseMovie> fallback;
-            if (findService) {
-              FindResults findResults = api.findService().find(query.getImdbId(), null, lang).execute().body();
-
-              if (findResults == null || findResults.movie_results == null) {
-                return false;
-              }
-
-              fallback = new ArrayList<>(findResults.movie_results);
-            }
-            else {
-              MovieResultsPage movieResultsPage = api.searchService()
-                  .movie(query.getQuery(), 1, lang, providerInfo.getConfig().getValueAsBool("includeAdult"),
-                      query.getYear() != 0 ? query.getYear() : null, query.getYear() != 0 ? query.getYear() : null, "phrase")
-                  .execute().body();
-
-              if (movieResultsPage == null || movieResultsPage.results == null) {
-                return false;
-              }
-
-              fallback = movieResultsPage.results;
-            }
-
-            resultList.clear();
-
-            for (int i = 0; i < original.size(); i++) {
-              BaseMovie originalMovie = original.get(i);
-              BaseMovie fallbackMovie = fallback.get(i);
-
-              if (originalMovie.title.equals(originalMovie.original_title) && !originalMovie.title.equals(fallbackMovie.title)
-                  && !originalMovie.original_language.equals(query.getLanguage().getLanguage()) && !StringUtils.isBlank(fallbackMovie.title)) {
-                LOGGER.debug(String.format("Fallback: Movie Replaced          ([%-32.32s] -> [%-32.32s])", originalMovie.title, fallbackMovie.title));
-                resultList.add(morphMovieToSearchResult(fallbackMovie));
-              }
-              else {
-                LOGGER.debug(String.format("Fallback: Movie Remained the Same ([%-32.32s])", originalMovie.title));
-                resultList.add(morphMovieToSearchResult(originalMovie));
-              }
-            }
-            return true;
-          }
-          catch (Exception exc) {
-            return false;
-          }
+      // tmdb provides title = originalTitle if no title in the requested language has been found,
+      // so get the title in a alternative language
+      if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(language.getLanguage()))
+          && !language.equals(fallbackLanguage)) {
+        LOGGER.debug("checking for title fallback {} for movie {}", fallbackLanguage, movie.title);
+        String lang = providerInfo.getConfig().getValue("titleFallbackLanguage").replace("_", "-");
+        Response<Movie> httpResponse = api.moviesService().summary(movie.id, lang, new AppendToResponse(AppendToResponseItem.TRANSLATIONS)).execute();
+        if (!httpResponse.isSuccessful()) {
+          throw new HttpException(httpResponse.code(), httpResponse.message());
         }
+        Movie m = httpResponse.body();
+        movie.title = m.title;
+        movie.overview = m.overview;
+
+        // use from table if STILL empty
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(m.translations, fallbackLanguage);
+        movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
+        movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
       }
     }
-    return false;
   }
 
   /**
@@ -372,42 +318,13 @@ class TmdbMovieMetadataProvider {
    *           indicated that nothing has been found
    */
   MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-    return getMetadata(options, false, null);
-  }
-
-  /**
-   * Get the movie metadata for the given search options
-   *
-   * @param options
-   *          the options for scraping
-   * @param fallback
-   *          whether this method called from fallback.
-   * @param metadata
-   *          the original metadata from the original result before callback.
-   * @return the metadata (never null)
-   * @throws ScrapeException
-   *           any exception which can be thrown while scraping
-   * @throws MissingIdException
-   *           indicated that there was no usable id to scrape
-   * @throws NothingFoundException
-   *           indicated that nothing has been found
-   */
-  MediaMetadata getMetadata(MediaScrapeOptions options, boolean fallback, MediaMetadata metadata)
-      throws ScrapeException, MissingIdException, NothingFoundException {
     Exception savedException = null;
     LOGGER.debug("getMetadata() " + options.toString());
-
-    Boolean titleFallback = providerInfo.getConfig().getValueAsBool("titleFallback");
-
-    Locale fallbackLanguage = null;
-    if (titleFallback == true) {
-      fallbackLanguage = new Locale(MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).getLanguage());
-    }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     // tmdbId from option
-    Integer tmdbId = options.getTmdbId();
+    int tmdbId = options.getTmdbId();
 
     // imdbId from option
     String imdbId = options.getImdbId();
@@ -417,39 +334,32 @@ class TmdbMovieMetadataProvider {
       throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
-    String language = options.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-      language += "-" + options.getLanguage().getCountry();
-    }
+    String language = options.getLanguage().toLanguageTag();
 
     // scrape
-    LOGGER.debug("TMDB: getMetadata: tmdbId = " + tmdbId + "; imdbId = " + imdbId);
     Movie movie = null;
     synchronized (api) {
+
+      // we do not have the tmdbId?!? hmm.. get it from imdb...
       if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
         try {
-          // get the tmdbId via the imdbId
-          int tempTmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
-          if (tempTmdbId > 0) {
-            // and now get the full data
-            movie = api.moviesService()
-                .summary(tempTmdbId, language,
-                    new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS))
-                .execute().body();
-          }
-        }
-        catch (TmdbNotFoundException e) {
-          LOGGER.info("nothing found");
+          tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
         }
         catch (Exception e) {
-          LOGGER.warn("problem getting data from tmdb: " + e.getMessage());
+          LOGGER.warn("problem getting tmdbId from imdbId: {}", e.getMessage());
           savedException = e;
         }
       }
-      if (movie == null && tmdbId != 0) {
+
+      if (movie == null && tmdbId > 0) {
         try {
-          movie = api.moviesService()
-              .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
+          Response<Movie> httpResponse = api.moviesService().summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS,
+              AppendToResponseItem.KEYWORDS, AppendToResponseItem.RELEASE_DATES, AppendToResponseItem.TRANSLATIONS)).execute();
+          if (!httpResponse.isSuccessful()) {
+            throw new HttpException(httpResponse.code(), httpResponse.message());
+          }
+          movie = httpResponse.body();
+          verifyMovieTitleLanguage(options.getLanguage(), movie);
         }
         catch (TmdbNotFoundException e) {
           LOGGER.info("nothing found");
@@ -473,56 +383,11 @@ class TmdbMovieMetadataProvider {
 
     md = morphMovieToMediaMetadata(movie, options);
 
-    // we may scraped with imdb id, get the tmdb id from the result
-    if (tmdbId == 0) {
-      tmdbId = movie.id;
-    }
-
     // add some special keywords as tags
     // see http://forum.kodi.tv/showthread.php?tid=254004
-    try {
-      Keywords mk = api.moviesService().keywords(tmdbId).execute().body();
-      for (BaseKeyword kw : ListUtils.nullSafe(mk.keywords)) {
+    if (movie.keywords != null && movie.keywords.keywords != null) {
+      for (BaseKeyword kw : movie.keywords.keywords) {
         md.addTag(kw.name);
-      }
-    }
-    catch (Exception e) {
-      LOGGER.warn("Error getting keywords");
-    }
-    // check if we need to rescrape in the fallback language
-    if (titleFallback && ((movie.title.equals(movie.original_title) && !movie.original_language.equals(options.getLanguage().getLanguage()))
-        || StringUtils.isBlank(movie.overview)) && (fallback || !options.getLanguage().equals(fallbackLanguage))) {
-      // title in original language or plot was empty - scrape in fallback language
-      if (fallback) {
-        LOGGER.debug("Movie data not found with fallback language. Returning original.");
-        return metadata;
-      }
-
-      Locale oldLang = options.getLanguage();
-      try {
-        options.setLanguage(fallbackLanguage);
-        LOGGER.debug("Re-scraping using fallback language " + MediaLanguages.valueOf(options.getLanguage().getLanguage()));
-
-        MediaMetadata fallbackMd = getMetadata(options, true, md);
-
-        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(fallbackMd.getPlot())) {
-          md.setPlot(fallbackMd.getPlot());
-        }
-        if (movie.title.equals(movie.original_title) && !movie.original_language.equals(oldLang.getLanguage())
-            && !StringUtils.isBlank(fallbackMd.getTitle())) {
-          md.setTitle(fallbackMd.getTitle());
-        }
-        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(fallbackMd.getOriginalTitle())) {
-          md.setOriginalTitle(fallbackMd.getOriginalTitle());
-        }
-        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(fallbackMd.getTagline())) {
-          md.setTagline(fallbackMd.getTagline());
-        }
-      }
-      catch (Exception ignored) {
-      }
-      finally {
-        options.setLanguage(oldLang);
       }
     }
 
@@ -533,6 +398,7 @@ class TmdbMovieMetadataProvider {
     MediaSearchResult searchResult = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
     searchResult.setId(Integer.toString(movie.id));
     searchResult.setTitle(movie.title);
+    searchResult.setOverview(movie.overview); // empty overview tells us that we have no translation?
     searchResult.setOriginalTitle(movie.original_title);
     searchResult.setOriginalLanguage(movie.original_language);
 
