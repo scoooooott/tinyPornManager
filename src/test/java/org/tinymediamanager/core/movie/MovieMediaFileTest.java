@@ -76,6 +76,7 @@ public class MovieMediaFileTest extends BasicTest {
     checkExtra("bla-blubb-extra-something", mft);
     checkExtra("bla-blubb-extra-", mft);
     checkExtra("", mft);
+    checkExtra("Extras/another/someExtForSomeMovie-trailer", mft);
 
     System.out.println("All fine :)");
   }
@@ -85,7 +86,7 @@ public class MovieMediaFileTest extends BasicTest {
       return;
     }
     Path f = Paths.get(".", filename + ".avi");
-    System.out.print("testing " + f + " for ");
+    System.out.println("testing " + f + " for ");
     MediaFile mf = new MediaFile(f);
     assertEqual(mft, mf.getType());
   }
