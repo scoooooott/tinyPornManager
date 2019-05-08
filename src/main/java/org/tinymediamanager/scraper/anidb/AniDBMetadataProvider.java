@@ -555,7 +555,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Url animeList;
 
     try {
-      animeList = new OnDiskCachedUrl("http://anidb.net/api/anime-titles.dat.gz", 1, TimeUnit.DAYS);
+      animeList = new OnDiskCachedUrl("http://anidb.net/api/anime-titles.dat.gz", 2, TimeUnit.DAYS); // use 2 days instead of 1
     }
     catch (Exception e) {
       LOGGER.error("error getting AniDB index: {}", e.getMessage());
