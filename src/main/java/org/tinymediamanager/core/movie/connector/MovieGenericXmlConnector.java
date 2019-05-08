@@ -183,7 +183,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write {}: {}", movie.getPathNIO().resolve(nfoFilename), e.getMessage());
+        getLogger().error("write {}: {}", movie.getPathNIO().resolve(nfoFilename), e);
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
