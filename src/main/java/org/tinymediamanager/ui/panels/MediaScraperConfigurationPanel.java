@@ -123,9 +123,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       // label
       // try different ways to get a meaningful key description
-      String keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
+      String keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
       if (StringUtils.isBlank(keyDescription)) {
-        keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
+        keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
       }
       if (StringUtils.isBlank(keyDescription)) {
         keyDescription = entry.getValue().getKeyDescription();
