@@ -881,7 +881,11 @@ public class TvShowNfoParser {
     if (elements != null && !elements.isEmpty()) {
       for (Element genre : elements) {
         if (StringUtils.isNotBlank(genre.ownText())) {
-          genres.add(MediaGenres.getGenre(genre.ownText()));
+          // old style - single tag with delimiter
+          String[] split = genre.ownText().split("/");
+          for (String sp : split) {
+            genres.add(MediaGenres.getGenre(sp.trim()));
+          }
         }
       }
     }
