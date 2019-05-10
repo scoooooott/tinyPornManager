@@ -63,8 +63,20 @@ public class ITKodiRPCTest {
   @Test
   public void testUriMatching() {
     // enter a valid hostname, else it will take long ;)
-    String s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner.avi";
-    String s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\101 Dalmatiner\\101 Dalmatiner.avi";
+
+    // same
+    String s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
+    String s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\101 Dalmatiner\\101 Dalmatiner #2.avi";
+    Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
+
+    // wrong parent
+    s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
+    s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\no Dalmatiner\\101 Dalmatiner #2.avi";
+    Assert.assertNotEquals(new SplitUri(s1), new SplitUri(s2)); // false
+
+    // other datasource
+    s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
+    s2 = "\\\\127.0.0.1\\public\\TMM\\newmovies\\101 Dalmatiner\\101 Dalmatiner #2.avi";
     Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
   }
 
