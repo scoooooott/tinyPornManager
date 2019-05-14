@@ -203,11 +203,30 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
           for (Path path : rootList) {
             if (Files.isDirectory(path)) {
-              if (existing.contains(path)) {
-                existingTvShowDirs.add(path);
+
+              // additional datasource/A/show sub dirs!
+              if (path.getFileName().toString().length() == 1) {
+                List<Path> subList = listFilesAndDirs(path);
+                for (Path sub : subList) {
+                  if (Files.isDirectory(sub)) {
+                    if (existing.contains(sub)) {
+                      existingTvShowDirs.add(sub);
+                    }
+                    else {
+                      newTvShowDirs.add(sub);
+                    }
+                  }
+                }
               }
+
+              // normal datasource/show folder
               else {
-                newTvShowDirs.add(path);
+                if (existing.contains(path)) {
+                  existingTvShowDirs.add(path);
+                }
+                else {
+                  newTvShowDirs.add(path);
+                }
               }
             }
             else {
@@ -238,7 +257,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         } // end forech datasource
       }
-      else {
+      else
+
+      {
         initThreadPool(3, "update");
         // update selected TV shows
         for (Path path : tvShowFolders) {
@@ -264,6 +285,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       LOGGER.info("getting Mediainfo...");
+
       initThreadPool(1, "mediainfo");
       setTaskName(BUNDLE.getString("update.mediainfo"));
       setTaskDescription(null);
@@ -308,7 +330,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.debug("VisFile: {}", visFile);
       resetCounters();
     }
-    catch (Exception e) {
+    catch (
+
+    Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }

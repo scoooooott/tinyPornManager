@@ -21,7 +21,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private static final String FOLDER                   = getSettingsFolder();
-  private static final int    NUMBER_OF_EXPECTED_SHOWS = 11;
+  private static final int    NUMBER_OF_EXPECTED_SHOWS = 13;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
@@ -54,6 +54,10 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private void check() {
     // do some checks before shutting down the database
     TvShowList tvShowList = TvShowList.getInstance();
+    for (TvShow show : tvShowList.getTvShows()) {
+      System.out.println(show.getPath());
+    }
+
     assertThat(tvShowList.getTvShows().size()).isEqualTo(NUMBER_OF_EXPECTED_SHOWS);
     Comparator<TvShowSeason> seasonComparator = Comparator.comparingInt(TvShowSeason::getSeason);
 
