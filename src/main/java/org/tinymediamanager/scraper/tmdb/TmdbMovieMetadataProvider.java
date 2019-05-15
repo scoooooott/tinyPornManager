@@ -263,8 +263,8 @@ class TmdbMovieMetadataProvider {
 
         // overwrite with ones from table (if found)
         Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, fallbackLanguage);
-        movie.title = tr.data.title == null ? movie.title : tr.data.title;
-        movie.overview = tr.data.overview == null ? movie.original_language : tr.data.overview;
+        movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
+        movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
       }
     }
   }

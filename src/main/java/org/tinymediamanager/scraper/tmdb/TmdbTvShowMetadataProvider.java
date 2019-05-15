@@ -639,8 +639,8 @@ class TmdbTvShowMetadataProvider {
 
         // overwrite with ones from table (if found)
         Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, fallbackLanguage);
-        show.name = tr.data.name == null ? show.name : tr.data.name;
-        show.overview = tr.data.overview == null ? show.overview : tr.data.overview;
+        show.name = StringUtils.isEmpty(show.name) ? tr.data.name : show.name;
+        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
       }
     }
   }
