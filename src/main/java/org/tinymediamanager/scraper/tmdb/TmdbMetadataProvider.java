@@ -300,19 +300,6 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
           break;
         }
       }
-      // use en_US
-      for (Translation tr : translations.translations) {
-        if (tr.iso_639_1.equals("en") && tr.iso_3166_1.equals("US")) {
-          mergeIfEmpty(ret, tr);
-          break;
-        }
-      }
-      for (Translation tr : translations.translations) {
-        if (tr.iso_639_1.equals("en")) {
-          mergeIfEmpty(ret, tr);
-          break;
-        }
-      }
     }
     return ret;
   }

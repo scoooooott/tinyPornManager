@@ -261,8 +261,22 @@ class TmdbMovieMetadataProvider {
           && !language.equals(fallbackLanguage)) {
         LOGGER.debug("checking for title fallback {} for movie {}", fallbackLanguage, movie.title);
 
-        // overwrite with ones from table (if found)
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, fallbackLanguage);
+        // overwrite with desired language from table (if found)
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, language);
+        if (!StringUtils.isEmpty(tr.data.title)) {
+          movie.title = tr.data.title;
+        }
+        if (!StringUtils.isEmpty(tr.data.overview)) {
+          movie.overview = tr.data.overview;
+        }
+
+        // if still empty, use fallback language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, fallbackLanguage);
+        movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
+        movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
+
+        // if still empty, use en-US language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(movie.translations, Locale.US);
         movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
         movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
       }
@@ -296,8 +310,22 @@ class TmdbMovieMetadataProvider {
         movie.title = m.title;
         movie.overview = m.overview;
 
-        // use from table if STILL empty
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(m.translations, fallbackLanguage);
+        // overwrite with desired language from table (if found)
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(m.translations, language);
+        if (!StringUtils.isEmpty(tr.data.title)) {
+          movie.title = tr.data.title;
+        }
+        if (!StringUtils.isEmpty(tr.data.overview)) {
+          movie.overview = tr.data.overview;
+        }
+
+        // if still empty, use fallback language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(m.translations, fallbackLanguage);
+        movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
+        movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
+
+        // if still empty, use en-US language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(m.translations, Locale.US);
         movie.title = StringUtils.isEmpty(movie.title) ? tr.data.title : movie.title;
         movie.overview = StringUtils.isEmpty(movie.overview) ? tr.data.overview : movie.overview;
       }

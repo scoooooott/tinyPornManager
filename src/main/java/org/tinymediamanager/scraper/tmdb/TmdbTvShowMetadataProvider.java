@@ -637,9 +637,23 @@ class TmdbTvShowMetadataProvider {
       if ((show.name.equals(show.original_name) && !show.original_language.equals(language.getLanguage())) && !language.equals(fallbackLanguage)) {
         LOGGER.debug("checking for title fallback {}", fallbackLanguage);
 
-        // overwrite with ones from table (if found)
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, fallbackLanguage);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.name : show.name;
+        // overwrite with desired language from table (if found)
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, language);
+        if (!StringUtils.isEmpty(tr.data.title)) {
+          show.name = tr.data.title;
+        }
+        if (!StringUtils.isEmpty(tr.data.overview)) {
+          show.overview = tr.data.overview;
+        }
+
+        // if still empty, use fallback language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, fallbackLanguage);
+        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : show.name;
+        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
+
+        // if still empty, use en-US language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, Locale.US);
+        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : show.name;
         show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
       }
     }
@@ -674,10 +688,24 @@ class TmdbTvShowMetadataProvider {
         show.name = s.name;
         show.overview = s.overview;
 
-        // use from table if STILL empty
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, fallbackLanguage);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.name : show.name;
-        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
+        // overwrite with desired language from table (if found)
+        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, language);
+        if (!StringUtils.isEmpty(tr.data.title)) {
+          show.name = tr.data.title;
+        }
+        if (!StringUtils.isEmpty(tr.data.overview)) {
+          show.overview = tr.data.overview;
+        }
+
+        // if still empty, use fallback language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, fallbackLanguage);
+        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : s.name;
+        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : s.overview;
+
+        // if still empty, use en-US language
+        tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, Locale.US);
+        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : s.name;
+        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : s.overview;
       }
     }
   }
