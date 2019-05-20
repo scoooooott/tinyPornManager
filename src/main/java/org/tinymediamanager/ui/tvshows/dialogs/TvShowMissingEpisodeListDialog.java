@@ -62,7 +62,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
     // UI
     {
       JPanel panelContent = new JPanel();
-      panelContent.setLayout(new MigLayout("", "[700lp,grow]", "[]"));
+      panelContent.setLayout(new MigLayout("", "[700lp,grow]", "[grow]"));
       getContentPane().add(panelContent, BorderLayout.CENTER);
 
       tblMissingEpisodeList = new TmmTable(missingEpisodeListModel);
