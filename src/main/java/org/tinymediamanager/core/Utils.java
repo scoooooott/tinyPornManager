@@ -1061,8 +1061,10 @@ public class Utils {
       }
     }
     if (language.equalsIgnoreCase("en")) {
-      return new Locale("en", "US"); // don't mess around; at least fixtate this
+      return Locale.US; // don't mess around; at least fixate this
     }
+
+    // try to find country based locale
     Locale l = null;
     List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
     for (Locale locale : countries) {
@@ -1076,6 +1078,9 @@ public class Utils {
       l = countries.get(0);
     }
 
+    if (l == null) {
+      l = new Locale(language); // let java decide..?
+    }
     return l;
   }
 
