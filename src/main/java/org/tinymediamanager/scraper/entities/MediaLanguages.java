@@ -18,6 +18,8 @@ package org.tinymediamanager.scraper.entities;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -144,7 +146,7 @@ public enum MediaLanguages {
 
   @Override
   public String toString() {
-    return displayTitle;
+    return displayTitle; // localized title, not the one from enum
   }
 
   public Locale toLocale() {
@@ -152,5 +154,19 @@ public enum MediaLanguages {
       return null;
     }
     return LocaleUtils.toLocale(name());
+  }
+
+  /**
+   * Usually, we sort enums based on their ordinal type, or based on name.<br>
+   * This is a convenience method to sort based on toString(), which we defined to be the translated displayTitle.
+   * 
+   * @return MediaLanguages.values() in a sorted way
+   */
+  public static Object[] valuesSorted() {
+    SortedMap<String, MediaLanguages> map = new TreeMap<String, MediaLanguages>(String.CASE_INSENSITIVE_ORDER);
+    for (MediaLanguages ml : MediaLanguages.values()) {
+      map.put(ml.toString(), ml);
+    }
+    return map.values().toArray();
   }
 }
