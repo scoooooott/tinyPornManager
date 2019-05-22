@@ -281,42 +281,64 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
    * @param locale
    * @return
    */
-  static Translation getFullTranslationWithFallback(Translations translations, Locale locale) {
-    Translation ret = new Translation();
-    ret.data = new Translation.Data();
+  private static Translation getTranslationForLocale(Translations translations, Locale locale) {
+    Translation ret = null;
 
     if (translations != null && translations.translations != null && !translations.translations.isEmpty()) {
       for (Translation tr : translations.translations) {
         // check with language AND country
         if (tr.iso_639_1.equals(locale.getLanguage()) && tr.iso_3166_1.equals(locale.getCountry())) {
-          mergeIfEmpty(ret, tr);
+          ret = tr;
           break;
         }
       }
-      // check with language OR country
-      for (Translation tr : translations.translations) {
-        if (tr.iso_639_1.equals(locale.getLanguage()) || tr.iso_3166_1.equals(locale.getCountry())) {
-          mergeIfEmpty(ret, tr);
-          break;
+
+      if (ret == null) {
+        // did not find exact translation, check again with language OR country
+        for (Translation tr : translations.translations) {
+          if (tr.iso_639_1.equals(locale.getLanguage()) || tr.iso_3166_1.equals(locale.getCountry())) {
+            ret = tr;
+            break;
+          }
         }
       }
     }
+
     return ret;
   }
 
-  private static void mergeIfEmpty(Translation orig, Translation merge) {
-    if (StringUtils.isEmpty(orig.data.title)) {
-      orig.data.title = merge.data.title;
+  /**
+   * 0 is title(movie) or name(show)<br>
+   * 1 is overview<br>
+   * both may be empty, but never null
+   * 
+   * @param translations
+   * @param locale
+   * @return
+   */
+  public static String[] getValuesFromTranslation(Translations translations, Locale locale) {
+    String[] ret = new String[] { "", "" };
+
+    Translation tr = getTranslationForLocale(translations, locale);
+    if (tr == null || tr.data == null) {
+      return ret;
     }
-    if (StringUtils.isEmpty(orig.data.name)) {
-      orig.data.name = merge.data.name;
+
+    if (!StringUtils.isEmpty(tr.data.title)) {
+      ret[0] = tr.data.title; // movie
     }
-    if (StringUtils.isEmpty(orig.data.overview)) {
-      orig.data.overview = merge.data.overview;
+    if (!StringUtils.isEmpty(tr.data.name)) {
+      ret[0] = tr.data.name; // show
     }
+
+    if (!StringUtils.isEmpty(tr.data.overview)) {
+      ret[1] = tr.data.overview;
+    }
+
+    return ret;
   }
 
-  /*
+  /**
    * Maps scraper Genres to internal TMM genres
    */
   static MediaGenres getTmmGenre(Genre genre) {

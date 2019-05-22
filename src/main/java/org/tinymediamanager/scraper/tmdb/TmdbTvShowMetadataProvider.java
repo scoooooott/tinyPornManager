@@ -61,7 +61,6 @@ import com.uwetrottmann.tmdb2.entities.ContentRating;
 import com.uwetrottmann.tmdb2.entities.CrewMember;
 import com.uwetrottmann.tmdb2.entities.FindResults;
 import com.uwetrottmann.tmdb2.entities.Genre;
-import com.uwetrottmann.tmdb2.entities.Translations.Translation;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.entities.TvShow;
@@ -637,24 +636,38 @@ class TmdbTvShowMetadataProvider {
       if ((show.name.equals(show.original_name) && !show.original_language.equals(language.getLanguage())) && !language.equals(fallbackLanguage)) {
         LOGGER.debug("checking for title fallback {}", fallbackLanguage);
 
-        // overwrite with desired language from table (if found)
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, language);
-        if (!StringUtils.isEmpty(tr.data.title)) {
-          show.name = tr.data.title;
+        // get in desired localization
+        String[] val = TmdbMetadataProvider.getValuesFromTranslation(show.translations, language);
+
+        // merge empty ones with fallback
+        String[] temp = TmdbMetadataProvider.getValuesFromTranslation(show.translations, fallbackLanguage);
+        if (val[0].isEmpty()) {
+          val[0] = temp[0];
         }
-        if (!StringUtils.isEmpty(tr.data.overview)) {
-          show.overview = tr.data.overview;
+        if (val[1].isEmpty()) {
+          val[1] = temp[1];
         }
 
-        // if still empty, use fallback language
-        tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, fallbackLanguage);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : show.name;
-        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
+        // merge empty ones with en-US
+        temp = TmdbMetadataProvider.getValuesFromTranslation(show.translations, Locale.US);
+        if (val[0].isEmpty()) {
+          val[0] = temp[0];
+        }
+        if (val[1].isEmpty()) {
+          val[1] = temp[1];
+        }
 
-        // if still empty, use en-US language
-        tr = TmdbMetadataProvider.getFullTranslationWithFallback(show.translations, Locale.US);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : show.name;
-        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : show.overview;
+        // merge STILL empty ones with scraped
+        if (val[0].isEmpty()) {
+          val[0] = show.name;
+        }
+        if (val[1].isEmpty()) {
+          val[1] = show.overview;
+        }
+
+        // finally SET the values
+        show.name = val[0];
+        show.overview = val[1];
       }
     }
   }
@@ -685,27 +698,39 @@ class TmdbTvShowMetadataProvider {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         TvShow s = httpResponse.body();
-        show.name = s.name;
-        show.overview = s.overview;
 
-        // overwrite with desired language from table (if found)
-        Translation tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, language);
-        if (!StringUtils.isEmpty(tr.data.title)) {
-          show.name = tr.data.title;
+        // get in desired localization
+        String[] val = TmdbMetadataProvider.getValuesFromTranslation(s.translations, language);
+
+        // merge empty ones with fallback
+        String[] temp = TmdbMetadataProvider.getValuesFromTranslation(s.translations, fallbackLanguage);
+        if (val[0].isEmpty()) {
+          val[0] = temp[0];
         }
-        if (!StringUtils.isEmpty(tr.data.overview)) {
-          show.overview = tr.data.overview;
+        if (val[1].isEmpty()) {
+          val[1] = temp[1];
         }
 
-        // if still empty, use fallback language
-        tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, fallbackLanguage);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : s.name;
-        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : s.overview;
+        // merge empty ones with en-US
+        temp = TmdbMetadataProvider.getValuesFromTranslation(s.translations, Locale.US);
+        if (val[0].isEmpty()) {
+          val[0] = temp[0];
+        }
+        if (val[1].isEmpty()) {
+          val[1] = temp[1];
+        }
 
-        // if still empty, use en-US language
-        tr = TmdbMetadataProvider.getFullTranslationWithFallback(s.translations, Locale.US);
-        show.name = StringUtils.isEmpty(show.name) ? tr.data.title : s.name;
-        show.overview = StringUtils.isEmpty(show.overview) ? tr.data.overview : s.overview;
+        // merge STILL empty ones with scraped
+        if (val[0].isEmpty()) {
+          val[0] = s.name;
+        }
+        if (val[1].isEmpty()) {
+          val[1] = s.overview;
+        }
+
+        // finally SET the values
+        show.name = val[0];
+        show.overview = val[1];
       }
     }
   }
