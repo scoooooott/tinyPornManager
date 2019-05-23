@@ -3,6 +3,7 @@ package org.tinymediamanager.ui.movies.panels;
 import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.POSTER;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
@@ -210,6 +211,7 @@ public class MovieInformationPanel extends JPanel {
 
       lblMoviePoster = new ImageLabel(false, false, true);
       lblMoviePoster.setDesiredAspectRatio(2 / 3f);
+      lblMoviePoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblMoviePoster);
 
       lblMoviePoster.enableLightbox();
@@ -220,6 +222,7 @@ public class MovieInformationPanel extends JPanel {
 
       lblMovieFanart = new ImageLabel(false, false, true);
       lblMovieFanart.setDesiredAspectRatio(16 / 9f);
+      lblMovieFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
       panelLeft.add(lblMovieFanart);
       lblMovieFanart.enableLightbox();

@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -46,6 +47,7 @@ public class ImagePreviewDialog extends TmmDialog {
   private static final Logger              LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 
   private String                           imageUrl;
+  private Path                             imagePath;
   private SwingWorker<BufferedImage, Void> worker;
   private ImageViewer                      imgViewer        = new ImageViewer();
 
@@ -64,6 +66,22 @@ public class ImagePreviewDialog extends TmmDialog {
 
     worker = new ImageFetcher();
     worker.execute();
+  }
+
+  public ImagePreviewDialog(Path pathToImage) {
+    super("", "imagePreview");
+    this.imagePath = pathToImage;
+
+    lblLoadingInfo = new JLabel(BUNDLE.getString("image.download")); //$NON-NLS-1$
+    lblLoadingInfo.setBorder(new EmptyBorder(10, 10, 10, 10));
+    TmmFontHelper.changeFont(lblLoadingInfo, 1.5f);
+    getContentPane().add(lblLoadingInfo, BorderLayout.CENTER);
+
+    setBottomPanel(new JPanel());
+
+    worker = new ImageFetcherPath();
+    worker.execute();
+
   }
 
   @Override
@@ -126,4 +144,41 @@ public class ImagePreviewDialog extends TmmDialog {
       }
     }
   }
+
+  protected class ImageFetcherPath extends SwingWorker<BufferedImage, Void> {
+    @Override
+    protected BufferedImage doInBackground() {
+      try {
+        return ImageUtils.createImage(imagePath);
+      }
+      catch (Exception e) {
+        LOGGER.warn("fetch image: " + e.getMessage());
+        return null;
+      }
+    }
+
+    @Override
+    protected void done() {
+      try {
+        BufferedImage image = get();
+        if (image == null) {
+          lblLoadingInfo.setText(BUNDLE.getString("image.download.failed")); //$NON-NLS-1$
+          pack();
+          return;
+        }
+        imgViewer.setImage(image);
+        JComponent comp = imgViewer.getComponent();
+
+        getContentPane().removeAll();
+        getContentPane().add(comp, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(MainWindow.getActiveInstance());
+      }
+      catch (Exception e) {
+        LOGGER.warn("fetch image: " + e.getMessage());
+      }
+    }
+
+  }
 }
+

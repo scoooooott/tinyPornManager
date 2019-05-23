@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.POSTER;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
@@ -140,6 +141,7 @@ public class TvShowInformationPanel extends JPanel {
 
       lblTvShowPoster = new ImageLabel(false, false, true);
       lblTvShowPoster.setDesiredAspectRatio(2 / 3f);
+      lblTvShowPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowPoster);
       lblTvShowPoster.enableLightbox();
       lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
@@ -148,6 +150,7 @@ public class TvShowInformationPanel extends JPanel {
 
       lblTvShowBackground = new ImageLabel(false, false, true);
       lblTvShowBackground.setDesiredAspectRatio(16 / 9f);
+      lblTvShowBackground.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowBackground);
       lblTvShowBackground.enableLightbox();
       lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
@@ -156,6 +159,7 @@ public class TvShowInformationPanel extends JPanel {
 
       lblTvShowBanner = new ImageLabel(false, false, true);
       lblTvShowBanner.setDesiredAspectRatio(25 / 8f);
+      lblTvShowBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowBanner);
       lblTvShowBanner.enableLightbox();
       lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
