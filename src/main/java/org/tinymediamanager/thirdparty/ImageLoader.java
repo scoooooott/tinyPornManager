@@ -359,29 +359,48 @@ public class ImageLoader {
     private transient int[] row;
 
     public void setDimensions(int w, int h) {
-      try {
-        if (w <= 0)
-          throw new IllegalArgumentException("Width must be greater than zero.  (" + w + ")");
-        if (h <= 0)
-          throw new IllegalArgumentException("Height must be greater than zero.  (" + h + ")");
-        if (size != null) {
-          // eh? already exists?
-          if (size.width == w && size.height == h)
-            return;
-          if (dest != null) {
-            throw new RuntimeException("An image of " + (size.getWidth()) + "x" + size.getHeight()
-                + " was already created.  Illegal attempt to call setDimensions(" + w + "," + h + ")");
+      // try to cache the image file; we have up to 5 retries here if we hit the memory cap since we are
+      // hitting the machine hard due to multi CPU image caching
+      int retries = 5;
+      do {
+        try {
+          if (w <= 0)
+            throw new IllegalArgumentException("Width must be greater than zero.  (" + w + ")");
+          if (h <= 0)
+            throw new IllegalArgumentException("Height must be greater than zero.  (" + h + ")");
+          if (size != null) {
+            // eh? already exists?
+            if (size.width == w && size.height == h)
+              return;
+            if (dest != null) {
+              throw new RuntimeException("An image of " + (size.getWidth()) + "x" + size.getHeight()
+                  + " was already created.  Illegal attempt to call setDimensions(" + w + "," + h + ")");
+            }
+          }
+          size = new Dimension(w, h);
+          dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+          row = new int[w];
+          fireChangeListeners();
+          break;
+        }
+        catch (OutOfMemoryError e) {
+          // memory limit hit; give it another 500ms time to recover
+          LOGGER.warn("hit memory cap: {}", e.getMessage());
+          size = null;
+          dest = null;
+          try {
+            Thread.sleep(200);
+          }
+          catch (InterruptedException ignored) {
+            Thread.interrupted();
           }
         }
-        size = new Dimension(w, h);
-        dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        row = new int[w];
-        fireChangeListeners();
-      }
-      catch (RuntimeException | Error e) {
-        LOGGER.debug("could not set dimensions: {}", e.getMessage());
-        throw e;
-      }
+        catch (RuntimeException | Error e) {
+          LOGGER.debug("could not set dimensions: {}", e.getMessage());
+          throw e;
+        }
+        retries--;
+      } while (retries > 0);
     }
 
     public void setHints(int hints) {

@@ -143,7 +143,23 @@ public class ImageCache {
 
       // recreate cache dir if needed
       // rescale & cache
-      BufferedImage originalImage = ImageUtils.createImage(originalFile);
+      BufferedImage originalImage = null;
+
+      // try to cache the image file; we have up to 5 retries here if we hit the memory cap since we are
+      // hitting the machine hard due to multi CPU image caching
+      int retries = 5;
+      do {
+        try {
+          originalImage = ImageUtils.createImage(originalFile);
+          break;
+        }
+        catch (OutOfMemoryError e) {
+          // memory limit hit; give it another 500ms time to recover
+          LOGGER.warn("hit memory cap: {}", e.getMessage());
+          Thread.sleep(500);
+        }
+        retries--;
+      } while (retries > 0);
 
       // calculate width based on MF type
       int desiredWidth = originalImage.getWidth(); // initialize with fallback
