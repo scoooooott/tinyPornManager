@@ -25,6 +25,7 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
@@ -158,6 +159,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
       lblTvShowPoster = new ImageLabel(false, false, true);
       lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
+      lblTvShowPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowPoster);
       lblTvShowPoster.enableLightbox();
       lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
@@ -166,6 +168,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
       lblTvShowThumb = new ImageLabel(false, false, true);
       lblTvShowThumb.setDesiredAspectRatio(16 / 9.0f);
+      lblTvShowThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowThumb);
       lblTvShowThumb.enableLightbox();
       lblThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
@@ -174,6 +177,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
       lblTvShowBanner = new ImageLabel(false, false, true);
       lblTvShowBanner.setDesiredAspectRatio(25 / 8.0f);
+      lblTvShowBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowBanner);
       lblTvShowBanner.enableLightbox();
       lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$

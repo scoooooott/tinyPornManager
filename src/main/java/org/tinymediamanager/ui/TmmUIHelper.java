@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -37,7 +38,10 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.NativeFileChooser;
+import org.tinymediamanager.ui.dialogs.ImagePreviewDialog;
 
 /**
  * The Class TmmUIHelper.
@@ -45,7 +49,8 @@ import org.tinymediamanager.ui.components.NativeFileChooser;
  * @author Manuel Laggner
  */
 public class TmmUIHelper {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TmmUIHelper.class);
+  private static final Logger           LOGGER = LoggerFactory.getLogger(TmmUIHelper.class);
+  protected static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public static Path selectDirectory(String title, String initialPath) {
     // on mac try to take the AWT FileDialog
@@ -359,5 +364,22 @@ public class TmmUIHelper {
         LOGGER.error("Couldn't redirect stream: {}", e.getLocalizedMessage());
       }
     }
+  }
+
+  private static void previewImage(ImageLabel image) {
+    if (StringUtils.isNotBlank(image.getImagePath())) {
+      ImagePreviewDialog dialog = new ImagePreviewDialog(Paths.get(image.getImagePath()));
+      dialog.setVisible(true);
+    }
+    else {
+      ImagePreviewDialog dialog = new ImagePreviewDialog(image.getImageUrl());
+      dialog.setVisible(true);
+    }
+  }
+
+  public static LinkLabel createLinkForImage(LinkLabel linklabel, ImageLabel image) {
+    linklabel.addActionListener(e -> previewImage(image));
+
+    return linklabel;
   }
 }

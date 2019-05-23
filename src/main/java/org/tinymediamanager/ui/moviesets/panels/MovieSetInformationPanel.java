@@ -18,11 +18,16 @@ package org.tinymediamanager.ui.moviesets.panels;
 import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.POSTER;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -61,9 +67,10 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieSetInformationPanel extends JPanel {
-  private static final long            serialVersionUID = -8166784589262658147L;
+  private static final long            serialVersionUID    = -8166784589262658147L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final String          ORIGINAL_IMAGE_SIZE = "originalImageSize";
   private JLabel                       lblMovieSetName;
   private ImageLabel                   lblFanart;
   private JLabel                       lblFanartSize;
@@ -126,6 +133,7 @@ public class MovieSetInformationPanel extends JPanel {
 
       lblPoster = new ImageLabel(false, false, true);
       lblPoster.setDesiredAspectRatio(2 / 3f);
+      lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblPoster);
       lblPoster.enableLightbox();
       lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
@@ -134,6 +142,7 @@ public class MovieSetInformationPanel extends JPanel {
 
       lblFanart = new ImageLabel(false, false, true);
       lblFanart.setDesiredAspectRatio(16 / 9f);
+      lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblFanart);
       lblFanart.enableLightbox();
       lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
@@ -187,7 +196,15 @@ public class MovieSetInformationPanel extends JPanel {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }
     else {
-      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+      if (StringUtils.isNotBlank(lblPoster.getImagePath())) {
+        try {
+          BufferedImage img = ImageIO.read(new File(lblPoster.getImagePath()));
+          lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
+        }
+        catch (IOException ignored) {
+          lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        }
+      }
     }
   }
 
@@ -199,7 +216,15 @@ public class MovieSetInformationPanel extends JPanel {
       lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
     }
     else {
-      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+      if (StringUtils.isNotBlank(lblFanart.getImagePath())) {
+        try {
+          BufferedImage img = ImageIO.read(new File(lblFanart.getImagePath()));
+          lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
+        }
+        catch (IOException ignored) {
+          lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+        }
+      }
     }
   }
 
