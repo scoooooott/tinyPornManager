@@ -197,7 +197,7 @@ class MovieImageSettingsPanel extends JPanel {
         JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
         panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
 
-        cbScraperLanguage = new JComboBox(MediaLanguages.values());
+        cbScraperLanguage = new JComboBox(MediaLanguages.valuesSorted());
         panelOptions.add(cbScraperLanguage, "cell 1 0");
 
         JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$

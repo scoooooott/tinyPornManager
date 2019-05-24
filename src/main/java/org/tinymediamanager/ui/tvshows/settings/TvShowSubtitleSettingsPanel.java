@@ -191,7 +191,7 @@ class TvShowSubtitleSettingsPanel extends JPanel {
         JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
         panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
 
-        cbScraperLanguage = new JComboBox(MediaLanguages.values());
+        cbScraperLanguage = new JComboBox(MediaLanguages.valuesSorted());
         panelOptions.add(cbScraperLanguage, "cell 1 0");
 
         JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$

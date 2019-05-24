@@ -209,7 +209,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       }
       {
         cbLanguage = new JComboBox<>();
-        cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
+        cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.valuesSorted()));
         cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getScraperLanguage());
         cbLanguage.addActionListener(e -> searchTvShow(textFieldSearchString.getText(), null));
         panelSearchField.add(cbLanguage, "cell 1 1,growx");
