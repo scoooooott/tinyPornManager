@@ -162,11 +162,11 @@ public enum MediaLanguages {
    * 
    * @return MediaLanguages.values() in a sorted way
    */
-  public static Object[] valuesSorted() {
-    SortedMap<String, MediaLanguages> map = new TreeMap<String, MediaLanguages>(String.CASE_INSENSITIVE_ORDER);
+  public static MediaLanguages[] valuesSorted() {
+    SortedMap<String, MediaLanguages> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     for (MediaLanguages ml : MediaLanguages.values()) {
       map.put(ml.toString(), ml);
     }
-    return map.values().toArray();
+    return map.values().toArray(new MediaLanguages[] {});
   }
 }
