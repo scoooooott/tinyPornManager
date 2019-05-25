@@ -70,7 +70,7 @@ public class BaseLabelUI extends BasicLabelUI {
     else {
       mnemIndex = JTattooUtilities.findDisplayedMnemonicIndex(l.getText(), l.getDisplayedMnemonic());
     }
-    g.setColor(Color.white);
+    g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
     JTattooUtilities.drawStringUnderlineCharAt(l, g, s, mnemIndex, textX + 1, textY + 1);
     g.setColor(AbstractLookAndFeel.getDisabledForegroundColor());
     JTattooUtilities.drawStringUnderlineCharAt(l, g, s, mnemIndex, textX, textY);

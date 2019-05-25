@@ -727,4 +727,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
     return getTheme().getTooltipBackgroundColor();
   }
 
+  public static int getDefaultFontSize() {
+    return getTheme().getDefaultFontSize();
+  }
 }

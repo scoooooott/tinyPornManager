@@ -23,7 +23,6 @@
 
 package com.jtattoo.plaf;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -194,7 +193,7 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x, textRect.y + fm.getAscent());
       }
       else {
-        g.setColor(Color.white);
+        g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
         g.setColor(AbstractLookAndFeel.getDisabledForegroundColor());
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x, textRect.y + fm.getAscent());

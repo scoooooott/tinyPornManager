@@ -31,13 +31,16 @@ abstract public class TmmTheme extends AbstractTheme {
 
   static {
     try (InputStream fsRegular = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
-        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
+        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream();
+        InputStream fontStream = TmmTheme.class.getResource("fontawesome-pro-regular-400.ttf").openStream()) {
       Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fsRegular);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuRegular);
 
       Font dejavuMono = Font.createFont(Font.TRUETYPE_FONT, fsMono);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuMono);
 
+      Font fontAwesome = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+      GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(fontAwesome);
     }
     catch (Exception ignored) {
       // nothing to be done here

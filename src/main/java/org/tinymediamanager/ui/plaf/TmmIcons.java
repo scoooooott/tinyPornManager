@@ -19,28 +19,41 @@ package org.tinymediamanager.ui.plaf;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
+import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseIcons;
 import com.jtattoo.plaf.JTattooUtilities;
 
+import sun.swing.ImageIconUIResource;
+
 public class TmmIcons extends BaseIcons {
 
-  public static Color COLOR       = Color.GRAY;
-  public static Color COLOR_HOVER = Color.WHITE;
+  public static Color           COLOR        = Color.GRAY;
+  public static Color           COLOR_HOVER  = Color.WHITE;
+
+  public static final Font      FONT_AWESOME = Font.decode("Font Awesome 5 Pro Regular");
+  public final static ImageIcon EMPTY_IMAGE  = new ImageIcon(TmmIcons.class.getResource("empty.png"));
 
   public static Icon getCloseIcon() {
     if (closeIcon == null) {
@@ -382,8 +395,9 @@ public class TmmIcons extends BaseIcons {
   }
 
   private static class SquareCheckBoxIcon implements Icon {
-    private static final int  SIZE             = 16;
-    private static final Icon SMALL_CHECK_ICON = new ImageIcon(TmmIcons.class.getResource("icons/checkmark.png"));
+    private static final int       SIZE             = AbstractLookAndFeel.getDefaultFontSize() + 4;
+    private static final ImageIcon SMALL_CHECK_ICON = createFontAwesomeIcon('\uF00C', AbstractLookAndFeel.getTheme().getFocusColor());
+    private static final ImageIcon TRI_STATE_ICON   = createFontAwesomeIcon('\uF068', AbstractLookAndFeel.getTheme().getFocusColor());
 
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -404,12 +418,22 @@ public class TmmIcons extends BaseIcons {
       g.setColor(AbstractLookAndFeel.getTheme().getInputBackgroundColor());
       g.fillRoundRect(x, y, SIZE, SIZE, SIZE / 2, SIZE / 2);
 
+      Icon icon = null;
+      int offsetX = 0;
       if (isTriStateButtonModelStatusMixed(model)) {
-        g.setColor(AbstractLookAndFeel.getTheme().getFocusColor());
-        g.fillRect(x + 4, y + SIZE / 2 - 1, SIZE - 7, 2);
+        icon = TRI_STATE_ICON;
+        offsetX = 2;
       }
       else if (model.isSelected()) {
-        SMALL_CHECK_ICON.paintIcon(c, g, x, y);
+        icon = SMALL_CHECK_ICON;
+      }
+
+      if (icon != null) {
+        if (!model.isEnabled()) {
+          icon = new ImageIconUIResource(GrayFilter.createDisabledImage(SMALL_CHECK_ICON.getImage()));
+        }
+
+        icon.paintIcon(c, g, x + offsetX, y);
       }
 
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRenderingHint);
@@ -439,5 +463,171 @@ public class TmmIcons extends BaseIcons {
     public int getIconHeight() {
       return SIZE;
     }
+  }
+
+  /**
+   * create a image off the font awesome icon font in the default size 14px for 12pt base font size.
+   *
+   * @param iconId
+   *          the icon id
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId) {
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), UIManager.getColor("Label.foreground"));
+  }
+
+  private static int calculateFontIconSize(float scaleFactor) {
+    return (int) Math.floor(AbstractLookAndFeel.getDefaultFontSize() * scaleFactor);
+  }
+
+  /**
+   * create a image off the font awesome icon font in given size (scaling to the base font size of 12pt applied!)
+   *
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, int size) {
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(size / 12.0f), UIManager.getColor("Label.foreground"));
+  }
+
+  /**
+   * create a image off the awesome icon font with the given scaling factor
+   *
+   * @param iconId
+   *          the icon id
+   * @param scaleFactor
+   *          the scale factor to apply
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, float scaleFactor) {
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(scaleFactor), UIManager.getColor("Label.foreground"));
+  }
+
+  /**
+   * create a image off the awesome icon font size 14pt for 12pt base font size.
+   *
+   * @param iconId
+   *          the icon id
+   * @param color
+   *          the color to create the icon in
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, Color color) {
+    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), color);
+  }
+
+  /**
+   * create a image off the awesome icon font
+   *
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
+   * @param color
+   *          the color to create the icon in
+   * @return the generated icon
+   */
+  public static ImageIcon createFontAwesomeIcon(char iconId, int size, Color color) {
+    if (FONT_AWESOME == null) {
+      return EMPTY_IMAGE;
+    }
+    Font font = FONT_AWESOME.deriveFont((float) size);
+    return createFontIcon(font, String.valueOf(iconId), color);
+  }
+
+  /**
+   * create a text icon in the default Label.foreground color
+   * 
+   * @param text
+   *          the text to be painted
+   * @param size
+   *          the text size
+   * @return an icon containing the text
+   */
+  public static ImageIcon createTextIcon(String text, int size) {
+    return createTextIcon(text, size, UIManager.getColor("Label.foreground"));
+  }
+
+  /**
+   * create a text icon in the given color
+   * 
+   * @param text
+   *          the text to be painted
+   * @param size
+   *          the text size
+   * @param color
+   *          the color to draw in
+   * @return an icon containing the text
+   */
+  public static ImageIcon createTextIcon(String text, int size, Color color) {
+    Font defaultfont = (Font) UIManager.get("Label.font");
+    if (defaultfont == null) {
+      return null;
+    }
+    Font font = defaultfont.deriveFont(Font.BOLD, (float) size);
+    return createFontIcon(font, text, color);
+  }
+
+  /**
+   * create a font icon - draw an icon off a font with the given text/character
+   * 
+   * @param font
+   *          the font to be used
+   * @param text
+   *          the text to be painted
+   * @param color
+   *          the color to draw in
+   * @return an icon containing the text
+   */
+  public static ImageIcon createFontIcon(Font font, String text, Color color) {
+    try {
+      // calculate icon size
+      BufferedImage tmp = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
+      g2.setFont(font);
+
+      // get the visual bounds of the string (this is more realiable than the string bounds)
+      Rectangle2D defaultBounds = g2.getFontMetrics().getStringBounds("M", g2);
+      Rectangle2D bounds = font.createGlyphVector(g2.getFontRenderContext(), text).getVisualBounds();
+      int iconWidth = (int) Math.ceil(bounds.getWidth()) + 2; // +2 to avoid clipping problems
+      int iconHeight = (int) Math.ceil(bounds.getHeight()) + 2; // +2 to avoid clipping problems
+
+      if (iconHeight < defaultBounds.getHeight()) {
+        iconHeight = (int) Math.ceil(defaultBounds.getHeight());
+      }
+
+      g2.dispose();
+
+      // if width is less than height, increase the width to be at least a square
+      if (iconWidth < iconHeight) {
+        iconWidth = iconHeight;
+      }
+
+      // and draw it
+      BufferedImage buffer = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
+      g2 = (Graphics2D) buffer.getGraphics();
+      // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      // g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+      if (desktopHints != null) {
+        g2.setRenderingHints(desktopHints);
+      }
+
+      g2.setFont(font);
+      g2.setColor(color);
+
+      // draw the glyhps centered
+      int y = (int) Math.floor(bounds.getY() - (defaultBounds.getHeight() - bounds.getHeight()) / 2);
+      g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), -y);
+      g2.dispose();
+      return new ImageIcon(buffer);
+    }
+    catch (Exception ignored) {
+    }
+
+    return EMPTY_IMAGE;
   }
 }

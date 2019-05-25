@@ -79,6 +79,7 @@ public abstract class AbstractTheme extends MetalTheme {
 
   protected static boolean            menuOpaque                         = true;
   protected static float              menuAlpha                          = 0.9f;
+  protected static int                defaultFontSize                    = 12;
   protected static String             logoString                         = "JTattoo";
   protected static FontUIResource     controlFont                        = null;
   protected static FontUIResource     systemFont                         = null;
@@ -455,6 +456,14 @@ public abstract class AbstractTheme extends MetalTheme {
       }
       if (props.getProperty("subTextFont") != null) {
         smallFont = createFont(props.getProperty("subTextFont"));
+      }
+      if (props.getProperty("defaultFontSize") != null) {
+        try {
+          defaultFontSize = Integer.parseInt(props.getProperty("defaultFontSize"));
+        }
+        catch (NumberFormatException ignored) {
+          // stick to the default one
+        }
       }
 
       if (props.getProperty("foregroundColor") != null) {
@@ -1514,6 +1523,10 @@ public abstract class AbstractTheme extends MetalTheme {
 
   public Icon getMenubarTexture() {
     return menubarTexture;
+  }
+
+  public int getDefaultFontSize() {
+    return defaultFontSize;
   }
 
   public abstract AbstractBorderFactory getBorderFactory();
