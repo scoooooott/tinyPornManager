@@ -164,7 +164,7 @@ public class MovieSetEditorDialog extends TmmDialog {
 
       JPanel panelContent = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), panelContent); //$NON-NLS-1$
-      panelContent.setLayout(new MigLayout("", "[][400lp,grow 200][150lp:200lp,grow 50]", "[][][150lp:200lp,grow][20lp:n][100lp:150lp,grow]"));
+      panelContent.setLayout(new MigLayout("", "[][400lp,grow 200][150lp:200lp,grow 50]", "[][][150lp:200lp,grow][20lp:n][][][100lp:150lp,grow]"));
 
       JLabel lblName = new TmmLabel(BUNDLE.getString("movieset.title")); //$NON-NLS-1$
       panelContent.add(lblName, "cell 0 0,alignx right");
@@ -194,7 +194,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       });
       panelContent.add(new TmmLabel(BUNDLE.getString("mediafiletype.poster")), "cell 2 0");
       panelContent.add(lblPosterSize, "cell 2 0");
-      panelContent.add(lblPoster, "cell 2 1 1 3,grow");
+      panelContent.add(lblPoster, "cell 2 1 1 4,grow");
       lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaFileType.POSTER));
 
       JLabel lblTmdbid = new TmmLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
@@ -218,7 +218,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       panelContent.add(lblMovies, "flowy,cell 0 4,alignx right,aligny top");
 
       JScrollPane scrollPaneMovies = new JScrollPane();
-      panelContent.add(scrollPaneMovies, "cell 1 4,grow");
+      panelContent.add(scrollPaneMovies, "cell 1 4 1 3,grow");
 
       tableMovies = new TmmTable();
       scrollPaneMovies.setViewportView(tableMovies);
@@ -242,9 +242,9 @@ public class MovieSetEditorDialog extends TmmDialog {
           dialog.setVisible(true);
         }
       });
-      panelContent.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 2 4");
-      panelContent.add(lblFanartSize, "cell 2 4");
-      panelContent.add(lblFanart, "cell 2 5 ,grow");
+      panelContent.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 2 5");
+      panelContent.add(lblFanartSize, "cell 2 5");
+      panelContent.add(lblFanart, "cell 2 6,grow");
       lblFanart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblFanartSize, lblFanart, MediaFileType.FANART));
 
       JButton btnSearchTmdbId = new JButton("");

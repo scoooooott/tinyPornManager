@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +39,6 @@ import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.LineBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -143,7 +141,6 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           tableMovieSets = new TmmTable();
           panelSearchResults.setViewportView(tableMovieSets);
           tableMovieSets.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-          tableMovieSets.setBorder(new LineBorder(new Color(0, 0, 0)));
           ListSelectionModel rowSM = tableMovieSets.getSelectionModel();
           rowSM.addListSelectionListener(e -> {
             // Ignore extra messages.
