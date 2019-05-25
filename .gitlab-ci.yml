@@ -29,7 +29,7 @@ test:jdk8:
     - pushes
   script:
     # install libmediainfo for unit tests
-    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - apt-get update && apt-get install -y --no-install-recommends libmms0 libglib2.0-0
     - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
