@@ -516,6 +516,7 @@ public class TinyMediaManager {
     props.setProperty("systemTextFont", fontString);
     props.setProperty("userTextFont", fontString);
     props.setProperty("menuTextFont", fontString);
+    props.setProperty("defaultFontSize", Integer.toString(fontSize));
 
     if (Globals.settings.isSystemWindowDecoration()) {
       props.setProperty("windowDecoration", "system");
