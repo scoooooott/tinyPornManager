@@ -119,12 +119,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public static final String                         VIDEO_FORMAT_SD          = "SD";
   public static final String                         VIDEO_FORMAT_HD          = "HD";
 
-  // 3D / side-by-side / top-and-bottom / H=half - http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
+  // 3D / side-by-side / top-and-bottom / H=half - MVC=Multiview Video Coding- http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
   public static final String                         VIDEO_3D                 = "3D";
   public static final String                         VIDEO_3D_SBS             = "3D SBS";
   public static final String                         VIDEO_3D_TAB             = "3D TAB";
   public static final String                         VIDEO_3D_HSBS            = "3D HSBS";
   public static final String                         VIDEO_3D_HTAB            = "3D HTAB";
+  public static final String                         VIDEO_3D_MVC             = "3D MVC";
 
   @JsonProperty
   private MediaFileType                              type                     = MediaFileType.UNKNOWN;
@@ -2168,6 +2169,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (getAspectRatioCalculated() > 3) {
           video3DFormat = VIDEO_3D_SBS;// FullSBS eg 3840x1080
         }
+      }
+      if (!StringUtils.isEmpty(mvl) && mvl.contains("laced")) { // Both Eyes laced in one block
+        video3DFormat = VIDEO_3D_MVC;
       }
     }
     else {

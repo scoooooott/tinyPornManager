@@ -121,6 +121,7 @@ public class MediaFileEditorPanel extends JPanel {
     threeDFormats.add(MediaFile.VIDEO_3D_HSBS);
     threeDFormats.add(MediaFile.VIDEO_3D_TAB);
     threeDFormats.add(MediaFile.VIDEO_3D_HTAB);
+    threeDFormats.add(MediaFile.VIDEO_3D_MVC);
 
     setLayout(new MigLayout("", "[300lp:450lp,grow]", "[200lp:450lp,grow]"));
     {
