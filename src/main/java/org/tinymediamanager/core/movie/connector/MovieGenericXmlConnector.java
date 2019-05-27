@@ -331,7 +331,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Element mpaa = document.createElement("mpaa");
 
     if (movie.getCertification() != null) {
-      if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
+      if (movie.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         mpaa.setTextContent(Certification.getMPAAString(movie.getCertification()));
       }

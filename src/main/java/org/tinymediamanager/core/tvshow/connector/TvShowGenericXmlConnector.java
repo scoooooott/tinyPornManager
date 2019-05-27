@@ -385,7 +385,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Element mpaa = document.createElement("mpaa");
 
     if (tvShow.getCertification() != null) {
-      if (TvShowModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
+      if (tvShow.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         mpaa.setTextContent(Certification.getMPAAString(tvShow.getCertification()));
       }
