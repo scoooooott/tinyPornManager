@@ -664,7 +664,7 @@ public class TvShowNfoParser {
     supportedElements.add("mpaa");
 
     Element element = getSingleElement(root, "certification");
-    if (element == null) {
+    if (element == null || StringUtils.isBlank(element.ownText())) {
       element = getSingleElement(root, "mpaa");
     }
     if (element != null) {
