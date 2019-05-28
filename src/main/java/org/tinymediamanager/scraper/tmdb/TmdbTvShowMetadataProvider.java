@@ -630,7 +630,8 @@ class TmdbTvShowMetadataProvider {
    *          the tv show to modify
    */
   private void verifyTvShowLanguageTitle(Locale language, TvShow show) {
-    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
+    // always doing a fallback scrape when overview empty, regardless of setting!
+    if (providerInfo.getConfig().getValueAsBool("titleFallback") || StringUtils.isEmpty(show.overview)) {
       Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
 
       if ((show.name.equals(show.original_name) && !show.original_language.equals(language.getLanguage())) && !language.equals(fallbackLanguage)) {
@@ -684,7 +685,7 @@ class TmdbTvShowMetadataProvider {
    * @throws IOException
    */
   private void verifyTvShowLanguageTitle(Locale language, BaseTvShow show) throws IOException {
-
+    // NOT doing a fallback scrape when overview empty, used only for SEARCH - unneeded!
     if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
       Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
 
@@ -747,8 +748,8 @@ class TmdbTvShowMetadataProvider {
     int seasonNr = query.getIdAsInt(MediaMetadata.SEASON_NR);
     int episodeNr = query.getIdAsInt(MediaMetadata.EPISODE_NR);
 
-    if (episode != null && (StringUtils.isAnyBlank(episode.name, episode.overview) || isEpisodesNameDefault(episode, episodeNr))
-        && providerInfo.getConfig().getValueAsBool("titleFallback")) {
+    if (episode != null && (StringUtils.isAnyBlank(episode.name, episode.overview) || isEpisodesNameDefault(episode, episodeNr)
+        || providerInfo.getConfig().getValueAsBool("titleFallback"))) {
 
       String languageFallback = MediaLanguages.get(providerInfo.getConfig().getValue("titleFallbackLanguage")).name().replace("_", "-");
 

@@ -254,7 +254,8 @@ class TmdbMovieMetadataProvider {
    * @throws IOException
    */
   private void verifyMovieTitleLanguage(Locale language, Movie movie) throws IOException {
-    if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
+    // always doing a fallback scrape when overview empty, regardless of setting!
+    if (providerInfo.getConfig().getValueAsBool("titleFallback") || StringUtils.isEmpty(movie.overview)) {
       Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
       if ((movie.title.equals(movie.original_title) && !movie.original_language.equals(language.getLanguage()))
           && !language.equals(fallbackLanguage)) {
@@ -306,6 +307,7 @@ class TmdbMovieMetadataProvider {
    * @throws IOException
    */
   private void verifyMovieTitleLanguage(Locale language, BaseMovie movie) throws IOException {
+    // NOT doing a fallback scrape when overview empty, used only for SEARCH - unneeded!
     if (providerInfo.getConfig().getValueAsBool("titleFallback")) {
       Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
 
