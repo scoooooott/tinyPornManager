@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.tinymediamanager</groupId>
         <artifactId>tmm-parent</artifactId>
-        <version>3.3-SNAPSHOT</version>
+        <version>3.3</version>
     </parent>
 
     <artifactId>tinyMediaManager</artifactId>
@@ -25,12 +25,12 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>api-scraper</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>tinyMediaManager-LaF</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0</version>
         </dependency>
 
         <!-- our plugins - all provided for dependency resolution -->
