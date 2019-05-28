@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -145,7 +146,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
         }
       }
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
