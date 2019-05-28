@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.registry.Registry;
-import org.jsoup.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.thirdparty.upnp.Upnp;
@@ -100,7 +100,7 @@ public class SplitUri {
       }
     }
 
-    if (u != null && !StringUtil.isBlank(u.getHost())) {
+    if (u != null && !StringUtils.isBlank(u.getHost())) {
       this.file = u.getPath();
       if (ds.startsWith("upnp")) {
         this.type = "UPNP";
