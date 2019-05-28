@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.anidb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -141,7 +142,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     try (InputStream is = cachedUrl.getInputStream()) {
       doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -493,7 +494,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     try (InputStream is = url.getInputStream()) {
       doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -577,7 +578,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         }
       }
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
