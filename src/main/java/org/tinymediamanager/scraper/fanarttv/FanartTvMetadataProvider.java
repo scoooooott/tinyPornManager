@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.fanarttv;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,7 +189,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     // if there has been an exception and nothing has been found, throw this exception
     if ((images == null || !images.isSuccessful()) && savedException != null) {
       // if the thread has been interrupted, to no rethrow that exception
-      if (savedException instanceof InterruptedException) {
+      if (savedException instanceof InterruptedException || savedException instanceof InterruptedIOException) {
         return returnArtwork;
       }
       throw new ScrapeException(savedException);
@@ -248,7 +249,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     catch (Exception e) {
       LOGGER.debug("failed to get artwork: {}", e.getMessage());
       // if the thread has been interrupted, to no rethrow that exception
-      if (e instanceof InterruptedException) {
+      if (e instanceof InterruptedException || e instanceof InterruptedException) {
         return returnArtwork;
       }
 
