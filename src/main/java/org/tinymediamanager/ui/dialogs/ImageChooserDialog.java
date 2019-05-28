@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.InterruptedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -928,7 +929,7 @@ public class ImageChooserDialog extends TmmDialog {
       // open a thread pool to parallel download the images
       ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 10, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
       pool.allowCoreThreadTimeOut(true);
-      ExecutorCompletionService service = new ExecutorCompletionService<DownloadChunk>(pool);
+      ExecutorCompletionService<DownloadChunk> service = new ExecutorCompletionService<>(pool);
 
       // get images from all artworkproviders
       for (MediaScraper scraper : artworkScrapers) {
@@ -1049,14 +1050,14 @@ public class ImageChooserDialog extends TmmDialog {
           LOGGER.debug("could not fetch artwork: {}", e.getIds());
         }
         catch (Exception e) {
-          if (e instanceof InterruptedException) {
+          if (e instanceof InterruptedException || e instanceof InterruptedIOException) { // NOSONAR
             // shutdown the pool
             pool.getQueue().clear();
             pool.shutdown();
 
             return null;
           }
-          throw e;
+          LOGGER.error("could not process artwork downloading - {}", e.getMessage());
         }
       } // end foreach scraper
 
@@ -1068,7 +1069,7 @@ public class ImageChooserDialog extends TmmDialog {
           publish(future.get());
           imagesFound = true;
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
           return null;
         }
         catch (ExecutionException e) {

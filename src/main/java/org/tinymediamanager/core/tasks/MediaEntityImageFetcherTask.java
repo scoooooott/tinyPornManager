@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tasks;
 
+import java.io.InterruptedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -121,7 +122,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         entity.addToMediaFiles(artwork);
       }
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }

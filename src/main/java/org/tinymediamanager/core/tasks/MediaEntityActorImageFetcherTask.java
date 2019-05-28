@@ -98,7 +98,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
         try {
           downloadPersonImage(person);
         }
-        catch (InterruptedIOException e) {
+        catch (InterruptedException | InterruptedIOException e) {
           LOGGER.info("artwork download aborted");
           throw e;
         }
@@ -107,7 +107,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
         }
       }
     }
-    catch (InterruptedIOException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // re-interrupt the thread
       Thread.currentThread().interrupt();
     }
