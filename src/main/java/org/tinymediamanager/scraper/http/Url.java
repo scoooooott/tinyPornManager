@@ -368,7 +368,7 @@ public class Url {
       try {
         is = getInputStream();
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // this exception has already been logged in getInputStream()
         throw e;
       }
