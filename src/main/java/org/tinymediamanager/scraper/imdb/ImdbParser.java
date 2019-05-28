@@ -23,6 +23,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMedi
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -184,7 +185,7 @@ public abstract class ImdbParser {
     try (InputStream is = url.getInputStream()) {
       doc = Jsoup.parse(is, "UTF-8", "");
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -1034,7 +1035,7 @@ public abstract class ImdbParser {
       try (InputStream is = url.getInputStream()) {
         doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }

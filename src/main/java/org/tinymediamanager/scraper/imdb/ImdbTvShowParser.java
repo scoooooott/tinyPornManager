@@ -21,6 +21,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -427,7 +428,7 @@ public class ImdbTvShowParser extends ImdbParser {
       doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
       parseEpisodeList(0, episodes, doc);
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -455,7 +456,7 @@ public class ImdbTvShowParser extends ImdbParser {
           break;
         }
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }
