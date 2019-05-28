@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.ofdb;
 
+import java.io.InterruptedIOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -150,7 +151,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     try {
       doc = UrlUtil.parseDocumentFromUrl(detailUrl);
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -258,7 +259,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
         md.setPlot(p);
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }
@@ -275,7 +276,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     try {
       doc = UrlUtil.parseDocumentFromUrl(movieDetail);
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -546,7 +547,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
         LOGGER.debug("found {} search results", filme.size());
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }
@@ -571,7 +572,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
         LOGGER.debug("found {} search results", filme.size());
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }
