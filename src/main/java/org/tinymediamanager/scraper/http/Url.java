@@ -370,7 +370,7 @@ public class Url {
       }
       catch (InterruptedException | InterruptedIOException e) {
         // this exception has already been logged in getInputStream()
-        throw e;
+        throw new InterruptedException();
       }
       catch (Exception e) {
         LOGGER.warn("problem fetching the url: {}", e.getMessage());
