@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,7 +111,7 @@ class TmdbArtworkProvider {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
 
         // if the thread has been interrupted, to no rethrow that exception
-        if (e instanceof InterruptedException) {
+        if (e instanceof InterruptedException || e instanceof InterruptedIOException) {
           return new ArrayList<>();
         }
 
