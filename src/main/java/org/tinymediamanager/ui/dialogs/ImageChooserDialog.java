@@ -29,6 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -918,6 +925,11 @@ public class ImageChooserDialog extends TmmDialog {
         return null;
       }
 
+      // open a thread pool to parallel download the images
+      ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 10, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+      pool.allowCoreThreadTimeOut(true);
+      ExecutorCompletionService service = new ExecutorCompletionService<DownloadChunk>(pool);
+
       // get images from all artworkproviders
       for (MediaScraper scraper : artworkScrapers) {
         try {
@@ -1010,16 +1022,17 @@ public class ImageChooserDialog extends TmmDialog {
               return null;
             }
 
-            Url url = null;
             try {
-              url = new Url(art.getPreviewUrl());
-              BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
+              Callable<DownloadChunk> callable = () -> {
+                Url url = new Url(art.getPreviewUrl());
+                BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
 
-              DownloadChunk chunk = new DownloadChunk();
-              chunk.artwork = art;
-              chunk.image = bufferedImage;
-              publish(chunk);
-              imagesFound = true;
+                DownloadChunk chunk = new DownloadChunk();
+                chunk.artwork = art;
+                chunk.image = bufferedImage;
+                return chunk;
+              };
+              service.submit(callable);
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask displaying: {}", e.getMessage());
@@ -1027,6 +1040,7 @@ public class ImageChooserDialog extends TmmDialog {
 
           }
         }
+
         catch (ScrapeException e) {
           LOGGER.error("getArtwork", e);
           MessageDialog.showExceptionWindow(e);
@@ -1034,7 +1048,33 @@ public class ImageChooserDialog extends TmmDialog {
         catch (MissingIdException e) {
           LOGGER.debug("could not fetch artwork: {}", e.getIds());
         }
+        catch (Exception e) {
+          if (e instanceof InterruptedException) {
+            // shutdown the pool
+            pool.getQueue().clear();
+            pool.shutdown();
+
+            return null;
+          }
+          throw e;
+        }
       } // end foreach scraper
+
+      // wait for all downloads to finish
+      pool.shutdown();
+      while (!pool.isTerminated()) {
+        try {
+          final Future<DownloadChunk> future = service.take();
+          publish(future.get());
+          imagesFound = true;
+        }
+        catch (InterruptedException e) {
+          return null;
+        }
+        catch (ExecutionException e) {
+          LOGGER.error("ThreadPool imageChooser: Error getting result! - {}", e);
+        }
+      }
 
       return null;
     }
