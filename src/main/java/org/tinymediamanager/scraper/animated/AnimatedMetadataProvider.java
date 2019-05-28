@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.animated;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -195,7 +196,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     try (InputStream is = url.getInputStream(); InputStreamReader ir = new InputStreamReader(is)) {
       b = gson.fromJson(ir, Base.class);
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
