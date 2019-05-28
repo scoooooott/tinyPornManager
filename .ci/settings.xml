@@ -7,7 +7,7 @@
             <password>${env.MAVEN_REPO_PASS}</password>
         </server>
         <server>
-            <id>gpg.passphrase.tmm</id>
+            <id>gpg.passphrase</id>
             <passphrase>${env.GPG_PASSPHRASE}</passphrase>
         </server>
     </servers>
@@ -16,7 +16,7 @@
             <id>ossrh</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation><!--			<properties>				<gpg.homedir>/private/tinymediamanager/.gpg</gpg.homedir>			</properties> -->
+            </activation>
             <repositories>
                 <repository>
                     <id>ossrh-snapshot</id>
