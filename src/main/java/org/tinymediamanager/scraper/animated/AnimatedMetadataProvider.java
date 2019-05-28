@@ -15,13 +15,10 @@
  */
 package org.tinymediamanager.scraper.animated;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,20 +26,19 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.animated.entities.Base;
-import org.tinymediamanager.scraper.animated.entities.Entry;
-import org.tinymediamanager.scraper.animated.entities.Movie;
+import org.tinymediamanager.scraper.animated.entities.Image;
+import org.tinymediamanager.scraper.animated.entities.KyraEntity;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
-
-import com.google.gson.Gson;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit2.Response;
 
 /**
  * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
@@ -52,24 +48,58 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @PluginImplementation
 public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(AnimatedMetadataProvider.class);
+  private static final String      TMM_API_KEY  = ApiKey.decryptApikey("ZCj2SXQCu+iVTt7RYUqlds0UoCJWuWTZpDIcAIZnvV3CoCeyu2srJQCcZVz5RFAT");
+  private static final String      TMM_USER_KEY = ApiKey.decryptApikey("shv369dt1GcJH0bL7Dab3LseS1H0UyEBRKC361coeSM=");
+
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static final String      BASE_URL     = "http://consiliumb.com/animatedgifs/";
-  private Base                     json         = null;
+  private static KyraApi           api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("animated", "AnimatedPosters",
-        "<html><h3>Animated Movie Posters</h3><br />as seen on http://forum.kodi.tv/showthread.php?tid=215727 :)</html>",
-        AnimatedMetadataProvider.class.getResource("/animated.png"));
+    MediaProviderInfo providerInfo = new MediaProviderInfo("animated", "KyraAnimated",
+        "<html><h3>KyraDB Animated Posters</h3><br />as seen on https://forum.kodi.tv/showthread.php?tid=343391 :)</html>",
+        AnimatedMetadataProvider.class.getResource("/kyradb_logo.png"));
     providerInfo.setVersion(AnimatedMetadataProvider.class);
+
+    // configure/load settings
+    providerInfo.getConfig().addText("apiKey", "", true);
+    providerInfo.getConfig().addText("userKey", "", true);
+    providerInfo.getConfig().load();
+
     return providerInfo;
   }
 
   public AnimatedMetadataProvider() {
   }
 
-  Base getJson() {
-    initJson();
-    return json;
+  // thread safe initialization of the API
+  private static synchronized void initAPI() throws ScrapeException {
+    if (api == null) {
+      try {
+        api = new KyraApi();
+      }
+      catch (Exception e) {
+        LOGGER.error("Error initializing KyraApi!", e);
+        throw new ScrapeException(e);
+      }
+    }
+
+    // set user keys, or ours...
+    String apiKey = providerInfo.getConfig().getValue("apiKey");
+    if (StringUtils.isNotBlank(apiKey) && !apiKey.equals(api.getApiKey())) {
+      api.setApiKey(apiKey);
+    }
+    else {
+      api.setApiKey(TMM_API_KEY);
+    }
+
+    String userKey = providerInfo.getConfig().getValue("userKey");
+    if (StringUtils.isNotBlank(userKey) && !userKey.equals(api.getUserKey())) {
+      api.setUserKey(userKey);
+    }
+    else {
+      api.setUserKey(TMM_USER_KEY);
+    }
+
   }
 
   @Override
@@ -78,11 +108,11 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws MissingIdException {
-    LOGGER.debug("getArtwork() " + options.toString());
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws MissingIdException, ScrapeException {
+    LOGGER.debug("getArtwork() - {}", options);
 
-    // lazy loading of the json
-    initJson();
+    // lazy initialization of the api
+    initAPI();
 
     List<MediaArtwork> artwork;
 
@@ -104,107 +134,175 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     return artwork;
   }
 
-  private synchronized void initJson() {
-    if (json == null) {
-      json = loadJson();
-    }
-  }
-
-  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws MissingIdException {
-    List<MediaArtwork> returnArtwork = new ArrayList<>();
-
+  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws MissingIdException, ScrapeException {
     MediaArtworkType artworkType = options.getArtworkType();
-    if (artworkType != MediaArtworkType.POSTER && artworkType != MediaArtworkType.BACKGROUND && artworkType != MediaArtworkType.ALL) {
-      // we only have these two
-      return returnArtwork;
-    }
 
     String imdbId = options.getImdbId();
-    if (StringUtils.isBlank(imdbId)) {
-      LOGGER.info("no IMDB id set - returning");
-      throw new MissingIdException(MediaMetadata.IMDB);
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = "";
+    }
+    int tmdbId = options.getTmdbId();
+    if (StringUtils.isBlank(imdbId) && tmdbId == 0) {
+      LOGGER.info("neither IMDB nor TMDB id set - returning");
+      throw new MissingIdException(MediaMetadata.IMDB, MediaMetadata.TMDB);
     }
 
-    LOGGER.info("getArtwork for IMDB id: " + imdbId);
-
-    if (json == null) {
-      // whoops. can this be?
-      return returnArtwork;
-    }
-    Movie m = json.getMovieByImdbId(imdbId);
-    if (m == null) {
-      LOGGER.info("no movie with IMDB id " + imdbId + " found");
-      return returnArtwork;
-    }
-
-    returnArtwork = prepareArtwork(m, artworkType);
-
-    String language = "";
+    String language = "en";
     if (options.getLanguage() != null) {
       language = options.getLanguage().getLanguage();
     }
+
+    List<MediaArtwork> returnArtwork = new ArrayList<>();
+    Exception savedException = null;
+
+    Response<KyraEntity> httpResponse = null;
+    if (tmdbId != 0) {
+      try {
+        LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
+        httpResponse = api.getMovieService().getAnimatedImages(tmdbId).execute();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get artwork: {}", e.getMessage());
+        savedException = e;
+      }
+    }
+
+    if ((httpResponse == null || !httpResponse.isSuccessful()) && StringUtils.isNotBlank(imdbId)) {
+      try {
+        LOGGER.debug("getArtwork with IMDB id: {}", imdbId);
+        httpResponse = api.getMovieService().getAnimatedImages(imdbId).execute();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get artwork: {}", e.getMessage());
+        savedException = e;
+      }
+    }
+
+    // if there has been an exception and nothing has been found, throw this exception
+    if ((httpResponse == null || !httpResponse.isSuccessful()) && savedException != null) {
+      // if the thread has been interrupted, to no rethrow that exception
+      if (savedException instanceof InterruptedException) {
+        return returnArtwork;
+      }
+      if (savedException instanceof InterruptedIOException) { // got this for some reasons
+        return returnArtwork;
+      }
+      throw new ScrapeException(savedException);
+    }
+
+    if (httpResponse == null) {
+      LOGGER.info("got no result");
+      return returnArtwork;
+    }
+    if (!httpResponse.isSuccessful()) {
+      String message = "";
+      try {
+        message = httpResponse.errorBody().string();
+      }
+      catch (IOException e) {
+        // ignore
+      }
+      LOGGER.warn("request was not successful: HTTP/{} - {}", httpResponse.code(), message);
+      return returnArtwork;
+    }
+
+    KyraEntity kyra = httpResponse.body();
+    returnArtwork = getArtwork(kyra, artworkType);
     returnArtwork.sort(new MediaArtwork.MediaArtworkComparator(language));
     return returnArtwork;
   }
 
-  private List<MediaArtwork> prepareArtwork(Movie m, MediaArtworkType artworkType) {
+  private List<MediaArtwork> getArtwork(KyraEntity kyra, MediaArtworkType artworkType) {
     List<MediaArtwork> artworks = new ArrayList<>();
 
+    String baseUrl = getBaseUrl(kyra, artworkType);
     switch (artworkType) {
       case POSTER:
-        artworks.addAll(genMA(m.getPosters(), artworkType));
+        artworks.addAll(prepareArtwork(kyra.getPosters(), baseUrl, artworkType));
         break;
+
       case BACKGROUND:
-        artworks.addAll(genMA(m.getBackgrounds(), artworkType));
+        artworks.addAll(prepareArtwork(kyra.getBackgrounds(), baseUrl, artworkType));
         break;
+
+      case LOGO:
+      case CLEARLOGO:
+        artworks.addAll(prepareArtwork(kyra.getLogos(), baseUrl, artworkType));
+        break;
+
+      case CHARACTERART:
+        artworks.addAll(prepareArtwork(kyra.getCharacters(), baseUrl, artworkType));
+        break;
+
+      case ACTOR:
+        artworks.addAll(prepareArtwork(kyra.getActors(), baseUrl, artworkType));
+        break;
+
       case ALL:
-        artworks.addAll(genMA(m.getPosters(), MediaArtworkType.POSTER));
-        artworks.addAll(genMA(m.getBackgrounds(), MediaArtworkType.BACKGROUND));
+        artworks.addAll(prepareArtwork(kyra.getPosters(), baseUrl, artworkType));
+        artworks.addAll(prepareArtwork(kyra.getBackgrounds(), baseUrl, artworkType));
+        artworks.addAll(prepareArtwork(kyra.getLogos(), baseUrl, artworkType));
+        artworks.addAll(prepareArtwork(kyra.getCharacters(), baseUrl, artworkType));
+        artworks.addAll(prepareArtwork(kyra.getActors(), baseUrl, artworkType));
         break;
+
       default:
         break;
     }
+
     return artworks;
   }
 
-  private List<MediaArtwork> genMA(List<Entry> entries, MediaArtworkType type) {
+  private List<MediaArtwork> prepareArtwork(List<Image> images, String baseUrl, MediaArtworkType type) {
     List<MediaArtwork> artworks = new ArrayList<>();
-    for (Entry image : ListUtils.nullSafe(entries)) {
+
+    for (Image image : ListUtils.nullSafe(images)) {
       MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type);
-      ma.setDefaultUrl(BASE_URL + image.getOriginal());
-      ma.setPreviewUrl(BASE_URL + image.getImage());
+      String url = baseUrl + "/" + image.getName();
+      ma.setDefaultUrl(url);
       ma.setAnimated(true);
-      ma.setLanguage(image.getLanguage().toLowerCase(Locale.ROOT));
+      ma.addImageSize(image.getWidth(), image.getHeight(), url);
       artworks.add(ma);
     }
+
     return artworks;
   }
 
-  private Base loadJson() {
-    Base b = null;
-    Gson gson = new Gson();
+  /**
+   * the images base url is always sent with complete entity....
+   * 
+   * @param kyra
+   * @param type
+   * @return
+   */
+  private String getBaseUrl(KyraEntity kyra, MediaArtworkType type) {
+    String ret = "";
+    switch (type) {
+      case POSTER:
+        ret = kyra.getBasePosters();
+        break;
 
-    Url url;
-    try {
-      url = new OnDiskCachedUrl(BASE_URL + "movies.json", 1, TimeUnit.DAYS);
-    }
-    catch (Exception e) {
-      LOGGER.error("Error downloading json: {}", e);
-      return null;
-    }
+      case BACKGROUND:
+        ret = kyra.getBaseBackground();
+        break;
 
-    try (InputStream is = url.getInputStream(); InputStreamReader ir = new InputStreamReader(is)) {
-      b = gson.fromJson(ir, Base.class);
-    }
-    catch (InterruptedException | InterruptedIOException e) {
-      // do not swallow these Exceptions
-      Thread.currentThread().interrupt();
-    }
-    catch (Exception e) {
-      LOGGER.error("Error downloading json: {}", e);
-      return null;
-    }
+      case LOGO:
+      case CLEARLOGO:
+        ret = kyra.getBaseLogos();
+        break;
 
-    return b;
+      case CHARACTERART:
+        ret = kyra.getBaseCharacter();
+        break;
+
+      case ACTOR:
+        ret = kyra.getBaseActor();
+        break;
+
+      default:
+        break;
+    }
+    return ret;
   }
+
 }
