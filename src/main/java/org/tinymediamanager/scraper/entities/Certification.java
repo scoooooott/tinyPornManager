@@ -485,7 +485,7 @@ public enum Certification {
       case US_TVMA:
       case US_TVG:
       case US_TVY:
-        return cert.name();
+        return cert.getName();
 
       default:
         return "";
