@@ -161,7 +161,6 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
         LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
         switch (artworkType) {
           case LOGO:
-          case CLEARLOGO:
             httpResponse = api.getMovieService().getLogo(tmdbId).execute();
             break;
 
@@ -185,7 +184,6 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
         LOGGER.debug("getArtwork with IMDB id: {}", imdbId);
         switch (artworkType) {
           case LOGO:
-          case CLEARLOGO:
             httpResponse = api.getMovieService().getLogo(imdbId).execute();
             break;
 
@@ -252,7 +250,6 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
         break;
 
       case LOGO:
-      case CLEARLOGO:
         artworks.addAll(prepareArtwork(kyra.getLogos(), baseUrl, artworkType));
         break;
 
