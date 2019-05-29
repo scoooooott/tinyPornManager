@@ -41,7 +41,7 @@ public class KyraEntity {
   private List<Image>         actors               = null;
   @SerializedName("number_of_actor_art")
   private int                 actorsCount          = 0;
-  @SerializedName("logogs")
+  @SerializedName("logos")
   private List<Image>         logos                = null;
   @SerializedName("number_of_logos")
   private int                 logosCount           = 0;
