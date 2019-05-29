@@ -991,7 +991,7 @@ public class ImageChooserDialog extends TmmDialog {
               break;
 
             case CHARACTERART:
-              options.setArtworkType(MediaArtworkType.CLEARART);
+              options.setArtworkType(MediaArtworkType.CHARACTERART);
               break;
 
             case KEYART:
