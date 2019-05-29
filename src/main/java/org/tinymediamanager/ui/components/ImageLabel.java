@@ -200,6 +200,26 @@ public class ImageLabel extends JLabel {
     return desiredAspectRatio;
   }
 
+  /**
+   * get a byte array of the original image.<br/>
+   * WARNING: this array is only filled _after_ the image has been loaded!
+   *
+   * @return a byte array of the original (not rescaled) image
+   */
+  public byte[] getOriginalImageBytes() {
+    return originalImageBytes;
+  }
+
+  /**
+   * get the {@link Dimension} of the original image.<br/>
+   * WARNING: the {@link Dimension} is only filled _after_ the image has been loaded!
+   *
+   * @return the {@link Dimension} original (not rescaled) image
+   */
+  public Dimension getOriginalImageSize() {
+    return originalImageSize;
+  }
+
   @Override
   public Dimension getPreferredSize() {
     if (desiredAspectRatio == 0) {
@@ -329,7 +349,7 @@ public class ImageLabel extends JLabel {
       float fontSize = (float) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
 
       // draw the _no image found_ icon
-      Font font = IconManager.loadFontAwesome().deriveFont(fontSize);
+      Font font = IconManager.FONT_AWESOME.deriveFont(fontSize);
       BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -454,6 +474,9 @@ public class ImageLabel extends JLabel {
       try {
         // get fetched image
         scaledImage = get();
+        // fire events
+        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
       }
       catch (Exception e) {
         scaledImage = null;
@@ -522,6 +545,9 @@ public class ImageLabel extends JLabel {
       try {
         // get fetched image
         scaledImage = get();
+        // fire events
+        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
       }
       catch (Exception e) {
         scaledImage = null;

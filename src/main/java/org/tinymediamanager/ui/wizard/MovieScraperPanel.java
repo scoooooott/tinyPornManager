@@ -207,8 +207,8 @@ class MovieScraperPanel extends JPanel {
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "cell 0 1");
 
-    cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
+    cbScraperLanguage = new JComboBox();
+    cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.valuesSorted()));
     panelMovieScrapers.add(cbScraperLanguage, "cell 1 1");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$

@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie.tasks;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -126,7 +127,7 @@ public class MovieExtraImageFetcherTask implements Runnable {
 
         i++;
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }

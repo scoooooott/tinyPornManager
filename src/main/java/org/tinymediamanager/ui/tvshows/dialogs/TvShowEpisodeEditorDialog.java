@@ -682,10 +682,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
         }
 
-        for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+        MediaArtwork ma = metadata.getMediaArt(MediaArtworkType.THUMB).stream().findFirst().orElse(null);
+        if (ma != null) {
           tfThumb.setText(ma.getDefaultUrl());
           lblThumb.setImageUrl(ma.getDefaultUrl());
-          break;
         }
       }
     }
@@ -732,8 +732,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       Map<String, Rating> ratings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        Rating userRating = new Rating(Rating.USER, (double) spRating.getValue(), 1, 10);
-        ratings.put(Rating.USER, userRating);
+        ratings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
@@ -874,10 +873,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
 
           // artwork
-          for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
+          MediaArtwork ma = metadata.getMediaArt(MediaArtworkType.THUMB).stream().findFirst().orElse(null);
+          if (ma != null) {
             lblThumb.setImageUrl(ma.getDefaultUrl());
             tfThumb.setText(ma.getDefaultUrl());
-            break;
           }
         }
       }
@@ -892,6 +891,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
             .pushMessage(new Message(Message.MessageLevel.ERROR, TvShowEpisodeEditorDialog.this.episodeToEdit, "scraper.error.missingid"));
       }
       catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
+        // nothing to be done here
       }
 
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

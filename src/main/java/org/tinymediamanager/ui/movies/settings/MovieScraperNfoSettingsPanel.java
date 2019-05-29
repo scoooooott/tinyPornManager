@@ -198,7 +198,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
         JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
         panelNfo.add(lblNfoLanguage, "cell 1 4 2 1");
 
-        cbNfoLanguage = new JComboBox(MediaLanguages.values());
+        cbNfoLanguage = new JComboBox(MediaLanguages.valuesSorted());
         panelNfo.add(cbNfoLanguage, "cell 1 4");
 
         JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$

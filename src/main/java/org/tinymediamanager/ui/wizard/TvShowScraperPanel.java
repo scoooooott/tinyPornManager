@@ -181,7 +181,7 @@ class TvShowScraperPanel extends JPanel {
     panelTvShowScrapers.add(lblScraperLanguage, "cell 0 1");
 
     cbScraperLanguage = new JComboBox<>();
-    cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
+    cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.valuesSorted()));
     panelTvShowScrapers.add(cbScraperLanguage, "cell 1 1");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$

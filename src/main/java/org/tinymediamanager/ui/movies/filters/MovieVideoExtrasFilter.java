@@ -45,7 +45,7 @@ public class MovieVideoExtrasFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    return !movie.getMediaFiles(MediaFileType.VIDEO_EXTRA).isEmpty();
+    return !movie.getMediaFiles(MediaFileType.EXTRA).isEmpty();
   }
 
   @Override

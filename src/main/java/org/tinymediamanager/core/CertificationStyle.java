@@ -40,6 +40,10 @@ public enum CertificationStyle {
    * @return the formatted certification style
    */
   public static String formatCertification(Certification cert, CertificationStyle style) {
+    if (cert == Certification.UNKNOWN) {
+      return "";
+    }
+
     switch (style) {
       case SHORT:
         return cert.getName();

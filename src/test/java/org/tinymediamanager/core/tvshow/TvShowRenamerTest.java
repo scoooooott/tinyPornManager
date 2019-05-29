@@ -304,7 +304,7 @@ public class TvShowRenamerTest extends BasicTest {
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 
-    mf = new MediaFile(destination.resolve("extras/S01E01 - cut scenes.mkv").toAbsolutePath(), MediaFileType.VIDEO_EXTRA);
+    mf = new MediaFile(destination.resolve("extras/S01E01 - cut scenes.mkv").toAbsolutePath(), MediaFileType.EXTRA);
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 
@@ -322,7 +322,7 @@ public class TvShowRenamerTest extends BasicTest {
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 
-    mf = new MediaFile(destination.resolve("Season 1/extras/S01E02 - takeouts.mkv").toAbsolutePath(), MediaFileType.VIDEO_EXTRA);
+    mf = new MediaFile(destination.resolve("Season 1/extras/S01E02 - takeouts.mkv").toAbsolutePath(), MediaFileType.EXTRA);
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 

@@ -61,7 +61,6 @@ class TvShowImageTypeSettingsPanel extends JPanel {
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private JCheckBox                   chckbxEpisodeThumb1;
-  private JCheckBox                   chckbxEpisodeThumb2;
   private JCheckBox                   chckbxEpisodeThumb3;
   private JCheckBox                   chckbxEpisodeThumb4;
 
@@ -211,14 +210,11 @@ class TvShowImageTypeSettingsPanel extends JPanel {
         chckbxEpisodeThumb1 = new JCheckBox("<dynamic>-thumb.ext");
         panelFileNaming.add(chckbxEpisodeThumb1, "cell 2 25");
 
-        chckbxEpisodeThumb2 = new JCheckBox("<dynamic>-landscape.ext");
-        panelFileNaming.add(chckbxEpisodeThumb2, "cell 3 25");
-
         chckbxEpisodeThumb3 = new JCheckBox("<dynamic>.ext");
-        panelFileNaming.add(chckbxEpisodeThumb3, "cell 2 26");
+        panelFileNaming.add(chckbxEpisodeThumb3, "cell 3 25");
 
         chckbxEpisodeThumb4 = new JCheckBox("<dynamic>.tbn");
-        panelFileNaming.add(chckbxEpisodeThumb4, "cell 3 26");
+        panelFileNaming.add(chckbxEpisodeThumb4, "cell 2 26");
 
         JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
         panelFileNaming.add(tpFileNamingHint, "cell 1 28 3 1,growx");
@@ -271,10 +267,9 @@ class TvShowImageTypeSettingsPanel extends JPanel {
     clearSelection(chckbxSeasonThumb1, chckbxSeasonThumb2);
 
     chckbxEpisodeThumb1.removeItemListener(checkBoxListener);
-    chckbxEpisodeThumb2.removeItemListener(checkBoxListener);
     chckbxEpisodeThumb3.removeItemListener(checkBoxListener);
     chckbxEpisodeThumb4.removeItemListener(checkBoxListener);
-    clearSelection(chckbxEpisodeThumb1, chckbxEpisodeThumb2, chckbxEpisodeThumb3, chckbxEpisodeThumb4);
+    clearSelection(chckbxEpisodeThumb1, chckbxEpisodeThumb3, chckbxEpisodeThumb4);
 
     for (TvShowPosterNaming posterNaming : settings.getPosterFilenames()) {
       switch (posterNaming) {
@@ -402,10 +397,6 @@ class TvShowImageTypeSettingsPanel extends JPanel {
           chckbxEpisodeThumb1.setSelected(true);
           break;
 
-        case FILENAME_LANDSCAPE:
-          chckbxEpisodeThumb2.setSelected(true);
-          break;
-
         case FILENAME:
           chckbxEpisodeThumb3.setSelected(true);
           break;
@@ -445,7 +436,6 @@ class TvShowImageTypeSettingsPanel extends JPanel {
     chckbxSeasonThumb2.addItemListener(checkBoxListener);
 
     chckbxEpisodeThumb1.addItemListener(checkBoxListener);
-    chckbxEpisodeThumb2.addItemListener(checkBoxListener);
     chckbxEpisodeThumb3.addItemListener(checkBoxListener);
     chckbxEpisodeThumb4.addItemListener(checkBoxListener);
 
@@ -543,9 +533,6 @@ class TvShowImageTypeSettingsPanel extends JPanel {
     settings.clearEpisodeThumbFilenames();
     if (chckbxEpisodeThumb1.isSelected()) {
       settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
-    }
-    if (chckbxEpisodeThumb2.isSelected()) {
-      settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_LANDSCAPE);
     }
     if (chckbxEpisodeThumb3.isSelected()) {
       settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME);

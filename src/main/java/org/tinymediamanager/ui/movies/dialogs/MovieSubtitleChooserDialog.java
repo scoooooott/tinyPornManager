@@ -142,7 +142,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       cbScraper.setSelectedItems(selectedSubtitleScrapers);
     }
 
-    for (MediaLanguages language : MediaLanguages.values()) {
+    for (MediaLanguages language : MediaLanguages.valuesSorted()) {
       cbLanguage.addItem(language);
       if (language == MovieModuleManager.SETTINGS.getSubtitleScraperLanguage()) {
         cbLanguage.setSelectedItem(language);

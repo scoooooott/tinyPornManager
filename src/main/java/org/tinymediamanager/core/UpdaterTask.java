@@ -18,6 +18,7 @@ package org.tinymediamanager.core;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -91,7 +92,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
             remoteUrl = uu;
           }
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException | InterruptedIOException e) {
           // do not swallow these Exceptions
           Thread.currentThread().interrupt();
         }
@@ -128,7 +129,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         LOGGER.info("Already up2date :)");
       }
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
     }
@@ -156,7 +157,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         Utils.writeStringToFile(getdownFile, gd);
         return true;
       }
-      catch (InterruptedException e2) {
+      catch (InterruptedException | InterruptedIOException e2) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }

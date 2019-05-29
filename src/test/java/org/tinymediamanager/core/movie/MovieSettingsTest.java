@@ -42,6 +42,10 @@ public class MovieSettingsTest extends BasicTest {
       MovieSettings settings = MovieSettings.getInstance(getSettingsFolder());
       assertThat(settings).isNotNull();
       settings.setAsciiReplacement(true);
+
+      // let the dirty flag set by the async propertychange listener
+      Thread.sleep(100);
+
       settings.saveSettings();
 
       // cannot re-instantiate settings - need to check plain file

@@ -29,11 +29,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -161,31 +159,23 @@ class MovieImageSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[400lp,grow]", "[][15lp!][]"));
     {
-      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:150lp,grow][][100lp:200lp,grow]"));
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[][shrink 0][]"));
 
       JLabel lblScraperT = new TmmLabel(BUNDLE.getString("scraper.artwork"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraperT, true);
       add(collapsiblePanel, "cell 0 0,wmin 0,grow");
       {
-        JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
-        panelScraper.add(scrollPaneScraper, "cell 1 0,grow");
-
         tableScraper = new TmmTable();
         tableScraper.setRowHeight(29);
-        tableScraper.configureScrollPane(scrollPaneScraper);
+        tableScraper.setShowGrid(true);
+        panelScraper.add(tableScraper, "cell 1 0,grow");
 
         JSeparator separator = new JSeparator();
         panelScraper.add(separator, "cell 1 1,growx");
 
-        JScrollPane scrollPaneScraperDetails = new JScrollPane();
-        panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
-
-        scrollPaneScraperDetails.setBorder(null);
-        scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
         JPanel panelScraperDetails = new ScrollablePanel();
-        scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
+        panelScraper.add(panelScraperDetails, "cell 1 2,grow");
+        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 
         tpScraperDescription = new JTextPane();
         tpScraperDescription.setOpaque(false);
@@ -207,7 +197,7 @@ class MovieImageSettingsPanel extends JPanel {
         JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
         panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
 
-        cbScraperLanguage = new JComboBox(MediaLanguages.values());
+        cbScraperLanguage = new JComboBox(MediaLanguages.valuesSorted());
         panelOptions.add(cbScraperLanguage, "cell 1 0");
 
         JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$

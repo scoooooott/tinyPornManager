@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.registry.Registry;
-import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.thirdparty.upnp.Upnp;
@@ -75,11 +75,14 @@ public class SplitUri {
       }
       if (ds.contains(":///")) {
         // 3 = file with scheme - parse as URI, but keep one slash
+        ds = ds.replaceAll(" ", "%20"); // space in urls
+        ds = ds.replaceAll("#", "%23"); // hash sign in urls
         u = new URI(ds.substring(ds.indexOf(":///") + 3));
       }
       else if (ds.contains("://")) {
         // 2 = //hostname/path - parse as URI
         ds = ds.replaceAll(" ", "%20"); // space in urls
+        ds = ds.replaceAll("#", "%23"); // hash sign in urls
         u = new URI(ds);
       }
       else {
@@ -97,7 +100,7 @@ public class SplitUri {
       }
     }
 
-    if (u != null && !StringUtil.isBlank(u.getHost())) {
+    if (u != null && !StringUtils.isBlank(u.getHost())) {
       this.file = u.getPath();
       if (ds.startsWith("upnp")) {
         this.type = "UPNP";
@@ -193,7 +196,8 @@ public class SplitUri {
     // 2: at least filename AND parent folder match
     Path p1 = Paths.get(file);
     Path p2 = Paths.get(other.file);
-    if (p1.getFileName().toString().equals(p2.getFileName().toString()) && p1.getParent().toString().equals(p2.getParent().toString())) {
+    if (p1.getFileName().toString().equals(p2.getFileName().toString())
+        && p1.getParent().getFileName().toString().equals(p2.getParent().getFileName().toString())) {
       // filename AND parent folder match
       LOGGER.trace("1: {}", file);
       LOGGER.trace("2: {}", other.file);
@@ -209,6 +213,7 @@ public class SplitUri {
 
     // 3: did not match? return false
     return false;
+
   }
 
   /**

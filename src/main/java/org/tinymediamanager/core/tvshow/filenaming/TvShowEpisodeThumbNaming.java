@@ -42,14 +42,6 @@ public enum TvShowEpisodeThumbNaming implements IFileNaming {
     }
   },
 
-  /** [filename]-landscape.* */
-  FILENAME_LANDSCAPE {
-    @Override
-    public String getFilename(String basename, String extension) {
-      return StringUtils.isNotBlank(basename) ? basename + "-landscape." + extension : "";
-    }
-  },
-
   /** [filename].tbn */
   FILENAME_TBN {
     @Override

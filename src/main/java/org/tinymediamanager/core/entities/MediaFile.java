@@ -91,7 +91,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
   private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
-  private static final Pattern                       CHARACTERART_PATTERN     = Pattern.compile("(?i)(.*-characterart|characterart)\\..{2,4}");
+  private static final Pattern                       CHARACTERART_PATTERN     = Pattern
+      .compile("(?i)(.*-characterart|characterart)[0-9]{0,2}\\..{2,4}");
   // be careful: disc.avi would be valid!
   private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
@@ -119,12 +120,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public static final String                         VIDEO_FORMAT_SD          = "SD";
   public static final String                         VIDEO_FORMAT_HD          = "HD";
 
-  // 3D / side-by-side / top-and-bottom / H=half - http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
+  // 3D / side-by-side / top-and-bottom / H=half - MVC=Multiview Video Coding- http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
   public static final String                         VIDEO_3D                 = "3D";
   public static final String                         VIDEO_3D_SBS             = "3D SBS";
   public static final String                         VIDEO_3D_TAB             = "3D TAB";
   public static final String                         VIDEO_3D_HSBS            = "3D HSBS";
   public static final String                         VIDEO_3D_HTAB            = "3D HTAB";
+  public static final String                         VIDEO_3D_MVC             = "3D MVC";
 
   @JsonProperty
   private MediaFileType                              type                     = MediaFileType.UNKNOWN;
@@ -306,6 +308,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       LOGGER.debug("way to up");
     }
 
+    // check EXTRAS first
+    if (getFilename().contains(".EXTRAS.") // scene file naming (need to check first! upper case!)
+        || basename.matches("(?i).*[_.-]+extra[s]?$") // end with "-extra[s]"
+        || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
+        || foldername.equalsIgnoreCase("extras") // preferred folder name
+        || foldername.equalsIgnoreCase("extra") // preferred folder name
+        || (!parentparent.isEmpty() && parentparent.matches("extra[s]?")) // extras folder a level deeper
+        || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
+        || PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
+    {
+      return MediaFileType.EXTRA;
+    }
+
     if (ext.equals("nfo")) {
       return MediaFileType.NFO;
     }
@@ -335,22 +350,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
-      // has to fit TV & Movie naming...
-      // String cleanName = ParserUtils.detectCleanMoviename(name); // tbc if useful...
-      // old impl: https://github.com/brentosmith/xbmc-dvdextras
-      // Official: http://wiki.xbmc.org/index.php?title=Add-on:VideoExtras#File_Naming_Convention
-      if (getFilename().contains(".EXTRAS.") // scene file naming (need to check first! upper case!)
-          || basename.matches("(?i).*[_.-]+extra[s]?$") // end with "-extra[s]"
-          || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
-          || foldername.equalsIgnoreCase("extras") // preferred folder name
-          || foldername.equalsIgnoreCase("extra") // preferred folder name
-          || (!parentparent.isEmpty() && parentparent.matches("extra[s]?")) // extras folder a level deeper
-          || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
-          || PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
-      {
-        return MediaFileType.VIDEO_EXTRA;
-      }
-
+      // is this maybe a trailer?
       if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]*trailer[\\[\\]\\(\\)_.-]?$") || basename.equalsIgnoreCase("movie-trailer")
           || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
         return MediaFileType.TRAILER;
@@ -362,6 +362,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.SAMPLE;
       }
 
+      // ok, it's the main video
       return MediaFileType.VIDEO;
     }
 
@@ -467,6 +468,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (matcher.matches()) {
       return MediaFileType.CHARACTERART;
     }
+    if (getPath().endsWith("characterart")) {
+      // own characterart folder (as seen in some skins/plugins)
+      return MediaFileType.CHARACTERART;
+    }
 
     // keyart.*
     matcher = KEYART_PATTERN.matcher(name);
@@ -531,8 +536,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideo() {
-    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SAMPLE));
+    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SAMPLE));
   }
 
   /**
@@ -2171,6 +2175,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           video3DFormat = VIDEO_3D_SBS;// FullSBS eg 3840x1080
         }
       }
+      if (!StringUtils.isEmpty(mvl) && mvl.contains("laced")) { // Both Eyes laced in one block
+        video3DFormat = VIDEO_3D_MVC;
+      }
     }
     else {
       // not detected as 3D by MI - BUT: if we've got some known resolutions, we can at least find the "full" ones ;)
@@ -2330,7 +2337,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     switch (type) {
       case VIDEO:
-      case VIDEO_EXTRA:
+      case EXTRA:
       case SAMPLE:
       case TRAILER:
         // *****************
@@ -2398,7 +2405,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     switch (type) {
       case VIDEO:
-      case VIDEO_EXTRA:
+      case EXTRA:
       case SAMPLE:
       case TRAILER:
       case AUDIO:
@@ -2526,7 +2533,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
-    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
+    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.EXTRA) || type.equals(MediaFileType.TRAILER)
         || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO)
         || type.equals(MediaFileType.NFO) || isGraphic()) {
       return true;

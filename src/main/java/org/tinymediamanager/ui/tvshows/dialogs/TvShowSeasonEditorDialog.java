@@ -18,9 +18,11 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,11 +40,13 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -57,26 +61,31 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowSeasonEditorDialog extends TmmDialog {
-  private static final long serialVersionUID = 3270218410302989845L;
+  private static final long   serialVersionUID    = 3270218410302989845L;
+  private static final String ORIGINAL_IMAGE_SIZE = "originalImageSize";
 
-  private TvShowSeason      tvShowSeasonToEdit;
-  private TvShowList        tvShowList       = TvShowList.getInstance();
+  private TvShowSeason        tvShowSeasonToEdit;
+  private TvShowList          tvShowList          = TvShowList.getInstance();
 
-  private boolean           continueQueue    = true;
-  private boolean           navigateBack     = false;
-  private int               queueIndex;
-  private int               queueSize;
+  private boolean             continueQueue       = true;
+  private boolean             navigateBack        = false;
+  private int                 queueIndex;
+  private int                 queueSize;
 
   /**
    * UI elements
    */
-  private ImageLabel        lblPoster;
-  private ImageLabel        lblBanner;
-  private ImageLabel        lblThumb;
+  private ImageLabel          lblPoster;
+  private ImageLabel          lblBanner;
+  private ImageLabel          lblThumb;
 
-  private JTextField        tfPoster;
-  private JTextField        tfBanner;
-  private JTextField        tfThumb;
+  private JTextField          tfPoster;
+  private JTextField          tfBanner;
+  private JTextField          tfThumb;
+
+  private LinkLabel           lblPosterSize       = new LinkLabel();
+  private LinkLabel           lblBannerSize       = new LinkLabel();
+  private LinkLabel           lblThumbSize        = new LinkLabel();
 
   /**
    * Instantiates a new tv show season editor dialog.
@@ -105,6 +114,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
       tfPoster.setText(tvShowSeason.getArtworkUrl(SEASON_POSTER));
       tfThumb.setText(tvShowSeason.getArtworkUrl(SEASON_THUMB));
       tfBanner.setText(tvShowSeason.getArtworkUrl(SEASON_BANNER));
+
     }
   }
 
@@ -133,7 +143,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
       {
         JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
         artworkPanel.add(lblPosterT, "cell 0 0");
-
+        artworkPanel.add(lblPosterSize, "cell 0 0");
         lblPoster = new ImageLabel();
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblPoster.addMouseListener(new MouseAdapter() {
@@ -150,11 +160,13 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
         });
 
         artworkPanel.add(lblPoster, "cell 0 1,grow");
+        lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
+            e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaArtwork.MediaArtworkType.POSTER));
       }
       {
         JLabel lblThumbT = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
         artworkPanel.add(lblThumbT, "cell 2 0");
-
+        artworkPanel.add(lblThumbSize, "cell 2 0");
         lblThumb = new ImageLabel();
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblThumb.addMouseListener(new MouseAdapter() {
@@ -171,11 +183,13 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
         });
 
         artworkPanel.add(lblThumb, "cell 2 1,grow");
+        lblThumb.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
+            e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaArtwork.MediaArtworkType.THUMB));
       }
       {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
         artworkPanel.add(lblBannerT, "cell 0 3");
-
+        artworkPanel.add(lblBannerSize, "cell 0 3");
         lblBanner = new ImageLabel();
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblBanner.addMouseListener(new MouseAdapter() {
@@ -191,6 +205,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
           }
         });
         artworkPanel.add(lblBanner, "cell 0 4 3 1,grow");
+        lblBanner.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
+            e -> setImageSizeAndCreateLink(lblBannerSize, lblBanner, MediaArtwork.MediaArtworkType.BANNER));
       }
     }
 
@@ -248,6 +264,17 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
   private void updateArtworkUrl(ImageLabel imageLabel, JTextField textField) {
     if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
       textField.setText(imageLabel.getImageUrl());
+    }
+  }
+
+  private void setImageSizeAndCreateLink(LinkLabel lblSize, ImageLabel imageLabel, MediaArtwork.MediaArtworkType type) {
+    createLinkForImage(lblSize, imageLabel);
+    Dimension dimension = tvShowSeasonToEdit.getArtworkSize(type);
+    if (dimension.width == 0 && dimension.height == 0) {
+      lblSize.setText(imageLabel.getOriginalImageSize().width + "x" + imageLabel.getOriginalImageSize().height);
+    }
+    else {
+      lblSize.setText(dimension.width + "x" + dimension.height);
     }
   }
 

@@ -76,7 +76,7 @@ public class TmmTreeTable extends TmmTable {
     ((TmmTreeModel) treeTableModel.getTreeModel()).getDataProvider().setTreeFilters(treeFilters);
     filterChangeListener = evt -> updateFiltering();
     setModel(treeTableModel);
-    init();
+    initTreeTable();
   }
 
   @Override
@@ -91,7 +91,7 @@ public class TmmTreeTable extends TmmTable {
     super.addColumn(aColumn);
   }
 
-  protected void init() {
+  protected void initTreeTable() {
     getColumnModel().getColumn(0).setCellRenderer(new TvShowTreeCellRenderer());
     getSelectionModel().addListSelectionListener(e -> {
       if (getSelectedRowCount() == 1) {
@@ -106,8 +106,6 @@ public class TmmTreeTable extends TmmTable {
     getTableHeader().setReorderingAllowed(false);
     getTableHeader().setOpaque(false);
     setOpaque(false);
-    // setRowHeight(22);
-    // setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint grid lines over the entire viewport.
     setShowGrid(false);
   }
@@ -216,14 +214,16 @@ public class TmmTreeTable extends TmmTable {
       cachedRootVisible = val;
     }
     if (val != isRootVisible()) {
-      getLayoutCache().setRootVisible(val);
-      if (getLayoutCache().getRowCount() > 0) {
-        TreePath rootPath = getLayoutCache().getPathForRow(0);
-        if (null != rootPath)
-          getLayoutCache().treeStructureChanged(new TreeModelEvent(this, rootPath));
+      AbstractLayoutCache layoutCache = getLayoutCache();
+      if (layoutCache != null) {
+        layoutCache.setRootVisible(val);
+        if (layoutCache.getRowCount() > 0) {
+          TreePath rootPath = layoutCache.getPathForRow(0);
+          if (null != rootPath)
+            layoutCache.treeStructureChanged(new TreeModelEvent(this, rootPath));
+        }
+        firePropertyChange("rootVisible", !val, val); // NOI18N
       }
-      // sortAndFilter();
-      firePropertyChange("rootVisible", !val, val); // NOI18N
     }
   }
 
@@ -242,63 +242,63 @@ public class TmmTreeTable extends TmmTable {
     boolean isTreeColumn = isTreeColumnIndex(column);
     if (isTreeColumn && e instanceof MouseEvent) {
       MouseEvent me = (MouseEvent) e;
-      TreePath path = getLayoutCache().getPathForRow(convertRowIndexToModel(row));
-      if (path != null && !getTreeTableModel().isLeaf(path.getLastPathComponent())) {
-        int handleWidth = TmmTreeTableCellRenderer.getExpansionHandleWidth();
-        Insets ins = getInsets();
-        int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
-        if (nd < 0) {
-          nd = 0;
-        }
-        int handleStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth());
-        int handleEnd = ins.left + handleStart + handleWidth;
-        // Translate 'x' to position of column if non-0:
-        int columnStart = getCellRect(row, column, false).x;
-        handleStart += columnStart;
-        handleEnd += columnStart;
+      AbstractLayoutCache layoutCache = getLayoutCache();
+      if (layoutCache != null) {
+        TreePath path = layoutCache.getPathForRow(convertRowIndexToModel(row));
+        if (path != null && !getTreeTableModel().isLeaf(path.getLastPathComponent())) {
+          int handleWidth = TmmTreeTableCellRenderer.getExpansionHandleWidth();
+          Insets ins = getInsets();
+          int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
+          if (nd < 0) {
+            nd = 0;
+          }
+          int handleStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth());
+          int handleEnd = ins.left + handleStart + handleWidth;
+          // Translate 'x' to position of column if non-0:
+          int columnStart = getCellRect(row, column, false).x;
+          handleStart += columnStart;
+          handleEnd += columnStart;
 
-        TableColumn tableColumn = getColumnModel().getColumn(column);
-        TableCellEditor columnCellEditor = tableColumn.getCellEditor();
-        if ((me.getX() > ins.left && me.getX() >= handleStart && me.getX() <= handleEnd) || (me.getClickCount() > 1 && columnCellEditor == null)) {
+          TableColumn tableColumn = getColumnModel().getColumn(column);
+          TableCellEditor columnCellEditor = tableColumn.getCellEditor();
+          if ((me.getX() > ins.left && me.getX() >= handleStart && me.getX() <= handleEnd) || (me.getClickCount() > 1 && columnCellEditor == null)) {
 
-          boolean expanded = getLayoutCache().isExpanded(path);
-          // me.consume(); - has no effect!
-          // System.err.println(" event consumed.");
-          if (!expanded) {
-            getTreePathSupport().expandPath(path);
+            boolean expanded = layoutCache.isExpanded(path);
+            if (!expanded) {
+              getTreePathSupport().expandPath(path);
 
-            Object ourObject = path.getLastPathComponent();
-            int cCount = getTreeTableModel().getChildCount(ourObject);
-            if (cCount > 0) {
-              int lastRow = row;
-              for (int i = 0; i < cCount; i++) {
-                Object child = getTreeTableModel().getChild(ourObject, i);
-                TreePath childPath = path.pathByAddingChild(child);
-                int childRow = getLayoutCache().getRowForPath(childPath);
-                childRow = convertRowIndexToView(childRow);
-                if (childRow > lastRow) {
-                  lastRow = childRow;
+              Object ourObject = path.getLastPathComponent();
+              int cCount = getTreeTableModel().getChildCount(ourObject);
+              if (cCount > 0) {
+                int lastRow = row;
+                for (int i = 0; i < cCount; i++) {
+                  Object child = getTreeTableModel().getChild(ourObject, i);
+                  TreePath childPath = path.pathByAddingChild(child);
+                  int childRow = layoutCache.getRowForPath(childPath);
+                  childRow = convertRowIndexToView(childRow);
+                  if (childRow > lastRow) {
+                    lastRow = childRow;
+                  }
                 }
+                int firstRow = row;
+                Rectangle rectLast = getCellRect(lastRow, 0, true);
+                Rectangle rectFirst = getCellRect(firstRow, 0, true);
+                Rectangle rectFull = new Rectangle(rectFirst.x, rectFirst.y, rectLast.x + rectLast.width - rectFirst.x,
+                    rectLast.y + rectLast.height - rectFirst.y);
+                scrollRectToVisible(rectFull);
               }
-              int firstRow = row;
-              Rectangle rectLast = getCellRect(lastRow, 0, true);
-              Rectangle rectFirst = getCellRect(firstRow, 0, true);
-              Rectangle rectFull = new Rectangle(rectFirst.x, rectFirst.y, rectLast.x + rectLast.width - rectFirst.x,
-                  rectLast.y + rectLast.height - rectFirst.y);
-              scrollRectToVisible(rectFull);
-            }
 
+            }
+            else {
+              getTreePathSupport().collapsePath(path);
+            }
+            return false;
           }
-          else {
-            getTreePathSupport().collapsePath(path);
-          }
-          // selectionDisabled = true;
+        }
+        // It may be a request to check/uncheck a check-box
+        if (checkAt(row, column, me)) {
           return false;
         }
-      }
-      // It may be a request to check/uncheck a check-box
-      if (checkAt(row, column, me)) {
-        return false;
       }
     }
 
@@ -325,20 +325,23 @@ public class TmmTreeTable extends TmmTable {
 
       int handleWidth = TmmTreeTableCellRenderer.getExpansionHandleWidth();
       Insets ins = getInsets();
-      TreePath path = getLayoutCache().getPathForRow(convertRowIndexToModel(row));
-      int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
-      if (nd < 0) {
-        nd = 0;
-      }
-      int handleStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth());
-      int handleEnd = ins.left + handleStart + handleWidth;
-      // Translate 'x' to position of column if non-0:
-      int columnStart = getCellRect(row, column, false).x;
-      handleStart += columnStart;
-      handleEnd += columnStart;
-      if (me.getX() >= handleEnd) {
-        lastEditPosition = null;
-        return true;
+      AbstractLayoutCache layoutCache = getLayoutCache();
+      if (layoutCache != null) {
+        TreePath path = layoutCache.getPathForRow(convertRowIndexToModel(row));
+        int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
+        if (nd < 0) {
+          nd = 0;
+        }
+        int handleStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth());
+        int handleEnd = ins.left + handleStart + handleWidth;
+        // Translate 'x' to position of column if non-0:
+        int columnStart = getCellRect(row, column, false).x;
+        handleStart += columnStart;
+        handleEnd += columnStart;
+        if (me.getX() >= handleEnd) {
+          lastEditPosition = null;
+          return true;
+        }
       }
     }
     lastEditPosition = new int[] { row, column };
@@ -353,7 +356,7 @@ public class TmmTreeTable extends TmmTable {
       TmmTreeTableCellRenderer ocr = (TmmTreeTableCellRenderer) tcr;
       Object value = getValueAt(row, column);
       if (value != null && crender.isCheckable(value) && crender.isCheckEnabled(value)) {
-        boolean chBoxPosition;
+        boolean chBoxPosition = false;
         if (me == null) {
           chBoxPosition = true;
         }
@@ -361,15 +364,18 @@ public class TmmTreeTable extends TmmTable {
           int handleWidth = TmmTreeTableCellRenderer.getExpansionHandleWidth();
           int chWidth = ocr.getTheCheckBoxWidth();
           Insets ins = getInsets();
-          TreePath path = getLayoutCache().getPathForRow(convertRowIndexToModel(row));
-          int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
-          if (nd < 0) {
-            nd = 0;
-          }
-          int chStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth()) + handleWidth;
-          int chEnd = chStart + chWidth;
+          AbstractLayoutCache layoutCache = getLayoutCache();
+          if (layoutCache != null) {
+            TreePath path = layoutCache.getPathForRow(convertRowIndexToModel(row));
+            int nd = path.getPathCount() - (isRootVisible() ? 1 : 2);
+            if (nd < 0) {
+              nd = 0;
+            }
+            int chStart = ins.left + (nd * TmmTreeTableCellRenderer.getNestingWidth()) + handleWidth;
+            int chEnd = chStart + chWidth;
 
-          chBoxPosition = (me.getX() > ins.left && me.getX() >= chStart && me.getX() <= chEnd);
+            chBoxPosition = (me.getX() > ins.left && me.getX() >= chStart && me.getX() <= chEnd);
+          }
         }
         if (chBoxPosition) {
           Boolean selected = crender.isSelected(value);
@@ -393,25 +399,29 @@ public class TmmTreeTable extends TmmTable {
       return;
     }
     TreeCellEditorBorder b = new TreeCellEditorBorder();
-    TreePath path = getLayoutCache().getPathForRow(convertRowIndexToModel(row));
-    Object o = getValueAt(row, column);
-    TmmTreeTableRenderDataProvider rdp = getRenderDataProvider();
-    TableCellRenderer tcr = getDefaultRenderer(Object.class);
-    if (rdp instanceof TmmTreeTableCheckRenderDataProvider && tcr instanceof TmmTreeTableCellRenderer) {
-      TmmTreeTableCheckRenderDataProvider crender = (TmmTreeTableCheckRenderDataProvider) rdp;
-      TmmTreeTableCellRenderer ocr = (TmmTreeTableCellRenderer) tcr;
-      Object value = getValueAt(row, column);
-      if (value != null && crender.isCheckable(value) && crender.isCheckEnabled(value)) {
-        b.checkWidth = ocr.getTheCheckBoxWidth();
-        b.checkBox = ocr.setUpCheckBox(crender, value, ocr.createCheckBox());
-      }
-    }
-    b.icon = rdp.getIcon(o);
-    b.nestingDepth = Math.max(0, path.getPathCount() - (isRootVisible() ? 1 : 2));
-    b.isLeaf = getTreeTableModel().isLeaf(o);
-    b.isExpanded = getLayoutCache().isExpanded(path);
 
-    ((JComponent) editor).setBorder(b);
+    AbstractLayoutCache layoutCache = getLayoutCache();
+    if (layoutCache != null) {
+      TreePath path = layoutCache.getPathForRow(convertRowIndexToModel(row));
+      Object o = getValueAt(row, column);
+      TmmTreeTableRenderDataProvider rdp = getRenderDataProvider();
+      TableCellRenderer tcr = getDefaultRenderer(Object.class);
+      if (rdp instanceof TmmTreeTableCheckRenderDataProvider && tcr instanceof TmmTreeTableCellRenderer) {
+        TmmTreeTableCheckRenderDataProvider crender = (TmmTreeTableCheckRenderDataProvider) rdp;
+        TmmTreeTableCellRenderer ocr = (TmmTreeTableCellRenderer) tcr;
+        Object value = getValueAt(row, column);
+        if (value != null && crender.isCheckable(value) && crender.isCheckEnabled(value)) {
+          b.checkWidth = ocr.getTheCheckBoxWidth();
+          b.checkBox = ocr.setUpCheckBox(crender, value, ocr.createCheckBox());
+        }
+      }
+      b.icon = rdp.getIcon(o);
+      b.nestingDepth = Math.max(0, path.getPathCount() - (isRootVisible() ? 1 : 2));
+      b.isLeaf = getTreeTableModel().isLeaf(o);
+      b.isExpanded = layoutCache.isExpanded(path);
+
+      ((JComponent) editor).setBorder(b);
+    }
   }
 
   @Override

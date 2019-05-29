@@ -36,11 +36,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -218,31 +216,23 @@ class MovieTrailerSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("hidemode 0", "[400lp,grow]", "[][15lp!][]"));
     {
-      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[100lp:150lp,grow][][100lp:200lp,grow]"));
+      JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[][shrink 0][]"));
 
       JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
       add(collapsiblePanel, "cell 0 0,wmin 0,grow");
       {
-        JScrollPane scrollPaneScraper = new JScrollPane();
-        panelScraper.add(scrollPaneScraper, "cell 1 0,grow");
-
         tableTrailerScraper = new TmmTable();
         tableTrailerScraper.setRowHeight(29);
-        tableTrailerScraper.configureScrollPane(scrollPaneScraper);
+        tableTrailerScraper.setShowGrid(true);
+        panelScraper.add(tableTrailerScraper, "cell 1 0,grow");
 
         JSeparator separator = new JSeparator();
         panelScraper.add(separator, "cell 1 1,growx");
 
-        JScrollPane scrollPaneScraperDetails = new JScrollPane();
-        panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
-
-        scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPaneScraperDetails.setBorder(null);
-
         JPanel panelScraperDetails = new ScrollablePanel();
-        scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
+        panelScraper.add(panelScraperDetails, "cell 1 2,grow");
+        panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 
         tpScraperDescription = new JTextPane();
         tpScraperDescription.setOpaque(false);

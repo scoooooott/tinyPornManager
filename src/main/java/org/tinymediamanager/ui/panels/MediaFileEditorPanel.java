@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.MediaFileType.NFO;
 import static org.tinymediamanager.core.MediaFileType.SAMPLE;
 import static org.tinymediamanager.core.MediaFileType.TRAILER;
 import static org.tinymediamanager.core.MediaFileType.VIDEO;
-import static org.tinymediamanager.core.MediaFileType.VIDEO_EXTRA;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -122,6 +121,7 @@ public class MediaFileEditorPanel extends JPanel {
     threeDFormats.add(MediaFile.VIDEO_3D_HSBS);
     threeDFormats.add(MediaFile.VIDEO_3D_TAB);
     threeDFormats.add(MediaFile.VIDEO_3D_HTAB);
+    threeDFormats.add(MediaFile.VIDEO_3D_MVC);
 
     setLayout(new MigLayout("", "[300lp:450lp,grow]", "[200lp:450lp,grow]"));
     {
@@ -280,7 +280,7 @@ public class MediaFileEditorPanel extends JPanel {
     // add selection listener to disable editing when needed
     tableMediaFiles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
-      private Set<MediaFileType> videoTypes = new HashSet<>(Arrays.asList(VIDEO, VIDEO_EXTRA, SAMPLE, TRAILER));
+      private Set<MediaFileType> videoTypes = new HashSet<>(Arrays.asList(VIDEO, SAMPLE, TRAILER));
 
       @Override
       public void valueChanged(ListSelectionEvent arg0) {

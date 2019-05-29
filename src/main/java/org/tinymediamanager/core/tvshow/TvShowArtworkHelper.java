@@ -29,6 +29,7 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 
 import java.io.File;
+import java.io.InterruptedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -489,7 +490,7 @@ public class TvShowArtworkHelper {
         ImageCache.invalidateCachedImage(destFile);
         ImageCache.cacheImageSilently(destFile);
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
       }

@@ -15,14 +15,12 @@
  */
 package org.tinymediamanager.ui;
 
+import static org.tinymediamanager.ui.plaf.TmmIcons.EMPTY_IMAGE;
+import static org.tinymediamanager.ui.plaf.TmmIcons.createFontAwesomeIcon;
+import static org.tinymediamanager.ui.plaf.TmmIcons.createTextIcon;
+
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,12 +32,11 @@ import javax.swing.UIManager;
 import org.tinymediamanager.Globals;
 
 public class IconManager {
-  private static final Font                FONT_AWESOME                = loadFontAwesome();
+  public static final Font                 FONT_AWESOME                = Font.decode("Font Awesome 5 Pro Regular");
   private final static Map<URI, ImageIcon> ICON_CACHE                  = new HashMap<>();
   private final static int                 DEFAULT_FONT_SIZE           = Globals.settings.getFontSize();
   private final static Color               ICON_COLOR                  = UIManager.getColor("Focus.color");
 
-  public final static ImageIcon            EMPTY_IMAGE                 = new ImageIcon(IconManager.class.getResource("images/empty.png"));
 
   // toolbar icons
   public final static ImageIcon            TOOLBAR_ABOUT               = loadImage("icn_about.png");
@@ -153,18 +150,6 @@ public class IconManager {
   public final static ImageIcon            VOTES                       = createFontAwesomeIcon('\uF164', 16);
   public final static ImageIcon            WATCHED                     = createFontAwesomeIcon('\uF04B', 16);
 
-  public static Font loadFontAwesome() {
-    Font fontAwesome = null;
-    try {
-      InputStream fontStream = IconManager.class.getResource("fontawesome-pro-regular-400.ttf").openStream();
-      fontAwesome = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-      fontStream.close();
-    }
-    catch (Exception ignored) {
-    }
-    return fontAwesome;
-  }
-
   public static ImageIcon loadImage(String name) {
     URL file = IconManager.class.getResource("images/interface/" + name);
     if (file != null) {
@@ -218,138 +203,5 @@ public class IconManager {
     return icon;
   }
 
-  /**
-   * create a image off the font awesome icon font in the default size 14px for 12pt base font size.
-   *
-   * @param iconId
-   *          the icon id
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId) {
-    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), UIManager.getColor("Label.foreground"));
-  }
 
-  private static int calculateFontIconSize(float scaleFactor) {
-    return (int) Math.floor(DEFAULT_FONT_SIZE * scaleFactor);
-  }
-
-  /**
-   * create a image off the font awesome icon font in given size (scaling to the base font size of 12pt applied!)
-   *
-   * @param iconId
-   *          the icon id
-   * @param size
-   *          the desired font size
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, int size) {
-    return createFontAwesomeIcon(iconId, calculateFontIconSize(size / 12.0f), UIManager.getColor("Label.foreground"));
-  }
-
-  /**
-   * create a image off the awesome icon font with the given scaling factor
-   *
-   * @param iconId
-   *          the icon id
-   * @param scaleFactor
-   *          the scale factor to apply
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, float scaleFactor) {
-    return createFontAwesomeIcon(iconId, calculateFontIconSize(scaleFactor), UIManager.getColor("Label.foreground"));
-  }
-
-  /**
-   * create a image off the awesome icon font size 14pt for 12pt base font size.
-   *
-   * @param iconId
-   *          the icon id
-   * @param color
-   *          the color to create the icon in
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, Color color) {
-    return createFontAwesomeIcon(iconId, calculateFontIconSize(1.1667f), color);
-  }
-
-  /**
-   * create a image off the awesome icon font
-   *
-   * @param iconId
-   *          the icon id
-   * @param size
-   *          the desired font size
-   * @param color
-   *          the color to create the icon in
-   * @return the generated icon
-   */
-  public static ImageIcon createFontAwesomeIcon(char iconId, int size, Color color) {
-    if (FONT_AWESOME == null) {
-      return EMPTY_IMAGE;
-    }
-    Font font = FONT_AWESOME.deriveFont((float) size);
-    return createFontIcon(font, String.valueOf(iconId), color);
-  }
-
-  private static ImageIcon createTextIcon(String text, int size) {
-    return createTextIcon(text, size, UIManager.getColor("Label.foreground"));
-  }
-
-  private static ImageIcon createTextIcon(String text, int size, Color color) {
-    Font defaultfont = (Font) UIManager.get("Label.font");
-    if (defaultfont == null) {
-      return null;
-    }
-    Font font = defaultfont.deriveFont(Font.BOLD, (float) size);
-    return createFontIcon(font, text, color);
-  }
-
-  private static ImageIcon createFontIcon(Font font, String text, Color color) {
-    try {
-      // calculate icon size
-      BufferedImage tmp = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
-      g2.setFont(font);
-
-      // get the visual bounds of the string (this is more realiable than the string bounds)
-      Rectangle2D defaultBounds = g2.getFontMetrics().getStringBounds("M", g2);
-      Rectangle2D bounds = font.createGlyphVector(g2.getFontRenderContext(), text).getVisualBounds();
-      int iconWidth = (int) Math.ceil(bounds.getWidth()) + 2; // +2 to avoid clipping problems
-      int iconHeight = (int) Math.ceil(bounds.getHeight()) + 2; // +2 to avoid clipping problems
-
-      if (iconHeight < defaultBounds.getHeight()) {
-        iconHeight = (int) Math.ceil(defaultBounds.getHeight());
-      }
-
-      g2.dispose();
-
-      // if width is less than height, increase the width to be at least a square
-      if (iconWidth < iconHeight) {
-        iconWidth = iconHeight;
-      }
-
-      // and draw it
-      BufferedImage buffer = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-      g2 = (Graphics2D) buffer.getGraphics();
-      // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      // g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-      Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
-      if (desktopHints != null) {
-        g2.setRenderingHints(desktopHints);
-      }
-
-      g2.setFont(font);
-      g2.setColor(color);
-
-      // draw the glyhps centered
-      int y = (int) Math.floor(bounds.getY() - (defaultBounds.getHeight() - bounds.getHeight()) / 2);
-      g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), -y);
-      g2.dispose();
-      return new ImageIcon(buffer);
-    }
-    catch (Exception ignored) {
-    }
-
-    return EMPTY_IMAGE;
-  }
 }

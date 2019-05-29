@@ -35,7 +35,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
   private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowMissingArtworkDownloadTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());        //$NON-NLS-1$
 
   private List<TvShow>                tvShows;
   private List<TvShowEpisode>         episodes;
@@ -176,10 +176,10 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
 
         // episode artwork is only provided by the meta data provider (not artwork provider)
         MediaMetadata metadata = ((ITvShowMetadataProvider) tvShowList.getDefaultMediaScraper().getMediaProvider()).getMetadata(options);
-        for (MediaArtwork ma : metadata.getMediaArt(MediaArtwork.MediaArtworkType.THUMB)) {
-          episode.setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
+        List<MediaArtwork> mas = metadata.getMediaArt(MediaArtwork.MediaArtworkType.THUMB);
+        if (!mas.isEmpty()) {
+          episode.setArtworkUrl(mas.get(0).getDefaultUrl(), MediaFileType.THUMB);
           episode.writeThumbImage();
-          break;
         }
       }
       catch (ScrapeException e) {

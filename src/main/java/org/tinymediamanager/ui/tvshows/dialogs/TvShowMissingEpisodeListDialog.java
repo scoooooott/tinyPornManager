@@ -62,7 +62,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
     // UI
     {
       JPanel panelContent = new JPanel();
-      panelContent.setLayout(new MigLayout("", "[700lp,grow]", "[]"));
+      panelContent.setLayout(new MigLayout("", "[700lp,grow]", "[grow]"));
       getContentPane().add(panelContent, BorderLayout.CENTER);
 
       tblMissingEpisodeList = new TmmTable(missingEpisodeListModel);
@@ -162,7 +162,6 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
   private class EpisodeListWorker extends SwingWorker<Void, Void> {
 
     private List<TvShow>   tvShows;
-    List<MediaMetadata>    mediaEpisodes;
     private MediaLanguages language = TvShowModuleManager.SETTINGS.getScraperLanguage();
 
     EpisodeListWorker(List<TvShow> tvShows) {
@@ -174,15 +173,13 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
 
       btnClose.setEnabled(false);
       startProgressBar();
-      mediaEpisodes = getEpisodes(tvShows);
       compareTvShows();
 
       return null;
     }
 
-    private List<MediaMetadata> getEpisodes(List<TvShow> tvShows) {
+    private List<MediaMetadata> getEpisodes(TvShow tvShow) {
 
-      for (TvShow tvshow : tvShows) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
         options.setLanguage(language.toLocale());
         options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
@@ -191,7 +188,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
         MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());
         options.setMetadata(md);
 
-        for (Map.Entry<String, Object> entry : tvshow.getIds().entrySet()) {
+      for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());
         }
 
@@ -203,7 +200,6 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
         catch (ScrapeException | UnsupportedMediaTypeException | MissingIdException e1) {
           e1.printStackTrace();
         }
-      }
       return null;
     }
 
@@ -219,6 +215,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
         }
 
         List<TvShowEpisode> scrapedEpisodes = tvshow.getEpisodes();
+        List<MediaMetadata> mediaEpisodes = getEpisodes(tvshow);
 
         for (MediaMetadata mediaEpisode : mediaEpisodes) {
 
@@ -232,7 +229,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
 
           for (TvShowEpisode scrapedEpisode : scrapedEpisodes) {
 
-            if ((scrapedEpisode.getEpisode() == container.episode) && scrapedEpisode.getSeason() == container.season) {
+            if (scrapedEpisode.getEpisode() == container.episode && scrapedEpisode.getSeason() == container.season) {
               entryFound = true;
             }
           }

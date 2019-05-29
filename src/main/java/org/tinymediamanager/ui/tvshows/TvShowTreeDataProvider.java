@@ -482,7 +482,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // return TV show name
       if (getUserObject() instanceof TvShow) {
         TvShow tvShow = (TvShow) getUserObject();
-        return tvShow.getTitle();
+        return tvShow.getTitleSortable();
       }
 
       // fallback: call super
@@ -554,7 +554,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
           return episode.getEpisode() + ". " + episode.getTitle();
         }
         else {
-          return episode.getTitle();
+          return episode.getTitleSortable();
         }
       }
 

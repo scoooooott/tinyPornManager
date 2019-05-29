@@ -288,8 +288,10 @@ public class ImageUtils {
         tempFile = tempFolder.resolve(filename + "." + timestamp + ".part"); // multi episode same file
       }
       catch (Exception e) {
+        LOGGER.debug("could not write to temp folder: {}", e.getMessage());
+
         // could not create the temp folder somehow - put the files into the entity dir
-        tempFile = destFile.resolve(filename + "." + timestamp + ".part"); // multi episode same file
+        tempFile = destFile.resolveSibling(filename + "." + timestamp + ".part"); // multi episode same file
       }
 
       // fetch and store images

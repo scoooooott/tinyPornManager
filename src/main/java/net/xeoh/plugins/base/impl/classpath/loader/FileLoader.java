@@ -67,12 +67,12 @@ public class FileLoader extends AbstractLoader {
     // If not caught by the previous handler, handle files normally.
     if (url.getScheme().equals("file")) {
       // Now load from the given file ...
-      LOGGER.debug("More specifically, trying to add from " + url);
+      LOGGER.debug("More specifically, trying to add from {}", url);
       try {
         File root = toFile(url.toURL());
 
         // ... if it exists ...
-        if (!root.exists()) {
+        if (root == null || !root.exists()) {
           this.logger.warning("Supplied path does not exist. Unable to add plugins from there.");
           return;
         }
@@ -81,7 +81,7 @@ public class FileLoader extends AbstractLoader {
         locateAllPluginsAt(root);
       }
       catch (Exception e) {
-        LOGGER.error("could not load plugins: " + e.getMessage());
+        LOGGER.error("could not load plugins: {}", e.getMessage());
       }
     }
   }

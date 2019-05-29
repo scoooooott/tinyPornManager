@@ -15,9 +15,12 @@
  */
 package org.tinymediamanager.ui.movies.dialogs;
 
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -90,6 +93,7 @@ import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UIConstants;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
@@ -122,24 +126,25 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieEditorDialog extends TmmDialog {
-  private static final long                  serialVersionUID = -286251957529920347L;
-  private static final Logger                LOGGER           = LoggerFactory.getLogger(MovieEditorDialog.class);
-  private static final Insets                BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final long                  serialVersionUID    = -286251957529920347L;
+  private static final Logger                LOGGER              = LoggerFactory.getLogger(MovieEditorDialog.class);
+  private static final Insets                BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final String                ORIGINAL_IMAGE_SIZE = "originalImageSize";
 
   private Movie                              movieToEdit;
-  private MovieList                          movieList        = MovieList.getInstance();
+  private MovieList                          movieList           = MovieList.getInstance();
 
-  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<>());
-  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<>());
-  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<>());
+  private List<MediaGenres>                  genres              = ObservableCollections.observableList(new ArrayList<>());
+  private List<MovieTrailer>                 trailers            = ObservableCollections.observableList(new ArrayList<>());
+  private List<String>                       tags                = ObservableCollections.observableList(new ArrayList<>());
   private EventList<MediaId>                 ids;
   private EventList<MediaRating>             ratings;
-  private List<MediaFile>                    mediaFiles       = new ArrayList<>();
-  private List<String>                       extrathumbs      = null;
-  private List<String>                       extrafanarts     = null;
+  private List<MediaFile>                    mediaFiles          = new ArrayList<>();
+  private List<String>                       extrathumbs         = null;
+  private List<String>                       extrafanarts        = null;
   private Rating                             userRating;
-  private boolean                            continueQueue    = true;
-  private boolean                            navigateBack     = false;
+  private boolean                            continueQueue       = true;
+  private boolean                            navigateBack        = false;
   private int                                queueIndex;
   private int                                queueSize;
 
@@ -206,6 +211,16 @@ public class MovieEditorDialog extends TmmDialog {
   private TmmTable                           tableProducers;
   private TmmTable                           tableDirectors;
   private TmmTable                           tableWriters;
+
+  private LinkLabel                          lblPosterSize       = new LinkLabel();
+  private LinkLabel                          lblFanartSize       = new LinkLabel();
+  private LinkLabel                          lblLogoSize         = new LinkLabel();
+  private LinkLabel                          lblClearlogoSize    = new LinkLabel();
+  private LinkLabel                          lblBannerSize       = new LinkLabel();
+  private LinkLabel                          lblClearartSize     = new LinkLabel();
+  private LinkLabel                          lblThumbSize        = new LinkLabel();
+  private LinkLabel                          lblDiscSize         = new LinkLabel();
+  private LinkLabel                          lblKeyartSize       = new LinkLabel();
 
   /**
    * Create the dialog.
@@ -403,7 +418,10 @@ public class MovieEditorDialog extends TmmDialog {
           }
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        details1Panel.add(lblPoster, "cell 8 0 1 8,grow");
+        details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.poster")), "cell 8 0");
+        details1Panel.add(lblPosterSize, "cell 8 0");
+        details1Panel.add(lblPoster, "cell 8 1 1 6,grow");
+        lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaFileType.POSTER));
       }
       {
         JLabel lblOriginalTitle = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -522,7 +540,10 @@ public class MovieEditorDialog extends TmmDialog {
             updateArtworkUrl(lblFanart, tfFanart);
           }
         });
-        details1Panel.add(lblFanart, "cell 8 8 1 4,grow");
+        details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
+        details1Panel.add(lblFanartSize, "cell 8 8");
+        details1Panel.add(lblFanart, "cell 8 9 1 3,grow");
+        lblFanart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblFanartSize, lblFanart, MediaFileType.FANART));
       }
 
       JButton btnAddRating = new JButton(new AddRatingAction());
@@ -854,7 +875,7 @@ public class MovieEditorDialog extends TmmDialog {
       {
         JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "cell 0 0");
-
+        artworkPanel.add(lblLogoSize, "cell 0 0");
         lblLogo = new ImageLabel();
         lblLogo.addMouseListener(new MouseAdapter() {
           @Override
@@ -864,15 +885,18 @@ public class MovieEditorDialog extends TmmDialog {
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
             updateArtworkUrl(lblLogo, tfLogo);
+
           }
         });
         lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblLogo, "cell 0 1,grow");
+        lblLogo.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblLogoSize, lblLogo, MediaFileType.LOGO));
+
       }
       {
         JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
         artworkPanel.add(lblKeyartT, "cell 4 0");
-
+        artworkPanel.add(lblKeyartSize, "cell 4 0");
         lblKeyart = new ImageLabel();
         lblKeyart.addMouseListener(new MouseAdapter() {
           @Override
@@ -886,11 +910,12 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblKeyart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblKeyart, "cell 4 1 1 4,grow");
+        lblKeyart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblKeyartSize, lblKeyart, MediaFileType.KEYART));
       }
       {
         JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
         artworkPanel.add(lblClearlogoT, "cell 2 0");
-
+        artworkPanel.add(lblClearlogoSize, "cell 2 0");
         lblClearlogo = new ImageLabel();
         lblClearlogo.addMouseListener(new MouseAdapter() {
           @Override
@@ -904,11 +929,13 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblClearlogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblClearlogo, "cell 2 1,grow");
+        lblClearlogo.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
+            e -> setImageSizeAndCreateLink(lblClearlogoSize, lblClearlogo, MediaFileType.CLEARLOGO));
       }
       {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
-        artworkPanel.add(lblBannerT, "cell 0 3,growx,aligny top");
-
+        artworkPanel.add(lblBannerT, "cell 0 3");
+        artworkPanel.add(lblBannerSize, "cell 0 3");
         lblBanner = new ImageLabel();
         lblBanner.addMouseListener(new MouseAdapter() {
           @Override
@@ -922,11 +949,12 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblBanner, "cell 0 4 3 1,grow");
+        lblBanner.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblBannerSize, lblBanner, MediaFileType.BANNER));
       }
       {
         JLabel lblClearartT = new TmmLabel("ClearArt");
-        artworkPanel.add(lblClearartT, "cell 0 6,growx,aligny top");
-
+        artworkPanel.add(lblClearartT, "cell 0 6");
+        artworkPanel.add(lblClearartSize, "cell 0 6");
         lblClearart = new ImageLabel();
         lblClearart.addMouseListener(new MouseAdapter() {
           @Override
@@ -940,11 +968,14 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblClearart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblClearart, "cell 0 7,grow");
+        lblClearart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
+            e -> setImageSizeAndCreateLink(lblClearartSize, lblClearart, MediaFileType.CLEARART));
+
       }
       {
         JLabel lblThumbT = new TmmLabel("Thumb");
         artworkPanel.add(lblThumbT, "cell 2 6");
-
+        artworkPanel.add(lblThumbSize, "cell 2 6");
         lblThumb = new ImageLabel();
         lblThumb.addMouseListener(new MouseAdapter() {
           @Override
@@ -958,11 +989,12 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblThumb, "cell 2 7,grow");
+        lblThumb.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaFileType.THUMB));
       }
       {
         JLabel lblDiscT = new TmmLabel("Disc");
         artworkPanel.add(lblDiscT, "cell 4 6");
-
+        artworkPanel.add(lblDiscSize, "cell 4 6");
         lblDisc = new ImageLabel();
         lblDisc.addMouseListener(new MouseAdapter() {
           @Override
@@ -976,6 +1008,7 @@ public class MovieEditorDialog extends TmmDialog {
         });
         lblDisc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblDisc, "cell 4 7,grow");
+        lblDisc.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblDiscSize, lblDisc, MediaFileType.DISC));
       }
     }
 
@@ -2071,5 +2104,16 @@ public class MovieEditorDialog extends TmmDialog {
     bindingGroup.addBinding(jTableBinding_1);
     bindingGroup.addBinding(jListBinding_1);
     return bindingGroup;
+  }
+
+  private void setImageSizeAndCreateLink(LinkLabel lblSize, ImageLabel imageLabel, MediaFileType type) {
+    createLinkForImage(lblSize, imageLabel);
+    Dimension dimension = movieToEdit.getArtworkDimension(type);
+    if (dimension.width == 0 && dimension.height == 0) {
+      lblSize.setText(imageLabel.getOriginalImageSize().width + "x" + imageLabel.getOriginalImageSize().height);
+    }
+    else {
+      lblSize.setText(dimension.width + "x" + dimension.height);
+    }
   }
 }

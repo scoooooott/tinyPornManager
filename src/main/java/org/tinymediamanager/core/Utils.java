@@ -636,8 +636,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
+          break;
         }
       }
 
@@ -734,8 +736,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again...");
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep");
+          break;
         }
       }
 
@@ -837,8 +841,10 @@ public class Utils {
           LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException e) { // NOSONAR
+          // we will not let the JVM abort the thread here -> just finish the logic without waiting any longer
           LOGGER.warn("I'm so excited - could not sleep"); // NOSONAR
+          break;
         }
       }
 
@@ -1055,8 +1061,10 @@ public class Utils {
       }
     }
     if (language.equalsIgnoreCase("en")) {
-      return new Locale("en", "US"); // don't mess around; at least fixtate this
+      return Locale.US; // don't mess around; at least fixate this
     }
+
+    // try to find country based locale
     Locale l = null;
     List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
     for (Locale locale : countries) {
@@ -1070,6 +1078,9 @@ public class Utils {
       l = countries.get(0);
     }
 
+    if (l == null) {
+      l = new Locale(language); // let java decide..?
+    }
     return l;
   }
 

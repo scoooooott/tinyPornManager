@@ -8,8 +8,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.InMemoryAppender;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmProperties;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -126,21 +121,26 @@ public class ExportLogAction extends TmmAction {
         LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
       }
 
-      // attach config files
-      List<String> configFiles = Arrays.asList(Settings.getInstance().getConfigFilename(), MovieModuleManager.SETTINGS.getConfigFilename(),
-          TvShowModuleManager.SETTINGS.getConfigFilename());
-      for (String filename : configFiles) {
-        try {
-          ZipEntry ze = new ZipEntry(filename);
-          zos.putNextEntry(ze);
-          FileInputStream in = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), filename));
-
-          IOUtils.copy(in, zos);
-          in.close();
-          zos.closeEntry();
+      // attach config files, but not DB
+      File[] data = new File("data").listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File directory, String filename) {
+          return !filename.matches(".*\\.db$"); // not DB
         }
-        catch (Exception e) {
-          LOGGER.warn("unable to attach " + filename + ": " + e.getMessage());
+      });
+      if (data != null) {
+        for (File dataFile : data) {
+          try (FileInputStream in = new FileInputStream(dataFile)) {
+
+            ZipEntry ze = new ZipEntry(dataFile.getName());
+            zos.putNextEntry(ze);
+
+            IOUtils.copy(in, zos);
+            zos.closeEntry();
+          }
+          catch (Exception e) {
+            LOGGER.warn("unable to attach {} - {}", dataFile.getName(), e.getMessage());
+          }
         }
       }
     }

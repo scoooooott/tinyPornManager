@@ -1,3 +1,8 @@
+Version 3.0 - Pre Release
+=======================
+
+changes since RC4: http://bit.ly/2VW2tww
+
 Version 3.0 - RC4
 =======================
 

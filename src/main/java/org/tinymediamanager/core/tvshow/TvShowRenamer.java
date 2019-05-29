@@ -917,7 +917,7 @@ public class TvShowRenamer {
       ////////////////////////////////////////////////////////////////////////
       // VIDEO_EXTRA
       ////////////////////////////////////////////////////////////////////////
-      case VIDEO_EXTRA:
+      case EXTRA:
         // this extra is for an episode -> move it at least to the season folder and try to replace the episode tokens
         MediaFile extra = new MediaFile(mf);
         // try to detect the title of the extra file

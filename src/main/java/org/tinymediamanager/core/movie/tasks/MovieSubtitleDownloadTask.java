@@ -23,6 +23,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -36,10 +38,11 @@ import org.tinymediamanager.core.tasks.DownloadTask;
  * @author Manuel Laggner
  */
 public class MovieSubtitleDownloadTask extends DownloadTask {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieSubtitleDownloadTask.class);
 
-  private final Movie  movie;
-  private final String languageTag;
-  private final Path   videoFilePath;
+  private final Movie         movie;
+  private final String        languageTag;
+  private final Path          videoFilePath;
 
   public MovieSubtitleDownloadTask(String url, Path videoFilePath, String languageTag, Movie movie) {
     super(url, movie.getPathNIO().resolve(FilenameUtils.getBaseName(videoFilePath.getFileName().toString()) + "." + languageTag));
@@ -59,10 +62,8 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
       String basename = FilenameUtils.getBaseName(videoFilePath.toString()) + "." + languageTag;
 
       // try to decompress
-      try {
+      try (FileInputStream fis = new FileInputStream(file.toFile()); ZipInputStream is = new ZipInputStream(fis)) {
         byte[] buffer = new byte[1024];
-
-        ZipInputStream is = new ZipInputStream(new FileInputStream(file.toFile()));
 
         // get the zipped file list entry
         ZipEntry ze = is.getNextEntry();
@@ -78,25 +79,25 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
           }
 
           Path destination = file.getParent().resolve(basename + "." + extension);
-          FileOutputStream os = new FileOutputStream(destination.toFile());
+          try (FileOutputStream os = new FileOutputStream(destination.toFile())) {
 
-          int len;
-          while ((len = is.read(buffer)) > 0) {
-            os.write(buffer, 0, len);
+            int len;
+            while ((len = is.read(buffer)) > 0) {
+              os.write(buffer, 0, len);
+            }
+
+            mf = new MediaFile(destination);
+
+            // only take the first subtitle
+            break;
           }
-
-          os.close();
-          mf = new MediaFile(destination);
-
-          // only take the first subtitle
-          break;
         }
         is.closeEntry();
-        is.close();
 
         Utils.deleteFileSafely(file);
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        LOGGER.debug("could not extract subtitle: {}", e.getMessage());
       }
     }
 

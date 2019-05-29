@@ -109,7 +109,7 @@ public class WhatsNewDialog extends TmmDialog {
   }
 
   private String prepareTextAsHtml(String originalText) {
-    Pattern pattern = Pattern.compile("(http[s]?://.*?)[ )]");
+    Pattern pattern = Pattern.compile("(http[s]?://.*?)[\\n\\r\\s)]");
     Matcher matcher = pattern.matcher(originalText);
     while (matcher.find()) {
       originalText = originalText.replace(matcher.group(1), "<a href=\"" + matcher.group(1) + "\">" + matcher.group(1) + "</a>");

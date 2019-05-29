@@ -664,7 +664,7 @@ public class TvShowNfoParser {
     supportedElements.add("mpaa");
 
     Element element = getSingleElement(root, "certification");
-    if (element == null) {
+    if (element == null || StringUtils.isBlank(element.ownText())) {
       element = getSingleElement(root, "mpaa");
     }
     if (element != null) {
@@ -846,9 +846,12 @@ public class TvShowNfoParser {
       try {
         watched = Boolean.parseBoolean(element.ownText());
         element = getSingleElement(root, "playcount");
-        playcount = MetadataUtil.parseInt(element.ownText());
+        if (element != null) {
+          playcount = MetadataUtil.parseInt(element.ownText());
+        }
       }
       catch (Exception ignored) {
+        // nothing to be catched here
       }
     }
 
@@ -878,7 +881,11 @@ public class TvShowNfoParser {
     if (elements != null && !elements.isEmpty()) {
       for (Element genre : elements) {
         if (StringUtils.isNotBlank(genre.ownText())) {
-          genres.add(MediaGenres.getGenre(genre.ownText()));
+          // old style - single tag with delimiter
+          String[] split = genre.ownText().split("/");
+          for (String sp : split) {
+            genres.add(MediaGenres.getGenre(sp.trim()));
+          }
         }
       }
     }

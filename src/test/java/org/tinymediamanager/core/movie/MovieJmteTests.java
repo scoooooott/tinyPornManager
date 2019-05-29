@@ -70,6 +70,7 @@ public class MovieJmteTests {
       engine.setModelAdaptor(new TmmModelAdaptor());
       root = new HashMap<>();
       root.put("movie", movie);
+      root.put("movieSet", movie.getMovieSet());
 
       // test single tokens
       compare("${title}", "Aladdin");
@@ -81,9 +82,9 @@ public class MovieJmteTests {
       compare("${year}", "1992");
       compare("${releaseDate}", "1992-11-25");
       compare("${rating}", "7.2");
-      compare("${movieset.title}", "Aladdin Collection");
-      compare("${movieset.title[0]}", "A");
-      compare("${movieset.titleSortable}", "Aladdin Collection");
+      compare("${movieSet.title}", "Aladdin Collection");
+      compare("${movieSet.title[0]}", "A");
+      compare("${movieSet.titleSortable}", "Aladdin Collection");
       compare("${titleSortable}", "Aladdin");
       compare("${imdb}", "tt0103639");
       compare("${certification}", "G");

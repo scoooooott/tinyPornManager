@@ -79,18 +79,18 @@ public class MovieFindMissingTask extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
+      start();
 
       // build MF list
       ArrayList<MediaFile> mfs = new ArrayList<>();
       for (Movie movie : movieList.getMovies()) {
         mfs.addAll(movie.getMediaFiles());
-        // mfs.addAll(movie.getMediaFiles(MediaFileType.VIDEO));
-        // mfs.addAll(movie.getMediaFiles(MediaFileType.VIDEO_EXTRA));
-        // mfs.addAll(movie.getMediaFiles(MediaFileType.TRAILER));
       }
 
       for (String ds : dataSources) {
-        start();
+        if (cancel) {
+          break;
+        }
 
         HashSet<Path> bigFiles = getBigFilesRecursive(Paths.get(ds));
         if (cancel) {
@@ -101,18 +101,15 @@ public class MovieFindMissingTask extends TmmThreadPool {
 
           MediaFile mf = new MediaFile(file);
           if (!mfs.contains(mf)) {
-            LOGGER.info("found possible movie file " + file);
+            LOGGER.info("found possible movie file {}", file);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, "possible movie", "found possible movie " + file, new String[] { ds }));
           }
         }
-        if (cancel) {
-          break;
-        }
       }
 
       stopWatch.stop();
-      LOGGER.info("Done finding missing movies :) - took " + stopWatch);
+      LOGGER.info("Done finding missing movies :) - took {}", stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -146,7 +143,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
       // getFilename returns null on DS root!
       if (dir.getFileName() != null && dir.getFileName().toString().equals(Constants.BACKUP_FOLDER)) {
-        LOGGER.debug("Skipping backup folder: " + dir);
+        LOGGER.debug("Skipping backup folder: {}", dir);
         // but not any other well known
         return SKIP_SUBTREE;
       }
@@ -163,7 +160,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("" + exc);
+      LOGGER.error("visitFile failed: {}", exc.getMessage());
       return CONTINUE;
     }
   }

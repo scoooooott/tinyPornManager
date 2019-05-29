@@ -66,7 +66,7 @@ public class MovieMediaFileTest extends BasicTest {
     checkExtra("", mft);
 
     // video_extra
-    mft = MediaFileType.VIDEO_EXTRA;
+    mft = MediaFileType.EXTRA;
     checkExtra("Red.Shoe.Diaries.S01.EXTRAS.DVDRip.X264", mft);
     checkExtra("Extra/extras/some-trailer", mft);
     checkExtra("extras/someExtForSomeMovie-trailer", mft);
@@ -76,6 +76,7 @@ public class MovieMediaFileTest extends BasicTest {
     checkExtra("bla-blubb-extra-something", mft);
     checkExtra("bla-blubb-extra-", mft);
     checkExtra("", mft);
+    checkExtra("Extras/another/someExtForSomeMovie-trailer", mft);
 
     System.out.println("All fine :)");
   }
@@ -85,7 +86,7 @@ public class MovieMediaFileTest extends BasicTest {
       return;
     }
     Path f = Paths.get(".", filename + ".avi");
-    System.out.print("testing " + f + " for ");
+    System.out.println("testing " + f + " for ");
     MediaFile mf = new MediaFile(f);
     assertEqual(mft, mf.getType());
   }

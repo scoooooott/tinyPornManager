@@ -1163,7 +1163,7 @@ public class TvShowSettings extends AbstractSettings {
     characterartFilenames.add(TvShowCharacterartNaming.CHARACTERART);
 
     thumbFilenames.clear();
-    thumbFilenames.add(TvShowThumbNaming.THUMB);
+    thumbFilenames.add(TvShowThumbNaming.LANDSCAPE);
 
     keyartFilenames.clear();
     keyartFilenames.add(TvShowKeyartNaming.KEYART);
@@ -1181,7 +1181,7 @@ public class TvShowSettings extends AbstractSettings {
     episodeNfoFilenames.add(TvShowEpisodeNfoNaming.FILENAME);
 
     episodeThumbFilenames.clear();
-    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_LANDSCAPE);
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME_THUMB);
 
     // other settings
     setTvShowConnector(TvShowConnectors.KODI);

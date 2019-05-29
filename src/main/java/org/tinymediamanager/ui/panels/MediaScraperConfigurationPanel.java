@@ -38,6 +38,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.config.MediaProviderConfigObject;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
@@ -54,6 +56,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
   private static final long           serialVersionUID = -4120483383064864579L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(MediaScraperConfigurationPanel.class);
 
   private IMediaProvider              mediaProvider;
   private boolean                     dirty            = false;
@@ -86,10 +89,12 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       @Override
       public void ancestorMoved(AncestorEvent event) {
+        // nothing needed here
       }
 
       @Override
       public void ancestorAdded(AncestorEvent event) {
+        // nothing needed here
       }
     });
   }
@@ -118,9 +123,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       // label
       // try different ways to get a meaningful key description
-      String keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
+      String keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
       if (StringUtils.isBlank(keyDescription)) {
-        keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
+        keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
       }
       if (StringUtils.isBlank(keyDescription)) {
         keyDescription = entry.getValue().getKeyDescription();
@@ -194,7 +199,8 @@ public class MediaScraperConfigurationPanel extends JPanel {
           panel.add(lblHint, constraints);
         }
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        LOGGER.debug("failed to add a hint: {}", e.getMessage());
       }
       constraints.gridy++;
     }
@@ -213,6 +219,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
       return BUNDLE.getString(key);
     }
     catch (Exception ignored) {
+      // an exception if thrown here if no string in the resources has been found -> silently ignore
     }
     return "";
   }

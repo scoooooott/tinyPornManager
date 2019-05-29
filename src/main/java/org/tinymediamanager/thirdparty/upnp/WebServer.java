@@ -30,7 +30,7 @@ public class WebServer extends NanoHTTPD {
   @Override
   public Response serve(IHTTPSession session) {
     String uri = session.getUri();
-    LOGGER.info("Incoming: " + session.getRemoteIpAddress() + " " + session.getMethod() + " " + uri);
+    LOGGER.info("Incoming: {} {} {}", session.getRemoteIpAddress(), session.getMethod(), uri);
 
     if (uri.startsWith("/upnp")) {
       String[] path = StringUtils.split(uri, '/');
@@ -73,10 +73,10 @@ public class WebServer extends NanoHTTPD {
   // CLONE from nanohttp-webserver (supporting ranges)
   // reworked for NIO Path and MF access, and not sending content on HEAD requests
   private Response serveFile(IHTTPSession session, MediaFile file) {
-    LOGGER.debug("Serving: " + file.getFileAsPath());
+    LOGGER.debug("Serving: {}", file.getFileAsPath());
     Response res;
     Map<String, String> header = session.getHeaders();
-    LOGGER.debug("Headers: " + header);
+    LOGGER.debug("Headers: {}", header);
     try {
       String mime = MimeTypes.getMimeTypeAsString(file.getExtension());
       long fileLen = Files.size(file.getFileAsPath());
@@ -135,14 +135,15 @@ public class WebServer extends NanoHTTPD {
             newLen = 0;
           }
 
-          InputStream fis = Files.newInputStream(file.getFileAsPath());
-          fis.skip(startFrom);
+          try (InputStream fis = Files.newInputStream(file.getFileAsPath())) {
+            fis.skip(startFrom);
 
-          res = newFixedLengthResponse(Status.PARTIAL_CONTENT, mime, fis, newLen);
-          res.addHeader("Accept-Ranges", "bytes");
-          res.addHeader("Content-Length", "" + newLen);
-          res.addHeader("Content-Range", "bytes " + startFrom + "-" + endAt + "/" + fileLen);
-          res.addHeader("ETag", etag);
+            res = newFixedLengthResponse(Status.PARTIAL_CONTENT, mime, fis, newLen);
+            res.addHeader("Accept-Ranges", "bytes");
+            res.addHeader("Content-Length", "" + newLen);
+            res.addHeader("Content-Range", "bytes " + startFrom + "-" + endAt + "/" + fileLen);
+            res.addHeader("ETag", etag);
+          }
         }
       }
       else {
@@ -161,7 +162,7 @@ public class WebServer extends NanoHTTPD {
           res = newFixedLengthResponse(Status.NOT_MODIFIED, mime, "");
           res.addHeader("ETag", etag);
         }
-        else if (!headerIfRangeMissingOrMatching && headerIfNoneMatchPresentAndMatching) {
+        else if (!headerIfRangeMissingOrMatching && headerIfNoneMatchPresentAndMatching) { // NOSONAR
           // range request that doesn't match current etag
           // would return entire (different) file
           // respond with not-modified

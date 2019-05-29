@@ -426,10 +426,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // is there any rating?
     if (rating == null && !ratings.isEmpty()) {
-      for (Rating r : ratings.values()) {
-        rating = r;
-        break;
-      }
+      rating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value

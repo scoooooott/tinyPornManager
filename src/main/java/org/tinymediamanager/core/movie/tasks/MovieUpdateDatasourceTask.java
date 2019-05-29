@@ -912,7 +912,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             break;
 
-          case VIDEO_EXTRA:
+          case EXTRA:
           case SAMPLE:
           case NFO:
           case TEXT:
@@ -929,11 +929,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case MEDIAINFO:
           case VSMETA:
           case THEME:
+          case CHARACTERART:
+          case KEYART:
             movie.addToMediaFiles(mf);
             break;
 
           case GRAPHIC:
           case UNKNOWN:
+          case SEASON_BANNER:
+          case SEASON_THUMB:
+          case VIDEO_EXTRA:
           default:
             LOGGER.debug("| NOT adding unknown media file type: " + mf.getFileAsPath());
             // movie.addToMediaFiles(mf); // DO NOT ADD UNKNOWN

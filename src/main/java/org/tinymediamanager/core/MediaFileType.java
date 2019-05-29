@@ -30,7 +30,8 @@ public enum MediaFileType {
 
   // @formatter:off
   VIDEO, 
-  VIDEO_EXTRA, // bonus/extra videos
+  @Deprecated
+  VIDEO_EXTRA, 
   TRAILER, 
   SAMPLE, // sample != trailer
   AUDIO, 
@@ -51,6 +52,7 @@ public enum MediaFileType {
   SEASON_THUMB, // gfx
   EXTRAFANART, // gfx
   EXTRATHUMB, // gfx
+  EXTRA,
   GRAPHIC, // NO gfx (since not a searchable type)
   MEDIAINFO, // xxx-mediainfo.xml
   VSMETA, // xxx.ext.vsmeta Synology

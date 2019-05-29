@@ -337,7 +337,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
       Source xmlInput = new StreamSource(new StringReader(input));
       StringWriter stringWriter = new StringWriter();
       StreamResult xmlOutput = new StreamResult(stringWriter);
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      TransformerFactory transformerFactory = TransformerFactory.newInstance(); // NOSONAR
       transformerFactory.setAttribute("indent-number", indent);
       Transformer transformer = transformerFactory.newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");

@@ -45,7 +45,7 @@ public class MediaSource extends DynaEnum<MediaSource> {
   public final static MediaSource              HDDVD       = new MediaSource("HDDVD", 6, "HDDVD", "(hddvd|hddvdrip)");
   public final static MediaSource              TV          = new MediaSource("TV", 8, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
   public final static MediaSource              VHS         = new MediaSource("VHS", 10, "VHS", "(vhs)");
-  public final static MediaSource              LASERDISC   = new MediaSource("LASERDISC", 12, "LaserDisc", "(laserdisc)");
+  public final static MediaSource              LASERDISC   = new MediaSource("LASERDISC", 12, "LaserDisc", "(laserdisc|ldrip)");
   public final static MediaSource              D_VHS       = new MediaSource("D_VHS", 14, "D-VHS");
 
   // other sources

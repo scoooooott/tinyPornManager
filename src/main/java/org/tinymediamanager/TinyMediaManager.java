@@ -383,13 +383,14 @@ public class TinyMediaManager {
           if (!GraphicsEnvironment.isHeadless() && e.getMessage().contains("file is locked")) {
             // MessageDialog.showExceptionWindow(e);
             ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-            MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+            MessageDialog dialog = new MessageDialog(null, bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
             dialog.setImage(IconManager.ERROR);
             dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
             dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
             dialog.setResizable(true);
             dialog.pack();
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setAlwaysOnTop(true);
             dialog.setVisible(true);
           }
           shutdownLogger();
@@ -515,6 +516,7 @@ public class TinyMediaManager {
     props.setProperty("systemTextFont", fontString);
     props.setProperty("userTextFont", fontString);
     props.setProperty("menuTextFont", fontString);
+    props.setProperty("defaultFontSize", Integer.toString(fontSize));
 
     if (Globals.settings.isSystemWindowDecoration()) {
       props.setProperty("windowDecoration", "system");
