@@ -9,9 +9,9 @@ import retrofit2.http.Path;
 public interface CastService {
 
   @GET("cast/tmdbid/{tmdbId}/images/actorart")
-  Call<KyraEntity> getAnimatedImages(@Path("tmdbId") int tmdbId);
+  Call<KyraEntity> getActorImages(@Path("tmdbId") int tmdbId);
 
   // @GET("cast/imdbid/{imdbId}/images/actorart")
-  // Call<KyraEntity> getAnimatedImages(@Path("imdbId") String imdbId);
+  // Call<KyraEntity> getActorImages(@Path("imdbId") String imdbId);
 
 }

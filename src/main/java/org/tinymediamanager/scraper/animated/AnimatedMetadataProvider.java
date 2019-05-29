@@ -159,7 +159,20 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     if (tmdbId != 0) {
       try {
         LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
-        httpResponse = api.getMovieService().getAnimatedImages(tmdbId).execute();
+        switch (artworkType) {
+          case LOGO:
+          case CLEARLOGO:
+            httpResponse = api.getMovieService().getLogo(tmdbId).execute();
+            break;
+
+          case CHARACTERART:
+            httpResponse = api.getMovieService().getCharacterArt(tmdbId).execute();
+            break;
+
+          default:
+            httpResponse = api.getMovieService().getAnimatedImages(tmdbId).execute();
+            break;
+        }
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
@@ -170,7 +183,20 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     if ((httpResponse == null || !httpResponse.isSuccessful()) && StringUtils.isNotBlank(imdbId)) {
       try {
         LOGGER.debug("getArtwork with IMDB id: {}", imdbId);
-        httpResponse = api.getMovieService().getAnimatedImages(imdbId).execute();
+        switch (artworkType) {
+          case LOGO:
+          case CLEARLOGO:
+            httpResponse = api.getMovieService().getLogo(imdbId).execute();
+            break;
+
+          case CHARACTERART:
+            httpResponse = api.getMovieService().getCharacterArt(imdbId).execute();
+            break;
+
+          default:
+            httpResponse = api.getMovieService().getAnimatedImages(imdbId).execute();
+            break;
+        }
       }
       catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
