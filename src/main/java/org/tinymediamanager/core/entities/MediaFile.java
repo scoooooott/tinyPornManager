@@ -91,7 +91,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
   private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
-  private static final Pattern                       CHARACTERART_PATTERN     = Pattern.compile("(?i)(.*-characterart|characterart)\\..{2,4}");
+  private static final Pattern                       CHARACTERART_PATTERN     = Pattern
+      .compile("(?i)(.*-characterart|characterart)[0-9]{0,2}\\..{2,4}");
   // be careful: disc.avi would be valid!
   private static final Pattern                       DISCART_PATTERN          = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
@@ -465,6 +466,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // characterart.*
     matcher = CHARACTERART_PATTERN.matcher(name);
     if (matcher.matches()) {
+      return MediaFileType.CHARACTERART;
+    }
+    if (getPath().endsWith("characterart")) {
+      // own characterart folder (as seen in some skins/plugins)
       return MediaFileType.CHARACTERART;
     }
 
