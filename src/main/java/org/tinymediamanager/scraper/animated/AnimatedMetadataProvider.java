@@ -283,7 +283,9 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
       MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type);
       String url = baseUrl + "/" + image.getName();
       ma.setDefaultUrl(url);
-      ma.setAnimated(true);
+      if (type == MediaArtworkType.POSTER || type == MediaArtworkType.BACKGROUND) {
+        ma.setAnimated(true);
+      }
       ma.addImageSize(image.getWidth(), image.getHeight(), url);
       artworks.add(ma);
     }
