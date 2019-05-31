@@ -1,26 +1,4 @@
-Version 3.0 - Pre Release
-=======================
-
-changes since RC4: http://bit.ly/2VW2tww
-
-Version 3.0 - RC4
-=======================
-
-changes since RC3: http://bit.ly/2UTR7gN
-
-Version 3.0 - RC3
-=======================
-
-changes since RC2: https://goo.gl/RKqRGL
-
-
-Version 3.0 - RC2
-=======================
-
-changes since RC1: https://goo.gl/i66R6E
-
-
-Version 3.0 - RC1
+Version 3.0
 =======================
 
 + completely rewritten UI (thx to @joostzilla)
@@ -34,7 +12,7 @@ Version 3.0 - RC1
 + completely rewritten NFO parsing and writing (much more flexible now)
 + easier translation via weblate.org now (https://hosted.weblate.org/projects/tinymediamanager/)
 + increased required Java version to Java 8+
-+ ability to mix in missing episodes
-+ presets in settings for common media centers
++ ability to mix in/search for missing episodes
++ presets in settings for common media centers (Kodi, old XBMC, Plex, MediaPortal)
 + added a feature to find "unwanted" files for cleanup (e.g. .txt, .url, ...)
 + many enhancements under the hood
