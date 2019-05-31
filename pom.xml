@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-universal-movie</artifactId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
 
     <name>Universal movie scraper</name>
     <description>A universal movie scraper for movies</description>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git
         </developerConnection>
-        <tag>scraper-universal-movie-3.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
