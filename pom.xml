@@ -396,17 +396,17 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>dist/tmm_${project.version}_${buildNumber}_win.zip</file>
+                                            <file>dist/tmm_${project.version}_win.zip</file>
                                             <type>zip</type>
                                             <classifier>win</classifier>
                                         </artifact>
                                         <artifact>
-                                            <file>dist/tmm_${project.version}_${buildNumber}_mac.zip</file>
+                                            <file>dist/tmm_${project.version}_mac.zip</file>
                                             <type>zip</type>
                                             <classifier>mac</classifier>
                                         </artifact>
                                         <artifact>
-                                            <file>dist/tmm_${project.version}_${buildNumber}_linux.tar.gz</file>
+                                            <file>dist/tmm_${project.version}}_linux.tar.gz</file>
                                             <type>tar.gz</type>
                                             <classifier>linux</classifier>
                                         </artifact>
