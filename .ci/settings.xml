@@ -7,7 +7,7 @@
             <password>${env.MAVEN_REPO_PASS}</password>
         </server>
         <server>
-            <id>gpg.passphrase.tmm</id>
+            <id>gpg.passphrase</id>
             <passphrase>${env.GPG_PASSPHRASE}</passphrase>
         </server>
     </servers>
