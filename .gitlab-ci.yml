@@ -45,7 +45,7 @@ test:jdk10:
     - pushes
   script:
     # install libmediainfo for unit tests
-    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - apt-get update && apt-get install -y --no-install-recommends libmms0 libglib2.0-0
     - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
@@ -61,7 +61,7 @@ test:jdk11:
     - pushes
   script:
     # install libmediainfo for unit tests
-    - apt-get update && apt-get install -y --no-install-recommends libmms0
+    - apt-get update && apt-get install -y --no-install-recommends libmms0 libglib2.0-0
     - wget https://mediaarea.net/download/binary/libzen0/0.4.37/libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - dpkg -i libzen0v5_0.4.37-1_amd64.Debian_9.0.deb
     - wget https://mediaarea.net/download/binary/libmediainfo0/18.12/libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
@@ -98,12 +98,6 @@ deploy:nightly:
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-nightly.txt -Dthread_pool_size=1 package
 
-    #    # deploy also to old HP until we've fully migrated to the new one
-    #    # push the build to the webserver
-    #    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_NIGHTLY},${FTP_PASSWORD_NIGHTLY} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
-    #    # and publish the files on the webserver
-    #    - curl http://nightly.tinymediamanager.org/bin/publish_build_v3.php
-
     # trigger the deployment on nightly.tinymediamanager.org (new HP)
     - curl -X POST -F "token=${NIGHTLY_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/7895208/trigger/pipeline
 
@@ -128,13 +122,7 @@ deploy:prerel:
     # package
     - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown-prerelease.txt -Dthread_pool_size=1 package
 
-    #    # deploy also to old HP until we've fully migrated to the new one
-    #    # push the build to the webserver
-    #    - lftp -c "set ftp:ssl-allow no; open -u ${FTP_USER_PREREL},${FTP_PASSWORD_PREREL} ${FTP_HOST}; mirror -Rev build/ ./build; mirror -Rev dist/ ./dist;"
-    #    # and publish the files on the webserver
-    #    - curl http://prerelease.tinymediamanager.org/bin/publish_build_v3.php
-
-    # trigger the deployment on nightly.tinymediamanager.org (new HP)
+    # trigger the deployment on prerelease.tinymediamanager.org (new HP)
     - curl -X POST -F "token=${PREREL_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/10869644/trigger/pipeline
 
   artifacts:
@@ -142,10 +130,66 @@ deploy:prerel:
       - build/
       - dist/
 
-deploy:release:
+deploy_release:
   stage: deploy
-  only:
-    - master@tinyMediaManager/tinyMediaManager
+  image: maven:3-jdk-8      # use stretch
+  environment:
+    name: release
+    url: https://release.tinymediamanager.org
   when: manual
+  only:
+    - master
   script:
-    - echo 'ToDo'
+    ##
+    ## Install ssh-agent if not already installed, it is required by Docker.
+    ## (change apt-get to yum if you use an RPM-based image)
+    ##
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+    ##
+    ## Run ssh-agent (inside the build environment)
+    ##
+    - eval $(ssh-agent -s)
+
+    ##
+    ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    ## We're using tr to fix line endings which makes ed25519 keys work
+    ## without extra base64 encoding.
+    ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    ##
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
+    ##
+    ## Create the SSH directory and give it the right permissions
+    ##
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    ##
+    ## set gpg key
+    ##
+    - echo "${GPG_PRIVATE_KEY}" | gpg --batch --import
+    - gpg --list-keys
+
+    ##
+    ## configure git for version push
+    ##
+    - git config --global user.name ${SSH_USER_NAME}
+    - git config --global user.email ${SSH_USER_EMAIL}
+    - git checkout -f ${CI_COMMIT_REF_NAME}
+    - git remote set-url origin git@gitlab.com:tinyMediaManager/${CI_PROJECT_NAME}.git
+
+    ##
+    ## perform the release
+    ##
+    - mvn $MAVEN_CLI_OPTS release:prepare release:perform -Dresume=false -DautoVersionSubmodules=true -DdryRun=false -Dmaven.test.skip=true -DskipITs -DscmCommentPrefix="[ci skip]"
+
+    # trigger the deployment on release.tinymediamanager.org (new HP)
+    - curl -X POST -F "token=${RELEASE_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/10869704/trigger/pipeline
+
+  artifacts:
+    paths:
+      - build/
+      - dist/
