@@ -130,7 +130,7 @@ deploy:prerel:
       - build/
       - dist/
 
-deploy_release:
+deploy:release:
   stage: deploy
   image: maven:3-jdk-8      # use stretch
   environment:
@@ -140,6 +140,9 @@ deploy_release:
   only:
     - master
   script:
+    # update package sources and install ant + 32 bit libs
+    - dpkg --add-architecture i386 && apt-get update && apt-get install -y --no-install-recommends ant libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 lftp curl
+
     ##
     ## Install ssh-agent if not already installed, it is required by Docker.
     ## (change apt-get to yum if you use an RPM-based image)
@@ -184,7 +187,7 @@ deploy_release:
     ##
     ## perform the release
     ##
-    - mvn $MAVEN_CLI_OPTS release:prepare release:perform -Dresume=false -DautoVersionSubmodules=true -DdryRun=false -Dmaven.test.skip=true -DskipITs -DscmCommentPrefix="[ci skip]"
+    - mvn $MAVEN_CLI_OPTS -P gitlab-ci -DbuildNumber=${CI_COMMIT_SHA:0:8} -Dgetdown=getdown.txt -Dthread_pool_size=1 release:prepare release:perform -Dresume=false -DautoVersionSubmodules=true -DdryRun=false -Dmaven.test.skip=true -DskipITs -DscmCommentPrefix="[ci skip]"
 
     # trigger the deployment on release.tinymediamanager.org (new HP)
     - curl -X POST -F "token=${RELEASE_PIPELINE_TOKEN}" -F "ref=master" -F "variables[JOB_ID]=${CI_JOB_ID}" https://gitlab.com/api/v4/projects/10869704/trigger/pipeline
