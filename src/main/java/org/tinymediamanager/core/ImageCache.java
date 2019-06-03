@@ -395,6 +395,9 @@ public class ImageCache {
     catch (EmptyFileException e) {
       LOGGER.warn("failed to cache file (file is empty): {}", path);
     }
+    catch (FileNotFoundException ignored) {
+      // no need to log anything here
+    }
     catch (Exception e) {
       LOGGER.warn("problem caching file: {}", e.getMessage());
     }
