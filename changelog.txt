@@ -1,3 +1,8 @@
+Upcomning 
+=======================
+x fix Fanart.tv reading personal clientKey
+
+
 Version 3.0
 =======================
 
