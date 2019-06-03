@@ -377,7 +377,7 @@ public class TvShowArtworkHelper {
         continue;
       }
 
-      Path destFile = Paths.get(show.getPathNIO() + File.separator + filename);
+      Path destFile = show.getPathNIO().resolve(filename);
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -457,7 +457,7 @@ public class TvShowArtworkHelper {
         continue;
       }
 
-      Path destFile = Paths.get(show.getPathNIO() + File.separator + filename);
+      Path destFile = show.getPathNIO().resolve(filename);
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
       TmmTaskManager.getInstance().addImageDownloadTask(task);

@@ -2,6 +2,7 @@ Upcomning
 =======================
 x fix Fanart.tv reading personal clientKey
 x fix Fanart.tv using TMDB id fallback
+x fix TvShow exporter naming pattern
 
 
 Version 3.0
