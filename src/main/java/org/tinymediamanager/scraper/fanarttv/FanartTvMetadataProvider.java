@@ -175,7 +175,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       }
     }
 
-    if (images == null && tmdbId != 0) {
+    if ((images == null || images.body() == null) && tmdbId != 0) {
       try {
         LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
         images = api.getMovieService().getMovieImages(Integer.toString(tmdbId)).execute();
