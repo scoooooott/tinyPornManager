@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core.entities;
 
-import java.util.Locale;
-
 import org.tinymediamanager.core.AbstractModelObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,14 +25,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MediaFileAudioStream extends AbstractModelObject {
-  /**
-   * "channels" String was a MediaInfo 1:1 text output<br>
-   * since output got changed quite hefty over different version<br>
-   * we now try to parse while getting MI, and not on every access.
-   */
-  @Deprecated
-  @JsonProperty
-  private String  channels      = "";
   @JsonProperty
   private int     audioChannels = 0;
   @JsonProperty
@@ -69,49 +59,6 @@ public class MediaFileAudioStream extends AbstractModelObject {
     this.defaultStream = defaultStream;
   }
 
-  @Deprecated
-  public String getChannels() {
-    return channels;
-  }
-
-  /**
-   * workaround for not changing the var to int.<br>
-   * channels usually filled like "5.1ch" or "8 / 6". Take the higher
-   * 
-   * @return channels as int
-   */
-  @Deprecated
-  public int getChannelsAsInt() {
-    int highest = 0;
-    if (!channels.isEmpty()) {
-      try {
-        String[] parts = channels.split("/");
-        for (String p : parts) {
-          if (p.toLowerCase(Locale.ROOT).contains("object")) {
-            // "11 objects / 6 channels" - ignore objects
-            continue;
-          }
-          p = p.replaceAll("[a-zA-Z]", ""); // remove now all characters
-
-          int ch = 0;
-          String[] c = p.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
-          for (String s : c) {
-            if (s.matches("[0-9]+")) {
-              ch += Integer.parseInt(s);
-            }
-          }
-          if (ch > highest) {
-            highest = ch;
-          }
-        }
-      }
-      catch (NumberFormatException e) {
-        highest = 0;
-      }
-    }
-    return highest;
-  }
-
   public int getBitrate() {
     return bitrate;
   }
@@ -126,11 +73,6 @@ public class MediaFileAudioStream extends AbstractModelObject {
 
   public void setCodec(String codec) {
     this.codec = codec;
-  }
-
-  @Deprecated
-  public void setChannels(String channels) {
-    this.channels = channels;
   }
 
   public void setBitrate(int bitrate) {
