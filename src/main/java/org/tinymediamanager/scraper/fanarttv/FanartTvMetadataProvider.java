@@ -99,7 +99,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     // check if we should set a client key
     String clientKey = providerInfo.getConfig().getValue("clientKey");
-    if (clientKey.equals(api.getClientKey())) {
+    if (!clientKey.equals(api.getClientKey())) {
       api.setClientKey(clientKey);
     }
   }
