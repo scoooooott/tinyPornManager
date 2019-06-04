@@ -3,6 +3,7 @@ Upcomning
 x fix Fanart.tv reading personal clientKey
 x fix Fanart.tv using TMDB id fallback
 x fix TvShow exporter naming pattern
+x fix TvShow renamer (Synology TvShow metadata overwriting videos)
 
 
 Version 3.0
