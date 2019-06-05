@@ -1099,29 +1099,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
         if (isDisc()) {
           // if filename is activated, we generate them accordingly MF(1)
           // but if disc, fixate this
-          if (Files.exists(getPathNIO().resolve("VIDEO_TS.ifo")) || Files.exists(getPathNIO().resolve("VIDEO_TS"))) {
-            filename = "VIDEO_TS.nfo";
-          }
-          else if (Files.exists(getPathNIO().resolve("HVDVD_TS.ifo")) || Files.exists(getPathNIO().resolve("HVDVD_TS"))) {
-            filename = "HVDVD_TS.nfo";
-          }
-          else if (Files.exists(getPathNIO().resolve("index.bdmv"))) {
-            filename = "index.nfo";
-          }
-          else if (Files.exists(getPathNIO().resolve("BDMV"))) {
-            filename = "BDMV.nfo";
-          }
-        }
-        else {
-          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-          filename += movieFilename + ".nfo";
-        }
-        break;
-      case MOVIE_NFO:
-        filename += "movie.nfo";
-        break;
-      case DISC_NFO:
-        if (isDisc()) {
           Path dir = getPathNIO().resolve("VIDEO_TS");
           if (Files.isDirectory(dir)) {
             filename = dir.resolve("VIDEO_TS.nfo").toString();
@@ -1135,7 +1112,34 @@ public class Movie extends MediaEntity implements IMediaInformation {
             filename = dir.resolve("index.nfo").toString();
           }
         }
+        else {
+          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
+          filename += movieFilename + ".nfo";
+        }
         break;
+
+      case MOVIE_NFO:
+        if (isDisc()) {
+          // if movie.nfo is activated, we generate them
+          // but if disc, fixate this
+          Path dir = getPathNIO().resolve("VIDEO_TS");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("VIDEO_TS.nfo").toString();
+          }
+          dir = getPathNIO().resolve("HVDVD_TS");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("HVDVD_TS.nfo").toString();
+          }
+          dir = getPathNIO().resolve("BDMV");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("index.nfo").toString();
+          }
+        }
+        else {
+          filename += "movie.nfo";
+        }
+        break;
+
       default:
         filename = "";
         break;

@@ -81,7 +81,6 @@ class MovieScraperPanel extends JPanel {
   private JCheckBox                   chckbxScraperFallback;
   private JCheckBox                   cbMovieNfoFilename1;
   private JCheckBox                   cbMovieNfoFilename2;
-  private JCheckBox                   cbMovieNfoFilename3;
   private JPanel                      panelScraperOptions;
 
   public MovieScraperPanel() {
@@ -112,13 +111,9 @@ class MovieScraperPanel extends JPanel {
     if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
       cbMovieNfoFilename2.setSelected(true);
     }
-    if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
-      cbMovieNfoFilename3.setSelected(true);
-    }
 
     // item listener
     cbMovieNfoFilename1.addItemListener(e -> checkChanges());
-    cbMovieNfoFilename3.addItemListener(e -> checkChanges());
     cbMovieNfoFilename2.addItemListener(e -> checkChanges());
 
     // adjust table columns
@@ -227,7 +222,7 @@ class MovieScraperPanel extends JPanel {
     {
       JPanel panel = new JPanel();
       panelMovieScrapers.add(panel, "cell 0 6 2 1,growx");
-      panel.setLayout(new MigLayout("", "[][][][]", "[][][]"));
+      panel.setLayout(new MigLayout("", "[][][][]", "[][]"));
 
       JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming"));
       panel.add(lblNfoFileNaming, "cell 0 0");
@@ -237,9 +232,6 @@ class MovieScraperPanel extends JPanel {
 
       cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
       panel.add(cbMovieNfoFilename2, "cell 1 1");
-
-      cbMovieNfoFilename3 = new JCheckBox("<html>VIDEO_TS / VIDEO_TS.nfo<br />BDMV / index.nfo</html>");
-      panel.add(cbMovieNfoFilename3, "cell 1 2");
     }
     {
       cbNfoFormat = new JComboBox(MovieConnectors.values());
@@ -261,9 +253,6 @@ class MovieScraperPanel extends JPanel {
     }
     if (cbMovieNfoFilename2.isSelected()) {
       settings.addNfoFilename(MovieNfoNaming.MOVIE_NFO);
-    }
-    if (cbMovieNfoFilename3.isSelected()) {
-      settings.addNfoFilename(MovieNfoNaming.DISC_NFO);
     }
   }
 

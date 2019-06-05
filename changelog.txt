@@ -7,6 +7,7 @@ x fixed TvShow renamer (Synology TvShow metadata overwriting videos) #527
 x fixed scraping of episode cast with IMDB
 x fixed displaying of episode director/writers in the episode editor
 x fixed downloading of season artwork #522
+x removed VIDEO_TS/BDMV NFO styles (integrated these into the other two styles)
 
 Version 3.0
 =======================
