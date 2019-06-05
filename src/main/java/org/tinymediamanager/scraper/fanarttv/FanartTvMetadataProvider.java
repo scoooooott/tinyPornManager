@@ -63,7 +63,6 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     providerInfo.setVersion(FanartTvMetadataProvider.class);
 
     // configure/load settings
-    providerInfo.getConfig().addText("apiKey", "", true);
     providerInfo.getConfig().addText("clientKey", "", true);
     providerInfo.getConfig().load();
 
@@ -78,23 +77,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     if (api == null) {
       try {
         api = new FanartTv();
+        api.setApiKey(TMM_API_KEY);
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
         throw new ScrapeException(e);
       }
-    }
-
-    String userApiKey = providerInfo.getConfig().getValue("apiKey");
-
-    // check if the API should change from current key to user key
-    if (StringUtils.isNotBlank(userApiKey) && !userApiKey.equals(api.getApiKey())) {
-      api.setApiKey(userApiKey);
-    }
-
-    // check if the API should change from current key to tmm key
-    if (StringUtils.isBlank(userApiKey) && !TMM_API_KEY.equals(api.getApiKey())) {
-      api.setApiKey(TMM_API_KEY);
     }
 
     // check if we should set a client key
