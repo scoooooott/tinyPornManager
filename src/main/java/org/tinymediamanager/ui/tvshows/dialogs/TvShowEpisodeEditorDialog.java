@@ -221,6 +221,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       for (Person origCast : episodeToEdit.getGuests()) {
         guests.add(new Person(origCast));
       }
+      for (Person director : episodeToEdit.getDirectors()) {
+        directors.add(new Person(director));
+      }
+      for (Person writer : episodeToEdit.getWriters()) {
+        writers.add(new Person(writer));
+      }
 
       tags.addAll(episodeToEdit.getTags());
     }

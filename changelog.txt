@@ -1,10 +1,11 @@
 Upcomning 
 =======================
-x fix Fanart.tv reading personal clientKey
-x fix Fanart.tv using TMDB id fallback
-x fix TvShow exporter naming pattern
-x fix TvShow renamer (Synology TvShow metadata overwriting videos)
-
+x fixed Fanart.tv reading personal clientKey
+x fixed Fanart.tv using TMDB id fallback
+x fixed TvShow exporter naming pattern
+x fixed TvShow renamer (Synology TvShow metadata overwriting videos)
+x fixed scraping of episode cast with IMDB
+x fixed displaying of episode director/writers in the episode editor
 
 Version 3.0
 =======================
