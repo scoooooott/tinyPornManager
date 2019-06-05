@@ -33,6 +33,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -87,7 +88,7 @@ public class UpgradeTasks {
     // GIT BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
-    // upgrade to v3
+    // upgrade to v3.0
     if (StrgUtils.compareVersion(v, "3.0.0") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 3");
       // clean old style backup files
@@ -116,6 +117,18 @@ public class UpgradeTasks {
       if (TvShowSettings.getInstance().getRenamerColonReplacement().equals("")) {
         TvShowSettings.getInstance().setRenamerColonReplacement(" ");
         TvShowSettings.getInstance().saveSettings();
+      }
+    }
+
+    // upgrade to v3.0.1
+    if (StrgUtils.compareVersion(v, "3.0.1") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.1");
+      // remove the tvShowSeason id from TV shows
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        if (tvShow.getIds().containsKey("tvShowSeason")) {
+          tvShow.removeId("tvShowSeason");
+          tvShow.saveToDb();
+        }
       }
     }
   }
