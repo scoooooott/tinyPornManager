@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.imdb;
 
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
@@ -272,13 +273,13 @@ public class ImdbTvShowParser extends ImdbParser {
     md.setRatings(wantedEpisode.getRatings());
     md.setReleaseDate(wantedEpisode.getReleaseDate());
 
-    // and finally the cast which needed to be fetched from the fullcredits page
+    // and finally the cast which needed to be fetched from the reference page
     if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
 
       Url url = null;
 
       try {
-        url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/fullcredits");
+        url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/reference");
         url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
       }
       catch (Exception e) {
@@ -289,53 +290,34 @@ public class ImdbTvShowParser extends ImdbParser {
         try (InputStream is = url.getInputStream()) {
           Document doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
 
-          // director & writer
-          Element fullcredits = doc.getElementById("fullcredits_content");
-          if (fullcredits != null) {
-            Elements tables = fullcredits.getElementsByTag("table");
+          // director
+          Element directorsElement = doc.getElementById("directors");
+          while (directorsElement != null && directorsElement.tag().getName() != "header") {
+            directorsElement = directorsElement.parent();
+          }
+          if (directorsElement != null) {
+            directorsElement = directorsElement.nextElementSibling();
+          }
+          if (directorsElement != null) {
+            for (Element directorElement : directorsElement.getElementsByClass("name")) {
+              String director = directorElement.text().trim();
 
-            // first table are directors
-            if (tables.get(0) != null) {
-              for (Element director : tables.get(0).getElementsByClass("name")) {
-                MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-                cm.setName(director.text());
-                // profile path
-                Element anchor = director.getElementsByAttributeValueStarting("href", "/name/").first();
-                if (anchor != null) {
-                  Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
-                  if (matcher.find()) {
-                    if (matcher.group(0) != null) {
-                      cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
-                    }
-                    if (matcher.group(1) != null) {
-                      cm.setId(providerInfo.getId(), matcher.group(1));
-                    }
+              MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
+              cm.setName(director);
+              // profile path
+              Element anchor = directorElement.getElementsByAttributeValueStarting("href", "/name/").first();
+              if (anchor != null) {
+                Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+                if (matcher.find()) {
+                  if (matcher.group(0) != null) {
+                    cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+                  }
+                  if (matcher.group(1) != null) {
+                    cm.setId(providerInfo.getId(), matcher.group(1));
                   }
                 }
-                md.addCastMember(cm);
               }
-            }
-
-            // second table are writers
-            if (tables.get(1) != null) {
-              for (Element writer : tables.get(1).getElementsByClass("name")) {
-                MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
-                cm.setName(writer.text());
-                // profile path
-                Element anchor = writer.getElementsByAttributeValueStarting("href", "/name/").first();
-                if (anchor != null) {
-                  Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
-                  if (matcher.find()) {
-                    if (matcher.group(0) != null) {
-                      cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
-                    }
-                    if (matcher.group(1) != null) {
-                      cm.setId(providerInfo.getId(), matcher.group(1));
-                    }
-                  }
-                }
-                md.addCastMember(cm);
-              }
+              md.addCastMember(cm);
             }
           }
 
@@ -349,6 +331,38 @@ public class ImdbTvShowParser extends ImdbParser {
                 cm.setType(MediaCastMember.CastType.ACTOR);
                 md.addCastMember(cm);
               }
+            }
+          }
+
+          // writers
+          Element writersElement = doc.getElementById("writers");
+          while (writersElement != null && writersElement.tag().getName() != "header") {
+            writersElement = writersElement.parent();
+          }
+          if (writersElement != null) {
+            writersElement = writersElement.nextElementSibling();
+          }
+          if (writersElement != null) {
+            Elements writersElements = writersElement.getElementsByAttributeValueStarting("href", "/name/");
+
+            for (Element writerElement : writersElements) {
+              String writer = cleanString(writerElement.ownText());
+              MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
+              cm.setName(writer);
+              // profile path
+              Element anchor = writerElement.getElementsByAttributeValueStarting("href", "/name/").first();
+              if (anchor != null) {
+                Matcher matcher = PERSON_ID_PATTERN.matcher(anchor.attr("href"));
+                if (matcher.find()) {
+                  if (matcher.group(0) != null) {
+                    cm.setProfileUrl("http://www.imdb.com" + matcher.group(0));
+                  }
+                  if (matcher.group(1) != null) {
+                    cm.setId(providerInfo.getId(), matcher.group(1));
+                  }
+                }
+              }
+              md.addCastMember(cm);
             }
           }
         }
