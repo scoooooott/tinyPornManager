@@ -302,7 +302,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     for (Map.Entry<String, Object> entry : episode.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.TVDB.equals(entry.getKey())) {
+      if (MediaMetadata.TVDB.equals(entry.getKey()) || episode.getIds().size() == 1) {
         uniqueid.setAttribute("default", "true");
       }
       else {

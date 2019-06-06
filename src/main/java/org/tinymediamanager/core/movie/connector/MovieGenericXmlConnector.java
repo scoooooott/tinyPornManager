@@ -384,7 +384,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.IMDB.equals(entry.getKey())) {
+      if (MediaMetadata.IMDB.equals(entry.getKey()) || movie.getIds().size() == 1) {
         uniqueid.setAttribute("default", "true");
       }
       else {

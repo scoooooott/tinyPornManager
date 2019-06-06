@@ -59,7 +59,6 @@ class MovieScraperNfoSettingsPanel extends JPanel {
   private JComboBox<MovieConnectors>           cbNfoFormat;
   private JCheckBox                            cbMovieNfoFilename1;
   private JCheckBox                            cbMovieNfoFilename2;
-  private JCheckBox                            cbMovieNfoFilename3;
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
   private JComboBox<MediaLanguages>            cbNfoLanguage;
@@ -116,8 +115,6 @@ class MovieScraperNfoSettingsPanel extends JPanel {
   private void buildCheckBoxes() {
     cbMovieNfoFilename1.removeItemListener(checkBoxListener);
     cbMovieNfoFilename2.removeItemListener(checkBoxListener);
-    cbMovieNfoFilename3.removeItemListener(checkBoxListener);
-    clearSelection(cbMovieNfoFilename1, cbMovieNfoFilename2, cbMovieNfoFilename3);
 
     // NFO filenames
     List<MovieNfoNaming> movieNfoFilenames = settings.getNfoFilenames();
@@ -127,13 +124,9 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
       cbMovieNfoFilename2.setSelected(true);
     }
-    if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
-      cbMovieNfoFilename3.setSelected(true);
-    }
 
     cbMovieNfoFilename1.addItemListener(checkBoxListener);
     cbMovieNfoFilename2.addItemListener(checkBoxListener);
-    cbMovieNfoFilename3.addItemListener(checkBoxListener);
   }
 
   private void clearSelection(JCheckBox... checkBoxes) {
@@ -177,7 +170,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
         {
           JPanel panelNfoFormat = new JPanel();
           panelNfo.add(panelNfoFormat, "cell 1 1 2 1");
-          panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][][]"));
+          panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
 
           JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
           panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
@@ -187,9 +180,6 @@ class MovieScraperNfoSettingsPanel extends JPanel {
 
           cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
           panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
-
-          cbMovieNfoFilename3 = new JCheckBox("<html>VIDEO_TS / VIDEO_TS.nfo<br />BDMV / index.nfo</html>"); //$NON-NLS-1$
-          panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
         }
 
         chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
@@ -224,9 +214,6 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     }
     if (cbMovieNfoFilename2.isSelected()) {
       settings.addNfoFilename(MovieNfoNaming.MOVIE_NFO);
-    }
-    if (cbMovieNfoFilename3.isSelected()) {
-      settings.addNfoFilename(MovieNfoNaming.DISC_NFO);
     }
 
     CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();

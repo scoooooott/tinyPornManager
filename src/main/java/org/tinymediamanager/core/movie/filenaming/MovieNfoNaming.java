@@ -23,11 +23,9 @@ package org.tinymediamanager.core.movie.filenaming;
  */
 public enum MovieNfoNaming {
 
-  /** [filename].nfo (and/or VIDEO:TS.nfo in root) */
-  FILENAME_NFO, /** movie.nfo (in root) */
-  MOVIE_NFO, /**
-              * DVD/Bluray style<br>
-              * <b>this is the nfo INSIDE the disc FOLDER</b>
-              */
-  DISC_NFO
+  /** [filename].nfo (in root) */
+  FILENAME_NFO,
+
+  /** movie.nfo (in root) */
+  MOVIE_NFO,
 }

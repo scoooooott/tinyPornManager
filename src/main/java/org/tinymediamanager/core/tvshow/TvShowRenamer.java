@@ -909,8 +909,9 @@ public class TvShowRenamer {
       case VSMETA:
         MediaFile vsmeta = new MediaFile(mf);
         // HACK: get video extension from "old" name, eg video.avi.vsmeta
-        String ext = FilenameUtils.getExtension(FilenameUtils.getBaseName(mf.getFilename()));
-        vsmeta.setFile(seasonFolder.resolve(newFilename + "." + ext));
+        String videoExt = FilenameUtils.getExtension(FilenameUtils.getBaseName(mf.getFilename()));
+        newFilename += "." + videoExt + ".vsmeta";
+        vsmeta.setFile(seasonFolder.resolve(newFilename));
         newFiles.add(vsmeta);
         break;
 

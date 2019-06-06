@@ -345,7 +345,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblPoster.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.POSTER,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.POSTER,
                 tvShowList.getAvailableArtworkScrapers(), lblPoster, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -462,7 +462,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblFanart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.FANART,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.FANART,
                 tvShowList.getAvailableArtworkScrapers(), lblFanart, null, extrafanarts, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -629,7 +629,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblClearlogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.CLEARLOGO,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.CLEARLOGO,
                 tvShowList.getAvailableArtworkScrapers(), lblClearlogo, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -649,7 +649,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblBanner.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.BANNER,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.BANNER,
                 tvShowList.getAvailableArtworkScrapers(), lblBanner, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -669,7 +669,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblClearart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.CLEARART,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.CLEARART,
                 tvShowList.getAvailableArtworkScrapers(), lblClearart, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -689,7 +689,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblLogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.LOGO,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.LOGO,
                 tvShowList.getAvailableArtworkScrapers(), lblLogo, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -708,7 +708,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblKeyart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.KEYART,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.KEYART,
                 tvShowList.getAvailableArtworkScrapers(), lblKeyart, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -727,7 +727,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblThumb.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.THUMB,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.THUMB,
                 tvShowList.getAvailableArtworkScrapers(), lblThumb, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
@@ -746,7 +746,7 @@ public class TvShowEditorDialog extends TmmDialog {
         lblCharacterart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, tvShowToEdit.getIds(), ImageType.CHARACTERART,
+            ImageChooserDialog dialog = new ImageChooserDialog(TvShowEditorDialog.this, new HashMap<>(tvShowToEdit.getIds()), ImageType.CHARACTERART,
                 tvShowList.getAvailableArtworkScrapers(), lblCharacterart, null, null, MediaType.TV_SHOW);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);

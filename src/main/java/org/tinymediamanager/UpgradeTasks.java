@@ -29,16 +29,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -93,7 +88,7 @@ public class UpgradeTasks {
     // GIT BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
-    // upgrade to v3
+    // upgrade to v3.0
     if (StrgUtils.compareVersion(v, "3.0.0") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 3");
       // clean old style backup files
@@ -114,58 +109,6 @@ public class UpgradeTasks {
         deleteFileSafely(path);
       }
 
-      // MediaFileAudioStream channels cleanup: String->int
-      for (Movie m : MovieList.getInstance().getMovies()) {
-        boolean updated = false;
-        for (MediaFile mf : m.getMediaFiles()) {
-          for (MediaFileAudioStream as : mf.getAudioStreams()) {
-            if (!as.getChannels().isEmpty()) {
-              int cnt = as.getChannelsAsInt();
-              if (cnt > 0) {
-                // if not empty, but 0, we could not parse it - keep it for now.
-                as.setAudioChannels(cnt);
-                as.setChannels("");
-                updated = true;
-              }
-            }
-          }
-          // migrate ENUMs
-          if (mf.getType() == MediaFileType.VIDEO_EXTRA) {
-            mf.setType(MediaFileType.EXTRA);
-            updated = true;
-          }
-        }
-        if (updated) {
-          m.saveToDb();
-        }
-      }
-
-      for (TvShow s : TvShowList.getInstance().getTvShows()) {
-        for (TvShowEpisode ep : s.getEpisodes()) {
-          boolean updated = false;
-          for (MediaFile mf : ep.getMediaFiles()) {
-            for (MediaFileAudioStream as : mf.getAudioStreams()) {
-              if (!as.getChannels().isEmpty()) {
-                int cnt = as.getChannelsAsInt();
-                if (cnt > 0) {
-                  as.setAudioChannels(cnt);
-                  as.setChannels("");
-                  updated = true;
-                }
-              }
-            }
-            // migrate ENUMs
-            if (mf.getType() == MediaFileType.VIDEO_EXTRA) {
-              mf.setType(MediaFileType.EXTRA);
-              updated = true;
-            }
-          }
-          if (updated) {
-            ep.saveToDb();
-          }
-        }
-      }
-
       // has been expanded to space
       if (MovieSettings.getInstance().getRenamerColonReplacement().equals("")) {
         MovieSettings.getInstance().setRenamerColonReplacement(" ");
@@ -174,6 +117,18 @@ public class UpgradeTasks {
       if (TvShowSettings.getInstance().getRenamerColonReplacement().equals("")) {
         TvShowSettings.getInstance().setRenamerColonReplacement(" ");
         TvShowSettings.getInstance().saveSettings();
+      }
+    }
+
+    // upgrade to v3.0.1
+    if (StrgUtils.compareVersion(v, "3.0.1") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.1");
+      // remove the tvShowSeason id from TV shows
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        if (tvShow.getIds().containsKey("tvShowSeason")) {
+          tvShow.removeId("tvShowSeason");
+          tvShow.saveToDb();
+        }
       }
     }
   }

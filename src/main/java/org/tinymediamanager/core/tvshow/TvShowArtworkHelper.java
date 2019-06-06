@@ -29,7 +29,9 @@ import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkTyp
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -368,8 +372,26 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonPosterNaming seasonPosterNaming : TvShowModuleManager.SETTINGS.getSeasonPosterFilenames()) {
-      Path destFile = Paths
-          .get(show.getPathNIO() + File.separator + seasonPosterNaming.getFilename(show, season, Utils.getArtworkExtension(seasonPosterUrl)));
+      String filename = seasonPosterNaming.getFilename(show, season, Utils.getArtworkExtension(seasonPosterUrl));
+      if (StringUtils.isBlank(filename)) {
+        LOGGER.warn("empty filename for artwork: {} - {}", seasonPosterNaming.name(), show); // NOSONAR
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+        continue;
+      }
+
+      Path destFile = show.getPathNIO().resolve(filename);
+
+      // check if the parent exist and create if needed
+      if (!Files.exists(destFile.getParent())) {
+        try {
+          Files.createDirectory(destFile.getParent());
+        }
+        catch (IOException e) {
+          LOGGER.error("could not create folder: {} - {}", destFile.getParent(), e.getMessage());
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+          continue;
+        }
+      }
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonPosterUrl, SEASON_POSTER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -402,8 +424,26 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonBannerNaming seasonBannerNaming : TvShowModuleManager.SETTINGS.getSeasonBannerFilenames()) {
-      Path destFile = Paths
-          .get(show.getPathNIO() + File.separator + seasonBannerNaming.getFilename(show, season, Utils.getArtworkExtension(seasonBannerUrl)));
+      String filename = seasonBannerNaming.getFilename(show, season, Utils.getArtworkExtension(seasonBannerUrl));
+      if (StringUtils.isBlank(filename)) {
+        LOGGER.warn("empty filename for artwork: {} - {}", seasonBannerNaming.name(), show);
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+        continue;
+      }
+
+      Path destFile = Paths.get(show.getPathNIO() + File.separator + filename);
+
+      // check if the parent exist and create if needed
+      if (!Files.exists(destFile.getParent())) {
+        try {
+          Files.createDirectory(destFile.getParent());
+        }
+        catch (IOException e) {
+          LOGGER.error("could not create folder: {} - {}", destFile.getParent(), e.getMessage());
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+          continue;
+        }
+      }
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonBannerUrl, SEASON_BANNER);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -436,8 +476,26 @@ public class TvShowArtworkHelper {
     }
 
     for (TvShowSeasonThumbNaming seasonThumbNaming : TvShowModuleManager.SETTINGS.getSeasonThumbFilenames()) {
-      Path destFile = Paths
-          .get(show.getPathNIO() + File.separator + seasonThumbNaming.getFilename(show, season, Utils.getArtworkExtension(seasonThumbUrl)));
+      String filename = seasonThumbNaming.getFilename(show, season, Utils.getArtworkExtension(seasonThumbUrl));
+      if (StringUtils.isBlank(filename)) {
+        LOGGER.warn("empty filename for artwork: {} - {}", seasonThumbNaming.name(), show);
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+        continue;
+      }
+
+      Path destFile = show.getPathNIO().resolve(filename);
+
+      // check if the parent exist and create if needed
+      if (!Files.exists(destFile.getParent())) {
+        try {
+          Files.createDirectory(destFile.getParent());
+        }
+        catch (IOException e) {
+          LOGGER.error("could not create folder: {} - {}", destFile.getParent(), e.getMessage());
+          MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, show, "tvshow.seasondownload.failed"));
+          continue;
+        }
+      }
 
       SeasonArtworkImageFetcher task = new SeasonArtworkImageFetcher(show, destFile, tvShowSeason, seasonThumbUrl, SEASON_THUMB);
       TmmTaskManager.getInstance().addImageDownloadTask(task);

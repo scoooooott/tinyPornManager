@@ -483,7 +483,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.TVDB.equals(entry.getKey())) {
+      if (MediaMetadata.TVDB.equals(entry.getKey()) || tvShow.getIds().size() == 1) {
         uniqueid.setAttribute("default", "true");
       }
       else {

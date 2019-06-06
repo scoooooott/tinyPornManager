@@ -17,8 +17,6 @@
 package org.tinymediamanager.core.tvshow.filenaming;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.ITvShowSeasonFileNaming;
@@ -41,7 +39,7 @@ public enum TvShowSeasonThumbNaming implements ITvShowSeasonFileNaming {
         return "season-specials-thumb." + extension;
       }
       else if (season > -1) {
-        return String.format("season%02d-thumb." + extension, season);
+        return String.format("season%02d-thumb.%s", season, extension);
       }
       else {
         return "";
@@ -61,15 +59,12 @@ public enum TvShowSeasonThumbNaming implements ITvShowSeasonFileNaming {
       String seasonFoldername = TvShowRenamer.getSeasonFoldername(tvShow, episode);
 
       // check whether the season folder name exists or not; do not create it just for the artwork!
-      if (StringUtils.isBlank(seasonFoldername) || !Files.exists(Paths.get(tvShow.getPath(), seasonFoldername))) {
-        // does not exist - fall back to the the show base filename style
+      if (StringUtils.isBlank(seasonFoldername)) {
+        // no season folder name in the templates found - fall back to the the show base filename style
         return SEASON_THUMB.getFilename(tvShow, season, extension);
       }
 
-      String filename = "";
-      if (StringUtils.isNotBlank(seasonFoldername)) {
-        filename = seasonFoldername + File.separator;
-      }
+      String filename = seasonFoldername + File.separator;
 
       if (season == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
         filename += "season-specials-thumb";
