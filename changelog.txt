@@ -1,4 +1,4 @@
-Upcoming
+Version 3.0.1
 =======================
 x fixed Fanart.tv reading personal clientKey
 x fixed Fanart.tv using TMDB id fallback
