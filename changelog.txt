@@ -9,6 +9,7 @@ x fixed displaying of episode director/writers in the episode editor
 x fixed downloading of season artwork #522
 x removed VIDEO_TS/BDMV NFO styles (integrated these into the other two styles)
 x updated JNA and libmediainfo
+x do not print "Unknown" for empty media sources
 
 
 Version 3.0
