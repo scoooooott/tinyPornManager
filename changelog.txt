@@ -1,4 +1,4 @@
-Upcomning 
+Upcoming
 =======================
 x fixed Fanart.tv reading personal clientKey
 x fixed Fanart.tv using TMDB id fallback
@@ -8,6 +8,8 @@ x fixed scraping of episode cast with IMDB
 x fixed displaying of episode director/writers in the episode editor
 x fixed downloading of season artwork #522
 x removed VIDEO_TS/BDMV NFO styles (integrated these into the other two styles)
+x updated JNA and libmediainfo
+
 
 Version 3.0
 =======================
