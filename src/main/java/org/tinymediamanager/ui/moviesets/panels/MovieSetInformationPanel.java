@@ -25,6 +25,8 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -196,7 +198,7 @@ public class MovieSetInformationPanel extends JPanel {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }
     else {
-      if (StringUtils.isNotBlank(lblPoster.getImagePath())) {
+      if (StringUtils.isNotBlank(lblPoster.getImagePath()) && Files.exists(Paths.get(lblPoster.getImagePath()))) {
         try {
           BufferedImage img = ImageIO.read(new File(lblPoster.getImagePath()));
           lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
@@ -216,7 +218,7 @@ public class MovieSetInformationPanel extends JPanel {
       lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
     }
     else {
-      if (StringUtils.isNotBlank(lblFanart.getImagePath())) {
+      if (StringUtils.isNotBlank(lblFanart.getImagePath()) && Files.exists(Paths.get(lblFanart.getImagePath()))) {
         try {
           BufferedImage img = ImageIO.read(new File(lblFanart.getImagePath()));
           lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
