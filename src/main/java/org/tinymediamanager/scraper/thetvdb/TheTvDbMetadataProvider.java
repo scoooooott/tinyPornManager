@@ -866,7 +866,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
 
       // Thumb
-      if (StringUtils.isNotBlank(ep.filename) && options.getArtworkType() == ALL || options.getArtworkType() == MediaArtworkType.THUMB) {
+      if (StringUtils.isNotBlank(ep.filename) && (options.getArtworkType() == ALL || options.getArtworkType() == MediaArtworkType.THUMB)) {
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
         ma.setPreviewUrl(artworkUrl + ep.filename);
         ma.setDefaultUrl(artworkUrl + ep.filename);
