@@ -10,6 +10,7 @@ x fixed downloading of season artwork #522
 x removed VIDEO_TS/BDMV NFO styles (integrated these into the other two styles)
 x updated JNA and libmediainfo
 x do not print "Unknown" for empty media sources
+x fixed artwork fetching with tvdb and removed bad thumb urls from the DB (you may need to re-write your NFO files)
 
 
 Version 3.0

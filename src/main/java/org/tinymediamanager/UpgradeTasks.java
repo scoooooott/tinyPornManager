@@ -29,11 +29,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -128,6 +130,16 @@ public class UpgradeTasks {
         if (tvShow.getIds().containsKey("tvShowSeason")) {
           tvShow.removeId("tvShowSeason");
           tvShow.saveToDb();
+        }
+      }
+
+      // remove "http://thetvdb.com/banners/" artwork urls from episodes
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (episode.getArtworkUrl(MediaFileType.THUMB).equals("http://thetvdb.com/banners/")) {
+            episode.setArtworkUrl("", MediaFileType.THUMB);
+            episode.saveToDb();
+          }
         }
       }
     }
