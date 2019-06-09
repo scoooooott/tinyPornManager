@@ -34,13 +34,13 @@ interface MediaInfoLibrary extends Library {
   // libmediainfo for linux depends on libzen, so we need to load dependencies first, because we know where our native libs are (e.g. Java Web Start
   // Cache).
   // if we do not, the system will look for dependencies, but only in the library path
-  Library          LIB_ZEN  = Platform.isLinux() ? Native.loadLibrary("zen", Library.class) : null;
+  Library          LIB_ZEN  = Platform.isLinux() ? Native.load("zen", Library.class) : null;
 
-  MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
+  MediaInfoLibrary INSTANCE = Native.load("mediainfo", MediaInfoLibrary.class,
       singletonMap(OPTION_FUNCTION_MAPPER, (FunctionMapper) (lib, method) -> {
-        // MediaInfo_New(), MediaInfo_Open() ...
-        return "MediaInfo_" + method.getName();
-      }));
+                                  // MediaInfo_New(), MediaInfo_Open() ...
+                                  return "MediaInfo_" + method.getName();
+                                }));
 
   /**
    * Create a new handle.

@@ -36,6 +36,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +70,7 @@ import com.madgag.gif.fmsware.GifDecoder;
  */
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
   private static final Logger                        LOGGER                   = LoggerFactory.getLogger(MediaFile.class);
+  private static final ReadWriteLock                 readWriteLock            = new ReentrantReadWriteLock();
 
   private static final String                        PATH                     = "path";
   private static final String                        FILENAME                 = "filename";
@@ -822,11 +825,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (miSnapshot == null) {
       try {
+        readWriteLock.writeLock().lock();
         if (!mediaInfo.open(this.getFileAsPath())) {
-          LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
-
-          // clear references
-          closeMediaInfo();
+          LOGGER.error("Mediainfo could not open file: {}", getFileAsPath());
         }
         else {
           miSnapshot = mediaInfo.snapshot();
@@ -834,10 +835,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
       // sometimes also an error is thrown
       catch (Exception | Error e) {
-        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
-
+        LOGGER.error("Mediainfo could not open file: {} - {}", getFileAsPath(), e.getMessage());
+      }
+      finally {
         // clear references
         closeMediaInfo();
+
+        readWriteLock.writeLock().unlock();
       }
     }
   }
@@ -850,7 +854,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       mediaInfo.close();
       mediaInfo = null;
     }
-    miSnapshot = null;
   }
 
   /**
