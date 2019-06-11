@@ -106,6 +106,27 @@ public class Utils {
 
   private static List<Locale>  availableLocales      = new ArrayList<>();
 
+  private static String        tempFolder;
+
+  static {
+    // get the systems default temp folder
+    try {
+      String temp = System.getProperty("java.io.tmpdir");
+      Path tempFolder = Paths.get(temp);
+      if (Files.exists(tempFolder) && Files.isWritable(tempFolder)) {
+        Utils.tempFolder = temp;
+      }
+      else {
+        Utils.tempFolder = "tmp";
+      }
+    }
+    catch (Exception | Error ignored) {
+      if (tempFolder != null) {
+        tempFolder = "tmp";
+      }
+    }
+  }
+
   private Utils() {
     // hide public constructor for utility classes
   }
@@ -1663,5 +1684,14 @@ public class Utils {
       Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
       return FileVisitResult.CONTINUE;
     }
+  }
+
+  /**
+   * get the temporary folder for this tmm instance
+   * 
+   * @return a string to the temporary folder
+   */
+  public static String getTempFolder() {
+    return tempFolder;
   }
 }
