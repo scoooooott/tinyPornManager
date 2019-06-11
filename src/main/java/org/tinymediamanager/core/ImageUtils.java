@@ -323,9 +323,27 @@ public class ImageUtils {
 
       // check if the file has been downloaded
       if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
-        // cleanup the file
-        FileUtils.deleteQuietly(tempFile.toFile());
-        throw new IOException("0byte file downloaded: " + filename);
+        // not here? weird... but maybe a slow drive - just wait a bit longer and re-check
+        int counter = 0;
+        boolean found = false;
+
+        // wait up to 5x 1 sec
+        do {
+          Thread.sleep(1000);
+          counter++;
+
+          // check if the file has been found
+          if (Files.exists(tempFile) || Files.size(tempFile) != 0) {
+            found = true;
+            break;
+          }
+        } while (counter < 5);
+
+        if (!found) {
+          // cleanup the file
+          FileUtils.deleteQuietly(tempFile.toFile());
+          throw new IOException("0byte file downloaded: " + filename);
+        }
       }
 
       // delete new destination if existing
