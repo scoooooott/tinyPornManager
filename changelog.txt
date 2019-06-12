@@ -13,6 +13,7 @@ x do not print "Unknown" for empty media sources
 x fixed artwork fetching with tvdb and removed bad thumb urls from the DB (you may need to re-write your NFO files)
 x fixed occasional Java crashes on OSX
 x fixed occasional error popup on start of tinyMediaManager
+x changed temporary artwork download to the systems temp folder
 
 
 Version 3.0
