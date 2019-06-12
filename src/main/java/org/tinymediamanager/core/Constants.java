@@ -22,7 +22,6 @@ package org.tinymediamanager.core;
  */
 public final class Constants {
   public static final String BACKUP_FOLDER          = ".deletedByTMM";
-  public static final String TEMP_FOLDER            = "tmp";
 
   public static final String ACTORS                 = "actors";
   public static final String ADDED_EPISODE          = "addedEpisode";

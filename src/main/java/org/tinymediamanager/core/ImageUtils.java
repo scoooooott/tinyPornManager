@@ -281,7 +281,7 @@ public class ImageUtils {
 
       try {
         // create a temp file/folder inside the tmm folder
-        Path tempFolder = Paths.get(Constants.TEMP_FOLDER);
+        Path tempFolder = Paths.get(Utils.getTempFolder());
         if (!Files.exists(tempFolder)) {
           Files.createDirectory(tempFolder);
         }

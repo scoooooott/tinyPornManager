@@ -15,11 +15,9 @@
  */
 package org.tinymediamanager.core;
 
-import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -90,9 +88,6 @@ public class TmmModuleManager {
     }
 
     // do cleanup tasks
-
-    // delete temp folder
-    FileUtils.deleteQuietly(Paths.get(Constants.TEMP_FOLDER).toFile());
   }
 
   /**
