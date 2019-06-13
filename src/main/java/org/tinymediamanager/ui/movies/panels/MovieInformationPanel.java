@@ -19,6 +19,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -188,14 +189,16 @@ public class MovieInformationPanel extends JPanel {
     movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
 
     btnPlay.addActionListener(e -> {
-      MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
-      try {
-        TmmUIHelper.openFile(mf.getFileAsPath());
-      }
-      catch (Exception ex) {
-        LOGGER.error("open file", e);
-        MessageManager.instance
-            .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+      MediaFile mf = movieSelectionModel.getSelectedMovie().getMainVideoFile();
+      if (StringUtils.isNotBlank(mf.getFilename())) {
+        try {
+          TmmUIHelper.openFile(mf.getFileAsPath());
+        }
+        catch (Exception ex) {
+          LOGGER.error("open file", e);
+          MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+        }
       }
     });
   }
