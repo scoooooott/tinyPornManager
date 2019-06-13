@@ -1,3 +1,8 @@
+Upcoming version
+=======================
+x read/write TV show sorttitle from/to NFO #539
+
+
 Version 3.0.1
 =======================
 x fixed Fanart.tv reading personal clientKey

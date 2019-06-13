@@ -134,6 +134,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addTitle();
         addOriginalTitle();
         addShowTitle();
+        addSortTitle();
         addYear();
         addRating();
         addVotes();
@@ -219,6 +220,15 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Element title = document.createElement("showtitle");
     title.setTextContent(tvShow.getTitle());
     root.appendChild(title);
+  }
+
+  /**
+   * add the sorttitle in the form <sorttitle>xxx</sorttitle>
+   */
+  protected void addSortTitle() {
+    Element sorttitle = document.createElement("sorttitle");
+    sorttitle.setTextContent(tvShow.getSortTitle());
+    root.appendChild(sorttitle);
   }
 
   /**

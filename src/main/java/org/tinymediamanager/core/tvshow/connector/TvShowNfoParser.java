@@ -68,6 +68,7 @@ public class TvShowNfoParser {
 
   public String                     title               = "";
   public String                     originalTitle       = "";
+  public String                     sortTitle           = "";
   public String                     showTitle           = "";
   public int                        year                = -1;
   public String                     plot                = "";
@@ -124,6 +125,7 @@ public class TvShowNfoParser {
     // parse all supported fields
     parseTag(TvShowNfoParser::parseTitle);
     parseTag(TvShowNfoParser::parseOriginalTitle);
+    parseTag(TvShowNfoParser::parseSortTitle);
     parseTag(TvShowNfoParser::parseShowTitle);
     parseTag(TvShowNfoParser::parseRatingAndVotes);
     parseTag(TvShowNfoParser::parseYear);
@@ -231,7 +233,7 @@ public class TvShowNfoParser {
   }
 
   /**
-   * the title usually comes in the original title tag
+   * the original title usually comes in the originaltitle tag
    */
   private Void parseOriginalTitle() {
     supportedElements.add("originaltitle");
@@ -239,6 +241,20 @@ public class TvShowNfoParser {
     Element element = getSingleElement(root, "originaltitle");
     if (element != null) {
       originalTitle = element.ownText();
+    }
+
+    return null;
+  }
+
+  /**
+   * the sort title usually comes in the sorttitle tag
+   */
+  private Void parseSortTitle() {
+    supportedElements.add("sorttitle");
+
+    Element element = getSingleElement(root, "sorttitle");
+    if (element != null) {
+      sortTitle = element.ownText();
     }
 
     return null;
@@ -1109,6 +1125,7 @@ public class TvShowNfoParser {
     TvShow show = new TvShow();
     show.setTitle(title);
     show.setOriginalTitle(originalTitle);
+    show.setSortTitle(sortTitle);
 
     for (Map.Entry<String, TvShowNfoParser.Rating> entry : ratings.entrySet()) {
       TvShowNfoParser.Rating r = entry.getValue();
