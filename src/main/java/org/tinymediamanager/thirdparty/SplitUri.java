@@ -195,12 +195,16 @@ public class SplitUri {
 
     // 2: at least filename AND parent folder match
     Path p1 = Paths.get(file);
+    String filename1 = p1.getFileName() == null ? "nofile" : p1.getFileName().toString();
+    String parent1 = p1.getParent() == null || p1.getParent().getFileName() == null ? "noparent" : p1.getParent().getFileName().toString();
+    LOGGER.debug("P1 parent {}, file {}", parent1, filename1);
+
     Path p2 = Paths.get(other.file);
-    if (p1.getFileName().toString().equals(p2.getFileName().toString())
-        && p1.getParent().getFileName().toString().equals(p2.getParent().getFileName().toString())) {
-      // filename AND parent folder match
-      LOGGER.trace("1: {}", file);
-      LOGGER.trace("2: {}", other.file);
+    String filename2 = p2.getFileName() == null ? "nofile" : p2.getFileName().toString();
+    String parent2 = p2.getParent() == null || p2.getParent().getFileName() == null ? "noparent" : p2.getParent().getFileName().toString();
+    LOGGER.debug("P2 parent {}, file {}", parent2, filename2);
+
+    if (parent1.equals(parent2) && filename1.equals(filename2)) {
 
       // 2: - check either matching IP or hostname
       if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
@@ -213,7 +217,6 @@ public class SplitUri {
 
     // 3: did not match? return false
     return false;
-
   }
 
   /**

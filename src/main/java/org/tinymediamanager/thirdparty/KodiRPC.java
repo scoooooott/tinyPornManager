@@ -168,6 +168,7 @@ public class KodiRPC {
           tmmFiles.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
         }
       }
+      LOGGER.debug("TMM {} items", tmmFiles.size());
 
       // iterate over all Kodi resources
       for (MovieDetail res : call.getResults()) {
@@ -181,7 +182,6 @@ public class KodiRPC {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (sp.equals(tmmsp)) {
-                LOGGER.trace(sp.toString());
                 moviemappings.put(uuid, res.movieid);
                 break;
               }
@@ -195,19 +195,11 @@ public class KodiRPC {
             SplitUri tmm = entry.getKey();
             UUID uuid = entry.getValue();
             if (kodi.equals(tmm)) {
-              LOGGER.trace(kodi.toString());
               moviemappings.put(uuid, res.movieid);
               break;
             }
           }
         }
-      }
-
-      // debug output
-      for (Map.Entry<UUID, Integer> entry : moviemappings.entrySet()) {
-        UUID key = entry.getKey();
-        Integer value = entry.getValue();
-        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
       LOGGER.debug("mapped {} items", moviemappings.size());
 
@@ -247,8 +239,8 @@ public class KodiRPC {
             tmmFiles.put(new SplitUri(ep.getMainVideoFile().getFileAsPath().toString()), ep.getDbId()); // file
           }
         }
-
       }
+      LOGGER.debug("TMM {} items", tmmFiles.size());
 
       // iterate over all Kodi shows
       for (TVShowDetail show : call.getResults()) {
@@ -258,7 +250,6 @@ public class KodiRPC {
           SplitUri tmmsp = entry.getKey();
           UUID uuid = entry.getValue();
           if (sp.equals(tmmsp)) {
-            LOGGER.trace(sp.toString());
             tvshowmappings.put(uuid, show.tvshowid);
             break;
           }
@@ -276,7 +267,6 @@ public class KodiRPC {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (spEp.equals(tmmsp)) {
-                LOGGER.trace(spEp.toString());
                 tvshowmappings.put(uuid, ep.episodeid);
                 break;
               }
@@ -284,13 +274,6 @@ public class KodiRPC {
           }
         }
 
-      }
-
-      // debug output
-      for (Map.Entry<UUID, Integer> entry : tvshowmappings.entrySet()) {
-        UUID key = entry.getKey();
-        Integer value = entry.getValue();
-        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
       LOGGER.debug("mapped {} items", tvshowmappings.size());
 
