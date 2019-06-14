@@ -175,6 +175,7 @@ public class MovieSetInformationPanel extends JPanel {
         panelRight.add(scrollPaneOverview, "cell 0 3,grow");
 
         taOverview = new ReadOnlyTextArea();
+        taOverview.setBorder(null);
         scrollPaneOverview.setViewportView(taOverview);
       }
       {

@@ -231,6 +231,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         scrollPanePlot.setBorder(null);
 
         taOverview = new ReadOnlyTextArea();
+        taOverview.setBorder(null);
         scrollPanePlot.setViewportView(taOverview);
         panelRight.add(scrollPanePlot, "cell 0 11 2 1,grow");
       }

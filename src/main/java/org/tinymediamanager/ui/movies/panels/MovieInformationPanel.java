@@ -363,6 +363,7 @@ public class MovieInformationPanel extends JPanel {
         panelTopRight.add(scrollPane, "cell 0 12 2 1,grow");
 
         taPlot = new ReadOnlyTextArea();
+        taPlot.setBorder(null);
         scrollPane.setViewportView(taPlot);
       }
     }
