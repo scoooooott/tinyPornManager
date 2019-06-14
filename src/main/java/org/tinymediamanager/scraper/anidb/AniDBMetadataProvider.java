@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -637,11 +638,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
           md = getTvShowMetadata(options);
         }
         catch (Exception e) {
-          LOGGER.error("could not get artwork: " + e.getMessage());
+          LOGGER.error("could not get artwork: {}", e.getMessage());
           throw new ScrapeException(e);
         }
 
-        artwork.addAll(md.getMediaArt(options.getArtworkType()));
+        artwork.addAll(md.getMediaArt(MediaArtworkType.POSTER));
         break;
 
       default:
