@@ -599,6 +599,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (matcher.find()) {
         movie.setVideoIn3D(true);
       }
+      // same for first video file; not necessarily the main file, but we have no file size yet to determine...
+      MediaFile vid = getMediaFile(mfs, MediaFileType.VIDEO);
+      if (vid != null) {
+        matcher = video3DPattern.matcher(vid.getFilename());
+        if (matcher.find()) {
+          movie.setVideoIn3D(true);
+        }
+      }
+
       // get edition from name if no edition has been set via NFO
       if (movie.getEdition() == MovieEdition.NONE) {
         movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
@@ -1274,8 +1283,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFileAll++;
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
-        fFound.add(file.toAbsolutePath());
-      }
+          fFound.add(file.toAbsolutePath());
+        }
       // System.out.println("(" + attr.size() + "bytes)");
       // System.out.println("(" + attr.creationTime() + " date)");
       return CONTINUE;
@@ -1288,10 +1297,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
-          || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
-        LOGGER.debug("Skipping dir: " + dir);
-        return SKIP_SUBTREE;
-      }
+            || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
+          LOGGER.debug("Skipping dir: " + dir);
+          return SKIP_SUBTREE;
+        }
       return CONTINUE;
     }
 

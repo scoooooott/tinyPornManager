@@ -3,6 +3,7 @@ Upcoming version
 x read/write TV show sorttitle from/to NFO #539
 x better detection of same named movies in different quality
 x fix bulk downloading images (AniDB, Kyra Animated)
+x better 3D detection from filename
 
 
 Version 3.0.1
