@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>tinyMediaManager-LaF</artifactId>
-            <version>3.0</version>
+            <version>3.1-SNAPSHOT</version>
         </dependency>
 
         <!-- our plugins - all provided for dependency resolution -->

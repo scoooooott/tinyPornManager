@@ -42,8 +42,8 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.plaf.TmmTheme;
 import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
 
 /**
@@ -349,7 +349,7 @@ public class ImageLabel extends JLabel {
       float fontSize = (float) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
 
       // draw the _no image found_ icon
-      Font font = IconManager.FONT_AWESOME.deriveFont(fontSize);
+      Font font = TmmTheme.FONT_AWESOME.deriveFont(fontSize);
       BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
