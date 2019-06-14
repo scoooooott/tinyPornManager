@@ -262,11 +262,11 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
         break;
 
       case ALL:
-        artworks.addAll(prepareArtwork(kyra.getPosters(), baseUrl, artworkType));
-        artworks.addAll(prepareArtwork(kyra.getBackgrounds(), baseUrl, artworkType));
-        artworks.addAll(prepareArtwork(kyra.getLogos(), baseUrl, artworkType));
-        artworks.addAll(prepareArtwork(kyra.getCharacters(), baseUrl, artworkType));
-        artworks.addAll(prepareArtwork(kyra.getActors(), baseUrl, artworkType));
+        artworks.addAll(prepareArtwork(kyra.getPosters(), kyra.getBasePosters(), MediaArtworkType.POSTER));
+        artworks.addAll(prepareArtwork(kyra.getBackgrounds(), kyra.getBaseBackground(), MediaArtworkType.BACKGROUND));
+        artworks.addAll(prepareArtwork(kyra.getLogos(), kyra.getBaseLogos(), MediaArtworkType.LOGO));
+        artworks.addAll(prepareArtwork(kyra.getCharacters(), kyra.getBaseCharacter(), MediaArtworkType.CHARACTERART));
+        artworks.addAll(prepareArtwork(kyra.getActors(), kyra.getBaseActor(), MediaArtworkType.ACTOR));
         break;
 
       default:
