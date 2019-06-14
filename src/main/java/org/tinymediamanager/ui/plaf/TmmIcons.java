@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.ui.plaf;
 
+import static org.tinymediamanager.ui.plaf.TmmTheme.FONT_AWESOME;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,7 +54,6 @@ public class TmmIcons extends BaseIcons {
   public static Color           COLOR        = Color.GRAY;
   public static Color           COLOR_HOVER  = Color.WHITE;
 
-  public static final Font      FONT_AWESOME = Font.decode("Font Awesome 5 Pro Regular");
   public final static ImageIcon EMPTY_IMAGE  = new ImageIcon(TmmIcons.class.getResource("empty.png"));
 
   public static Icon getCloseIcon() {

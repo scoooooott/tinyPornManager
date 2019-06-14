@@ -27,23 +27,32 @@ import com.jtattoo.plaf.AbstractTheme;
  * @author Manuel Laggner
  */
 abstract public class TmmTheme extends AbstractTheme {
-  public static final String FONT = "Dialog";
+  public static final String FONT         = "Dialog";
+
+  public static final Font   FONT_AWESOME = loadFontAwesome();
 
   static {
     try (InputStream fsRegular = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
-        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream();
-        InputStream fontStream = TmmTheme.class.getResource("fontawesome-pro-regular-400.ttf").openStream()) {
+        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
       Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fsRegular);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuRegular);
 
       Font dejavuMono = Font.createFont(Font.TRUETYPE_FONT, fsMono);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuMono);
-
-      Font fontAwesome = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-      GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(fontAwesome);
     }
     catch (Exception ignored) {
       // nothing to be done here
     }
+  }
+
+  private static Font loadFontAwesome() {
+    // force font awesome to be loaded from the laf and not the system
+    try (InputStream fsAwesome = TmmTheme.class.getResource("fontawesome-pro-regular-400.ttf").openStream()) {
+      return Font.createFont(Font.TRUETYPE_FONT, fsAwesome);
+    }
+    catch (Exception ignored) {
+      // nothing to be done here
+    }
+    return null;
   }
 }
