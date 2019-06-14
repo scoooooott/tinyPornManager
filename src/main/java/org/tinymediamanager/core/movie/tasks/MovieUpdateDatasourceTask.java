@@ -384,8 +384,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
           else {
             // detect unique basename, without stacking etc
-            String[] ty = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename())));
-            normalizedVideoFiles.add(ty[0] + ty[1]);
+            String basename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename()));
+            normalizedVideoFiles.add(basename);
           }
         }
       }
@@ -737,16 +737,18 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie = m;
           break;
         }
-        for (MediaFile mfile : m.getMediaFiles(MediaFileType.VIDEO)) {
-          // try to match like if we would create a new movie
-          String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfile.getFilename())));
-          String[] mfTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename())));
-          if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title AND year (even empty) match
-            LOGGER.debug("| found possible movie '" + m.getTitle() + "' from filename " + mf);
-            movie = m;
-            break;
-          }
-        }
+        // NOPE - the cleaned filename might be found - but might be a different version!!
+        // so only match strictly with filename above, not loose with clean name
+        // for (MediaFile mfile : m.getMediaFiles(MediaFileType.VIDEO)) {
+        // // try to match like if we would create a new movie
+        // String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfile.getFilename())));
+        // String[] mfTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename())));
+        // if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title AND year (even empty) match
+        // LOGGER.debug("| found possible movie '" + m.getTitle() + "' from filename " + mf);
+        // movie = m;
+        // break;
+        // }
+        // }
       }
       if (movie == null) {
         // 2) create if not found

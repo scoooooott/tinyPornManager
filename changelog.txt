@@ -1,6 +1,7 @@
 Upcoming version
 =======================
 x read/write TV show sorttitle from/to NFO #539
+x better detection of same named movies in different quality
 
 
 Version 3.0.1
