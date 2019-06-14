@@ -1713,12 +1713,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * checks GRAPHIC file for animation, and sets animated flag<br>
+   * checks all graphic file for animation, and sets animated flag<br>
    * currently supported only .GIF<br>
    * Direct file access - should be only used in mediaInfo method!
    */
   public void checkForAnimation() {
-    if (type == MediaFileType.GRAPHIC && getExtension().equalsIgnoreCase("gif")) {
+    if (isGraphic() && getExtension().equalsIgnoreCase("gif")) {
       try {
         GifDecoder decoder = new GifDecoder();
         decoder.read(getFileAsPath().toString());
