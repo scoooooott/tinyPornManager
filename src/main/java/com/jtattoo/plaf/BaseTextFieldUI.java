@@ -54,6 +54,7 @@ public class BaseTextFieldUI extends MetalTextFieldUI {
     return new BaseTextFieldUI();
   }
 
+  @Override
   protected void installKeyboardActions() {
     super.installKeyboardActions();
     if (JTattooUtilities.isMac()) {
@@ -67,6 +68,7 @@ public class BaseTextFieldUI extends MetalTextFieldUI {
     }
   }
 
+  @Override
   protected void installListeners() {
     super.installListeners();
 
@@ -100,12 +102,14 @@ public class BaseTextFieldUI extends MetalTextFieldUI {
     }
   }
 
+  @Override
   protected void uninstallListeners() {
     getComponent().removeFocusListener(focusListener);
     focusListener = null;
     super.uninstallListeners();
   }
 
+  @Override
   protected void paintBackground(Graphics g) {
     g.setColor(getComponent().getBackground());
     if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {

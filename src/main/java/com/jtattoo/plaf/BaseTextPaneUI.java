@@ -107,12 +107,14 @@ public class BaseTextPaneUI extends BasicTextPaneUI {
     }
   }
 
+  @Override
   protected void uninstallListeners() {
     getComponent().removeFocusListener(focusListener);
     focusListener = null;
     super.uninstallListeners();
   }
 
+  @Override
   protected void paintBackground(Graphics g) {
     g.setColor(getComponent().getBackground());
     if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {
@@ -123,6 +125,7 @@ public class BaseTextPaneUI extends BasicTextPaneUI {
     g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
   }
 
+  @Override
   protected void paintSafely(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
     Object savedRenderingHint = null;
@@ -136,6 +139,7 @@ public class BaseTextPaneUI extends BasicTextPaneUI {
     }
   }
 
+  @Override
   protected void propertyChange(PropertyChangeEvent evt) {
     if (evt.getPropertyName().equals("editable") || evt.getPropertyName().equals("enabled")) {
       updateBackground();
