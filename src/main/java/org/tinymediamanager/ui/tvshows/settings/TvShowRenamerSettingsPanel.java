@@ -299,14 +299,15 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       }
     }
     {
-      JPanel panelExample = SettingsPanelFactory.createSettingsPanel();
+      JPanel panelExample = new JPanel();
+      panelExample.setLayout(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp,grow]", ""));
 
       JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 4,growx, wmin 0");
       {
         JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-        panelExample.add(lblExampleTvShowT, "cell 1 0 2 1");
+        panelExample.add(lblExampleTvShowT, "cell 1 0");
 
         cbTvShowForPreview = new JComboBox();
         panelExample.add(cbTvShowForPreview, "cell 1 0,growx,wmin 0");
@@ -320,7 +321,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       }
       {
         lblExample = new JLabel("");
-        panelExample.add(lblExample, "cell 1 1 2 1, wmin 0");
+        panelExample.add(lblExample, "cell 1 1, wmin 0");
         TmmFontHelper.changeFont(lblExample, Font.BOLD);
       }
       {
@@ -330,7 +331,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPane = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPane);
-        panelExample.add(scrollPane, "cell 1 2 2 1,grow");
+        panelExample.add(scrollPane, "cell 1 2,grow");
         scrollPane.setViewportView(tableExamples);
       }
     }

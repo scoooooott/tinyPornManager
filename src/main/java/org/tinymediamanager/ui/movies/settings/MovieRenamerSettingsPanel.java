@@ -306,27 +306,28 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       }
     }
     {
-      JPanel panelExample = SettingsPanelFactory.createSettingsPanel();
+      JPanel panelExample = new JPanel();
+      panelExample.setLayout(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp,grow]", ""));
 
-      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
-      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblAdvancedOptions, true);
+      JLabel lblExampleHeader = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblExampleHeader, true);
       add(collapsiblePanel, "cell 0 4, growx, wmin 0");
       {
         JLabel lblExampleT = new JLabel(BUNDLE.getString("tmm.movie")); //$NON-NLS-1$
-        panelExample.add(lblExampleT, "cell 1 0 2 1");
+        panelExample.add(lblExampleT, "cell 1 0");
 
         cbMovieForPreview = new JComboBox();
         panelExample.add(cbMovieForPreview, "cell 1 0");
 
         lblExample = new TmmLabel("", L1);
-        panelExample.add(lblExample, "cell 1 1 2 1, wmin 0");
+        panelExample.add(lblExample, "cell 1 1, wmin 0");
 
         DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
             GlazedListsSwing.swingThreadProxyList(exampleEventList), new MovieRenamerExampleTableFormat());
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPaneExamples);
-        panelExample.add(scrollPaneExamples, "cell 1 2 2 1,grow");
+        panelExample.add(scrollPaneExamples, "cell 1 2,grow");
       }
     }
   }
