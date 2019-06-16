@@ -1,6 +1,7 @@
 Upcoming version
 =======================
 + added undo/redo for all text fields
++ added renamer token for the current parent folder (to enable renaming of folders without moving them in the folder structure)
 x read/write TV show sorttitle from/to NFO #539
 x better detection of same named movies in different quality
 x fix bulk downloading images (AniDB, Kyra Animated)

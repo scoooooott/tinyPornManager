@@ -284,6 +284,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
+   * get the parent relative to the data source as string
+   *
+   * @return a string which represents the parent relative to the data source
+   */
+  public String getParent() {
+    Path path = getPathNIO();
+    if (path == null) {
+      return "";
+    }
+
+    Path parent = Paths.get(this.dataSource).relativize(path.getParent());
+
+    return parent.toString();
+  }
+
+  /**
    * Gets the dimension of the (first) artwork of the given type
    * 
    * @param type

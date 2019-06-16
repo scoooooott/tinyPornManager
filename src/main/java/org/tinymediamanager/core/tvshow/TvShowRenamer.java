@@ -108,6 +108,7 @@ public class TvShowRenamer {
     tokenMap.put("showOriginalTitle", "tvShow.originalTitle");
     tokenMap.put("showTitleSortable", "tvShow.titleSortable");
     tokenMap.put("showYear", "tvShow.year");
+    tokenMap.put("parent", "tvShow.parent");
 
     // episode tags
     tokenMap.put("episodeNr", "episode.episode");
