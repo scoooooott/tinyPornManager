@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -43,12 +44,17 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -57,6 +63,7 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -80,6 +87,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private static final long              serialVersionUID = 5039498266207230875L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger            LOGGER           = LoggerFactory.getLogger(MovieRenamerSettingsPanel.class);
 
   private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
   private List<String>                   spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
@@ -256,9 +264,23 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         TmmFontHelper.changeFont(tpDefaultFilePattern, L2);
       }
       {
-        JTextArea tpChooseAFolder = new ReadOnlyTextArea(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
-        panelPatterns.add(tpChooseAFolder, "cell 3 4,growx,wmin 0");
-        TmmFontHelper.changeFont(tpChooseAFolder, L2);
+
+        JLabel lblRenamerHintT = new JLabel(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
+        panelPatterns.add(lblRenamerHintT, "cell 1 4 3 1");
+
+        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+        btnHelp.addActionListener(e -> {
+          String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/Movie-Settings#renamer");
+          try {
+            TmmUIHelper.browseUrl(url);
+          }
+          catch (Exception e1) {
+            LOGGER.error("Wiki", e1);
+            MessageManager.instance
+                .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+          }
+        });
+        panelPatterns.add(btnHelp, "cell 1 4 3 1");
       }
       {
         taMMDWarning = new ReadOnlyTextArea(BUNDLE.getString("Settings.renamer.folder.warning"));
