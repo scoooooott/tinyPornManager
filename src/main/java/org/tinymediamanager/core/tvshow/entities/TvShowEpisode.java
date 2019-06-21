@@ -48,6 +48,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -331,6 +332,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     this.firstAired = newValue;
     firePropertyChange(FIRST_AIRED, oldValue, newValue);
     firePropertyChange(FIRST_AIRED_AS_STRING, oldValue, newValue);
+
+    // also set the year
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(firstAired);
+    setYear(calendar.get(Calendar.YEAR));
   }
 
   public TvShowSeason getTvShowSeason() {
