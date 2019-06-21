@@ -334,9 +334,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     firePropertyChange(FIRST_AIRED_AS_STRING, oldValue, newValue);
 
     // also set the year
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(firstAired);
-    setYear(calendar.get(Calendar.YEAR));
+    if (firstAired != null) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(firstAired);
+      setYear(calendar.get(Calendar.YEAR));
+    }
   }
 
   public TvShowSeason getTvShowSeason() {
