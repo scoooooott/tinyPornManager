@@ -42,7 +42,9 @@ public class TvShowActorImageFetcherTask extends MediaEntityActorImageFetcherTas
   }
 
   public TvShowActorImageFetcherTask(TvShowEpisode episode) {
-    this.mediaEntity = episode;
+    // use the show as entity to store the actor images in the TV show root
+    this.mediaEntity = episode.getTvShow();
+    cleanup = false;
 
     persons = new HashSet<>(episode.getGuests());
   }
