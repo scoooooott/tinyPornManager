@@ -9,6 +9,7 @@ x better 3D detection from filename
 x fixed some scaling issues in the renamer settings panels
 x set episode year along with firstAired
 x writing of TV show actor images
+x fix an occasional crash when scraping movie sets #563
 
 
 Version 3.0.1

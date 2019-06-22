@@ -65,6 +65,12 @@ abstract class AbstractMovieSetUIFilter extends AbstractTmmUIFilter<TmmTreeNode>
     }
     else if (userObject instanceof Movie) {
       Movie movie = (Movie) userObject;
+
+      // just in case we're getting an event just when we change the assigned movie set
+      if (movie.getMovieSet() == null) {
+        return false;
+      }
+
       if (getFilterState() == FilterState.ACTIVE) {
         return accept(movie.getMovieSet(), Collections.singletonList(movie));
       }
