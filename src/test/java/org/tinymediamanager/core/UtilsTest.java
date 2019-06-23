@@ -258,16 +258,18 @@ public class UtilsTest extends BasicTest {
 
   @Test
   public void locale() {
-    for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
-      System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
-    }
+    // for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
+    // System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
+    // }
+
+    assertEqual(LanguageUtils.KEY_TO_LOCALE_MAP.get("tur").getISO3Language(), new Locale("tr").getISO3Language());
   }
 
   @Test
   public void localeCountry() {
-    for (String s : LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.keySet()) {
-      System.out.println(s + " - " + LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.get(s));
-    }
+    // for (String s : LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.keySet()) {
+    // System.out.println(s + " - " + LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.get(s));
+    // }
 
     // Java 8: Vereinigte Staaten von Amerika
     // Java 9: Vereinigte Staaten
