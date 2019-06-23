@@ -17,6 +17,7 @@
 package org.tinymediamanager.core;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -187,14 +188,14 @@ public abstract class AbstractSettings extends AbstractModelObject {
         Files.createDirectories(cfgFolder);
       }
       catch (IOException e) {
-        LOGGER.warn("could not create config folder: " + e.getMessage());
+        LOGGER.warn("could not create config folder: {}", e.getMessage());
       }
     }
 
     // unmarshall the JSON
     try {
       try {
-        LOGGER.debug("Loading settings (" + filename + ") from " + folder);
+        LOGGER.debug("Loading settings ({}) from {}", filename, folder);
         Reader reader = new FileReader(new File(folder, filename));
         String settingsAsJson = IOUtils.toString(reader);
 
@@ -202,6 +203,10 @@ public abstract class AbstractSettings extends AbstractModelObject {
         instance = objectReader.readValue(settingsAsJson);
       }
       catch (Exception e) {
+        if (!(e instanceof FileNotFoundException)) {
+          // log only if there are other Exceptions than the FileNotFoundException
+          LOGGER.error("failed loading settings", e);
+        }
         LOGGER.warn("could not load settings - creating default ones...");
         instance = (AbstractSettings) clazz.newInstance();
         instance.settingsFolder = folder;
