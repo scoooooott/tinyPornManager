@@ -79,15 +79,24 @@ public class LanguageUtils {
     Locale intl = Locale.ENGLISH;
 
     // all possible variants of language/prefixes/non-iso style
+    // all lowercase (!)
     for (String langu : Locale.getISOLanguages()) {
       Locale base = new Locale(langu); // from all, create only the base languages
 
+      // ISO Codes have always priority
+      // ISO-639-2/T
+      langArray.put(base.getISO3Language().toLowerCase(Locale.ROOT), base);
+      // ISO-639-2/B
+      langArray.put(LanguageUtils.getISO3BLanguage(base).toLowerCase(Locale.ROOT), base);
+      // ISO 639-1
+      langArray.put(langu.toLowerCase(Locale.ROOT), base);
+
       // first put the name in the default locale
-      langArray.putIfAbsent(base.getDisplayLanguage(), base);
+      langArray.putIfAbsent(base.getDisplayLanguage().toLowerCase(Locale.ROOT), base);
       // second in english
-      langArray.putIfAbsent(base.getDisplayLanguage(intl), base);
+      langArray.putIfAbsent(base.getDisplayLanguage(intl).toLowerCase(Locale.ROOT), base);
       try {
-        langArray.putIfAbsent(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
+        langArray.putIfAbsent(base.getDisplayLanguage(intl).substring(0, 3).toLowerCase(Locale.ROOT), base); // eg German -> Ger, where iso3=deu
       }
       catch (Exception ignore) {
         // nothing to be done here
@@ -98,36 +107,28 @@ public class LanguageUtils {
         try {
           String alternativeLanguage = base.getDisplayLanguage(new Locale(displayLangu));
           if (!alternativeLanguage.isEmpty()) {
-            langArray.putIfAbsent(alternativeLanguage, base);
+            langArray.putIfAbsent(alternativeLanguage.toLowerCase(Locale.ROOT), base);
           }
         }
         catch (Exception ignored) {
           // nothing to be done here
         }
       }
-
-      // ISO-639-2/T
-      langArray.putIfAbsent(base.getISO3Language(), base);
-      // ISO-639-2/B
-      langArray.putIfAbsent(LanguageUtils.getISO3BLanguage(base), base);
-      // ISO 639-1
-      langArray.putIfAbsent(langu, base);
     }
 
-    // also sort in all languge tags from available locales
+    // also sort in all language tags from available locales
     for (Locale locale : Locale.getAvailableLocales()) {
       Locale base = new Locale(locale.getLanguage());
-      langArray.putIfAbsent(locale.toLanguageTag(), base);
+      langArray.putIfAbsent(locale.toLanguageTag().toLowerCase(Locale.ROOT), base);
     }
 
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
     Collections.sort(keys, (s1, s2) -> s2.length() - s1.length());
 
-    // all lowercase (!)
     for (String key : keys) {
       if (!key.isEmpty()) {
-        sortedMap.put(key.toLowerCase(Locale.ROOT), langArray.get(key));
+        sortedMap.put(key, langArray.get(key));
       }
     }
 
