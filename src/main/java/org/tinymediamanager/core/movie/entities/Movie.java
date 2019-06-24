@@ -1177,20 +1177,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * get trailer name (w/o extension)<br>
-   * &lt;moviefile&gt;-trailer.ext
-   * 
-   * @return the trailer basename
-   */
-  public String getTrailerBasename() {
-    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename()));
-    }
-    return null;
-  }
-
-  /**
    * download the specified type of artwork for this movie
    *
    * @param type

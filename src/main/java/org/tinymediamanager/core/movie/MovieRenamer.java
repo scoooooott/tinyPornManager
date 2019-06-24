@@ -772,6 +772,9 @@ public class MovieRenamer {
           // Fixate the name regardless of setting
           trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
         }
+        else if (movie.isDisc()) {
+          trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+        }
         else {
           trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
         }
