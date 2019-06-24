@@ -1212,31 +1212,31 @@ public class MovieSettings extends AbstractSettings {
     addNfoFilename(MovieNfoNaming.FILENAME_NFO);
 
     posterFilenames.clear();
-    addPosterFilename(MoviePosterNaming.POSTER);
+    addPosterFilename(MoviePosterNaming.FILENAME_POSTER);
 
     fanartFilenames.clear();
-    addFanartFilename(MovieFanartNaming.FANART);
+    addFanartFilename(MovieFanartNaming.FILENAME_FANART);
 
     bannerFilenames.clear();
-    addBannerFilename(MovieBannerNaming.BANNER);
+    addBannerFilename(MovieBannerNaming.FILENAME_BANNER);
 
     clearartFilenames.clear();
-    addClearartFilename(MovieClearartNaming.CLEARART);
+    addClearartFilename(MovieClearartNaming.FILENAME_CLEARART);
 
     thumbFilenames.clear();
-    addThumbFilename(MovieThumbNaming.THUMB);
+    addThumbFilename(MovieThumbNaming.FILENAME_LANDSCAPE);
 
     logoFilenames.clear();
-    addLogoFilename(MovieLogoNaming.LOGO);
+    addLogoFilename(MovieLogoNaming.FILENAME_LOGO);
 
     clearlogoFilenames.clear();
-    addClearlogoFilename(MovieClearlogoNaming.CLEARLOGO);
+    addClearlogoFilename(MovieClearlogoNaming.FILENAME_CLEARLOGO);
 
     discartFilenames.clear();
-    addDiscartFilename(MovieDiscartNaming.DISC);
+    addDiscartFilename(MovieDiscartNaming.FILENAME_DISC);
 
     keyartFilenames.clear();
-    addKeyartFilename(MovieKeyartNaming.KEYART);
+    addKeyartFilename(MovieKeyartNaming.FILENAME_KEYART);
 
     // other settings
     setMovieConnector(MovieConnectors.XBMC);
@@ -1256,31 +1256,31 @@ public class MovieSettings extends AbstractSettings {
     addNfoFilename(MovieNfoNaming.FILENAME_NFO);
 
     posterFilenames.clear();
-    addPosterFilename(MoviePosterNaming.POSTER);
+    addPosterFilename(MoviePosterNaming.FILENAME_POSTER);
 
     fanartFilenames.clear();
-    addFanartFilename(MovieFanartNaming.FANART);
+    addFanartFilename(MovieFanartNaming.FILENAME_FANART);
 
     bannerFilenames.clear();
-    addBannerFilename(MovieBannerNaming.BANNER);
+    addBannerFilename(MovieBannerNaming.FILENAME_BANNER);
 
     clearartFilenames.clear();
-    addClearartFilename(MovieClearartNaming.CLEARART);
+    addClearartFilename(MovieClearartNaming.FILENAME_CLEARART);
 
     thumbFilenames.clear();
-    addThumbFilename(MovieThumbNaming.LANDSCAPE);
+    addThumbFilename(MovieThumbNaming.FILENAME_LANDSCAPE);
 
     logoFilenames.clear();
-    addLogoFilename(MovieLogoNaming.LOGO);
+    addLogoFilename(MovieLogoNaming.FILENAME_LOGO);
 
     clearlogoFilenames.clear();
-    addClearlogoFilename(MovieClearlogoNaming.CLEARLOGO);
+    addClearlogoFilename(MovieClearlogoNaming.FILENAME_CLEARLOGO);
 
     discartFilenames.clear();
-    addDiscartFilename(MovieDiscartNaming.DISC);
+    addDiscartFilename(MovieDiscartNaming.FILENAME_DISCART);
 
     keyartFilenames.clear();
-    addKeyartFilename(MovieKeyartNaming.KEYART);
+    addKeyartFilename(MovieKeyartNaming.FILENAME_KEYART);
 
     // other settings
     setMovieConnector(MovieConnectors.KODI);
