@@ -1,18 +1,18 @@
 package org.tinymediamanager.thirdparty;
 
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.UDN;
@@ -33,31 +33,50 @@ import org.tinymediamanager.thirdparty.upnp.Upnp;
  *
  */
 public class SplitUri {
-  private static final Logger LOGGER   = LoggerFactory.getLogger(SplitUri.class);
+  private static final Logger LOGGER     = LoggerFactory.getLogger(SplitUri.class);
 
-  public String               label    = "";
-  public String               type     = "";
-  public String               ip       = "";
-  public String               hostname = "";
-  public String               file     = "";
+  public String               file       = "";
+  public String               datasource = "";
+  public String               label      = "";
+  public String               type       = "";
+  public String               ip         = "";
+  public String               hostname   = "";
 
-  private Map<String, String> lookup   = new HashMap<>();
+  private Map<String, String> lookup     = new HashMap<>();
 
   @SuppressWarnings("unused")
   private SplitUri() {
   }
 
-  public SplitUri(String ds) {
-    this(ds, ds);
+  public SplitUri(String ds, String file) {
+    this(ds, file, "", "");
   }
 
-  public SplitUri(String ds, String label) {
-    this(ds, ds, "");
-  }
+  public SplitUri(String ds, String file, String label, String ipForLocal) {
 
-  public SplitUri(String ds, String label, String ipForLocal) {
+    // remove trailing slashes
+    if (ds.matches(".*[\\\\/]$")) {
+      ds = ds.substring(0, ds.length() - 1);
+    }
+    // remove datasource from file
+    if (file.startsWith(ds)) {
+      file = file.substring(ds.length());
+    }
+
+    this.datasource = ds;
+    this.file = file;
+
+    int schema = file.indexOf("://");
+    if (schema == -1) {
+      schema = file.indexOf(":\\\\");
+    }
+    if (schema > 0) {
+      this.file = this.file.substring(schema + 3);
+    }
+    this.file = Paths.get(this.file).toString(); // unify slashes
     this.label = label;
 
+    // try to parse datasource and unify
     URI u = null;
     try {
       try {
@@ -65,8 +84,8 @@ public class SplitUri {
         ds = URLDecoder.decode(ds, "UTF-8");
         ds = URLDecoder.decode(ds, "UTF-8");
       }
-      catch (UnsupportedEncodingException e) {
-        LOGGER.warn(e.getMessage());
+      catch (Exception e) {
+        LOGGER.warn("Could not decode uri '{}': {}", ds, e.getMessage());
       }
       ds = ds.replaceAll("\\\\", "/");
       // for directories, we might get a trailing delimiter - remove
@@ -101,7 +120,6 @@ public class SplitUri {
     }
 
     if (u != null && !StringUtils.isBlank(u.getHost())) {
-      this.file = u.getPath();
       if (ds.startsWith("upnp")) {
         this.type = "UPNP";
         this.hostname = getMacFromUpnpUUID(u.getHost());
@@ -132,12 +150,13 @@ public class SplitUri {
           this.ip = ip;
         }
         catch (Exception e) {
+          LOGGER.warn("Could not lookup IP for {}: {}", u.getHost(), e.getMessage());
         }
       }
+      this.datasource = u.getPath(); // datasource is just path without server
     }
     else {
       this.type = "LOCAL";
-      this.file = ds;
       if (ipForLocal.isEmpty()) {
         this.ip = "127.0.0.1";
         this.hostname = "localhost";
@@ -154,14 +173,17 @@ public class SplitUri {
           }
         }
         catch (Exception e) {
+          LOGGER.warn("Could not lookup hostname for {}: {}", ipForLocal, e.getMessage());
         }
       }
     }
+
+    this.datasource = Paths.get(this.datasource).toString(); // convert forward & backslashes to same format
   }
 
   @Override
   public String toString() {
-    return "SplitUri [label=" + label + ", type=" + type + ", ip=" + ip + ", hostname=" + hostname + ", file=" + file + "]";
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
   @Override
@@ -184,36 +206,25 @@ public class SplitUri {
       return false;
     SplitUri other = (SplitUri) obj;
 
-    if (file == null || file.isEmpty() || other.file == null || other.file.isEmpty()) {
+    if (datasource == null || datasource.isEmpty() || other.datasource == null || other.datasource.isEmpty()) {
       return false;
     }
 
     // 1: same? - step directly out
-    if (file.equals(other.file)) {
+    if (file.equals(other.file) && datasource.equals(other.datasource)) {
       return true;
     }
 
-    // 2: at least filename AND parent folder match
-    Path p1 = Paths.get(file);
-    Path p2 = Paths.get(other.file);
-    if (p1.getFileName().toString().equals(p2.getFileName().toString())
-        && p1.getParent().getFileName().toString().equals(p2.getParent().getFileName().toString())) {
-      // filename AND parent folder match
-      LOGGER.trace("1: {}", file);
-      LOGGER.trace("2: {}", other.file);
-
-      // 2: - check either matching IP or hostname
-      if (ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
-        return true;
-      }
-      if (hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
-        return true;
-      }
+    // 2: - check either matching IP or hostname
+    if (file.equals(other.file) && ip != null && !ip.isEmpty() && ip.equals(other.ip)) {
+      return true;
+    }
+    if (file.equals(other.file) && hostname != null && !hostname.isEmpty() && hostname.equalsIgnoreCase(other.hostname)) {
+      return true;
     }
 
     // 3: did not match? return false
     return false;
-
   }
 
   /**

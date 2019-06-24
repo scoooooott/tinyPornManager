@@ -1,3 +1,18 @@
+Upcoming version
+=======================
++ added undo/redo for all text fields
++ added renamer token for the current parent folder (to enable renaming of folders without moving them in the folder structure)
+x read/write TV show sorttitle from/to NFO #539
+x better detection of same named movies in different quality
+x fix bulk downloading images (AniDB, Kyra Animated)
+x better 3D detection from filename
+x fixed some scaling issues in the renamer settings panels
+x set episode year along with firstAired
+x writing of TV show actor images
+x fix an occasional crash when scraping movie sets #563
+x fixed language detection for Turkish subtitles #562
+
+
 Version 3.0.1
 =======================
 x fixed Fanart.tv reading personal clientKey

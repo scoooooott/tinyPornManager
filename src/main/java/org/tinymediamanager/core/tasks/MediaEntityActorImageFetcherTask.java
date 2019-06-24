@@ -45,6 +45,7 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
 
   protected MediaEntity       mediaEntity;
   protected Set<Person>       persons;
+  protected boolean           cleanup = true;
 
   protected abstract Logger getLogger();
 
@@ -60,37 +61,41 @@ public abstract class MediaEntityActorImageFetcherTask implements Runnable {
       }
 
       // first - check which actors images can be deleted (images for actors which are not in this ME)
-      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(actorsDir)) {
-        for (Path path : directoryStream) {
-          // has tmm been shut down?
-          if (Thread.interrupted()) {
-            return;
-          }
-
-          if (Utils.isRegularFile(path) && path.getFileName().toString().matches("(?i).*\\.(tbn|png|jpg)")
-              && !path.getFileName().toString().startsWith(".")) {
-            boolean found = false;
-            // check if there is an actor for this file
-            String actorImage = FilenameUtils.getBaseName(path.getFileName().toString()).replace("_", " ");
-            for (Person actor : persons) {
-              if (actor.getName().equals(actorImage)) {
-                found = true;
-
-                // trick it to get rid of wrong extensions
-                if (!FilenameUtils.getExtension(path.getFileName().toString()).equalsIgnoreCase(UrlUtil.getExtension(actor.getThumbUrl()))) {
-                  found = false;
-                }
-                break;
-              }
+      // only if the actors folder is not a symbolic link
+      if (cleanup && !Files.isSymbolicLink(actorsDir)) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(actorsDir)) {
+          for (Path path : directoryStream) {
+            // has tmm been shut down?
+            if (Thread.interrupted()) {
+              return;
             }
-            // delete image if not found
-            if (!found) {
-              Utils.deleteFileWithBackup(path, mediaEntity.getDataSource());
+
+            if (Utils.isRegularFile(path) && path.getFileName().toString().matches("(?i).*\\.(tbn|png|jpg)")
+                && !path.getFileName().toString().startsWith(".")) {
+              boolean found = false;
+              // check if there is an actor for this file
+              String actorImage = FilenameUtils.getBaseName(path.getFileName().toString()).replace("_", " ");
+              for (Person actor : persons) {
+                if (actor.getName().equals(actorImage)) {
+                  found = true;
+
+                  // trick it to get rid of wrong extensions
+                  if (!FilenameUtils.getExtension(path.getFileName().toString()).equalsIgnoreCase(UrlUtil.getExtension(actor.getThumbUrl()))) {
+                    found = false;
+                  }
+                  break;
+                }
+              }
+              // delete image if not found
+              if (!found) {
+                Utils.deleteFileWithBackup(path, mediaEntity.getDataSource());
+              }
             }
           }
         }
-      }
-      catch (IOException ignored) {
+        catch (IOException ignored) {
+          // just ignore here
+        }
       }
 
       // second - download images

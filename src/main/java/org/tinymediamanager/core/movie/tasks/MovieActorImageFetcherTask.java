@@ -32,6 +32,10 @@ public class MovieActorImageFetcherTask extends MediaEntityActorImageFetcherTask
 
   public MovieActorImageFetcherTask(Movie movie) {
     this.mediaEntity = movie;
+    // do not do a cleanup if we're in a MMD
+    if (movie.isMultiMovieDir()) {
+      cleanup = false;
+    }
 
     persons = new HashSet<>(movie.getActors());
   }

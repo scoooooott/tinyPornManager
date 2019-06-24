@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -44,12 +45,17 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
@@ -58,6 +64,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -83,6 +90,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private static final long                        serialVersionUID = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle              BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger                      LOGGER           = LoggerFactory.getLogger(TvShowRenamerSettingsPanel.class);
 
   private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
   private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
@@ -201,15 +209,16 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("${audioChannelsAsString}"));
     exampleEventList.add(new TvShowRenamerExample("${audioLanguage}"));
     exampleEventList.add(new TvShowRenamerExample("${audioLanguageList}"));
-    exampleEventList.add(new TvShowRenamerExample("${audioLanguageAsString}"));
+    exampleEventList.add(new TvShowRenamerExample("${audioLanguagesAsString}"));
     exampleEventList.add(new TvShowRenamerExample("${mediaSource}"));
     exampleEventList.add(new TvShowRenamerExample("${hdr}"));
+    exampleEventList.add(new TvShowRenamerExample("${parent}"));
   }
 
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[][15lp!][][15lp!][]"));
     {
-      JPanel panelPatterns = new JPanel(new MigLayout("insets 0, hidemode 1", "[20lp!][15lp][][300lp,grow]", "[][][][][][]"));
+      JPanel panelPatterns = new JPanel(new MigLayout("insets 0, hidemode 1", "[20lp!][15lp][][300lp,grow]", "[][][][][][][]"));
 
       JLabel lblPatternsT = new TmmLabel(BUNDLE.getString("Settings.tvshow.renamer.title"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelPatterns, lblPatternsT, true);
@@ -260,6 +269,24 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         panelPatterns.add(tpDefaultFilePattern, "cell 3 5 2 1,growx,wmin 0");
         TmmFontHelper.changeFont(tpDefaultFilePattern, L2);
       }
+      {
+        JLabel lblRenamerHintT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.hint")); //$NON-NLS-1$
+        panelPatterns.add(lblRenamerHintT, "cell 1 6 3 1");
+
+        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+        btnHelp.addActionListener(e -> {
+          String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/TV-Show-Settings#renamer");
+          try {
+            TmmUIHelper.browseUrl(url);
+          }
+          catch (Exception e1) {
+            LOGGER.error("Wiki", e1);
+            MessageManager.instance
+                .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+          }
+        });
+        panelPatterns.add(btnHelp, "cell 1 6 3 1");
+      }
     }
     {
       JPanel panelAdvancedOptions = SettingsPanelFactory.createSettingsPanel();
@@ -298,14 +325,15 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       }
     }
     {
-      JPanel panelExample = SettingsPanelFactory.createSettingsPanel();
+      JPanel panelExample = new JPanel();
+      panelExample.setLayout(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp,grow]", ""));
 
       JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 4,growx, wmin 0");
       {
         JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-        panelExample.add(lblExampleTvShowT, "cell 1 0 2 1");
+        panelExample.add(lblExampleTvShowT, "cell 1 0");
 
         cbTvShowForPreview = new JComboBox();
         panelExample.add(cbTvShowForPreview, "cell 1 0,growx,wmin 0");
@@ -319,7 +347,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       }
       {
         lblExample = new JLabel("");
-        panelExample.add(lblExample, "cell 1 1 2 1, wmin 0");
+        panelExample.add(lblExample, "cell 1 1, wmin 0");
         TmmFontHelper.changeFont(lblExample, Font.BOLD);
       }
       {
@@ -329,7 +357,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPane = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPane);
-        panelExample.add(scrollPane, "cell 1 2 2 1,grow");
+        panelExample.add(scrollPane, "cell 1 2,grow");
         scrollPane.setViewportView(tableExamples);
       }
     }

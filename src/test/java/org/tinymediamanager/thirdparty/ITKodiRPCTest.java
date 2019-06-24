@@ -41,6 +41,7 @@ public class ITKodiRPCTest {
 
   @Test
   public void testUris() {
+    testUri(".a");
     testUri(
         "zip:///C%3a%5cUsers%5cmamk%5cVideos%5cFilme%5cAvatar%20-%20Aufbruch%20nach%20Pandora%20(2009).zip/Avatar - Aufbruch nach Pandora (2009)/Avatar - Aufbruch nach Pandora (2009) (7.0) cd1.avi");
     testUri("upnp://886fc236-b611-0730-0000-000017107649/1/");
@@ -54,10 +55,19 @@ public class ITKodiRPCTest {
     testUri(".\\video\\relative.txt");
     testUri("file:///video/local.txt");
     testUri("D:\\_neu\\TMM\\TEST_TV_DVD\\");
+
+    // datasource
+    testUri("D:\\_neu\\TMM\\", "D:\\_neu\\TMM\\");
+    testUri("smb://NAS/video/", "smb://NAS/video/");
+
   }
 
   private void testUri(String s) {
-    System.out.println(new SplitUri(s));
+    testUri("", s);
+  }
+
+  private void testUri(String ds, String s) {
+    System.out.println(new SplitUri(ds, s));
   }
 
   @Test
@@ -67,17 +77,34 @@ public class ITKodiRPCTest {
     // same
     String s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
     String s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\101 Dalmatiner\\101 Dalmatiner #2.avi";
-    Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
+    Assert.assertEquals(new SplitUri("smb://localhost/public/TMM/testmovies", s1), new SplitUri("\\\\127.0.0.1\\public\\TMM\\testmovies", s2));
 
-    // wrong parent
-    s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
-    s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\no Dalmatiner\\101 Dalmatiner #2.avi";
-    Assert.assertNotEquals(new SplitUri(s1), new SplitUri(s2)); // false
+    // no file
+    s1 = "smb://192.168.1.10/Series/The Magicians (2015)/";
+    s2 = "\\\\127.0.0.1\\Series\\The Magicians (2015)";
+    Assert.assertEquals(new SplitUri("smb://192.168.1.10/Series", s1), new SplitUri("\\\\127.0.0.1\\Series", s2));
+
+    // datasource only
+    s1 = "smb://127.0.0.1/share";
+    s2 = "\\\\127.0.0.1\\share";
+    Assert.assertEquals(new SplitUri(s1, s1), new SplitUri(s2, s2));
+    Assert.assertEquals(new SplitUri(s1, ""), new SplitUri(s2, ""));
 
     // other datasource
     s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
     s2 = "\\\\127.0.0.1\\public\\TMM\\newmovies\\101 Dalmatiner\\101 Dalmatiner #2.avi";
-    Assert.assertEquals(new SplitUri(s1), new SplitUri(s2));
+    Assert.assertEquals(new SplitUri("smb://localhost/public/TMM/testmovies/", s1), new SplitUri("\\\\127.0.0.1\\public\\TMM\\newmovies", s2));
+
+    /////////////////////////////// NEGATIVE TESTS
+    // wrong parent
+    s1 = "smb://localhost/public/TMM/testmovies/101 Dalmatiner/101 Dalmatiner #2.avi";
+    s2 = "\\\\127.0.0.1\\public\\TMM\\testmovies\\no Dalmatiner\\101 Dalmatiner #2.avi";
+    Assert.assertNotEquals(new SplitUri("smb://localhost/public/TMM/testmovies/", s1), new SplitUri("\\\\127.0.0.1\\public\\TMM\\testmovies", s2));
+
+    // no datasource
+    s1 = "smb://192.168.1.10/Series/The Magicians (2015)/";
+    s2 = "\\\\127.0.0.1\\Series\\The Magicians (2015)";
+    Assert.assertNotEquals(new SplitUri("", s1), new SplitUri("", s2));
   }
 
   @Test
@@ -116,6 +143,8 @@ public class ITKodiRPCTest {
     for (SplitUri ds : KodiRPC.getInstance().getVideoDataSources()) {
       System.out.println(ds);
     }
+
+    KodiRPC.getInstance().getDataSources();
   }
 
   @Test

@@ -74,7 +74,8 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
 
   private String[] getVideoFormats() {
     return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P, MediaFile.VIDEO_FORMAT_720P,
-        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD }; // MediaFile.VIDEO_FORMAT_8K,
+        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_2160P, MediaFile.VIDEO_FORMAT_4320P, MediaFile.VIDEO_FORMAT_SD,
+        MediaFile.VIDEO_FORMAT_HD };
   }
 
   private boolean isVideoHD(String videoFormat) {
@@ -84,10 +85,10 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
     if (videoFormat.equals(MediaFile.VIDEO_FORMAT_1080P)) {
       return true;
     }
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_4K)) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_2160P)) {
       return true;
     }
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_8K)) {
+    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_4320P)) {
       return true;
     }
     return false;

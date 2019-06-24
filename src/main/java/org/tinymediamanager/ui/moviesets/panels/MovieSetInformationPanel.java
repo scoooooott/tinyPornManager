@@ -24,7 +24,6 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
@@ -42,6 +41,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -70,6 +71,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class MovieSetInformationPanel extends JPanel {
   private static final long            serialVersionUID    = -8166784589262658147L;
+  private static final Logger          LOGGER              = LoggerFactory.getLogger(MovieSetInformationPanel.class);
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle  BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final String          ORIGINAL_IMAGE_SIZE = "originalImageSize";
@@ -173,6 +175,7 @@ public class MovieSetInformationPanel extends JPanel {
         panelRight.add(scrollPaneOverview, "cell 0 3,grow");
 
         taOverview = new ReadOnlyTextArea();
+        taOverview.setBorder(null);
         scrollPaneOverview.setViewportView(taOverview);
       }
       {
@@ -203,7 +206,8 @@ public class MovieSetInformationPanel extends JPanel {
           BufferedImage img = ImageIO.read(new File(lblPoster.getImagePath()));
           lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
         }
-        catch (IOException ignored) {
+        catch (Exception e) {
+          LOGGER.warn("Could not read poster dimensions: {}", e.getMessage());
           lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
         }
       }
@@ -223,7 +227,8 @@ public class MovieSetInformationPanel extends JPanel {
           BufferedImage img = ImageIO.read(new File(lblFanart.getImagePath()));
           lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
         }
-        catch (IOException ignored) {
+        catch (Exception e) {
+          LOGGER.warn("Could not read fanart dimensions: {}", e.getMessage());
           lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
         }
       }

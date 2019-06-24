@@ -154,11 +154,12 @@ public class TinyMediaManager {
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2019 Manuel Laggner ===");
     LOGGER.info("=====================================================");
-    LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
-    LOGGER.info("os.name          : " + System.getProperty("os.name"));
-    LOGGER.info("os.version       : " + System.getProperty("os.version"));
-    LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
-    LOGGER.info("java.version     : " + System.getProperty("java.version"));
+    LOGGER.info("tmm.version      : {}", ReleaseInfo.getRealVersion());
+    LOGGER.info("os.name          : {}", System.getProperty("os.name"));
+    LOGGER.info("os.version       : {}", System.getProperty("os.version"));
+    LOGGER.info("os.arch          : {}", System.getProperty("os.arch"));
+    LOGGER.info("java.version     : {}", System.getProperty("java.version"));
+    LOGGER.info("java.maxMem      : {} MiB", Runtime.getRuntime().maxMemory() / 1024 / 1024);
 
     if (Globals.isRunningJavaWebStart()) {
       LOGGER.info("java.webstart    : true");
@@ -175,10 +176,10 @@ public class TinyMediaManager {
 
     // set GUI default language
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
-    LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
-    LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
-    LOGGER.info("Scraper language : " + MovieModuleManager.SETTINGS.getScraperLanguage());
-    LOGGER.info("TV Scraper lang  : " + TvShowModuleManager.SETTINGS.getScraperLanguage());
+    LOGGER.info("System language  : {}_{}", System.getProperty("user.language"), System.getProperty("user.country"));
+    LOGGER.info("GUI language     : {}_{}", Locale.getDefault().getLanguage(), Locale.getDefault().getCountry());
+    LOGGER.info("Scraper language : {}", MovieModuleManager.SETTINGS.getScraperLanguage());
+    LOGGER.info("TV Scraper lang  : {}", TvShowModuleManager.SETTINGS.getScraperLanguage());
 
     // start EDT
     EventQueue.invokeLater(new Runnable() {

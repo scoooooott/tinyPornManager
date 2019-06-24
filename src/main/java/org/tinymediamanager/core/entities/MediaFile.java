@@ -113,10 +113,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public static final String                         VIDEO_FORMAT_576P        = "576p";
   public static final String                         VIDEO_FORMAT_720P        = "720p";
   public static final String                         VIDEO_FORMAT_1080P       = "1080p";
-  public static final String                         VIDEO_FORMAT_4K          = "4k";
-  public static final String                         VIDEO_FORMAT_8K          = "8k";
+  public static final String                         VIDEO_FORMAT_2160P       = "2160p";
+  public static final String                         VIDEO_FORMAT_4320P       = "4320p";
+
   public static final List<String>                   VIDEO_FORMATS            = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
-      VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_4K, VIDEO_FORMAT_8K);
+      VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_2160P, VIDEO_FORMAT_4320P);
 
   // meta formats
   public static final String                         VIDEO_FORMAT_LD          = "LD";
@@ -1121,7 +1122,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     Field[] declaredFields = MediaFile.class.getDeclaredFields();
     for (Field field : declaredFields) {
-      if (Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("VIDEO_FORMAT_")) {
+      if (Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("VIDEO_FORMAT_") && !field.isAnnotationPresent(Deprecated.class)) {
         try {
           videoFormats.add((String) field.get(null));
         }
@@ -1217,22 +1218,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return VIDEO_FORMAT_1080P;
     }
     else if (w <= blur(3840) && h <= blur(2160)) { // 4K Ultra-high-definition television
-      return VIDEO_FORMAT_4K;
+      return VIDEO_FORMAT_2160P;
     }
     else if (w <= blur(3840) && h <= blur(1600)) { // 4K Ultra-wide-television
-      return VIDEO_FORMAT_4K;
+      return VIDEO_FORMAT_2160P;
     }
     else if (w <= blur(4096) && h <= blur(2160)) { // DCI 4K (native resolution)
-      return VIDEO_FORMAT_4K;
+      return VIDEO_FORMAT_2160P;
     }
     else if (w <= blur(4096) && h <= blur(1716)) { // DCI 4K (CinemaScope cropped)
-      return VIDEO_FORMAT_4K;
+      return VIDEO_FORMAT_2160P;
     }
     else if (w <= blur(3996) && h <= blur(2160)) { // DCI 4K (flat cropped)
-      return VIDEO_FORMAT_4K;
+      return VIDEO_FORMAT_2160P;
     }
 
-    return VIDEO_FORMAT_8K;
+    return VIDEO_FORMAT_4320P;
   }
 
   // add 1%
@@ -1713,12 +1714,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * checks GRAPHIC file for animation, and sets animated flag<br>
+   * checks all graphic file for animation, and sets animated flag<br>
    * currently supported only .GIF<br>
    * Direct file access - should be only used in mediaInfo method!
    */
   public void checkForAnimation() {
-    if (type == MediaFileType.GRAPHIC && getExtension().equalsIgnoreCase("gif")) {
+    if (isGraphic() && getExtension().equalsIgnoreCase("gif")) {
       try {
         GifDecoder decoder = new GifDecoder();
         decoder.read(getFileAsPath().toString());

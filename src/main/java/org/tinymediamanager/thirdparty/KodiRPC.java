@@ -1,6 +1,8 @@
 package org.tinymediamanager.thirdparty;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,17 +49,18 @@ import org.tinymediamanager.jsonrpc.io.JsonApiRequest;
 import org.tinymediamanager.jsonrpc.notification.AbstractEvent;
 
 public class KodiRPC {
-  private static final Logger          LOGGER           = LoggerFactory.getLogger(KodiRPC.class);
+  private static final Logger          LOGGER                   = LoggerFactory.getLogger(KodiRPC.class);
   private static KodiRPC               instance;
-  private static JavaConnectionManager cm               = new JavaConnectionManager();
+  private static JavaConnectionManager cm                       = new JavaConnectionManager();
 
-  private String                       kodiVersion      = "";
-  private ArrayList<SplitUri>          videodatasources = new ArrayList<>();
-  private ArrayList<SplitUri>          audiodatasources = new ArrayList<>();
+  private String                       kodiVersion              = "";
+  private ArrayList<SplitUri>          videodatasources         = new ArrayList<>();
+  private ArrayList<String>            videodatasourcesAsString = new ArrayList<>();
+  private ArrayList<SplitUri>          audiodatasources         = new ArrayList<>();
 
   // TMM DbId-to-KodiId mappings
-  private HashMap<UUID, Integer>       moviemappings    = new HashMap<>();
-  private HashMap<UUID, Integer>       tvshowmappings   = new HashMap<>();
+  private HashMap<UUID, Integer>       moviemappings            = new HashMap<>();
+  private HashMap<UUID, Integer>       tvshowmappings           = new HashMap<>();
 
   private KodiRPC() {
     cm.registerConnectionListener(new ConnectionListener() {
@@ -129,19 +132,46 @@ public class KodiRPC {
     send(call);
   }
 
-  public ArrayList<SplitUri> getVideoDataSources() {
+  public List<SplitUri> getVideoDataSources() {
     return this.videodatasources;
+  }
+
+  public List<String> getVideoDataSourcesAsString() {
+    return this.videodatasourcesAsString;
   }
 
   private void getAndSetVideoDataSources() {
     final Files.GetSources call = new Files.GetSources(FilesModel.Media.VIDEO); // movies + tv !!!
     this.videodatasources = new ArrayList<>();
+    this.videodatasourcesAsString = new ArrayList<>();
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
       for (ListModel.SourceItem res : call.getResults()) {
-        this.videodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+        LOGGER.trace("Kodi datasource: {}", res.file);
+        this.videodatasourcesAsString.add(res.file);
+
+        SplitUri s = new SplitUri(res.file, "", res.label, cm.getHostConfig().getAddress());
+        this.videodatasources.add(s);
+      }
+
+      // sort by length (longest first)
+      Comparator<String> c = new Comparator<String>() {
+        public int compare(String s1, String s2) {
+          return Integer.compare(s1.length(), s2.length());
+        }
+      };
+      Collections.sort(this.videodatasourcesAsString, c);
+      Collections.reverse(this.videodatasourcesAsString);
+    }
+  }
+
+  private String detectDatasource(String file) {
+    for (String ds : this.videodatasourcesAsString) {
+      if (file.startsWith(ds)) {
+        return ds;
       }
     }
+    return "";
   }
 
   /**
@@ -160,14 +190,15 @@ public class KodiRPC {
           // Kodi RPC sends only those disc files
           for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
             if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
-              tmmFiles.put(new SplitUri(mf.getFileAsPath().toString()), movie.getDbId());
+              tmmFiles.put(new SplitUri(movie.getDataSource(), mf.getFileAsPath().toString()), movie.getDbId());
             }
           }
         }
         else {
-          tmmFiles.put(new SplitUri(main.getFileAsPath().toString()), movie.getDbId());
+          tmmFiles.put(new SplitUri(movie.getDataSource(), main.getFileAsPath().toString()), movie.getDbId());
         }
       }
+      LOGGER.debug("TMM {} items", tmmFiles.size());
 
       // iterate over all Kodi resources
       for (MovieDetail res : call.getResults()) {
@@ -175,13 +206,13 @@ public class KodiRPC {
           String[] files = res.file.split(" , ");
           for (String s : files) {
             s = s.replaceFirst("^stack://", "");
-            SplitUri sp = new SplitUri(s, res.label, cm.getHostConfig().getAddress()); // generate clean object
+            String ds = detectDatasource(s);
+            SplitUri sp = new SplitUri(ds, s, res.label, cm.getHostConfig().getAddress()); // generate clean object
 
             for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (sp.equals(tmmsp)) {
-                LOGGER.trace(sp.toString());
                 moviemappings.put(uuid, res.movieid);
                 break;
               }
@@ -189,25 +220,18 @@ public class KodiRPC {
           }
         }
         else {
-          SplitUri kodi = new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
+          String ds = detectDatasource(res.file);
+          SplitUri kodi = new SplitUri(ds, res.file, res.label, cm.getHostConfig().getAddress()); // generate clean object
 
           for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
             SplitUri tmm = entry.getKey();
             UUID uuid = entry.getValue();
             if (kodi.equals(tmm)) {
-              LOGGER.trace(kodi.toString());
               moviemappings.put(uuid, res.movieid);
               break;
             }
           }
         }
-      }
-
-      // debug output
-      for (Map.Entry<UUID, Integer> entry : moviemappings.entrySet()) {
-        UUID key = entry.getKey();
-        Integer value = entry.getValue();
-        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
       LOGGER.debug("mapped {} items", moviemappings.size());
 
@@ -232,33 +256,33 @@ public class KodiRPC {
       // cache our video files/paths as SplitUris
       Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
       for (TvShow show : TvShowList.getInstance().getTvShows()) {
-        tmmFiles.put(new SplitUri(show.getPathNIO().toString()), show.getDbId()); // folder
+        tmmFiles.put(new SplitUri(show.getDataSource(), show.getPathNIO().toString()), show.getDbId()); // folder
 
         for (TvShowEpisode ep : show.getEpisodes()) {
           if (ep.isDisc()) {
             // Kodi RPC sends only those disc files
             for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
               if (mf.getFilename().equalsIgnoreCase("VIDEO_TS.IFO") || mf.getFilename().equalsIgnoreCase("INDEX.BDMV")) {
-                tmmFiles.put(new SplitUri(mf.getFileAsPath().toString()), ep.getDbId());
+                tmmFiles.put(new SplitUri(show.getDataSource(), mf.getFileAsPath().toString()), ep.getDbId());
               }
             }
           }
           else {
-            tmmFiles.put(new SplitUri(ep.getMainVideoFile().getFileAsPath().toString()), ep.getDbId()); // file
+            tmmFiles.put(new SplitUri(show.getDataSource(), ep.getMainVideoFile().getFileAsPath().toString()), ep.getDbId()); // file
           }
         }
-
       }
+      LOGGER.debug("TMM {} items", tmmFiles.size());
 
       // iterate over all Kodi shows
       for (TVShowDetail show : call.getResults()) {
-        SplitUri sp = new SplitUri(show.file, show.label, cm.getHostConfig().getAddress()); // generate clean object
+        String ds = detectDatasource(show.file);
+        SplitUri sp = new SplitUri(ds, show.file, show.label, cm.getHostConfig().getAddress()); // generate clean object
 
         for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
           SplitUri tmmsp = entry.getKey();
           UUID uuid = entry.getValue();
           if (sp.equals(tmmsp)) {
-            LOGGER.trace(sp.toString());
             tvshowmappings.put(uuid, show.tvshowid);
             break;
           }
@@ -270,13 +294,12 @@ public class KodiRPC {
         if (epCall.getResults() != null && !epCall.getResults().isEmpty()) {
 
           for (EpisodeDetail ep : epCall.getResults()) {
-            SplitUri spEp = new SplitUri(ep.file, ep.label, cm.getHostConfig().getAddress()); // generate clean object
+            SplitUri spEp = new SplitUri(ds, ep.file, ep.label, cm.getHostConfig().getAddress()); // generate clean object
 
             for (Map.Entry<SplitUri, UUID> entry : tmmFiles.entrySet()) {
               SplitUri tmmsp = entry.getKey();
               UUID uuid = entry.getValue();
               if (spEp.equals(tmmsp)) {
-                LOGGER.trace(spEp.toString());
                 tvshowmappings.put(uuid, ep.episodeid);
                 break;
               }
@@ -284,13 +307,6 @@ public class KodiRPC {
           }
         }
 
-      }
-
-      // debug output
-      for (Map.Entry<UUID, Integer> entry : tvshowmappings.entrySet()) {
-        UUID key = entry.getKey();
-        Integer value = entry.getValue();
-        LOGGER.debug("TMM: {} - Kodi: {}", key, value);
       }
       LOGGER.debug("mapped {} items", tvshowmappings.size());
 
@@ -367,7 +383,7 @@ public class KodiRPC {
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
       for (ListModel.SourceItem res : call.getResults()) {
-        this.audiodatasources.add(new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+        this.audiodatasources.add(new SplitUri(res.file, res.file, res.label, cm.getHostConfig().getAddress()));
       }
     }
   }
@@ -509,20 +525,16 @@ public class KodiRPC {
 
         LOGGER.info("--- KODI DATASOURCES ---");
         for (ListModel.SourceItem res : call.getResults()) {
-          LOGGER.debug(res.file + " - " + new SplitUri(res.file, res.label, cm.getHostConfig().getAddress()));
+          LOGGER.debug(res.file + " - " + new SplitUri(res.file, "", res.label, cm.getHostConfig().getAddress()));
         }
 
         LOGGER.info("--- TMM DATASOURCES ---");
         for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
-          LOGGER.info(ds + " - " + new SplitUri(ds));
+          LOGGER.info(ds + " - " + new SplitUri(ds, ""));
         }
         for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
-          LOGGER.info(ds + " - " + new SplitUri(ds));
+          LOGGER.info(ds + " - " + new SplitUri(ds, ""));
         }
-
-        String ds = "//server/asdf";
-        LOGGER.info(ds + " - " + new SplitUri(ds));
-
       }
 
       @Override

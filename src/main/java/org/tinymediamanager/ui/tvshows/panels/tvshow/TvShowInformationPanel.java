@@ -218,6 +218,7 @@ public class TvShowInformationPanel extends JPanel {
         panelRight.add(scrollPaneOverview, "cell 0 10,grow");
 
         tpOverview = new ReadOnlyTextArea();
+        tpOverview.setBorder(null);
         scrollPaneOverview.setViewportView(tpOverview);
       }
     }

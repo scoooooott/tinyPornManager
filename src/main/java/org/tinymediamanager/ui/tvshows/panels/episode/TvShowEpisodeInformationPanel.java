@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -132,14 +133,16 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     this.tvShowEpisodeSelectionModel.addPropertyChangeListener(propertyChangeListener);
 
     btnPlay.addActionListener(e -> {
-      MediaFile mf = this.tvShowEpisodeSelectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
-      try {
-        TmmUIHelper.openFile(mf.getFileAsPath());
-      }
-      catch (Exception ex) {
-        LOGGER.error("open file", e);
-        MessageManager.instance
-            .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+      MediaFile mf = this.tvShowEpisodeSelectionModel.getSelectedTvShowEpisode().getMainVideoFile();
+      if (StringUtils.isNotBlank(mf.getFilename())) {
+        try {
+          TmmUIHelper.openFile(mf.getFileAsPath());
+        }
+        catch (Exception ex) {
+          LOGGER.error("open file", e);
+          MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+        }
       }
     });
   }
@@ -228,6 +231,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         scrollPanePlot.setBorder(null);
 
         taOverview = new ReadOnlyTextArea();
+        taOverview.setBorder(null);
         scrollPanePlot.setViewportView(taOverview);
         panelRight.add(scrollPanePlot, "cell 0 11 2 1,grow");
       }

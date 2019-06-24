@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -138,6 +139,22 @@ public class UpgradeTasks {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           if (episode.getArtworkUrl(MediaFileType.THUMB).equals("http://thetvdb.com/banners/")) {
             episode.setArtworkUrl("", MediaFileType.THUMB);
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
+    // upgrade to v3.0.2
+    if (StrgUtils.compareVersion(v, "3.0.2") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.2");
+      // set episode year
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (episode.getYear() == 0 && episode.getFirstAired() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(episode.getFirstAired());
+            episode.setYear(calendar.get(Calendar.YEAR));
             episode.saveToDb();
           }
         }
