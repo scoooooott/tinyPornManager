@@ -862,6 +862,10 @@ public class MovieRenamer {
             // Fixate the name regardless of setting
             nfonames.add(MovieNfoNaming.FILENAME_NFO);
           }
+          else if (movie.isDisc()) {
+            nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            nfonames.add(MovieNfoNaming.MOVIE_NFO); // unneeded, but "TMM style"
+          }
           else {
             nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();
           }

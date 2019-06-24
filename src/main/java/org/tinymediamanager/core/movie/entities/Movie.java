@@ -1097,47 +1097,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
     switch (nfo) {
       case FILENAME_NFO:
         if (isDisc()) {
-          // if filename is activated, we generate them accordingly MF(1)
-          // but if disc, fixate this
-          Path dir = getPathNIO().resolve("VIDEO_TS");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("VIDEO_TS.nfo").toString();
-          }
-          dir = getPathNIO().resolve("HVDVD_TS");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("HVDVD_TS.nfo").toString();
-          }
-          dir = getPathNIO().resolve("BDMV");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("index.nfo").toString();
-          }
+          // in case of disc, this is the name of the "main" disc identifier file!
+          filename = FilenameUtils.removeExtension(findDiscMainFile());
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-          filename += movieFilename + ".nfo";
+          filename = FilenameUtils.removeExtension(newMovieFilename);
+        }
+        if (!filename.isEmpty()) {
+          filename += ".nfo";
         }
         break;
 
       case MOVIE_NFO:
-        if (isDisc()) {
-          // if movie.nfo is activated, we generate them
-          // but if disc, fixate this
-          Path dir = getPathNIO().resolve("VIDEO_TS");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("VIDEO_TS.nfo").toString();
-          }
-          dir = getPathNIO().resolve("HVDVD_TS");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("HVDVD_TS.nfo").toString();
-          }
-          dir = getPathNIO().resolve("BDMV");
-          if (Files.isDirectory(dir)) {
-            filename = dir.resolve("index.nfo").toString();
-          }
-        }
-        else {
-          filename += "movie.nfo";
-        }
+        filename = "movie.nfo";
         break;
 
       default:
@@ -1171,7 +1143,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * all supported TRAILE names. (without path!)
+   * all supported TRAILER names. (without path!)
    * 
    * @param trailer
    *          trailer naming enum
@@ -1184,15 +1156,18 @@ public class Movie extends MediaEntity implements IMediaInformation {
     switch (trailer) {
       case FILENAME_TRAILER:
         if (isDisc()) {
-          filename += "movie-trailer"; // TODO: assume, or same naming as NFO?
+          // in case of disc, this is the name of the "main" disc identifier file!
+          filename = FilenameUtils.removeExtension(findDiscMainFile());
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-          filename = movieFilename + "-trailer";
+          filename = FilenameUtils.removeExtension(newMovieFilename);
+        }
+        if (!filename.isEmpty()) {
+          filename += "-trailer";
         }
         break;
       case MOVIE_TRAILER:
-        filename += "movie-trailer";
+        filename = "movie-trailer";
         break;
       default:
         filename = "";
@@ -1264,13 +1239,19 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     if (connector != null) {
-      List<MovieNfoNaming> naming = MovieModuleManager.SETTINGS.getNfoFilenames();
+      List<MovieNfoNaming> nfonames = new ArrayList<>();
       if (isMultiMovieDir()) {
-        // fixate
-        naming = new ArrayList<>();
-        naming.add(MovieNfoNaming.FILENAME_NFO);
+        // Fixate the name regardless of setting
+        nfonames.add(MovieNfoNaming.FILENAME_NFO);
       }
-      connector.write(naming);
+      else if (isDisc()) {
+        nfonames.add(MovieNfoNaming.FILENAME_NFO);
+        nfonames.add(MovieNfoNaming.MOVIE_NFO); // unneeded, but "TMM style"
+      }
+      else {
+        nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();
+      }
+      connector.write(nfonames);
       firePropertyChange(HAS_NFO_FILE, false, true);
     }
   }
@@ -1544,6 +1525,18 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void setDisc(boolean isDisc) {
     this.isDisc = isDisc;
+  }
+
+  public String findDiscMainFile() {
+    String ret = "";
+    for (MediaFile video : getMediaFiles(MediaFileType.VIDEO)) {
+      // get the MF from the "index" file.
+      // we need the name and especially the path where it is...
+      if (video.isMainDiscIdentifierFile()) {
+        ret = Utils.relPath(getPathNIO(), video.getFileAsPath());
+      }
+    }
+    return ret;
   }
 
   public int getMediaInfoVideoBitrate() {
