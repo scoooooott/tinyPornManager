@@ -540,7 +540,7 @@ public abstract class ImdbParser {
         try {
           MediaRating rating = new MediaRating("imdb");
           rating.setRating(Float.valueOf(ratingAsString));
-          rating.setVoteCount(Integer.parseInt(countAsString));
+          rating.setVoteCount(MetadataUtil.parseInt(countAsString));
           md.addRating(rating);
         }
         catch (Exception ignored) {
