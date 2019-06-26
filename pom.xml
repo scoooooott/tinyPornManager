@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-anidb</artifactId>
-    <version>3.1</version>
+    <version>3.2-SNAPSHOT</version>
 
     <name>AniDB scraper</name>
     <description>A AniDB scraper for tinyMediaManager</description>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git
         </developerConnection>
-        <tag>scraper-anidb-3.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
