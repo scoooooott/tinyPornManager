@@ -118,7 +118,7 @@ public class MetadataUtil {
 
   /**
    * parse a String for its integer value<br />
-   * this method can parse normal integer values (e.g. 2001) as well as the style with digit separators (e.g. 2.001 or 2,001)
+   * this method can parse normal integer values (e.g. 2001) as well as the style with digit separators (e.g. 2.001 or 2,001 or 2 001)
    *
    * @param intAsString
    *          the String to be parsed
@@ -133,8 +133,8 @@ public class MetadataUtil {
     }
     catch (NumberFormatException e) {
       // did not work; try to remove digit separators
-      // since we do not know for which locale the separators has been written, remove . and ,
-      return Integer.parseInt(intAsString.replaceAll("[,\\.]*", ""));
+      // since we do not know for which locale the separators has been written, remove . and , and all whitespaces
+      return Integer.parseInt(intAsString.replaceAll("[,\\.\\s]*", ""));
     }
   }
 
