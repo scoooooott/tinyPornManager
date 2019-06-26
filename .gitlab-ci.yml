@@ -130,7 +130,7 @@ deploy:prerel:
       - build/
       - dist/
 
-deploy:release:
+deploy:RELEASE:
   stage: deploy
   image: maven:3-jdk-8      # use stretch
   environment:

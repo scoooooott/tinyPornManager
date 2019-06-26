@@ -583,6 +583,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)");
   }
 
+  /**
+   * Every disc has its own starting point.<br>
+   * So this returns true if we found it.
+   * 
+   * @return
+   */
+  public boolean isMainDiscIdentifierFile() {
+    if (getFilename().equalsIgnoreCase("video_ts.ifo") || getFilename().equalsIgnoreCase("index.bdmv")
+        || getFilename().equalsIgnoreCase("hv000i01.ifo")) {
+      return true;
+    }
+    return false;
+  }
+
   public Path getFile() {
     return getFileAsPath();
   }

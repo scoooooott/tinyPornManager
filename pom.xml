@@ -24,19 +24,19 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>api-scraper</artifactId>
-            <version>3.0.2-SNAPSHOT</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>tinyMediaManager-LaF</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>3.1</version>
         </dependency>
 
         <!-- our plugins - all provided for dependency resolution -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-anidb</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-imdb</artifactId>
-            <version>3.1</version>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-animated</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>3.1</version>
         </dependency>
         <!-- REMOVED RottenTomatoes removed free access to the API <dependency> 
             <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-rottentomatoes</artifactId> 

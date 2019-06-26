@@ -1,4 +1,4 @@
-Upcoming version
+Version 3.0.2
 =======================
 + added undo/redo for all text fields
 + added renamer token for the current parent folder (to enable renaming of folders without moving them in the folder structure)
@@ -11,6 +11,11 @@ x set episode year along with firstAired
 x writing of TV show actor images
 x fix an occasional crash when scraping movie sets #563
 x fixed language detection for Turkish subtitles #562
+x reworked KodiRPC connection (better datasource matching) #554 #549
+x fixed location for writing NFO and trailer files (for disc folders)
+x changed hotkey for deleting movies/TV shows to CTRL+SHIFT+DEL #568
+x fixed parsing of votes from IMDB in another notation #559
+x clean episode title upon importing
 
 
 Version 3.0.1

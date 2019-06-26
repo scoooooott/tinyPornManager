@@ -772,6 +772,9 @@ public class MovieRenamer {
           // Fixate the name regardless of setting
           trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
         }
+        else if (movie.isDisc()) {
+          trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+        }
         else {
           trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
         }
@@ -861,6 +864,10 @@ public class MovieRenamer {
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
             nfonames.add(MovieNfoNaming.FILENAME_NFO);
+          }
+          else if (movie.isDisc()) {
+            nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            nfonames.add(MovieNfoNaming.MOVIE_NFO); // unneeded, but "TMM style"
           }
           else {
             nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();

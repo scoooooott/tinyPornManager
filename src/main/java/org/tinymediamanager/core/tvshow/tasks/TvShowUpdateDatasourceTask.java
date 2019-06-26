@@ -726,7 +726,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               if (result.name.isEmpty()) {
                 result.name = FilenameUtils.getBaseName(mf.getFilename());
               }
-              episode.setTitle(result.name);
+              episode.setTitle(TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(result.name, tvShow.getTitle()));
               episode.setPath(mf.getPath());
               episode.setTvShow(tvShow);
               episode.addToMediaFiles(epFiles); // all found EP MFs
@@ -784,7 +784,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setPath(discRoot.toAbsolutePath().toString());
             }
 
-            episode.setTitle(FilenameUtils.getBaseName(mf.getFilename()));
+            episode.setTitle(TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(FilenameUtils.getBaseName(mf.getFilename()), tvShow.getTitle()));
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date); // maybe found
             episode.addToMediaFiles(epFiles); // all found EP MFs
