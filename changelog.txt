@@ -15,6 +15,7 @@ x reworked KodiRPC connection (better datasource matching) #554 #549
 x fixed location for writing NFO and trailer files (for disc folders)
 x changed hotkey for deleting movies/TV shows to CTRL+SHIFT+DEL #568
 x fixed parsing of votes from IMDB in another notation #559
+x clean episode title upon importing
 
 
 Version 3.0.1
