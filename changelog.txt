@@ -1,3 +1,7 @@
+Upcoming version
+=======================
+x write correct trailer url to the NFO
+
 Version 3.0.2
 =======================
 + added undo/redo for all text fields
