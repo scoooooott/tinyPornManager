@@ -1251,10 +1251,16 @@ public class TvShowRenamer {
       // we need to mask it in windows
       destination = destination.replaceAll("\\\\{2,}", "\\\\");
       destination = destination.replaceAll("^\\\\", "");
+      // trim whitespace around directory sep
+      destination = destination.replaceAll("\\s+\\\\", "\\\\");
+      destination = destination.replaceAll("\\\\\\s+", "\\\\");
     }
     else {
       destination = destination.replaceAll(File.separator + "{2,}", File.separator);
       destination = destination.replaceAll("^" + File.separator, "");
+      // trim whitespace around directory sep
+      destination = destination.replaceAll("\\s+/", "/");
+      destination = destination.replaceAll("/\\s+", "/");
     }
 
     // ASCII replacement
