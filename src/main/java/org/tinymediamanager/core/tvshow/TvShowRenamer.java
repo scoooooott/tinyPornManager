@@ -426,6 +426,8 @@ public class TvShowRenamer {
       boolean ok = moveFile(vid.getFileAsPath(), newMF.getFileAsPath());
       if (ok) {
         vid.setFile(newMF.getFileAsPath()); // update
+        // if we move the episode in its own folder, we might need to upgrade the path as well!
+        episode.setPath(newMF.getPath());
       }
       needed.add(vid); // add vid, since we're updating existing MF object
     }
@@ -573,7 +575,7 @@ public class TvShowRenamer {
     for (TvShowEpisode e : eps) {
       e.removeAllMediaFiles();
       e.addToMediaFiles(needed);
-      e.setPath(seasonFolder.toString());
+      e.setPath(episode.getPath());
       e.gatherMediaFileInformation(false);
       e.saveToDb();
 
