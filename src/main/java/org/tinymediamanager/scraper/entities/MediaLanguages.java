@@ -53,6 +53,7 @@ public enum MediaLanguages {
   hr("hrvatski jezik"),
   hu("Magyar"),
   hy("Հայերեն"),
+  is("Íslenska"),
   it("Italiano"),
   ja("日本語"),
   ka("ქართული"),
