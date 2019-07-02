@@ -44,7 +44,7 @@ public enum MediaLanguages {
   el("Ελληνικά"),
   en("English"),
   es("Español"),
-  es_mx("Español (Mexico)"),
+  es_MX("Español (Mexico)"),
   et("eesti"),
   fa("فارسی"),
   fi("Suomi"),
