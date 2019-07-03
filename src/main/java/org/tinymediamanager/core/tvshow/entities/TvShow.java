@@ -253,50 +253,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
 
-    for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_BANNER)) {
-      if (mf.getFilename().startsWith("season-specials")) {
-        seasonBanners.put(0, mf);
-      }
-      else if (mf.getFilename().startsWith("season-all")) {
-        seasonBanners.put(-1, mf);
-      }
-      else {
-        // parse out the season from the name
-        Matcher matcher = seasonNumber.matcher(mf.getFilename());
-        if (matcher.matches()) {
-          try {
-            int season = Integer.parseInt(matcher.group(1));
-            seasonBanners.put(season, mf);
-          }
-          catch (Exception e) {
-            LOGGER.warn("could not parse season number: {}", e.getMessage());
-          }
-        }
-      }
-    }
-
-    for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_THUMB)) {
-      if (mf.getFilename().startsWith("season-specials")) {
-        seasonThumbs.put(0, mf);
-      }
-      else if (mf.getFilename().startsWith("season-all")) {
-        seasonThumbs.put(-1, mf);
-      }
-      else {
-        // parse out the season from the name
-        Matcher matcher = seasonNumber.matcher(mf.getFilename());
-        if (matcher.matches()) {
-          try {
-            int season = Integer.parseInt(matcher.group(1));
-            seasonThumbs.put(season, mf);
-          }
-          catch (Exception e) {
-            LOGGER.warn("could not parse season number: {}", e.getMessage());
-          }
-        }
-      }
-    }
-
     for (TvShowEpisode episode : episodes) {
       episode.addPropertyChangeListener(propertyChangeListener);
     }
