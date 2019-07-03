@@ -114,9 +114,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShow.class);
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
 
-  private static final Pattern               seasonPosterPattern   = Pattern.compile("(?i)season([0-9]{1,4}|special)(-poster)?\\..{2,4}");
-  private static final Pattern               seasonBannerPattern   = Pattern.compile("(?i)season([0-9]{1,4}|special)-banner\\..{2,4}");
-  private static final Pattern               seasonThumbPattern    = Pattern.compile("(?i)season([0-9]{1,4}|special)-thumb\\..{2,4}");
+  private static final Pattern               seasonNumber          = Pattern.compile("(?i)season([0-9]{1,4}).*");
 
   @JsonProperty
   private int                                runtime               = 0;
@@ -216,53 +214,84 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     // create season artwork maps
-    for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER)) {
-      if (mf.getFilename().startsWith("season-specials-poster")) {
-        seasonPosters.put(0, mf);
-      }
-      else {
-        // parse out the season from the name
-        Matcher matcher = seasonPosterPattern.matcher(mf.getFilename());
-        if (matcher.matches()) {
-          try {
-            int season = Integer.parseInt(matcher.group(1));
-            seasonPosters.put(season, mf);
-          }
-          catch (Exception ignored) {
+    for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER, MediaFileType.SEASON_BANNER, MediaFileType.SEASON_THUMB)) {
+      Integer season = null;
+      try {
+        if (mf.getFilename().startsWith("season-specials")) {
+          season = 0;
+        }
+        else if (mf.getFilename().startsWith("season-all")) {
+          season = -1;
+        }
+        else {
+          // parse out the season from the name
+          Matcher matcher = seasonNumber.matcher(mf.getFilename());
+          season = Integer.parseInt(matcher.group(1));
+        }
+
+        if (season != null) {
+          switch (mf.getType()) {
+            case SEASON_BANNER:
+              seasonBanners.put(season, mf);
+              break;
+
+            case SEASON_POSTER:
+              seasonPosters.put(season, mf);
+              break;
+
+            case SEASON_THUMB:
+              seasonThumbs.put(season, mf);
+              break;
+
+            default:
+              break;
           }
         }
       }
+      catch (Exception e) {
+        LOGGER.warn("could not parse season number: {} MF: {}", e.getMessage(), mf.getFileAsPath().toAbsolutePath());
+      }
     }
+
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_BANNER)) {
-      if (mf.getFilename().startsWith("season-specials-banner")) {
+      if (mf.getFilename().startsWith("season-specials")) {
         seasonBanners.put(0, mf);
+      }
+      else if (mf.getFilename().startsWith("season-all")) {
+        seasonBanners.put(-1, mf);
       }
       else {
         // parse out the season from the name
-        Matcher matcher = seasonBannerPattern.matcher(mf.getFilename());
+        Matcher matcher = seasonNumber.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
             int season = Integer.parseInt(matcher.group(1));
             seasonBanners.put(season, mf);
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.warn("could not parse season number: {}", e.getMessage());
           }
         }
       }
     }
+
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_THUMB)) {
-      if (mf.getFilename().startsWith("season-specials-thumb")) {
+      if (mf.getFilename().startsWith("season-specials")) {
         seasonThumbs.put(0, mf);
+      }
+      else if (mf.getFilename().startsWith("season-all")) {
+        seasonThumbs.put(-1, mf);
       }
       else {
         // parse out the season from the name
-        Matcher matcher = seasonThumbPattern.matcher(mf.getFilename());
+        Matcher matcher = seasonNumber.matcher(mf.getFilename());
         if (matcher.matches()) {
           try {
             int season = Integer.parseInt(matcher.group(1));
             seasonThumbs.put(season, mf);
           }
-          catch (Exception ignored) {
+          catch (Exception e) {
+            LOGGER.warn("could not parse season number: {}", e.getMessage());
           }
         }
       }
