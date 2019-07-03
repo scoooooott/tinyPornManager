@@ -79,7 +79,7 @@ public class ImageCacheTask extends TmmThreadPool {
     public Object call() {
       try {
         // sleep 50ms to let the system calm down from a previous task
-        // Thread.sleep(50);
+        Thread.sleep(50);
         ImageCache.cacheImage(fileToCache);
       }
       catch (EmptyFileException e) {
