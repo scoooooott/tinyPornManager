@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core.entities;
 
-import org.tinymediamanager.core.AbstractModelObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -24,23 +22,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class MediaFileAudioStream extends AbstractModelObject {
+public class MediaFileAudioStream extends MediaStreamInfo {
   @JsonProperty
-  private int     audioChannels = 0;
+  private int    audioChannels = 0;
   @JsonProperty
-  private String  codec         = "";
+  private int    bitrate       = 0;
   @JsonProperty
-  private int     bitrate       = 0;
-  @JsonProperty
-  private String  language      = "";
-  @JsonProperty
-  private boolean defaultStream = false;
+  @Deprecated
+  public boolean defaultStream = false;
 
   public MediaFileAudioStream() {
-  }
-
-  public String getCodec() {
-    return codec;
   }
 
   public int getAudioChannels() {
@@ -51,14 +42,6 @@ public class MediaFileAudioStream extends AbstractModelObject {
     this.audioChannels = audiochannels;
   }
 
-  public boolean isDefaultStream() {
-    return defaultStream;
-  }
-
-  public void setDefaultStream(boolean defaultStream) {
-    this.defaultStream = defaultStream;
-  }
-
   public int getBitrate() {
     return bitrate;
   }
@@ -67,19 +50,8 @@ public class MediaFileAudioStream extends AbstractModelObject {
     return bitrate > 0 ? bitrate + " kbps" : "";
   }
 
-  public String getLanguage() {
-    return language;
-  }
-
-  public void setCodec(String codec) {
-    this.codec = codec;
-  }
-
   public void setBitrate(int bitrate) {
     this.bitrate = bitrate;
   }
 
-  public void setLanguage(String language) {
-    this.language = language;
-  }
 }

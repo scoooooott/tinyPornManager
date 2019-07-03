@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core.entities;
 
-import org.tinymediamanager.core.AbstractModelObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -24,67 +22,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class MediaFileSubtitle extends AbstractModelObject implements Comparable<MediaFileSubtitle> {
+public class MediaFileSubtitle extends MediaStreamInfo implements Comparable<MediaFileSubtitle> {
+
+  /**
+   * https://www.3playmedia.com/2017/06/19/whats-the-difference-subtitles-for-the-deaf-and-hard-of-hearing-sdh-v-closed-captions/<br>
+   * https://www.reddit.com/r/kodi/comments/4daoa1/subtitles_can_someone_explain_the_difference/d1pa9lf?utm_source=share&utm_medium=web2x
+   */
+
   @JsonProperty
-  private String  codec         = "";
+  @Deprecated
+  public boolean forced        = false;
   @JsonProperty
-  private String  language      = "";
-  @JsonProperty
-  private boolean forced        = false;
-  @JsonProperty
-  private boolean defaultStream = false;
+  @Deprecated
+  public boolean defaultStream = false;
 
   public MediaFileSubtitle() {
-  }
-
-  public String getCodec() {
-    return codec;
-  }
-
-  public void setCodec(String codec) {
-    this.codec = codec;
-  }
-
-  public boolean isDefaultStream() {
-    return defaultStream;
-  }
-
-  public void setDefaultStream(boolean defaultStream) {
-    this.defaultStream = defaultStream;
-  }
-
-  public String getLanguage() {
-    return language;
-  }
-
-  public void setLanguage(String language) {
-    this.language = language;
-  }
-
-  public boolean isForced() {
-    return forced;
-  }
-
-  public void setForced(boolean forced) {
-    this.forced = forced;
-  }
-
-  @Override
-  public boolean equals(Object mf2) {
-    if ((mf2 instanceof MediaFileSubtitle)) {
-      return compareTo((MediaFileSubtitle) mf2) == 0;
-    }
-    return false;
   }
 
   @Override
   public int compareTo(MediaFileSubtitle mf2) {
     return this.getLanguage().compareTo(mf2.getLanguage());
-  }
-
-  @Override
-  public int hashCode() {
-    return this.language.hashCode();
   }
 
   @Override
