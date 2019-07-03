@@ -89,9 +89,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final Pattern                       THUMB_PATTERN            = Pattern
       .compile("(?i)(.*-thumb|thumb|.*-landscape|landscape)[0-9]{0,2}\\..{2,4}");
   private static final Pattern                       SEASON_POSTER_PATTERN    = Pattern
-      .compile("(?i)season([0-9]{1,4}|-specials)(-poster)?\\..{1,4}");
-  private static final Pattern                       SEASON_BANNER_PATTERN    = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-banner\\..{1,4}");
-  private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern.compile("(?i)season([0-9]{1,4}|-specials)-thumb\\..{1,4}");
+      .compile("(?i)season([0-9]{1,4}|-specials|-all)(-poster)?\\..{1,4}");
+  private static final Pattern                       SEASON_BANNER_PATTERN    = Pattern
+      .compile("(?i)season([0-9]{1,4}|-specials|-all)-banner\\..{1,4}");
+  private static final Pattern                       SEASON_THUMB_PATTERN     = Pattern
+      .compile("(?i)season([0-9]{1,4}|-specials|-all)-thumb\\..{1,4}");
   private static final Pattern                       LOGO_PATTERN             = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   private static final Pattern                       CLEARLOGO_PATTERN        = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
   private static final Pattern                       CHARACTERART_PATTERN     = Pattern
