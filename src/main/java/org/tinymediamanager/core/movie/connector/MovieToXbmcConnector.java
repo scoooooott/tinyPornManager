@@ -183,9 +183,12 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         height.setTextContent(Integer.toString(vid.getVideoHeight()));
         video.appendChild(height);
 
-        Element durationinseconds = document.createElement("durationinseconds");
-        durationinseconds.setTextContent(Integer.toString(movie.getRuntimeFromMediaFiles()));
-        video.appendChild(durationinseconds);
+        // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
+        if (!movie.isDisc()) {
+          Element durationinseconds = document.createElement("durationinseconds");
+          durationinseconds.setTextContent(Integer.toString(movie.getRuntimeFromMediaFiles()));
+          video.appendChild(durationinseconds);
+        }
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp

@@ -77,9 +77,12 @@ public class TvShowEpisodeToXbmcConnector extends TvShowEpisodeGenericXmlConnect
       height.setTextContent(String.valueOf(videoFile.getVideoHeight()));
       video.appendChild(height);
 
-      Element durationinseconds = document.createElement("durationinseconds");
-      durationinseconds.setTextContent(String.valueOf(episode.getRuntimeFromMediaFiles()));
-      video.appendChild(durationinseconds);
+      // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
+      if (!episode.isDisc()) {
+        Element durationinseconds = document.createElement("durationinseconds");
+        durationinseconds.setTextContent(String.valueOf(episode.getRuntimeFromMediaFiles()));
+        video.appendChild(durationinseconds);
+      }
 
       Element stereomode = document.createElement("stereomode");
       // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
