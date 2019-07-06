@@ -30,8 +30,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -945,6 +947,28 @@ public class TvShowList extends AbstractModelObject {
     }
 
     return subtitleScrapers;
+  }
+
+  /**
+   * search all episodes of all TV shows for duplicates (duplicate S/E)
+   */
+  public void searchDuplicateEpisodes() {
+    for (TvShow tvShow : getTvShows()) {
+      Map<String, TvShowEpisode> episodeMap = new HashMap<>();
+
+      for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        String se = "S" + episode.getSeason() + "E" + episode.getEpisode();
+
+        TvShowEpisode duplicate = episodeMap.get(se);
+        if (duplicate != null) {
+          duplicate.setDuplicate();
+          episode.setDuplicate();
+        }
+        else {
+          episodeMap.put(se, episode);
+        }
+      }
+    }
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {

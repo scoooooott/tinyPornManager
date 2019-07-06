@@ -2,6 +2,7 @@ Upcoming version
 =======================
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
++ added a duplicate episode filter #578
 x write correct trailer url to the NFO
 x do not write stream runtime for disc style movies to NFO
 
