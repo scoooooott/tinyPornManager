@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -27,6 +26,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.table.TmmTableFormat;
 
 /**
  * This class implements a tag filter for the TV show tree
@@ -34,10 +34,13 @@ import org.tinymediamanager.ui.components.TmmLabel;
  * @author Manuel Laggner
  */
 public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String> {
+  private TmmTableFormat.StringComparator comparator;
+
   private TvShowList tvShowList = TvShowList.getInstance();
 
   public TvShowTagFilter() {
     super();
+    comparator = new TmmTableFormat.StringComparator();
     buildAndInstallTagsArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallTagsArray();
     tvShowList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
@@ -80,7 +83,7 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
   private void buildAndInstallTagsArray() {
     List<String> tags = new ArrayList<>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
-    Collections.sort(tags);
+    tags.sort(comparator);
 
     setValues(tags);
   }
