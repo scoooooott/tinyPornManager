@@ -3,8 +3,11 @@ Upcoming version
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
 + added a duplicate episode filter #578
++ added a MovieEdition filter
 x write correct trailer url to the NFO
 x do not write stream runtime for disc style movies to NFO
+x sort tags in the tag filter dropdown
+
 
 Version 3.0.2
 =======================
