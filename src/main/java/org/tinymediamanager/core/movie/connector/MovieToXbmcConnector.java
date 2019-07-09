@@ -184,7 +184,7 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         video.appendChild(height);
 
         // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
-        if (!movie.isDisc()) {
+        if (!movie.isDisc() || movie.getMainVideoFile().getExtension().equalsIgnoreCase("iso")) {
           Element durationinseconds = document.createElement("durationinseconds");
           durationinseconds.setTextContent(Integer.toString(movie.getRuntimeFromMediaFiles()));
           video.appendChild(durationinseconds);

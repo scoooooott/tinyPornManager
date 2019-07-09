@@ -78,7 +78,7 @@ public class TvShowEpisodeToXbmcConnector extends TvShowEpisodeGenericXmlConnect
       video.appendChild(height);
 
       // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
-      if (!episode.isDisc()) {
+      if (!episode.isDisc() || episode.getMainVideoFile().getExtension().equalsIgnoreCase("iso")) {
         Element durationinseconds = document.createElement("durationinseconds");
         durationinseconds.setTextContent(String.valueOf(episode.getRuntimeFromMediaFiles()));
         video.appendChild(durationinseconds);
