@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Settings;
 
 /**
@@ -25,7 +26,69 @@ import org.tinymediamanager.core.Settings;
 public class Globals {
   private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
 
-  public static final Settings settings = Settings.getInstance();
+  public static final String   DATA_FOLDER;
+  public static final String   CACHE_FOLDER;
+  public static final String   BACKUP_FOLDER;
+  public static final String   LOG_FOLDER;
+
+  public static final Settings settings;
+
+  static {
+    // first we look for a dedicated folder property
+    // after that we look for tmm.contentfolder
+    String dataFolder = System.getProperty("tmm.datafolder");
+    String cacheFolder = System.getProperty("tmm.cachefolder");
+    String backupFolder = System.getProperty("tmm.backupfolder");
+    String logFolder = System.getProperty("tmm.logfolder");
+
+    String contentFolder = System.getProperty("tmm.contentfolder");
+
+    // data
+    if (StringUtils.isNotBlank(dataFolder)) {
+      DATA_FOLDER = dataFolder;
+    }
+    else if (StringUtils.isNotBlank(contentFolder)) {
+      DATA_FOLDER = contentFolder + "/data";
+    }
+    else {
+      DATA_FOLDER = "data";
+    }
+
+    // cache
+    if (StringUtils.isNotBlank(cacheFolder)) {
+      CACHE_FOLDER = cacheFolder;
+    }
+    else if (StringUtils.isNotBlank(contentFolder)) {
+      CACHE_FOLDER = contentFolder + "/cache";
+    }
+    else {
+      CACHE_FOLDER = "cache";
+    }
+
+    // backup
+    if (StringUtils.isNotBlank(backupFolder)) {
+      BACKUP_FOLDER = backupFolder;
+    }
+    else if (StringUtils.isNotBlank(contentFolder)) {
+      BACKUP_FOLDER = contentFolder + "/backup";
+    }
+    else {
+      BACKUP_FOLDER = "backup";
+    }
+
+    // logs
+    if (StringUtils.isNotBlank(logFolder)) {
+      LOG_FOLDER = logFolder;
+    }
+    else if (StringUtils.isNotBlank(contentFolder)) {
+      LOG_FOLDER = contentFolder + "/logs";
+    }
+    else {
+      LOG_FOLDER = "logs";
+    }
+
+    settings = Settings.getInstance();
+  }
 
   /**
    * are we in our internal debug mode?

@@ -72,6 +72,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -1125,7 +1126,7 @@ public class Utils {
    *          if file is already there, ignore that and overwrite with new copy
    */
   public static void createBackupFile(Path file, boolean overwrite) {
-    Path backup = Paths.get("backup");
+    Path backup = Paths.get(Globals.BACKUP_FOLDER);
     try {
       if (!Files.exists(backup)) {
         Files.createDirectory(backup);
@@ -1157,7 +1158,7 @@ public class Utils {
   public static void deleteOldBackupFile(Path file, int keep) {
     ArrayList<Path> al = new ArrayList<>();
     String fname = file.getFileName().toString();
-    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Globals.BACKUP_FOLDER))) {
       for (Path path : directoryStream) {
         if (path.getFileName().toString().matches(fname + "\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip") || // name.ext.yyyy-mm-dd.zip
             path.getFileName().toString().matches(fname + "\\.\\d{4}\\-\\d{2}\\-\\d{2}")) { // old name.ext.yyyy-mm-dd

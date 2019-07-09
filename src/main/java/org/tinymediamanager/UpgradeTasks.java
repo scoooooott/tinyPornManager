@@ -101,7 +101,7 @@ public class UpgradeTasks {
       // clean old style backup files
       ArrayList<Path> al = new ArrayList<>();
 
-      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Globals.BACKUP_FOLDER))) {
         for (Path path : directoryStream) {
           if (path.getFileName().toString().matches("movies\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")
               || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {

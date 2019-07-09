@@ -52,7 +52,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  */
 public class ImageCache {
   private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
-  private static final Path   CACHE_DIR = Paths.get("cache/image");
+  private static final Path   CACHE_DIR = Paths.get(Globals.CACHE_FOLDER + "/image");
 
   public enum CacheType {
     FAST,
