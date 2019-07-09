@@ -44,10 +44,29 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
  * @since 1.0
  */
 public class TmmHttpClient {
-  private static final Logger LOGGER    = LoggerFactory.getLogger(TmmHttpClient.class);
-  public static final String  CACHE_DIR = "cache/http";
-  private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 25 * 1024 * 1024);
-  private static OkHttpClient client    = createHttpClient();
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmmHttpClient.class);
+  private static final Cache  CACHE;
+  private static OkHttpClient client = createHttpClient();
+
+  static {
+    String cacheFolder = System.getProperty("tmm.cachefolder");
+    String contentFolder = System.getProperty("tmm.contentfolder");
+
+    String result;
+
+    // cache
+    if (StringUtils.isNotBlank(cacheFolder)) {
+      result = cacheFolder;
+    }
+    else if (StringUtils.isNotBlank(contentFolder)) {
+      result = contentFolder + "/cache";
+    }
+    else {
+      result = "cache";
+    }
+
+    CACHE = new Cache(new File(result), 25 * 1024 * 1024);
+  }
 
   /**
    * instantiates a new OkHttpClient
