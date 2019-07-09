@@ -856,7 +856,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
           else {
             Matcher matcher = seasonNumber.matcher(mf.getFilename());
-            season = Integer.parseInt(matcher.group(1));
+            if (matcher.matches()) {
+              season = Integer.parseInt(matcher.group(1));
+            }
+            else {
+              throw new IllegalStateException("did not find a season number");
+            }
           }
           LOGGER.debug("found {} - {}", mf.getType(), mf.getFileAsPath());
           tvShow.setSeasonArtwork(season, mf);

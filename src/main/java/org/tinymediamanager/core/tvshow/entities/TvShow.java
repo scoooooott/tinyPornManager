@@ -114,7 +114,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShow.class);
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
 
-  private static final Pattern               seasonNumber          = Pattern.compile("(?i)season([0-9]{1,4}).*");
+  private static final Pattern               SEASON_NUMBER         = Pattern.compile("(?i)season([0-9]{1,4}).*");
 
   @JsonProperty
   private int                                runtime               = 0;
@@ -225,8 +225,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         }
         else {
           // parse out the season from the name
-          Matcher matcher = seasonNumber.matcher(mf.getFilename());
-          season = Integer.parseInt(matcher.group(1));
+          Matcher matcher = SEASON_NUMBER.matcher(mf.getFilename());
+          if (matcher.matches()) {
+            season = Integer.parseInt(matcher.group(1));
+          }
+          else {
+            throw new IllegalStateException("did not find a season number");
+          }
         }
 
         if (season != null) {
