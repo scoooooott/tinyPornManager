@@ -255,8 +255,10 @@ public class ToolbarPanel extends JPanel implements TitlePane {
     });
     menu.add(menuWakeOnLan);
 
-    menu.addSeparator();
-    menu.add(new LaunchUpdaterAction());
+    if (Boolean.parseBoolean(System.getProperty("tmm.noupdate")) != true) {
+      menu.addSeparator();
+      menu.add(new LaunchUpdaterAction());
+    }
 
     // debug menu
     if (Globals.isDebug()) {

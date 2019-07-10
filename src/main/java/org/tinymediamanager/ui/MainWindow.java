@@ -50,8 +50,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
-import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.tasks.UpdaterTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -105,10 +105,9 @@ public class MainWindow extends JFrame {
 
     initialize();
 
-    // Globals.executor.execute(new MyStatusbarThread());
-    // use a Future to be able to cancel it
-    // statusTask.execute();
-    checkForUpdate();
+    if (Boolean.parseBoolean(System.getProperty("tmm.noupdate")) != true) {
+      checkForUpdate();
+    }
   }
 
   /**
