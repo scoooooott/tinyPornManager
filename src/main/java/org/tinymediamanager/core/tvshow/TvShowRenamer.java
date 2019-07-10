@@ -197,6 +197,13 @@ public class TvShowRenamer {
    *          the show
    */
   public static void renameTvShowRoot(TvShow show) {
+    // skip renamer, if all templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
+        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+      LOGGER.info("NOT renaming TvShow '{}' - renaming patterns are empty!", show.getTitle());
+      return;
+    }
+
     LOGGER.debug("TV show year: " + show.getYear());
     LOGGER.debug("TV show path: " + show.getPathNIO());
     String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
@@ -383,6 +390,13 @@ public class TvShowRenamer {
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
+    // skip renamer, if all templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
+        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+      LOGGER.info("NOT renaming TvShow '{}' Episode {} - renaming patterns are empty!", episode.getTvShow().getTitle(), episode.getEpisode());
+      return;
+    }
+
     MediaFile originalVideoMediaFile = new MediaFile(episode.getMainVideoFile());
     // test for valid season/episode number
     if (episode.getSeason() < 0 || episode.getEpisode() < 0) {

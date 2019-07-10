@@ -297,6 +297,12 @@ public class MovieRenamer {
    *          the movie
    */
   public static void renameMovie(Movie movie) {
+    // skip renamer, if all templates are empty!
+    if (MovieModuleManager.SETTINGS.getRenamerPathname().isEmpty() && MovieModuleManager.SETTINGS.getRenamerFilename().isEmpty()) {
+      LOGGER.info("NOT renaming Movie '{}' - renaming patterns are empty!", movie.getTitle());
+      return;
+    }
+
     // FIXME: what? when?
     boolean posterRenamed = false;
     boolean fanartRenamed = false;
