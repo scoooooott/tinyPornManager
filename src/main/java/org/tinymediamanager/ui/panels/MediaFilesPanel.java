@@ -168,7 +168,7 @@ public abstract class MediaFilesPanel extends JPanel {
           return mediaFile.getVideoResolution();
 
         case 6:
-          return mediaFile.getDurationHM();
+          return mediaFile.getDurationHMS();
 
         case 7:
           return mediaFile.getSubtitlesAsString();

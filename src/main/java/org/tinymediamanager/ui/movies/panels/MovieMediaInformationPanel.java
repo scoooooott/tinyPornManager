@@ -122,7 +122,8 @@ public class MovieMediaInformationPanel extends MediaInformationPanel {
     else {
       int minutes = (int) (runtime / 60) % 60;
       int hours = (int) (runtime / (60 * 60)) % 24;
-      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
+      int seconds = runtime % 60;
+      lblRuntime.setText(String.format("%dh %02dm %02ds", hours, minutes, seconds));
     }
 
     chckbxWatched.setSelected(movie.isWatched());
