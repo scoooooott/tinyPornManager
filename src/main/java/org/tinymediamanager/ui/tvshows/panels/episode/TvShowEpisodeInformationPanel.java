@@ -218,7 +218,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 8 2 1");
+        panelRight.add(panelLogos, "cell 0 8 2 1,alignx left,aligny top,wmin 0");
       }
       {
         panelRight.add(new JSeparator(), "cell 0 9 2 1,growx");

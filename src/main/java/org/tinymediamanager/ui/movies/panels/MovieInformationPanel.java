@@ -338,7 +338,7 @@ public class MovieInformationPanel extends JPanel {
 
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelTopRight.add(panelLogos, "cell 0 7 2 1,alignx left,aligny top");
+        panelTopRight.add(panelLogos, "cell 0 7 2 1,alignx left,aligny top,wmin 0");
       }
 
       {
