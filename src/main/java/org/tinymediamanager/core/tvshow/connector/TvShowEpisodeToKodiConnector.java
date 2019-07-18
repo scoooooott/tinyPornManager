@@ -55,6 +55,11 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
     Element ratings = document.createElement("ratings");
 
     for (Rating r : episode.getRatings().values()) {
+      // skip user ratings here
+      if (Rating.USER.equals(r.getId())) {
+        continue;
+      }
+
       Element rating = document.createElement("rating");
       rating.setAttribute("name", r.getId());
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));

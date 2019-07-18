@@ -163,6 +163,11 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
     Element ratings = document.createElement("ratings");
 
     for (Rating r : movie.getRatings().values()) {
+      // skip user ratings here
+      if (Rating.USER.equals(r.getId())) {
+        continue;
+      }
+
       Element rating = document.createElement("rating");
 
       // Kodi needs themoviedb instead of tmdb
