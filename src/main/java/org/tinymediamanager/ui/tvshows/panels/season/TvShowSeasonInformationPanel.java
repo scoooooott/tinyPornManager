@@ -186,7 +186,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
     {
       JPanel panelRight = new JPanel();
       add(panelRight, "cell 1 0,grow");
-      panelRight.setLayout(new MigLayout("", "[][323px,grow]", "[][][shrink 0][][286px,grow]"));
+      panelRight.setLayout(new MigLayout("insets 0 n n n, hidemode 2", "[][323px,grow]", "[][][shrink 0][][286px,grow]"));
       {
         lblTvshowTitle = new TmmLabel("", 1.33);
         panelRight.add(lblTvshowTitle, "cell 0 0 2 1");

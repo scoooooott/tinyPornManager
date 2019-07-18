@@ -39,6 +39,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -74,8 +76,10 @@ public class TvShowInformationPanel extends JPanel {
   private ImageLabel                  lblTvShowBanner;
   private JLabel                      lblBannerSize;
   private JTextArea                   tpOverview;
+  private JSeparator                  sepLogos;
   private MediaInformationLogosPanel  panelLogos;
 
+  private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private TvShowSelectionModel        tvShowSelectionModel;
   private JLabel                      lblOriginalTitle;
 
@@ -168,7 +172,7 @@ public class TvShowInformationPanel extends JPanel {
     {
       JPanel panelRight = new JPanel();
       add(panelRight, "cell 1 0,grow");
-      panelRight.setLayout(new MigLayout("", "[450lp,grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("insets 0 n n n, hidemode 2", "[450lp,grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
 
       {
         lblTvShowName = new TmmLabel("", 1.33);
@@ -200,11 +204,12 @@ public class TvShowInformationPanel extends JPanel {
         panelRight.add(lblVoteCount, "cell 0 5,aligny center");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 6,growx");
+        sepLogos = new JSeparator();
+        panelRight.add(sepLogos, "cell 0 6,growx");
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 7,growx");
+        panelRight.add(panelLogos, "cell 0 7,wmin 0");
       }
       {
         panelRight.add(new JSeparator(), "cell 0 8,growx");
@@ -295,5 +300,16 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_4, lblOriginalTitle, jLabelBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("showLogosPanel");
+    BeanProperty<JSeparator, Boolean> jSeparatorBeanProperty = BeanProperty.create("visible");
+    AutoBinding<TvShowSettings, Boolean, JSeparator, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
+        tvShowSettingsBeanProperty, sepLogos, jSeparatorBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<MediaInformationLogosPanel, Boolean> mediaInformationLogosPanelBeanProperty = BeanProperty.create("visible");
+    AutoBinding<TvShowSettings, Boolean, MediaInformationLogosPanel, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        settings, tvShowSettingsBeanProperty, panelLogos, mediaInformationLogosPanelBeanProperty);
+    autoBinding_7.bind();
   }
 }

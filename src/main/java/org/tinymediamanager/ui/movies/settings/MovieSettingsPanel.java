@@ -65,6 +65,7 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                    chckbxBuildImageCache;
   private JCheckBox                    chckbxRuntimeFromMi;
   private JCheckBox                    chckbxPersistUiSorting;
+  private JCheckBox                    chckbxShowLogos;
   private JButton                      btnPresetKodi;
   private JButton                      btnPresetXbmc;
   private JButton                      btnPresetMediaPortal1;
@@ -223,15 +224,19 @@ public class MovieSettingsPanel extends JPanel {
         panelUiSettings.add(chckbxPersistUiSorting, "cell 1 1 2 1");
       }
       {
+        chckbxShowLogos = new JCheckBox(BUNDLE.getString("Settings.showlogos")); //$NON-NLS-1$
+        panelUiSettings.add(chckbxShowLogos, "cell 1 2 2 1");
+      }
+      {
         JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
-        panelUiSettings.add(lblRating, "cell 1 2 2 1");
+        panelUiSettings.add(lblRating, "cell 1 3 2 1");
 
         cbRating = new AutocompleteComboBox<>(Arrays.asList("imdb", "tmdb", "rottenTomatoes"));
-        panelUiSettings.add(cbRating, "cell 1 2");
+        panelUiSettings.add(cbRating, "cell 1 3");
       }
       {
         chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
-        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 3 2 1");
+        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 4 2 1");
       }
     }
     {
@@ -384,5 +389,10 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_9, chckbxIncludeExternalAudioStreams, jCheckBoxBeanProperty);
     autoBinding_9.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_10 = BeanProperty.create("showLogosPanel");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_10, chckbxShowLogos, jCheckBoxBeanProperty);
+    autoBinding_10.bind();
   }
 }

@@ -42,6 +42,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.ui.ColumnLayout;
@@ -71,6 +73,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
 
+  private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
 
   /** UI components */
@@ -83,10 +86,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private ImageLabel                  lblSeasonPoster;
   private JTextArea                   taOverview;
   private MediaInformationLogosPanel  panelLogos;
-  private JPanel                      panelDetails;
+  private JSeparator                  sepLogos;
   private JLabel                      lblSeasonPosterSize;
   private JLabel                      lblEpisodeThumbSize;
-  private JLabel                      lblPlot;
   private JLabel                      lblOriginalTitle;
   private JButton                     btnPlay;
 
@@ -173,7 +175,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     }
     {
       JPanel panelRight = new JPanel();
-      panelRight.setLayout(new MigLayout("", "[grow][][]", "[][][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      panelRight.setLayout(new MigLayout("insets 0 n n n, hidemode 2", "[grow][][]", "[][][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
       add(panelRight, "cell 1 0,grow");
 
       {
@@ -196,7 +198,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         panelRight.add(new JSeparator(), "cell 0 3 2 1,growx,wmin 0");
       }
       {
-        panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
+        JPanel panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
         panelRight.add(panelDetails, "cell 0 4 2 1,growx");
       }
       {
@@ -214,17 +216,18 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         panelRight.add(lblVoteCount, "cell 0 6 2 1,aligny center");
       }
       {
-        panelRight.add(new JSeparator(), "cell 0 7 2 1,growx");
+        sepLogos = new JSeparator();
+        panelRight.add(sepLogos, "cell 0 7 2 1,growx");
       }
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 8 2 1,alignx left,aligny top,wmin 0");
+        panelRight.add(panelLogos, "cell 0 8 2 1,wmin 0");
       }
       {
         panelRight.add(new JSeparator(), "cell 0 9 2 1,growx");
       }
       {
-        lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         panelRight.add(lblPlot, "cell 0 10 2 1");
 
         JScrollPane scrollPanePlot = new JScrollPane();
@@ -307,5 +310,16 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_5, lblVoteCount, jLabelBeanProperty);
     autoBinding_6.setConverter(new VoteCountConverter());
     autoBinding_6.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("showLogosPanel");
+    BeanProperty<JSeparator, Boolean> jSeparatorBeanProperty = BeanProperty.create("visible");
+    AutoBinding<TvShowSettings, Boolean, JSeparator, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
+        tvShowSettingsBeanProperty, sepLogos, jSeparatorBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<MediaInformationLogosPanel, Boolean> mediaInformationLogosPanelBeanProperty = BeanProperty.create("visible");
+    AutoBinding<TvShowSettings, Boolean, MediaInformationLogosPanel, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        settings, tvShowSettingsBeanProperty, panelLogos, mediaInformationLogosPanelBeanProperty);
+    autoBinding_8.bind();
   }
 }

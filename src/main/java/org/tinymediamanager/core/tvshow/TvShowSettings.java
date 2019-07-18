@@ -172,10 +172,12 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              preferPersonalRating           = true;
   private String                               preferredRating                = "tvdb";
 
+  // ui
   private boolean                              storeUiFilters                 = false;
   private boolean                              displayMissingEpisodes         = false;
   private boolean                              displayMissingSpecials         = false;
   private boolean                              capitalWordsinTitles           = false;
+  private boolean                              showLogosPanel                 = true;
 
   public TvShowSettings() {
     super();
@@ -1069,6 +1071,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.capitalWordsinTitles;
     this.capitalWordsinTitles = newValue;
     firePropertyChange("capitalWordsInTitles", oldValue, newValue);
+  }
+
+  public boolean isShowLogosPanel() {
+    return showLogosPanel;
+  }
+
+  public void setShowLogosPanel(boolean newValue) {
+    boolean oldValue = showLogosPanel;
+    this.showLogosPanel = newValue;
+    firePropertyChange("showLogosPanel", oldValue, newValue);
   }
 
   /*****************************************************************
