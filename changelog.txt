@@ -14,6 +14,7 @@ x do not write stream runtime for disc style movies to NFO
 x sort tags in the tag filter dropdown
 x enlarged the year column that occasional truncation should not happen again
 x the logos panel does not push other fields (like play button, plot, ..) out of the screen
+x removed duplicate shortcut CTRL+SHIFT+U #590
 
 
 Version 3.0.2
