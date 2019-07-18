@@ -178,6 +178,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
 
     // dummy popupmenu to infer the text
     updatePopupMenu = new JPopupMenu(BUNDLE.getString("movieset.add"));
+    updatePopupMenu.add(createAndRegisterAction(MovieSetAddAction.class));
   }
 
   @Override
