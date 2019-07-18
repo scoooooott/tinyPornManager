@@ -6,6 +6,7 @@ Upcoming version
 + added a MovieEdition filter
 + added option to store tmm data into another folders http://bit.ly/2JoUUeN
 + added seconds to the runtime in the media files panel
+x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
 x do not write stream runtime for disc style movies to NFO
