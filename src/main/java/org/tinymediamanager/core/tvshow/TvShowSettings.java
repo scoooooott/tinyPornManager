@@ -293,7 +293,7 @@ public class TvShowSettings extends AbstractSettings {
    */
   @Override
   protected void writeDefaultSettings() {
-    setTvShowTableHiddenColumns(Arrays.asList("format", "fileSize"));
+    setTvShowTableHiddenColumns(Arrays.asList("format", "fileSize", "aired"));
 
     // activate default scrapers
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {

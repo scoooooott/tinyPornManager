@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow.entities;
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.BANNER_URL;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.POSTER_URL;
@@ -72,6 +73,10 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
               removeEpisode(episode);
             }
             break;
+
+          case FIRST_AIRED:
+            firePropertyChange(FIRST_AIRED, null, evt.getNewValue());
+            break;
         }
       }
     };
@@ -107,12 +112,14 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     episodes.sort(TvShowEpisode::compareTo);
     episode.addPropertyChangeListener(listener);
     firePropertyChange(ADDED_EPISODE, null, episodes);
+    firePropertyChange(FIRST_AIRED, null, getFirstAired());
   }
 
   public void removeEpisode(TvShowEpisode episode) {
     episodes.remove(episode);
     episode.removePropertyChangeListener(listener);
     firePropertyChange(REMOVED_EPISODE, null, episodes);
+    firePropertyChange(FIRST_AIRED, null, getFirstAired());
   }
 
   public List<TvShowEpisode> getEpisodes() {
@@ -123,6 +130,19 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
       }
     }
     return episodes;
+  }
+
+  /**
+   * get the firstAired of the first episode here
+   * 
+   * @return the first aired date of the first episode or null
+   */
+  public Date getFirstAired() {
+    TvShowEpisode episode = episodes.get(0);
+    if (episode != null) {
+      return episode.getFirstAired();
+    }
+    return null;
   }
 
   /**

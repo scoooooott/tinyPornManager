@@ -16,21 +16,25 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.FontMetrics;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTableFormat;
+import org.tinymediamanager.ui.renderer.DateTableCellRenderer;
 import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
 
 /**
@@ -72,6 +76,21 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     col.setCellRenderer(new RightAlignTableCellRenderer());
     col.setColumnResizeable(false);
     col.setMinWidth((int) (fontMetrics.stringWidth("99.9") * 1.2f));
+    addColumn(col);
+
+    /*
+     * aired
+     */
+    col = new Column(BUNDLE.getString("metatag.aired"), "aired", this::getAiredDate, Date.class);
+    col.setHeaderIcon(IconManager.DATE_ADDED);
+    col.setCellRenderer(new DateTableCellRenderer());
+    col.setColumnResizeable(false);
+    try {
+      Date date = StrgUtils.parseDate("2012-12-12");
+      col.setMinWidth((int) (fontMetrics.stringWidth(TmmDateFormat.SHORT_DATE_FORMAT.format(date)) * 1.2f));
+    }
+    catch (Exception ignored) {
+    }
     addColumn(col);
 
     /*
@@ -158,6 +177,29 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
       }
     }
     return "";
+  }
+
+  private Date getAiredDate(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShow) {
+      Date airedDate = ((TvShow) userObject).getFirstAired();
+      if (airedDate != null) {
+        return airedDate;
+      }
+    }
+    if (userObject instanceof TvShowSeason) {
+      Date airedDate = ((TvShowSeason) userObject).getFirstAired();
+      if (airedDate != null) {
+        return airedDate;
+      }
+    }
+    if (userObject instanceof TvShowEpisode) {
+      Date airedDate = ((TvShowEpisode) userObject).getFirstAired();
+      if (airedDate != null) {
+        return airedDate;
+      }
+    }
+    return null;
   }
 
   private String getFormat(TmmTreeNode node) {

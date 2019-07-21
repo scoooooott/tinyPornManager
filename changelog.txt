@@ -8,6 +8,7 @@ Upcoming version
 + added seconds to the runtime in the media files panel
 + added an option to hide media logos (to save space for low resolution devices)
 + reworked logic for finding the best artwork according to the settings #589
++ added first aired to the TV show tree #557
 x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
