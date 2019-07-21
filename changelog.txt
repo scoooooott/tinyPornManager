@@ -15,6 +15,7 @@ x sort tags in the tag filter dropdown
 x enlarged the year column that occasional truncation should not happen again
 x the logos panel does not push other fields (like play button, plot, ..) out of the screen
 x removed duplicate shortcut CTRL+SHIFT+U #590
+x do not throw exception if a TV show has x*100 episodes #587
 
 
 Version 3.0.2
