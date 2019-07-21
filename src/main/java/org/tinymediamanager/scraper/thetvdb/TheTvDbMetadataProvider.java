@@ -782,8 +782,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       int counter = 1;
       while (true) {
         Response<EpisodesResponse> httpResponse = tvdb.series().episodes(showId, counter, language).execute();
-        if (!httpResponse.isSuccessful()) {
+        if (!httpResponse.isSuccessful() && counter == 1) {
+          // error at the first fetch will result in an exception
           throw new HttpException(httpResponse.code(), httpResponse.message());
+        }
+        else if (!httpResponse.isSuccessful() && counter > 1) {
+          // we got at least one page with results - maybe the episode count is the same as the pagination count
+          break;
         }
         EpisodesResponse response = httpResponse.body();
 
