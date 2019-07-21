@@ -1297,11 +1297,9 @@ public class TvShowRenamer {
     destination = destination.replaceAll("^[ \\.\\-_]+", "");
     destination = destination.replaceAll("[ \\.\\-_]+$", "");
 
-    // is now handled directly in JMTE
-    // // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
-    // destination = destination.replaceAll(": ", " - "); // nicer
-    // destination = destination.replaceAll(":", "-"); // nicer
-    // destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
+    // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
+    destination = destination.replaceAll(": ", " - "); // nicer
+    destination = destination.replaceAll(":", "-"); // nicer
 
     return destination.trim();
   }

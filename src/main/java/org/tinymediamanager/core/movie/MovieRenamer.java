@@ -1242,6 +1242,10 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("[ \\.]+$", "");
     }
 
+    // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
+    newDestination = newDestination.replaceAll(": ", " - "); // nicer
+    newDestination = newDestination.replaceAll(":", "-"); // nicer
+
     return newDestination.trim();
   }
 

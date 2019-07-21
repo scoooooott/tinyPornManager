@@ -18,6 +18,7 @@ x the logos panel does not push other fields (like play button, plot, ..) out of
 x removed duplicate shortcut CTRL+SHIFT+U #590
 x do not throw exception if a TV show has x*100 episodes #587
 x do not resize extrathumbs if the setting is deactivated #589
+x replace colons in the renamer patterns
 
 
 Version 3.0.2
