@@ -1246,6 +1246,12 @@ public class TvShowRenamer {
     } // end multi episodes
 
     newDestination = cleanupDestination(newDestination);
+
+    // any whitespace replacements?
+    if (SETTINGS.isRenamerSpaceSubstitution()) {
+      newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
+    }
+
     return newDestination;
   }
 
@@ -1287,11 +1293,6 @@ public class TvShowRenamer {
     // trim out unnecessary whitespaces
     destination = destination.trim();
     destination = destination.replaceAll(" +", " ").trim();
-
-    // any whitespace replacements?
-    if (SETTINGS.isRenamerSpaceSubstitution()) {
-      destination = destination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
-    }
 
     // replace all leading/trailing separators
     destination = destination.replaceAll("^[ \\.\\-_]+", "");
