@@ -99,7 +99,7 @@ public class MovieSetArtworkHelper {
           cleanup.add(mf);
         }
         catch (Exception e) {
-          LOGGER.error("could not rename movie set artwork: " + e.getMessage());
+          LOGGER.error("could not rename movie set artwork: {}", e.getMessage());
         }
       }
     }
@@ -227,8 +227,9 @@ public class MovieSetArtworkHelper {
         }
       }
     }
-    else {
-      // size has priority over language
+
+    if (foundPoster == null) {
+      // nothing found or language has no preference
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtwork.MediaArtworkType.POSTER && art.getSizeOrder() == preferredSizeOrder) {
@@ -287,8 +288,9 @@ public class MovieSetArtworkHelper {
         }
       }
     }
-    else {
-      // size has priority over language
+
+    if (foundfanart == null) {
+      // nothing found or language has no preference
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtwork.MediaArtworkType.BACKGROUND && art.getSizeOrder() == preferredSizeOrder) {

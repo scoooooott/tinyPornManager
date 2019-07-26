@@ -123,7 +123,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       Movie movie = (Movie) child.getUserObject();
       TmmTreeNode node = getNodeFromCache(movie.getMovieSet());
       // parent movie set not yet added? add it
-      if (node == null) {
+      if (node == null && movie.getMovieSet() != null) {
         node = addMovieSet(movie.getMovieSet());
       }
       return node;

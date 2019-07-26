@@ -4,6 +4,9 @@ import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.nio.file.Path;
+import java.text.Collator;
+import java.text.Normalizer;
+import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -163,7 +166,21 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return IconManager.TABLE_NOT_OK;
   }
 
-  public class StringComparator implements Comparator<String> {
+  public static class StringComparator implements Comparator<String> {
+    protected Collator stringCollator;
+
+    public StringComparator() {
+      RuleBasedCollator defaultCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+      try {
+        // default collator ignores whitespaces
+        // using hack from http://stackoverflow.com/questions/16567287/java-collation-ignores-space
+        stringCollator = new RuleBasedCollator(defaultCollator.getRules().replace("<'\u005f'", "<' '<'\u005f'"));
+      }
+      catch (Exception e) {
+        stringCollator = defaultCollator;
+      }
+    }
+
     @Override
     public int compare(String arg0, String arg1) {
       if (StringUtils.isBlank(arg0)) {
@@ -172,11 +189,18 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       if (StringUtils.isBlank(arg1)) {
         return 1;
       }
+
+      if (stringCollator != null) {
+        String first = Normalizer.normalize(arg0.toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String second = Normalizer.normalize(arg1.toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        return stringCollator.compare(first, second);
+      }
+
       return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));
     }
   }
 
-  public class PathComparator implements Comparator<Path> {
+  public static class PathComparator implements Comparator<Path> {
     @Override
     public int compare(Path arg0, Path arg1) {
       if (arg0 == null) {
@@ -189,7 +213,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     }
   }
 
-  public class IntegerComparator implements Comparator<Integer> {
+  public static class IntegerComparator implements Comparator<Integer> {
     @Override
     public int compare(Integer arg0, Integer arg1) {
       if (arg0 == null) {
@@ -202,14 +226,14 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     }
   }
 
-  public class FloatComparator implements Comparator<Float> {
+  public static class FloatComparator implements Comparator<Float> {
     @Override
     public int compare(Float arg0, Float arg1) {
       return arg0.compareTo(arg1);
     }
   }
 
-  public class ImageComparator implements Comparator<ImageIcon> {
+  public static class ImageComparator implements Comparator<ImageIcon> {
     @Override
     public int compare(ImageIcon arg0, ImageIcon arg1) {
       if (arg0 == arg1) {
@@ -222,21 +246,21 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     }
   }
 
-  public class DateComparator implements Comparator<Date> {
+  public static class DateComparator implements Comparator<Date> {
     @Override
     public int compare(Date arg0, Date arg1) {
       return arg0.compareTo(arg1);
     }
   }
 
-  public class VideoFormatComparator implements Comparator<String> {
+  public static class VideoFormatComparator implements Comparator<String> {
     @Override
     public int compare(String arg0, String arg1) {
       return Integer.compare(MediaFile.VIDEO_FORMATS.indexOf(arg0), MediaFile.VIDEO_FORMATS.indexOf(arg1));
     }
   }
 
-  public class FileSizeComparator implements Comparator<String> {
+  public static class FileSizeComparator implements Comparator<String> {
     Pattern pattern = Pattern.compile("(.*) (.*?)");
 
     @Override
@@ -273,7 +297,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     }
   }
 
-  public class CertificationComparator implements Comparator<Certification> {
+  public static class CertificationComparator implements Comparator<Certification> {
     @Override
     public int compare(Certification arg0, Certification arg1) {
       if (arg0 == null) {

@@ -295,7 +295,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
       List<MediaArtwork> artwork = new ArrayList<>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));

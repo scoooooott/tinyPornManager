@@ -163,6 +163,11 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
     Element ratings = document.createElement("ratings");
 
     for (Rating r : movie.getRatings().values()) {
+      // skip user ratings here
+      if (Rating.USER.equals(r.getId())) {
+        continue;
+      }
+
       Element rating = document.createElement("rating");
 
       // Kodi needs themoviedb instead of tmdb
@@ -278,9 +283,12 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
         height.setTextContent(Integer.toString(vid.getVideoHeight()));
         video.appendChild(height);
 
-        Element durationinseconds = document.createElement("durationinseconds");
-        durationinseconds.setTextContent(Integer.toString(movie.getRuntimeFromMediaFiles()));
-        video.appendChild(durationinseconds);
+        // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
+        if (!movie.isDisc() && !movie.getMainVideoFile().getExtension().equalsIgnoreCase("iso")) {
+          Element durationinseconds = document.createElement("durationinseconds");
+          durationinseconds.setTextContent(Integer.toString(movie.getRuntimeFromMediaFiles()));
+          video.appendChild(durationinseconds);
+        }
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp

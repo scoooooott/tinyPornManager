@@ -31,8 +31,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -97,7 +101,7 @@ public class UpgradeTasks {
       // clean old style backup files
       ArrayList<Path> al = new ArrayList<>();
 
-      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Globals.BACKUP_FOLDER))) {
         for (Path path : directoryStream) {
           if (path.getFileName().toString().matches("movies\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")
               || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
@@ -155,6 +159,67 @@ public class UpgradeTasks {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(episode.getFirstAired());
             episode.setYear(calendar.get(Calendar.YEAR));
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
+    // add stream flags for old booleans
+    if (StrgUtils.compareVersion(v, "3.0.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.3");
+
+      for (Movie movie : MovieList.getInstance().getMovies()) {
+        boolean dirty = false;
+        for (MediaFile mf : movie.getMediaFiles()) {
+          for (MediaFileAudioStream as : mf.getAudioStreams()) {
+            // the IS method checks already for new field
+            if (as.defaultStream && !as.isDefaultStream()) {
+              as.setDefaultStream(true);
+              dirty = true;
+            }
+          }
+          for (MediaFileSubtitle sub : mf.getSubtitles()) {
+            // the IS method checks already for new field
+            if (sub.defaultStream && !sub.isDefaultStream()) {
+              sub.setDefaultStream(true);
+              dirty = true;
+            }
+            if (sub.forced && !sub.isForced()) {
+              sub.setForced(true);
+              dirty = true;
+            }
+          }
+        }
+        if (dirty) {
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          boolean dirty = false;
+          for (MediaFile mf : episode.getMediaFiles()) {
+            for (MediaFileAudioStream as : mf.getAudioStreams()) {
+              // the IS method checks already for new field
+              if (as.defaultStream && !as.isDefaultStream()) {
+                as.setDefaultStream(true);
+                dirty = true;
+              }
+            }
+            for (MediaFileSubtitle sub : mf.getSubtitles()) {
+              // the IS method checks already for new field
+              if (sub.defaultStream && !sub.isDefaultStream()) {
+                sub.setDefaultStream(true);
+                dirty = true;
+              }
+              if (sub.forced && !sub.isForced()) {
+                sub.setForced(true);
+                dirty = true;
+              }
+            }
+          }
+          if (dirty) {
             episode.saveToDb();
           }
         }

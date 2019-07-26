@@ -296,7 +296,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
         chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
-        chckbxSpaceReplacement.setToolTipText("Settings.renamer.spacereplacement.hint");
+        chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
         panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 0 2 1");
 
         cbSpaceReplacement = new JComboBox<>(spaceReplacement.toArray());

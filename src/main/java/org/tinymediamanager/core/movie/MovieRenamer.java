@@ -297,6 +297,12 @@ public class MovieRenamer {
    *          the movie
    */
   public static void renameMovie(Movie movie) {
+    // skip renamer, if all templates are empty!
+    if (MovieModuleManager.SETTINGS.getRenamerPathname().isEmpty() && MovieModuleManager.SETTINGS.getRenamerFilename().isEmpty()) {
+      LOGGER.info("NOT renaming Movie '{}' - renaming patterns are empty!", movie.getTitle());
+      return;
+    }
+
     // FIXME: what? when?
     boolean posterRenamed = false;
     boolean fanartRenamed = false;
@@ -1215,8 +1221,8 @@ public class MovieRenamer {
     // replace multiple spaces with a single one
     newDestination = newDestination.replaceAll(" +", " ").trim();
 
-    // replace spaces with underscores if needed
-    if (MovieModuleManager.SETTINGS.isRenamerSpaceSubstitution()) {
+    // replace spaces with underscores if needed (filename only)
+    if (forFilename && MovieModuleManager.SETTINGS.isRenamerSpaceSubstitution()) {
       String replacement = MovieModuleManager.SETTINGS.getRenamerSpaceReplacement();
       newDestination = newDestination.replace(" ", replacement);
 
@@ -1231,10 +1237,13 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
-    // replace trailing dots and spaces (filename only!)
-    if (forFilename) {
-      newDestination = newDestination.replaceAll("[ \\.]+$", "");
-    }
+    // replace all leading/trailing separators
+    newDestination = newDestination.replaceAll("^[ \\.\\-_]+", "");
+    newDestination = newDestination.replaceAll("[ \\.\\-_]+$", "");
+
+    // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
+    newDestination = newDestination.replaceAll(": ", " - "); // nicer
+    newDestination = newDestination.replaceAll(":", "-"); // nicer
 
     return newDestination.trim();
   }

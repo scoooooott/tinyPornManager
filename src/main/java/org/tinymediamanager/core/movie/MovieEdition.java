@@ -15,8 +15,10 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.text.RuleBasedCollator;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,7 +81,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
 
   /**
    * get all movie editions
-   * 
+   *
    * @return an array of all movie editions
    */
   public static MovieEdition[] values() {
@@ -90,7 +92,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
 
   /**
    * Parse the given string for an appropriate movie edition (via name & regexp)
-   * 
+   *
    * @param stringToParse
    *          the string to parse out the movie edition
    * @return the found edition
@@ -139,7 +141,9 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
   /**
    * Comparator for sorting our MovieEditions in a localized fashion
    */
-  private static class MovieEditionComparator implements Comparator<MovieEdition> {
+  public static class MovieEditionComparator implements Comparator<MovieEdition> {
+    private RuleBasedCollator stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+
     @Override
     public int compare(MovieEdition o1, MovieEdition o2) {
       // toString is localized name
@@ -152,7 +156,27 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
       if (o2.toString() == null) {
         return -1;
       }
-      return o1.toString().compareTo(o2.toString());
+      return stringCollator.compare(o1.toString().toLowerCase(Locale.ROOT), o2.toString().toLowerCase(Locale.ROOT));
     }
+  }
+
+  /**
+   * add a new DynaEnumEventListener. This listener will be informed if any new value has been added
+   *
+   * @param listener
+   *          the new listener to be added
+   */
+  public static void addListener(DynaEnumEventListener listener) {
+    addListener(MovieEdition.class, listener);
+  }
+
+  /**
+   * remove the given DynaEnumEventListener
+   *
+   * @param listener
+   *          the listener to be removed
+   */
+  public static void removeListener(DynaEnumEventListener listener) {
+    removeListener(MovieEdition.class, listener);
   }
 }

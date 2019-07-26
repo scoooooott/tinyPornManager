@@ -61,6 +61,7 @@ class TvShowSettingsPanel extends JPanel {
   private JCheckBox                    chckbxTraktTv;
   private JButton                      btnClearTraktTvShows;
   private JCheckBox                    chckbxPersistUiFilters;
+  private JCheckBox                    chckbxShowLogos;
   private JCheckBox                    chckbxShowMissingEpisodes;
   private JButton                      btnPresetKodi;
   private JButton                      btnPresetXbmc;
@@ -278,20 +279,23 @@ class TvShowSettingsPanel extends JPanel {
         chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
         panelUiSettings.add(chckbxPersistUiFilters, "cell 1 0 2 1");
 
+        chckbxShowLogos = new JCheckBox(BUNDLE.getString("Settings.showlogos")); //$NON-NLS-1$
+        panelUiSettings.add(chckbxShowLogos, "cell 1 1 2 1");
+
         chckbxShowMissingEpisodes = new JCheckBox(BUNDLE.getString("Settings.tvshow.missingepisodes")); //$NON-NLS-1$
-        panelUiSettings.add(chckbxShowMissingEpisodes, "cell 1 1 2 1");
+        panelUiSettings.add(chckbxShowMissingEpisodes, "cell 1 2 2 1");
 
         chckbxShowMissingSpecials = new JCheckBox(BUNDLE.getString("Settings.tvshow.missingespecials")); //$NON-NLS-1$
-        panelUiSettings.add(chckbxShowMissingSpecials, "cell 2 2");
+        panelUiSettings.add(chckbxShowMissingSpecials, "cell 2 3");
 
         JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
-        panelUiSettings.add(lblRating, "flowx,cell 1 3 2 1");
+        panelUiSettings.add(lblRating, "flowx,cell 1 4 2 1");
 
         cbRating = new AutocompleteComboBox(Arrays.asList("tvdb", "tmdb"));
-        panelUiSettings.add(cbRating, "cell 1 3");
+        panelUiSettings.add(cbRating, "cell 1 4");
 
         chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
-        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 4");
+        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 5");
       }
     }
     {
@@ -460,5 +464,10 @@ class TvShowSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_6, chckbxShowMissingSpecials, jCheckBoxBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_7 = BeanProperty.create("showLogosPanel");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_7, chckbxShowLogos, jCheckBoxBeanProperty);
+    autoBinding_9.bind();
   }
 }

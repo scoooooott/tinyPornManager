@@ -197,6 +197,13 @@ public class TvShowRenamer {
    *          the show
    */
   public static void renameTvShowRoot(TvShow show) {
+    // skip renamer, if all templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
+        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+      LOGGER.info("NOT renaming TvShow '{}' - renaming patterns are empty!", show.getTitle());
+      return;
+    }
+
     LOGGER.debug("TV show year: " + show.getYear());
     LOGGER.debug("TV show path: " + show.getPathNIO());
     String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
@@ -383,6 +390,13 @@ public class TvShowRenamer {
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
+    // skip renamer, if all templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
+        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+      LOGGER.info("NOT renaming TvShow '{}' Episode {} - renaming patterns are empty!", episode.getTvShow().getTitle(), episode.getEpisode());
+      return;
+    }
+
     MediaFile originalVideoMediaFile = new MediaFile(episode.getMainVideoFile());
     // test for valid season/episode number
     if (episode.getSeason() < 0 || episode.getEpisode() < 0) {
@@ -426,6 +440,8 @@ public class TvShowRenamer {
       boolean ok = moveFile(vid.getFileAsPath(), newMF.getFileAsPath());
       if (ok) {
         vid.setFile(newMF.getFileAsPath()); // update
+        // if we move the episode in its own folder, we might need to upgrade the path as well!
+        episode.setPath(newMF.getPath());
       }
       needed.add(vid); // add vid, since we're updating existing MF object
     }
@@ -573,7 +589,7 @@ public class TvShowRenamer {
     for (TvShowEpisode e : eps) {
       e.removeAllMediaFiles();
       e.addToMediaFiles(needed);
-      e.setPath(seasonFolder.toString());
+      e.setPath(episode.getPath());
       e.gatherMediaFileInformation(false);
       e.saveToDb();
 
@@ -1230,6 +1246,12 @@ public class TvShowRenamer {
     } // end multi episodes
 
     newDestination = cleanupDestination(newDestination);
+
+    // any whitespace replacements?
+    if (SETTINGS.isRenamerSpaceSubstitution()) {
+      newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
+    }
+
     return newDestination;
   }
 
@@ -1251,10 +1273,16 @@ public class TvShowRenamer {
       // we need to mask it in windows
       destination = destination.replaceAll("\\\\{2,}", "\\\\");
       destination = destination.replaceAll("^\\\\", "");
+      // trim whitespace around directory sep
+      destination = destination.replaceAll("\\s+\\\\", "\\\\");
+      destination = destination.replaceAll("\\\\\\s+", "\\\\");
     }
     else {
       destination = destination.replaceAll(File.separator + "{2,}", File.separator);
       destination = destination.replaceAll("^" + File.separator, "");
+      // trim whitespace around directory sep
+      destination = destination.replaceAll("\\s+/", "/");
+      destination = destination.replaceAll("/\\s+", "/");
     }
 
     // ASCII replacement
@@ -1266,20 +1294,13 @@ public class TvShowRenamer {
     destination = destination.trim();
     destination = destination.replaceAll(" +", " ").trim();
 
-    // any whitespace replacements?
-    if (SETTINGS.isRenamerSpaceSubstitution()) {
-      destination = destination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
-    }
-
     // replace all leading/trailing separators
     destination = destination.replaceAll("^[ \\.\\-_]+", "");
     destination = destination.replaceAll("[ \\.\\-_]+$", "");
 
-    // is now handled directly in JMTE
-    // // replaces all invalid/illegal characters for filenames with "" except the colon, which will be changed to a dash
-    // destination = destination.replaceAll(": ", " - "); // nicer
-    // destination = destination.replaceAll(":", "-"); // nicer
-    // destination = destination.replaceAll("([\"\\\\:<>|/?*])", "");
+    // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
+    destination = destination.replaceAll(": ", " - "); // nicer
+    destination = destination.replaceAll(":", "-"); // nicer
 
     return destination.trim();
   }

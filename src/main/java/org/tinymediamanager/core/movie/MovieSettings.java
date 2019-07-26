@@ -181,10 +181,12 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
 
+  // ui
   private boolean                          storeUiFilters                      = false;
   private boolean                          storeUiSorting                      = false;
   private SortColumn                       sortColumn                          = SortColumn.TITLE;
   private boolean                          sortAscending                       = true;
+  private boolean                          showLogosPanel                      = true;
 
   public MovieSettings() {
     super();
@@ -1197,6 +1199,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.capitalWordsInTitles;
     this.capitalWordsInTitles = newValue;
     firePropertyChange("capitalWordsInTitles", oldValue, newValue);
+  }
+
+  public boolean isShowLogosPanel() {
+    return showLogosPanel;
+  }
+
+  public void setShowLogosPanel(boolean newValue) {
+    boolean oldValue = showLogosPanel;
+    this.showLogosPanel = newValue;
+    firePropertyChange("showLogosPanel", oldValue, newValue);
   }
 
   /*****************************************************************

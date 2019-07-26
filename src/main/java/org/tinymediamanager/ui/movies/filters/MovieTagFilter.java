@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.movies.filters;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -26,6 +25,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.table.TmmTableFormat;
 
 /**
  * This class implements a tag filter for movies
@@ -33,10 +33,12 @@ import org.tinymediamanager.ui.components.TmmLabel;
  * @author Manuel Laggner
  */
 public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
-  private MovieList movieList = MovieList.getInstance();
+  private TmmTableFormat.StringComparator comparator;
+  private MovieList                       movieList = MovieList.getInstance();
 
   public MovieTagFilter() {
     super();
+    comparator = new TmmTableFormat.StringComparator();
     buildAndInstallTagsArray();
     PropertyChangeListener propertyChangeListener = evt -> buildAndInstallTagsArray();
     movieList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
@@ -65,7 +67,7 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
 
   private void buildAndInstallTagsArray() {
     List<String> tags = new ArrayList<>(movieList.getTagsInMovies());
-    Collections.sort(tags);
+    tags.sort(comparator);
 
     setValues(tags);
   }

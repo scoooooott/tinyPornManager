@@ -25,6 +25,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.scraper.http.ProxySettings;
@@ -295,7 +296,7 @@ public class Settings extends AbstractSettings {
    * @return single instance of Settings
    */
   public static synchronized Settings getInstance() {
-    return getInstance(System.getProperty("tmm.datafolder", "data"));
+    return getInstance(Globals.DATA_FOLDER);
   }
 
   /**

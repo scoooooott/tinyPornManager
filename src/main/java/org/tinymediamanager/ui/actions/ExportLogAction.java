@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.InMemoryAppender;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -122,11 +123,8 @@ public class ExportLogAction extends TmmAction {
       }
 
       // attach config files, but not DB
-      File[] data = new File("data").listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File directory, String filename) {
-          return !filename.matches(".*\\.db$"); // not DB
-        }
+      File[] data = new File(Globals.DATA_FOLDER).listFiles((directory, filename) -> {
+        return !filename.matches(".*\\.db$"); // not DB
       });
       if (data != null) {
         for (File dataFile : data) {

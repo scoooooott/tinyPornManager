@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
     <!-- https://logback.qos.ch/manual/appenders.html -->
 
     <!-- we log to three different locations:
@@ -7,6 +8,18 @@
         2) a log file (INFO)
         3) a memory appender for providing more logs in case of bug reporting (TRACE)
     -->
+    <property name="logfolder" value="logs"/>
+
+    <if condition='isDefined("tmm.logfolder")'>
+        <then>
+            <property name="logfolder" value="${tmm.logfolder}"/>
+        </then>
+    </if>
+    <if condition='isDefined("tmm.contentfolder")'>
+        <then>
+            <property name="logfolder" value="${tmm.contentfolder}/logs"/>
+        </then>
+    </if>
 
     <!-- console appender; mainly for CMD and for the IDE -->
     <!-- in the CMD the log level is reduced by the JVM arg -Dtmm.consoleloglevel=INFO -->
@@ -24,13 +37,13 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
-        <file>logs/tmm.log</file>
+        <file>${logfolder}/tmm.log</file>
         <append>true</append>
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/tmm.%d.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${logfolder}/tmm.%d.%i.log.gz</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>7</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>

@@ -55,6 +55,11 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
     Element ratings = document.createElement("ratings");
 
     for (Rating r : episode.getRatings().values()) {
+      // skip user ratings here
+      if (Rating.USER.equals(r.getId())) {
+        continue;
+      }
+
       Element rating = document.createElement("rating");
       rating.setAttribute("name", r.getId());
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));
@@ -116,9 +121,12 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
       height.setTextContent(String.valueOf(videoFile.getVideoHeight()));
       video.appendChild(height);
 
-      Element durationinseconds = document.createElement("durationinseconds");
-      durationinseconds.setTextContent(String.valueOf(episode.getRuntimeFromMediaFiles()));
-      video.appendChild(durationinseconds);
+      // does not work reliable for disc style movies, MediaInfo and even Kodi write weird values in there
+      if (!episode.isDisc() && !episode.getMainVideoFile().getExtension().equalsIgnoreCase("iso")) {
+        Element durationinseconds = document.createElement("durationinseconds");
+        durationinseconds.setTextContent(String.valueOf(episode.getRuntimeFromMediaFiles()));
+        video.appendChild(durationinseconds);
+      }
 
       Element stereomode = document.createElement("stereomode");
       // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp

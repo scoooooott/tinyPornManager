@@ -52,7 +52,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  */
 public class ImageCache {
   private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
-  private static final Path   CACHE_DIR = Paths.get("cache/image");
+  private static final Path   CACHE_DIR = Paths.get(Globals.CACHE_FOLDER + "/image");
 
   public enum CacheType {
     FAST,
@@ -145,8 +145,8 @@ public class ImageCache {
       // rescale & cache
       BufferedImage originalImage = null;
 
-      // try to cache the image file; we have up to 5 retries here if we hit the memory cap since we are
-      // hitting the machine hard due to multi CPU image caching
+      // try to cache the image file
+      // we have up to 5 retries here if we hit the memory cap since we are hitting the machine hard due to multi CPU image caching
       int retries = 5;
       do {
         try {
@@ -181,14 +181,28 @@ public class ImageCache {
           originalImage.getHeight(), true);
       BufferedImage scaledImage = null;
 
-      if (Globals.settings.getImageCacheType() == CacheType.FAST) {
-        // scale fast
-        scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y);
-      }
-      else {
-        // scale with good quality
-        scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y);
-      }
+      // we have up to 5 retries here if we hit the memory cap since we are hitting the machine hard due to multi CPU image caching
+      retries = 5;
+      do {
+        try {
+          if (Globals.settings.getImageCacheType() == CacheType.FAST) {
+            // scale fast
+            scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y);
+          }
+          else {
+            // scale with good quality
+            scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y);
+          }
+          break;
+        }
+        catch (OutOfMemoryError e) {
+          // memory limit hit; give it another 500ms time to recover
+          LOGGER.warn("hit memory cap: {}", e.getMessage());
+          Thread.sleep(500);
+        }
+        retries--;
+      } while (retries > 0);
+
       originalImage = null;
 
       ImageWriter imgWrtr = null;

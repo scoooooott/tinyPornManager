@@ -158,6 +158,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           addId(episode, parserEpisode);
           addIds(episode, parserEpisode);
           addRating(episode, parserEpisode);
+          addUserrating(episode, parserEpisode);
           addVotes(episode, parserEpisode);
           addPlot(episode, parserEpisode);
           addRuntime(episode, parserEpisode);
@@ -319,7 +320,26 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
   protected void addRating(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
-    Rating mainRating = episode.getRating();
+
+    // the default rating
+    Map<String, Rating> ratings = episode.getRatings();
+    Rating mainRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+
+    // is there any rating which is not the user rating?
+    if (mainRating == null) {
+      for (Rating r : ratings.values()) {
+        // skip user ratings here
+        if (Rating.USER.equals(r.getId())) {
+          continue;
+        }
+        mainRating = r;
+      }
+    }
+
+    // just create one to not pass null
+    if (mainRating == null) {
+      mainRating = new Rating();
+    }
 
     if (mainRating.getMaxValue() > 0) {
       rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
@@ -331,6 +351,27 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     Element rating = document.createElement("rating");
     rating.setTextContent(String.format(Locale.US, "%.1f", rating10));
     root.appendChild(rating);
+  }
+
+  /**
+   * add the userrating in the form <userrating>xxx</userrating> (floating point with one decimal)
+   */
+  protected void addUserrating(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    // get main rating and calculate the rating value to a base of 10
+    Float rating10;
+
+    Rating rating = episode.getRating(Rating.USER);
+
+    if (rating.getMaxValue() > 0) {
+      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    }
+    else {
+      rating10 = rating.getRating();
+    }
+
+    Element UserRating = document.createElement("userrating");
+    UserRating.setTextContent(String.format(Locale.US, "%.1f", rating10));
+    root.appendChild(UserRating);
   }
 
   /**

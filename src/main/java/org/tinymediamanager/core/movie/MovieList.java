@@ -364,7 +364,7 @@ public class MovieList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.warn("problem decoding movie json string: " + e.getMessage());
-        LOGGER.info("dropping corrupt movie");
+        LOGGER.info("dropping corrupt movie: {}", json);
         movieMap.remove(uuid);
       }
     }

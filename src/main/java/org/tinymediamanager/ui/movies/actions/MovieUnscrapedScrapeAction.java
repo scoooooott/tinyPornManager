@@ -49,7 +49,7 @@ public class MovieUnscrapedScrapeAction extends TmmAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }
 
   @Override

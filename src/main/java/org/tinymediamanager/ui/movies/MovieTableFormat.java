@@ -99,7 +99,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);
     col.setColumnComparator(integerComparator);
     col.setColumnResizeable(false);
-    col.setMinWidth((int) (fontMetrics.stringWidth("2000") * 1.2f));
+    col.setMinWidth((int) (fontMetrics.stringWidth("2000") * 1.3f));
     addColumn(col);
 
     /*

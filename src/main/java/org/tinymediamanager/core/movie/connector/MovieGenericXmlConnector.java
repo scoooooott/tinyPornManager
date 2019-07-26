@@ -133,6 +133,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addSorttitle();
         addYear();
         addRating();
+        addUserrating();
         addVotes();
         addSet();
         addOutline();
@@ -237,7 +238,26 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   protected void addRating() {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
-    Rating mainRating = movie.getRating();
+
+    // the default rating
+    Map<String, Rating> ratings = movie.getRatings();
+    Rating mainRating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
+
+    // is there any rating which is not the user rating?
+    if (mainRating == null) {
+      for (Rating r : ratings.values()) {
+        // skip user ratings here
+        if (Rating.USER.equals(r.getId())) {
+          continue;
+        }
+        mainRating = r;
+      }
+    }
+
+    // just create one to not pass null
+    if (mainRating == null) {
+      mainRating = new Rating();
+    }
 
     if (mainRating.getMaxValue() > 0) {
       rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
@@ -249,6 +269,27 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Element rating = document.createElement("rating");
     rating.setTextContent(String.format(Locale.US, "%.1f", rating10));
     root.appendChild(rating);
+  }
+
+  /**
+   * add the userrating in the form <userrating>xxx</userrating> (floating point with one decimal)
+   */
+  protected void addUserrating() {
+    // get main rating and calculate the rating value to a base of 10
+    Float rating10;
+
+    Rating rating = movie.getRating(Rating.USER);
+
+    if (rating.getMaxValue() > 0) {
+      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    }
+    else {
+      rating10 = rating.getRating();
+    }
+
+    Element UserRating = document.createElement("userrating");
+    UserRating.setTextContent(String.format(Locale.US, "%.1f", rating10));
+    root.appendChild(UserRating);
   }
 
   /**
@@ -574,7 +615,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Element trailer = document.createElement("trailer");
     for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
       if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(movieTrailer.getDownloadUrl());
+        trailer.setTextContent(movieTrailer.getUrl());
         break;
       }
     }

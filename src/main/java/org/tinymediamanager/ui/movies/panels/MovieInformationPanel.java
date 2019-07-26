@@ -31,6 +31,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -79,6 +81,7 @@ public class MovieInformationPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private MovieSelectionModel         movieSelectionModel;
   private final ImageIcon             imageEmtpy       = new ImageIcon();
   private ImageIcon                   imageUnwatched;
@@ -103,6 +106,7 @@ public class MovieInformationPanel extends JPanel {
   private JLabel                      lblOtherIds;
 
   private MediaInformationLogosPanel  panelLogos;
+  private JSeparator                  sepLogos;
   private JLabel                      lblOriginalTitle;
   private JButton                     btnPlay;
 
@@ -235,8 +239,8 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight
-          .setLayout(new MigLayout("insets 0 n n n", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][20lp:40lp,grow]"));
+      panelTopRight.setLayout(
+          new MigLayout("insets 0 n n n, hidemode 2", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][20lp:40lp,grow]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);
@@ -333,12 +337,13 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 6 2 1,growx");
+        sepLogos = new JSeparator();
+        panelTopRight.add(sepLogos, "cell 0 6 2 1,growx");
       }
 
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelTopRight.add(panelLogos, "cell 0 7 2 1,alignx left,aligny top");
+        panelTopRight.add(panelLogos, "cell 0 7 2 1,wmin 0");
       }
 
       {
@@ -402,9 +407,8 @@ public class MovieInformationPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    //
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.rating.votes");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
     autoBinding_2.setConverter(new VoteCountConverter());
@@ -481,5 +485,16 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_9, lblRating, jLabelBeanProperty_1);
     autoBinding_1.setConverter(new RatingConverter());
     autoBinding_1.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty = BeanProperty.create("showLogosPanel");
+    BeanProperty<JSeparator, Boolean> jSeparatorBeanProperty = BeanProperty.create("visible");
+    AutoBinding<MovieSettings, Boolean, JSeparator, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
+        movieSettingsBeanProperty, sepLogos, jSeparatorBeanProperty);
+    autoBinding_11.bind();
+    //
+    BeanProperty<MediaInformationLogosPanel, Boolean> mediaInformationLogosPanelBeanProperty = BeanProperty.create("visible");
+    AutoBinding<MovieSettings, Boolean, MediaInformationLogosPanel, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        settings, movieSettingsBeanProperty, panelLogos, mediaInformationLogosPanelBeanProperty);
+    autoBinding_12.bind();
   }
 }

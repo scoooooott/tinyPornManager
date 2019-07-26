@@ -170,7 +170,8 @@ public class MovieExtraImageFetcherTask implements Runnable {
           filename += FilenameUtils.getExtension(urlAsString);
         }
 
-        Path destFile = ImageUtils.downloadImage(urlAsString, folder, filename, true, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
+        Path destFile = ImageUtils.downloadImage(urlAsString, folder, filename, MovieModuleManager.SETTINGS.isImageExtraThumbsResize(),
+            MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
 
         MediaFile mf = new MediaFile(destFile, MediaFileType.EXTRATHUMB);
         mf.gatherMediaInformation();

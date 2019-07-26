@@ -30,8 +30,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -310,8 +312,10 @@ public class TvShowList extends AbstractModelObject {
     ObjectReader tvShowObjectReader = objectMapper.readerFor(TvShow.class);
 
     for (UUID uuid : new ArrayList<>(tvShowMap.keyList())) {
+      String json = "";
       try {
-        TvShow tvShow = tvShowObjectReader.readValue(tvShowMap.get(uuid));
+        json = tvShowMap.get(uuid);
+        TvShow tvShow = tvShowObjectReader.readValue(json);
         tvShow.setDbId(uuid);
 
         // for performance reasons we add tv shows directly
@@ -319,7 +323,7 @@ public class TvShowList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.warn("problem decoding TV show json string: " + e.getMessage());
-        LOGGER.info("dropping corrupt TV show");
+        LOGGER.info("dropping corrupt TV show: {}", json);
         tvShowMap.remove(uuid);
       }
     }
@@ -337,8 +341,10 @@ public class TvShowList extends AbstractModelObject {
     int episodeCount = 0;
 
     for (UUID uuid : new ArrayList<>(episodesMap.keyList())) {
+      String json = "";
       try {
-        TvShowEpisode episode = episodeObjectReader.readValue(episodesMap.get(uuid));
+        json = episodesMap.get(uuid);
+        TvShowEpisode episode = episodeObjectReader.readValue(json);
         episode.setDbId(uuid);
 
         // check for orphaned episodes
@@ -361,7 +367,7 @@ public class TvShowList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.warn("problem decoding episode json string: " + e.getMessage());
-        LOGGER.info("dropping corrupt episode");
+        LOGGER.info("dropping corrupt episode: {}", json);
         episodesMap.remove(uuid);
       }
     }
@@ -941,6 +947,28 @@ public class TvShowList extends AbstractModelObject {
     }
 
     return subtitleScrapers;
+  }
+
+  /**
+   * search all episodes of all TV shows for duplicates (duplicate S/E)
+   */
+  public void searchDuplicateEpisodes() {
+    for (TvShow tvShow : getTvShows()) {
+      Map<String, TvShowEpisode> episodeMap = new HashMap<>();
+
+      for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        String se = "S" + episode.getSeason() + "E" + episode.getEpisode();
+
+        TvShowEpisode duplicate = episodeMap.get(se);
+        if (duplicate != null) {
+          duplicate.setDuplicate();
+          episode.setDuplicate();
+        }
+        else {
+          episodeMap.put(se, episode);
+        }
+      }
+    }
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {

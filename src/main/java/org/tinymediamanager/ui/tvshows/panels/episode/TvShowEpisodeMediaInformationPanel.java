@@ -115,9 +115,10 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
       lblRuntime.setText("");
     }
     else {
-      int minutes = (int) (runtime / 60) % 60;
-      int hours = (int) (runtime / (60 * 60)) % 24;
-      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
+      int minutes = (runtime / 60) % 60;
+      int hours = (runtime / (60 * 60)) % 24;
+      int seconds = runtime % 60;
+      lblRuntime.setText(String.format("%dh %02dm %02ds", hours, minutes, seconds));
     }
 
     chckbxWatched.setSelected(tvShowEpisode.isWatched());

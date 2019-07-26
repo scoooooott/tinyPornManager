@@ -1,3 +1,28 @@
+Version 3.0.3
+=======================
++ added Mexican Spanish to scraper languages #570
++ added Icelandic to scraper languages #574
++ added a duplicate episode filter #578
++ added a MovieEdition filter
++ added option to store tmm data into another folders http://bit.ly/2JoUUeN
++ added seconds to the runtime in the media files panel
++ added an option to hide media logos (to save space for low resolution devices)
++ reworked logic for finding the best artwork according to the settings #589
++ added first aired to the TV show tree #557
+x fixed downloading movie set artwork in the right resolution #580
+x write user ratings to own tags in the NFO files
+x write correct trailer url to the NFO
+x do not write stream runtime for disc style movies to NFO
+x sort tags in the tag filter dropdown
+x enlarged the year column that occasional truncation should not happen again
+x the logos panel does not push other fields (like play button, plot, ..) out of the screen
+x removed duplicate shortcut CTRL+SHIFT+U #590
+x do not throw exception if a TV show has x*100 episodes #587
+x do not resize extrathumbs if the setting is deactivated #589
+x replace colons in the renamer patterns
+x enhanced the renamer replacements/cleanup #597
+
+
 Version 3.0.2
 =======================
 + added undo/redo for all text fields

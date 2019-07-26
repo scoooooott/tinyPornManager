@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +43,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -56,6 +54,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
@@ -89,7 +88,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long                        serialVersionUID = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle              BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle              BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
   private static final Logger                      LOGGER           = LoggerFactory.getLogger(TvShowRenamerSettingsPanel.class);
 
   private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
@@ -425,15 +424,12 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       if (tvShow != null && episode != null) {
         String tvShowDir = TvShowRenamer.getTvShowFoldername(tfTvShowFolder.getText(), tvShow);
-        String filename = TvShowRenamer
-            .generateEpisodeFilenames(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0)).get(0).getFilename();
-        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFolderName.getText(), episode.getTvShow(), episode);
-        if (StringUtils.isBlank(seasonDir)) {
-          lblExample.setText(tvShowDir + File.separator + filename);
-        }
-        else {
-          lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
-        }
+        MediaFile episodeMf = TvShowRenamer
+            .generateEpisodeFilenames(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0)).get(0);
+
+        String newFilenameAndPath = episodeMf.getFile().toString().replace(episode.getTvShow().getPath(), "");
+        lblExample.setText(tvShowDir + newFilenameAndPath);
+
         // create examples
         for (TvShowRenamerExample example : exampleEventList) {
           example.createExample(episode);
