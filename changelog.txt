@@ -1,4 +1,4 @@
-Upcoming version
+Version 3.0.3
 =======================
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
