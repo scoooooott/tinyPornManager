@@ -138,11 +138,11 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
    * @return the first aired date of the first episode or null
    */
   public Date getFirstAired() {
-    TvShowEpisode episode = episodes.get(0);
-    if (episode != null) {
-      return episode.getFirstAired();
+    if (episodes.isEmpty()) {
+      return null;
     }
-    return null;
+
+    return episodes.get(0).getFirstAired();
   }
 
   /**
