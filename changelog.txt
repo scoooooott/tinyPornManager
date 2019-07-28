@@ -1,5 +1,6 @@
 Version 3.0.3
 =======================
++ added jump to movie by keystroke in the movie table
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
 + added a duplicate episode filter #578
