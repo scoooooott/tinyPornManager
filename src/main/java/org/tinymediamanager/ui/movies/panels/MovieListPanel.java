@@ -288,8 +288,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
               }
 
               if (title.startsWith(searchTerm)) {
-                ListSelectionModel selectionModel = movieTable.getSelectionModel();
-                selectionModel.setSelectionInterval(i, i);
+                movieTable.getSelectionModel().setSelectionInterval(i, i);
                 movieTable.scrollRectToVisible(new Rectangle(movieTable.getCellRect(i, 0, true)));
                 break;
               }
@@ -300,10 +299,12 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
 
       @Override
       public void keyReleased(KeyEvent arg0) {
+        // not needed
       }
 
       @Override
       public void keyPressed(KeyEvent arg0) {
+        // not needed
       }
     });
   }
