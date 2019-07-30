@@ -1772,14 +1772,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     Path xmlFile = Paths.get(this.path, this.filename.replaceAll("(?i)\\.iso$", "-mediainfo.xml"));
     if (Files.exists(xmlFile)) {
       try {
-        LOGGER.info("ISO: try to parse " + xmlFile);
+        LOGGER.info("ISO: try to parse {}", xmlFile);
         MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
+        // XML has now ALL the files, as mediainfo would have read it.
 
-        // get snapshot from biggest file
-        MediaInfoXMLParser.MiFile mainFile = xml.getMainFile();
-        setMiSnapshot(mainFile.snapshot);
-        setDuration(mainFile.getDuration()); // accumulated duration
-        return 0;
+        // now we need to detect the main disc movie file (we only have one MF)
+        setMiSnapshot(xml.getMainFile().snapshot);
+        setDuration(xml.getRuntimeFromDvdFiles());
+
+        return 0; // no check for file sizes!
       }
       catch (Exception e) {
         LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
