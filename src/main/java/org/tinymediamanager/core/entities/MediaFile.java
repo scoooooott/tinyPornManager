@@ -1863,14 +1863,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
                 miSnapshot = tempSnapshot;
               }
 
+              // set highest duration
+              if (mf.getDuration() > dur) {
+                dur = mf.getDuration();
+              }
               // accumulate durations from every MF (except disc ID files, and for DVD all IFOs
-              if (isMainDiscIdentifierFile() || getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
-                LOGGER.debug("do not get duration from disc identifier file.");
-              }
-              else {
-                dur += mf.getDuration();
-              }
-              LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
+              // if (isMainDiscIdentifierFile() || getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
+              // LOGGER.debug("do not get duration from disc identifier file.");
+              // }
+              // else {
+              // dur += mf.getDuration();
+              // }
+              LOGGER.trace("ISO: file duration: {} - highest dur {} min", mf.getDurationHHMMSS(), dur / 60);
             }
             // sometimes also an error is thrown
             catch (Exception | Error e) {
