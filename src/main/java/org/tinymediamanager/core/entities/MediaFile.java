@@ -1778,7 +1778,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         // now we need to detect the main disc movie file (we only have one MF)
         setMiSnapshot(xml.getMainFile().snapshot);
-        setDuration(xml.getRuntimeFromDvdFiles());
+        setDuration(Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles()));
 
         return 0; // no check for file sizes!
       }

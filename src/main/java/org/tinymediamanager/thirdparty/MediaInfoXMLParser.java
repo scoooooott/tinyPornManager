@@ -54,6 +54,7 @@ public class MediaInfoXMLParser {
     // process every file in the ISO
     for (Element file : fileElements) {
       MiFile miFile = new MiFile();
+      miFile.filename = "/tmp/dummy.bdmv";
       if (StringUtils.isNotBlank(file.attr("ref"))) {
         miFile.filename = file.attr("ref");
       }
@@ -73,7 +74,7 @@ public class MediaInfoXMLParser {
 
       // dummy MF to get the type (now the filename should be always set)
       MediaFile mf = new MediaFile(Paths.get(miFile.filename));
-      if (mf.isVideo()) {
+      if (mf.isVideo() || mf.getExtension().equalsIgnoreCase("mpls")) {
         miFile.filename = mf.getFilename(); // so we have it w/o path
         files.add(miFile);
       }
@@ -85,12 +86,27 @@ public class MediaInfoXMLParser {
    */
   public MiFile getMainFile() {
     long biggest = 0L;
+    long longest = 0L;
 
     MiFile mainFile = null;
-    for (MiFile f : files) {
-      if (f.getFilesize() > biggest) {
-        mainFile = f;
-        biggest = f.getFilesize();
+    // for (MiFile f : files) {
+    // if (f.getFilesize() > biggest) {
+    // mainFile = f;
+    // biggest = f.getFilesize();
+    // }
+    // }
+
+    // no filesize? try parsing by duration
+    if (mainFile == null) {
+      for (MiFile f : files) {
+        if (f.getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
+          // IFO files have the accumulated duration, but unusable as MI snapshot ;)
+          // continue;
+        }
+        if (f.getDuration() > longest) {
+          mainFile = f;
+          longest = f.getDuration();
+        }
       }
     }
 
@@ -98,13 +114,18 @@ public class MediaInfoXMLParser {
     if (mainFile == null) {
       mainFile = new MiFile();
     }
-
+    LOGGER.trace("Returning main video file: {}", mainFile.getFilename());
     return mainFile;
   }
 
   public int getRuntimeFromDvdFiles() {
     int rtifo = 0;
     MiFile ifo = null;
+
+    if (files.size() <= 1) {
+      // this method is for DVDs with multiple files...
+      return 0;
+    }
 
     // loop over all IFOs, and find the one with longest runtime == main video file?
     for (MiFile mf : files) {
@@ -232,6 +253,9 @@ public class MediaInfoXMLParser {
           }
 
           String value = elem.ownText();
+          if (value.isEmpty()) {
+            continue;
+          }
 
           // Width and Height sometimes comes with the string "pixels"
           if (key.equals("Width") || key.equals("Height")) {
@@ -243,24 +267,26 @@ public class MediaInfoXMLParser {
           if (key.equals("FileSize")) {
             try {
               // accumulate filemsize for same type of tracks
-              kindFilesize += Long.parseLong(value); // should be only once in General
+              kindFilesize += parseSize(value); // should be only once in General
               // and overwrite current value with accumulated (since we can only have one value/kind)
               value = String.valueOf(kindFilesize);
             }
             catch (NumberFormatException ignored) {
+              LOGGER.trace("could not parse filesize", ignored);
             }
           }
           if (key.equals("Stream_size")) {
             try {
               // accumulate streamsize for same type of tracks
-              kindStreamsize += Long.parseLong(value);
+              kindStreamsize += parseSize(value);
               // and overwrite current value with accumulated (since we can only have one value/kind)
               value = String.valueOf(kindStreamsize);
             }
             catch (NumberFormatException ignored) {
+              LOGGER.trace("could not parse streamsize", ignored);
             }
           }
-          if (key.equals("Complete_name") && StreamKind.General == currentKind) {
+          if (key.equals("Complete_name") && StreamKind.General == currentKind && value.length() > 5) {
             this.filename = value;
           }
           if (key.equals("Duration") && StreamKind.General == currentKind) {
@@ -329,13 +355,14 @@ public class MediaInfoXMLParser {
         }
       }
 
-      // if (!filename.isEmpty()) {
-      // // we have a filename (DVD structure or plain file)
-      // Path p = Paths.get(".",filename);
-      // if (p.getNameCount() == 0) {
-      // // we just have a root directory like v: - create fake video name...
-      // p = p.resolve("/iso/dummy.vob");
-      // }
+      if (!filename.isEmpty()) {
+        // we have a filename (DVD structure or plain file)
+        Path p = Paths.get(filename);
+        if (p.getNameCount() == 0) {
+          // we just have a root directory like v: - create fake video name...
+          p = p.resolve("/iso/dummy.vob");
+        }
+      }
       // MediaFile mf = new MediaFile(p);
       // if (mf.getType() != MediaFileType.VIDEO && !mf.getExtension().equalsIgnoreCase("mpls")) {
       // // MI seems to write/parse MPLS into xml...? tread that as valid.
@@ -398,6 +425,32 @@ public class MediaInfoXMLParser {
           break;
       }
       return k;
+    }
+
+    private long parseSize(String size) {
+      // <File_size>22.0 MiB (5%)</File_size>
+      long s = 0L;
+
+      // replace everything after bracket
+      size = size.replaceAll("\\(.*$", "").trim();
+
+      int factor = 1;
+      if (size.toLowerCase(Locale.ROOT).endsWith("kib")) {
+        factor = 1024;
+      }
+      if (size.toLowerCase(Locale.ROOT).endsWith("mib")) {
+        factor = 1024 * 1024;
+      }
+      if (size.toLowerCase(Locale.ROOT).endsWith("gib")) {
+        factor = 1024 * 1024 * 1024;
+      }
+      // remove everything after first whitespace
+      size = size.replaceAll("\\s.*$", "");
+
+      Double d = Double.parseDouble(size);
+      s = d.longValue(); // bytes
+      s = s * factor;
+      return s;
     }
   }
 

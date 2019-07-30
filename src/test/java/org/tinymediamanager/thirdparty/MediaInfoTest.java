@@ -120,7 +120,7 @@ public class MediaInfoTest extends BasicTest {
       assertThat(mf.getVideoWidth()).isEqualTo(720);
       assertThat(mf.getVideoHeight()).isEqualTo(576);
       assertThat(mf.getVideoCodec()).isEqualTo("MPEG");
-      assertThat(mf.getDuration()).isEqualTo(5160);
+      assertThat(mf.getDuration()).isEqualTo(5181);
 
       assertThat(mf.getAudioStreams().size()).isEqualTo(8);
       // first audio stream is AC-3 english/5.1
