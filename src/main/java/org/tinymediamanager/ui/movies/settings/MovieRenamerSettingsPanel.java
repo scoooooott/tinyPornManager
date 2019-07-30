@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,11 +63,13 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -97,8 +101,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   /**
    * UI components
    */
-  private JTextField                     tfMoviePath;
-  private JTextField                     tfMovieFilename;
+  private EnhancedTextField              tfMoviePath;
+  private EnhancedTextField              tfMovieFilename;
   private JLabel                         lblExample;
   private JCheckBox                      chckbxAsciiReplacement;
 
@@ -237,7 +241,14 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
         panelPatterns.add(lblMoviePath, "cell 1 0 2 1,alignx right");
 
-        tfMoviePath = new JTextField();
+        tfMoviePath = new EnhancedTextField(IconManager.UNDO_GREY);
+        tfMoviePath.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfMoviePath.addIconMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            tfMoviePath.setText(MovieSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+          }
+        });
         panelPatterns.add(tfMoviePath, "cell 3 0,growx");
 
         JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
@@ -252,7 +263,14 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
         panelPatterns.add(lblMovieFilename, "cell 1 2 2 1,alignx right");
 
-        tfMovieFilename = new JTextField();
+        tfMovieFilename = new EnhancedTextField(IconManager.UNDO_GREY);
+        tfMovieFilename.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfMovieFilename.addIconMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            tfMovieFilename.setText(MovieSettings.DEFAULT_RENAMER_FILE_PATTERN);
+          }
+        });
         panelPatterns.add(tfMovieFilename, "cell 3 2,growx");
 
         JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$

@@ -101,9 +101,10 @@ public class IconManager {
   public static final ImageIcon            INFO                        = createFontAwesomeIcon('\uF05A');
   public static final ImageIcon            FILTER_ACTIVE               = createFontAwesomeIcon('\uF672', new Color(255, 119, 0));
   public static final ImageIcon            NEW                         = createTextIcon("new", DEFAULT_FONT_SIZE, new Color(31, 187, 0));
+  public static final ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
   public static final ImageIcon            SEARCH_GREY                 = createFontAwesomeIcon('\uF002');
   public static final ImageIcon            STOP                        = createFontAwesomeIcon('\uF28D');
-  public static final ImageIcon            PLAY_LARGE                  = createFontAwesomeIcon('\uF144', 28);
+  public static final ImageIcon            UNDO_GREY                   = createFontAwesomeIcon('\uF0E2');
 
   // font awesome icons light (button usage)
   public static final ImageIcon            ADD_INV                     = createFontAwesomeIcon('\uF067', UIManager.getColor("Button.foreground"));
