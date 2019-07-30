@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1652,7 +1653,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public int getRuntimeFromMediaFiles() {
     int runtime = 0;
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-      runtime += mf.getDuration();
+      if (!mf.isMainDiscIdentifierFile() && !mf.getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) { // exclude all IFOs
+        runtime += mf.getDuration();
+      }
     }
     return runtime;
   }

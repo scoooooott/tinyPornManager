@@ -1769,7 +1769,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private long getMediaInfoSnapshotFromISO() {
     // check if we have a snapshot xml
-    Path xmlFile = Paths.get(this.path, this.filename.replaceFirst("\\.iso$", "-mediainfo.xml"));
+    Path xmlFile = Paths.get(this.path, this.filename.replaceAll("(?i)\\.iso$", "-mediainfo.xml"));
     if (Files.exists(xmlFile)) {
       try {
         LOGGER.info("ISO: try to parse " + xmlFile);
@@ -1862,8 +1862,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
                 miSnapshot = tempSnapshot;
               }
 
-              // accumulate durations from every MF
-              dur += mf.getDuration();
+              // accumulate durations from every MF (except disc ID files, and for DVD all IFOs
+              if (isMainDiscIdentifierFile() || getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
+                LOGGER.debug("do not get duration from disc identifier file.");
+              }
+              else {
+                dur += mf.getDuration();
+              }
               LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
             }
             // sometimes also an error is thrown
