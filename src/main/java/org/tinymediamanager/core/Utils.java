@@ -628,13 +628,16 @@ public class Utils {
                 }
                 continue;
               }
-              Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+              Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
             }
-          }
 
-          // delete source files
-          Utils.deleteDirectoryRecursive(srcDir);
-          rename = true;
+            // delete source files
+            Utils.deleteDirectoryRecursive(srcDir);
+            rename = true;
+          }
+          catch (IOException e) {
+            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
+          }
         }
         catch (IOException e) {
           LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
@@ -729,12 +732,12 @@ public class Utils {
         catch (AtomicMoveNotSupportedException a) {
           // if it fails (b/c not on same file system) use that
           try {
-            Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+            Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
             Files.delete(srcFile);
             rename = true; // no exception
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -840,6 +843,17 @@ public class Utils {
           // replace existing for changing cASE
           Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
           rename = true;// no exception
+        }
+        catch (UnsupportedOperationException u) {
+          // maybe copy with attributes does not work here (across file systems), just try without file attributes
+          try {
+            // replace existing for changing cASE
+            Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+            rename = true;// no exception
+          }
+          catch (IOException e) {
+            LOGGER.warn("copy did not work (fallback): {}", e.getMessage());
+          }
         }
         catch (IOException e) {
           LOGGER.warn("copy did not work: {}", e.getMessage());
