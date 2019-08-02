@@ -15,8 +15,12 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
@@ -32,7 +36,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -232,7 +239,74 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
       }
     }
 
+    // add a key listener to jump to the first movie starting with the typed character
+    addKeyListener();
+
     SwingUtilities.invokeLater(() -> movieTable.requestFocus());
+  }
+
+  private void addKeyListener() {
+    movieTable.addKeyListener(new KeyListener() {
+      private long   lastKeypress = 0;
+      private String searchTerm   = "";
+
+      @Override
+      public void keyTyped(KeyEvent arg0) {
+        long now = System.currentTimeMillis();
+        if (now - lastKeypress > 500) {
+          searchTerm = "";
+        }
+        lastKeypress = now;
+
+        if (arg0.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+          searchTerm += arg0.getKeyChar();
+        }
+
+        if (StringUtils.isNotBlank(searchTerm)) {
+          boolean titleColumn = true;
+
+          // look for the first column and check if we should search in the original title
+          TableColumn tableColumn = movieTable.getColumnModel().getColumn(0);
+          if ("originalTitle".equals(tableColumn.getIdentifier())) {
+            titleColumn = false;
+          }
+
+          TableModel model = movieTable.getModel();
+
+          for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0) instanceof Movie) {
+              Movie movie = (Movie) model.getValueAt(i, 0);
+
+              // search in the title/originaltitle depending on the visible column
+              String title;
+
+              if (titleColumn) {
+                title = movie.getTitleSortable().toLowerCase(Locale.ROOT);
+              }
+              else {
+                title = movie.getOriginalTitleSortable().toLowerCase(Locale.ROOT);
+              }
+
+              if (title.startsWith(searchTerm)) {
+                movieTable.getSelectionModel().setSelectionInterval(i, i);
+                movieTable.scrollRectToVisible(new Rectangle(movieTable.getCellRect(i, 0, true)));
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent arg0) {
+        // not needed
+      }
+
+      @Override
+      public void keyPressed(KeyEvent arg0) {
+        // not needed
+      }
+    });
   }
 
   public MovieSelectionModel getSelectionModel() {

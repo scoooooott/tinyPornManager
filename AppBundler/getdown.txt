@@ -31,6 +31,7 @@ xresource = [!windows] tinyMediaManagerCMD.sh
 xresource = [!windows] tinyMediaManager.sh
 xresource = [!windows] tinyMediaManagerUpdater.sh
 xresource = [mac os x] tinyMediaManagerOSX.sh
+xresource = [mac os x] tinyMediaManagerCMD-OSX.sh
 resource = [mac os x] JavaApplicationStub.new       #rename to new, for self-update
 resource = [mac os x] Info.plist
 resource = [mac os x] tmm.icns

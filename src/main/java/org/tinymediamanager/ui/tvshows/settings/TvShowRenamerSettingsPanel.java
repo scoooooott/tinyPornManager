@@ -23,6 +23,8 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,11 +63,13 @@ import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -101,14 +105,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
    */
   private JLabel                                   lblExample;
   private JComboBox<TvShowPreviewContainer>        cbTvShowForPreview;
-  private JTextField                               tfSeasonFolderName;
+  private EnhancedTextField                        tfSeasonFolderName;
   private JCheckBox                                chckbxAsciiReplacement;
   private JComboBox<String>                        cbSpaceReplacement;
   private JCheckBox                                chckbxSpaceReplacement;
   private JComboBox<TvShowEpisodePreviewContainer> cbEpisodeForPreview;
   private TmmTable                                 tableExamples;
-  private JTextField                               tfTvShowFolder;
-  private JTextField                               tfEpisodeFilename;
+  private EnhancedTextField                        tfTvShowFolder;
+  private EnhancedTextField                        tfEpisodeFilename;
   private JCheckBox                                chckbxSpecialSeason;
   private JComboBox                                cbColonReplacement;
 
@@ -227,7 +231,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
         panelPatterns.add(lblTvShowFolder, "cell 1 0 2 1,alignx right");
 
-        tfTvShowFolder = new JTextField();
+        tfTvShowFolder = new EnhancedTextField(IconManager.UNDO_GREY);
+        tfTvShowFolder.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfTvShowFolder.addIconMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            tfTvShowFolder.setText(TvShowSettings.DEFAULT_RENAMER_FOLDER_PATTERN);
+          }
+        });
         panelPatterns.add(tfTvShowFolder, "cell 3 0 2 1,growx");
 
         JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
@@ -242,7 +253,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
         panelPatterns.add(lblSeasonFolderName, "cell 1 2 2 1,alignx right");
 
-        tfSeasonFolderName = new JTextField();
+        tfSeasonFolderName = new EnhancedTextField(IconManager.UNDO_GREY);
+        tfSeasonFolderName.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfSeasonFolderName.addIconMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            tfSeasonFolderName.setText(TvShowSettings.DEFAULT_RENAMER_SEASON_PATTERN);
+          }
+        });
         panelPatterns.add(tfSeasonFolderName, "cell 3 2 2 1,growx");
 
         JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
@@ -257,7 +275,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         JLabel lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));
         panelPatterns.add(lblEpisodeFileName, "cell 1 4 2 1,alignx right");
 
-        tfEpisodeFilename = new JTextField();
+        tfEpisodeFilename = new EnhancedTextField(IconManager.UNDO_GREY);
+        tfEpisodeFilename.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfEpisodeFilename.addIconMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            tfEpisodeFilename.setText(TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN);
+          }
+        });
         panelPatterns.add(tfEpisodeFilename, "cell 3 4 2 1,growx");
 
         JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$

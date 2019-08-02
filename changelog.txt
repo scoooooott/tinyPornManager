@@ -1,5 +1,6 @@
 Version 3.0.3
 =======================
++ added jump to movie by keystroke in the movie table
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
 + added a duplicate episode filter #578
@@ -9,6 +10,7 @@ Version 3.0.3
 + added an option to hide media logos (to save space for low resolution devices)
 + reworked logic for finding the best artwork according to the settings #589
 + added first aired to the TV show tree #557
++ added a button to revert renamer template to the default value
 x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
@@ -21,6 +23,7 @@ x do not throw exception if a TV show has x*100 episodes #587
 x do not resize extrathumbs if the setting is deactivated #589
 x replace colons in the renamer patterns
 x enhanced the renamer replacements/cleanup #597
+x execute a copy&delete if a move fails #602
 
 
 Version 3.0.2

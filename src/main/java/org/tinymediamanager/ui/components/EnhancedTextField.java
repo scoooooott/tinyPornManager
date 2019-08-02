@@ -12,6 +12,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -141,14 +142,32 @@ public class EnhancedTextField extends JTextField implements FocusListener {
   }
 
   /**
+   * set a tooltip text for the icon
+   * 
+   * @param tooltip
+   *          the text to be set
+   */
+  public void setIconToolTipText(String tooltip) {
+    if (lblIcon != null && StringUtils.isNotBlank(tooltip)) {
+      lblIcon.setToolTipText(tooltip);
+    }
+  }
+
+  public void addIconMouseListener(MouseListener mouseListener) {
+    if (lblIcon != null && mouseListener != null) {
+      lblIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      lblIcon.addMouseListener(mouseListener);
+    }
+  }
+
+  /**
    * create a predefined search text field
    * 
    * @return the JTextField for searching
    */
   public static EnhancedTextField createSearchTextField() {
     EnhancedTextField textField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
-    textField.lblIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    textField.lblIcon.addMouseListener(new MouseAdapter() {
+    textField.addIconMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (StringUtils.isNotBlank(textField.getText())) {

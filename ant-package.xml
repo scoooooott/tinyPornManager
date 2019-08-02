@@ -138,6 +138,8 @@
 		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%SVNREV%" value="${tmmRevision}" />
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
+		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerCMD-OSX.sh"
+			   perm="ugo+rx"/>
 		<copy todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/">
 			<fileset dir="${build.dir}">
 				<include name="**/*" />
@@ -191,6 +193,8 @@
 		<copy file="${dist.dir}/linux/tinyMediaManagerCMD.sh" todir="${build.dir}" />
 
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" todir="${build.dir}" />
+		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerCMD-OSX.sh"
+			  todir="${build.dir}"/>
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" tofile="${build.dir}/JavaApplicationStub.new" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" todir="${build.dir}" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/tmm.icns" todir="${build.dir}"/>
@@ -229,7 +233,8 @@
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
-			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+			<zipfileset filemode="755" dir="${dist.dir}/mac"
+						includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh, **/tinyMediaManagerCMD-OSX.sh"/>
 		</zip>
 
 		<echo message="=====================================================" />

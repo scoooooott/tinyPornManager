@@ -1769,17 +1769,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private long getMediaInfoSnapshotFromISO() {
     // check if we have a snapshot xml
-    Path xmlFile = Paths.get(this.path, this.filename.replaceFirst("\\.iso$", "-mediainfo.xml"));
+    Path xmlFile = Paths.get(this.path, this.filename.replaceAll("(?i)\\.iso$", "-mediainfo.xml"));
     if (Files.exists(xmlFile)) {
       try {
-        LOGGER.info("ISO: try to parse " + xmlFile);
+        LOGGER.info("ISO: try to parse {}", xmlFile);
         MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
+        // XML has now ALL the files, as mediainfo would have read it.
 
-        // get snapshot from biggest file
-        MediaInfoXMLParser.MiFile mainFile = xml.getMainFile();
-        setMiSnapshot(mainFile.snapshot);
-        setDuration(mainFile.getDuration()); // accumulated duration
-        return 0;
+        // now we need to detect the main disc movie file (we only have one MF)
+        setMiSnapshot(xml.getMainFile().snapshot);
+        setDuration(Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles()));
+
+        return 0; // no check for file sizes!
       }
       catch (Exception e) {
         LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
@@ -1862,9 +1863,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
                 miSnapshot = tempSnapshot;
               }
 
-              // accumulate durations from every MF
-              dur += mf.getDuration();
-              LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
+              // set highest duration
+              if (mf.getDuration() > dur) {
+                dur = mf.getDuration();
+              }
+              // accumulate durations from every MF (except disc ID files, and for DVD all IFOs
+              // if (isMainDiscIdentifierFile() || getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
+              // LOGGER.debug("do not get duration from disc identifier file.");
+              // }
+              // else {
+              // dur += mf.getDuration();
+              // }
+              LOGGER.trace("ISO: file duration: {} - highest dur {} min", mf.getDurationHHMMSS(), dur / 60);
             }
             // sometimes also an error is thrown
             catch (Exception | Error e) {

@@ -32,7 +32,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
@@ -606,37 +605,30 @@ public class Utils {
           rename = true;// no exception
         }
         catch (AtomicMoveNotSupportedException a) {
-          // if it fails (b/c not on same file system) use that
-          try {
-            Files.move(srcDir, destDir, StandardCopyOption.REPLACE_EXISTING);
-            rename = true; // no exception
-          }
-          catch (DirectoryNotEmptyException e) {
-            // second try still did not work; original documentation
-            /*
-             * When moving a directory requires that its entries be moved then this method fails (by throwing an {@code IOException}). To move a
-             * <i>file tree</i> may involve copying rather than moving directories and this can be done using the {@link #copy copy} method in
-             * conjunction with the {@link #walkFileTree Files.walkFileTree} utility method.
-             */
-            // in this case we do a recursive copy & delete
-            // copy all files (with re-creating symbolic links if there are some)
-            try (Stream<Path> stream = Files.walk(srcDir)) {
-              Iterator<Path> srcFiles = stream.iterator();
-              while (srcFiles.hasNext()) {
-                Path source = srcFiles.next();
-                Path destination = destDir.resolve(srcDir.relativize(source));
-                if (Files.isSymbolicLink(source)) {
-                  Files.createSymbolicLink(destination, source.toRealPath());
-                  continue;
-                }
-                if (Files.isDirectory(source)) {
-                  if (!Files.exists(destination)) {
-                    Files.createDirectory(destination);
-                  }
-                  continue;
-                }
-                Files.copy(source, destination);// use flag to override existing
+          // if it fails (b/c not on same file system) use that; original documentation
+          /*
+           * When moving a directory requires that its entries be moved then this method fails (by throwing an {@code IOException}). To move a <i>file
+           * tree</i> may involve copying rather than moving directories and this can be done using the {@link #copy copy} method in conjunction with
+           * the {@link #walkFileTree Files.walkFileTree} utility method.
+           */
+          // in this case we do a recursive copy & delete
+          // copy all files (with re-creating symbolic links if there are some)
+          try (Stream<Path> stream = Files.walk(srcDir)) {
+            Iterator<Path> srcFiles = stream.iterator();
+            while (srcFiles.hasNext()) {
+              Path source = srcFiles.next();
+              Path destination = destDir.resolve(srcDir.relativize(source));
+              if (Files.isSymbolicLink(source)) {
+                Files.createSymbolicLink(destination, source.toRealPath());
+                continue;
               }
+              if (Files.isDirectory(source)) {
+                if (!Files.exists(destination)) {
+                  Files.createDirectory(destination);
+                }
+                continue;
+              }
+              Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
             }
 
             // delete source files
@@ -644,8 +636,7 @@ public class Utils {
             rename = true;
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
-            Utils.deleteDirectoryRecursive(destDir);
+            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -741,11 +732,12 @@ public class Utils {
         catch (AtomicMoveNotSupportedException a) {
           // if it fails (b/c not on same file system) use that
           try {
-            Files.move(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(srcFile);
             rename = true; // no exception
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem: {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -851,6 +843,17 @@ public class Utils {
           // replace existing for changing cASE
           Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
           rename = true;// no exception
+        }
+        catch (UnsupportedOperationException u) {
+          // maybe copy with attributes does not work here (across file systems), just try without file attributes
+          try {
+            // replace existing for changing cASE
+            Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+            rename = true;// no exception
+          }
+          catch (IOException e) {
+            LOGGER.warn("copy did not work (fallback): {}", e.getMessage());
+          }
         }
         catch (IOException e) {
           LOGGER.warn("copy did not work: {}", e.getMessage());

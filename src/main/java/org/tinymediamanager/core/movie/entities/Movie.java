@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1649,10 +1650,65 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return mediaFilesWithSubtitles;
   }
 
+  private int getRuntimeFromDvdFiles() {
+    int rtifo = 0;
+    MediaFile ifo = null;
+
+    // loop over all IFOs, and find the one with longest runtime == main video file?
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
+        if (mf.getDuration() > rtifo) {
+          rtifo = mf.getDuration();
+          ifo = mf; // need the prefix
+        }
+      }
+    }
+
+    if (ifo != null) {
+      LOGGER.trace("Found longest IFO:{} duration:{}", ifo.getFilename(), runtime);
+
+      // check DVD VOBs
+      String prefix = StrgUtils.substr(ifo.getFilename(), "(?i)^(VTS_\\d+).*");
+      if (prefix.isEmpty()) {
+        // check HD-DVD
+        prefix = StrgUtils.substr(ifo.getFilename(), "(?i)^(HV\\d+)I.*");
+      }
+
+      if (!prefix.isEmpty()) {
+        int rtvob = 0;
+        for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+          if (mf.getFilename().startsWith(prefix) && ifo.getFilename() != mf.getFilename()) {
+            rtvob += mf.getDuration();
+            LOGGER.trace("VOB:{} duration:{} accumulated:{}", mf.getFilename(), mf.getDuration(), rtvob);
+          }
+        }
+        if (rtvob > rtifo) {
+          rtifo = rtvob;
+        }
+      }
+      else {
+        // no IFO? must be bluray
+        LOGGER.trace("TODO: bluray");
+      }
+    }
+
+    return rtifo;
+
+  }
+
   public int getRuntimeFromMediaFiles() {
     int runtime = 0;
-    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-      runtime += mf.getDuration();
+    if (isDisc) {
+      runtime = getRuntimeFromDvdFiles();
+    }
+
+    // accumulate old version
+    if (runtime < 10) {
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+        if (!mf.isMainDiscIdentifierFile() && !mf.getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) { // exclude all IFOs
+          runtime += mf.getDuration();
+        }
+      }
     }
     return runtime;
   }
