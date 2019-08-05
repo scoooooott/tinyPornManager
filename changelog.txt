@@ -11,6 +11,7 @@ Version 3.0.3
 + reworked logic for finding the best artwork according to the settings #589
 + added first aired to the TV show tree #557
 + added a button to revert renamer template to the default value
++ added option to explicitly rebuild the image cache for selected movies/TV shows
 x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
