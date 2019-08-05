@@ -26,6 +26,7 @@ x replace colons in the renamer patterns
 x enhanced the renamer replacements/cleanup #597
 x execute a copy&delete if a move fails #602
 x getMainVideoFile() now returns the first part of stacked movies/episodes rather than the biggest one
+x fixed regexp to find extra(s) in nested movie folders #603
 
 
 Version 3.0.2

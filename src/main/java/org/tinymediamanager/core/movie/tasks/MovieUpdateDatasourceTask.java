@@ -1362,7 +1362,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
           // check if file is a VIDEO type - only scan those folders (and not extras/trailer folders)!
           MediaFile mf = new MediaFile(file);
-          if (mf.getType() == MediaFileType.VIDEO && !datasource.relativize(file.getParent()).toString().matches("(?i).*[_.-]+extra[s]?.*")) {
+          if (mf.getType() == MediaFileType.VIDEO && !datasource.relativize(file.getParent()).toString().matches("(?i).*[_.-]+extra[s]?$")) {
             videofolders.add(file.getParent());
           }
           else {
