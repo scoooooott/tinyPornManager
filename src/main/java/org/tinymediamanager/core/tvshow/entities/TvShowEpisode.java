@@ -1389,10 +1389,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public MediaFile getMainVideoFile() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (!videos.isEmpty()) {
-      return videos.get(0);
+    MediaFile vid = null;
+
+    if (stacked) {
+      // search the first stacked media file (e.g. CD1)
+      vid = getMediaFiles(MediaFileType.VIDEO).stream().min(Comparator.comparingInt(MediaFile::getStacking)).orElse(new MediaFile());
     }
+    else {
+      // get the biggest one
+      vid = getBiggestMediaFile(MediaFileType.VIDEO);
+    }
+
+    if (vid != null) {
+      return vid;
+    }
+
+    // cannot happen - movie MUST always have a video file
     return new MediaFile();
   }
 
