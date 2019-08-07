@@ -445,11 +445,6 @@ public class TvShowEpisodeAndSeasonParser {
     result.cleanedName = cleanFilename(result.name, new Pattern[] { seasonPattern, seasonMultiEP, seasonMultiEP2, episodePattern, episodePattern2,
         numbers3Pattern, numbers2Pattern, romanPattern, date1, date2 });
 
-    // if the cleaned name is empty, just take the base name instead
-    if (StringUtils.isBlank(result.cleanedName)) {
-      result.cleanedName = result.name;
-    }
-
     Collections.sort(result.episodes);
     LOGGER.debug("returning result " + result);
     return result;

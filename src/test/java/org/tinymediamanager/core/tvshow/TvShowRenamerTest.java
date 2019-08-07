@@ -300,11 +300,20 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setDvdSeason(1);
     ep.setDvdEpisode(1);
     ep.setPath(destination.toAbsolutePath().toString());
+
     mf = new MediaFile(destination.resolve("S01E01.mkv").toAbsolutePath());
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 
     mf = new MediaFile(destination.resolve("extras/S01E01 - cut scenes.mkv").toAbsolutePath(), MediaFileType.EXTRA);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    mf = new MediaFile(destination.resolve("S01E01 - sample.avi").toAbsolutePath(), MediaFileType.SAMPLE);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+
+    mf = new MediaFile(destination.resolve("S01E01 - something else.mkv").toAbsolutePath(), MediaFileType.EXTRA);
     mf.gatherMediaInformation();
     ep.addToMediaFiles(mf);
 
@@ -342,6 +351,12 @@ public class TvShowRenamerTest extends BasicTest {
 
     Path extra1 = seasonDir.resolve("extras/Breaking Bad - S01E01 - Pilot-cut scenes.mkv");
     assertThat(extra1).exists();
+
+    Path sample1 = seasonDir.resolve("Breaking Bad - S01E01 - Pilot-sample.avi");
+    assertThat(sample1).exists();
+
+    Path extra12 = seasonDir.resolve("extras/Breaking Bad - S01E01 - Pilot-something else.mkv");
+    assertThat(extra12).exists();
 
     Path video2 = seasonDir.resolve("Breaking Bad - S01E02 - Pilot 2.mkv");
     assertThat(video2).exists();

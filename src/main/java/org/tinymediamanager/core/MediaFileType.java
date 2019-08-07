@@ -32,6 +32,7 @@ public enum MediaFileType {
   VIDEO, 
   TRAILER,
   SAMPLE, // sample != trailer
+  @Deprecated
   VIDEO_EXTRA,
   AUDIO,
   SUBTITLE, 

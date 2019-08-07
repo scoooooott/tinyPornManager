@@ -934,6 +934,7 @@ public class TvShowRenamer {
       // VIDEO_EXTRA
       ////////////////////////////////////////////////////////////////////////
       case EXTRA:
+      case VIDEO_EXTRA:
         // this extra is for an episode -> move it at least to the season folder and try to replace the episode tokens
         MediaFile extra = new MediaFile(mf);
         // try to detect the title of the extra file
@@ -959,13 +960,12 @@ public class TvShowRenamer {
       case AUDIO:
       case TEXT:
       case UNKNOWN:
-      case VIDEO_EXTRA:
-        // get the actual episode filename and strip out the last/unknown part
-        MediaFile videoFile = eps.get(0).getMainVideoFile();
-        String unknownPart = mf.getBasename().replace(videoFile.getBasename(), "");
+        // this is something extra for an episode -> try to replace the episode tokens and preserve the extra in the filename
+        // try to detect the title of the extra file
+        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(mf.getFilename(), tvShow.getTitle());
 
         MediaFile other = new MediaFile(mf);
-        other.setFile(seasonFolder.resolve(cleanupDestination(newFilename + unknownPart) + "." + mf.getExtension()));
+        other.setFile(seasonFolder.resolve(cleanupDestination(newFilename + "-" + result.cleanedName) + "." + mf.getExtension()));
         newFiles.add(other);
         break;
 
