@@ -542,8 +542,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideo() {
-    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SAMPLE)
-        || type.equals(MediaFileType.VIDEO_EXTRA));
+    switch (type) {
+      case VIDEO:
+      case TRAILER:
+      case SAMPLE:
+      case VIDEO_EXTRA:
+        return true;
+
+      case EXTRA:
+        // check if that extra is a video file
+        if (Globals.settings.getVideoFileType().contains("." + getExtension().toLowerCase(Locale.ROOT))) {
+          return true;
+        }
+        break;
+
+      default:
+        break;
+    }
+    return false;
   }
 
   /**
