@@ -706,9 +706,9 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
     if (!mediaFiles.contains(mediaFile)) {
       mediaFiles.add(mediaFile);
-      sortMediaFiles();
     }
 
+    sortMediaFiles();
     readWriteLock.writeLock().unlock();
 
     firePropertyChange(MEDIA_FILES, null, mediaFiles);

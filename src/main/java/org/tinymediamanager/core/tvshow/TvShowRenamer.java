@@ -400,14 +400,13 @@ public class TvShowRenamer {
     MediaFile originalVideoMediaFile = new MediaFile(episode.getMainVideoFile());
     // test for valid season/episode number
     if (episode.getSeason() < 0 || episode.getEpisode() < 0) {
-      LOGGER.warn(
-          "failed to rename episode " + episode.getTitle() + " (TV show " + episode.getTvShow().getTitle() + ") - invalid season/episode number");
+      LOGGER.warn("failed to rename episode {} (TV show {}) - invalid season/episode number", episode.getTitle(), episode.getTvShow().getTitle());
       MessageManager.instance.pushMessage(
           new Message(MessageLevel.ERROR, episode.getTvShow().getTitle(), "tvshow.renamer.failedrename", new String[] { episode.getTitle() }));
       return;
     }
 
-    LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
+    LOGGER.info("Renaming TvShow '{}', Episode {}", episode.getTvShow().getTitle(), episode.getEpisode());
 
     if (episode.isDisc()) {
       renameEpisodeAsDisc(episode);
@@ -435,7 +434,7 @@ public class TvShowRenamer {
     // ## rename VIDEO (move 1:1)
     // ######################################################################
     for (MediaFile vid : episode.getMediaFiles(MediaFileType.VIDEO)) {
-      LOGGER.trace("Rename 1:1 " + vid.getType() + " " + vid.getFileAsPath());
+      LOGGER.trace("Rename 1:1 {} {}", vid.getType(), vid.getFileAsPath());
       MediaFile newMF = generateEpisodeFilenames(episode.getTvShow(), vid).get(0); // there can be only one
       boolean ok = moveFile(vid.getFileAsPath(), newMF.getFileAsPath());
       if (ok) {
@@ -463,7 +462,7 @@ public class TvShowRenamer {
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.KEYART));
     mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
-      LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
+      LOGGER.trace("Rename 1:N {} {}", mf.getType(), mf.getFileAsPath());
       List<MediaFile> newMFs = generateEpisodeFilenames(episode.getTvShow(), mf); // 1:N
       for (MediaFile newMF : newMFs) {
         boolean ok = copyFile(mf.getFileAsPath(), newMF.getFileAsPath());
@@ -508,7 +507,7 @@ public class TvShowRenamer {
     // ## rename subtitles (copy 1:1)
     // ######################################################################
     for (MediaFile subtitle : episode.getMediaFiles(MediaFileType.SUBTITLE)) {
-      LOGGER.trace("Rename 1:1 " + subtitle.getType() + " " + subtitle.getFileAsPath());
+      LOGGER.trace("Rename 1:1 {} {}", subtitle.getType(), subtitle.getFileAsPath());
       MediaFile newMF = generateEpisodeFilenames(episode.getTvShow(), subtitle).get(0); // there can be only one
       boolean ok = moveFile(subtitle.getFileAsPath(), newMF.getFileAsPath());
       if (ok) {
@@ -575,7 +574,7 @@ public class TvShowRenamer {
           }
         }
         catch (IOException e) {
-          LOGGER.error("cleanup of " + cl.getFileAsPath().toString() + " : " + e.getMessage());
+          LOGGER.error("cleanup of {} - {}", cl.getFileAsPath().toString(), e.getMessage());
         }
       }
     }
@@ -655,7 +654,6 @@ public class TvShowRenamer {
     Path newDisc = newEpFolder.resolve(disc.getFileName()); // old disc name
 
     try {
-      // if (!epFolder.equals(newEpFolder)) {
       if (!epFolder.toAbsolutePath().toString().equals(newEpFolder.toAbsolutePath().toString())) {
         boolean ok = false;
         try {
@@ -672,7 +670,7 @@ public class TvShowRenamer {
         }
         if (ok) {
           // iterate over all EPs & MFs and fix new path
-          LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
+          LOGGER.debug("updating *all* MFs for new path -> {}", newEpFolder);
           for (TvShowEpisode e : eps) {
             e.updateMediaFilePath(disc, newDisc);
             e.setPath(newEpFolder.toAbsolutePath().toString());
@@ -697,7 +695,7 @@ public class TvShowRenamer {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
       if (!directoryStream.iterator().hasNext()) {
         // no iterator = empty
-        LOGGER.debug("Deleting empty Directory " + dir);
+        LOGGER.debug("Deleting empty Directory - {}", dir);
         Files.delete(dir); // do not use recursive her
         return;
       }
@@ -946,15 +944,28 @@ public class TvShowRenamer {
         break;
 
       ////////////////////////////////////////////////////////////////////////
-      // SAMPLE / TEXT / UNKNOWN
+      // SAMPLE
+      ////////////////////////////////////////////////////////////////////////
+      case SAMPLE:
+        MediaFile sample = new MediaFile(mf);
+        sample.setFile(seasonFolder.resolve(newFilename + "-sample." + mf.getExtension()));
+        newFiles.add(sample);
+        break;
+
+      ////////////////////////////////////////////////////////////////////////
+      // AUDIO / TEXT / UNKNOWN / VIDEO_EXTRA
       // take the unknown part of the file name and attach it to the new file name
       ////////////////////////////////////////////////////////////////////////
       case AUDIO:
-      case SAMPLE:
       case TEXT:
       case UNKNOWN:
+      case VIDEO_EXTRA:
+        // get the actual episode filename and strip out the last/unknown part
+        MediaFile videoFile = eps.get(0).getMainVideoFile();
+        String unknownPart = mf.getBasename().replace(videoFile.getBasename(), "");
+
         MediaFile other = new MediaFile(mf);
-        other.setFile(seasonFolder.resolve(newFilename + "." + mf.getExtension()));
+        other.setFile(seasonFolder.resolve(cleanupDestination(newFilename + unknownPart) + "." + mf.getExtension()));
         newFiles.add(other);
         break;
 

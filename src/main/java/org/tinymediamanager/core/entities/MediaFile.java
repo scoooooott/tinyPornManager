@@ -324,7 +324,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
         || PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
     {
-      return MediaFileType.EXTRA;
+      // decide between VIDEO_EXTRA and EXTRA to support direct play of extra video files from the UI
+      if (isVideo()) {
+        return MediaFileType.VIDEO_EXTRA;
+      }
+      else {
+        return MediaFileType.EXTRA;
+      }
     }
 
     if (ext.equals("nfo")) {
@@ -542,7 +548,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isVideo() {
-    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SAMPLE));
+    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SAMPLE)
+        || type.equals(MediaFileType.VIDEO_EXTRA));
   }
 
   /**

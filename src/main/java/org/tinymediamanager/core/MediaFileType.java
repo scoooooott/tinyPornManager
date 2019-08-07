@@ -30,11 +30,10 @@ public enum MediaFileType {
 
   // @formatter:off
   VIDEO, 
-  @Deprecated
-  VIDEO_EXTRA, 
-  TRAILER, 
+  TRAILER,
   SAMPLE, // sample != trailer
-  AUDIO, 
+  VIDEO_EXTRA,
+  AUDIO,
   SUBTITLE, 
   NFO, 
   POSTER, // gfx
