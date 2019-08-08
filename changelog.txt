@@ -28,6 +28,7 @@ x execute a copy&delete if a move fails #602
 x getMainVideoFile() now returns the first part of stacked movies/episodes rather than the biggest one
 x fixed regexp to find extra(s) in nested movie folders #603
 x fixed renaming of episodes with samples #601
+x fixed crash in the movie renamer settings when a movie was in a UNC root #561
 
 
 Version 3.0.2
