@@ -59,6 +59,7 @@ public class ITKodiRPCTest {
     // datasource
     testUri("D:\\_neu\\TMM\\", "D:\\_neu\\TMM\\");
     testUri("smb://NAS/video/", "smb://NAS/video/");
+    testUri("smb://", "smb://");
 
   }
 
