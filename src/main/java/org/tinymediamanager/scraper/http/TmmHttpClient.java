@@ -34,8 +34,6 @@ import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import okhttp3.logging.HttpLoggingInterceptor.Level;
 
 /**
  * The class HttpClient. To construct our HTTP client for internet access
@@ -76,26 +74,8 @@ public class TmmHttpClient {
   private static OkHttpClient createHttpClient() {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-    // default logging: just req/resp when TMM is on DEBUG
-    HttpLoggingInterceptor log_debug = new HttpLoggingInterceptor(
-        message -> LOGGER.debug(message.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>"))); // NOSONAR
-    log_debug.setLevel(Level.BASIC);
-    builder.addInterceptor(log_debug);
-
-    // and FULL BODY logging for TRACE (duplicating the 2 BASIC log liens)
-    HttpLoggingInterceptor log_trace = new HttpLoggingInterceptor(message -> {
-      String content = message.trim().replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
-
-      // only log the first 10k characters
-      if (content.length() > 10000) {
-        LOGGER.trace("{}...", content.substring(0, 10000)); // NOSONAR
-      }
-      else {
-        LOGGER.trace(content);
-      }
-    });
-    log_trace.setLevel(Level.BODY);
-    builder.addInterceptor(log_trace);
+    // add an own logging interceptor to only log text responses
+    builder.addInterceptor(new TmmHttpLoggingInterceptor());
 
     // pool
     builder.connectionPool(new ConnectionPool(5, 5000, TimeUnit.MILLISECONDS));
