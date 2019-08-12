@@ -49,6 +49,7 @@ public class TvShowSettingsTest extends BasicTest {
       assertTrue(config.contains("\"asciiReplacement\" : true"));
     }
     catch (Exception e) {
+      e.printStackTrace(); // FIXME: debug for buildserver JDK8
       Assertions.fail(e.getMessage());
     }
   }
