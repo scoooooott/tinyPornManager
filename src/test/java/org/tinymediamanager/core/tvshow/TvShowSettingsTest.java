@@ -44,12 +44,12 @@ public class TvShowSettingsTest extends BasicTest {
       settings.setAsciiReplacement(true);
       settings.saveSettings();
 
+      Thread.sleep(1000);
       // cannot re-instantiate settings - need to check plain file
       String config = Utils.readFileToString(Paths.get(getSettingsFolder(), TvShowSettings.getInstance().getConfigFilename()));
       assertTrue(config.contains("\"asciiReplacement\" : true"));
     }
     catch (Exception e) {
-      e.printStackTrace(); // FIXME: debug for buildserver JDK8
       Assertions.fail(e.getMessage());
     }
   }
