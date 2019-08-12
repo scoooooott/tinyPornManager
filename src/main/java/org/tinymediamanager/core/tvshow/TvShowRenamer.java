@@ -1258,11 +1258,6 @@ public class TvShowRenamer {
 
     newDestination = cleanupDestination(newDestination);
 
-    // any whitespace replacements?
-    if (SETTINGS.isRenamerSpaceSubstitution()) {
-      newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
-    }
-
     return newDestination;
   }
 
@@ -1294,6 +1289,17 @@ public class TvShowRenamer {
       // trim whitespace around directory sep
       destination = destination.replaceAll("\\s+/", "/");
       destination = destination.replaceAll("/\\s+", "/");
+    }
+
+    // replace spaces with underscores if needed (filename only)
+    if (SETTINGS.isRenamerSpaceSubstitution()) {
+      String replacement = SETTINGS.getRenamerSpaceReplacement();
+      destination = destination.replace(" ", replacement);
+
+      // also replace now multiple replacements with one to avoid strange looking results
+      // example:
+      // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
+      destination = destination.replaceAll(Pattern.quote(replacement) + "+", replacement);
     }
 
     // ASCII replacement

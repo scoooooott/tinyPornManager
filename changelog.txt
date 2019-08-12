@@ -29,6 +29,8 @@ x getMainVideoFile() now returns the first part of stacked movies/episodes rathe
 x fixed regexp to find extra(s) in nested movie folders #603
 x fixed renaming of episodes with samples #601
 x fixed crash in the movie renamer settings when a movie was in a UNC root #561
+x fixed import of MediaInfo.xml files
+x fixed TV show renamer spaces substitution
 
 
 Version 3.0.2
