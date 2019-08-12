@@ -55,7 +55,7 @@ public class MediaInfoXMLParser {
     for (Element file : fileElements) {
       MiFile miFile = new MiFile();
       miFile.filename = "/tmp/dummy.bdmv";
-      if (StringUtils.isNotBlank(file.attr("ref"))) {
+      if (StringUtils.isNotBlank(file.attr("ref")) && file.attr("ref").length() > 5) {
         miFile.filename = file.attr("ref");
       }
 
