@@ -1535,7 +1535,8 @@ public class TvShowRenamer {
     else {
       result = result.replaceAll(":", TvShowModuleManager.SETTINGS.getRenamerColonReplacement());
     }
-    return result.replaceAll("([\"\\\\:<>|/?*])", "");
+
+    return result.replaceAll("([\":<>|?*])", "");
   }
 
   private static class TvShowRenamerModelAdaptor extends TmmModelAdaptor {

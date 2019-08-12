@@ -16,7 +16,9 @@ public class MovieRenamerTest extends BasicTest {
     assertEqual("jb  - the bla", MovieRenamer.replaceInvalidCharacters("jb : the bla"));
     assertEqual("2-22", MovieRenamer.replaceInvalidCharacters("2:22"));
     assertEqual("2 -22", MovieRenamer.replaceInvalidCharacters("2 :22"));
-    assertEqual("weird - movie", MovieRenamer.replaceInvalidCharacters("weird \"\\\\:<>|/?* movie"));
+
+    // we do not strip path separators here
+    assertEqual("weird \\\\-/ movie", MovieRenamer.replaceInvalidCharacters("weird \"\\\\:<>|/?* movie"));
   }
 
   @Test

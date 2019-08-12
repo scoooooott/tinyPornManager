@@ -1341,7 +1341,7 @@ public class MovieRenamer {
   }
 
   /**
-   * replaces all invalid/illegal characters for filenames with ""<br>
+   * replaces all invalid/illegal characters for filenames/foldernames with ""<br>
    * except the colon, which will be changed to a dash
    *
    * @param source
@@ -1359,7 +1359,7 @@ public class MovieRenamer {
       result = result.replaceAll(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
     }
 
-    return result.replaceAll("([\"\\\\:<>|/?*])", "");
+    return result.replaceAll("([\":<>|?*])", "");
   }
 
   private static class MovieRenamerModelAdaptor extends TmmModelAdaptor {
