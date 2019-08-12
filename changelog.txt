@@ -11,6 +11,7 @@ Version 3.0.3
 + reworked logic for finding the best artwork according to the settings #589
 + added first aired to the TV show tree #557
 + added a button to revert renamer template to the default value
++ added option to explicitly rebuild the image cache for selected movies/TV shows
 x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
@@ -24,6 +25,10 @@ x do not resize extrathumbs if the setting is deactivated #589
 x replace colons in the renamer patterns
 x enhanced the renamer replacements/cleanup #597
 x execute a copy&delete if a move fails #602
+x getMainVideoFile() now returns the first part of stacked movies/episodes rather than the biggest one
+x fixed regexp to find extra(s) in nested movie folders #603
+x fixed renaming of episodes with samples #601
+x fixed crash in the movie renamer settings when a movie was in a UNC root #561
 
 
 Version 3.0.2

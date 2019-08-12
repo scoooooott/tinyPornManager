@@ -115,8 +115,11 @@ public class SplitUri {
         u = Paths.get(ds).toAbsolutePath().toUri();
       }
       catch (InvalidPathException e2) {
-        LOGGER.warn(e2.getMessage());
+        LOGGER.warn("Invalid path: {} - {}", ds, e2.getMessage());
       }
+    }
+    catch (InvalidPathException e) {
+      LOGGER.warn("Invalid path: {} - {}", ds, e.getMessage());
     }
 
     if (u != null && !StringUtils.isBlank(u.getHost())) {
@@ -178,7 +181,12 @@ public class SplitUri {
       }
     }
 
-    this.datasource = Paths.get(this.datasource).toString(); // convert forward & backslashes to same format
+    try {
+      this.datasource = Paths.get(this.datasource).toString(); // convert forward & backslashes to same format
+    }
+    catch (Exception e) {
+      LOGGER.warn("Invalid path: {} - {}", ds, e.getMessage());
+    }
   }
 
   @Override

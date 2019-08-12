@@ -1,5 +1,7 @@
 package org.tinymediamanager.core.movie;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -45,6 +47,21 @@ public class MovieMediaFileTest extends BasicTest {
     mf.setStacking(1);
     mf.setStackingMarker("part 1");
     System.out.println(mf.getFilenameWithoutStacking()); // stacked
+  }
+
+  @Test
+  public void testGetMainVideoFile() {
+    Movie movie = new Movie();
+
+    MediaFile first = new MediaFile(Paths.get("target/test-classes/testmovies/Stack/StackSingle/StackSingleFile CD1.avi"));
+    movie.addToMediaFiles(first);
+
+    MediaFile second = new MediaFile(Paths.get("target/test-classes/testmovies/Stack/StackSingle/StackSingleFile CD2.avi"));
+    movie.addToMediaFiles(second);
+
+    movie.reEvaluateStacking();
+
+    assertThat(movie.getMainVideoFile()).isEqualTo(first);
   }
 
   @Test

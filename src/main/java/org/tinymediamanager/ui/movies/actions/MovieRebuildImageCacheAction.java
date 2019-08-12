@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.actions;
+package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -24,27 +24,26 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tasks.ImageCacheTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.TmmAction;
+import org.tinymediamanager.ui.movies.MovieUIModule;
 
 /**
- * The RebuildImageCacheAction to rebuild the whole image cache
+ * MovieRebuildImageCacheAction - rebuild the image cache for selected movie(s)
  * 
  * @author Manuel Laggner
  */
-public class RebuildImageCacheAction extends TmmAction {
-  private static final long           serialVersionUID = -9178351750617647813L;
+public class MovieRebuildImageCacheAction extends TmmAction {
+  private static final long           serialVersionUID = -5089957097690621345L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public RebuildImageCacheAction() {
-    putValue(NAME, BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
+  public MovieRebuildImageCacheAction() {
+    putValue(NAME, BUNDLE.getString("movie.rebuildimagecache")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rebuildimagecache")); //$NON-NLS-1$
   }
 
   @Override
@@ -54,24 +53,18 @@ public class RebuildImageCacheAction extends TmmAction {
       return;
     }
 
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+
+    if (selectedMovies.isEmpty()) {
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      return;
+    }
+
     List<MediaFile> imageFiles = new ArrayList<>();
 
-    // movie list
-    List<Movie> movies = new ArrayList<>(MovieList.getInstance().getMovies());
-    for (Movie movie : movies) {
+    // get data of all files within all selected movies
+    for (Movie movie : selectedMovies) {
       imageFiles.addAll(movie.getImagesToCache());
-    }
-
-    // moviesets
-    List<MovieSet> movieSets = new ArrayList<>(MovieList.getInstance().getMovieSetList());
-    for (MovieSet movieSet : movieSets) {
-      imageFiles.addAll(movieSet.getImagesToCache());
-    }
-
-    // tv dhows
-    List<TvShow> tvShows = new ArrayList<>(TvShowList.getInstance().getTvShows());
-    for (TvShow tvShow : tvShows) {
-      imageFiles.addAll(tvShow.getImagesToCache());
     }
 
     ImageCacheTask task = new ImageCacheTask(imageFiles);

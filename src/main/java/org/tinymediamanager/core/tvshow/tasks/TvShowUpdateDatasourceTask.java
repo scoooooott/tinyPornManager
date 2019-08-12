@@ -619,6 +619,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);
               }
+              // we found a video file which is named like the EP file?!
+              // declare it as extras
+              if (!em.getFilename().equals(mf.getFilename()) && em.getType() == MediaFileType.VIDEO) {
+                em.setType(MediaFileType.EXTRA);
+              }
               epFiles.add(em);
               LOGGER.trace("UDS: found matching MF - {}", em);
             }

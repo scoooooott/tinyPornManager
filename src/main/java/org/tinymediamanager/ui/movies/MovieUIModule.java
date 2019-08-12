@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.movies.actions.MovieExportAction;
 import org.tinymediamanager.ui.movies.actions.MovieFindMissingAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
 import org.tinymediamanager.ui.movies.actions.MovieReadNfoAction;
+import org.tinymediamanager.ui.movies.actions.MovieRebuildImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
@@ -215,6 +216,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieCleanUpFilesAction.class));
     popupMenu.add(createAndRegisterAction(MovieClearImageCacheAction.class));
+    popupMenu.add(createAndRegisterAction(MovieRebuildImageCacheAction.class));
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieRemoveAction.class));
     popupMenu.add(createAndRegisterAction(MovieDeleteAction.class));

@@ -25,7 +25,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -404,10 +404,11 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       String filename = "";
       if (StringUtils.isNotBlank(tfMoviePath.getText())) {
         path = MovieRenamer.createDestinationForFoldername(tfMoviePath.getText(), movie);
+        path = Paths.get(movie.getDataSource(), path).toString();
       }
       else {
         // the old folder name
-        path = movie.getPathNIO().getFileName().toString();
+        path = movie.getPathNIO().toString();
       }
 
       if (StringUtils.isNotBlank(tfMovieFilename.getText())) {
@@ -421,7 +422,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         filename = movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
       }
 
-      lblExample.setText(movie.getDataSource() + File.separator + path + File.separator + filename);
+      lblExample.setText(Paths.get(path, filename).toString());
 
       // create examples
       for (MovieRenamerExample example : exampleEventList) {

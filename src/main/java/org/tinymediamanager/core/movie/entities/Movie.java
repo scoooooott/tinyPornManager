@@ -2120,10 +2120,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public MediaFile getMainVideoFile() {
-    MediaFile vid = getBiggestMediaFile(MediaFileType.VIDEO);
+    MediaFile vid = null;
+
+    if (stacked) {
+      // search the first stacked media file (e.g. CD1)
+      vid = getMediaFiles(MediaFileType.VIDEO).stream().min(Comparator.comparingInt(MediaFile::getStacking)).orElse(new MediaFile());
+    }
+    else {
+      // get the biggest one
+      vid = getBiggestMediaFile(MediaFileType.VIDEO);
+    }
+
     if (vid != null) {
       return vid;
     }
+
     // cannot happen - movie MUST always have a video file
     return new MediaFile();
   }
