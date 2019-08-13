@@ -344,15 +344,20 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int row = tableAudioStreams.getSelectedRow();
-      if (row > -1) {
-        row = tableAudioStreams.convertRowIndexToModel(row);
+      int[] audioRows = tableAudioStreams.getSelectedRows();
+      if (audioRows.length > 0) {
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-          MediaFileAudioStream audioStream = mf.getAudioStreams().get(row);
-          mf.removeAudioStream(audioStream);
+
+          List<MediaFileAudioStream> audioStreams = new ArrayList<>();
+          for (int audioRow : audioRows) {
+            audioRow = tableAudioStreams.convertRowIndexToModel(audioRow);
+            audioStreams.add(mf.getAudioStreams().get(audioRow));
+          }
+
+          audioStreams.forEach(audioStream -> mf.removeAudioStream(audioStream));
         }
       }
     }
@@ -385,15 +390,20 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int row = tableSubtitles.getSelectedRow();
-      if (row > -1) {
-        row = tableSubtitles.convertRowIndexToModel(row);
+      int[] subtitleRows = tableSubtitles.getSelectedRows();
+      if (subtitleRows.length > 0) {
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-          MediaFileSubtitle subtitle = mf.getSubtitles().get(row);
-          mf.removeSubtitle(subtitle);
+
+          List<MediaFileSubtitle> subtitles = new ArrayList<>();
+          for (int audioRow : subtitleRows) {
+            audioRow = tableSubtitles.convertRowIndexToModel(audioRow);
+            subtitles.add(mf.getSubtitles().get(audioRow));
+          }
+
+          subtitles.forEach(subtitle -> mf.removeSubtitle(subtitle));
         }
       }
     }

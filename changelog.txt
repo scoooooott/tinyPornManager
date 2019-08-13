@@ -32,6 +32,7 @@ x fixed crash in the movie renamer settings when a movie was in a UNC root #561
 x fixed import of MediaInfo.xml files
 x fixed TV show renamer spaces substitution
 x fixed ${parent} processing in the renamer #609
+x fixed removing of audio streams/subtitles in the media file editor #610
 
 
 Version 3.0.2
