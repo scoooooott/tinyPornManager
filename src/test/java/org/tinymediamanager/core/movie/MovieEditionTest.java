@@ -5,6 +5,7 @@ import static org.tinymediamanager.core.movie.MovieEdition.DIRECTORS_CUT;
 import static org.tinymediamanager.core.movie.MovieEdition.EXTENDED_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.IMAX;
 import static org.tinymediamanager.core.movie.MovieEdition.NONE;
+import static org.tinymediamanager.core.movie.MovieEdition.SPECIAL_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.THEATRICAL_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.UNCUT;
 import static org.tinymediamanager.core.movie.MovieEdition.UNRATED;
@@ -52,6 +53,9 @@ public class MovieEditionTest {
     assertThat(parse("IMAX.Alaska.Spirit.of.the.Wild.1997.FRENCH.AC3.DOKU.DL.720p.BluRay.x264-xxx")).isEqualTo(IMAX);
     assertThat(parse("The.Hunger.Games.Catching.Fire.2013.IMAX.720p.BluRay.H264.AAC-xxx")).isEqualTo(IMAX);
     assertThat(parse("Transformers Revenge Of The Fallen 2009 IMAX 1080p BluRay x264-abc")).isEqualTo(IMAX);
+
+    // SPECIAL_EDITION
+    assertThat(parse("Blade.Runner.The.Final.Cut.1982.BluRay.1080p")).isEqualTo(SPECIAL_EDITION);
 
     // NORMAL
     assertThat(parse("Boomerang.1992.Incl.Directors.Commentary.DVDRip.x264-xyz")).isEqualTo(NONE);
