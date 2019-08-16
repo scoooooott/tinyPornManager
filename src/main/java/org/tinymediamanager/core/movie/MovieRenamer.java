@@ -1051,8 +1051,8 @@ public class MovieRenamer {
    */
   private static String getStackingString(MediaFile mf) {
     String delimiter = " ";
-    if (MovieModuleManager.SETTINGS.isRenamerSpaceSubstitution()) {
-      delimiter = MovieModuleManager.SETTINGS.getRenamerSpaceReplacement();
+    if (MovieModuleManager.SETTINGS.isRenamerFilenameSpaceSubstitution()) {
+      delimiter = MovieModuleManager.SETTINGS.getRenamerFilenameSpaceReplacement();
     }
     if (!mf.getStackingMarker().isEmpty()) {
       return delimiter + mf.getStackingMarker();
@@ -1222,8 +1222,17 @@ public class MovieRenamer {
     newDestination = newDestination.replaceAll(" +", " ").trim();
 
     // replace spaces with underscores if needed (filename only)
-    if (forFilename && MovieModuleManager.SETTINGS.isRenamerSpaceSubstitution()) {
-      String replacement = MovieModuleManager.SETTINGS.getRenamerSpaceReplacement();
+    if (forFilename && MovieModuleManager.SETTINGS.isRenamerFilenameSpaceSubstitution()) {
+      String replacement = MovieModuleManager.SETTINGS.getRenamerFilenameSpaceReplacement();
+      newDestination = newDestination.replace(" ", replacement);
+
+      // also replace now multiple replacements with one to avoid strange looking results
+      // example:
+      // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
+      newDestination = newDestination.replaceAll(Pattern.quote(replacement) + "+", replacement);
+    }
+    else if (!forFilename && MovieModuleManager.SETTINGS.isRenamerPathnameSpaceSubstitution()) {
+      String replacement = MovieModuleManager.SETTINGS.getRenamerPathnameSpaceReplacement();
       newDestination = newDestination.replace(" ", replacement);
 
       // also replace now multiple replacements with one to avoid strange looking results
