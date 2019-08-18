@@ -398,9 +398,9 @@ public class MediaFileEditorPanel extends JPanel {
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
 
           List<MediaFileSubtitle> subtitles = new ArrayList<>();
-          for (int audioRow : subtitleRows) {
-            audioRow = tableSubtitles.convertRowIndexToModel(audioRow);
-            subtitles.add(mf.getSubtitles().get(audioRow));
+          for (int subtitleRow : subtitleRows) {
+            subtitleRow = tableSubtitles.convertRowIndexToModel(subtitleRow);
+            subtitles.add(mf.getSubtitles().get(subtitleRow));
           }
 
           subtitles.forEach(subtitle -> mf.removeSubtitle(subtitle));
