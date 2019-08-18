@@ -42,6 +42,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
+import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.IconManager;
@@ -87,7 +88,8 @@ public class MovieTrailerPanel extends JPanel {
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieTrailer.class)));
+    trailerEventList = GlazedListsSwing.swingThreadProxyList(
+        new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MovieTrailer.class)));
     trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     setLayout(new MigLayout("", "[400lp,grow]", "[250lp,grow]"));
     table = new TmmTable(trailerTableModel);
@@ -242,11 +244,17 @@ public class MovieTrailerPanel extends JPanel {
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
           Movie movie = movieSelectionModel.getSelectedMovie();
           try {
-            MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
-            TmmTaskManager.getInstance().addDownloadTask(task);
+            if (trailer.getProvider().equalsIgnoreCase("youtube")) {
+              YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, movie);
+              TmmTaskManager.getInstance().addDownloadTask(task);
+            }
+            else {
+              MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+              TmmTaskManager.getInstance().addDownloadTask(task);
+            }
           }
           catch (Exception ex) {
-            LOGGER.error("could not start trailer download: " + ex.getMessage());
+            LOGGER.error("could not start trailer download: {}", ex.getMessage());
             MessageManager.instance.pushMessage(
                 new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", ex.getLocalizedMessage() }));
           }

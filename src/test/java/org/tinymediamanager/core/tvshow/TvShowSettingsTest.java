@@ -42,6 +42,7 @@ public class TvShowSettingsTest extends BasicTest {
       TvShowSettings settings = TvShowSettings.getInstance(getSettingsFolder());
       assertThat(settings).isNotNull();
       settings.setAsciiReplacement(true);
+      Thread.sleep(1000); // sleep here because the dirty listener is async
       settings.saveSettings();
 
       // cannot re-instantiate settings - need to check plain file

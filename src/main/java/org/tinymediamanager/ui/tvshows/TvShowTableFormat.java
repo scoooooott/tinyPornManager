@@ -26,6 +26,7 @@ import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -227,6 +228,10 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow) {
       TvShow tvShow = (TvShow) userObject;
+      // if we untick to write episode file NFOs, we do not need to check for tree "problems"...
+      if (TvShowModuleManager.SETTINGS.getEpisodeNfoFilenames().isEmpty()) {
+        return getCheckIcon(tvShow.getHasNfoFile());
+      }
       return getTriStateIcon(TRI_STATE.getState(tvShow.getHasNfoFile(), tvShow.getHasEpisodeNfoFiles()));
     }
     else if (userObject instanceof TvShowSeason) {

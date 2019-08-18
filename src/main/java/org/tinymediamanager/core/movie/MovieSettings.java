@@ -55,6 +55,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
@@ -131,8 +132,10 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          renameAfterScrape                   = false;
   private String                           renamerPathname                     = DEFAULT_RENAMER_FOLDER_PATTERN;
   private String                           renamerFilename                     = DEFAULT_RENAMER_FILE_PATTERN;
-  private boolean                          renamerSpaceSubstitution            = false;
-  private String                           renamerSpaceReplacement             = "_";
+  private boolean                          renamerPathnameSpaceSubstitution    = false;
+  private String                           renamerPathnameSpaceReplacement     = "_";
+  private boolean                          renamerFilenameSpaceSubstitution    = false;
+  private String                           renamerFilenameSpaceReplacement     = "_";
   private String                           renamerColonReplacement             = "-";
   private boolean                          renamerNfoCleanup                   = false;
   private boolean                          renamerCreateMoviesetForSingleMovie = false;
@@ -690,14 +693,25 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("renamerFilename", oldValue, newValue);
   }
 
-  public boolean isRenamerSpaceSubstitution() {
-    return renamerSpaceSubstitution;
+  public boolean isRenamerPathnameSpaceSubstitution() {
+    return renamerPathnameSpaceSubstitution;
   }
 
-  public void setRenamerSpaceSubstitution(boolean newValue) {
-    boolean oldValue = this.renamerSpaceSubstitution;
-    this.renamerSpaceSubstitution = newValue;
-    firePropertyChange("renamerSpaceSubstitution", oldValue, newValue);
+  public void setRenamerPathnameSpaceSubstitution(boolean newValue) {
+    boolean oldValue = this.renamerPathnameSpaceSubstitution;
+    this.renamerPathnameSpaceSubstitution = newValue;
+    firePropertyChange("renamerPathnameSpaceSubstitution", oldValue, newValue);
+  }
+
+  public boolean isRenamerFilenameSpaceSubstitution() {
+    return renamerFilenameSpaceSubstitution;
+  }
+
+  @JsonProperty(value = "renamerSpaceSubstitution")
+  public void setRenamerFilenameSpaceSubstitution(boolean newValue) {
+    boolean oldValue = this.renamerFilenameSpaceSubstitution;
+    this.renamerFilenameSpaceSubstitution = newValue;
+    firePropertyChange("renamerFilenameSpaceSubstitution", oldValue, newValue);
   }
 
   public void setRenameAfterScrape(boolean newValue) {
@@ -710,14 +724,25 @@ public class MovieSettings extends AbstractSettings {
     return this.renameAfterScrape;
   }
 
-  public String getRenamerSpaceReplacement() {
-    return renamerSpaceReplacement;
+  public String getRenamerPathnameSpaceReplacement() {
+    return renamerPathnameSpaceReplacement;
   }
 
-  public void setRenamerSpaceReplacement(String newValue) {
-    String oldValue = this.renamerSpaceReplacement;
-    this.renamerSpaceReplacement = newValue;
-    firePropertyChange("renamerSpaceReplacement", oldValue, newValue);
+  public void setRenamerPathnameSpaceReplacement(String newValue) {
+    String oldValue = this.renamerPathnameSpaceReplacement;
+    this.renamerPathnameSpaceReplacement = newValue;
+    firePropertyChange("renamerPathnameSpaceReplacement", oldValue, newValue);
+  }
+
+  @JsonProperty(value = "renamerSpaceReplacement")
+  public String getRenamerFilenameSpaceReplacement() {
+    return renamerFilenameSpaceReplacement;
+  }
+
+  public void setRenamerFilenameSpaceReplacement(String newValue) {
+    String oldValue = this.renamerFilenameSpaceReplacement;
+    this.renamerFilenameSpaceReplacement = newValue;
+    firePropertyChange("renamerFilenameSpaceReplacement", oldValue, newValue);
   }
 
   public String getRenamerColonReplacement() {

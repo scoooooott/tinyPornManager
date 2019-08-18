@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
-import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -141,27 +139,6 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
         return super.accept(f) && !f.getName().equals("propertyChangeSupport");
       }
     }).toString();
-  }
-
-  /**
-   * gets the real download url - provider based implementation
-   * 
-   * @return real url
-   */
-  public String getDownloadUrl() {
-    String url = getUrl();
-
-    if ("youtube".equalsIgnoreCase(getProvider())) {
-      try {
-        YoutubeLinkExtractor yt = new YoutubeLinkExtractor(url);
-        url = yt.extractVideoUrl();
-      }
-      catch (IOException e) {
-        LOGGER.error("Error extracting Youtube url: " + e.getMessage());
-      }
-    }
-
-    return url;
   }
 
   @Override

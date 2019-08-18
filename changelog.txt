@@ -1,5 +1,7 @@
 Version 3.0.3
 =======================
++ reworked the YouTube download engine. Should now work for almost all trailers! (thx @wjanes)
++ separated space substitution for filenames and foldernames (movies) #611
 + added jump to movie by keystroke in the movie table
 + added Mexican Spanish to scraper languages #570
 + added Icelandic to scraper languages #574
@@ -12,6 +14,7 @@ Version 3.0.3
 + added first aired to the TV show tree #557
 + added a button to revert renamer template to the default value
 + added option to explicitly rebuild the image cache for selected movies/TV shows
++ added "Final Cut" to recognized movie edition patterns #612
 x fixed downloading movie set artwork in the right resolution #580
 x write user ratings to own tags in the NFO files
 x write correct trailer url to the NFO
@@ -29,6 +32,10 @@ x getMainVideoFile() now returns the first part of stacked movies/episodes rathe
 x fixed regexp to find extra(s) in nested movie folders #603
 x fixed renaming of episodes with samples #601
 x fixed crash in the movie renamer settings when a movie was in a UNC root #561
+x fixed import of MediaInfo.xml files
+x fixed TV show renamer spaces substitution
+x fixed ${parent} processing in the renamer #609
+x fixed removing of audio streams/subtitles in the media file editor #610
 
 
 Version 3.0.2
