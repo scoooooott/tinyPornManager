@@ -185,6 +185,12 @@
             <artifactId>animated-gif-lib</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.mp4parser</groupId>
+            <artifactId>muxer</artifactId>
+            <version>1.9.27</version>
+        </dependency>
+
     </dependencies>
 
     <build>
