@@ -48,6 +48,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -287,7 +288,7 @@ public class MediaFileEditorPanel extends JPanel {
         if (!arg0.getValueIsAdjusting()) {
           int selectedRow = tableMediaFiles.convertRowIndexToModel(tableMediaFiles.getSelectedRow());
           if (selectedRow > -1) {
-            MediaFile mf = MediaFileEditorPanel.this.mediaFiles.get(selectedRow).getMediaFile();
+            MediaFile mf = MediaFileEditorPanel.this.mediaFiles.get(selectedRow).mediaFile;
             // codec should not be enabled for NFOs
             tfCodec.setEnabled(!(mf.getType() == NFO));
             // audio streams and subtitles should not be enabled for anything except VIDEOS/TRAILER/SAMPLES
@@ -330,7 +331,7 @@ public class MediaFileEditorPanel extends JPanel {
       if (mediaFileRow > -1) {
         mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
         MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-        mf.addAudioStream(new MediaFileAudioStream());
+        mf.audioStreams.add(new MediaFileAudioStream());
       }
     }
   }
@@ -344,20 +345,16 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int[] audioRows = tableAudioStreams.getSelectedRows();
+      int[] audioRows = convertSelectedRowsToModelRows(tableAudioStreams);
       if (audioRows.length > 0) {
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
 
-          List<MediaFileAudioStream> audioStreams = new ArrayList<>();
-          for (int audioRow : audioRows) {
-            audioRow = tableAudioStreams.convertRowIndexToModel(audioRow);
-            audioStreams.add(mf.getAudioStreams().get(audioRow));
+          for (int row : audioRows) {
+            mf.audioStreams.remove(row);
           }
-
-          audioStreams.forEach(audioStream -> mf.removeAudioStream(audioStream));
         }
       }
     }
@@ -376,7 +373,7 @@ public class MediaFileEditorPanel extends JPanel {
       if (mediaFileRow > -1) {
         mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
         MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-        mf.addSubtitle(new MediaFileSubtitle());
+        mf.subtitles.add(new MediaFileSubtitle());
       }
     }
   }
@@ -390,23 +387,31 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int[] subtitleRows = tableSubtitles.getSelectedRows();
+      int[] subtitleRows = convertSelectedRowsToModelRows(tableSubtitles);
       if (subtitleRows.length > 0) {
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
 
-          List<MediaFileSubtitle> subtitles = new ArrayList<>();
-          for (int subtitleRow : subtitleRows) {
-            subtitleRow = tableSubtitles.convertRowIndexToModel(subtitleRow);
-            subtitles.add(mf.getSubtitles().get(subtitleRow));
+          for (int row : subtitleRows) {
+            mf.subtitles.remove(row);
           }
-
-          subtitles.forEach(subtitle -> mf.removeSubtitle(subtitle));
         }
       }
     }
+  }
+
+  private int[] convertSelectedRowsToModelRows(JTable table) {
+    int[] tableRows = table.getSelectedRows();
+    int[] modelRows = new int[tableRows.length];
+    for (int i = 0; i < tableRows.length; i++) {
+      modelRows[i] = table.convertRowIndexToModel(tableRows[i]);
+    }
+
+    // sort it (descending)
+    ArrayUtils.reverse(modelRows);
+    return modelRows;
   }
 
   /*
@@ -431,30 +436,9 @@ public class MediaFileEditorPanel extends JPanel {
       return audioStreams;
     }
 
-    public void addAudioStream(MediaFileAudioStream audioStream) {
-      if (!audioStreams.contains(audioStream)) {
-        audioStreams.add(audioStream);
-      }
-    }
-
-    public void removeAudioStream(MediaFileAudioStream audioStream) {
-      audioStreams.remove(audioStream);
-    }
-
     public List<MediaFileSubtitle> getSubtitles() {
       return subtitles;
     }
-
-    public void addSubtitle(MediaFileSubtitle subtitle) {
-      if (!subtitles.contains(subtitle)) {
-        subtitles.add(subtitle);
-      }
-    }
-
-    public void removeSubtitle(MediaFileSubtitle subtitle) {
-      subtitles.remove(subtitle);
-    }
-
   }
 
   /**

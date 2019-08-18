@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.entities;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -54,4 +56,25 @@ public class MediaFileAudioStream extends MediaStreamInfo {
     this.bitrate = bitrate;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    MediaFileAudioStream that = (MediaFileAudioStream) o;
+
+    return audioChannels == that.audioChannels && bitrate == that.bitrate && defaultStream == that.defaultStream;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), audioChannels, bitrate, defaultStream);
+  }
 }
