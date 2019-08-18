@@ -29,7 +29,6 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -96,6 +95,7 @@ public class YoutubeDownloadTask extends TmmTask {
         MessageManager.instance.pushMessage(
             new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.unsupported", new String[] { movie.getTitle() }));
         LOGGER.error("Could not download movieTrailer for {}", movie.getTitle());
+        return;
       }
 
       ExecutorService executorService = Executors.newFixedThreadPool(2);
@@ -168,7 +168,7 @@ public class YoutubeDownloadTask extends TmmTask {
    */
   public Path download(Format format) throws Exception {
     String fileName;
-    Path tempDir = Paths.get(Constants.TEMP_FOLDER);
+    Path tempDir = Paths.get(Utils.getTempFolder());
 
     if (!Files.exists(tempDir)) {
       Files.createDirectory(tempDir);

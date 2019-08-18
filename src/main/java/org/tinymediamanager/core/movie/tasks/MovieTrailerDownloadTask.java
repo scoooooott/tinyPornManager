@@ -33,8 +33,7 @@ import org.tinymediamanager.core.tasks.DownloadTask;
 public class MovieTrailerDownloadTask extends DownloadTask {
 
   public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) throws Exception {
-    super(trailer.getDownloadUrl(), movie.getPathNIO().resolve(movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER)), movie,
-        MediaFileType.TRAILER);
+    super(trailer.getUrl(), movie.getPathNIO().resolve(movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER)), movie, MediaFileType.TRAILER);
 
     List<MovieTrailerNaming> trailernames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
