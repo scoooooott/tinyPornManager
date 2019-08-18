@@ -22,8 +22,8 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
+import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
 
@@ -127,16 +127,23 @@ public class MovieHelpers {
     // start movie trailer download?
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
         && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
-      try {
-        MovieTrailer trailer = movie.getTrailer().get(0);
-        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+      selectTrailerProvider(movie, LOGGER);
+    }
+  }
+
+  public static void selectTrailerProvider(Movie movie, Logger logger) {
+    try {
+      if (movie.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
+        YoutubeDownloadTask task = new YoutubeDownloadTask(movie.getTrailer().get(0), movie);
+        TmmTaskManager.getInstance().addDownloadTask(task);
+      } else {
+        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
         TmmTaskManager.getInstance().addDownloadTask(task);
       }
-      catch (Exception e) {
-        LOGGER.error("could not start trailer download: " + e.getMessage());
-        MessageManager.instance.pushMessage(
-            new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
-      }
+    } catch (Exception e) {
+      logger.error("could not start trailer download: " + e.getMessage());
+      MessageManager.instance.pushMessage(
+              new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[]{":", e.getLocalizedMessage()}));
     }
   }
 

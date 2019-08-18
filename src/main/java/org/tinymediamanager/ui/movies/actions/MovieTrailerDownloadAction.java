@@ -15,26 +15,22 @@
  */
 package org.tinymediamanager.ui.movies.actions;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
-import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
+
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The class MovieTrailerDownloadAction is used to trigger trailer download for selected movies
@@ -89,15 +85,7 @@ public class MovieTrailerDownloadAction extends TmmAction {
       if (movie.getTrailer().isEmpty()) {
         continue;
       }
-      try {
-        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
-        TmmTaskManager.getInstance().addDownloadTask(task);
-      }
-      catch (Exception ex) {
-        LOGGER.error("could not start trailer download: " + ex.getMessage());
-        MessageManager.instance.pushMessage(
-            new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", ex.getLocalizedMessage() }));
-      }
+      MovieHelpers.selectTrailerProvider(movie, LOGGER);
     }
   }
 }
