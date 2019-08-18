@@ -1,5 +1,6 @@
 Version 3.0.3
 =======================
++ reworked the YouTube download engine. Should now work for almost all trailers! (thx @wjanes)
 + separated space substitution for filenames and foldernames (movies) #611
 + added jump to movie by keystroke in the movie table
 + added Mexican Spanish to scraper languages #570
