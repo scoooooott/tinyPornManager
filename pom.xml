@@ -9,14 +9,14 @@
     </parent>
 
     <artifactId>tinyMediaManager</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4-SNAPSHOT</version>
     <name>tinyMediaManager</name>
 
     <scm>
         <url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
         <connection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-        <tag>tinyMediaManager-3.0.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
