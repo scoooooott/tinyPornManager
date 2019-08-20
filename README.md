@@ -9,7 +9,7 @@ tinyMediaManager is free to use. If you appreciate all the effort that has gone 
 [1]: https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
 [2]: https://www.tinymediamanager.org/donate/
 
-##Features##
+## Features
 [https://www.tinymediamanager.org/features/](https://www.tinymediamanager.org/features/)
 
 ## Release
@@ -18,7 +18,7 @@ you will find the latest release at [https://release.tinymediamanager.org](https
 ## Changelog
 [https://www.tinymediamanager.org/changelog](https://www.tinymediamanager.org/changelog)
 
-##Screenshots##
+## Screenshots
 [https://www.tinymediamanager.org/screenshots/](https://www.tinymediamanager.org/screenshots/)
 
 ## Developer info:
