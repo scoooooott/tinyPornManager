@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>api-scraper</artifactId>
-            <version>3.0.3-SNAPSHOT</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager</groupId>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-tvdb</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
