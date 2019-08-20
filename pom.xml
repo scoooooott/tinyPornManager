@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-tvdb</artifactId>
-    <version>3.2</version>
+    <version>3.3-SNAPSHOT</version>
 
     <name>TheTVDb scraper</name>
     <description>A TheTVDb scraper for tinyMediaManager</description>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git
         </developerConnection>
-        <tag>scraper-tvdb-3.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
