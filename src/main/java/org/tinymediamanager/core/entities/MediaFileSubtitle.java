@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.entities;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -47,5 +49,27 @@ public class MediaFileSubtitle extends MediaStreamInfo implements Comparable<Med
   @Override
   public String toString() {
     return this.getLanguage();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    MediaFileSubtitle that = (MediaFileSubtitle) o;
+
+    return forced == that.forced && defaultStream == that.defaultStream;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), forced, defaultStream);
   }
 }

@@ -1,6 +1,8 @@
 package org.tinymediamanager.core.entities;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.tinymediamanager.core.AbstractModelObject;
 
@@ -25,11 +27,11 @@ public class MediaStreamInfo extends AbstractModelObject {
   }
 
   @JsonProperty
-  public String         codec       = "";
+  protected String     codec       = "";
   @JsonProperty
-  public String         language    = "";
+  protected String     language    = "";
   @JsonProperty
-  public EnumSet<Flags> streamFlags = EnumSet.noneOf(Flags.class);
+  protected Set<Flags> streamFlags = EnumSet.noneOf(Flags.class);
 
   public String getCodec() {
     return codec;
@@ -52,9 +54,7 @@ public class MediaStreamInfo extends AbstractModelObject {
   }
 
   public void set(Flags... flags) {
-    for (Flags f : flags) {
-      streamFlags.add(f);
-    }
+    streamFlags.addAll(Arrays.asList(flags));
   }
 
   public void remove(Flags... flags) {
@@ -100,26 +100,35 @@ public class MediaStreamInfo extends AbstractModelObject {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     MediaStreamInfo other = (MediaStreamInfo) obj;
     if (language == null) {
       if (other.language != null)
         return false;
     }
-    else if (!language.equals(other.language))
+    else if (!language.equals(other.language)) {
       return false;
-    if (streamFlags == null) {
-      if (other.streamFlags != null)
-        return false;
     }
-    else if (!streamFlags.equals(other.streamFlags))
+    if (streamFlags == null) {
+      if (other.streamFlags != null) {
+        return false;
+      }
+    }
+    else if (!streamFlags.equals(other.streamFlags)) {
       return false;
+    }
+
     return true;
   }
-
 }
