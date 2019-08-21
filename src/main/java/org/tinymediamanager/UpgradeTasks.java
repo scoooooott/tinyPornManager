@@ -30,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -224,6 +225,12 @@ public class UpgradeTasks {
           }
         }
       }
+    }
+
+    // migrate image cache to hex folders
+    if (StrgUtils.compareVersion(v, "3.0.4") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.4");
+      ImageCache.migrate();
     }
   }
 

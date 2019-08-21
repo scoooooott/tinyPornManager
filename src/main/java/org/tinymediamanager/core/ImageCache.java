@@ -21,9 +21,11 @@ import java.awt.image.ColorConvertOp;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,20 +53,20 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner
  */
 public class ImageCache {
-  private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
-  private static final Path   CACHE_DIR = Paths.get(Globals.CACHE_FOLDER + "/image");
+  private static final Logger LOGGER     = LoggerFactory.getLogger(ImageCache.class);
+  private static final Path   CACHE_DIR  = Paths.get(Globals.CACHE_FOLDER + "/image");
+  private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
   public enum CacheType {
     FAST,
     SMOOTH
   }
 
-  /**
-   * Gets the cache dir. If it is not on the disk - it will also create it
-   * 
-   * @return the cache dir
-   */
-  public static Path getCacheDir() {
+  static {
+    createSubdirs();
+  }
+
+  private static void createSubdirs() {
     if (!Files.exists(CACHE_DIR)) {
       try {
         Files.createDirectories(CACHE_DIR);
@@ -73,6 +75,41 @@ public class ImageCache {
         LOGGER.warn("Could not create cache dir {} - {}", CACHE_DIR, e.getMessage());
       }
     }
+
+    for (char sub : HEX_DIGITS) {
+      try {
+        Path p = CACHE_DIR.resolve(Character.toString(sub));
+        Files.createDirectories(p);
+      }
+      catch (FileAlreadyExistsException ignore) {
+        // do not care
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not create cache sub dir '{}' - {}", sub, e.getMessage());
+      }
+    }
+  }
+
+  @Deprecated
+  public static void migrate() {
+    List<Path> files = Utils.listFiles(getCacheDir());
+    for (Path f : files) {
+      Path f2 = getCacheDir().resolve(Paths.get(f.getFileName().toString().substring(0, 1), f.getFileName().toString()));
+      try {
+        Files.move(f, f2, StandardCopyOption.ATOMIC_MOVE);
+      }
+      catch (IOException ignore) {
+        // ignored - do not care
+      }
+    }
+  }
+
+  /**
+   * Gets the cache dir. If it is not on the disk - it will also create it
+   * 
+   * @return the cache dir
+   */
+  public static Path getCacheDir() {
     return CACHE_DIR;
   }
 
@@ -98,6 +135,14 @@ public class ImageCache {
       LOGGER.error("Failed to create cached filename for image: {} - {}", path, e);
     }
     return "";
+  }
+
+  public static String getMD5WithSubfolder(String path) {
+    String md5 = getMD5(path);
+    if (path == null) {
+      return null;
+    }
+    return Paths.get(md5.substring(0, 1), md5).toString();
   }
 
   /**
@@ -130,8 +175,7 @@ public class ImageCache {
     }
 
     Path originalFile = mediaFile.getFileAsPath();
-
-    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5WithSubfolder(originalFile.toString()) + "." + Utils.getExtension(originalFile));
     if (overwrite || !Files.exists(cachedFile)) {
       // check if the original file exists && size > 0
       if (!Files.exists(originalFile)) {
@@ -303,7 +347,7 @@ public class ImageCache {
     }
 
     Path path = mediaFile.getFileAsPath();
-    Path cachedFile = getCacheDir().resolve(ImageCache.getMD5(path.toAbsolutePath().toString()) + "." + Utils.getExtension(path));
+    Path cachedFile = getCacheDir().resolve(ImageCache.getMD5WithSubfolder(path.toAbsolutePath().toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
       Utils.deleteFileSafely(cachedFile);
     }
@@ -326,7 +370,7 @@ public class ImageCache {
     if (ext.isEmpty()) {
       ext = "jpg"; // just assume
     }
-    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(url) + "." + ext);
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5WithSubfolder(url) + "." + ext);
     if (Files.exists(cachedFile)) {
       LOGGER.trace("found cached url :) {}", url);
       return cachedFile;
@@ -383,7 +427,7 @@ public class ImageCache {
 
     Path path = mediaFile.getFileAsPath().toAbsolutePath();
 
-    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(path.toString()) + "." + Utils.getExtension(path));
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5WithSubfolder(path.toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
       LOGGER.trace("found cached file :) {}", path);
       return cachedFile;
@@ -432,7 +476,7 @@ public class ImageCache {
       return false;
     }
 
-    Path cachedFile = CACHE_DIR.resolve(ImageCache.getMD5(path.toString()) + "." + Utils.getExtension(path));
+    Path cachedFile = CACHE_DIR.resolve(ImageCache.getMD5WithSubfolder(path.toString()) + "." + Utils.getExtension(path));
 
     return Files.exists(cachedFile);
   }
