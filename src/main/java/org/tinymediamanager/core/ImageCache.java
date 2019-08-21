@@ -66,7 +66,7 @@ public class ImageCache {
     createSubdirs();
   }
 
-  private static void createSubdirs() {
+  public static void createSubdirs() {
     if (!Files.exists(CACHE_DIR)) {
       try {
         Files.createDirectories(CACHE_DIR);
