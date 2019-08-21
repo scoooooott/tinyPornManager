@@ -1,3 +1,7 @@
+Version 3.0.4
+=======================
+
+
 Version 3.0.3
 =======================
 + reworked the YouTube download engine. Should now work for almost all trailers! (thx @wjanes)
