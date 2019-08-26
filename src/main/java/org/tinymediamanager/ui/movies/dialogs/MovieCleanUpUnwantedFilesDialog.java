@@ -165,12 +165,10 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       startProgressBar();
 
       // Get Cleanup File Types from the settings
-      List<String> filetypes = Settings.getInstance().getCleanupFileType();
-      String extensions = String.join(",", filetypes);
-      extensions = extensions.replace(".", "");
+      List<String> regexPatterns = Settings.getInstance().getCleanupFileType();
 
       for (Movie movie : selectedMovies) {
-        for (File file : MovieHelpers.getUnknownFiles(movie.getPath(), "*.{" + extensions + "}")) {
+        for (File file : MovieHelpers.getUnknownFilesbyRegex(movie.getPath(), regexPatterns )) {
           FileContainer fileContainer = new FileContainer();
           fileContainer.movie = movie;
           fileContainer.file = file.toPath();

@@ -17,29 +17,39 @@ package org.tinymediamanager.ui.settings;
 
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
+import org.tinymediamanager.ui.dialogs.MessageDialog;
 
 class FileTypesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 9136097757447080369L;
@@ -115,6 +125,12 @@ class FileTypesSettingsPanel extends JPanel {
     });
     btnAddCleanupFiletype.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfCleanupFiletype.getText())) {
+        try {
+          Pattern.compile(tfCleanupFiletype.getText());
+        } catch ( PatternSyntaxException ex ) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("message.regex.error")); //$NON-NLS-1$
+        return;
+        }
         Globals.settings.addCleanupFileType(tfCleanupFiletype.getText());
         tfCleanupFiletype.setText("");
       }
@@ -206,9 +222,10 @@ class FileTypesSettingsPanel extends JPanel {
       }
     }
     {
-      JPanel panelCleanupFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
+      JPanel panelCleanupFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp][][grow]", "[]"));
 
       JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unwantedfiletypes"), H3); //$NON-NLS-1$
+      JLabel lblCleanupFiletypesHelpT = new TmmLabel(BUNDLE.getString("Settings.cleanupfiles.help"));
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelCleanupFiletypes, lblCleanupFiletypesT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
@@ -228,6 +245,22 @@ class FileTypesSettingsPanel extends JPanel {
         btnAddCleanupFiletype = new JButton(IconManager.ADD_INV);
         panelCleanupFiletypes.add(btnAddCleanupFiletype, "cell 2 1, growx");
         btnAddCleanupFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+
+        panelCleanupFiletypes.add(lblCleanupFiletypesHelpT, "cell 1 2");
+
+        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+        btnHelp.addActionListener(e -> {
+          String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/General-Settings#file-types");
+          try {
+            TmmUIHelper.browseUrl(url);
+          }
+          catch (Exception e1) {
+            MessageManager.instance
+                    .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+          }
+        });
+        panelCleanupFiletypes.add(btnHelp, "cell 1 2");
+
       }
     }
   }

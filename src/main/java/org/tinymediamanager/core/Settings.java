@@ -15,11 +15,9 @@
  */
 package org.tinymediamanager.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -32,13 +30,14 @@ import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The Class Settings - holding all settings for tmm.
- * 
+ *
  * @author Manuel Laggner
  */
 public class Settings extends AbstractSettings {
@@ -292,7 +291,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the single instance of Settings.
-   * 
+   *
    * @return single instance of Settings
    */
   public static synchronized Settings getInstance() {
@@ -350,7 +349,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Adds a title prefix.
-   * 
+   *
    * @param prfx
    *          the prefix
    */
@@ -363,7 +362,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Removes the title prefix.
-   * 
+   *
    * @param prfx
    *          the prfx
    */
@@ -374,7 +373,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the title prefix.
-   * 
+   *
    * @return the title prefix
    */
   public List<String> getTitlePrefix() {
@@ -383,7 +382,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Adds the video file types.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -399,7 +398,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Removes the video file type.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -410,7 +409,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the video file type.
-   * 
+   *
    * @return the video file type
    */
   public List<String> getVideoFileType() {
@@ -419,7 +418,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Adds the audio file types.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -435,7 +434,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Removes the audio file type.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -446,7 +445,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the audio file type.
-   * 
+   *
    * @return the audio file type
    */
   public List<String> getAudioFileType() {
@@ -455,7 +454,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Adds the subtitle file types.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -471,7 +470,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Removes the subtitle file type.
-   * 
+   *
    * @param type
    *          the type
    */
@@ -485,7 +484,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the subtitle file type.
-   * 
+   *
    * @return the subtitle file type
    */
   public List<String> getSubtitleFileType() {
@@ -499,9 +498,6 @@ public class Settings extends AbstractSettings {
    *          the type
    */
   public void addCleanupFileType(String type) {
-    if (!type.startsWith(".")) {
-      type = "." + type;
-    }
     if (!cleanupFileTypes.contains(type)) {
       cleanupFileTypes.add(type);
       firePropertyChange(CLEANUP_FILE_TYPE, null, cleanupFileTypes);
@@ -515,9 +511,6 @@ public class Settings extends AbstractSettings {
    *          the type
    */
   public void removeCleanupFileType(String type) {
-    if (!type.startsWith(".")) {
-      type = "." + type;
-    }
     cleanupFileTypes.remove(type);
     firePropertyChange(CLEANUP_FILE_TYPE, null, cleanupFileTypes);
   }
@@ -533,7 +526,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Convenience method to get all supported file extensions
-   * 
+   *
    * @return list
    */
   public List<String> getAllSupportedFileTypes() {
@@ -557,7 +550,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the proxy host.
-   * 
+   *
    * @return the proxy host
    */
   public String getProxyHost() {
@@ -566,7 +559,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the proxy host.
-   * 
+   *
    * @param newValue
    *          the new proxy host
    */
@@ -578,7 +571,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the proxy port.
-   * 
+   *
    * @return the proxy port
    */
   public String getProxyPort() {
@@ -587,7 +580,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the proxy port.
-   * 
+   *
    * @param newValue
    *          the new proxy port
    */
@@ -599,7 +592,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the proxy username.
-   * 
+   *
    * @return the proxy username
    */
   public String getProxyUsername() {
@@ -608,7 +601,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the proxy username.
-   * 
+   *
    * @param newValue
    *          the new proxy username
    */
@@ -620,7 +613,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the proxy password.
-   * 
+   *
    * @return the proxy password
    */
   @JsonSerialize(using = EncryptedStringSerializer.class)
@@ -631,7 +624,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the proxy password.
-   * 
+   *
    * @param newValue
    *          the new proxy password
    */
@@ -699,7 +692,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Should we use a proxy.
-   * 
+   *
    * @return true, if successful
    */
   public boolean useProxy() {
@@ -708,7 +701,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Checks if is image cache.
-   * 
+   *
    * @return true, if is image cache
    */
   public boolean isImageCache() {
@@ -717,7 +710,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the image cache.
-   * 
+   *
    * @param newValue
    *          the new image cache
    */
@@ -729,7 +722,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Gets the image cache type.
-   * 
+   *
    * @return the image cache type
    */
   public CacheType getImageCacheType() {
@@ -738,7 +731,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * Sets the image cache type.
-   * 
+   *
    * @param newValue
    *          the new image cache type
    */
@@ -792,7 +785,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * get Localge.getLanguage() 2 char from settings
-   * 
+   *
    * @return 2 char string - use "new Locale(getLanguage())"
    */
   public String getLanguage() {
@@ -804,7 +797,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * set Locale.toString() 5 char into settings
-   * 
+   *
    * @param language
    *          the language to be set
    */
@@ -865,7 +858,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * gets saved Kodi HTTP port, or default
-   * 
+   *
    * @return the Kodi HTTP port
    */
   public int getKodiHttpPort() {
@@ -880,7 +873,7 @@ public class Settings extends AbstractSettings {
 
   /**
    * gets saved Kodi TCP port, or default
-   * 
+   *
    * @return the Kodi TCP port
    */
   public int getKodiTcpPort() {
