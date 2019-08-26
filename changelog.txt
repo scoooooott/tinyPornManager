@@ -1,7 +1,7 @@
 Version 3.0.4
 =======================
 x fix missing replacement of path separators in movie/Tv show renamer tokens #618
-
+x fix parsing of episode vote count in the IMDB scraper
 
 Version 3.0.3
 =======================
