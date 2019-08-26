@@ -22,6 +22,7 @@ import static org.tinymediamanager.core.movie.MovieRenamer.morphTemplate;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,6 @@ import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
-import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
@@ -75,7 +75,8 @@ public class MovieJmteTests {
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
       engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
-      engine.setModelAdaptor(new TmmModelAdaptor());
+      engine.setModelAdaptor(new MovieRenamer.MovieRenamerModelAdaptor());
+
       root = new HashMap<>();
       root.put("movie", movie);
       root.put("movieSet", movie.getMovieSet());
@@ -142,6 +143,10 @@ public class MovieJmteTests {
       // test conditional output
       compare("${- ,edition,}", "- Director's Cut");
       // compare("${- ,edition[0,2],}", "- Di"); // does not work at the moment in JMTE
+
+      // test parent and space separator expressions
+      compare("${parent}", "A" + File.separator + "1992");
+      compare("${movie.country}", "US DE");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -156,7 +161,8 @@ public class MovieJmteTests {
 
   private Movie createMovie() throws Exception {
     Movie movie = new Movie();
-    movie.setPath("/media/movies/Aladdin");
+    movie.setDataSource("/media/movies");
+    movie.setPath("/media/movies/A/1992/Aladdin");
     movie.setTitle("Aladdin");
     movie.setOriginalTitle("Disneys Aladdin");
     movie.setSortTitle("Aladdin");
@@ -172,7 +178,7 @@ public class MovieJmteTests {
     movie.setTmdbId(812);
     movie.setId("trakt", 655);
     movie.setProductionCompany("Walt Disney");
-    movie.setCountry("US");
+    movie.setCountry("US/DE");
     movie.setCertification(Certification.US_G);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

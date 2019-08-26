@@ -1371,7 +1371,7 @@ public class MovieRenamer {
     return result.replaceAll("([\":<>|?*])", "");
   }
 
-  private static class MovieRenamerModelAdaptor extends TmmModelAdaptor {
+  public static class MovieRenamerModelAdaptor extends TmmModelAdaptor {
     @Override
     public Object getValue(Map<String, Object> model, String expression) {
       Object value = super.getValue(model, expression);
@@ -1389,6 +1389,13 @@ public class MovieRenamer {
 
       if (value instanceof String) {
         value = replaceInvalidCharacters((String) value);
+
+        // do not replace path separators on the .parent token
+        if (!token.getText().contains("parent")) {
+          value = ((String) value).replaceAll("\\/", " ");
+          value = ((String) value).replaceAll("\\\\", " ");
+
+        }
       }
 
       return value;

@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -36,10 +37,11 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
-import org.tinymediamanager.core.jmte.TmmModelAdaptor;
+import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -61,7 +63,13 @@ public class TvShowJmteTests {
       TvShow tvShow = createTvShow();
 
       engine = Engine.createEngine();
-      engine.setModelAdaptor(new TmmModelAdaptor());
+      engine.registerRenderer(Number.class, new ZeroNumberRenderer());
+      engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new TvShowRenamer.TvShowNamedFirstCharacterRenderer());
+      engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.setModelAdaptor(new TvShowRenamer.TvShowRenamerModelAdaptor());
       root = new HashMap<>();
       root.put("tvShow", tvShow);
 
@@ -79,6 +87,10 @@ public class TvShowJmteTests {
       // direct access
       compare("${tvShow.year}/${tvShow.title}", "1987/The 4400");
       compare("${tvShow.year}/${showTitle[0,2]}", "1987/Th");
+
+      // test parent and space separator expressions
+      compare("${parent}", "#" + File.separator + "1987");
+      compare("${tvShow.productionCompany}", "FOX (US) HBO");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -92,10 +104,13 @@ public class TvShowJmteTests {
       TvShowEpisode episode = createEpisode();
 
       engine = Engine.createEngine();
-      engine.setModelAdaptor(new TmmModelAdaptor());
-      engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.registerRenderer(Number.class, new ZeroNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
+      engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new TvShowRenamer.TvShowNamedFirstCharacterRenderer());
+      engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.setModelAdaptor(new TvShowRenamer.TvShowRenamerModelAdaptor());
       root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", episode.getTvShow());
@@ -156,7 +171,8 @@ public class TvShowJmteTests {
 
   private TvShow createTvShow() throws Exception {
     TvShow tvShow = new TvShow();
-    tvShow.setPath("/media/tvshows/21 Jump Street");
+    tvShow.setDataSource("/media/tvshows/");
+    tvShow.setPath("/media/tvshows/#/1987/21 Jump Street");
     tvShow.setTitle("The 4400");
     tvShow.setYear(1987);
     tvShow.setRating(new Rating(Rating.NFO, 7.4f, 8));
@@ -164,7 +180,7 @@ public class TvShowJmteTests {
     tvShow.setGenres(Arrays.asList(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA));
     tvShow.setTvdbId("77585");
     tvShow.setFirstAired("1987-04-12");
-    tvShow.setProductionCompany("FOX (US)");
+    tvShow.setProductionCompany("FOX (US)/HBO");
     return tvShow;
   }
 
