@@ -130,7 +130,7 @@ public class ImdbTvShowParser extends ImdbParser {
       throw new MissingIdException(MediaMetadata.IMDB);
     }
 
-    LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
+    LOGGER.debug("IMDB: getMetadata(imdbId): {}", imdbId);
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
@@ -165,7 +165,7 @@ public class ImdbTvShowParser extends ImdbParser {
       md.setId(providerInfo.getId(), imdbId);
     }
     catch (Exception e) {
-      LOGGER.error("problem while scraping: " + e.getMessage());
+      LOGGER.error("problem while scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -283,7 +283,7 @@ public class ImdbTvShowParser extends ImdbParser {
         url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
       }
       catch (Exception e) {
-        LOGGER.warn("could not get cast page: {}", e);
+        LOGGER.warn("could not get cast page: {}", e.getMessage());
       }
 
       if (url != null) {
@@ -292,7 +292,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
           // director
           Element directorsElement = doc.getElementById("directors");
-          while (directorsElement != null && directorsElement.tag().getName() != "header") {
+          while (directorsElement != null && !"header".equals(directorsElement.tag().getName())) {
             directorsElement = directorsElement.parent();
           }
           if (directorsElement != null) {
@@ -336,7 +336,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
           // writers
           Element writersElement = doc.getElementById("writers");
-          while (writersElement != null && writersElement.tag().getName() != "header") {
+          while (writersElement != null && !"header".equals(writersElement.tag().getName())) {
             writersElement = writersElement.parent();
           }
           if (writersElement != null) {
@@ -366,7 +366,8 @@ public class ImdbTvShowParser extends ImdbParser {
             }
           }
         }
-        catch (Exception ignored) {
+        catch (Exception e) {
+          LOGGER.trace("problem parsing: {}", e.getMessage());
         }
       }
 
@@ -407,7 +408,7 @@ public class ImdbTvShowParser extends ImdbParser {
           Thread.currentThread().interrupt();
         }
         catch (Exception e) {
-          LOGGER.warn("could not get cast page: {}", e);
+          LOGGER.warn("could not get cast page: {}", e.getMessage());
         }
       }
     }
@@ -475,7 +476,7 @@ public class ImdbTvShowParser extends ImdbParser {
         Thread.currentThread().interrupt();
       }
       catch (Exception e) {
-        LOGGER.warn("problem parsing ep list: " + e.getMessage());
+        LOGGER.warn("problem parsing ep list: {}", e.getMessage());
       }
     }
 
@@ -550,11 +551,12 @@ public class ImdbTvShowParser extends ImdbParser {
                 String countAsString = votesElement.ownText().replaceAll("[.,()]", "").trim();
                 try {
                   MediaRating rating = new MediaRating(providerInfo.getId());
-                  rating.setRating(Float.valueOf(ratingAsString));
-                  rating.setVoteCount(Integer.parseInt(countAsString));
+                  rating.setRating(Float.parseFloat(ratingAsString));
+                  rating.setVoteCount(MetadataUtil.parseInt(countAsString));
                   ep.addRating(rating);
                 }
-                catch (Exception ignored) {
+                catch (Exception e) {
+                  LOGGER.trace("could not parse rating/vote count: {}", e.getMessage());
                 }
               }
             }
@@ -584,7 +586,7 @@ public class ImdbTvShowParser extends ImdbParser {
             episodes.add(ep);
           }
           catch (Exception e) {
-            LOGGER.warn("failed parsing: " + row.text() + " for ep data; " + e.getMessage());
+            LOGGER.warn("failed parsing: {} for ep data - {}", row.text(), e.getMessage());
           }
         }
       }
