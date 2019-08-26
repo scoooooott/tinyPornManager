@@ -28,13 +28,14 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
+import java.io.FileFilter;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * a collection of various helpers for the movie module
@@ -148,22 +149,30 @@ public class MovieHelpers {
   }
 
   /**
-   * Method to get a List of files with the following extensions
-   * @param path Path where the files are located
-   * @param extensions Extension ( *.txt ) or (*.{txt,html,url}
-   * @return List of Files
+   * Method to get a list of files with the given regular expression
+   * @param path Path where these files should be searched
+   * @param regexList list of regular expression
+   * @return a list of files
    */
-  public static  List<File> getUnknownFiles(String path, String extensions) {
-    Path dir = FileSystems.getDefault().getPath(path);
-    List<File> files = new ArrayList<>();
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, extensions)) {
-      for (Path entry : stream) {
-        files.add(entry.toFile());
+  public static List<File> getUnknownFilesbyRegex(String path, List<String> regexList) {
+
+    List<File> filesToDelete = new ArrayList<>();
+
+    filesToDelete.addAll(Arrays.asList(Objects.requireNonNull(FileSystems.getDefault().getPath(path).toFile().listFiles(filename -> {
+      boolean accept = false;
+
+      for( String regex : regexList ) {
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(filename.getName());
+        if ( m.find() ) {
+          accept = true;
+        }
       }
-      return files;
-    } catch (IOException x) {
-      throw new RuntimeException(String.format("error reading folder %s: %s", dir, x.getMessage()), x);
+
+      return accept;
+    }))));
+
+
+    return filesToDelete;
     }
   }
-
-}
