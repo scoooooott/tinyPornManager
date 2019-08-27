@@ -40,6 +40,7 @@ public class MovieEditionTest {
     assertThat(parse("Get.Hard.2015.UNRATED.720p.BluRay.DTS.x264-xyz")).isEqualTo(UNRATED);
     assertThat(parse("Curse.Of.Chucky.2013.UNRATED.1080p.WEB-DL.H264-xyz")).isEqualTo(UNRATED);
     assertThat(parse("Men.Of.War.UNRATED.1994.AC3.HDRip.x264")).isEqualTo(UNRATED);
+    assertThat(parse("Men Of War UNRATED 1994 AC3 HDRip x264")).isEqualTo(UNRATED);
 
     // UNCUT
     assertThat(parse("12 Monkeys [Uncut] [3D]")).isEqualTo(UNCUT);
@@ -63,6 +64,7 @@ public class MovieEditionTest {
     assertThat(parse("The Lion Guard Return Of The Roar 2015 DVDRip x264-aaa")).isEqualTo(NONE);
     assertThat(parse("Spies 1928 720p BluRay x264-hhh")).isEqualTo(NONE);
     assertThat(parse("Rodeo Girl 2016 DVDRip x264-yxc")).isEqualTo(NONE);
+    assertThat(parse("Climax")).isEqualTo(NONE);
   }
 
   private MovieEdition parse(String name) {
