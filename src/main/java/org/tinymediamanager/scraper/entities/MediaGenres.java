@@ -239,7 +239,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         if (notation.equalsIgnoreCase(name)) {
           return genre;
         }
-        if (notation.length() > 3) {
+        // only do the following check, if the notation start with ??-
+        if (notation.length() > 3 && notation.substring(0, 3).matches(".{2}-")) {
           // first 3 chars are language like "de-"
           if (notation.substring(3).equalsIgnoreCase(name)) {
             return genre;
