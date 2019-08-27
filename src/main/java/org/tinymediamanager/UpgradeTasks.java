@@ -79,7 +79,8 @@ public class UpgradeTasks {
    * performs some upgrade tasks from one version to another<br>
    * <b>make sure, this upgrade can run multiple times (= needed for nightlies!!!)
    *
-   * @param oldVersion our current version
+   * @param oldVersion
+   *          our current version
    */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
     MovieList movieList = MovieList.getInstance();
@@ -106,11 +107,12 @@ public class UpgradeTasks {
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Globals.BACKUP_FOLDER))) {
         for (Path path : directoryStream) {
           if (path.getFileName().toString().matches("movies\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")
-                  || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
+              || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
             al.add(path);
           }
         }
-      } catch (IOException ignored) {
+      }
+      catch (IOException ignored) {
       }
 
       for (Path path : al) {
@@ -232,9 +234,22 @@ public class UpgradeTasks {
       LOGGER.info("Performing database upgrade tasks to version 3.0.4");
       ImageCache.migrate();
 
-      //change unknown file extension to regex
-      for (int i = 0; i < Settings.getInstance().getCleanupFileType().size(); i++) {
-        Settings.getInstance().getCleanupFileType().set(i, Settings.getInstance().getCleanupFileType().get(i) + "$");
+      // change unknown file extension to regex
+      // look if there is any regexp in the list to avoid double upgrade in devel mode
+      boolean alreadyMigrated = false;
+      for (String entry : Settings.getInstance().getCleanupFileType()) {
+        if (entry.endsWith("$")) {
+          alreadyMigrated = true;
+          break;
+        }
+      }
+
+      if (!alreadyMigrated) {
+        List<String> newEntries = new ArrayList<>();
+        for (String entry : Settings.getInstance().getCleanupFileType()) {
+          newEntries.add(entry + "$");
+        }
+        Settings.getInstance().setCleanupFileTypes(newEntries);
       }
     }
   }
@@ -250,7 +265,8 @@ public class UpgradeTasks {
       if (file.length() != cur.length() || !cur.exists()) {
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update the updater!");
         }
       }
@@ -263,7 +279,8 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManager.exe");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update tmm!");
         }
       }
@@ -272,7 +289,8 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManagerUpd.exe");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update the updater!");
         }
       }
@@ -281,7 +299,8 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManagerCMD.exe");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update CMD TMM!");
         }
       }
@@ -294,7 +313,8 @@ public class UpgradeTasks {
         File cur = new File("../../MacOS/JavaApplicationStub");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update JavaApplicationStub");
         }
       }
@@ -307,7 +327,8 @@ public class UpgradeTasks {
         File cur = new File("../../Info.plist");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update JavaApplicationStub");
         }
       }
@@ -320,7 +341,8 @@ public class UpgradeTasks {
         File cur = new File("../tmm.icns");
         try {
           FileUtils.copyFile(file, cur);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOGGER.error("Could not update tmm.icns");
         }
       }

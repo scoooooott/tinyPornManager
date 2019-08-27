@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.core;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -30,10 +32,9 @@ import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * The Class Settings - holding all settings for tmm.
@@ -279,9 +280,9 @@ public class Settings extends AbstractSettings {
 
     // default cleanup postfix
     cleanupFileTypes.clear();
-    addCleanupFileType(".txt");
-    addCleanupFileType(".url");
-    addCleanupFileType(".html");
+    addCleanupFileType(".txt$");
+    addCleanupFileType(".url$");
+    addCleanupFileType(".html$");
     Collections.sort(cleanupFileTypes);
 
     setProxyFromSystem();
@@ -492,7 +493,7 @@ public class Settings extends AbstractSettings {
   }
 
   /**
-   * Adds the subtitle file types.
+   * Adds the cleanup file types.
    *
    * @param type
    *          the type
@@ -505,7 +506,7 @@ public class Settings extends AbstractSettings {
   }
 
   /**
-   * Removes the subtitle file type.
+   * Removes the cleanup file type.
    *
    * @param type
    *          the type
@@ -516,12 +517,23 @@ public class Settings extends AbstractSettings {
   }
 
   /**
-   * Gets the subtitle file type.
+   * Gets the cleanup file type.
    *
-   * @return the subtitle file type
+   * @return the cleanup file type
    */
   public List<String> getCleanupFileType() {
     return cleanupFileTypes;
+  }
+
+  /**
+   * set the
+   * 
+   * @param newValues
+   */
+  public void setCleanupFileTypes(List<String> newValues) {
+    cleanupFileTypes.clear();
+    cleanupFileTypes.addAll(newValues);
+    firePropertyChange(CLEANUP_FILE_TYPE, null, cleanupFileTypes);
   }
 
   /**
