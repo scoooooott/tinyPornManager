@@ -5,6 +5,7 @@ x fix parsing of episode vote count in the IMDB scraper
 x fetching artwork sometimes returned the wrong type #617
 x fixed wrong detection of user defined genres like Marvel
 x fixed detection of IMAX edition
++ added possibility to use regular expressions for finding unknown files
 
 
 Version 3.0.3

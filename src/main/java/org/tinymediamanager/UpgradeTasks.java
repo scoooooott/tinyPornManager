@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -48,7 +50,7 @@ import com.sun.jna.Platform;
 
 /**
  * The class UpdateTasks. To perform needed update tasks
- * 
+ *
  * @author Manuel Laggner / Myron Boyle
  */
 public class UpgradeTasks {
@@ -76,9 +78,8 @@ public class UpgradeTasks {
   /**
    * performs some upgrade tasks from one version to another<br>
    * <b>make sure, this upgrade can run multiple times (= needed for nightlies!!!)
-   * 
-   * @param oldVersion
-   *          our current version
+   *
+   * @param oldVersion our current version
    */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
     MovieList movieList = MovieList.getInstance();
@@ -105,12 +106,11 @@ public class UpgradeTasks {
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Globals.BACKUP_FOLDER))) {
         for (Path path : directoryStream) {
           if (path.getFileName().toString().matches("movies\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")
-              || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
+                  || path.getFileName().toString().matches("tvshows\\.db\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip")) {
             al.add(path);
           }
         }
-      }
-      catch (IOException ignored) {
+      } catch (IOException ignored) {
       }
 
       for (Path path : al) {
@@ -231,6 +231,11 @@ public class UpgradeTasks {
     if (StrgUtils.compareVersion(v, "3.0.4") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 3.0.4");
       ImageCache.migrate();
+
+      //change unknown file extension to regex
+      for (int i = 0; i < Settings.getInstance().getCleanupFileType().size(); i++) {
+        Settings.getInstance().getCleanupFileType().set(i, Settings.getInstance().getCleanupFileType().get(i) + "$");
+      }
     }
   }
 
@@ -245,8 +250,7 @@ public class UpgradeTasks {
       if (file.length() != cur.length() || !cur.exists()) {
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update the updater!");
         }
       }
@@ -259,8 +263,7 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManager.exe");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update tmm!");
         }
       }
@@ -269,8 +272,7 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManagerUpd.exe");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update the updater!");
         }
       }
@@ -279,8 +281,7 @@ public class UpgradeTasks {
         File cur = new File("tinyMediaManagerCMD.exe");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update CMD TMM!");
         }
       }
@@ -293,8 +294,7 @@ public class UpgradeTasks {
         File cur = new File("../../MacOS/JavaApplicationStub");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update JavaApplicationStub");
         }
       }
@@ -307,8 +307,7 @@ public class UpgradeTasks {
         File cur = new File("../../Info.plist");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update JavaApplicationStub");
         }
       }
@@ -321,8 +320,7 @@ public class UpgradeTasks {
         File cur = new File("../tmm.icns");
         try {
           FileUtils.copyFile(file, cur);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOGGER.error("Could not update tmm.icns");
         }
       }

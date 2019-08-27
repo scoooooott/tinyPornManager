@@ -168,10 +168,10 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       List<String> regexPatterns = Settings.getInstance().getCleanupFileType();
 
       for (Movie movie : selectedMovies) {
-        for (File file : MovieHelpers.getUnknownFilesbyRegex(movie.getPath(), regexPatterns )) {
+        for (Path file : MovieHelpers.getUnknownFilesbyRegex(movie.getPathNIO(), regexPatterns )) {
           FileContainer fileContainer = new FileContainer();
           fileContainer.movie = movie;
-          fileContainer.file = file.toPath();
+          fileContainer.file = file;
           try {
             BasicFileAttributes attrs = Files.readAttributes(fileContainer.file, BasicFileAttributes.class);
             fileContainer.filesize = attrs.size();
