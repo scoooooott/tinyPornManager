@@ -941,7 +941,11 @@ public class MovieArtworkHelper {
 
     // the first we find
     if (sortedArtwork.isEmpty() && !artwork.isEmpty()) {
-      sortedArtwork.add(artwork.get(0));
+      for (MediaArtwork art : artwork) {
+        if (!sortedArtwork.contains(art) && art.getType() == type) {
+          sortedArtwork.add(art);
+        }
+      }
     }
 
     return sortedArtwork;
