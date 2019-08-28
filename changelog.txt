@@ -8,6 +8,7 @@ x fix parsing of episode vote count in the IMDB scraper
 x fetching artwork sometimes returned the wrong type #617
 x fixed wrong detection of user defined genres like Marvel
 x fixed detection of IMAX edition
+x renamed Trakt.tv scraper option "API key" to "Client ID"
 
 
 Version 3.0.3
