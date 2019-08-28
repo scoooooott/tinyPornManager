@@ -92,7 +92,7 @@ class TraktMovieMetadataProvider {
       searchResults = response.body();
     }
     catch (Exception e) {
-      LOGGER.error("Problem scraping for " + searchString + "; " + e.getMessage());
+      LOGGER.error("Problem scraping for {} - {}", searchString, e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -111,7 +111,7 @@ class TraktMovieMetadataProvider {
   }
 
   MediaMetadata scrape(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
-    LOGGER.debug("getMetadata() " + options.toString());
+    LOGGER.debug("getMetadata() - {}", options.toString());
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
     if (options.getType() != MediaType.MOVIE) {
@@ -131,7 +131,7 @@ class TraktMovieMetadataProvider {
     }
 
     // scrape
-    LOGGER.debug("Trakt.tv: getMetadata: id = " + id);
+    LOGGER.debug("Trakt.tv: getMetadata: id = {}", id);
 
     String lang = options.getLanguage().getLanguage();
     List<MovieTranslation> translations = null;
@@ -153,7 +153,7 @@ class TraktMovieMetadataProvider {
         credits = api.movies().people(id).execute().body();
       }
       catch (Exception e) {
-        LOGGER.debug("failed to get meta data: " + e.getMessage());
+        LOGGER.debug("failed to get meta data: {}", e.getMessage());
         throw new ScrapeException(e);
       }
     }

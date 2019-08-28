@@ -37,6 +37,7 @@ import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.trakt5.TraktV2;
@@ -53,7 +54,8 @@ import retrofit2.Response;
 @PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger    LOGGER       = LoggerFactory.getLogger(TraktMetadataProvider.class);
-  private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+  private static final String    CLIENT_ID    = ApiKey
+      .decryptApikey("Xd0t1yRY+HaxMl3bqILuxIaokXxekrFNj0QszCUsG6aNSbrhOhC2h5PcxDhV7wUXmBdOt9cYlMGNJjLZvKcS3xTRx3zYH7EYb7Mv5hCsMQU=");
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
 
@@ -69,7 +71,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
         TraktMetadataProvider.class.getResource("/trakt_tv.png"));
     providerInfo.setVersion(TraktMetadataProvider.class);
 
-    providerInfo.getConfig().addText("apiKey", "", true);
+    providerInfo.getConfig().addText("clientId", "", true);
     providerInfo.getConfig().load();
 
     return providerInfo;
@@ -78,7 +80,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   // thread safe initialization of the API
   private static synchronized void initAPI() {
     String apiKey = CLIENT_ID;
-    String userApiKey = providerInfo.getConfig().getValue("apiKey");
+    String userApiKey = providerInfo.getConfig().getValue("clientId");
 
     // check if the API should change from current key to user key
     if (StringUtils.isNotBlank(userApiKey) && api != null && !userApiKey.equals(api.apiKey())) {
@@ -120,7 +122,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
    * @return
    */
   public List<MediaSearchResult> lookupWithId(MediaSearchOptions options) {
-    List<SearchResult> results = new ArrayList<SearchResult>();
+    List<SearchResult> results = new ArrayList<>();
 
     // get known IDs
     String imdbId = options.getImdbId().isEmpty() ? null : options.getImdbId();
@@ -188,7 +190,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   // Searching
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
-    LOGGER.debug("search() " + options.toString());
+    LOGGER.debug("search() - {}", options.toString());
 
     // lazy initialization of the api
     initAPI();
@@ -223,8 +225,6 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
         return new TraktMovieMetadataProvider(api).scrape(options);
 
       case TV_SHOW:
-        return new TraktTVShowMetadataProvider(api).scrape(options);
-
       case TV_EPISODE:
         return new TraktTVShowMetadataProvider(api).scrape(options);
 
