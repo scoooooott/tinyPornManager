@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ 
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s22">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+  </Style>
+  <Style ss:ID="s23">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <NumberFormat ss:Format="Short Date"/>
+  </Style>
+ </Styles>
+ 
+ <Worksheet ss:Name="movielist">
+  <Table x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="60">
+
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="33.00" ss:StyleID="s22"/>
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="100.00"/>
+   <Column ss:Width="100.00" ss:StyleID="s23" />
+   <Column ss:Width="60.00" ss:StyleID="s22" />
+   <Column ss:Width="60.00" ss:StyleID="s22" />
+   <Column ss:Width="120.00"/>
+   <Column ss:Width="70.00" ss:StyleID="s22" />
+   <Column ss:Width="50.00" ss:StyleID="s22" />
+   <Column ss:Width="50.00" ss:StyleID="s22" />
+   <Column ss:Width="200.00"/>
+   <Column ss:Width="260.00"/>
+   <Column ss:Width="300.00"/>
+   <Column ss:Width="70.00"/>
+   <Column ss:Width="70.00" ss:StyleID="s23" />
+   <Column ss:Width="100.00"/>
+   <Column ss:Width="40.00"/>
+   <Column ss:Width="40.00"/>
+   <Column ss:Width="40.00"/>
+   <Column ss:Width="70.00" ss:StyleID="s22" />
+   <Column ss:Width="50.00" ss:StyleID="s22" />
+   <Column ss:Width="50.00"/>
+   <Column ss:Width="50.00"/>
+   <Column ss:Width="50.00"/>
+   <Column ss:Width="70.00"/>
+   <Column ss:Width="33.00" ss:StyleID="s22" />
+   <Column ss:Width="33.00" ss:StyleID="s22" />
+   <Column ss:Width="33.00" ss:StyleID="s22" />
+   <Column ss:Width="33.00" ss:StyleID="s22" />
+   <Column ss:Width="33.00" ss:StyleID="s22" />
+   <Column ss:Width="300.00"/>
+   <Column ss:Width="100.00"/>
+   <Column ss:Width="100.00"/>
+   <Column ss:Width="100.00"/>
+
+
+<Row>
+     <Cell><Data ss:Type="String">Title</Data></Cell>
+     <Cell><Data ss:Type="String">Year</Data></Cell>
+     <Cell><Data ss:Type="String">Movie set</Data></Cell>
+     <Cell><Data ss:Type="String">Plot</Data></Cell>
+     <Cell><Data ss:Type="String">Original title</Data></Cell>
+     <Cell><Data ss:Type="String">Genres</Data></Cell>
+     <Cell><Data ss:Type="String">Tags</Data></Cell>
+     <Cell><Data ss:Type="String">Fecha Estreno</Data></Cell>
+     <Cell><Data ss:Type="String">Imdb Id</Data></Cell>
+     <Cell><Data ss:Type="String">Tmdb Id</Data></Cell>
+     <Cell><Data ss:Type="String">Spoken languages</Data></Cell>
+     <Cell><Data ss:Type="String">Certification</Data></Cell>
+     <Cell><Data ss:Type="String">Duration (file)</Data></Cell>
+     <Cell><Data ss:Type="String">Duration (scraper)</Data></Cell>
+     <Cell><Data ss:Type="String">Country</Data></Cell>
+     <Cell><Data ss:Type="String">Path</Data></Cell>
+     <Cell><Data ss:Type="String">File name</Data></Cell>
+     <Cell><Data ss:Type="String">File size</Data></Cell>
+     <Cell><Data ss:Type="String">Date added</Data></Cell>
+     <Cell><Data ss:Type="String">File extension</Data></Cell>
+     <Cell><Data ss:Type="String">Video definition</Data></Cell>
+     <Cell><Data ss:Type="String">Video codec</Data></Cell>
+     <Cell><Data ss:Type="String">Video format</Data></Cell>
+     <Cell><Data ss:Type="String">Video resolution</Data></Cell>
+     <Cell><Data ss:Type="String">Video bitrate</Data></Cell>
+     <Cell><Data ss:Type="String">Aspect ratio</Data></Cell>
+     <Cell><Data ss:Type="String">Frame rate</Data></Cell>
+     <Cell><Data ss:Type="String">HDR</Data></Cell>
+     <Cell><Data ss:Type="String">Audio codecs</Data></Cell>
+     <Cell><Data ss:Type="String">Audio channels</Data></Cell>
+     <Cell><Data ss:Type="String">Audio bitrate</Data></Cell>
+     <Cell><Data ss:Type="String">Subtitles</Data></Cell>
+     <Cell><Data ss:Type="String">Has metadata</Data></Cell>
+     <Cell><Data ss:Type="String">Is duplicate</Data></Cell>
+     <Cell><Data ss:Type="String">Has images</Data></Cell>
+     <Cell><Data ss:Type="String">Has NFO</Data></Cell>
+     <Cell><Data ss:Type="String">Has trailers</Data></Cell>
+     <Cell><Data ss:Type="String">Actors</Data></Cell>
+</Row>
+
+${foreach movies movie}
+   <Row>
+    <Cell><Data ss:Type="String">${movie.title}</Data></Cell>
+    <Cell><Data ss:Type="Number">${movie.year}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.movieSet}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.plot}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.originalTitle}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.genresAsString}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.tagsAsString}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.releaseDateAsString}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.imdbId}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.tmdbId}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.spokenLanguages}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.certification}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.runtimeFromMediaFiles}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.runtime}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.country}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.path}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.filename}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.filesize}</Data></Cell>
+    <Cell><Data ss:Type="DateTime">${movie.dateAdded;date(yyyy-MM-dd)}T00:00:00.000</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.extension}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.videoDefinitionCategory}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mediaInfoVideoCodec}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mediaInfoVideoFormat}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mediaInfoVideoResolution}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mediaInfoVideoBitrate}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.aspectRatio}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.frameRate}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.HDR}</Data></Cell>
+    <Cell><Data ss:Type="String">${foreach movie.mediaFiles mediafiles}${foreach mediafiles.audioStreams audio}${audio.codec}, ${end}${end}</Data></Cell>
+    <Cell><Data ss:Type="String">${foreach movie.mediaFiles mediafiles}${foreach mediafiles.audioStreams audio}${audio.audioChannels}, ${end}${end}</Data></Cell>
+    <Cell><Data ss:Type="String">${foreach movie.mediaFiles mediafiles}${foreach mediafiles.audioStreams audio}${audio.bitrateInKbps}, ${end}${end}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.mainVideoFile.subtitlesAsString}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.hasMetadata}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.duplicate}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.hasImages}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.hasNfoFile}</Data></Cell>
+    <Cell><Data ss:Type="String">${movie.hasTrailer}</Data></Cell>
+    <Cell><Data ss:Type="String">${foreach movie.actors actor}${actor.name}, ${end}</Data></Cell>
+
+   </Row>
+${end}
+
+  </Table>
+ </Worksheet>
+</Workbook>

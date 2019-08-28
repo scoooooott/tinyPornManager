@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.actions;
 
+import static org.tinymediamanager.ui.TmmFontHelper.L1;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -23,9 +25,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -33,6 +38,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -74,6 +80,25 @@ public class TvShowRenameAction extends TmmAction {
     if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
       JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
       return;
+    }
+
+    // display warning and ask the user again
+    if (!TmmProperties.getInstance().getPropertyAsBoolean("tvshow.hiderenamehint")) { //$NON-NLS-1$
+      JCheckBox checkBox = new JCheckBox(BUNDLE.getString("tmm.donotshowagain")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(checkBox, L1);
+      checkBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+      Object[] params = { BUNDLE.getString("tvshow.rename.desc"), checkBox }; //$NON-NLS-1$
+      int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"), //$NON-NLS-1$
+          JOptionPane.YES_NO_OPTION);
+
+      // the user don't want to show this dialog again
+      if (checkBox.isSelected()) {
+        TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected())); //$NON-NLS-1$ )
+      }
+
+      if (answer != JOptionPane.OK_OPTION) {
+        return;
+      }
     }
 
     // rename

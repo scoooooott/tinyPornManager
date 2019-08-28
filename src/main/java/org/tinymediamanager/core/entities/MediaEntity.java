@@ -294,7 +294,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       return "";
     }
 
-    Path parent = Paths.get(this.dataSource).relativize(path.getParent());
+    Path parent = Paths.get(this.dataSource).toAbsolutePath().relativize(path.getParent());
 
     return parent.toString();
   }

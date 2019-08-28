@@ -1,3 +1,16 @@
+Version 3.0.4
+=======================
++ changed "finding unwanted files" logic to use regular expressions
++ show a warning what rename&cleanup does
++ added a new export template (Mobile Movie Search, Soda's modifs) thx @Poka
+x fix missing replacement of path separators in movie/Tv show renamer tokens #618
+x fix parsing of episode vote count in the IMDB scraper
+x fetching artwork sometimes returned the wrong type #617
+x fixed wrong detection of user defined genres like Marvel
+x fixed detection of IMAX edition
+x renamed Trakt.tv scraper option "API key" to "Client ID"
+
+
 Version 3.0.3
 =======================
 + reworked the YouTube download engine. Should now work for almost all trailers! (thx @wjanes)

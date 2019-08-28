@@ -25,12 +25,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -47,7 +50,7 @@ import com.sun.jna.Platform;
 
 /**
  * The class UpdateTasks. To perform needed update tasks
- * 
+ *
  * @author Manuel Laggner / Myron Boyle
  */
 public class UpgradeTasks {
@@ -75,7 +78,7 @@ public class UpgradeTasks {
   /**
    * performs some upgrade tasks from one version to another<br>
    * <b>make sure, this upgrade can run multiple times (= needed for nightlies!!!)
-   * 
+   *
    * @param oldVersion
    *          our current version
    */
@@ -223,6 +226,30 @@ public class UpgradeTasks {
             episode.saveToDb();
           }
         }
+      }
+    }
+
+    // migrate image cache to hex folders
+    if (StrgUtils.compareVersion(v, "3.0.4") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.4");
+      ImageCache.migrate();
+
+      // change unknown file extension to regex
+      // look if there is any regexp in the list to avoid double upgrade in devel mode
+      boolean alreadyMigrated = false;
+      for (String entry : Settings.getInstance().getCleanupFileType()) {
+        if (entry.endsWith("$")) {
+          alreadyMigrated = true;
+          break;
+        }
+      }
+
+      if (!alreadyMigrated) {
+        List<String> newEntries = new ArrayList<>();
+        for (String entry : Settings.getInstance().getCleanupFileType()) {
+          newEntries.add(entry + "$");
+        }
+        Settings.getInstance().setCleanupFileTypes(newEntries);
       }
     }
   }

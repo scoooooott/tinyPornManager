@@ -53,7 +53,7 @@ public class TmmProperties {
       properties.load(input);
     } catch (FileNotFoundException ignored) {
     } catch (Exception e) {
-      LOGGER.warn("unable to read properties file: " + e.getMessage());
+      LOGGER.warn("unable to read properties file: {}", e.getMessage());
     }
   }
 
@@ -85,7 +85,7 @@ public class TmmProperties {
       tmp.store(output, null);
     }
     catch (IOException e) {
-      LOGGER.warn("failed to store properties file: " + e.getMessage());
+      LOGGER.warn("failed to store properties file: {}", e.getMessage());
     }
     finally {
       if (output != null) {
@@ -93,7 +93,7 @@ public class TmmProperties {
           output.close();
         }
         catch (IOException e) {
-          LOGGER.warn("failed to store properties file: " + e.getMessage());
+          LOGGER.warn("failed to store properties file: {}", e.getMessage());
         }
       }
     }

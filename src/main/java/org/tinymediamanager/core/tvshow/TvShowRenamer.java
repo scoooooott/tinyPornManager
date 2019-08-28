@@ -1539,7 +1539,7 @@ public class TvShowRenamer {
     return result.replaceAll("([\":<>|?*])", "");
   }
 
-  private static class TvShowRenamerModelAdaptor extends TmmModelAdaptor {
+  public static class TvShowRenamerModelAdaptor extends TmmModelAdaptor {
     @Override
     public Object getValue(Map<String, Object> model, String expression) {
       Object value = super.getValue(model, expression);
@@ -1557,13 +1557,20 @@ public class TvShowRenamer {
 
       if (value instanceof String) {
         value = replaceInvalidCharacters((String) value);
+
+        // do not replace path separators on the .parent token
+        if (!token.getText().contains("parent")) {
+          value = ((String) value).replaceAll("\\/", " ");
+          value = ((String) value).replaceAll("\\\\", " ");
+
+        }
       }
 
       return value;
     }
   }
 
-  private static class TvShowNamedFirstCharacterRenderer implements NamedRenderer {
+  public static class TvShowNamedFirstCharacterRenderer implements NamedRenderer {
 
     @Override
     public String render(Object o, String s, Locale locale, Map<String, Object> map) {

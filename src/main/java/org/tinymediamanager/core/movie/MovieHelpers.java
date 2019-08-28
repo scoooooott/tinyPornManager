@@ -27,14 +27,18 @@ import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 /**
  * a collection of various helpers for the movie module
@@ -47,8 +51,7 @@ public class MovieHelpers {
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
-   * @param name
-   *          certification string like "USA:R / UK:15 / Sweden:15"
+   * @param name certification string like "USA:R / UK:15 / Sweden:15"
    * @return the localized certification if found, else *ANY* language cert found
    */
   // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
@@ -56,7 +59,6 @@ public class MovieHelpers {
   // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
   // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
-
   public static Certification parseCertificationStringForMovieSetupCountry(String name) {
     Certification cert = Certification.UNKNOWN;
     name = name.trim();
@@ -72,8 +74,7 @@ public class MovieHelpers {
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
-        }
-        else {
+        } else {
           cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
           if (cert != Certification.UNKNOWN) {
             return cert;
@@ -90,22 +91,19 @@ public class MovieHelpers {
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
-        }
-        else {
+        } else {
           cert = Certification.findCertification(c);
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
       }
-    }
-    else {
+    } else {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
         cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
-      }
-      else {
+      } else {
         // no country? try to find only by name
         cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
       }
@@ -119,14 +117,13 @@ public class MovieHelpers {
 
   /**
    * start the automatic trailer download for the given movie
-   * 
-   * @param movie
-   *          the movie to start the trailer download for
+   *
+   * @param movie the movie to start the trailer download for
    */
   public static void startAutomaticTrailerDownload(Movie movie) {
     // start movie trailer download?
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
-        && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
+            && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
       selectTrailerProvider(movie, LOGGER);
     }
   }
@@ -148,22 +145,47 @@ public class MovieHelpers {
   }
 
   /**
-   * Method to get a List of files with the following extensions
-   * @param path Path where the files are located
-   * @param extensions Extension ( *.txt ) or (*.{txt,html,url}
-   * @return List of Files
+   * Method to get a list of files with the given regular expression
+   *
+   * @param regexList list of regular expression
+   * @return a list of files
    */
-  public static  List<File> getUnknownFiles(String path, String extensions) {
-    Path dir = FileSystems.getDefault().getPath(path);
-    List<File> files = new ArrayList<>();
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, extensions)) {
-      for (Path entry : stream) {
-        files.add(entry.toFile());
-      }
-      return files;
-    } catch (IOException x) {
-      throw new RuntimeException(String.format("error reading folder %s: %s", dir, x.getMessage()), x);
+  public static HashSet<Path> getUnknownFilesbyRegex(Path folder, List<String> regexList) {
+
+        GetUnkownFilesVisitor visitor = new GetUnkownFilesVisitor(regexList);
+
+    try {
+      Files.walkFileTree(folder, visitor);
+    } catch (IOException ignored ) {}
+
+    return visitor.fileList;
+
+  }
+
+  private static class GetUnkownFilesVisitor extends SimpleFileVisitor<Path> {
+
+    private HashSet<Path> fileList = new HashSet<>();
+    private List<String> regexList;
+
+    GetUnkownFilesVisitor(List<String> regexList) {
+      this.regexList = regexList;
     }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
+
+      for (String regex : regexList) {
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(file.getFileName().toString());
+        if (m.find()) {
+          fileList.add(file);
+        }
+      }
+      return CONTINUE;
+    }
+
   }
 
 }
+
+

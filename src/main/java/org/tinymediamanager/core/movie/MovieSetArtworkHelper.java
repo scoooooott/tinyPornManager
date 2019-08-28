@@ -715,7 +715,7 @@ public class MovieSetArtworkHelper {
     }
 
     private void writeImageToCacheFolder(byte[] bytes) {
-      String filename = ImageCache.getMD5(urlToArtwork);
+      String filename = ImageCache.getMD5WithSubfolder(urlToArtwork);
 
       try {
         writeImage(bytes, ImageCache.getCacheDir().resolve(filename + ".jpg"));
