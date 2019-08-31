@@ -115,6 +115,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
 
   private static final Pattern               SEASON_NUMBER         = Pattern.compile("(?i)season([0-9]{1,4}).*");
+  private static final Pattern               SEASON_FOLDER_NUMBER  = Pattern.compile("(?i).*([0-9]{1,4}).*");
 
   @JsonProperty
   private int                                runtime               = 0;
@@ -215,7 +216,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // create season artwork maps
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER, MediaFileType.SEASON_BANNER, MediaFileType.SEASON_THUMB)) {
-      Integer season = null;
+      int season = -1;
       try {
         if (mf.getFilename().startsWith("season-specials")) {
           season = 0;
@@ -229,12 +230,27 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           if (matcher.matches()) {
             season = Integer.parseInt(matcher.group(1));
           }
-          else {
-            throw new IllegalStateException("did not find a season number");
+
+          // try to parse out the season from the parent
+          if (season == -1) {
+            matcher = SEASON_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
+            if (matcher.matches()) {
+              season = Integer.parseInt(matcher.group(1));
+            }
           }
+          if (season == -1) {
+            matcher = SEASON_FOLDER_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
+            if (matcher.matches()) {
+              season = Integer.parseInt(matcher.group(1));
+            }
+          }
+
         }
 
-        if (season != null) {
+        if (season == -1) {
+          throw new IllegalStateException("did not find a season number");
+        }
+        else {
           switch (mf.getType()) {
             case SEASON_BANNER:
               seasonBanners.put(season, mf);
