@@ -1275,6 +1275,9 @@ public class MovieSettings extends AbstractSettings {
     keyartFilenames.clear();
     addKeyartFilename(MovieKeyartNaming.FILENAME_KEYART);
 
+    trailerFilenames.clear();
+    addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
     // other settings
     setMovieConnector(MovieConnectors.XBMC);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1318,6 +1321,9 @@ public class MovieSettings extends AbstractSettings {
 
     keyartFilenames.clear();
     addKeyartFilename(MovieKeyartNaming.FILENAME_KEYART);
+
+    trailerFilenames.clear();
+    addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
 
     // other settings
     setMovieConnector(MovieConnectors.KODI);
@@ -1363,6 +1369,9 @@ public class MovieSettings extends AbstractSettings {
     keyartFilenames.clear();
     addKeyartFilename(MovieKeyartNaming.KEYART);
 
+    trailerFilenames.clear();
+    addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
     // other settings
     setMovieConnector(MovieConnectors.MP);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1407,6 +1416,9 @@ public class MovieSettings extends AbstractSettings {
     keyartFilenames.clear();
     addKeyartFilename(MovieKeyartNaming.KEYART);
 
+    trailerFilenames.clear();
+    addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
     // other settings
     setMovieConnector(MovieConnectors.KODI);
     setRenamerPathname(DEFAULT_RENAMER_FOLDER_PATTERN);
@@ -1450,6 +1462,9 @@ public class MovieSettings extends AbstractSettings {
 
     keyartFilenames.clear();
     addKeyartFilename(MovieKeyartNaming.KEYART);
+
+    trailerFilenames.clear();
+    addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
 
     // other settings
     setMovieConnector(MovieConnectors.XBMC);

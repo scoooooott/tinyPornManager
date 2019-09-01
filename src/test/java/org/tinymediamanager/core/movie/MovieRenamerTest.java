@@ -54,6 +54,9 @@ public class MovieRenamerTest extends BasicTest {
     assertEqual("The Dish (2000) MPEG-480p AC3-6ch",
         MovieRenamer.createDestinationForFilename("${title} (${year}) ${videoCodec}-${videoFormat} ${audioCodec}-${audioChannels}", m));
     assertEqual("The Dish (2000)", MovieRenamer.createDestinationForFoldername("${title} (${year})", m));
+    assertEqual("_The Dish (2000)", MovieRenamer.createDestinationForFoldername("${_,title,} (${year})", m));
+    assertEqual("The Dish (2000)", MovieRenamer.createDestinationForFoldername(".${title} (${year})", m));
+    assertEqual("The Dish (2000)", MovieRenamer.createDestinationForFoldername("-${title} (${year})-", m));
   }
 
   @Test

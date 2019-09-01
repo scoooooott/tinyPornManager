@@ -1241,14 +1241,14 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll(Pattern.quote(replacement) + "+", replacement);
     }
 
+    // replace all leading/trailing separators (except the underscore which could be valid in the front)
+    newDestination = newDestination.replaceAll("^[ \\.\\-]+", "");
+    newDestination = newDestination.replaceAll("[ \\.\\-_]+$", "");
+
     // ASCII replacement
     if (MovieModuleManager.SETTINGS.isAsciiReplacement()) {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
-
-    // replace all leading/trailing separators
-    newDestination = newDestination.replaceAll("^[ \\.\\-_]+", "");
-    newDestination = newDestination.replaceAll("[ \\.\\-_]+$", "");
 
     // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
     newDestination = newDestination.replaceAll(": ", " - "); // nicer

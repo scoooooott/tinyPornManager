@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>api-scraper</artifactId>
-            <version>3.0.4-SNAPSHOT</version>
+            <version>3.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager</groupId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-imdb</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.3</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-trakt</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>com.uwetrottmann.trakt5</groupId>
             <artifactId>trakt-java</artifactId>
-            <version>6.1.0</version>
+            <version>6.3.0</version>
         </dependency>
         <dependency>
             <groupId>it.tidalwave.betterbeansbinding</groupId>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
-            <version>5.3.1</version>
+            <version>5.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.floreysoft</groupId>
@@ -157,7 +157,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2-mvstore</artifactId>
-            <version>1.4.197</version>
+            <version>1.4.199</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jtidy</groupId>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>org.mp4parser</groupId>
             <artifactId>muxer</artifactId>
-            <version>1.9.27</version>
+            <version>1.9.39</version>
         </dependency>
 
     </dependencies>
