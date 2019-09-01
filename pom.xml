@@ -10,7 +10,7 @@
 
     <groupId>org.tinymediamanager.plugins</groupId>
     <artifactId>scraper-trakt</artifactId>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.1</version>
 
     <name>Trakt.tv scraper</name>
     <description>A metadata scraper for Trakt.tv</description>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>scraper-trakt-3.1</tag>
     </scm>
 
     <dependencies>
