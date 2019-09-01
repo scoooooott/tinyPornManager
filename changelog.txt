@@ -11,6 +11,7 @@ x fixed detection of IMAX edition
 x renamed Trakt.tv scraper option "API key" to "Client ID"
 x detecting season poster from folder.jpg #626
 x fixed removing of an underscore at the beginning of the renamer token #619
+x added trailer file names to presets
 
 
 Version 3.0.3

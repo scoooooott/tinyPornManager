@@ -105,6 +105,13 @@ class MovieTrailerSettingsPanel extends JPanel {
     initComponents();
     initDataBindings();
 
+    // implement checkBoxListener for preset events
+    settings.addPropertyChangeListener(evt -> {
+      if ("preset".equals(evt.getPropertyName())) {
+        buildCheckBoxes();
+      }
+    });
+
     // data init
     List<String> enabledTrailerProviders = settings.getTrailerScrapers();
     int selectedIndex = -1;
