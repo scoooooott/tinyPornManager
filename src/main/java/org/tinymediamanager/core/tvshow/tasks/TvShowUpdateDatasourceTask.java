@@ -168,6 +168,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // update selected data sources
         for (String ds : dataSources) {
           LOGGER.info("Start UDS on datasource: {}", ds);
+          initThreadPool(3, "update");
+          setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
+          publishState();
+
           Path dsAsPath = Paths.get(ds);
 
           // first of all check if the DS is available; we can take the
@@ -181,9 +185,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
             continue;
           }
+          publishState();
 
-          initThreadPool(3, "update"); // FIXME: more threads result in
-                                       // duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<>();
           List<Path> existingTvShowDirs = new ArrayList<>();
           List<Path> rootList = listFilesAndDirs(dsAsPath);

@@ -169,6 +169,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                 .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
             continue;
           }
+          publishState();
 
           // just check datasource folder, parse NEW folders first
           List<Path> newMovieDirs = new ArrayList<>();
@@ -199,6 +200,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
           }
           rootList.clear();
+          publishState();
+
           for (Path path : newMovieDirs) {
             searchAndParse(dsAsPath.toAbsolutePath(), path, Integer.MAX_VALUE);
           }
@@ -1283,8 +1286,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFileAll++;
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
-          fFound.add(file.toAbsolutePath());
-        }
+        fFound.add(file.toAbsolutePath());
+      }
       // System.out.println("(" + attr.size() + "bytes)");
       // System.out.println("(" + attr.creationTime() + " date)");
       return CONTINUE;
@@ -1297,10 +1300,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
-            || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
-          LOGGER.debug("Skipping dir: " + dir);
-          return SKIP_SUBTREE;
-        }
+          || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
+        LOGGER.debug("Skipping dir: " + dir);
+        return SKIP_SUBTREE;
+      }
       return CONTINUE;
     }
 
@@ -1420,6 +1423,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               // ka-ching! parse this now as MMD and return
               List<Path> rootFiles = listFilesOnly(dir); // get all files and dirs
               submitTask(new parseMultiMovieDirTask(datasource.toAbsolutePath(), dir, rootFiles));
+              publishState();
               return CONTINUE;
             }
           }
