@@ -263,7 +263,7 @@ public class MainWindow extends JFrame {
 
     // mouse event listener for context menu
     Toolkit.getDefaultToolkit().addAWTEventListener(arg0 -> {
-      if (arg0 instanceof MouseEvent && MouseEvent.MOUSE_RELEASED == arg0.getID() && arg0.getSource() instanceof JTextComponent) {
+      if (arg0 instanceof MouseEvent && ((MouseEvent) arg0).isPopupTrigger() && arg0.getSource() instanceof JTextComponent) {
         MouseEvent me = (MouseEvent) arg0;
         JTextComponent tc = (JTextComponent) arg0.getSource();
         if (me.isPopupTrigger() && tc.getComponentPopupMenu() == null) {

@@ -1,5 +1,6 @@
 Version 3.0.5
 =======================
+fix: show popupmenu from text fields on macOS #637
 
 
 Version 3.0.4
