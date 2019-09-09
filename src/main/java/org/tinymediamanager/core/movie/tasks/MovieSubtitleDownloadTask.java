@@ -57,6 +57,7 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
     super.doInBackground();
 
     MediaFile mf = new MediaFile(file);
+    Path old = mf.getFileAsPath();
 
     if (mf.getType() != MediaFileType.SUBTITLE) {
       String basename = FilenameUtils.getBaseName(videoFilePath.toString()) + "." + languageTag;
@@ -93,12 +94,14 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
           }
         }
         is.closeEntry();
-
-        Utils.deleteFileSafely(file);
       }
       catch (Exception e) {
         LOGGER.debug("could not extract subtitle: {}", e.getMessage());
       }
+    }
+    if (!old.equals(mf.getFileAsPath())) {
+      // if it not the same (zip vs sub) - delete ZIP
+      Utils.deleteFileSafely(old);
     }
 
     mf.gatherMediaInformation();
