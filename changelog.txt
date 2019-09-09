@@ -2,6 +2,7 @@ Version 3.0.5
 =======================
 x show popupmenu from text fields on macOS #637
 x crash on startup if some images could not be loaded
+x catch more exceptions on file download #642
 
 
 Version 3.0.4
