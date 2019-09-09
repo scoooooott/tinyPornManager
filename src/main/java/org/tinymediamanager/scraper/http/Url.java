@@ -469,14 +469,14 @@ public class Url {
       fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
       return true;
     }
-    catch (IOException e) {
-      LOGGER.error("Error downloading {} - {}", this.url, e.getMessage());
-    }
     catch (InterruptedException ignored) {
       if (call != null) {
         call.cancel();
       }
       Thread.currentThread().interrupt();
+    }
+    catch (Exception e) {
+      LOGGER.error("Error downloading {} - {}", this.url, e.getMessage());
     }
     return false;
   }
