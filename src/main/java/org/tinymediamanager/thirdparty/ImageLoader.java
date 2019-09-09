@@ -61,8 +61,9 @@ public class ImageLoader {
   private static final DirectColorModel RGBModel  = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0);
 
   public static BufferedImage createImage(URL url) {
-    if (url == null)
+    if (url == null) {
       throw new NullPointerException();
+    }
     try {
       return createImage(Toolkit.getDefaultToolkit().createImage(url), url.toString());
     }
@@ -73,7 +74,13 @@ public class ImageLoader {
   }
 
   public static BufferedImage createImage(File file) {
-    return createImage(Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath()), file.getAbsolutePath());
+    try {
+      return createImage(Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath()), file.getAbsolutePath());
+    }
+    catch (RuntimeException e) {
+      LOGGER.debug("could not create image: {}", e.getMessage());
+      throw e;
+    }
   }
 
   /**
@@ -89,15 +96,22 @@ public class ImageLoader {
     if (i instanceof BufferedImage) {
       BufferedImage bi = (BufferedImage) i;
       int type = bi.getType();
-      if (type == BufferedImage.TYPE_INT_ARGB)
+      if (type == BufferedImage.TYPE_INT_ARGB) {
         return bi;
+      }
       BufferedImage newImage = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = newImage.createGraphics();
       g.drawImage(bi, 0, 0, null);
       g.dispose();
       return newImage;
     }
-    return createImage(i, null);
+    try {
+      return createImage(i, null);
+    }
+    catch (RuntimeException e) {
+      LOGGER.debug("could not create image: {}", e.getMessage());
+      throw e;
+    }
   }
 
   protected static BufferedImage createImage(Image i, String description) {
@@ -109,22 +123,30 @@ public class ImageLoader {
    * This checks to see if two DirectColorModels are identical. Apparently the "equals" method in DirectColorModel doesn't really work.
    */
   private static boolean equals(DirectColorModel d1, DirectColorModel d2) {
-    if (d1.getAlphaMask() != d2.getAlphaMask())
+    if (d1.getAlphaMask() != d2.getAlphaMask()) {
       return false;
-    if (d1.getGreenMask() != d2.getGreenMask())
+    }
+    if (d1.getGreenMask() != d2.getGreenMask()) {
       return false;
-    if (d1.getRedMask() != d2.getRedMask())
+    }
+    if (d1.getRedMask() != d2.getRedMask()) {
       return false;
-    if (d1.getBlueMask() != d2.getBlueMask())
+    }
+    if (d1.getBlueMask() != d2.getBlueMask()) {
       return false;
-    if (d1.getColorSpace() != d2.getColorSpace())
+    }
+    if (d1.getColorSpace() != d2.getColorSpace()) {
       return false;
-    if (d1.isAlphaPremultiplied() != d2.isAlphaPremultiplied())
+    }
+    if (d1.isAlphaPremultiplied() != d2.isAlphaPremultiplied()) {
       return false;
-    if (d1.getTransferType() != d2.getTransferType())
+    }
+    if (d1.getTransferType() != d2.getTransferType()) {
       return false;
-    if (d1.getTransparency() != d2.getTransparency())
+    }
+    if (d1.getTransparency() != d2.getTransparency()) {
       return false;
+    }
     return true;
   }
 
@@ -160,13 +182,16 @@ public class ImageLoader {
    * <code>getProgress()</code> changes value.
    */
   public void addChangeListener(ChangeListener l) {
-    if (l == null)
+    if (l == null) {
       return;
+    }
 
-    if (listeners == null)
+    if (listeners == null) {
       listeners = new ArrayList<>();
-    if (listeners.contains(l))
+    }
+    if (listeners.contains(l)) {
       return;
+    }
     listeners.add(l);
   }
 
@@ -174,8 +199,9 @@ public class ImageLoader {
    * Removes a ChangeListener from this loader.
    */
   public void removeChangeListener(ChangeListener l) {
-    if (listeners == null)
+    if (listeners == null) {
       return;
+    }
     listeners.remove(l);
   }
 
@@ -207,8 +233,9 @@ public class ImageLoader {
    * Returns the dimension of this image, or null if the dimensions are not yet known.
    */
   public Dimension getSize() {
-    if (size == null)
+    if (size == null) {
       return null;
+    }
     return new Dimension(size.width, size.height);
   }
 

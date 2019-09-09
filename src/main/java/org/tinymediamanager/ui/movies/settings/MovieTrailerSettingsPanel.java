@@ -317,15 +317,20 @@ class MovieTrailerSettingsPanel extends JPanel {
     }
 
     private ImageIcon getScaledIcon(ImageIcon original) {
-      Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(getFont());
+      try {
+        Canvas c = new Canvas();
+        FontMetrics fm = c.getFontMetrics(getFont());
 
-      int height = (int) (fm.getHeight() * 2f);
-      int width = original.getIconWidth() / original.getIconHeight() * height;
+        int height = (int) (fm.getHeight() * 2f);
+        int width = original.getIconWidth() / original.getIconHeight() * height;
 
-      BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_ANTIALIAS);
-      return new ImageIcon(scaledImage);
+        BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
+            height, Scalr.OP_ANTIALIAS);
+        return new ImageIcon(scaledImage);
+      }
+      catch (Exception e) {
+        return new ImageIcon();
+      }
     }
 
     public String getScraperId() {

@@ -55,22 +55,27 @@ public class ScraperInTable extends AbstractModelObject {
   }
 
   protected ImageIcon getScaledIcon(ImageIcon original) {
-    Canvas c = new Canvas();
-    FontMetrics fm = c.getFontMetrics(new JPanel().getFont());
+    try {
+      Canvas c = new Canvas();
+      FontMetrics fm = c.getFontMetrics(new JPanel().getFont());
 
-    int height = (int) (fm.getHeight() * 2f);
-    int width = original.getIconWidth() / original.getIconHeight() * height;
+      int height = (int) (fm.getHeight() * 2f);
+      int width = original.getIconWidth() / original.getIconHeight() * height;
 
-    BufferedImage scaledImage;
-    if (!scraper.isEnabled()) {
-      scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_GRAYSCALE);
+      BufferedImage scaledImage;
+      if (!scraper.isEnabled()) {
+        scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+            Scalr.OP_GRAYSCALE);
+      }
+      else {
+        scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+            Scalr.OP_ANTIALIAS);
+      }
+      return new ImageIcon(scaledImage);
     }
-    else {
-      scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
-          Scalr.OP_ANTIALIAS);
+    catch (Exception e) {
+      return null;
     }
-    return new ImageIcon(scaledImage);
   }
 
   public String getScraperId() {
