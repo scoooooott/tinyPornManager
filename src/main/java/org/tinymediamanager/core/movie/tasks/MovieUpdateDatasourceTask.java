@@ -1438,7 +1438,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     // thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("" + exc);
+      LOGGER.error("visit file failed: {}", exc.getMessage());
+      // add some more trace infos to get a clue what exactly failed
+      LOGGER.trace("visit file failed", exc);
       return CONTINUE;
     }
   }

@@ -1018,7 +1018,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
     }
     catch (IOException e) {
-      LOGGER.error(e.getMessage());
+      LOGGER.error("list files failed: {}", e.getMessage());
+      // add some more trace infos to get a clue what exactly failed
+      LOGGER.trace("visit file failed", e);
     }
     return fileNames;
   }
@@ -1059,7 +1061,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     // If you don't override this method and an error occurs, an IOException is thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error(exc.getMessage());
+      LOGGER.error("visit file failed: {}", exc.getMessage());
+      // add some more trace infos to get a clue what exactly failed
+      LOGGER.trace("visit file failed", exc);
       return CONTINUE;
     }
   }
