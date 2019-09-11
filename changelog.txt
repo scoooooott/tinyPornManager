@@ -5,6 +5,7 @@ x crash on startup if some images could not be loaded
 x catch more exceptions on file download #642
 x do not try to open dialogs on disconnected screens #640
 x delete subtitle archive after extracting #641
+x fix update data sources from Google Drive
 
 
 Version 3.0.4

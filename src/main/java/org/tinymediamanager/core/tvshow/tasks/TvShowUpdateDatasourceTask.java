@@ -25,7 +25,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +44,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.AbstractFileVisitor;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -1025,7 +1025,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     return fileNames;
   }
 
-  private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
+  private static class AllFilesRecursive extends AbstractFileVisitor {
     private HashSet<Path> fFound = new HashSet<>();
 
     @Override
@@ -1057,14 +1057,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       return CONTINUE;
     }
 
-    // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is thrown.
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("visit file failed: {}", exc.getMessage());
-      // add some more trace infos to get a clue what exactly failed
-      LOGGER.trace("visit file failed", exc);
-      return CONTINUE;
+    protected Logger getLogger() {
+      return LOGGER;
     }
   }
 

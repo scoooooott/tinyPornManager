@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +47,7 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.AbstractFileVisitor;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -1210,7 +1209,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   /**
    * simple NIO File.listFiles() replacement<br>
    * returns ONLY regular files (NO folders, NO hidden) in specified dir, filtering against our badwords (NOT recursive)
-   * 
+   *
    * @param directory
    *          the folder to list the files for
    * @return list of files&folders
@@ -1226,12 +1225,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             fileNames.add(path.toAbsolutePath());
           }
           else {
-            LOGGER.debug("Skipping: " + path);
+            LOGGER.debug("Skipping: {}", path);
           }
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.error("error on listFilesOnly: {}", e.getMessage());
     }
     return fileNames;
   }
@@ -1239,7 +1239,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   /**
    * simple NIO File.listFiles() replacement<br>
    * returns all files & folders in specified dir, filtering against our skip folders (NOT recursive)
-   * 
+   *
    * @param directory
    *          the folder to list the items for
    * @return list of files&folders
@@ -1254,11 +1254,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           fileNames.add(path.toAbsolutePath());
         }
         else {
-          LOGGER.debug("Skipping: " + path);
+          LOGGER.debug("Skipping: {}", path);
         }
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOGGER.error("error on listFilesAndDirs: {}", e.getMessage());
     }
     return fileNames;
   }
@@ -1273,35 +1274,32 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
-      // can not happen, since we overrided visitFileFailed, which throws no
-      // exception ;)
+      // can not happen, since we overrided visitFileFailed, which throws no exception ;)
     }
     return visitor.fFound;
   }
 
-  private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
+  private static class AllFilesRecursive extends AbstractFileVisitor {
     private HashSet<Path> fFound = new HashSet<>();
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-      visFileAll++;
+      incVisFile();
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
-      // System.out.println("(" + attr.size() + "bytes)");
-      // System.out.println("(" + attr.creationTime() + " date)");
       return CONTINUE;
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-      preDirAll++;
+      incPreDir();
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
           || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
-        LOGGER.debug("Skipping dir: " + dir);
+        LOGGER.debug("Skipping dir: {}", dir);
         return SKIP_SUBTREE;
       }
       return CONTINUE;
@@ -1309,17 +1307,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-      postDirAll++;
+      incPostDir();
       return CONTINUE;
     }
 
-    // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is
-    // thrown.
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("" + exc);
-      return CONTINUE;
+    protected Logger getLogger() {
+      return LOGGER;
     }
   }
 
@@ -1335,12 +1329,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
-      // can not happen, since we override visitFileFailed, which throws no
-      // exception ;)
+      // can not happen, since we override visitFileFailed, which throws no exception ;)
     }
   }
 
-  private class SearchAndParseVisitor implements FileVisitor<Path> {
+  private class SearchAndParseVisitor extends AbstractFileVisitor {
     private Path              datasource;
     private ArrayList<String> unstackedRoot = new ArrayList<>(); // only for
                                                                  // folder
@@ -1349,13 +1342,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                                                                  // video
                                                                  // folders
 
-    protected SearchAndParseVisitor(Path datasource) {
+    SearchAndParseVisitor(Path datasource) {
       this.datasource = datasource;
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-      visFile++;
+      incVisFile();
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase(Locale.ROOT))) {
@@ -1378,11 +1371,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-      preDir++;
+      incPreDir();
       String fn = dir.getFileName().toString().toUpperCase(Locale.ROOT);
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
           || Files.exists(dir.resolve(".nomedia")) || MovieModuleManager.SETTINGS.getSkipFolder().contains(dir.toFile().getAbsolutePath())) {
-        LOGGER.debug("Skipping dir: " + dir);
+        LOGGER.debug("Skipping dir: {}", dir);
         return SKIP_SUBTREE;
       }
       return CONTINUE;
@@ -1390,7 +1383,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-      postDir++;
+      incPostDir();
       if (cancel) {
         return TERMINATE;
       }
@@ -1410,8 +1403,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
         }
         if (update) {
-          // this.videofolders.remove(dir);
-
           // check if any existing movie has already the same (sub)dir
           // IF we already have a movie a level deeper, we HAVE TO treat this folder as MMD!
           // we always start to parse from deepest level down to root, so they should be all already populated
@@ -1433,15 +1424,30 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       return CONTINUE;
     }
 
-    // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is
-    // thrown.
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error("visit file failed: {}", exc.getMessage());
-      // add some more trace infos to get a clue what exactly failed
-      LOGGER.trace("visit file failed", exc);
-      return CONTINUE;
+    protected Logger getLogger() {
+      return LOGGER;
     }
+  }
+
+  /**
+   * synchronized increment of visFile
+   */
+  private static synchronized void incVisFile() {
+    visFile++;
+  }
+
+  /**
+   * synchronized increment of preDir
+   */
+  private static synchronized void incPreDir() {
+    preDir++;
+  }
+
+  /**
+   * synchronized increment of postDir
+   */
+  private static synchronized void incPostDir() {
+    postDir++;
   }
 }
