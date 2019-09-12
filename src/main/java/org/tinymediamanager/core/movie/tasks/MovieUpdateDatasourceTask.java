@@ -1310,11 +1310,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       incPostDir();
       return CONTINUE;
     }
-
-    @Override
-    protected Logger getLogger() {
-      return LOGGER;
-    }
   }
 
   // **************************************
@@ -1422,11 +1417,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       return CONTINUE;
-    }
-
-    @Override
-    protected Logger getLogger() {
-      return LOGGER;
     }
   }
 

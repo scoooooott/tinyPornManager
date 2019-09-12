@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * the class {@link AbstractFileVisitor} is used to provide a robust {@link FileVisitor} which is capable to parse Google Drive File Stream paths
@@ -35,25 +36,30 @@ import org.slf4j.Logger;
  * @author Manuel Laggner
  */
 public abstract class AbstractFileVisitor implements FileVisitor<Path> {
-
-  protected abstract Logger getLogger();
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFileVisitor.class);
 
   // If there is some error accessing the file, let the user know.
   // If you don't override this method and an error occurs, an IOException is thrown.
   @Override
   public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
     if (e instanceof FileSystemLoopException) {
-      getLogger().info("FileSystemLoopException detected, traversiong the alternate way");
+      LOGGER.trace("FileSystemLoopException detected: {}", path);
+      LOGGER.trace("Problematic path: {} - isDir: {} - isFile: {}", path, path.toFile().isDirectory(), path.toFile().isFile());
       // in some cases (e.g. Google Drive File Stream) loop detection for directories works incorrectly
       // fallback: try to traverse in an alternate way
-      traverseTreeAlternate(path);
+      if (path.toFile().isDirectory()) {
+        traverseTreeAlternate(path);
+      }
+      else {
+        traverseTreeAlternate(path.getParent());
+      }
       return FileVisitResult.SKIP_SUBTREE;
     }
     else {
       // any other problem here
-      getLogger().error("visit file failed: {}", e.getMessage());
+      LOGGER.error("visit file failed: {}", e.getMessage());
       // add some more trace infos to get a clue what exactly failed
-      getLogger().trace("visit file failed", e);
+      LOGGER.trace("visit file failed", e);
       return CONTINUE;
     }
   }
@@ -65,11 +71,11 @@ public abstract class AbstractFileVisitor implements FileVisitor<Path> {
       preVisitDirectory(parent, pathAttr);
 
       for (Path path : directoryStream) {
-        if (Files.isDirectory(path)) {
+        if (path.toFile().isDirectory()) {
           traverseTreeAlternate(path);
         }
         else {
-          BasicFileAttributes fileAttr = Files.readAttributes(parent, BasicFileAttributes.class);
+          BasicFileAttributes fileAttr = Files.readAttributes(path, BasicFileAttributes.class);
           visitFile(path, fileAttr);
         }
       }
@@ -77,7 +83,7 @@ public abstract class AbstractFileVisitor implements FileVisitor<Path> {
       postVisitDirectory(parent, null);
     }
     catch (IOException e) {
-      getLogger().error("error on listFilesAndDirs: {}", e.getMessage());
+      LOGGER.error("error on traverseTreeAlternate: {}", e.getMessage());
     }
   }
 }

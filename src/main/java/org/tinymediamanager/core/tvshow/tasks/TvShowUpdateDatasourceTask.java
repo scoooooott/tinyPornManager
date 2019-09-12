@@ -1056,11 +1056,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       incPostDir();
       return CONTINUE;
     }
-
-    @Override
-    protected Logger getLogger() {
-      return LOGGER;
-    }
   }
 
   private static void resetCounters() {
