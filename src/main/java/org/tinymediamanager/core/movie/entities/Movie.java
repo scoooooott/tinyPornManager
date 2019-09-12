@@ -2120,7 +2120,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public MediaFile getMainVideoFile() {
-    MediaFile vid = null;
+    MediaFile vid = new MediaFile();
 
     if (stacked) {
       // search the first stacked media file (e.g. CD1)
@@ -2138,12 +2138,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    if (vid != null) {
-      return vid;
-    }
-
-    // cannot happen - movie MUST always have a video file
-    return new MediaFile();
+    return vid;
   }
 
   public MediaFile getMainDVDVideoFile() {
