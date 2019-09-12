@@ -2127,8 +2127,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
       vid = getMediaFiles(MediaFileType.VIDEO).stream().min(Comparator.comparingInt(MediaFile::getStacking)).orElse(new MediaFile());
     }
     else {
-      // get the biggest one
-      vid = getBiggestMediaFile(MediaFileType.VIDEO);
+      // try to find correct main movie file (DVD only)
+      if (isDisc()) {
+        vid = getMainDVDVideoFile();
+      }
+
+      // we didn't find one, so get the biggest one
+      if (vid.getFilename().isEmpty()) {
+        vid = getBiggestMediaFile(MediaFileType.VIDEO);
+      }
     }
 
     if (vid != null) {
@@ -2137,6 +2144,27 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // cannot happen - movie MUST always have a video file
     return new MediaFile();
+  }
+
+  public MediaFile getMainDVDVideoFile() {
+    MediaFile vid = new MediaFile();
+
+    // find IFO file with longest duration
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.getExtension().equalsIgnoreCase("ifo")) {
+        if (mf.getDuration() > vid.getDuration()) {
+          vid = mf;
+        }
+      }
+    }
+    // find the vob matching to our ifo
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.getExtension().equalsIgnoreCase("vob") && mf.getBasename().equalsIgnoreCase(vid.getBasename())) {
+        vid = mf;
+        break;
+      }
+    }
+    return vid;
   }
 
   @Override
