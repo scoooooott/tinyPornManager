@@ -529,7 +529,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             }
           }
 
-          mfs.add(mf);
+          // not adding unknown MFs to list....
+          if (mf.getType() != MediaFileType.UNKNOWN) {
+            mfs.add(mf);
+          }
         }
       }
       allFiles.clear();
