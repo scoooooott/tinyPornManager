@@ -1,10 +1,10 @@
 package org.tinymediamanager.scraper.mpdbtv.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
-public class HDClearArts {
+import com.google.gson.annotations.SerializedName;
+
+public class HDClearArt {
 
   @SerializedName("id")
   public Integer id;

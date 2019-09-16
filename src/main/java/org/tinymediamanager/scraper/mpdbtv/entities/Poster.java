@@ -25,7 +25,7 @@ public class Poster {
   public Integer imageType;
 
   @SerializedName("languages")
-  public List<Object> languages = null;
+  public List<Languages> languages = null;
 
   @SerializedName("rating")
   public double rating;

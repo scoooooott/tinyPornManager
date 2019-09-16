@@ -17,13 +17,13 @@ public class MovieEntity {
   public Integer runtime;
 
   @SerializedName("budget")
-  public Object budget;
+  public Integer budget;
 
   @SerializedName("saga_id")
-  public Object sagaId;
+  public Integer sagaId;
 
   @SerializedName("saga_order")
-  public Object sagaOrder;
+  public Integer sagaOrder;
 
   @SerializedName("views")
   public Integer views;
@@ -56,13 +56,13 @@ public class MovieEntity {
   public String idImdb;
 
   @SerializedName("id_tmdb")
-  public Object idTmdb;
+  public String idTmdb;
 
   @SerializedName("title")
   public String title;
 
   @SerializedName("tagline")
-  public Object tagline;
+  public String tagline;
 
   @SerializedName("plot")
   public String plot;
@@ -76,20 +76,12 @@ public class MovieEntity {
   @SerializedName("releases")
   public List<Release> releases = null;
 
-  @SerializedName("countries")
-  public List<Object> countries = null;
 
   @SerializedName("genres")
   public List<Genre> genres = null;
 
   @SerializedName("studios")
   public List<Studio> studios = null;
-
-  @SerializedName("saga")
-  public Object saga;
-
-  @SerializedName("sorttitle")
-  public Object sorttitle;
 
   @SerializedName("directors")
   public List<Director> directors = null;
@@ -104,18 +96,18 @@ public class MovieEntity {
   public List<Poster> posters = null;
 
   @SerializedName("fanarts")
-  public List<Object> fanarts = null;
+  public List<Fanart> fanarts = null;
 
   @SerializedName("discarts")
-  public List<Object> discarts = null;
+  public List<DiscArt> discarts = null;
 
   @SerializedName("hdlogos")
-  public List<Object> hdlogos = null;
+  public List<HDLogo> hdlogos = null;
 
   @SerializedName("hdcleararts")
-  public List<Object> hdcleararts = null;
+  public List<HDClearArt> hdcleararts = null;
 
   @SerializedName("trailers")
-  public List<Object> trailers = null;
+  public List<Trailer> trailers = null;
   
 }

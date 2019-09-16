@@ -25,12 +25,17 @@ import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mpdbtv.entities.Actor;
 import org.tinymediamanager.scraper.mpdbtv.entities.Director;
+import org.tinymediamanager.scraper.mpdbtv.entities.DiscArt;
+import org.tinymediamanager.scraper.mpdbtv.entities.Fanart;
 import org.tinymediamanager.scraper.mpdbtv.entities.Genre;
+import org.tinymediamanager.scraper.mpdbtv.entities.HDClearArt;
+import org.tinymediamanager.scraper.mpdbtv.entities.HDLogo;
 import org.tinymediamanager.scraper.mpdbtv.entities.MovieEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.Poster;
 import org.tinymediamanager.scraper.mpdbtv.entities.Producer;
 import org.tinymediamanager.scraper.mpdbtv.entities.SearchEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.Studio;
+import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
 
@@ -172,16 +177,15 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     //Trailers
     ArrayList<MediaTrailer> mediaTrailers = new ArrayList<>();
 
-    for(Object trailer : scrapeResult.trailers) {
-      LinkedTreeMap<Object,Object> map = (LinkedTreeMap<Object, Object>) trailer;
+    for(Trailer trailer : scrapeResult.trailers) {
 
-      for(int i = 0; i < map.size(); i++) {
         MediaTrailer mt = new MediaTrailer();
         mt.setName(scrapeResult.title);
-        mt.setUrl((String) map.get("url"));
-        mt.setQuality((String) map.get("quality"));
+        mt.setUrl(trailer.url);
+        mt.setQuality(trailer.quality);
+
         mediaTrailers.add(mt);
-      }
+
     }
 
     //Studios
@@ -203,6 +207,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaCastMember.setImageUrl(director.thumb);
       mediaCastMember.setCharacter(director.role);
       mediaCastMember.setId(providerInfo.getId(),director.id);
+
 
       castMembers.add(mediaCastMember);
 
@@ -228,6 +233,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaCastMember.setImageUrl(producer.thumb);
       mediaCastMember.setCharacter(producer.role);
 
+
       castMembers.add(mediaCastMember);
 
     }
@@ -242,11 +248,49 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       metadata.addMediaArt(mediaArtwork);
     }
 
+    //Fanarts
+    for(Fanart fanart : scrapeResult.fanarts) {
+      MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
+      mediaArtwork.setPreviewUrl(fanart.preview);
+      mediaArtwork.setDefaultUrl(fanart.original);
+      mediaArtwork.setLikes(fanart.votes);
+
+      metadata.addMediaArt(mediaArtwork);
+    }
+
+    //DiscArt
+    for(DiscArt discArt : scrapeResult.discarts) {
+      MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.DISC);
+      mediaArtwork.setPreviewUrl(discArt.preview);
+      mediaArtwork.setDefaultUrl(discArt.original);
+      mediaArtwork.setLikes(discArt.votes);
+
+      metadata.addMediaArt(mediaArtwork);
+    }
+
+    //HDClearArt
+    for (HDClearArt hdClearArt : scrapeResult.hdcleararts) {
+      MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.CLEARART);
+      mediaArtwork.setPreviewUrl(hdClearArt.preview);
+      mediaArtwork.setDefaultUrl(hdClearArt.original);
+      mediaArtwork.setLikes(hdClearArt.votes);
+
+      metadata.addMediaArt(mediaArtwork);
+    }
+
+    //HDLogo
+    for (HDLogo hdLogo : scrapeResult.hdlogos) {
+      MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.CLEARLOGO);
+      mediaArtwork.setPreviewUrl(hdLogo.preview);
+      mediaArtwork.setDefaultUrl(hdLogo.original);
+      mediaArtwork.setLikes(hdLogo.votes);
+    }
+
 
     metadata.setId("allocine", scrapeResult.idAllocine);
     metadata.setId("imdb",scrapeResult.idImdb);
     metadata.setId("tmdb",scrapeResult.idTmdb);
-    metadata.setTagline((String) scrapeResult.tagline);
+    metadata.setTagline(scrapeResult.tagline);
     metadata.setReleaseDate(new Date(scrapeResult.firstRelease));
     metadata.setTitle(scrapeResult.title);
     metadata.setOriginalTitle(scrapeResult.originalTitle);
