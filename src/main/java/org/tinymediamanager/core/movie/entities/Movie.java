@@ -2157,9 +2157,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
         }
       }
     }
-    // no IFO? - no VOB!
+    // no IFO? - might be bluray
     if (vid == null) {
-      LOGGER.debug("No IFO file found! {}", getPathNIO());
       return vid;
     }
 
