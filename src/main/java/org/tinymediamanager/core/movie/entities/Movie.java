@@ -2131,18 +2131,23 @@ public class Movie extends MediaEntity implements IMediaInformation {
       if (isDisc()) {
         vid = getMainDVDVideoFile();
       }
-
-      // we didn't find one, so get the biggest one
-      if (vid.getFilename().isEmpty()) {
-        vid = getBiggestMediaFile(MediaFileType.VIDEO);
-      }
+    }
+    // we didn't find one, so get the biggest one
+    if (vid == null || vid.getFilename().isEmpty()) {
+      vid = getBiggestMediaFile(MediaFileType.VIDEO);
     }
 
-    return vid;
+    if (vid != null) {
+      return vid;
+    }
+
+    LOGGER.warn("Movie without video file? {}", getPathNIO());
+    // cannot happen - movie MUST always have a video file
+    return new MediaFile();
   }
 
   public MediaFile getMainDVDVideoFile() {
-    MediaFile vid = new MediaFile();
+    MediaFile vid = null;
 
     // find IFO file with longest duration
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
