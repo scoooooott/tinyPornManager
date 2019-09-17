@@ -2152,11 +2152,17 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // find IFO file with longest duration
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
       if (mf.getExtension().equalsIgnoreCase("ifo")) {
-        if (mf.getDuration() > vid.getDuration()) {
+        if (vid == null || mf.getDuration() > vid.getDuration()) {
           vid = mf;
         }
       }
     }
+    // no IFO? - no VOB!
+    if (vid == null) {
+      LOGGER.debug("No IFO file found! {}", getPathNIO());
+      return vid;
+    }
+
     // find the vob matching to our ifo
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
       if (mf.getExtension().equalsIgnoreCase("vob") && mf.getBasename().equalsIgnoreCase(vid.getBasename())) {
