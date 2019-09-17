@@ -36,6 +36,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1615,10 +1617,10 @@ public class Utils {
       return filesFound;
     }
     try {
-      Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      Files.walkFileTree(root, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new AbstractFileVisitor() {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-          if (Files.isRegularFile(file)) {
+          if (Utils.isRegularFile(file)) {
             filesFound.add(file);
           }
           return FileVisitResult.CONTINUE;

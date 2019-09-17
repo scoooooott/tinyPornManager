@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -168,7 +167,7 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       List<String> regexPatterns = Settings.getInstance().getCleanupFileType();
 
       for (Movie movie : selectedMovies) {
-        for (Path file : MovieHelpers.getUnknownFilesbyRegex(movie.getPathNIO(), regexPatterns )) {
+        for (Path file : MovieHelpers.getUnknownFilesByRegex(movie.getPathNIO(), regexPatterns)) {
           FileContainer fileContainer = new FileContainer();
           fileContainer.movie = movie;
           fileContainer.file = file;

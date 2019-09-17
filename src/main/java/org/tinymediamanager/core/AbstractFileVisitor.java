@@ -26,6 +26,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,25 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractFileVisitor implements FileVisitor<Path> {
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFileVisitor.class);
+
+  // copied the implementation from the class {@link java.nio.file.SimpleFileVisitor}
+  @Override
+  public FileVisitResult preVisitDirectory(Path var1, BasicFileAttributes var2) throws IOException {
+    Objects.requireNonNull(var1);
+    Objects.requireNonNull(var2);
+    return FileVisitResult.CONTINUE;
+  }
+
+  // copied the implementation from the class {@link java.nio.file.SimpleFileVisitor}
+  public FileVisitResult postVisitDirectory(Path var1, IOException var2) throws IOException {
+    Objects.requireNonNull(var1);
+    if (var2 != null) {
+      throw var2;
+    }
+    else {
+      return FileVisitResult.CONTINUE;
+    }
+  }
 
   // If there is some error accessing the file, let the user know.
   // If you don't override this method and an error occurs, an IOException is thrown.
