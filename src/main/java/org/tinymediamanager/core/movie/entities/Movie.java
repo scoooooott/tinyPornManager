@@ -1677,7 +1677,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       if (!prefix.isEmpty()) {
         int rtvob = 0;
         for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-          if (mf.getFilename().startsWith(prefix) && ifo.getFilename() != mf.getFilename()) {
+          if (mf.getFilename().startsWith(prefix) && !ifo.getFilename().equals(mf.getFilename())) {
             rtvob += mf.getDuration();
             LOGGER.trace("VOB:{} duration:{} accumulated:{}", mf.getFilename(), mf.getDuration(), rtvob);
           }
