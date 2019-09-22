@@ -163,7 +163,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
             tf = new JTextField(config.getValue(entry.getKey()));
           }
 
-          tf.setPreferredSize(new Dimension(100, 24));
+          tf.setPreferredSize(new Dimension(250, 24));
           tf.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent e) {
