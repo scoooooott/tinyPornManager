@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 - 2019 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.mpdbtv;
 
 import java.io.IOException;
@@ -39,30 +54,30 @@ import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import com.google.gson.internal.LinkedTreeMap;
-
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MpdbMetadataProvider.class);
+  private static final Logger            LOGGER       = LoggerFactory.getLogger(MpdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static final String API_KEY = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
-  private static final String FORMAT = "json";
+  private static final String            API_KEY      = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
+  private static final String            FORMAT       = "json";
 
-  private Controller controller;
+  private Controller                     controller;
 
   public MpdbMetadataProvider() {
     this.controller = new Controller(false);
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv", "\"<html><h3>MPDB.tv/h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"", MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
+    MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv",
+        "\"<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
+        MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
 
     providerInfo.setVersion(MpdbMetadataProvider.class);
-    providerInfo.getConfig().addText("aboKey","",false);
-    providerInfo.getConfig().addText("username","",false);
+    providerInfo.getConfig().addText("aboKey", "", false);
+    providerInfo.getConfig().addText("username", "", false);
     providerInfo.getConfig().load();
 
     return providerInfo;
@@ -75,12 +90,12 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     List<MediaSearchResult> mediaResult = new ArrayList<>();
     List<SearchEntity> searchResult;
 
-    if ( StringUtils.isBlank(getAboKey())) {
+    if (StringUtils.isBlank(getAboKey())) {
       LOGGER.warn("no ABO Key found");
       return mediaResult;
     }
 
-    if ( StringUtils.isBlank(getUserName())) {
+    if (StringUtils.isBlank(getUserName())) {
       LOGGER.warn("no Username found");
       return mediaResult;
     }
@@ -88,40 +103,35 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     LOGGER.info("========= BEGIN MPDB.tv Scraper Search for Movie: {} ", mediaSearchOptions.getQuery());
 
     try {
-      searchResult = controller.getSearchInformation(API_KEY,
-                                  getEncodedUserName(),
-                                  getSubscriptionKey(),
-                                  mediaSearchOptions.getQuery(),
-                                  mediaSearchOptions.getLanguage(),
-                            true, FORMAT);
+      searchResult = controller.getSearchInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(), mediaSearchOptions.getQuery(),
+          mediaSearchOptions.getLanguage(), true, FORMAT);
 
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
 
-    if( searchResult == null) {
+    if (searchResult == null) {
       LOGGER.warn("no result from MPDB.tv");
       return mediaResult;
     }
 
-    for( SearchEntity entity: searchResult ) {
+    for (SearchEntity entity : searchResult) {
 
       MediaSearchResult result = new MediaSearchResult(MpdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
 
-      result.setId(providerInfo.getId(),entity.id);
+      result.setId(providerInfo.getId(), entity.id);
       result.setOriginalTitle(entity.original_title);
       result.setTitle(entity.title);
       result.setYear(entity.year);
-      result.setId("imdb_id",entity.id_imdb);
-      result.setId("allocine_id",entity.id_allocine);
+      result.setId("imdb_id", entity.id_imdb);
+      result.setId("allocine_id", entity.id_allocine);
       result.setUrl(entity.url);
       result.setPosterUrl(entity.posterUrl);
 
       mediaResult.add(result);
     }
-
-
 
     return mediaResult;
   }
@@ -134,88 +144,85 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     MediaMetadata metadata = new MediaMetadata(MpdbMetadataProvider.providerInfo.getId());
     MovieEntity scrapeResult;
 
-    if ( StringUtils.isBlank(getAboKey())) {
+    if (StringUtils.isBlank(getAboKey())) {
       LOGGER.warn("no ABO Key found");
       return metadata;
     }
 
-    if ( StringUtils.isBlank(getUserName())) {
+    if (StringUtils.isBlank(getUserName())) {
       LOGGER.warn("no Username found");
       return metadata;
     }
 
     LOGGER.info("========= BEGIN MPDB.tv scraping");
     try {
-      scrapeResult = controller.getScrapeInformation(API_KEY,
-                                                     getEncodedUserName(),
-                                                     getSubscriptionKey(),
-                                                     Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())),
-                                                     mediaScrapeOptions.getLanguage(),null,FORMAT);
-    } catch (IOException e) {
+      scrapeResult = controller.getScrapeInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(),
+          Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())), mediaScrapeOptions.getLanguage(), null, FORMAT);
+    }
+    catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
 
-    if( scrapeResult == null) {
+    if (scrapeResult == null) {
       LOGGER.warn("no result from MPDB.tv");
       return metadata;
     }
 
-    //Rating
+    // Rating
     MediaRating rating = new MediaRating(providerInfo.getId());
     rating.setRating(scrapeResult.rating);
     rating.setVoteCount(scrapeResult.ratingVotes);
     rating.setMaxValue(10);
 
-    //Genres
+    // Genres
     ArrayList<MediaGenres> mediaGenres = new ArrayList<>();
 
-    for(Genre genre : scrapeResult.genres ) {
+    for (Genre genre : scrapeResult.genres) {
       mediaGenres.add(MediaGenres.getGenre(genre.name));
     }
 
-    //Trailers
+    // Trailers
     ArrayList<MediaTrailer> mediaTrailers = new ArrayList<>();
 
-    for(Trailer trailer : scrapeResult.trailers) {
+    for (Trailer trailer : scrapeResult.trailers) {
 
-        MediaTrailer mt = new MediaTrailer();
-        mt.setName(scrapeResult.title);
-        mt.setUrl(trailer.url);
-        mt.setQuality(trailer.quality);
+      MediaTrailer mt = new MediaTrailer();
+      mt.setName(scrapeResult.title);
+      mt.setUrl(trailer.url);
+      mt.setQuality(trailer.quality);
 
-        mediaTrailers.add(mt);
+      mediaTrailers.add(mt);
 
     }
 
-    //Studios
+    // Studios
     ArrayList<String> productionCompanies = new ArrayList<>();
 
-    for( Studio studio : scrapeResult.studios ) {
+    for (Studio studio : scrapeResult.studios) {
       productionCompanies.add(studio.name);
     }
 
     metadata.setProductionCompanies(productionCompanies);
 
-    //Cast
+    // Cast
     ArrayList<MediaCastMember> castMembers = new ArrayList<>();
 
-    for ( Director director : scrapeResult.directors) {
+    for (Director director : scrapeResult.directors) {
       MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
       mediaCastMember.setName(director.name);
       mediaCastMember.setPart(director.departement);
       mediaCastMember.setImageUrl(director.thumb);
       mediaCastMember.setCharacter(director.role);
-      mediaCastMember.setId(providerInfo.getId(),director.id);
-
+      mediaCastMember.setId(providerInfo.getId(), director.id);
 
       castMembers.add(mediaCastMember);
 
     }
 
-    for ( Actor actor : scrapeResult.actors) {
+    for (Actor actor : scrapeResult.actors) {
       MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.ACTOR);
-      mediaCastMember.setId(providerInfo.getId(),actor.id);
+      mediaCastMember.setId(providerInfo.getId(), actor.id);
       mediaCastMember.setName(actor.name);
       mediaCastMember.setPart(actor.departement);
       mediaCastMember.setImageUrl(actor.thumb);
@@ -225,21 +232,20 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
     }
 
-    for ( Producer producer : scrapeResult.producers) {
+    for (Producer producer : scrapeResult.producers) {
       MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
-      mediaCastMember.setId(providerInfo.getId(),producer.id);
+      mediaCastMember.setId(providerInfo.getId(), producer.id);
       mediaCastMember.setName(producer.name);
       mediaCastMember.setPart(producer.departement);
       mediaCastMember.setImageUrl(producer.thumb);
       mediaCastMember.setCharacter(producer.role);
 
-
       castMembers.add(mediaCastMember);
 
     }
 
-    //Poster
-    for( Poster poster : scrapeResult.posters) {
+    // Poster
+    for (Poster poster : scrapeResult.posters) {
       MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
       mediaArtwork.setPreviewUrl(poster.preview);
       mediaArtwork.setDefaultUrl(poster.original);
@@ -248,8 +254,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       metadata.addMediaArt(mediaArtwork);
     }
 
-    //Fanarts
-    for(Fanart fanart : scrapeResult.fanarts) {
+    // Fanarts
+    for (Fanart fanart : scrapeResult.fanarts) {
       MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
       mediaArtwork.setPreviewUrl(fanart.preview);
       mediaArtwork.setDefaultUrl(fanart.original);
@@ -258,8 +264,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       metadata.addMediaArt(mediaArtwork);
     }
 
-    //DiscArt
-    for(DiscArt discArt : scrapeResult.discarts) {
+    // DiscArt
+    for (DiscArt discArt : scrapeResult.discarts) {
       MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.DISC);
       mediaArtwork.setPreviewUrl(discArt.preview);
       mediaArtwork.setDefaultUrl(discArt.original);
@@ -268,7 +274,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       metadata.addMediaArt(mediaArtwork);
     }
 
-    //HDClearArt
+    // HDClearArt
     for (HDClearArt hdClearArt : scrapeResult.hdcleararts) {
       MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.CLEARART);
       mediaArtwork.setPreviewUrl(hdClearArt.preview);
@@ -278,7 +284,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       metadata.addMediaArt(mediaArtwork);
     }
 
-    //HDLogo
+    // HDLogo
     for (HDLogo hdLogo : scrapeResult.hdlogos) {
       MediaArtwork mediaArtwork = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.CLEARLOGO);
       mediaArtwork.setPreviewUrl(hdLogo.preview);
@@ -286,10 +292,9 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaArtwork.setLikes(hdLogo.votes);
     }
 
-
     metadata.setId("allocine", scrapeResult.idAllocine);
-    metadata.setId("imdb",scrapeResult.idImdb);
-    metadata.setId("tmdb",scrapeResult.idTmdb);
+    metadata.setId("imdb", scrapeResult.idImdb);
+    metadata.setId("tmdb", scrapeResult.idTmdb);
     metadata.setTagline(scrapeResult.tagline);
     metadata.setReleaseDate(new Date(scrapeResult.firstRelease));
     metadata.setTitle(scrapeResult.title);
