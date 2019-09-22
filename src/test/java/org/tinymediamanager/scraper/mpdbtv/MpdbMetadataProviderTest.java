@@ -54,8 +54,8 @@ public class MpdbMetadataProviderTest {
   @Test
   public void testSearch() throws ScrapeException {
     MpdbMetadataProvider mp = new MpdbMetadataProvider();
-    mp.getProviderInfo().getConfig().setValue("mpdb_aboKey", System.getProperty("aboKey"));
-    mp.getProviderInfo().getConfig().setValue("mpdb_username", System.getProperty("username"));
+    mp.getProviderInfo().getConfig().setValue("aboKey", System.getProperty("mpdb_aboKey"));
+    mp.getProviderInfo().getConfig().setValue("username", System.getProperty("mpdb_username"));
     mp.getProviderInfo().getConfig().save();
 
     MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
