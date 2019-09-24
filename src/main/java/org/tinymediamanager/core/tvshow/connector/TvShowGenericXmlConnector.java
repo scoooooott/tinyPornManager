@@ -562,7 +562,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
   protected void addDateAdded() {
     Element dateadded = document.createElement("dateadded");
     if (tvShow.getDateAdded() != null) {
-      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getDateAdded()));
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tvShow.getDateAdded()));
     }
     root.appendChild(dateadded);
   }
