@@ -6,6 +6,7 @@ x catch more exceptions on file download #642
 x do not try to open dialogs on disconnected screens #640
 x delete subtitle archive after extracting #641
 x fix update data sources from Google Drive
+x correct date format style in files
 
 
 Version 3.0.4

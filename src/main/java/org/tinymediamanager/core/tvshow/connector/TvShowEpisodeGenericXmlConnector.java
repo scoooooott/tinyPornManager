@@ -449,7 +449,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
   protected void addDateAdded(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     Element dateadded = document.createElement("dateadded");
     if (episode.getDateAdded() != null) {
-      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(episode.getDateAdded()));
+      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(episode.getDateAdded()));
     }
     root.appendChild(dateadded);
   }
