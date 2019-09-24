@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.List;
+
 /**
  * The interface ITmmModule. For use as a connector to a tmm module
  * 
@@ -33,4 +35,6 @@ public interface ITmmModule {
   void initializeDatabase() throws Exception;
 
   void saveSettings() throws Exception;
+
+  List<String> getStartupMessages();
 }

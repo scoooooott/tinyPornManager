@@ -17,6 +17,9 @@ package org.tinymediamanager.core.movie;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -34,6 +37,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -46,23 +50,27 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class MovieModuleManager implements ITmmModule {
-  public static final MovieSettings SETTINGS     = MovieSettings.getInstance();
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  public static final MovieSettings   SETTINGS     = MovieSettings.getInstance();
 
-  private static final String       MODULE_TITLE = "Movie management";
-  private static final String       MOVIE_DB     = "movies.db";
-  private static final Logger       LOGGER       = LoggerFactory.getLogger(MovieModuleManager.class);
-  private static MovieModuleManager instance;
+  private static final String         MODULE_TITLE = "Movie management";
+  private static final String         MOVIE_DB     = "movies.db";
+  private static final Logger         LOGGER       = LoggerFactory.getLogger(MovieModuleManager.class);
+  private static MovieModuleManager   instance;
 
-  private boolean                   enabled;
-  private MVStore                   mvStore;
-  private ObjectWriter              movieObjectWriter;
-  private ObjectWriter              movieSetObjectWriter;
+  private boolean                     enabled;
+  private MVStore                     mvStore;
+  private ObjectWriter                movieObjectWriter;
+  private ObjectWriter                movieSetObjectWriter;
 
-  private MVMap<UUID, String>       movieMap;
-  private MVMap<UUID, String>       movieSetMap;
+  private MVMap<UUID, String>         movieMap;
+  private MVMap<UUID, String>         movieSetMap;
+
+  private List<String>                startupMessages;
 
   private MovieModuleManager() {
     enabled = false;
+    startupMessages = new ArrayList<>();
   }
 
   public static MovieModuleManager getInstance() {
@@ -80,9 +88,31 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void startUp() {
     // configure database
-    mvStore = new MVStore.Builder().fileName(Paths.get(Globals.settings.getSettingsFolder(), MOVIE_DB).toString()).compressHigh()
-        .backgroundExceptionHandler((t, e) -> LOGGER.error("Error in the background thread of the persistent cache", e)).autoCommitBufferSize(4096)
-        .open();
+    Path databaseFile = Paths.get(Globals.settings.getSettingsFolder(), MOVIE_DB);
+    try {
+      mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
+    }
+    catch (Exception e) {
+      // look if the file is locked by another process (rethrow rather than delete the db file)
+      if (e instanceof IllegalStateException && e.getMessage().contains("file is locked")) {
+        throw e;
+      }
+
+      LOGGER.error("Could not open database file: {}", e.getMessage());
+      LOGGER.info("starting over with an empty database file");
+
+      try {
+        Utils.deleteFileSafely(Paths.get(Globals.BACKUP_FOLDER, MOVIE_DB + ".corrupted"));
+        Utils.moveFileSafe(databaseFile, Paths.get(Globals.BACKUP_FOLDER, MOVIE_DB + ".corrupted"));
+        mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
+
+        // inform user that the DB could not be loaded
+        startupMessages.add(BUNDLE.getString("movie.loaddb.failed"));
+      }
+      catch (Exception e1) {
+        LOGGER.error("could not move old database file and create a new one: {}", e1.getMessage());
+      }
+    }
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -200,5 +230,10 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void saveSettings() {
     SETTINGS.saveSettings();
+  }
+
+  @Override
+  public List<String> getStartupMessages() {
+    return startupMessages;
   }
 }

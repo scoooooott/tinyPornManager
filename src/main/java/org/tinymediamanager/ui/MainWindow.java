@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
@@ -272,11 +273,22 @@ public class MainWindow extends JFrame {
       }
     }, AWTEvent.MOUSE_EVENT_MASK);
 
-    // inform user is MI could not be loaded
+    // inform user that MI could not be loaded
     if (Platform.isLinux() && StringUtils.isBlank(MediaInfo.version())) {
       SwingUtilities.invokeLater(() -> {
         JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("mediainfo.failed.linux")); //$NON-NLS-1$
       });
+    }
+
+    // inform user that something happened while loading the modules
+    for (ITmmModule module : TmmModuleManager.getInstance().getModules()) {
+      if (!module.getStartupMessages().isEmpty()) {
+        for (String message : module.getStartupMessages()) {
+          SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(MainWindow.this, message); // $NON-NLS-1$
+          });
+        }
+      }
     }
   }
 

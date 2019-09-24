@@ -17,6 +17,9 @@ package org.tinymediamanager.core.tvshow;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -34,6 +37,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -49,23 +53,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Manuel Laggner
  */
 public class TvShowModuleManager implements ITmmModule {
-  public static final TvShowSettings SETTINGS     = TvShowSettings.getInstance();
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  public static final TvShowSettings  SETTINGS     = TvShowSettings.getInstance();
 
-  private static final String        MODULE_TITLE = "TV show management";
-  private static final String        TV_SHOW_DB   = "tvshows.db";
-  private static final Logger        LOGGER       = LoggerFactory.getLogger(TvShowModuleManager.class);
-  private static TvShowModuleManager instance;
+  private static final String         MODULE_TITLE = "TV show management";
+  private static final String         TV_SHOW_DB   = "tvshows.db";
+  private static final Logger         LOGGER       = LoggerFactory.getLogger(TvShowModuleManager.class);
+  private static TvShowModuleManager  instance;
 
-  private boolean                    enabled;
-  private MVStore                    mvStore;
-  private ObjectWriter               tvShowObjectWriter;
-  private ObjectWriter               episodeObjectWriter;
+  private boolean                     enabled;
+  private MVStore                     mvStore;
+  private ObjectWriter                tvShowObjectWriter;
+  private ObjectWriter                episodeObjectWriter;
 
-  private MVMap<UUID, String>        tvShowMap;
-  private MVMap<UUID, String>        episodeMap;
+  private MVMap<UUID, String>         tvShowMap;
+  private MVMap<UUID, String>         episodeMap;
+
+  private List<String>                startupMessages;
 
   private TvShowModuleManager() {
     enabled = false;
+    startupMessages = new ArrayList<>();
   }
 
   public static TvShowModuleManager getInstance() {
@@ -83,9 +91,31 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public void startUp() {
     // configure database
-    mvStore = new MVStore.Builder().fileName(Paths.get(Globals.settings.getSettingsFolder(), TV_SHOW_DB).toString()).compressHigh()
-        .backgroundExceptionHandler((t, e) -> LOGGER.error("Error in the background thread of the persistent cache", e)).autoCommitBufferSize(4096)
-        .open();
+    Path databaseFile = Paths.get(Globals.settings.getSettingsFolder(), TV_SHOW_DB);
+    try {
+      mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
+    }
+    catch (Exception e) {
+      // look if the file is locked by another process (rethrow rather than delete the db file)
+      if (e instanceof IllegalStateException && e.getMessage().contains("file is locked")) {
+        throw e;
+      }
+
+      LOGGER.error("Could not open database file: {}", e.getMessage());
+      LOGGER.info("starting over with an empty database file");
+
+      try {
+        Utils.deleteFileSafely(Paths.get(Globals.BACKUP_FOLDER, TV_SHOW_DB + ".corrupted"));
+        Utils.moveFileSafe(databaseFile, Paths.get(Globals.BACKUP_FOLDER, TV_SHOW_DB + ".corrupted"));
+        mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
+
+        // inform user that the DB could not be loaded
+        startupMessages.add(BUNDLE.getString("tvshow.loaddb.failed"));
+      }
+      catch (Exception e1) {
+        LOGGER.error("could not move old database file and create a new one: {}", e1.getMessage());
+      }
+    }
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -195,5 +225,10 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public void saveSettings() {
     SETTINGS.saveSettings();
+  }
+
+  @Override
+  public List<String> getStartupMessages() {
+    return startupMessages;
   }
 }

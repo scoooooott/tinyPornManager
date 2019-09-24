@@ -7,6 +7,7 @@ x do not try to open dialogs on disconnected screens #640
 x delete subtitle archive after extracting #641
 x fix update data sources from Google Drive
 x correct date format style in files
+x when unable to load the database, start over with a new/clean one rather than not starting tmm
 
 
 Version 3.0.4
