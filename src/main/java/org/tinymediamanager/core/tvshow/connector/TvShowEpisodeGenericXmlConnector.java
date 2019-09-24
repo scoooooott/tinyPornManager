@@ -168,6 +168,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           addAired(episode, parserEpisode);
           addWatched(episode, parserEpisode);
           addPlaycount(episode, parserEpisode);
+          addLastplayed(episode, parserEpisode);
           addStudios(episode, parserEpisode);
           addTags(episode, parserEpisode);
           addCredits(episode, parserEpisode);
@@ -486,6 +487,17 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
       playcount.setTextContent("1");
     }
     root.appendChild(playcount);
+  }
+
+  /**
+   * add the <lastplayed>xxx</lastplayed> we do not have this in tmm, but we might get it from an existing nfo
+   */
+  private void addLastplayed(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element lastplayed = document.createElement("lastplayed");
+    if (parser != null && parser.lastplayed != null) {
+      lastplayed.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(parser.lastplayed));
+      root.appendChild(lastplayed);
+    }
   }
 
   /**
