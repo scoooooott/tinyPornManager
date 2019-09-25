@@ -579,12 +579,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               LOGGER.trace("could not parse int: {}", e.getMessage());
             }
           }
-
-          tvShow.setPath(showDir.toAbsolutePath().toString());
-          tvShow.setDataSource(datasource.toString());
-          tvShow.setNewlyAdded(true);
-          tvShowList.addTvShow(tvShow);
         }
+
+        tvShow.setPath(showDir.toAbsolutePath().toString());
+        tvShow.setDataSource(datasource.toString());
+        tvShow.setNewlyAdded(true);
+        tvShowList.addTvShow(tvShow);
       }
 
       // ******************************
