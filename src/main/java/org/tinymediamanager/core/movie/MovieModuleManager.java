@@ -102,8 +102,8 @@ public class MovieModuleManager implements ITmmModule {
       LOGGER.info("starting over with an empty database file");
 
       try {
-        Utils.deleteFileSafely(Paths.get(Globals.BACKUP_FOLDER, MOVIE_DB + ".corrupted"));
-        Utils.moveFileSafe(databaseFile, Paths.get(Globals.BACKUP_FOLDER, MOVIE_DB + ".corrupted"));
+        Utils.deleteFileSafely(Paths.get(MOVIE_DB + ".corrupted"));
+        Utils.moveFileSafe(databaseFile, Paths.get(MOVIE_DB + ".corrupted"));
         mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
 
         // inform user that the DB could not be loaded

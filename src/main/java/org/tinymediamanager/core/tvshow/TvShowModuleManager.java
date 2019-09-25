@@ -105,8 +105,8 @@ public class TvShowModuleManager implements ITmmModule {
       LOGGER.info("starting over with an empty database file");
 
       try {
-        Utils.deleteFileSafely(Paths.get(Globals.BACKUP_FOLDER, TV_SHOW_DB + ".corrupted"));
-        Utils.moveFileSafe(databaseFile, Paths.get(Globals.BACKUP_FOLDER, TV_SHOW_DB + ".corrupted"));
+        Utils.deleteFileSafely(Paths.get(TV_SHOW_DB + ".corrupted"));
+        Utils.moveFileSafe(databaseFile, Paths.get(TV_SHOW_DB + ".corrupted"));
         mvStore = new MVStore.Builder().fileName(databaseFile.toString()).compressHigh().autoCommitBufferSize(4096).open();
 
         // inform user that the DB could not be loaded
