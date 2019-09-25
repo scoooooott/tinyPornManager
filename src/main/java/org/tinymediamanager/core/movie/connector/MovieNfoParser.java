@@ -219,8 +219,8 @@ public class MovieNfoParser {
    * @return true/false
    */
   public boolean isValidNfo() {
-    // since the initial year is -1, a value of 0 and higher must have been parsed successfully
-    return (year > -1 || releaseDate != null) && StringUtils.isNotBlank(title);
+    // we're happy if at least the title could be parsed
+    return StringUtils.isNotBlank(title);
   }
 
   private Element getSingleElement(Element parent, String tag) {

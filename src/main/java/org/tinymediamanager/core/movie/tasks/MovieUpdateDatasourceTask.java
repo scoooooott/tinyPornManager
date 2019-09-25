@@ -447,14 +447,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     for (MediaFile mf : mfs) {
 
       if (mf.getType().equals(MediaFileType.NFO)) {
-        LOGGER.info("| parsing NFO " + mf.getFileAsPath());
+        LOGGER.info("| parsing NFO {}", mf.getFileAsPath());
         Movie nfo = null;
         try {
           MovieNfoParser movieNfoParser = MovieNfoParser.parseNfo(mf.getFileAsPath());
           nfo = movieNfoParser.toMovie();
         }
         catch (Exception e) {
-          LOGGER.warn("problem parsing NFO: " + e.getMessage());
+          LOGGER.warn("problem parsing NFO: {}", e.getMessage());
         }
 
         if (movie == null) {
@@ -470,12 +470,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             String imdb = Utils.readFileToString(mf.getFileAsPath());
             imdb = ParserUtils.detectImdbId(imdb);
             if (!imdb.isEmpty()) {
-              LOGGER.debug("| Found IMDB id: " + imdb);
+              LOGGER.debug("| Found IMDB id: {}", imdb);
               movie.setImdbId(imdb);
             }
           }
           catch (IOException e) {
-            LOGGER.warn("| couldn't read NFO " + mf);
+            LOGGER.warn("| couldn't read NFO {}", mf);
           }
         }
       } // end NFO

@@ -552,17 +552,26 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       if (tvShow == null) {
         // tvShow did not exist - try to parse a NFO file in parent folder
         if (Files.exists(showNFO.getFileAsPath())) {
-          TvShowNfoParser parser = TvShowNfoParser.parseNfo(showNFO.getFileAsPath());
-          if (parser.isValidNfo()) {
+          try {
+            TvShowNfoParser parser = TvShowNfoParser.parseNfo(showNFO.getFileAsPath());
             tvShow = parser.toTvShow();
+          }
+          catch (Exception e) {
+            LOGGER.warn("problem parsing NFO: {}", e.getMessage());
           }
         }
         if (tvShow == null) {
           // create new one
           tvShow = new TvShow();
+        }
+
+        if (StringUtils.isBlank(tvShow.getTitle()) || tvShow.getYear() <= 0) {
+          // we have a tv show object, but without title or year; try to parse that our of the folder/filename
           String[] ty = ParserUtils.detectCleanMovienameAndYear(showDir.getFileName().toString());
-          tvShow.setTitle(ty[0]);
-          if (!ty[1].isEmpty()) {
+          if (StringUtils.isBlank(tvShow.getTitle()) && StringUtils.isNotBlank(ty[0])) {
+            tvShow.setTitle(ty[0]);
+          }
+          if (tvShow.getYear() <= 0 && !ty[1].isEmpty()) {
             try {
               tvShow.setYear(Integer.parseInt(ty[1]));
             }
@@ -570,9 +579,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               LOGGER.trace("could not parse int: {}", e.getMessage());
             }
           }
-        }
 
-        if (tvShow != null) {
           tvShow.setPath(showDir.toAbsolutePath().toString());
           tvShow.setDataSource(datasource.toString());
           tvShow.setNewlyAdded(true);
