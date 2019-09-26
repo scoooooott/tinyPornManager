@@ -15,9 +15,9 @@
  */
 package org.tinymediamanager.scraper.http;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
@@ -50,20 +50,20 @@ public class TmmHttpClient {
     String cacheFolder = System.getProperty("tmm.cachefolder");
     String contentFolder = System.getProperty("tmm.contentfolder");
 
-    String result;
+    String parent;
 
     // cache
     if (StringUtils.isNotBlank(cacheFolder)) {
-      result = cacheFolder;
+      parent = cacheFolder;
     }
     else if (StringUtils.isNotBlank(contentFolder)) {
-      result = contentFolder + "/cache";
+      parent = contentFolder + "/cache";
     }
     else {
-      result = "cache";
+      parent = "cache";
     }
 
-    CACHE = new Cache(new File(result), 25 * 1024 * 1024);
+    CACHE = new Cache(Paths.get(parent, "http").toFile(), 25 * 1024 * 1024);
   }
 
   /**
