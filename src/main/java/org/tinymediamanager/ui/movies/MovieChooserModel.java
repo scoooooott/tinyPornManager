@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -117,12 +116,6 @@ public class MovieChooserModel extends AbstractModelObject {
   public void setTitle(String title) {
     String oldValue = this.title;
     this.title = StrgUtils.getNonNullString(title);
-
-    // Capitalize first letter of title if setting is set!
-    if (MovieModuleManager.SETTINGS.getCapitalWordsInTitles()) {
-      this.title = WordUtils.capitalize(this.title);
-    }
-
     firePropertyChange("title", oldValue, this.title);
   }
 
