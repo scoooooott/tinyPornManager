@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.http;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.nio.file.Paths;
@@ -187,5 +188,16 @@ public class TmmHttpClient {
         return response.request().newBuilder().header("Proxy-Authorization", credential).build();
       });
     }
+  }
+
+  /**
+   * Closes the cache and deletes all of its stored values. This will delete all files in the cache directory including files that weren't created by
+   * the cache.
+   * 
+   * @throws IOException
+   *           any {@link IOException} occurred while deleting the cache
+   */
+  public static void clearCache() throws IOException {
+    CACHE.delete();
   }
 }
