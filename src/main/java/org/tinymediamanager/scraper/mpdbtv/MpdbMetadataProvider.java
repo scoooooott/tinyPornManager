@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -120,10 +121,13 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     for (SearchEntity entity : searchResult) {
 
       MediaSearchResult result = new MediaSearchResult(MpdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
-
       result.setId(providerInfo.getId(), entity.id);
-      result.setOriginalTitle(entity.original_title);
-      result.setTitle(entity.title);
+      result.setOriginalTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
+      if (StringUtils.isEmpty(entity.title)) {
+        result.setTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
+      } else {
+        result.setTitle(StringEscapeUtils.unescapeHtml4(entity.title));
+      }
       result.setYear(entity.year);
       result.setId("imdb_id", entity.id_imdb);
       result.setId("allocine_id", entity.id_allocine);

@@ -56,7 +56,6 @@ public class MpdbMetadataProviderTest {
     MpdbMetadataProvider mp = new MpdbMetadataProvider();
     mp.getProviderInfo().getConfig().setValue("aboKey", System.getProperty("mpdb_aboKey"));
     mp.getProviderInfo().getConfig().setValue("username", System.getProperty("mpdb_username"));
-    mp.getProviderInfo().getConfig().save();
 
     MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
     options.setQuery("Batman");
@@ -71,9 +70,8 @@ public class MpdbMetadataProviderTest {
   @Test
   public void testScrape() throws ScrapeException {
     MpdbMetadataProvider mp = new MpdbMetadataProvider();
-    mp.getProviderInfo().getConfig().setValue("aboKey",System.getProperty("aboKey"));
-    mp.getProviderInfo().getConfig().setValue("username",System.getProperty("username"));
-    mp.getProviderInfo().getConfig().save();
+    mp.getProviderInfo().getConfig().setValue("aboKey",System.getProperty("mpdb_aboKey"));
+    mp.getProviderInfo().getConfig().setValue("username",System.getProperty("mpdb_username"));
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setId("mpdbtv","3193");

@@ -36,7 +36,7 @@ public interface MpdbService {
                                        @Path("searchstring") String searchString,
                                        @Query("language") Locale lang,
                                        @Query("saga") boolean saga,
-                                       @Query("format") String format);
+                                       @Query("_format") String format);
 
   @GET("movies/{apikey}/{username}/{subscriptionkey}/{id}")
   Call<MovieEntity> movieScrapebyID(
@@ -46,6 +46,6 @@ public interface MpdbService {
                                     @Path("id") int mpdb_id,
                                     @Query("language") Locale lang,
                                     @Query("typeId") String id,
-                                    @Query("format") String format);
+                                    @Query("_format") String format);
 
 }
