@@ -12,6 +12,7 @@ x when unable to load the database, start over with a new/clean one rather than 
 x fixed loading of the colon replacement in the renamer settings
 x enhanced detection of valid NFO files #638
 x write the plot content to the outline field in the NFO #630
+x ImageCache must not crash tmm on exceptions #659
 
 
 Version 3.0.4
