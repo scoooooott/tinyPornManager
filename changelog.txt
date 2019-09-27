@@ -11,6 +11,7 @@ x correct date format style in files
 x when unable to load the database, start over with a new/clean one rather than not starting tmm
 x fixed loading of the colon replacement in the renamer settings
 x enhanced detection of valid NFO files #638
+x write the plot content to the outline field in the NFO #630
 
 
 Version 3.0.4

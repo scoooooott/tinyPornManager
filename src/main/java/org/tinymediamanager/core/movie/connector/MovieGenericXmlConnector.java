@@ -315,8 +315,8 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addOutline() {
     Element outline = document.createElement("outline");
-    // FIXME tbc how we should fill that field
-    // outline.setTextContent();
+    // use the plot right now since we do not have a dedicated outline field in tmm
+    outline.setTextContent(movie.getPlot());
     root.appendChild(outline);
   }
 
