@@ -140,7 +140,7 @@ public class MovieToNfoConnectorTest extends BasicTest {
 
       // write it
       List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.FILENAME_NFO);
-      MovieToMediaportalConnector connector = new MovieToMediaportalConnector(movie);
+      MovieToMpLegacyConnector connector = new MovieToMpLegacyConnector(movie);
       connector.write(nfoNames);
 
       Path nfoFile = Paths.get(getSettingsFolder(), "mp_nfo/Aladdin.nfo");

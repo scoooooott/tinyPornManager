@@ -94,7 +94,9 @@ import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.core.movie.connector.IMovieConnector;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpLegacyConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMovingPicturesConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMyVideoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
@@ -1213,7 +1215,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
       case MP:
-        connector = new MovieToMediaportalConnector(this);
+        connector = new MovieToMpLegacyConnector(this);
+        break;
+
+      case MP_MP:
+        connector = new MovieToMpMovingPicturesConnector(this);
+        break;
+
+      case MP_MV:
+        connector = new MovieToMpMyVideoConnector(this);
         break;
 
       case KODI:

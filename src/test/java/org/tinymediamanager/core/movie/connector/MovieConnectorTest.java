@@ -83,18 +83,18 @@ public class MovieConnectorTest extends BasicTest {
   }
 
   @Test
-  public void testMovieToXbmcConnectorMediaPortal() {
+  public void testMovieToXbmcConnectorMpLegacy() {
     try {
       // load data from a given NFO (with unsupported tags)
-      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mp-legacy.nfo"));
       Movie movie = parser.toMovie();
       MediaFile video = new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo_out/test3.avi"));
       movie.addToMediaFiles(video);
       movie.setPath(Paths.get(getSettingsFolder(), "movie_nfo_out").toString());
-      movie.addToMediaFiles(new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo/mediaportal.nfo"), MediaFileType.NFO));
+      movie.addToMediaFiles(new MediaFile(Paths.get(getSettingsFolder(), "movie_nfo/mp-legacy.nfo"), MediaFileType.NFO));
 
       // and write it again
-      IMovieConnector connector = new MovieToMediaportalConnector(movie);
+      IMovieConnector connector = new MovieToMpLegacyConnector(movie);
       connector.write(Collections.singletonList(MovieNfoNaming.FILENAME_NFO));
     }
     catch (Exception e) {

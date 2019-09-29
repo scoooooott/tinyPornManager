@@ -27,7 +27,6 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +181,7 @@ public class MovieNfoParser {
       function.apply(this);
     }
     catch (Exception e) {
-      LOGGER.warn("problem parsing tag (line " + e.getStackTrace()[0].getLineNumber() + "):" + e.getMessage());
+      LOGGER.warn("problem parsing tag (line {}): {}", e.getStackTrace()[0].getLineNumber(), e.getMessage());
     }
   }
 
@@ -322,6 +321,7 @@ public class MovieNfoParser {
         }
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -347,6 +347,7 @@ public class MovieNfoParser {
           r.maxValue = MetadataUtil.parseInt(ratingChild.attr("max"));
         }
         catch (NumberFormatException ignored) {
+          // just ignore
         }
 
         for (Element child : ratingChild.children()) {
@@ -357,6 +358,7 @@ public class MovieNfoParser {
                 r.rating = Float.parseFloat(child.ownText());
               }
               catch (NumberFormatException ignored) {
+                // just ignore
               }
               break;
 
@@ -365,7 +367,11 @@ public class MovieNfoParser {
                 r.votes = MetadataUtil.parseInt(child.ownText());
               }
               catch (Exception ignored) {
+                // just ignore
               }
+              break;
+
+            default:
               break;
           }
         }
@@ -402,6 +408,12 @@ public class MovieNfoParser {
     }
     else {
       element = getSingleElement(root, "set");
+
+      if (element == null) {
+        // okay, there is no single <set> tag; maybe it is a mp NFO format with multiple sets; just pick the first one
+        element = root.select(root.tagName() + " > " + "set").first();
+      }
+
       // new kodi style
       // <set> <name>set name</name><overview>set overview</overview></set>
       if (element != null && !element.children().isEmpty()) {
@@ -409,11 +421,16 @@ public class MovieNfoParser {
         for (Element child : element.children()) {
           switch (child.tagName()) {
             case "name":
+            case "setname":
               tmp.name = child.ownText();
               break;
 
             case "overview":
+            case "setdescription":
               tmp.overview = child.ownText();
+              break;
+
+            default:
               break;
           }
         }
@@ -445,6 +462,7 @@ public class MovieNfoParser {
         year = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -463,6 +481,7 @@ public class MovieNfoParser {
         top250 = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -523,6 +542,7 @@ public class MovieNfoParser {
         runtime = MetadataUtil.parseInt(element.ownText());
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -636,6 +656,7 @@ public class MovieNfoParser {
         ids.put(MediaMetadata.TMDB, MetadataUtil.parseInt(element.ownText()));
       }
       catch (NumberFormatException ignored) {
+        // just ignore
       }
     }
 
@@ -657,6 +678,7 @@ public class MovieNfoParser {
         }
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -718,9 +740,10 @@ public class MovieNfoParser {
     // if there is exactly one country tag, split the countries at the comma
     if (elements.size() == 1) {
       try {
-        countries.addAll(Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"))); // split on , or / and remove whitespace around)
+        countries.addAll(split(elements.get(0).ownText()));
       }
       catch (Exception ignored) {
+        // nothing to do here
       }
     }
     else {
@@ -826,8 +849,7 @@ public class MovieNfoParser {
       for (Element genre : elements) {
         if (StringUtils.isNotBlank(genre.ownText())) {
           // old style - single tag with delimiter
-          String[] split = genre.ownText().split("/");
-          for (String sp : split) {
+          for (String sp : split(genre.ownText())) {
             genres.add(MediaGenres.getGenre(sp.trim()));
           }
         }
@@ -849,9 +871,10 @@ public class MovieNfoParser {
     // if there is exactly one studio tag, split the studios at the comma
     if (elements.size() == 1) {
       try {
-        studios.addAll(Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"))); // split on , or / and remove whitespace around)
+        studios.addAll(split(elements.get(0).ownText()));
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
     else {
@@ -877,15 +900,14 @@ public class MovieNfoParser {
     // if there is exactly one credits tag, split the credits at the comma
     if (elements.size() == 1) {
       try {
-        // split on , or / and remove whitespace around)
-        String[] creditsNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
-        for (String credit : creditsNames) {
+        for (String credit : split(elements.get(0).ownText())) {
           Person person = new Person();
           person.name = credit;
           credits.add(person);
         }
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
     else {
@@ -913,25 +935,22 @@ public class MovieNfoParser {
     // if there is exactly one director tag, split the directors at the comma
     if (elements.size() == 1) {
       try {
-        // split on , or / and remove whitespace around)
-        String[] directorNames = elements.get(0).ownText().split("\\s*[,\\/]\\s*");
-        for (String director : directorNames) {
+        for (String director : split(elements.get(0).ownText())) {
           Person person = new Person();
           person.name = director;
           directors.add(person);
         }
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
     else {
       for (Element element : elements) {
         if (StringUtils.isNotBlank(element.ownText())) {
-          if (StringUtils.isNotBlank(element.ownText())) {
-            Person person = new Person();
-            person.name = element.ownText();
-            directors.add(person);
-          }
+          Person person = new Person();
+          person.name = element.ownText();
+          directors.add(person);
         }
       }
     }
@@ -983,6 +1002,10 @@ public class MovieNfoParser {
 
           case "profile":
             actor.profile = child.ownText();
+            break;
+
+          default:
+            break;
         }
       }
       if (StringUtils.isNotBlank(actor.name)) {
@@ -1017,6 +1040,9 @@ public class MovieNfoParser {
 
           case "thumb":
             producer.thumb = child.ownText();
+            break;
+
+          default:
             break;
         }
       }
@@ -1064,6 +1090,9 @@ public class MovieNfoParser {
                 fileinfo.subtitles.add(subtitle);
               }
               break;
+
+            default:
+              break;
           }
         }
       }
@@ -1085,6 +1114,7 @@ public class MovieNfoParser {
             video.aspect = Float.parseFloat(child.ownText());
           }
           catch (NumberFormatException ignored) {
+            // just ignore
           }
           break;
 
@@ -1093,6 +1123,7 @@ public class MovieNfoParser {
             video.width = MetadataUtil.parseInt(child.ownText());
           }
           catch (NumberFormatException ignored) {
+            // just ignore
           }
           break;
 
@@ -1101,6 +1132,7 @@ public class MovieNfoParser {
             video.height = MetadataUtil.parseInt(child.ownText());
           }
           catch (NumberFormatException ignored) {
+            // just ignore
           }
           break;
 
@@ -1109,11 +1141,15 @@ public class MovieNfoParser {
             video.durationinseconds = MetadataUtil.parseInt(child.ownText());
           }
           catch (NumberFormatException ignored) {
+            // just ignore
           }
           break;
 
         case "stereomode":
           video.stereomode = child.ownText();
+          break;
+
+        default:
           break;
       }
     }
@@ -1143,7 +1179,12 @@ public class MovieNfoParser {
             audio.channels = MetadataUtil.parseInt(child.ownText());
           }
           catch (NumberFormatException ignored) {
+            // just ignore
           }
+          break;
+
+        default:
+          break;
       }
     }
 
@@ -1161,6 +1202,9 @@ public class MovieNfoParser {
         case "language":
           subtitle.language = child.ownText();
           break;
+
+        default:
+          break;
       }
     }
 
@@ -1176,8 +1220,12 @@ public class MovieNfoParser {
    */
   private Void parseLanguages() {
     supportedElements.add("languages");
+    supportedElements.add("language");
 
     Element element = getSingleElement(root, "languages");
+    if (element == null) {
+      element = getSingleElement(root, "language");
+    }
     if (element != null) {
       languages = element.ownText();
     }
@@ -1185,7 +1233,7 @@ public class MovieNfoParser {
     // if the languages are in MediaPortal style, parse them and prepare them for tmm
     if (StringUtils.isNotBlank(languages)) {
       List<String> languages = new ArrayList<>();
-      for (String langu : this.languages.split("\\|")) {
+      for (String langu : split(this.languages)) {
         langu = langu.trim();
         String languIso = LanguageUtils.getIso2LanguageFromLocalizedString(langu);
         if (StringUtils.isNotBlank(languIso)) {
@@ -1213,6 +1261,7 @@ public class MovieNfoParser {
         source = MediaSource.getMediaSource(element.ownText());
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -1231,6 +1280,7 @@ public class MovieNfoParser {
         edition = MovieEdition.getMovieEditionFromString(element.ownText());
       }
       catch (Exception ignored) {
+        // just ignore
       }
     }
 
@@ -1261,6 +1311,7 @@ public class MovieNfoParser {
             trailer = URLDecoder.decode(matcher.group(1), "UTF-8");
           }
           catch (UnsupportedEncodingException ignored) {
+            // just ignore
           }
         }
       }
@@ -1354,6 +1405,7 @@ public class MovieNfoParser {
         }
       }
       catch (ParseException ignored) {
+        // just ignore
       }
     }
 
@@ -1373,6 +1425,25 @@ public class MovieNfoParser {
     }
 
     return null;
+  }
+
+  /**
+   * splits the given String into substrings by all known/supported separators
+   * 
+   * @param source
+   *          the source String to split
+   * @return an array with all parts
+   */
+  public static List<String> split(String source) {
+    List<String> result = new ArrayList<>();
+
+    for (String string : source.split("\\s*[;,\\/|]\\s*")) {
+      if (StringUtils.isNotBlank(string)) {
+        result.add(string);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -1454,6 +1525,7 @@ public class MovieNfoParser {
           tmdbSetId = Integer.parseInt(ids.get("tmdbSet").toString());
         }
         catch (Exception ignored) {
+          // just ignore
         }
       }
 

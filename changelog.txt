@@ -14,6 +14,7 @@ x enhanced detection of valid NFO files #638
 x write the plot content to the outline field in the NFO #630
 x ImageCache must not crash tmm on exceptions #659
 x enabled to explicitly filter for empty values #660
+x refactored the MediaPortal NFO format into 2 new formats for enhanced compatibility: MP MyVideos and MP Moving Pictures
 
 
 Version 3.0.4

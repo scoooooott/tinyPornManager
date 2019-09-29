@@ -101,6 +101,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
           break;
         }
         catch (Exception ignored) {
+          // just ignore
         }
       }
     }
@@ -190,7 +191,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
       }
     }
 
-    if (newNfos.size() > 0) {
+    if (!newNfos.isEmpty()) {
       movie.removeAllMediaFiles(MediaFileType.NFO);
       movie.addToMediaFiles(newNfos);
     }

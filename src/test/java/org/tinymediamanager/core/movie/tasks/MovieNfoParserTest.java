@@ -50,7 +50,7 @@ public class MovieNfoParserTest extends BasicTest {
     mfs.add(new MediaFile(Paths.get("target/test-classes/movie_nfo/justImdbUrl.nfo")));
 
     Movie m = uds.parseNFOs(mfs);
-    assertThat(m.getImdbId().equals("tt0499549"));
+    assertThat(m.getImdbId()).isEqualTo("tt0499549");
   }
 
   @Test
@@ -371,10 +371,10 @@ public class MovieNfoParserTest extends BasicTest {
   }
 
   @Test
-  public void testMediaPortal() {
+  public void testMpLegacy() {
     // MediaPortal
     try {
-      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mp-legacy.nfo"));
 
       assertThat(parser).isNotNull();
       assertThat(parser.title).isNotEmpty();
@@ -435,6 +435,142 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.fileinfo).isNull();
       assertThat(parser.unsupportedElements).isEmpty();
       assertThat(parser.trailer).isNotEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testMpMovingPictures() {
+    // MediaPortal
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mp-moving_pictures.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isNotEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
+      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.2f);
+      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.set.overview).isEmpty();
+      assertThat(parser.year).isEqualTo(2016);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).isEmpty();
+      assertThat(parser.fanarts).isEmpty();
+      assertThat(parser.certification).isEqualTo(Certification.GB_12A);
+      assertThat(parser.ids).isNotEmpty();
+      assertThat(parser.ids).contains(entry("imdb", "tt1179933"));
+      assertThat(parser.countries).isEmpty();
+      assertThat(parser.releaseDate).hasSameTimeAs("2016-03-18");
+      assertThat(parser.watched).isEqualTo(true);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.DRAMA, MediaGenres.HORROR, MediaGenres.MYSTERY, MediaGenres.SCIENCE_FICTION,
+          MediaGenres.THRILLER);
+      assertThat(parser.studios).hasSize(3);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(3);
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
+      }
+      assertThat(parser.tags).isEmpty();
+      assertThat(parser.actors).hasSize(9);
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isEmpty();
+        assertThat(actor.thumb).isEmpty();
+      }
+      assertThat(parser.producers).isEmpty();
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.trailer).isEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testMpMyVideo() {
+    // MediaPortal
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mp-myvideo.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isEmpty();
+      assertThat(parser.sorttitle).isNotEmpty();
+
+      assertThat(parser.ratings).hasSize(2);
+      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
+      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(Rating.USER).id).isEqualTo(Rating.USER);
+      assertThat(parser.ratings.get(Rating.USER).rating).isEqualTo(9f);
+      assertThat(parser.ratings.get(Rating.USER).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.set.overview).isEmpty();
+      assertThat(parser.year).isEqualTo(2000);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isNotEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+
+      assertThat(parser.posters).isEmpty(); // local artwork does not count
+      assertThat(parser.fanarts).isEmpty(); // local artwork does not count
+
+      assertThat(parser.certification).isIn(Certification.DE_FSK12, Certification.GB_12); // name clash between FSK12 and GB12
+      assertThat(parser.ids).isNotEmpty();
+      assertThat(parser.ids).contains(entry("imdb", "tt0183869"));
+      assertThat(parser.countries).containsExactly("France");
+      assertThat(parser.releaseDate).isNull(); // no date found in the NFO
+      assertThat(parser.watched).isEqualTo(true);
+      assertThat(parser.playcount).isEqualTo(4);
+      assertThat(parser.genres).contains(MediaGenres.COMEDY); // we do not check against translated genres (RU ones); this may work if all
+                                                              // translations are loaded
+      assertThat(parser.studios).hasSize(3);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(1);
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
+      }
+      assertThat(parser.tags).isEmpty();
+      assertThat(parser.actors).hasSize(17);
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+      }
+      assertThat(parser.producers).isEmpty();
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).isNotEmpty();
+      assertThat(parser.trailer).isEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();

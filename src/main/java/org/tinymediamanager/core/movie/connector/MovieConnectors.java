@@ -25,7 +25,9 @@ import java.nio.file.Path;
 public enum MovieConnectors {
   KODI("Kodi"),
   XBMC("Kodi / XBMC < v16"),
-  MP("MediaPortal");
+  MP("MediaPortal (legacy)"),
+  MP_MP("MediaPortal - Moving Pictures"),
+  MP_MV("MediaPortal - MyVideo");
 
   private String title;
 
