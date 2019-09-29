@@ -52,6 +52,13 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
   @Override
   public boolean accept(Movie movie) {
     List<String> tags = checkComboBox.getSelectedItems();
+
+    // check for explicit empty search
+    if (tags.isEmpty() && movie.getTags().isEmpty()) {
+      return true;
+    }
+
+    // check for all values
     for (String tag : movie.getTags()) {
       if (tags.contains(tag)) {
         return true;

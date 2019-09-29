@@ -363,7 +363,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
       List<E> objs = getSelectedItems();
       Vector<String> strs = new Vector<>();
       if (objs.isEmpty()) {
-        str = BUNDLE.getString("ComboBox.select"); //$NON-NLS-1$
+        str = "[] / " + BUNDLE.getString("ComboBox.select"); //$NON-NLS-1$
       }
       else {
         for (Object obj : objs) {

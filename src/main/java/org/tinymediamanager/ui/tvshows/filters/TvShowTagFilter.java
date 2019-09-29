@@ -36,7 +36,7 @@ import org.tinymediamanager.ui.components.table.TmmTableFormat;
 public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String> {
   private TmmTableFormat.StringComparator comparator;
 
-  private TvShowList tvShowList = TvShowList.getInstance();
+  private TvShowList                      tvShowList = TvShowList.getInstance();
 
   public TvShowTagFilter() {
     super();
@@ -54,6 +54,19 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<String> tags = checkComboBox.getSelectedItems();
+
+    // check for explicit empty search
+    if (tags.isEmpty()) {
+      if (invert ^ tvShow.getTags().isEmpty()) {
+        return true;
+      }
+
+      for (TvShowEpisode episode : episodes) {
+        if (invert ^ episode.getTags().isEmpty()) {
+          return true;
+        }
+      }
+    }
 
     // search tags of the show
     for (String tag : tags) {
