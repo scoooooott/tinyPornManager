@@ -126,11 +126,6 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     initDataBindings();
 
     // the panel renamer
-    ActionListener renamerActionListener = arg0 -> {
-      checkChanges();
-      createRenamerExample();
-    };
-
     DocumentListener documentListener = new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent arg0) {
@@ -152,18 +147,10 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     tfSeasonFolderName.getDocument().addDocumentListener(documentListener);
     tfEpisodeFilename.getDocument().addDocumentListener(documentListener);
 
-    chckbxSpaceReplacement.addActionListener(renamerActionListener);
-    chckbxAsciiReplacement.addActionListener(renamerActionListener);
-    chckbxSpecialSeason.addActionListener(renamerActionListener);
-
     cbTvShowForPreview.addActionListener(arg0 -> {
       buildAndInstallEpisodeArray();
       createRenamerExample();
     });
-
-    cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
-    cbSpaceReplacement.addActionListener(renamerActionListener);
-    cbColonReplacement.addActionListener(renamerActionListener);
 
     // space replacement
     String spaceReplacement = settings.getRenamerSpaceReplacement();
@@ -216,6 +203,18 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("${mediaSource}"));
     exampleEventList.add(new TvShowRenamerExample("${hdr}"));
     exampleEventList.add(new TvShowRenamerExample("${parent}"));
+
+    // event listener must be at the end
+    ActionListener renamerActionListener = arg0 -> {
+      checkChanges();
+      createRenamerExample();
+    };
+    chckbxSpaceReplacement.addActionListener(renamerActionListener);
+    chckbxAsciiReplacement.addActionListener(renamerActionListener);
+    chckbxSpecialSeason.addActionListener(renamerActionListener);
+    cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
+    cbSpaceReplacement.addActionListener(renamerActionListener);
+    cbColonReplacement.addActionListener(renamerActionListener);
   }
 
   private void initComponents() {

@@ -44,6 +44,13 @@ public class MovieGenreFilter extends AbstractCheckComboBoxMovieUIFilter<MediaGe
   @Override
   public boolean accept(Movie movie) {
     List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
+
+    // check for explicit empty search
+    if (selectedItems.isEmpty() && movie.getGenres().isEmpty()) {
+      return true;
+    }
+
+    // check for all values
     for (MediaGenres genre : movie.getGenres()) {
       if (selectedItems.contains(genre)) {
         return true;

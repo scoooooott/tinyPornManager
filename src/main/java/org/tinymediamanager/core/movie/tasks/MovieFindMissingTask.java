@@ -120,10 +120,10 @@ public class MovieFindMissingTask extends TmmThreadPool {
   public HashSet<Path> getBigFilesRecursive(Path folder) {
     BigFilesRecursive visitor = new BigFilesRecursive();
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
     }
-    catch (IOException e) {
-      // can not happen, since we overrided visitFileFailed, which throws no exception ;)
+    catch (IOException ignored) {
+      // can not happen, since we overridden visitFileFailed, which throws no exception ;)
     }
     return visitor.fFound;
   }

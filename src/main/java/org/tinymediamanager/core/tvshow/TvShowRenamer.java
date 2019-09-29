@@ -508,10 +508,21 @@ public class TvShowRenamer {
     // ######################################################################
     for (MediaFile subtitle : episode.getMediaFiles(MediaFileType.SUBTITLE)) {
       LOGGER.trace("Rename 1:1 {} {}", subtitle.getType(), subtitle.getFileAsPath());
-      MediaFile newMF = generateEpisodeFilenames(episode.getTvShow(), subtitle).get(0); // there can be only one
-      boolean ok = moveFile(subtitle.getFileAsPath(), newMF.getFileAsPath());
+      MediaFile sub = generateEpisodeFilenames(episode.getTvShow(), subtitle).get(0); // there can be only one
+      boolean ok = moveFile(subtitle.getFileAsPath(), sub.getFileAsPath());
       if (ok) {
-        subtitle.setFile(newMF.getFileAsPath()); // update
+        if (sub.getFilename().endsWith(".sub")) {
+          // when having a .sub, also rename .idx (don't care if error)
+          try {
+            Path oldidx = subtitle.getFileAsPath().resolveSibling(subtitle.getFilename().replaceFirst("sub$", "idx"));
+            Path newidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+            Utils.moveFileSafe(oldidx, newidx);
+          }
+          catch (Exception e) {
+            // no idx found or error - ignore
+          }
+        }
+        subtitle.setFile(sub.getFileAsPath()); // update
       }
       needed.add(subtitle); // add vid, since we're updating existing MF object
     }

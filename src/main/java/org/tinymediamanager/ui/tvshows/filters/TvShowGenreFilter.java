@@ -46,6 +46,13 @@ public class TvShowGenreFilter extends AbstractCheckComboBoxTvShowUIFilter<Media
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
+
+    // check for explicit empty search
+    if (invert ^ (selectedItems.isEmpty() && tvShow.getGenres().isEmpty())) {
+      return true;
+    }
+
+    // check for all values
     for (MediaGenres genre : selectedItems) {
       if (invert ^ tvShow.getGenres().contains(genre)) {
         return true;

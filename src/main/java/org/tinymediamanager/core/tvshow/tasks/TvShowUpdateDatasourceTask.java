@@ -25,7 +25,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +44,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.AbstractFileVisitor;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -168,6 +168,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // update selected data sources
         for (String ds : dataSources) {
           LOGGER.info("Start UDS on datasource: {}", ds);
+          initThreadPool(3, "update");
+          setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
+          publishState();
+
           Path dsAsPath = Paths.get(ds);
 
           // first of all check if the DS is available; we can take the
@@ -181,9 +185,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
             continue;
           }
+          publishState();
 
-          initThreadPool(3, "update"); // FIXME: more threads result in
-                                       // duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<>();
           List<Path> existingTvShowDirs = new ArrayList<>();
           List<Path> rootList = listFilesAndDirs(dsAsPath);
@@ -526,7 +529,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             }
           }
 
-          mfs.add(mf);
+          // not adding unknown MFs to list....
+          if (mf.getType() != MediaFileType.UNKNOWN) {
+            mfs.add(mf);
+          }
         }
       }
       allFiles.clear();
@@ -546,17 +552,26 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       if (tvShow == null) {
         // tvShow did not exist - try to parse a NFO file in parent folder
         if (Files.exists(showNFO.getFileAsPath())) {
-          TvShowNfoParser parser = TvShowNfoParser.parseNfo(showNFO.getFileAsPath());
-          if (parser.isValidNfo()) {
+          try {
+            TvShowNfoParser parser = TvShowNfoParser.parseNfo(showNFO.getFileAsPath());
             tvShow = parser.toTvShow();
+          }
+          catch (Exception e) {
+            LOGGER.warn("problem parsing NFO: {}", e.getMessage());
           }
         }
         if (tvShow == null) {
           // create new one
           tvShow = new TvShow();
+        }
+
+        if (StringUtils.isBlank(tvShow.getTitle()) || tvShow.getYear() <= 0) {
+          // we have a tv show object, but without title or year; try to parse that our of the folder/filename
           String[] ty = ParserUtils.detectCleanMovienameAndYear(showDir.getFileName().toString());
-          tvShow.setTitle(ty[0]);
-          if (!ty[1].isEmpty()) {
+          if (StringUtils.isBlank(tvShow.getTitle()) && StringUtils.isNotBlank(ty[0])) {
+            tvShow.setTitle(ty[0]);
+          }
+          if (tvShow.getYear() <= 0 && !ty[1].isEmpty()) {
             try {
               tvShow.setYear(Integer.parseInt(ty[1]));
             }
@@ -566,12 +581,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
 
-        if (tvShow != null) {
-          tvShow.setPath(showDir.toAbsolutePath().toString());
-          tvShow.setDataSource(datasource.toString());
-          tvShow.setNewlyAdded(true);
-          tvShowList.addTvShow(tvShow);
-        }
+        tvShow.setPath(showDir.toAbsolutePath().toString());
+        tvShow.setDataSource(datasource.toString());
+        tvShow.setNewlyAdded(true);
+        tvShowList.addTvShow(tvShow);
       }
 
       // ******************************
@@ -621,9 +634,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               }
               // we found a video file which is named like the EP file?!
               // declare it as extras
-              if (!em.getFilename().equals(mf.getFilename()) && em.getType() == MediaFileType.VIDEO) {
-                em.setType(MediaFileType.EXTRA);
-              }
+              // NOOOO - we might have 2 video files!!!
+              // if (!em.getFilename().equals(mf.getFilename()) && em.getType() == MediaFileType.VIDEO) {
+              // em.setType(MediaFileType.EXTRA);
+              // }
               epFiles.add(em);
               LOGGER.trace("UDS: found matching MF - {}", em);
             }
@@ -1014,12 +1028,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
     }
     catch (IOException e) {
-      LOGGER.error(e.getMessage());
+      LOGGER.error("list files failed: {}", e.getMessage());
+      // add some more trace infos to get a clue what exactly failed
+      LOGGER.trace("visit file failed", e);
     }
     return fileNames;
   }
 
-  private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
+  private static class AllFilesRecursive extends AbstractFileVisitor {
     private HashSet<Path> fFound = new HashSet<>();
 
     @Override
@@ -1048,14 +1064,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
       incPostDir();
-      return CONTINUE;
-    }
-
-    // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is thrown.
-    @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      LOGGER.error(exc.getMessage());
       return CONTINUE;
     }
   }

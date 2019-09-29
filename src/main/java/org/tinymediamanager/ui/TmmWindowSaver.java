@@ -17,6 +17,8 @@ package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -128,7 +130,7 @@ public class TmmWindowSaver implements AWTEventListener {
 
     if (!dialog.getName().contains("dialog")) {
       Rectangle rect = getWindowBounds(dialog.getName());
-      if (rect.width > 0) {
+      if (rect.width > 0 && getVirtualBounds().contains(rect)) {
         dialog.setBounds(rect);
       }
       else {
@@ -211,5 +213,15 @@ public class TmmWindowSaver implements AWTEventListener {
 
   private void addParam(String key, Object value) {
     properties.putProperty(key, value.toString());
+  }
+
+  private Rectangle getVirtualBounds() {
+    Rectangle bounds = new Rectangle(0, 0, 0, 0);
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice lstGDs[] = ge.getScreenDevices();
+    for (GraphicsDevice gd : lstGDs) {
+      bounds.add(gd.getDefaultConfiguration().getBounds());
+    }
+    return bounds;
   }
 }

@@ -182,8 +182,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       cbColonReplacement.setSelectedIndex(index);
     }
 
-    ActionListener actionCreateRenamerExample = e -> createRenamerExample();
-    cbMovieForPreview.addActionListener(actionCreateRenamerExample);
     cbFoldernameSpaceReplacement.addActionListener(arg0 -> {
       checkChanges();
       createRenamerExample();
@@ -197,10 +195,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       createRenamerExample();
     });
 
-    chckbxMoviesetSingleMovie.addActionListener(actionCreateRenamerExample);
-    chckbxAsciiReplacement.addActionListener(actionCreateRenamerExample);
-    chckbxFilenameSpaceReplacement.addActionListener(actionCreateRenamerExample);
-    chckbxFoldernameSpaceReplacement.addActionListener(actionCreateRenamerExample);
+
 
     lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
 
@@ -241,6 +236,14 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("${hdr}"));
     exampleEventList.add(new MovieRenamerExample("${edition}"));
     exampleEventList.add(new MovieRenamerExample("${parent}"));
+
+    // event listener must be at the end
+    ActionListener actionCreateRenamerExample = e -> createRenamerExample();
+    cbMovieForPreview.addActionListener(actionCreateRenamerExample);
+    chckbxMoviesetSingleMovie.addActionListener(actionCreateRenamerExample);
+    chckbxAsciiReplacement.addActionListener(actionCreateRenamerExample);
+    chckbxFilenameSpaceReplacement.addActionListener(actionCreateRenamerExample);
+    chckbxFoldernameSpaceReplacement.addActionListener(actionCreateRenamerExample);
   }
 
   private void initComponents() {

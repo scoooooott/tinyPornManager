@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -72,6 +73,23 @@ public class UpgradeTasks {
     // if (StrgUtils.compareVersion(v, "3") < 0) {
     // LOGGER.info("Performing upgrade tasks to version 3");
     // }
+
+    // migrate image cache to hex folders
+    if (StrgUtils.compareVersion(v, "3.0.5") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 3.0.5");
+
+      // clear all files from /cache (except the all subfolders)
+      try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(Globals.CACHE_FOLDER))) {
+        for (Path path : stream) {
+          if (!path.toFile().isDirectory()) {
+            Utils.deleteFileSafely(path);
+          }
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not clean up cache folder - {}", e.getMessage());
+      }
+    }
 
   }
 

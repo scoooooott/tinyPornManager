@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.CertificationStyle;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.w3c.dom.Element;
 
 /**
- * the class MovieToMediaportalConnector is used to write a classic Mediaportal 1.x compatible NFO file
+ * the class MovieToMpMyVideoConnector is used to write a classic Mediaportal 1.x compatible NFO file for the Moving Pictures plugin
  *
  * @author Manuel Laggner
  */
-public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToMediaportalConnector.class);
+public class MovieToMpMovingPicturesConnector extends MovieGenericXmlConnector {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToMpMovingPicturesConnector.class);
 
-  public MovieToMediaportalConnector(Movie movie) {
+  public MovieToMpMovingPicturesConnector(Movie movie) {
     super(movie);
   }
 
@@ -49,24 +47,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
 
   @Override
   protected void addOwnTags() {
-  }
-
-  /**
-   * the media portal fanart style<br />
-   * <fanart><thumb>xxx</thumb></fanart>
-   */
-  @Override
-  protected void addFanart() {
-    Element fanart = document.createElement("fanart");
-
-    String fanarUrl = movie.getArtworkUrl(MediaFileType.FANART);
-    if (StringUtils.isNotBlank(fanarUrl)) {
-      Element thumb = document.createElement("thumb");
-      thumb.setTextContent(fanarUrl);
-      fanart.appendChild(thumb);
-    }
-
-    root.appendChild(fanart);
+    // no own tags needed in this format
   }
 
   /**
@@ -74,7 +55,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
    */
   @Override
   protected void addMpaa() {
-    Element mpaa = document.createElement("certification");
+    Element mpaa = document.createElement("mpaa");
     if (movie.getCertification() != null) {
       mpaa.setTextContent(CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle()));
     }
@@ -89,44 +70,33 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   }
 
   /**
-   * genres are nested in a genre tag<br />
-   * <genres><genre>xxx</genre></genres>
-   */
-  @Override
-  protected void addGenres() {
-    Element genres = document.createElement("genres");
-
-    for (MediaGenres mediaGenre : movie.getGenres()) {
-      Element genre = document.createElement("genre");
-      genre.setTextContent(mediaGenre.getLocalizedName(MovieModuleManager.SETTINGS.getNfoLanguage().toLocale()));
-      genres.appendChild(genre);
-    }
-
-    root.appendChild(genres);
-  }
-
-  /**
-   * countries are concatenated in a single <country>xxx</country> tag
+   * countries are concatenated in a single <country>xxx</country> tag, separated by ,
    */
   @Override
   protected void addCountry() {
     Element country = document.createElement("country");
-    country.setTextContent(movie.getCountry());
+
+    List<String> countries = MovieNfoParser.split(movie.getCountry());
+    country.setTextContent(StringUtils.join(countries, ", "));
+
     root.appendChild(country);
   }
 
   /**
-   * studios are concatenated in a single <studio>xxx</studio> tag
+   * studios are concatenated in a single <studio>xxx</studio> tag, separated by ,
    */
   @Override
   protected void addStudios() {
     Element studio = document.createElement("studio");
-    studio.setTextContent(movie.getProductionCompany());
+
+    List<String> studios = MovieNfoParser.split(movie.getProductionCompany());
+    studio.setTextContent(StringUtils.join(studios, ", "));
+
     root.appendChild(studio);
   }
 
   /**
-   * credits are concatenated in a single <credits>xxx</credits> tag
+   * credits are concatenated in a single <credits>xxx</credits> tag, separated by ,
    */
   @Override
   protected void addCredits() {
@@ -136,7 +106,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   }
 
   /**
-   * directors are concatenated in a single <director>xxx</director> tag
+   * directors are concatenated in a single <director>xxx</director> tag, separated by ,
    */
   @Override
   protected void addDirectors() {
@@ -146,14 +116,14 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   }
 
   /**
-   * languages are print in the UI language in a single <language>xxx</language> tagseparated by |
+   * languages are print in the UI language in a single <language>xxx</language> tagseparated by ,
    */
   @Override
   protected void addLanguages() {
     // prepare spoken language for MP - try to extract the iso codes to the UI language separated by a pipe
     Locale uiLanguage = Locale.getDefault();
     List<String> languages = new ArrayList<>();
-    for (String langu : movie.getSpokenLanguages().split(",")) {
+    for (String langu : MovieNfoParser.split(movie.getSpokenLanguages())) {
       langu = langu.trim();
       Locale locale = new Locale(langu);
       String languageLocalized = locale.getDisplayLanguage(uiLanguage);
@@ -165,8 +135,8 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
       }
     }
 
-    Element element = document.createElement("languages");
-    element.setTextContent(StringUtils.join(languages.toArray(), '|'));
+    Element element = document.createElement("language");
+    element.setTextContent(StringUtils.join(languages, ", "));
     root.appendChild(element);
   }
 }

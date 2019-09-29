@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
@@ -263,7 +264,7 @@ public class MainWindow extends JFrame {
 
     // mouse event listener for context menu
     Toolkit.getDefaultToolkit().addAWTEventListener(arg0 -> {
-      if (arg0 instanceof MouseEvent && MouseEvent.MOUSE_RELEASED == arg0.getID() && arg0.getSource() instanceof JTextComponent) {
+      if (arg0 instanceof MouseEvent && ((MouseEvent) arg0).isPopupTrigger() && arg0.getSource() instanceof JTextComponent) {
         MouseEvent me = (MouseEvent) arg0;
         JTextComponent tc = (JTextComponent) arg0.getSource();
         if (me.isPopupTrigger() && tc.getComponentPopupMenu() == null) {
@@ -272,11 +273,22 @@ public class MainWindow extends JFrame {
       }
     }, AWTEvent.MOUSE_EVENT_MASK);
 
-    // inform user is MI could not be loaded
+    // inform user that MI could not be loaded
     if (Platform.isLinux() && StringUtils.isBlank(MediaInfo.version())) {
       SwingUtilities.invokeLater(() -> {
         JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("mediainfo.failed.linux")); //$NON-NLS-1$
       });
+    }
+
+    // inform user that something happened while loading the modules
+    for (ITmmModule module : TmmModuleManager.getInstance().getModules()) {
+      if (!module.getStartupMessages().isEmpty()) {
+        for (String message : module.getStartupMessages()) {
+          SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(MainWindow.this, message); // $NON-NLS-1$
+          });
+        }
+      }
     }
   }
 

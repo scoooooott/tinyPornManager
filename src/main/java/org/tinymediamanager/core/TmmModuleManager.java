@@ -64,6 +64,10 @@ public class TmmModuleManager {
     module.shutDown();
   }
 
+  public Set<ITmmModule> getModules() {
+    return modules;
+  }
+
   /**
    * start up tmm - do initialization code here
    */

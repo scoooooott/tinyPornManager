@@ -20,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -390,11 +389,11 @@ public class ImageCache {
         return cachedFile;
       }
     }
-    catch (MalformedURLException e) {
+    catch (Exception e) {
       LOGGER.trace("Problem getting cached file for url {}", e.getMessage());
     }
 
-    LOGGER.trace("Problem getting cached file for url {}", url);
+    LOGGER.trace("could not get cached file for url {}", url);
     return null;
   }
 

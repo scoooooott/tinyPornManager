@@ -1,3 +1,22 @@
+Version 3.0.5
+=======================
++ added an action to force deletion of all HTTP caches (on disk and in memory) #656
+x show popupmenu from text fields on macOS #637
+x crash on startup if some images could not be loaded
+x catch more exceptions on file download #642
+x do not try to open dialogs on disconnected screens #640
+x delete subtitle archive after extracting #641
+x fix update data sources from Google Drive
+x correct date format style in files
+x when unable to load the database, start over with a new/clean one rather than not starting tmm
+x fixed loading of the colon replacement in the renamer settings
+x enhanced detection of valid NFO files #638
+x write the plot content to the outline field in the NFO #630
+x ImageCache must not crash tmm on exceptions #659
+x enabled to explicitly filter for empty values #660
+x refactored the MediaPortal NFO format into 2 new formats for enhanced compatibility: MP MyVideos and MP Moving Pictures
+
+
 Version 3.0.4
 =======================
 + changed "finding unwanted files" logic to use regular expressions

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2012 - 2018 Manuel Laggner
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<movie>
+    <title>10 Cloverfield Lane</title>
+    <sorttitle>cloverfield lane</sorttitle>
+    <originaltitle>|10 Cloverfield Lane|</originaltitle>
+    <rating>7.2</rating>
+    <year>2016</year>
+    <premiered>2016-03-18</premiered>
+    <set>Cloverfield</set>
+    <plot>After getting in a car accident, a woman is held in a shelter with two men, who claim the outside world is
+        affected by a widespread chemical attack.
+    </plot>
+    <tagline>Monsters come in many forms</tagline>
+    <runtime>103</runtime>
+    <mpaa>12A</mpaa>
+    <certification>12A</certification>
+    <language>|English</language>
+    <id>tt1179933</id>
+    <director>|Dan Trachtenberg|</director>
+    <credits>Josh Campbell, Matthew Stuecken, Damien Chazelle</credits>
+    <studio>|Paramount Pictures, Bad Robot, Spectrum Effects|</studio>
+    <watched>True</watched>
+    <genre>Drama</genre>
+    <genre>Horror</genre>
+    <genre>Mystery</genre>
+    <genre>Sci-Fi</genre>
+    <genre>Thriller</genre>
+    <actor>
+        <name>John Goodman</name>
+    </actor>
+    <actor>
+        <name>Mary Elizabeth Winstead</name>
+    </actor>
+    <actor>
+        <name>John Gallagher Jr.</name>
+    </actor>
+    <actor>
+        <name>Douglas M. Griffin</name>
+    </actor>
+    <actor>
+        <name>Suzanne Cryer</name>
+    </actor>
+    <actor>
+        <name>Bradley Cooper</name>
+    </actor>
+    <actor>
+        <name>Sumalee Montano</name>
+    </actor>
+    <actor>
+        <name>Frank Mottek</name>
+    </actor>
+    <actor>
+        <name>Kayla Bechor</name>
+    </actor>
+</movie>

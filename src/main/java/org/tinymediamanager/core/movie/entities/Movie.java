@@ -94,7 +94,9 @@ import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.core.movie.connector.IMovieConnector;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpLegacyConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMovingPicturesConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMyVideoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
@@ -1213,7 +1215,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
       case MP:
-        connector = new MovieToMediaportalConnector(this);
+        connector = new MovieToMpLegacyConnector(this);
+        break;
+
+      case MP_MP:
+        connector = new MovieToMpMovingPicturesConnector(this);
+        break;
+
+      case MP_MV:
+        connector = new MovieToMpMyVideoConnector(this);
         break;
 
       case KODI:
@@ -1677,7 +1687,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       if (!prefix.isEmpty()) {
         int rtvob = 0;
         for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-          if (mf.getFilename().startsWith(prefix) && ifo.getFilename() != mf.getFilename()) {
+          if (mf.getFilename().startsWith(prefix) && !ifo.getFilename().equals(mf.getFilename())) {
             rtvob += mf.getDuration();
             LOGGER.trace("VOB:{} duration:{} accumulated:{}", mf.getFilename(), mf.getDuration(), rtvob);
           }
@@ -2120,14 +2130,20 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public MediaFile getMainVideoFile() {
-    MediaFile vid = null;
+    MediaFile vid = new MediaFile();
 
     if (stacked) {
       // search the first stacked media file (e.g. CD1)
       vid = getMediaFiles(MediaFileType.VIDEO).stream().min(Comparator.comparingInt(MediaFile::getStacking)).orElse(new MediaFile());
     }
     else {
-      // get the biggest one
+      // try to find correct main movie file (DVD only)
+      if (isDisc()) {
+        vid = getMainDVDVideoFile();
+      }
+    }
+    // we didn't find one, so get the biggest one
+    if (vid == null || vid.getFilename().isEmpty()) {
       vid = getBiggestMediaFile(MediaFileType.VIDEO);
     }
 
@@ -2135,8 +2151,35 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return vid;
     }
 
+    LOGGER.warn("Movie without video file? {}", getPathNIO());
     // cannot happen - movie MUST always have a video file
     return new MediaFile();
+  }
+
+  public MediaFile getMainDVDVideoFile() {
+    MediaFile vid = null;
+
+    // find IFO file with longest duration
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.getExtension().equalsIgnoreCase("ifo")) {
+        if (vid == null || mf.getDuration() > vid.getDuration()) {
+          vid = mf;
+        }
+      }
+    }
+    // no IFO? - might be bluray
+    if (vid == null) {
+      return vid;
+    }
+
+    // find the vob matching to our ifo
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.getExtension().equalsIgnoreCase("vob") && mf.getBasename().equalsIgnoreCase(vid.getBasename())) {
+        vid = mf;
+        break;
+      }
+    }
+    return vid;
   }
 
   @Override

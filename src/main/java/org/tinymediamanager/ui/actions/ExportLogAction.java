@@ -109,8 +109,7 @@ public class ExportLogAction extends TmmAction {
         }
       }
 
-      try {
-        FileInputStream in = new FileInputStream("launcher.log");
+      try (FileInputStream in = new FileInputStream("launcher.log")) {
         ZipEntry ze = new ZipEntry("launcher.log");
         zos.putNextEntry(ze);
 

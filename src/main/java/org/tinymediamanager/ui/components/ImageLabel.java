@@ -111,12 +111,16 @@ public class ImageLabel extends JLabel {
   }
 
   public void setOriginalImage(byte[] originalImageBytes) {
-    this.originalImageBytes = originalImageBytes;
-    BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
-    this.originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
-    this.scaledImage = Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, this.getSize().width, this.getSize().height,
-        Scalr.OP_ANTIALIAS);
-
+    try {
+      this.originalImageBytes = originalImageBytes;
+      BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
+      this.originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+      this.scaledImage = Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, this.getSize().width, this.getSize().height,
+          Scalr.OP_ANTIALIAS);
+    }
+    catch (Exception e) {
+      clearImageData();
+    }
     repaint();
   }
 
@@ -461,6 +465,7 @@ public class ImageLabel extends JLabel {
       }
       catch (Exception e) {
         imageUrl = "";
+        clearImageData();
         return null;
       }
     }
@@ -528,6 +533,7 @@ public class ImageLabel extends JLabel {
         catch (Exception e) {
           // okay, we got an exception here - set the image path to empty to avoid an endless try-to-reload
           ImageLabel.this.imagePath = "";
+          clearImageData();
           return null;
         }
       }

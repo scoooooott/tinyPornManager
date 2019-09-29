@@ -54,6 +54,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
+import org.tinymediamanager.ui.actions.ClearHttpCacheAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExportLogAction;
@@ -85,7 +86,7 @@ import net.miginfocom.swing.MigLayout;
 public class ToolbarPanel extends JPanel implements TitlePane {
   private static final long           serialVersionUID      = 7969400170662870244L;
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());
-  private final static Logger         LOGGER                = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
 
   private TmmWindowDecorationPanel    windowDecorationPanel = null;
 
@@ -195,6 +196,7 @@ public class ToolbarPanel extends JPanel implements TitlePane {
 
     menu.add(new ClearImageCacheAction());
     menu.add(new RebuildImageCacheAction());
+    menu.add(new ClearHttpCacheAction());
 
     menu.addSeparator();
 

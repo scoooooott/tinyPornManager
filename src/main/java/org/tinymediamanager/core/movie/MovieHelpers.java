@@ -16,8 +16,23 @@
 
 package org.tinymediamanager.core.movie;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.AbstractFileVisitor;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -26,19 +41,6 @@ import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.Certification;
-
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.nio.file.FileVisitResult.CONTINUE;
 
 /**
  * a collection of various helpers for the movie module
@@ -51,7 +53,8 @@ public class MovieHelpers {
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
-   * @param name certification string like "USA:R / UK:15 / Sweden:15"
+   * @param name
+   *          certification string like "USA:R / UK:15 / Sweden:15"
    * @return the localized certification if found, else *ANY* language cert found
    */
   // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
@@ -74,7 +77,8 @@ public class MovieHelpers {
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
-        } else {
+        }
+        else {
           cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
           if (cert != Certification.UNKNOWN) {
             return cert;
@@ -91,19 +95,22 @@ public class MovieHelpers {
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
-        } else {
+        }
+        else {
           cert = Certification.findCertification(c);
           if (cert != Certification.UNKNOWN) {
             return cert;
           }
         }
       }
-    } else {
+    }
+    else {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
         cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
-      } else {
+      }
+      else {
         // no country? try to find only by name
         cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
       }
@@ -118,12 +125,13 @@ public class MovieHelpers {
   /**
    * start the automatic trailer download for the given movie
    *
-   * @param movie the movie to start the trailer download for
+   * @param movie
+   *          the movie to start the trailer download for
    */
   public static void startAutomaticTrailerDownload(Movie movie) {
     // start movie trailer download?
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
-            && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
+        && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
       selectTrailerProvider(movie, LOGGER);
     }
   }
@@ -133,41 +141,46 @@ public class MovieHelpers {
       if (movie.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
         YoutubeDownloadTask task = new YoutubeDownloadTask(movie.getTrailer().get(0), movie);
         TmmTaskManager.getInstance().addDownloadTask(task);
-      } else {
+      }
+      else {
         MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
         TmmTaskManager.getInstance().addDownloadTask(task);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       logger.error("could not start trailer download: " + e.getMessage());
       MessageManager.instance.pushMessage(
-              new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[]{":", e.getLocalizedMessage()}));
+          new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 
   /**
    * Method to get a list of files with the given regular expression
    *
-   * @param regexList list of regular expression
+   * @param regexList
+   *          list of regular expression
    * @return a list of files
    */
-  public static HashSet<Path> getUnknownFilesbyRegex(Path folder, List<String> regexList) {
+  public static HashSet<Path> getUnknownFilesByRegex(Path folder, List<String> regexList) {
 
-        GetUnkownFilesVisitor visitor = new GetUnkownFilesVisitor(regexList);
+    GetUnknownFilesVisitor visitor = new GetUnknownFilesVisitor(regexList);
 
     try {
-      Files.walkFileTree(folder, visitor);
-    } catch (IOException ignored ) {}
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
+    }
+    catch (IOException e) {
+      LOGGER.error("could not get unknown files: {}", e.getMessage());
+    }
 
     return visitor.fileList;
-
   }
 
-  private static class GetUnkownFilesVisitor extends SimpleFileVisitor<Path> {
+  private static class GetUnknownFilesVisitor extends AbstractFileVisitor {
 
     private HashSet<Path> fileList = new HashSet<>();
-    private List<String> regexList;
+    private List<String>  regexList;
 
-    GetUnkownFilesVisitor(List<String> regexList) {
+    GetUnknownFilesVisitor(List<String> regexList) {
       this.regexList = regexList;
     }
 
@@ -183,9 +196,5 @@ public class MovieHelpers {
       }
       return CONTINUE;
     }
-
   }
-
 }
-
-
