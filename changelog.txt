@@ -16,6 +16,7 @@ x ImageCache must not crash tmm on exceptions #659
 x enabled to explicitly filter for empty values #660
 x refactored the MediaPortal NFO format into 2 new formats for enhanced compatibility: MP MyVideos and MP Moving Pictures
 x do not crash tmm on startup on incomplete settings #663
+x remove a custom genre in the bulk editor does not throw an exception any more
 
 
 Version 3.0.4

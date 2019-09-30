@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -111,7 +110,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
           if (item instanceof String) {
             genre = MediaGenres.getGenre((String) item);
           }
-          // MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
+
           if (genre != null) {
             for (Movie movie : moviesToEdit) {
               movie.addGenre(genre);
@@ -127,9 +126,23 @@ public class MovieBulkEditorDialog extends TmmDialog {
         btnRemoveGenre.addActionListener(e -> {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            movie.removeGenre(genre);
+          MediaGenres genre = null;
+          Object item = cbGenres.getSelectedItem();
+
+          // genre
+          if (item instanceof MediaGenres) {
+            genre = (MediaGenres) item;
+          }
+
+          // newly created genre?
+          if (item instanceof String) {
+            genre = MediaGenres.getGenre((String) item);
+          }
+
+          if (genre != null) {
+            for (Movie movie : moviesToEdit) {
+              movie.removeGenre(genre);
+            }
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
