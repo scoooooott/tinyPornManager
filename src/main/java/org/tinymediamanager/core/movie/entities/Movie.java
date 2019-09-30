@@ -1349,7 +1349,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // the default rating
-    if (rating == null) {
+    if (rating == null && StringUtils.isNotBlank(MovieModuleManager.SETTINGS.getPreferredRating())) {
       rating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
     }
 

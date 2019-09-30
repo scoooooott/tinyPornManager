@@ -15,6 +15,7 @@ x write the plot content to the outline field in the NFO #630
 x ImageCache must not crash tmm on exceptions #659
 x enabled to explicitly filter for empty values #660
 x refactored the MediaPortal NFO format into 2 new formats for enhanced compatibility: MP MyVideos and MP Moving Pictures
+x do not crash tmm on startup on incomplete settings #663
 
 
 Version 3.0.4
