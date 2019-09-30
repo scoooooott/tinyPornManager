@@ -198,6 +198,6 @@ public class TmmHttpClient {
    *           any {@link IOException} occurred while deleting the cache
    */
   public static void clearCache() throws IOException {
-    CACHE.delete();
+    CACHE.evictAll();
   }
 }
