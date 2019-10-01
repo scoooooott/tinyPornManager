@@ -125,7 +125,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       result.setOriginalTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
       if (StringUtils.isEmpty(entity.title)) {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
-      } else {
+      }
+      else {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.title));
       }
       result.setYear(entity.year);
@@ -174,10 +175,14 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     }
 
     // Rating
-    MediaRating rating = new MediaRating(providerInfo.getId());
-    rating.setRating(scrapeResult.rating);
-    rating.setVoteCount(scrapeResult.ratingVotes);
-    rating.setMaxValue(10);
+    if (scrapeResult.rating != null) {
+      MediaRating rating = new MediaRating(providerInfo.getId());
+      rating.setRating(scrapeResult.rating);
+      rating.setVoteCount(scrapeResult.ratingVotes);
+      rating.setMaxValue(10);
+
+      metadata.addRating(rating);
+    }
 
     // Genres
     ArrayList<MediaGenres> mediaGenres = new ArrayList<>();
@@ -185,20 +190,20 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     for (Genre genre : scrapeResult.genres) {
       mediaGenres.add(MediaGenres.getGenre(genre.name));
     }
+    metadata.setGenres(mediaGenres);
 
     // Trailers
     ArrayList<MediaTrailer> mediaTrailers = new ArrayList<>();
 
     for (Trailer trailer : scrapeResult.trailers) {
-
       MediaTrailer mt = new MediaTrailer();
       mt.setName(scrapeResult.title);
       mt.setUrl(trailer.url);
       mt.setQuality(trailer.quality);
 
       mediaTrailers.add(mt);
-
     }
+    metadata.setTrailers(mediaTrailers);
 
     // Studios
     ArrayList<String> productionCompanies = new ArrayList<>();
@@ -221,7 +226,6 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaCastMember.setId(providerInfo.getId(), director.id);
 
       castMembers.add(mediaCastMember);
-
     }
 
     for (Actor actor : scrapeResult.actors) {
@@ -233,7 +237,6 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaCastMember.setCharacter(actor.role);
 
       castMembers.add(mediaCastMember);
-
     }
 
     for (Producer producer : scrapeResult.producers) {
@@ -245,8 +248,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaCastMember.setCharacter(producer.role);
 
       castMembers.add(mediaCastMember);
-
     }
+    metadata.setCastMembers(castMembers);
 
     // Poster
     for (Poster poster : scrapeResult.posters) {
@@ -304,11 +307,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     metadata.setTitle(scrapeResult.title);
     metadata.setOriginalTitle(scrapeResult.originalTitle);
     metadata.setRuntime(scrapeResult.runtime);
-    metadata.setGenres(mediaGenres);
     metadata.setPlot(scrapeResult.plot);
-    metadata.setTrailers(mediaTrailers);
-    metadata.addRating(rating);
-    metadata.setCastMembers(castMembers);
 
     return metadata;
   }
