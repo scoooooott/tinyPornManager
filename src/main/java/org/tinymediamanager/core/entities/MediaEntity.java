@@ -417,9 +417,16 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void setRatings(Map<String, Rating> newRatings) {
+    // preserve the user rating here
+    Rating userRating = ratings.get(Rating.USER);
+
     ratings.clear();
     for (Entry<String, Rating> entry : newRatings.entrySet()) {
       setRating(entry.getValue());
+    }
+
+    if (userRating != null && !newRatings.containsKey(Rating.USER)) {
+      setRating(userRating);
     }
   }
 
