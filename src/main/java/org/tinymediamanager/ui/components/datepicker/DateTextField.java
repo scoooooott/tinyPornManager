@@ -31,6 +31,8 @@ import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.TmmDateFormat;
 
 /**
@@ -39,22 +41,23 @@ import org.tinymediamanager.core.TmmDateFormat;
  * @author Manuel Laggner
  */
 class DateTextField extends JFormattedTextField implements CaretListener, FocusListener, ActionListener {
-  private static final long serialVersionUID = -8901842591101625304L;
+  private static final long   serialVersionUID = -8901842591101625304L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(DateTextField.class);
 
-  private Date              date;
-  private SimpleDateFormat  dateFormatter;
-  private String            datePattern;
-  private String            maskPattern;
+  private Date                date;
+  private SimpleDateFormat    dateFormatter;
+  private String              datePattern;
+  private String              maskPattern;
 
-  private Color             positiveColor;
-  private Color             negativeColor;
+  private Color               positiveColor;
+  private Color               negativeColor;
 
-  private int               hours;
-  private int               minutes;
-  private int               seconds;
-  private int               millis;
+  private int                 hours;
+  private int                 minutes;
+  private int                 seconds;
+  private int                 millis;
 
-  private Calendar          calendar;
+  private Calendar            calendar;
 
   public DateTextField() {
     this(null);
@@ -115,7 +118,7 @@ class DateTextField extends JFormattedTextField implements CaretListener, FocusL
         setText(formattedDate);
       }
       catch (RuntimeException e) {
-        e.printStackTrace();
+        LOGGER.warn("Could not set text: {}", e);
       }
     }
     setForeground(UIManager.getColor("FormattedTextField.foreground"));
