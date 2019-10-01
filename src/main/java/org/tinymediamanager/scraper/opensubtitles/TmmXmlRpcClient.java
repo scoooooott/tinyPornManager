@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.opensubtitles;
 
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -35,8 +34,11 @@ import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
 import de.timroes.axmlrpc.XMLUtil;
 import de.timroes.axmlrpc.serializer.SerializerHandler;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.OkUrlFactory;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * This is the tinyMediaManager implementation of the XMLRPCClient to use our http client
@@ -88,6 +90,8 @@ public class TmmXmlRpcClient {
     private static final String HTTP_POST  = "POST";
     private static final String USER_AGENT = "User-Agent";
 
+    private final MediaType     XML        = MediaType.parse("text/xml");
+
     /**
      * Create a new Caller for synchronous use. If the caller has been created with this constructor you cannot use the start method to start it as a
      * thread. But you can call the call method on it for synchronous use.
@@ -120,19 +124,12 @@ public class TmmXmlRpcClient {
           return cachedResponse;
         }
 
-        HttpURLConnection http = new OkUrlFactory(client).open(url);
-        http.setRequestProperty(USER_AGENT, userAgent);
-        http.setRequestMethod(HTTP_POST);
-        http.setDoOutput(true);
-        http.setDoInput(true);
-
-        OutputStreamWriter stream = new OutputStreamWriter(http.getOutputStream());
-        stream.write(callXml);
-        stream.flush();
-        stream.close();
+        RequestBody body = RequestBody.create(XML, callXml);
+        Request request = new Request.Builder().url(url).header(USER_AGENT, userAgent).post(body).build();
+        Response response = client.newCall(request).execute();
 
         // Try to get the status code from the connection
-        int statusCode = http.getResponseCode();
+        int statusCode = response.code();
 
         // if the response was not successful, throw an exception
         if (statusCode != HttpURLConnection.HTTP_OK) {
@@ -140,7 +137,7 @@ public class TmmXmlRpcClient {
         }
 
         // cache the response
-        cachedResponse = responseParser.parse(http.getInputStream());
+        cachedResponse = responseParser.parse(response.body().byteStream());
         callCache.put(callXml, cachedResponse);
 
         return cachedResponse;
@@ -174,7 +171,6 @@ public class TmmXmlRpcClient {
     public Object parse(InputStream response) throws XMLRPCException {
 
       try {
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -189,7 +185,6 @@ public class TmmXmlRpcClient {
         e = XMLUtil.getOnlyChildElement(e.getChildNodes());
 
         if (e.getNodeName().equals(PARAMS)) {
-
           e = XMLUtil.getOnlyChildElement(e.getChildNodes());
 
           if (!e.getNodeName().equals(PARAM)) {
@@ -197,29 +192,24 @@ public class TmmXmlRpcClient {
           }
 
           return getReturnValueFromElement(e);
-
         }
         else if (e.getNodeName().equals(FAULT)) {
-
           @SuppressWarnings("unchecked")
           Map<String, Object> o = (Map<String, Object>) getReturnValueFromElement(e);
 
           throw new XMLRPCServerException((String) o.get(FAULT_STRING), (Integer) o.get(FAULT_CODE));
-
         }
 
         throw new XMLRPCException("The methodResponse tag must contain a fault or params tag.");
-
       }
       catch (Exception ex) {
-
-        if (ex instanceof XMLRPCServerException)
+        if (ex instanceof XMLRPCServerException) {
           throw (XMLRPCServerException) ex;
-        else
-          throw new XMLRPCException("Error getting result from server.", ex);
-
+        }
+        else {
+          throw new XMLRPCException(ex.getMessage());
+        }
       }
-
     }
 
     /**

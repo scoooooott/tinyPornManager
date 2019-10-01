@@ -139,7 +139,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
             results.add(result);
           }
 
-          LOGGER.debug("found " + info.getMovieInfo().size() + " results");
+          LOGGER.debug("found {} results", info.getMovieInfo().size());
         }
         catch (TmmXmlRpcException e) {
           switch (e.statusCode) {
@@ -159,11 +159,11 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           }
         }
         catch (Exception e) {
-          LOGGER.error("Could not search subtitle.", e);
+          LOGGER.error("Could not search subtitle - {}", e.getMessage());
         }
       }
       else {
-        LOGGER.warn("file does not exist or is zero byte: " + file);
+        LOGGER.warn("file does not exist or is zero byte: {}", file);
       }
     }
 
@@ -171,7 +171,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     if (results.isEmpty() && StringUtils.isNotBlank(options.getImdbId())) {
       Map<String, Object> mapQuery = new HashMap<>();
 
-      LOGGER.debug("searching subtitle for imdb id: " + options.getImdbId());
+      LOGGER.debug("searching subtitle for imdb id: {}", options.getImdbId());
       // use IMDB Id without leading tt
       mapQuery.put("imdbid", options.getImdbId().replace("tt", ""));
       mapQuery.put("sublanguageid", getLanguageCode(options.getLanguage()));
@@ -199,7 +199,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           results.add(result);
         }
 
-        LOGGER.debug("found " + info.getMovieInfo().size() + " results");
+        LOGGER.debug("found {} results", info.getMovieInfo().size());
       }
       catch (TmmXmlRpcException e) {
         switch (e.statusCode) {
@@ -227,7 +227,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     if (results.isEmpty() && StringUtils.isNotBlank(options.getQuery())) {
       Map<String, Object> mapQuery = new HashMap<>();
 
-      LOGGER.debug("serching subtitle for query: " + options.getQuery());
+      LOGGER.debug("serching subtitle for query: {}", options.getQuery());
 
       mapQuery.put("query", options.getQuery());
       mapQuery.put("sublanguageid", getLanguageCode(options.getLanguage()));
@@ -247,7 +247,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
           results.add(result);
         }
 
-        LOGGER.debug("found " + info.getMovieInfo().size() + " results");
+        LOGGER.debug("found {} results", info.getMovieInfo().size());
       }
       catch (TmmXmlRpcException e) {
         switch (e.statusCode) {
@@ -263,7 +263,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
 
             // unspecified error:
           default:
-            throw new ScrapeException(e.getCause());
+            throw new ScrapeException(e);
         }
       }
       catch (Exception e) {
