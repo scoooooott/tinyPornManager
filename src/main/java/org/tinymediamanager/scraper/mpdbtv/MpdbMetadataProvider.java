@@ -73,7 +73,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv",
-        "\"<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
+        "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
         MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
 
     providerInfo.setVersion(MpdbMetadataProvider.class);
