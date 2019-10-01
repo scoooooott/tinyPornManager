@@ -1,5 +1,6 @@
 Version 3.0.5
 =======================
++ added a scraper for MPDb.tv (thx @wjanes)
 + added an action to force deletion of all HTTP caches (on disk and in memory) #656
 + added changing of the movie edition to the movie bulk editor
 x show popupmenu from text fields on macOS #637
