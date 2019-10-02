@@ -63,6 +63,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   private JLabel                            lblAired;
   private JLabel                            lblTags;
   private JLabel                            lblDateAdded;
+  private JLabel                            lblNote;
 
   /**
    * Instantiates a new tv show episode details panel.
@@ -96,7 +97,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
       JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
@@ -143,6 +144,13 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       lblPath = new LinkLabel("");
       add(lblPath, "cell 2 5, growx, wmin 0");
     }
+    {
+      JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note")); //$NON-NLS-1$
+      add(lblNoteT, "cell 0 6");
+
+      lblNote = new JLabel("");
+      add(lblNote, "cell 2 6,,growx,wmin 0");
+    }
   }
 
   protected void initDataBindings() {
@@ -182,5 +190,10 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowEpisodeSelectionModelBeanProperty_5, lblDateAdded, jLabelBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShowEpisode.note");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_6, lblNote, jLabelBeanProperty);
+    autoBinding_6.bind();
   }
 }

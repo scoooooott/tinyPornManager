@@ -137,6 +137,7 @@ public class MovieRenamer {
     tokenMap.put("mediaSource", "movie.mediaSource");
     tokenMap.put("edition", "movie.edition");
     tokenMap.put("parent", "movie.parent");
+    tokenMap.put("note", "movie.note");
 
     return tokenMap;
   }

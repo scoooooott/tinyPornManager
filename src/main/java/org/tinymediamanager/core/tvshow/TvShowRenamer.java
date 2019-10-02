@@ -109,6 +109,7 @@ public class TvShowRenamer {
     tokenMap.put("showTitleSortable", "tvShow.titleSortable");
     tokenMap.put("showYear", "tvShow.year");
     tokenMap.put("parent", "tvShow.parent");
+    tokenMap.put("showNote", "tvShow.note");
 
     // episode tags
     tokenMap.put("episodeNr", "episode.episode");
@@ -142,6 +143,7 @@ public class TvShowRenamer {
     tokenMap.put("hdr", "episode.videoHDRFormat");
 
     tokenMap.put("mediaSource", "episode.mediaSource");
+    tokenMap.put("note", "episode.note");
 
     return tokenMap;
   }
