@@ -20,8 +20,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.exceptions.HttpException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mpdbtv.entities.MovieEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.SearchEntity;
@@ -53,6 +58,14 @@ public class Controller {
       logging.setLevel(HttpLoggingInterceptor.Level.BODY);
       builder.addInterceptor(logging);
     }
+    builder.addInterceptor(chain -> {
+      Request request = chain.request();
+      okhttp3.Response response = chain.proceed(request);
+      if( response.code() != 200 ) {
+        throw new HttpException( response.code(), response.message());
+      }
+      return chain.proceed(chain.request());
+    });
     retrofit = buildRetrofitInstance(builder.build());
 
   }

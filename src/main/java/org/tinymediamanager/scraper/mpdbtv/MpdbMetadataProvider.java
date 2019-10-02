@@ -37,6 +37,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mpdbtv.entities.Actor;
@@ -60,12 +61,12 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @PluginImplementation
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
-  private static final Logger            LOGGER       = LoggerFactory.getLogger(MpdbMetadataProvider.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MpdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static final String            API_KEY      = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
-  private static final String            FORMAT       = "json";
+  private static final String API_KEY = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
+  private static final String FORMAT = "json";
 
-  private Controller                     controller;
+  private Controller controller;
 
   public MpdbMetadataProvider() {
     this.controller = new Controller(false);
@@ -73,8 +74,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv",
-        "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
-        MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
+            "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
+            MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
 
     providerInfo.setVersion(MpdbMetadataProvider.class);
     providerInfo.getConfig().addText("aboKey", "", false);
@@ -91,24 +92,17 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     List<MediaSearchResult> mediaResult = new ArrayList<>();
     List<SearchEntity> searchResult;
 
-    if (StringUtils.isBlank(getAboKey())) {
-      LOGGER.warn("no ABO Key found");
-      return mediaResult;
-    }
-
-    if (StringUtils.isBlank(getUserName())) {
-      LOGGER.warn("no Username found");
-      return mediaResult;
+    if (StringUtils.isAnyBlank(getAboKey(), getUserName())) {
+      LOGGER.warn("no username/ABO Key found");
+      throw new ScrapeException(new HttpException(401, "Unauthorized"));
     }
 
     LOGGER.info("========= BEGIN MPDB.tv Scraper Search for Movie: {} ", mediaSearchOptions.getQuery());
 
     try {
       searchResult = controller.getSearchInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(), mediaSearchOptions.getQuery(),
-          mediaSearchOptions.getLanguage(), true, FORMAT);
-
-    }
-    catch (IOException e) {
+              mediaSearchOptions.getLanguage(), true, FORMAT);
+    } catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -125,8 +119,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       result.setOriginalTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
       if (StringUtils.isEmpty(entity.title)) {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
-      }
-      else {
+      } else {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.title));
       }
       result.setYear(entity.year);
@@ -149,22 +142,16 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     MediaMetadata metadata = new MediaMetadata(MpdbMetadataProvider.providerInfo.getId());
     MovieEntity scrapeResult;
 
-    if (StringUtils.isBlank(getAboKey())) {
-      LOGGER.warn("no ABO Key found");
-      return metadata;
-    }
-
-    if (StringUtils.isBlank(getUserName())) {
-      LOGGER.warn("no Username found");
-      return metadata;
+    if (StringUtils.isAnyBlank(getAboKey(), getUserName())) {
+      LOGGER.warn("no username/ABO Key found");
+      throw new ScrapeException(new HttpException(401, "Unauthorized"));
     }
 
     LOGGER.info("========= BEGIN MPDB.tv scraping");
     try {
       scrapeResult = controller.getScrapeInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(),
-          Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())), mediaScrapeOptions.getLanguage(), null, FORMAT);
-    }
-    catch (IOException e) {
+              Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())), mediaScrapeOptions.getLanguage(), null, FORMAT);
+    } catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
