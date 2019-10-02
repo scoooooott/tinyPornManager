@@ -21,6 +21,7 @@ x do not crash tmm on startup on incomplete settings #663
 x remove a custom genre in the bulk editor does not throw an exception any more
 x do not overwrite user ratings on scrape
 x better logging of errors in the OpenSubtitles scraper #633
+x fixed movie in a movie set filter
 
 
 Version 3.0.4
