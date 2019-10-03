@@ -16,23 +16,8 @@
 
 package org.tinymediamanager.core.movie;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-
-import java.io.IOException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.AbstractFileVisitor;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -154,47 +139,5 @@ public class MovieHelpers {
     }
   }
 
-  /**
-   * Method to get a list of files with the given regular expression
-   *
-   * @param regexList
-   *          list of regular expression
-   * @return a list of files
-   */
-  public static HashSet<Path> getUnknownFilesByRegex(Path folder, List<String> regexList) {
 
-    GetUnknownFilesVisitor visitor = new GetUnknownFilesVisitor(regexList);
-
-    try {
-      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
-    }
-    catch (IOException e) {
-      LOGGER.error("could not get unknown files: {}", e.getMessage());
-    }
-
-    return visitor.fileList;
-  }
-
-  private static class GetUnknownFilesVisitor extends AbstractFileVisitor {
-
-    private HashSet<Path> fileList = new HashSet<>();
-    private List<String>  regexList;
-
-    GetUnknownFilesVisitor(List<String> regexList) {
-      this.regexList = regexList;
-    }
-
-    @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-
-      for (String regex : regexList) {
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(file.getFileName().toString());
-        if (m.find()) {
-          fileList.add(file);
-        }
-      }
-      return CONTINUE;
-    }
-  }
 }

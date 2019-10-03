@@ -15,16 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.CardLayout;
-
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
+import net.miginfocom.swing.MigLayout;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -41,6 +32,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowChangeDatasourceAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowCleanUpFilesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowDownloadMissingArtworkAction;
@@ -70,7 +62,6 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowFilterDialog;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowMissingEpisodeListDialog;
 import org.tinymediamanager.ui.tvshows.panels.TvShowTreePanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeInformationPanel;
@@ -83,7 +74,14 @@ import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsNode;
 
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import java.awt.CardLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
   private final static String       ID       = "tvShows";
@@ -261,6 +259,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowRenameAction.class));
     popupMenu.add(createAndRegisterAction(TvShowMediaInformationAction.class));
     popupMenu.add(createAndRegisterAction(TvShowExportAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowCleanUpFilesAction.class));
     popupMenu.add(createAndRegisterAction(TvShowClearImageCacheAction.class));
 
     popupMenu.addSeparator();
@@ -341,6 +340,8 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     editPopupMenu.add(createAndRegisterAction(TvShowChangeToAiredOrderAction.class));
     editPopupMenu.addSeparator();
     editPopupMenu.add(createAndRegisterAction(TvShowExportAction.class));
+    editPopupMenu.addSeparator();
+    editPopupMenu.add(createAndRegisterAction(TvShowCleanUpFilesAction.class));
   }
 
   /**
