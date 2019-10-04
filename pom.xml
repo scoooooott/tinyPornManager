@@ -11,7 +11,7 @@
     <groupId>org.tinymediamanager.plugins</groupId>
 
     <artifactId>scraper-opensubtitles</artifactId>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.1</version>
     <name>OpenSubtitles.org scraper</name>
     <description>A scraper for Subtitles</description>
     <url>https://www.tinymediamanager.org</url>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@gitlab.com:tinyMediaManager/scraper/${project.artifactId}.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>scraper-opensubtitles-3.1</tag>
     </scm>
 
     <dependencies>
