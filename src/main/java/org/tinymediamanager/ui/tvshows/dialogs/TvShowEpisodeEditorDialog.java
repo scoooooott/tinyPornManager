@@ -165,6 +165,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private TmmTable                                tableWriters;
   private JTextField                              tfOriginalTitle;
   private JTextField                              tfThumb;
+  private JTextField                              tfNote;
 
   /**
    * Instantiates a new TV show episode scrape dialog.
@@ -217,6 +218,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       taPlot.setText(episodeToEdit.getPlot());
       taPlot.setCaretPosition(0);
       cbMediaSource.setSelectedItem(episodeToEdit.getMediaSource());
+      tfNote.setText(episodeToEdit.getNote());
 
       for (Person origCast : episodeToEdit.getGuests()) {
         guests.add(new Person(origCast));
@@ -253,8 +255,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     {
       JPanel detailsPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), detailsPanel); //$NON-NLS-1$
-      detailsPanel.setLayout(new MigLayout("", "[][20lp:75lp][50lp:75lp][][60lp:75lp][50lp:75lp][20lp:n][][25lp:n][200lp:250lp,grow]",
-          "[][][][][][][100lp:125lp,grow][][][][100lp][pref:pref:pref]"));
+      detailsPanel.setLayout(new MigLayout("", "[][20lp:75lp,grow][50lp:75lp][][60lp:75lp][50lp:75lp][20lp:n][][25lp:n][200lp:250lp,grow]",
+          "[][][][][][][100lp:125lp,grow][][][][100lp][pref:pref:pref][]"));
 
       {
         JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -271,12 +273,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
             TmmUIHelper.openFile(mf.getFileAsPath());
           }
           catch (Exception ex) {
-            LOGGER.error("open file", e);
+            LOGGER.error("open file - {}", e);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
           }
         });
-        detailsPanel.add(btnPlay, "cell 1 0");
+        detailsPanel.add(btnPlay, "cell 1 0 7 1");
       }
       {
         JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -392,6 +394,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         JButton btnRemoveRating = new JButton(new RemoveRatingAction());
         btnRemoveRating.setMargin(BUTTON_MARGIN);
         detailsPanel.add(btnRemoveRating, "cell 0 10,alignx right,aligny top");
+      }
+      {
+        JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
+        detailsPanel.add(lblNoteT, "cell 0 12,alignx trailing");
+
+        tfNote = new JTextField();
+        detailsPanel.add(tfNote, "cell 1 12 7 1,growx");
       }
     }
 
@@ -718,6 +727,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDisplaySeason((Integer) spDisplaySeason.getValue());
       episodeToEdit.setDisplayEpisode((Integer) spDisplayEpisode.getValue());
       episodeToEdit.setPlot(taPlot.getText());
+      episodeToEdit.setNote(tfNote.getText());
 
       Object mediaSource = cbMediaSource.getSelectedItem();
       if (mediaSource instanceof MediaSource) {

@@ -105,6 +105,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                     productionCompany = "";
   @JsonProperty
   protected boolean                    scraped           = false;
+  @JsonProperty
+  protected String                     note              = "";
 
   @JsonProperty
   protected Map<String, Rating>        ratings           = new ConcurrentHashMap<>(0);
@@ -596,6 +598,16 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public boolean isScraped() {
     return scraped;
+  }
+
+  public void setNote(String newValue) {
+    String oldValue = this.note;
+    this.note = newValue;
+    firePropertyChange("note", oldValue, newValue);
+  }
+
+  public String getNote() {
+    return this.note;
   }
 
   public void setDuplicate() {

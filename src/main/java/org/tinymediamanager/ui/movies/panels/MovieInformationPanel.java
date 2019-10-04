@@ -162,12 +162,10 @@ public class MovieInformationPanel extends JPanel {
       Object source = propertyChangeEvent.getSource();
       // react on selection of a movie and change of a movie
       if (source instanceof MovieSelectionModel) {
-        Movie movie = null;
-        if (source instanceof MovieSelectionModel) {
-          movie = ((MovieSelectionModel) source).getSelectedMovie();
-        }
+        MovieSelectionModel selectionModel = (MovieSelectionModel) source;
+        Movie movie = selectionModel.getSelectedMovie();
 
-        if (movie != null) {
+        if (movie != null && movie != selectionModel.initialMovie) {
           setPoster(movie);
           setFanart(movie);
           panelLogos.setMediaInformationSource(movie);

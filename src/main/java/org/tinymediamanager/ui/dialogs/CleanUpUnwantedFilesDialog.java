@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.dialogs;
 
-import java.awt.BorderLayout;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+package org.tinymediamanager.ui.dialogs;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.components.table.TmmTable;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -32,48 +41,38 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.MovieHelpers;
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
+import java.awt.BorderLayout;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * The dialog {@link MovieCleanUpUnwantedFilesDialog} displays found _unknown files_ for selected movies
- * 
+ * show a dialog with all unwanted files
+ *
  * @author Wolfgang Janes
  */
-public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
-  private final static Logger      LOGGER = LoggerFactory.getLogger(MovieCleanUpUnwantedFilesDialog.class);
+public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
-  private EventList<FileContainer> results;
+  private final static Logger LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
 
-  private TmmTable                 table;
-  private JButton                  btnClean;
-  private JProgressBar             progressBar;
-  private JLabel                   lblProgressAction;
+  private EventList<CleanUpUnwantedFilesDialog.FileContainer> results;
+  private TmmTable table;
+  private JButton btnClean;
+  private JProgressBar progressBar;
+  private JLabel lblProgressAction;
 
-  public MovieCleanUpUnwantedFilesDialog(List<Movie> selectedMovies) {
-    super(BUNDLE.getString("movie.cleanupfiles"), "cleanupfiles");
+  public CleanUpUnwantedFilesDialog(List<MediaEntity> selectedEntities) {
+    super(BUNDLE.getString("cleanupfiles"), "cleanupEntities");
 
     results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<>()));
-    DefaultEventTableModel<FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results),
-        new CleanUpTableFormat());
+    DefaultEventTableModel<CleanUpUnwantedFilesDialog.FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results),
+            new CleanUpTableFormat());
 
     {
       table = new TmmTable(cleanUpTableModel);
@@ -108,11 +107,12 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       }
     }
 
-    MovieCleanUpWorker worker = new MovieCleanUpWorker(selectedMovies);
+    TvShowCleanUpWorker worker = new TvShowCleanUpWorker(selectedEntities);
     worker.execute();
+
   }
 
-  private class CleanUpTableFormat implements TableFormat<FileContainer> {
+  private static class CleanUpTableFormat implements TableFormat<CleanUpUnwantedFilesDialog.FileContainer> {
     @Override
     public int getColumnCount() {
       return 3;
@@ -134,7 +134,7 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
     }
 
     @Override
-    public Object getColumnValue(FileContainer selectedFile, int column) {
+    public Object getColumnValue(CleanUpUnwantedFilesDialog.FileContainer selectedFile, int column) {
       switch (column) {
         case 0:
           return selectedFile.file.toString();
@@ -149,13 +149,32 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
     }
   }
 
-  private class MovieCleanUpWorker extends SwingWorker<Void, Void> {
+  private static class FileContainer {
+    MediaEntity entity;
+    Path file;
+    long filesize;
 
-    private List<Movie>       selectedMovies;
-    public Set<FileContainer> files;
+    String getFilesizeInKilobytes() {
+      DecimalFormat df = new DecimalFormat("#0.00");
+      return df.format(filesize / (1024.0)) + " kB";
+    }
 
-    private MovieCleanUpWorker(List<Movie> selectedMovies) {
-      this.selectedMovies = selectedMovies;
+    String getExtension() {
+      return FilenameUtils.getExtension(file.getFileName().toString());
+    }
+
+    String getFileName() {
+      return file.toString();
+    }
+  }
+
+  private class TvShowCleanUpWorker extends SwingWorker<Void, Void> {
+
+    private List<MediaEntity> selectedEntities;
+    public Set<CleanUpUnwantedFilesDialog.FileContainer> files;
+
+    private TvShowCleanUpWorker(List<MediaEntity> entities) {
+      this.selectedEntities = entities;
     }
 
     @Override
@@ -166,19 +185,27 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       // Get Cleanup File Types from the settings
       List<String> regexPatterns = Settings.getInstance().getCleanupFileType();
 
-      for (Movie movie : selectedMovies) {
-        for (Path file : MovieHelpers.getUnknownFilesByRegex(movie.getPathNIO(), regexPatterns)) {
-          FileContainer fileContainer = new FileContainer();
-          fileContainer.movie = movie;
+      selectedEntities.sort(Comparator.comparing(MediaEntity::getTitle));
+
+      HashSet<Path> fileList = new HashSet<>();
+
+      for (MediaEntity entity : selectedEntities) {
+        for (Path file : Utils.getUnknownFilesByRegex(entity.getPathNIO(), regexPatterns)) {
+          if (fileList.contains(file)) {
+            continue;
+          }
+
+          CleanUpUnwantedFilesDialog.FileContainer fileContainer = new FileContainer();
+          fileContainer.entity = entity;
           fileContainer.file = file;
           try {
             BasicFileAttributes attrs = Files.readAttributes(fileContainer.file, BasicFileAttributes.class);
             fileContainer.filesize = attrs.size();
-          }
-          catch (Exception ignored) {
+          } catch (Exception ignored) {
           }
 
           results.add(fileContainer);
+          fileList.add(file);
         }
       }
 
@@ -192,6 +219,7 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
         btnClean.setEnabled(true);
         TableColumnResizer.adjustColumnPreferredWidths(table);
         table.getParent().invalidate();
+        results.sort(Comparator.comparing(FileContainer::getFileName));
       });
     }
   }
@@ -199,16 +227,15 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
   private void cleanFiles(JTable table) {
     // clean selected Files and remove them from the List
     int[] rows = table.getSelectedRows();
-    List<FileContainer> fileList = new ArrayList<>();
+    List<CleanUpUnwantedFilesDialog.FileContainer> fileList = new ArrayList<>();
 
     for (int row : rows) {
       try {
-        FileContainer selectedFile = results.get(row);
+        CleanUpUnwantedFilesDialog.FileContainer selectedFile = results.get(row);
         fileList.add(selectedFile);
         LOGGER.info("Deleting File " + selectedFile.file.toString());
-        Utils.deleteFileWithBackup(selectedFile.file, selectedFile.movie.getDataSource());
-      }
-      catch (Exception e) {
+        Utils.deleteFileWithBackup(selectedFile.file, selectedFile.entity.getDataSource());
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -230,20 +257,5 @@ public class MovieCleanUpUnwantedFilesDialog extends TmmDialog {
       progressBar.setIndeterminate(false);
       lblProgressAction.setText("");
     });
-  }
-
-  private class FileContainer {
-    Movie movie;
-    Path  file;
-    long  filesize;
-
-    String getFilesizeInKilobytes() {
-      DecimalFormat df = new DecimalFormat("#0.00");
-      return df.format(filesize / (1024.0)) + " kB";
-    }
-
-    String getExtension() {
-      return FilenameUtils.getExtension(file.getFileName().toString());
-    }
   }
 }

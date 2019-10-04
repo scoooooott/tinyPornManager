@@ -41,9 +41,10 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
   private static final String               SELECTED_MOVIE = "selectedMovie";
 
+  public final Movie                        initialMovie   = new Movie();
+
   private List<Movie>                       selectedMovies;
   private Movie                             selectedMovie;
-  private Movie                             initialMovie   = new Movie();
   private DefaultEventSelectionModel<Movie> selectionModel;
   private MovieMatcherEditor                matcherEditor;
   private TableComparatorChooser<Movie>     tableComparatorChooser;

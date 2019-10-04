@@ -169,6 +169,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JComboBox<Certification>           cbCertification;
   private JCheckBox                          cbWatched;
   private JTextField                         tfTagline;
+  private JTextField                         tfNote;
 
   private JCheckBox                          chckbxVideo3D;
 
@@ -304,6 +305,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
       spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
+      tfNote.setText(movieToEdit.getNote());
 
       for (Person origCast : movieToEdit.getActors()) {
         cast.add(new Person(origCast));
@@ -395,8 +397,8 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
-      details1Panel.setLayout(new MigLayout("", "[][][50lp:75lp][][60lp:75lp][100lp:n][50lp:75lp,grow][25lp:n][200lp:250lp,grow]",
-          "[][][][][100lp:175lp][][][][][][][75lp:100lp]"));
+      details1Panel.setLayout(new MigLayout("", "[][grow][50lp:75lp][][60lp:75lp][100lp:n][50lp:75lp,grow][25lp:n][200lp:250lp,grow]",
+          "[][][][][100lp:175lp][][][][][][][75lp:100lp][]"));
 
       {
         JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -542,7 +544,7 @@ public class MovieEditorDialog extends TmmDialog {
         });
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
         details1Panel.add(lblFanartSize, "cell 8 8");
-        details1Panel.add(lblFanart, "cell 8 9 1 3,grow");
+        details1Panel.add(lblFanart, "cell 8 9 1 4,grow");
         lblFanart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblFanartSize, lblFanart, MediaFileType.FANART));
       }
 
@@ -562,12 +564,19 @@ public class MovieEditorDialog extends TmmDialog {
             TmmUIHelper.openFile(mf.getFileAsPath());
           }
           catch (Exception ex) {
-            LOGGER.error("open file", e);
+            LOGGER.error("open file - {}", e);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
           }
         });
-        details1Panel.add(btnPlay, "cell 1 0");
+        details1Panel.add(btnPlay, "cell 1 0 6 1");
+      }
+      {
+        JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
+        details1Panel.add(lblNoteT, "cell 0 12,alignx trailing");
+
+        tfNote = new JTextField();
+        details1Panel.add(tfNote, "cell 1 12 6 1,growx");
       }
     }
 
@@ -1172,6 +1181,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
+      movieToEdit.setNote(tfNote.getText());
 
       Object movieEdition = cbEdition.getSelectedItem();
       if (movieEdition instanceof MovieEdition) {

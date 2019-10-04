@@ -78,7 +78,9 @@ public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
       for (TmmCheckComboBoxItem<MediaScraper> item : items) {
         if (item.getUserObject() != null) {
           ImageIcon logo = getIcon(item.getUserObject().getLogoURL());
-          maxIconWidth = Math.max(maxIconWidth, logo.getIconWidth());
+          if (logo != null) {
+            maxIconWidth = Math.max(maxIconWidth, logo.getIconWidth());
+          }
         }
       }
     }
