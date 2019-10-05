@@ -1,6 +1,10 @@
 Version 3.0.5
 =======================
++ added a scraper for MPDb.tv (thx @wjanes)
 + added an action to force deletion of all HTTP caches (on disk and in memory) #656
++ added changing of the movie edition to the movie bulk editor
++ added a custom note field for movies/TV shows/episodes
++ added unwanted files dialog for TV shows
 x show popupmenu from text fields on macOS #637
 x crash on startup if some images could not be loaded
 x catch more exceptions on file download #642
@@ -15,6 +19,11 @@ x write the plot content to the outline field in the NFO #630
 x ImageCache must not crash tmm on exceptions #659
 x enabled to explicitly filter for empty values #660
 x refactored the MediaPortal NFO format into 2 new formats for enhanced compatibility: MP MyVideos and MP Moving Pictures
+x do not crash tmm on startup on incomplete settings #663
+x remove a custom genre in the bulk editor does not throw an exception any more
+x do not overwrite user ratings on scrape
+x better logging of errors in the OpenSubtitles scraper #633
+x fixed movie in a movie set filter
 
 
 Version 3.0.4

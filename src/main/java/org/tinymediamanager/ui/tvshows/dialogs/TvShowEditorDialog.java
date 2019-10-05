@@ -169,6 +169,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private DatePicker                        dpPremiered;
   private TmmTable                          tableEpisodes;
   private JTextField                        tfSorttitle;
+  private JTextField                        tfNote;
 
   private JTextField                        tfPoster;
   private JTextField                        tfFanart;
@@ -257,6 +258,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tfStudio.setText(tvShow.getProductionCompany());
       tfCountry.setText(tvShow.getCountry());
+      tfNote.setText(tvShow.getNote());
       cbStatus.setSelectedItem(tvShow.getStatus());
       spRuntime.setValue(tvShow.getRuntime());
       int year = tvShow.getYear();
@@ -330,8 +332,8 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JPanel details1Panel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
-      details1Panel.setLayout(
-          new MigLayout("", "[][grow][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]", "[][][][100lp:175lp][][][][][][][75lp:100lp]"));
+      details1Panel.setLayout(new MigLayout("", "[][grow][50lp:75lp][][60lp:75lp][100lp:n][][25lp:n][200lp:250lp,grow]",
+          "[][][][100lp:175lp][][][][][][][75lp:100lp][]"));
 
       {
         JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -471,7 +473,7 @@ public class TvShowEditorDialog extends TmmDialog {
         });
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
         details1Panel.add(lblFanartSize, "cell 8 8");
-        details1Panel.add(lblFanart, "cell 8 9 1 3, grow");
+        details1Panel.add(lblFanart, "cell 8 9 1 4,grow");
         lblFanart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblFanartSize, lblFanart, MediaFileType.FANART));
       }
 
@@ -482,6 +484,14 @@ public class TvShowEditorDialog extends TmmDialog {
       JButton btnRemoveRating = new JButton(new RemoveRatingAction());
       btnRemoveRating.setMargin(BUTTON_MARGIN);
       details1Panel.add(btnRemoveRating, "cell 0 10,alignx right,aligny top");
+
+      {
+        JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
+        details1Panel.add(lblNoteT, "cell 0 11,alignx trailing");
+
+        tfNote = new JTextField();
+        details1Panel.add(tfNote, "cell 1 11 6 1,growx");
+      }
     }
 
     /**********************************************************************************
@@ -1025,6 +1035,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tvShowToEdit.setProductionCompany(tfStudio.getText());
       tvShowToEdit.setCountry(tfCountry.getText());
+      tvShowToEdit.setNote(tfNote.getText());
       tvShowToEdit.setActors(actors);
       tvShowToEdit.setGenres(genres);
 

@@ -72,6 +72,8 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblCountryT;
   private JLabel                      lblCountry;
   private JLabel                      lblRuntime;
+  private JLabel                      lblNoteT;
+  private JLabel                      lblNote;
 
   /**
    * Instantiates a new tv show details panel.
@@ -129,7 +131,7 @@ public class TvShowDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
       JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
       add(lblPremieredT, "cell 0 0");
@@ -221,6 +223,13 @@ public class TvShowDetailsPanel extends JPanel {
       lblPath = new LinkLabel("");
       add(lblPath, "cell 1 8 3 1,growx,wmin 0");
     }
+    {
+      lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note")); //$NON-NLS-1$
+      add(lblNoteT, "cell 0 9");
+
+      lblNote = new JLabel("");
+      add(lblNote, "cell 1 9 3 1,growx,wmin 0");
+    }
   }
 
   protected void initDataBindings() {
@@ -291,5 +300,10 @@ public class TvShowDetailsPanel extends JPanel {
         selectionModel, tvShowSelectionModelBeanProperty_10, lblOtherIds, jLabelBeanProperty);
     autoBinding_10.setConverter(new TvShowOtherIdsConverter());
     autoBinding_10.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_13 = BeanProperty.create("selectedTvShow.note");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_13, lblNote, jLabelBeanProperty);
+    autoBinding_13.bind();
   }
 }

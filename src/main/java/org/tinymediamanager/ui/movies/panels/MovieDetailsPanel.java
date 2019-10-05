@@ -61,6 +61,7 @@ public class MovieDetailsPanel extends JPanel {
   private JLabel                      lblSpokenLanguages;
   private JLabel                      lblCountry;
   private JLabel                      lblReleaseDate;
+  private JLabel                      lblNote;
 
   /**
    * Instantiates a new movie details panel.
@@ -94,7 +95,7 @@ public class MovieDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
     JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
     add(lblReleaseDateT, "cell 0 0");
@@ -143,6 +144,12 @@ public class MovieDetailsPanel extends JPanel {
 
     lblMoviePath = new LinkLabel("");
     add(lblMoviePath, "cell 2 7,growx,wmin 0");
+
+    JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
+    add(lblNoteT, "cell 0 8");
+
+    lblNote = new JLabel("");
+    add(lblNote, "cell 2 8, growx, wmin 0");
   }
 
   protected void initDataBindings() {
@@ -187,5 +194,10 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_9, lblEdition, jLabelBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.note");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_6, lblNote, jLabelBeanProperty);
+    autoBinding_7.bind();
   }
 }
