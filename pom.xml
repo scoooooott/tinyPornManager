@@ -100,13 +100,6 @@
             <version>1.1.1</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.tinymediamanager</groupId>
-            <artifactId>tinyMediaManager-LaF</artifactId>
-            <version>3.1</version>
-        </dependency>
-
         <dependency>
             <groupId>fr.turri</groupId>
             <artifactId>aXMLRPC</artifactId>
