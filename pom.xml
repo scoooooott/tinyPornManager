@@ -107,12 +107,13 @@
             <version>3.1</version>
         </dependency>
 
-        <!-- our plugins - all provided for dependency resolution -->
         <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-opensubtitles</artifactId>
-            <version>3.1</version>
+            <groupId>fr.turri</groupId>
+            <artifactId>aXMLRPC</artifactId>
+            <version>1.8.3</version>
         </dependency>
+
+        <!-- our plugins - all provided for dependency resolution -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-animated</artifactId>
