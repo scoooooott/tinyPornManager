@@ -110,11 +110,6 @@
         <!-- our plugins - all provided for dependency resolution -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-hdtrailers</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-imdb</artifactId>
             <version>3.3</version>
         </dependency>
