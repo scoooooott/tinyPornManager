@@ -110,11 +110,6 @@
         <!-- our plugins - all provided for dependency resolution -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-ofdb</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-omdbapi</artifactId>
             <version>3.0</version>
         </dependency>
