@@ -126,11 +126,6 @@
             <version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-universal-movie</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-mpdbtv</artifactId>
             <version>3.0</version>
         </dependency>
