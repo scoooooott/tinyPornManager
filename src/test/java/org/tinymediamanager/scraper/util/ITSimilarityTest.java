@@ -15,7 +15,7 @@ import info.debatty.java.stringsimilarity.JaroWinkler;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import info.debatty.java.stringsimilarity.SorensenDice;
 
-public class SimilarityTest {
+public class ITSimilarityTest {
 
   // as stated on http://www.catalysoft.com/articles/StrikeAMatch.html
   // the implemented algorithm is already known as Dice's Coefficient.
@@ -46,8 +46,8 @@ public class SimilarityTest {
 
   private void compareAlgs(String s1, String s2) {
     float f = Similarity.compareStrings(s1, s2);
-    double a1 = SimilarityTest.diceCoefficient(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
-    double a2 = SimilarityTest.diceCoefficientOptimized(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
+    double a1 = ITSimilarityTest.diceCoefficient(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
+    double a2 = ITSimilarityTest.diceCoefficientOptimized(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
     double a3 = levenshtein.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));

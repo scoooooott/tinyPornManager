@@ -1,14 +1,14 @@
 package org.tinymediamanager.youtube;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.scraper.util.youtube.model.MediaDetails;
 import org.tinymediamanager.scraper.util.youtube.model.YoutubeMedia;
 
-import java.io.IOException;
 
-
-public class YtDownloaderTest {
+public class ITYtDownloaderTest {
 
   private static final String videoId = "8BeLUQRomPA"; // ANGEL HAS FALLEN Trailer German Deutsch
   private static YoutubeMedia media = new YoutubeMedia(videoId);
