@@ -4,14 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.BeforeClass;
@@ -28,22 +23,22 @@ public class UtilsTest extends BasicTest {
     Settings.getInstance(getSettingsFolder());
   }
 
-  @Test
-  public void parseIp() throws UnknownHostException, SecurityException {
-    System.out.println(getIP("localhost"));
-    System.out.println(getIP("localhost:22"));
-    System.out.println(getIP("::1"));
-    System.out.println(getIP("2001:0000:3238:DFE1:63:0000:0000:FEFB"));
-    System.out.println(getIP("[2001:0000:3238:DFE1:63:0000:0000:FEFB]:22"));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-    System.out.println(getIP(""));
-
-  }
+  // @Test
+  // public void parseIp() throws UnknownHostException, SecurityException {
+  // System.out.println(getIP("localhost"));
+  // System.out.println(getIP("localhost:22"));
+  // System.out.println(getIP("::1"));
+  // System.out.println(getIP("2001:0000:3238:DFE1:63:0000:0000:FEFB"));
+  // System.out.println(getIP("[2001:0000:3238:DFE1:63:0000:0000:FEFB]:22"));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  // System.out.println(getIP(""));
+  //
+  // }
 
   private String getIP(String ip) {
     // WORKAROUND: add any scheme to make the resulting URI valid.
@@ -56,17 +51,17 @@ public class UtilsTest extends BasicTest {
     }
   }
 
-  @Test
-  public void div() {
-    // Utils.trackEvent("test");
-
-    Path sub = Paths.get("cache\\image");
-    Path fil = Paths.get("C:\\Users\\User\\workspaceGIT\\tinyMediaManager\\cache\\image\\yyy");
-    System.out.println(sub.resolve(fil));
-
-    Path p = Paths.get("C:\\Users\\User").resolve("").resolve("file.ext");
-    System.out.println(p);
-  }
+  // @Test
+  // public void div() {
+  // // Utils.trackEvent("test");
+  //
+  // Path sub = Paths.get("cache\\image");
+  // Path fil = Paths.get("C:\\Users\\User\\workspaceGIT\\tinyMediaManager\\cache\\image\\yyy");
+  // System.out.println(sub.resolve(fil));
+  //
+  // Path p = Paths.get("C:\\Users\\User").resolve("").resolve("file.ext");
+  // System.out.println(p);
+  // }
 
   @Test
   public void zip() {
@@ -85,19 +80,19 @@ public class UtilsTest extends BasicTest {
     assertEqual(true, StrgUtils.compareVersion("2.7.3-SNMAPSHOT", "2.7.2") > 0);
   }
 
-  @Test
-  public void map() {
-    HashMap<String, Object> ids = new HashMap<>(0);
-    ids.put("STR1", "str1");
-    ids.put("STR2", "1000");
-    ids.put("INT1", Integer.parseInt("1000"));
-    ids.put("DUPE", "2000");
-    ids.put("DUPE", 1000);
-    for (String s : ids.keySet()) {
-      Object o = ids.get(s);
-      System.out.println(s + "  " + o + "  " + (o instanceof String ? "String" : "") + (o instanceof Integer ? "Integer" : ""));
-    }
-  }
+  // @Test
+  // public void map() {
+  // HashMap<String, Object> ids = new HashMap<>(0);
+  // ids.put("STR1", "str1");
+  // ids.put("STR2", "1000");
+  // ids.put("INT1", Integer.parseInt("1000"));
+  // ids.put("DUPE", "2000");
+  // ids.put("DUPE", 1000);
+  // for (String s : ids.keySet()) {
+  // Object o = ids.get(s);
+  // System.out.println(s + " " + o + " " + (o instanceof String ? "String" : "") + (o instanceof Integer ? "Integer" : ""));
+  // }
+  // }
 
   @Test
   public void getSortableName() {
@@ -240,21 +235,21 @@ public class UtilsTest extends BasicTest {
     Utils.deleteOldBackupFile(Paths.get("pom.xml"), 2);
   }
 
-  @SuppressWarnings("rawtypes")
-  @Test
-  public void env() {
-    Map<String, String> env = System.getenv();
-    for (String envName : env.keySet()) {
-      System.out.format("%s=%s%n", envName, env.get(envName));
-    }
-
-    Properties props = System.getProperties();
-    Enumeration e = props.propertyNames();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      System.out.println(key + " -- " + props.getProperty(key));
-    }
-  }
+  // @SuppressWarnings("rawtypes")
+  // @Test
+  // public void env() {
+  // Map<String, String> env = System.getenv();
+  // for (String envName : env.keySet()) {
+  // System.out.format("%s=%s%n", envName, env.get(envName));
+  // }
+  //
+  // Properties props = System.getProperties();
+  // Enumeration e = props.propertyNames();
+  // while (e.hasMoreElements()) {
+  // String key = (String) e.nextElement();
+  // System.out.println(key + " -- " + props.getProperty(key));
+  // }
+  // }
 
   @Test
   public void locale() {

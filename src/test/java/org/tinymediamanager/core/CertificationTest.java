@@ -8,12 +8,12 @@ import org.tinymediamanager.scraper.entities.Certification;
 
 public class CertificationTest extends BasicTest {
 
-  @Test
-  public void testCertificationNames() {
-    for (Certification cert : Certification.values()) {
-      System.out.println(cert.name() + "\t" + cert.toString());
-    }
-  }
+  // @Test
+  // public void testCertificationNames() {
+  // for (Certification cert : Certification.values()) {
+  // System.out.println(cert.name() + "\t" + cert.toString());
+  // }
+  // }
 
   @Test
   public void testCertificationTemplate() {

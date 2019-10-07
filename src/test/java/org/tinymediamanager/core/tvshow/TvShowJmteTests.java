@@ -18,12 +18,7 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,14 +39,11 @@ import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.DynaEnum;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import com.floreysoft.jmte.Engine;
-
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 public class TvShowJmteTests {
   private Engine              engine;
@@ -231,58 +223,58 @@ public class TvShowJmteTests {
     return episode;
   }
 
-  @Test
-  public void getProperties() throws Exception {
-    printBeanInfo(TvShow.class);
-    printBeanInfo(TvShowSeason.class);
-    printBeanInfo(TvShowEpisode.class);
-  }
-
-  private void printBeanInfo(Class clazz) throws Exception {
-    System.out.println("\n\n" + clazz.getName() + "\n");
-
-    // access properties as Map
-    BeanInfo info = Introspector.getBeanInfo(clazz);
-    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-
-    for (PropertyDescriptor descriptor : pds) {
-      if ("class".equals(descriptor.getDisplayName())) {
-        continue;
-      }
-
-      if ("declaringClass".equals(descriptor.getDisplayName())) {
-        continue;
-      }
-
-      if (descriptor.getReadMethod() != null) {
-        final Type type = descriptor.getReadMethod().getGenericReturnType();
-        if (type instanceof ParameterizedTypeImpl) {
-          ParameterizedType pt = (ParameterizedTypeImpl) type;
-
-          String typeAsString;
-          Class rawTypeClass = (Class) pt.getRawType();
-          typeAsString = rawTypeClass.getSimpleName() + "\\<";
-
-          int index = 0;
-          for (Type arg : pt.getActualTypeArguments()) {
-            Class argClass = (Class) arg;
-            typeAsString += getTypeName(argClass);
-
-            index++;
-
-            if (index < pt.getActualTypeArguments().length) {
-              typeAsString += ",";
-            }
-          }
-          typeAsString += "\\>";
-          System.out.println("|" + typeAsString + "|" + descriptor.getDisplayName() + "|");
-        }
-        else {
-          System.out.println("|" + getTypeName(descriptor.getReadMethod().getReturnType()) + "|" + descriptor.getDisplayName() + "|");
-        }
-      }
-    }
-  }
+  // @Test
+  // public void getProperties() throws Exception {
+  // printBeanInfo(TvShow.class);
+  // printBeanInfo(TvShowSeason.class);
+  // printBeanInfo(TvShowEpisode.class);
+  // }
+  //
+  // private void printBeanInfo(Class clazz) throws Exception {
+  // System.out.println("\n\n" + clazz.getName() + "\n");
+  //
+  // // access properties as Map
+  // BeanInfo info = Introspector.getBeanInfo(clazz);
+  // PropertyDescriptor[] pds = info.getPropertyDescriptors();
+  //
+  // for (PropertyDescriptor descriptor : pds) {
+  // if ("class".equals(descriptor.getDisplayName())) {
+  // continue;
+  // }
+  //
+  // if ("declaringClass".equals(descriptor.getDisplayName())) {
+  // continue;
+  // }
+  //
+  // if (descriptor.getReadMethod() != null) {
+  // final Type type = descriptor.getReadMethod().getGenericReturnType();
+  // if (type instanceof ParameterizedTypeImpl) {
+  // ParameterizedType pt = (ParameterizedTypeImpl) type;
+  //
+  // String typeAsString;
+  // Class rawTypeClass = (Class) pt.getRawType();
+  // typeAsString = rawTypeClass.getSimpleName() + "\\<";
+  //
+  // int index = 0;
+  // for (Type arg : pt.getActualTypeArguments()) {
+  // Class argClass = (Class) arg;
+  // typeAsString += getTypeName(argClass);
+  //
+  // index++;
+  //
+  // if (index < pt.getActualTypeArguments().length) {
+  // typeAsString += ",";
+  // }
+  // }
+  // typeAsString += "\\>";
+  // System.out.println("|" + typeAsString + "|" + descriptor.getDisplayName() + "|");
+  // }
+  // else {
+  // System.out.println("|" + getTypeName(descriptor.getReadMethod().getReturnType()) + "|" + descriptor.getDisplayName() + "|");
+  // }
+  // }
+  // }
+  // }
 
   private String getTypeName(Class clazz) {
     String typeAsString;

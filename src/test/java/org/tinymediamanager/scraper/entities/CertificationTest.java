@@ -22,12 +22,12 @@ import org.junit.Test;
 
 public class CertificationTest {
 
-  @Test
-  public void testCertificationNames() {
-    for (Certification cert : Certification.values()) {
-      System.out.println(cert.name() + "\t" + cert.toString());
-    }
-  }
+  // @Test
+  // public void testCertificationNames() {
+  // for (Certification cert : Certification.values()) {
+  // System.out.println(cert.name() + "\t" + cert.toString());
+  // }
+  // }
 
   @Test
   public void testParseCertification() {
