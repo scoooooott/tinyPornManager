@@ -31,7 +31,7 @@ public class MediaProviderConfigTest {
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     FileUtils.deleteQuietly(new File("target/scraper_config.conf"));
-    FileUtils.copyFile(new File("target/test-classes/scraper_config.conf"), new File("target/scraper_config.conf"));
+    FileUtils.copyFile(new File("target/test-classes/scraper_config.conf.tmpl"), new File("target/scraper_config.conf"));
   }
 
   @Test
