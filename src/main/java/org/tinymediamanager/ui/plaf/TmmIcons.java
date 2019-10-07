@@ -16,18 +16,8 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseIcons;
-import com.jtattoo.plaf.JTattooUtilities;
-import sun.swing.ImageIconUIResource;
+import static org.tinymediamanager.ui.plaf.TmmTheme.FONT_AWESOME;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
-import javax.swing.GrayFilter;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.UIManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -45,7 +35,17 @@ import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static org.tinymediamanager.ui.plaf.TmmTheme.FONT_AWESOME;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.GrayFilter;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.UIManager;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseIcons;
+import com.jtattoo.plaf.JTattooUtilities;
 
 public class TmmIcons extends BaseIcons {
 
@@ -417,7 +417,7 @@ public class TmmIcons extends BaseIcons {
 
       if (icon != null) {
         if (!model.isEnabled()) {
-          icon = new ImageIconUIResource(GrayFilter.createDisabledImage(SMALL_CHECK_ICON.getImage()));
+          icon = new ImageIcon(GrayFilter.createDisabledImage(SMALL_CHECK_ICON.getImage()));
         }
 
         icon.paintIcon(c, g, x + offsetX, y);
