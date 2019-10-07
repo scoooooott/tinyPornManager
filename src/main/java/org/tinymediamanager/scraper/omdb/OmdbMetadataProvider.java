@@ -51,14 +51,11 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * Central metadata provider class
  *
  * @author Wolfgang Janes
  */
-@PluginImplementation
 public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbMetadataProvider { // , ITvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(OmdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();

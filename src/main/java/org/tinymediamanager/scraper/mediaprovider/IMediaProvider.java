@@ -17,8 +17,6 @@ package org.tinymediamanager.scraper.mediaprovider;
 
 import org.tinymediamanager.scraper.MediaProviderInfo;
 
-import net.xeoh.plugins.base.Plugin;
-
 /**
  * The interface {@link IMediaProvider}. This is the root interface for all tinyMediaManager metadata provider interfaces You should not implement
  * this interface by a class, since plugin examination relies on the concrete interface
@@ -26,7 +24,7 @@ import net.xeoh.plugins.base.Plugin;
  * @author Manuel Laggner
  * @since 1.0
  */
-public interface IMediaProvider extends Plugin {
+public interface IMediaProvider {
   /**
    * Gets a general information about the metadata provider
    * 

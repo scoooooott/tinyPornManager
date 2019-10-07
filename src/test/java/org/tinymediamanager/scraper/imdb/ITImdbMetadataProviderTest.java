@@ -1,8 +1,22 @@
 package org.tinymediamanager.scraper.imdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -14,20 +28,6 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.util.PluginManager;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ITImdbMetadataProviderTest {
 
@@ -231,7 +231,7 @@ public class ITImdbMetadataProviderTest {
     MediaScrapeOptions options = null;
     MediaMetadata md = null;
 
-    PluginManager.getInstance().loadClasspathPlugins();
+    MediaProviders.loadMediaProviders();
 
     /*
      * test on akas.imdb.com - Psych (tt0491738)
@@ -335,7 +335,7 @@ public class ITImdbMetadataProviderTest {
     MediaMetadata md = null;
     SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
 
-    PluginManager.getInstance().loadClasspathPlugins();
+    MediaProviders.loadMediaProviders();
 
     /*
      * test on akas.imdb.com - Psych (tt0491738)

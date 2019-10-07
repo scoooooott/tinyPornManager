@@ -22,8 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 /**
@@ -152,13 +154,7 @@ public class MetadataUtil {
 
     try {
       // call the tmdb metadata provider
-      IMovieMetadataProvider tmdb = null;
-      for (IMovieMetadataProvider provider : PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class)) {
-        if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
-          tmdb = provider;
-          break;
-        }
-      }
+      IMediaProvider tmdb = MediaProviders.getProviderById(MediaMetadata.TMDB);
       if (tmdb == null) {
         return "";
       }
@@ -166,7 +162,7 @@ public class MetadataUtil {
       // we just need to "scrape" this movie
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setId(MediaMetadata.TMDB, Integer.toString(tmdbId));
-      MediaMetadata md = tmdb.getMetadata(options);
+      MediaMetadata md = ((IMovieMetadataProvider) tmdb).getMetadata(options);
       return md.getId(MediaMetadata.IMDB).toString();
     }
     catch (Exception ingored) {

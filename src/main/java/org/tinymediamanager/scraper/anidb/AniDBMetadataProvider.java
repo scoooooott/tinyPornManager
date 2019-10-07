@@ -66,14 +66,11 @@ import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB) https://wiki.anidb.net/w/UDP_API_Definition
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(AniDBMetadataProvider.class);
   private static final String IMAGE_SERVER = "http://img7.anidb.net/pics/anime/";

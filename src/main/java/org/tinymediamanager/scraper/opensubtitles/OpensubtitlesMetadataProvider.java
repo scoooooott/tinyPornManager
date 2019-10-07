@@ -47,14 +47,11 @@ import org.tinymediamanager.scraper.opensubtitles.model.Info;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.Similarity;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * OpensubtitlesMetadataProvider provides subtitle scraping from OpenSubtitles.org
  *
  * @author Myron Boyle, Manuel Laggner
  */
-@PluginImplementation
 public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(OpensubtitlesMetadataProvider.class);
   private static final String SERVICE = "http://api.opensubtitles.org/xml-rpc";

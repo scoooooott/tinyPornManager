@@ -55,7 +55,6 @@ import com.uwetrottmann.tmdb2.entities.Translations;
 import com.uwetrottmann.tmdb2.entities.Translations.Translation;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
 
 /**
@@ -63,7 +62,6 @@ import okhttp3.OkHttpClient;
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
         ITvShowArtworkProvider, IMovieTrailerProvider, IMovieTmdbMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMetadataProvider.class);

@@ -1,5 +1,10 @@
 package org.tinymediamanager.scraper.kyradb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -8,16 +13,11 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 
-import java.io.IOException;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class ITKyraTest {
 
   @Test
   public void getMovie() throws IOException, MissingIdException, ScrapeException {
-    AnimatedMetadataProvider mp = new AnimatedMetadataProvider();
+    KyradbMetadataProvider mp = new KyradbMetadataProvider();
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setTmdbId(245891);

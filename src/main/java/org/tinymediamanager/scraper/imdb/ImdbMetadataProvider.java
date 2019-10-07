@@ -38,14 +38,11 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * The Class ImdbMetadataProvider. A meta data provider for the site imdb.com
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 

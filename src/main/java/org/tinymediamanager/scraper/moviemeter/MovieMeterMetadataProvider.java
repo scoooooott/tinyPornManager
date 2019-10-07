@@ -45,14 +45,11 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * The Class MoviemeterMetadataProvider. A meta data provider for the site moviemeter.nl
  *
  * @author Myron Boyle (myron0815@gmx.net)
  */
-@PluginImplementation
 public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieMeterMetadataProvider.class);
   private static final String TMM_API_KEY = ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM");

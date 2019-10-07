@@ -82,7 +82,6 @@ import com.uwetrottmann.thetvdb.entities.SeriesImagesQueryParamResponse;
 import com.uwetrottmann.thetvdb.entities.SeriesResponse;
 import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 
@@ -91,7 +90,6 @@ import retrofit2.Response;
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static String artworkUrl = "http://thetvdb.com/banners/";

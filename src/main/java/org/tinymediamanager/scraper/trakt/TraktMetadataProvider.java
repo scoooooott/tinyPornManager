@@ -47,11 +47,9 @@ import com.uwetrottmann.trakt5.enums.Extended;
 import com.uwetrottmann.trakt5.enums.IdType;
 import com.uwetrottmann.trakt5.enums.Type;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 
-@PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TraktMetadataProvider.class);
   private static final String CLIENT_ID = ApiKey

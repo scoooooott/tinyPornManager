@@ -37,14 +37,11 @@ import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * The Class HDTrailersNet. A trailer provider for the site hd-trailers.net
  *
  * @author Myron Boyle
  */
-@PluginImplementation
 public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(HDTrailersNetTrailerProvider.class);
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();

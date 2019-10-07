@@ -15,27 +15,6 @@
  */
 package org.tinymediamanager.scraper.universal_movie;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-import net.xeoh.plugins.base.annotations.events.PluginLoaded;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.config.MediaProviderConfig;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.NothingFoundException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTmdbMetadataProvider;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -52,32 +31,47 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.config.MediaProviderConfig;
+import org.tinymediamanager.scraper.entities.MediaRating;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTmdbMetadataProvider;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
 /**
  * This is a metadata provider which is highly configurable and combines the results of various other providers
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
-  private static final String UNDEFINED = "-";
-  private static final String SEARCH = "search";
-  private static final String RATINGS = "ratings";
-  private static final Logger LOGGER = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
-  private final MediaProviderInfo providerInfo;
-
+  private static final String                              UNDEFINED          = "-";
+  private static final String                              SEARCH             = "search";
+  private static final String                              RATINGS            = "ratings";
+  private static final Logger                              LOGGER             = LoggerFactory.getLogger(UniversalMovieMetadataProvider.class);
+  private static final MediaProviderInfo                   providerInfo       = createMediaProviderInfo();
   private static final Map<String, IMovieMetadataProvider> compatibleScrapers = new HashMap<>();
 
   public UniversalMovieMetadataProvider() {
-    providerInfo = createMediaProviderInfo();
   }
 
-  @PluginLoaded
-  public static void add(IMovieMetadataProvider plugin) {
+  public static void addProvider(IMediaProvider provider) {
     // called for each plugin implementing that interface
-    if (plugin instanceof IMovieTmdbMetadataProvider || plugin instanceof IMovieImdbMetadataProvider) {
-      if (!compatibleScrapers.containsKey(plugin.getProviderInfo().getId())) {
-        compatibleScrapers.put(plugin.getProviderInfo().getId(), plugin);
-      }
+    if (!provider.getProviderInfo().getId().equals(providerInfo.getId()) && !compatibleScrapers.containsKey(provider.getProviderInfo().getId())
+        && (provider instanceof IMovieTmdbMetadataProvider || provider instanceof IMovieImdbMetadataProvider)) {
+      compatibleScrapers.put(provider.getProviderInfo().getId(), (IMovieMetadataProvider) provider);
     }
   }
 
@@ -101,8 +95,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     config.addSelect("runtime", "metatag.runtime", compatibleScraperIds, UNDEFINED);
     config.addSelect(RATINGS, "metatag.rating", compatibleScraperIds, UNDEFINED);
     config.addSelect("top250", "metatag.top250",
-            compatibleScraperIds.contains(MediaMetadata.IMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.IMDB) : Collections.singletonList(UNDEFINED),
-            UNDEFINED);
+        compatibleScraperIds.contains(MediaMetadata.IMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.IMDB) : Collections.singletonList(UNDEFINED),
+        UNDEFINED);
     config.addSelect("genres", "metatag.genre", compatibleScraperIds, UNDEFINED);
     config.addSelect("certifications", "metatag.certification", compatibleScraperIds, UNDEFINED);
     config.addSelect("productionCompanies", "metatag.production", compatibleScraperIds, UNDEFINED);
@@ -112,15 +106,15 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
     config.addSelect("tags", "metatag.tags", compatibleScraperIds, UNDEFINED);
     config.addSelect("mediaArt", "metatag.artwork", compatibleScraperIds, UNDEFINED);
     config.addSelect("collectionName", "metatag.movieset",
-            compatibleScraperIds.contains(MediaMetadata.TMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.TMDB) : Collections.singletonList(UNDEFINED),
-            UNDEFINED);
+        compatibleScraperIds.contains(MediaMetadata.TMDB) ? Arrays.asList(UNDEFINED, MediaMetadata.TMDB) : Collections.singletonList(UNDEFINED),
+        UNDEFINED);
     config.load();
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("universal_movie", "Universal movie scraper",
-            "<html><h3>Universal movie scraper</h3><br />A meta scraper which allows to collect data from several other scrapers</html>",
-            UniversalMovieMetadataProvider.class.getResource("/logo.png"));
+        "<html><h3>Universal movie scraper</h3><br />A meta scraper which allows to collect data from several other scrapers</html>",
+        UniversalMovieMetadataProvider.class.getResource("/logo.png"));
     providerInfo.setVersion(UniversalMovieMetadataProvider.class);
     return providerInfo;
   }
@@ -149,7 +143,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
         result.setProviderId(providerInfo.getId());
         resultList.add(result);
       }
-    } catch (ScrapeException | UnsupportedMediaTypeException e) {
+    }
+    catch (ScrapeException | UnsupportedMediaTypeException e) {
       LOGGER.warn("Could not call search method of " + mp.getProviderInfo().getId() + " : " + e.getMessage());
       throw e;
     }
@@ -240,7 +235,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
                 metadataMap.put(MediaMetadata.TMDB, md);
               }
             }
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.warn("Could not get a result from scraper: " + e.getMessage());
           }
         }
@@ -249,7 +245,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
           if (tmdbId == 0) {
             try {
               tmdbId = Integer.parseInt((String) md.getId(MediaMetadata.TMDB));
-            } catch (Exception ignored) {
+            }
+            catch (Exception ignored) {
             }
           }
           if (!MetadataUtil.isValidImdbId(imdbId) && MetadataUtil.isValidImdbId((String) md.getId(MediaMetadata.IMDB))) {
@@ -285,7 +282,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
         if (mediaMetadata != null) {
           metadataMap.put(mediaMetadata.getProviderId(), mediaMetadata);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.warn("Could not get a result from scraper: " + e.getMessage());
       }
     }
@@ -311,7 +309,8 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
             Method setter = new PropertyDescriptor(entry.getKey(), MediaMetadata.class).getWriteMethod();
 
             setter.invoke(md, getter.invoke(mediaMetadata));
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.warn("Problem assigning " + entry.getKey() + " : " + e.getMessage());
           }
         }
@@ -339,7 +338,7 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
    ****************************************************************************/
   protected class MetadataProviderWorker implements Callable<MediaMetadata> {
     private final IMovieMetadataProvider metadataProvider;
-    private final MediaScrapeOptions mediaScrapeOptions;
+    private final MediaScrapeOptions     mediaScrapeOptions;
 
     MetadataProviderWorker(IMovieMetadataProvider metadataProvider, MediaScrapeOptions mediaScrapeOptions) {
       this.metadataProvider = metadataProvider;

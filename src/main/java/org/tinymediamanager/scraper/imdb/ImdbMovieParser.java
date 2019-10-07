@@ -15,25 +15,12 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.exceptions.NothingFoundException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.PluginManager;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TITLE;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -42,10 +29,23 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TITLE;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviders;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
  * The class ImdbMovieParser is used to parse the movie sites at imdb.com
@@ -53,10 +53,10 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInf
  * @author Manuel Laggner
  */
 public class ImdbMovieParser extends ImdbParser {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMovieParser.class);
+  private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbMovieParser.class);
   private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
 
-  private ImdbSiteDefinition imdbSite;
+  private ImdbSiteDefinition   imdbSite;
 
   ImdbMovieParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.MOVIE);
@@ -183,7 +183,8 @@ public class ImdbMovieParser extends ImdbParser {
 
       // if everything worked so far, we can set the given id
       md.setId(providerInfo.getId(), imdbId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("problem while scraping: " + e.getMessage());
       throw new ScrapeException(e);
     }
@@ -230,7 +231,8 @@ public class ImdbMovieParser extends ImdbParser {
             md.setCollectionName(tmdbMd.getCollectionName());
           }
         }
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
       }
     }
 
@@ -280,7 +282,8 @@ public class ImdbMovieParser extends ImdbParser {
             if (column != null) {
               releaseDate = parseDate(column.text());
             }
-          } else {
+          }
+          else {
             LOGGER.trace("country {} does not match ours {}", matcher.group(1), options.getCountry().getAlpha2());
           }
         }
@@ -342,8 +345,8 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   private static class TmdbMovieWorker implements Callable<MediaMetadata> {
-    private String imdbId;
-    private Locale language;
+    private String      imdbId;
+    private Locale      language;
     private CountryCode certificationCountry;
 
     public TmdbMovieWorker(String imdbId, Locale language, CountryCode certificationCountry) {
@@ -355,14 +358,7 @@ public class ImdbMovieParser extends ImdbParser {
     @Override
     public MediaMetadata call() throws Exception {
       try {
-        IMovieMetadataProvider tmdb = null;
-        List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
-        for (IMovieMetadataProvider provider : providers) {
-          if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
-            tmdb = provider;
-            break;
-          }
-        }
+        IMediaProvider tmdb = MediaProviders.getProviderById(MediaMetadata.TMDB);
         if (tmdb == null) {
           return null;
         }
@@ -371,8 +367,9 @@ public class ImdbMovieParser extends ImdbParser {
         options.setLanguage(language);
         options.setCountry(certificationCountry);
         options.setImdbId(imdbId);
-        return tmdb.getMetadata(options);
-      } catch (Exception e) {
+        return ((IMovieMetadataProvider) tmdb).getMetadata(options);
+      }
+      catch (Exception e) {
         return null;
       }
     }

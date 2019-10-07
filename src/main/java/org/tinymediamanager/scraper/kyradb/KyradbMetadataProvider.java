@@ -37,17 +37,15 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit2.Response;
 
 /**
- * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
+ * The Class KyradbMetadataProvider. An artwork provider for the site kyradb.com
  *
- * @author Manuel Laggner
+ * @author Myron Boyle
  */
-@PluginImplementation
-public class AnimatedMetadataProvider implements IMovieArtworkProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AnimatedMetadataProvider.class);
+public class KyradbMetadataProvider implements IMovieArtworkProvider {
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(KyradbMetadataProvider.class);
   private static final String TMM_API_KEY = ApiKey.decryptApikey("ZCj2SXQCu+iVTt7RYUqlds0UoCJWuWTZpDIcAIZnvV3CoCeyu2srJQCcZVz5RFAT");
   private static final String TMM_USER_KEY = ApiKey.decryptApikey("shv369dt1GcJH0bL7Dab3LseS1H0UyEBRKC361coeSM=");
 
@@ -57,8 +55,8 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("animated", "KyraAnimated",
             "<html><h3>KyraDB Animated Posters</h3><br />as seen on https://forum.kodi.tv/showthread.php?tid=343391 :)</html>",
-        AnimatedMetadataProvider.class.getResource("/org/tinymediamanager/scraper/kyradb_logo.png"));
-    providerInfo.setVersion(AnimatedMetadataProvider.class);
+        KyradbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/kyradb_logo.png"));
+    providerInfo.setVersion(KyradbMetadataProvider.class);
 
     // configure/load settings
     providerInfo.getConfig().addText("apiKey", "", true);
@@ -68,7 +66,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
     return providerInfo;
   }
 
-  public AnimatedMetadataProvider() {
+  public KyradbMetadataProvider() {
   }
 
   // thread safe initialization of the API

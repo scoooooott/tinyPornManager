@@ -16,28 +16,28 @@
 
 package org.tinymediamanager.scraper.universal_movie;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Locale;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.util.PluginManager;
-
-import java.util.List;
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ITUniversalMovieMetadataProviderTest {
 
   @BeforeClass
   public static void setUp() {
     // load all classpath plugins
-    PluginManager.getInstance().loadClasspathPlugins();
+    MediaProviders.loadMediaProviders();
   }
 
   @Test

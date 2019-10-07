@@ -52,14 +52,11 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
  *
  * @author Myron Boyle (myron0815@gmx.net)
  */
-@PluginImplementation
 public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrailerProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(OfdbMetadataProvider.class);
   private static final String BASE_URL = "http://www.ofdb.de";

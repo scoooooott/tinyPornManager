@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.ui.movies;
 
+import java.util.Locale;
+
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.ScraperInTable;
 
@@ -59,6 +61,6 @@ public class MovieScraper extends ScraperInTable implements Comparable<MovieScra
     if (!isKodiScraper() && o.isKodiScraper()) {
       return -1;
     }
-    return scraper.getName().compareTo(o.scraper.getName());
+    return scraper.getName().toLowerCase(Locale.ROOT).compareTo(o.scraper.getName().toLowerCase(Locale.ROOT));
   }
 }

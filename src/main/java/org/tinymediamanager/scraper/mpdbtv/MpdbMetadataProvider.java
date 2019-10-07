@@ -56,11 +56,12 @@ import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
-@PluginImplementation
+/**
+ * The Class MpdbMetadataProvider. A meta data provider for the site ofdb.de
+ *
+ * @author Wolfgang Janes
+ */
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(MpdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
   private static final String API_KEY = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");

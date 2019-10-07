@@ -15,28 +15,11 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.exceptions.NothingFoundException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
-import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.PluginManager;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -50,11 +33,29 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.THUMB;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviders;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaRating;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
+import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
@@ -62,10 +63,10 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInf
  * @author Manuel Laggner
  */
 public class ImdbTvShowParser extends ImdbParser {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ImdbTvShowParser.class);
+  private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbTvShowParser.class);
   private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped out
 
-  private ImdbSiteDefinition imdbSite;
+  private ImdbSiteDefinition   imdbSite;
 
   ImdbTvShowParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.TV_SHOW);
@@ -163,7 +164,8 @@ public class ImdbTvShowParser extends ImdbParser {
 
       // if everything worked so far, we can set the given id
       md.setId(providerInfo.getId(), imdbId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("problem while scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -202,7 +204,8 @@ public class ImdbTvShowParser extends ImdbParser {
             md.setPlot(tmdbMd.getPlot());
           }
         }
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
       }
     }
 
@@ -279,7 +282,8 @@ public class ImdbTvShowParser extends ImdbParser {
       try {
         url = new Url(imdbSite.getSite() + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/reference");
         url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.warn("could not get cast page: {}", e.getMessage());
       }
 
@@ -362,7 +366,8 @@ public class ImdbTvShowParser extends ImdbParser {
               md.addCastMember(cm);
             }
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.trace("problem parsing: {}", e.getMessage());
         }
       }
@@ -398,10 +403,12 @@ public class ImdbTvShowParser extends ImdbParser {
               md.addMediaArt(thumb);
             }
           }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           // do not swallow these Exceptions
           Thread.currentThread().interrupt();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.warn("could not get cast page: {}", e.getMessage());
         }
       }
@@ -427,7 +434,8 @@ public class ImdbTvShowParser extends ImdbParser {
     try {
       url = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
       url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("problem scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -435,21 +443,24 @@ public class ImdbTvShowParser extends ImdbParser {
     try (InputStream is = url.getInputStream()) {
       doc = Jsoup.parse(is, imdbSite.getCharset().displayName(), "");
       parseEpisodeList(0, episodes, doc);
-    } catch (InterruptedException | InterruptedIOException e) {
+    }
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("problem scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
     // then parse every season
-    for (int i = 1; ; i++) {
+    for (int i = 1;; i++) {
       Url seasonUrl;
       try {
         seasonUrl = new InMemoryCachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate?season=" + i);
         seasonUrl.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("problem scraping: {}", e.getMessage());
         throw new ScrapeException(e);
       }
@@ -460,10 +471,12 @@ public class ImdbTvShowParser extends ImdbParser {
         if (!parseEpisodeList(i, episodes, doc)) {
           break;
         }
-      } catch (InterruptedException | InterruptedIOException e) {
+      }
+      catch (InterruptedException | InterruptedIOException e) {
         // do not swallow these Exceptions
         Thread.currentThread().interrupt();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.warn("problem parsing ep list: {}", e.getMessage());
       }
     }
@@ -491,7 +504,8 @@ public class ImdbTvShowParser extends ImdbParser {
             if (season == 0) {
               ep.setSeasonNumber(season);
               ep.setEpisodeNumber(++episodeCounter);
-            } else {
+            }
+            else {
               ep.setSeasonNumber(Integer.parseInt(matcher.group(1)));
               ep.setEpisodeNumber(Integer.parseInt(matcher.group(2)));
             }
@@ -541,7 +555,8 @@ public class ImdbTvShowParser extends ImdbParser {
                   rating.setRating(Float.parseFloat(ratingAsString));
                   rating.setVoteCount(MetadataUtil.parseInt(countAsString));
                   ep.addRating(rating);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                   LOGGER.trace("could not parse rating/vote count: {}", e.getMessage());
                 }
               }
@@ -570,7 +585,8 @@ public class ImdbTvShowParser extends ImdbParser {
             }
 
             episodes.add(ep);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.warn("failed parsing: {} for ep data - {}", row.text(), e.getMessage());
           }
         }
@@ -580,12 +596,12 @@ public class ImdbTvShowParser extends ImdbParser {
   }
 
   private static class TmdbTvShowWorker implements Callable<MediaMetadata> {
-    private String imdbId;
-    private Locale language;
+    private String      imdbId;
+    private Locale      language;
     private CountryCode certificationCountry;
-    private int season = -1;
-    private int episode = -1;
-    private MediaType mediaType;
+    private int         season  = -1;
+    private int         episode = -1;
+    private MediaType   mediaType;
 
     TmdbTvShowWorker(String imdbId, Locale language, CountryCode certificationCountry) {
       this.imdbId = imdbId;
@@ -605,14 +621,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
     @Override
     public MediaMetadata call() throws Exception {
-      IMovieMetadataProvider tmdb = null;
-      List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
-      for (IMovieMetadataProvider provider : providers) {
-        if (MediaMetadata.TMDB.equals(provider.getProviderInfo().getId())) {
-          tmdb = provider;
-          break;
-        }
-      }
+      IMediaProvider tmdb = MediaProviders.getProviderById(MediaMetadata.TMDB);
       if (tmdb == null) {
         return null;
       }
@@ -623,7 +632,7 @@ public class ImdbTvShowParser extends ImdbParser {
       options.setImdbId(imdbId);
       options.setId(MediaMetadata.SEASON_NR, String.valueOf(season));
       options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode));
-      return tmdb.getMetadata(options);
+      return ((ITvShowMetadataProvider) tmdb).getMetadata(options);
     }
   }
 }

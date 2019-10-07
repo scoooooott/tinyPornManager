@@ -40,7 +40,6 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit2.Response;
 
 /**
@@ -48,17 +47,16 @@ import retrofit2.Response;
  *
  * @author Manuel Laggner
  */
-@PluginImplementation
 public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowArtworkProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
-  private static final String TMM_API_KEY = ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3");
+  private static final Logger            LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
+  private static final String            TMM_API_KEY  = ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3");
+  private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static FanartTv api = null;
+  private static FanartTv                api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
-            "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
+        "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
         FanartTvMetadataProvider.class.getResource("/org/tinymediamanager/scraper/fanart_tv.png"));
     providerInfo.setVersion(FanartTvMetadataProvider.class);
 
@@ -78,7 +76,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       try {
         api = new FanartTv();
         api.setApiKey(TMM_API_KEY);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
         throw new ScrapeException(e);
       }
@@ -155,7 +154,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       try {
         LOGGER.debug("getArtwork with IMDB id: {}", imdbId);
         images = api.getMovieService().getMovieImages(imdbId).execute();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
@@ -165,7 +165,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       try {
         LOGGER.debug("getArtwork with TMDB id: {}", tmdbId);
         images = api.getMovieService().getMovieImages(Integer.toString(tmdbId)).execute();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
@@ -188,7 +189,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       String message = "";
       try {
         message = images.errorBody().string();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         // ignore
       }
       LOGGER.warn("request was not successful: HTTP/{} - {}", images.code(), message);
@@ -229,7 +231,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     try {
       LOGGER.debug("getArtwork with TVDB id: {}", tvdbId);
       images = api.getTvShowService().getTvShowImages(tvdbId).execute();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.debug("failed to get artwork: {}", e.getMessage());
       // if the thread has been interrupted, to no rethrow that exception
       if (e instanceof InterruptedException || e instanceof InterruptedException) {
@@ -247,7 +250,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       String message = "";
       try {
         message = images.errorBody().string();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         // ignore
       }
       LOGGER.warn("request was not successful: HTTP/{} - {}", images.code(), message);
@@ -385,10 +389,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
       if ("all".equals(image.season)) {
         ma.setSeason(0);
-      } else {
+      }
+      else {
         try {
           ma.setSeason(Integer.valueOf(image.season));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.trace("could not parse int: {}", e.getMessage());
         }
       }
@@ -438,9 +444,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       this.sizeOrder = sizeOrder;
     }
 
-    int width;
-    int height;
+    int              width;
+    int              height;
     MediaArtworkType type;
-    int sizeOrder;
+    int              sizeOrder;
   }
 }
