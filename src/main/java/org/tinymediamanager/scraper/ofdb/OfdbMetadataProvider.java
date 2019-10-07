@@ -15,7 +15,16 @@
  */
 package org.tinymediamanager.scraper.ofdb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.InterruptedIOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
@@ -43,15 +52,7 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import java.io.InterruptedIOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -71,7 +72,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("ofdb", "Online Filmdatenbank (OFDb.de)",
             "<html><h3>Online Filmdatenbank (OFDb)</h3><br />A german movie database driven by the community.<br /><br />Available languages: DE</html>",
-            OfdbMetadataProvider.class.getResource("/ofdb_de.png"));
+        OfdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/ofdb_de.png"));
     providerInfo.setVersion(OfdbMetadataProvider.class);
     return providerInfo;
   }

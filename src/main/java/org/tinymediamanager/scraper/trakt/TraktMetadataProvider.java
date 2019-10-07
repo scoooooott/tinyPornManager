@@ -15,14 +15,12 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import com.uwetrottmann.trakt5.TraktV2;
-import com.uwetrottmann.trakt5.TraktV2Interceptor;
-import com.uwetrottmann.trakt5.entities.SearchResult;
-import com.uwetrottmann.trakt5.enums.Extended;
-import com.uwetrottmann.trakt5.enums.IdType;
-import com.uwetrottmann.trakt5.enums.Type;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-import okhttp3.OkHttpClient;
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +39,17 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+
+import com.uwetrottmann.trakt5.TraktV2;
+import com.uwetrottmann.trakt5.TraktV2Interceptor;
+import com.uwetrottmann.trakt5.entities.SearchResult;
+import com.uwetrottmann.trakt5.enums.Extended;
+import com.uwetrottmann.trakt5.enums.IdType;
+import com.uwetrottmann.trakt5.enums.Type;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import okhttp3.OkHttpClient;
 import retrofit2.Response;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
 
 @PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
@@ -66,7 +68,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     MediaProviderInfo providerInfo = new MediaProviderInfo("trakt", "Trakt.tv",
             "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things," + " but primarily keeps track of TV shows and movies you watch. "
                     + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
-            TraktMetadataProvider.class.getResource("/trakt_tv.png"));
+        TraktMetadataProvider.class.getResource("/org/tinymediamanager/scraper/trakt_tv.png"));
     providerInfo.setVersion(TraktMetadataProvider.class);
 
     providerInfo.getConfig().addText("clientId", "", true);

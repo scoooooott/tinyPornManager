@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +38,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class ImdbMetadataProvider. A meta data provider for the site imdb.com
@@ -76,7 +77,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo mpi = new MediaProviderInfo("imdb", "IMDb.com",
             "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
-            ImdbMetadataProvider.class.getResource("/imdb_com.png"));
+        ImdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/imdb_com.png"));
     mpi.setVersion(ImdbMetadataProvider.class);
     return mpi;
   }

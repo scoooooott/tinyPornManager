@@ -16,21 +16,6 @@
 
 package org.tinymediamanager.scraper.opensubtitles;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
-import org.tinymediamanager.scraper.SubtitleSearchResult;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.opensubtitles.model.Info;
-import org.tinymediamanager.scraper.util.LanguageUtils;
-import org.tinymediamanager.scraper.util.Similarity;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,6 +32,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.opensubtitles.model.Info;
+import org.tinymediamanager.scraper.util.LanguageUtils;
+import org.tinymediamanager.scraper.util.Similarity;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * OpensubtitlesMetadataProvider provides subtitle scraping from OpenSubtitles.org
@@ -69,7 +70,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("opensubtitles", "OpenSubtitles.org",
             "<html><h3>OpenSubtitles.org</h3><br />A subtitle scraper for OpenSubtitles.org</html>",
-            OpensubtitlesMetadataProvider.class.getResource("/opensubtitles_org.png"));
+        OpensubtitlesMetadataProvider.class.getResource("/org/tinymediamanager/scraper/opensubtitles_org.png"));
     providerInfo.setVersion(OpensubtitlesMetadataProvider.class);
     return providerInfo;
   }

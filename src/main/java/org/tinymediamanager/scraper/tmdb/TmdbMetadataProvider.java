@@ -15,16 +15,10 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.TmdbInterceptor;
-import com.uwetrottmann.tmdb2.entities.Configuration;
-import com.uwetrottmann.tmdb2.entities.FindResults;
-import com.uwetrottmann.tmdb2.entities.Genre;
-import com.uwetrottmann.tmdb2.entities.Translations;
-import com.uwetrottmann.tmdb2.entities.Translations.Translation;
-import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-import okhttp3.OkHttpClient;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +46,17 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.TmdbInterceptor;
+import com.uwetrottmann.tmdb2.entities.Configuration;
+import com.uwetrottmann.tmdb2.entities.FindResults;
+import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.entities.Translations;
+import com.uwetrottmann.tmdb2.entities.Translations.Translation;
+import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import okhttp3.OkHttpClient;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -86,7 +88,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("tmdb", "themoviedb.org",
             "<html><h3>The Movie Database (TMDb)</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
-            TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
+        TmdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/themoviedb_org.png"));
     providerInfo.setVersion(TmdbMetadataProvider.class);
 
     providerInfo.getConfig().addText("apiKey", "", true);

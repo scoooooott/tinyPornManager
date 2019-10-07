@@ -16,7 +16,14 @@
 
 package org.tinymediamanager.scraper.omdb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +51,7 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * Central metadata provider class
@@ -72,7 +73,7 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("omdbapi", "omdbapi.com",
             "<html><h3>Omdbapi.com</h3><br />The OMDb API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.omdbapi.com/)<br /><br />TinyMediaManager offers a limited access to OMDb API (10 calls per 15 seconds)<br /><br />Available languages: EN</html>",
-            OmdbMetadataProvider.class.getResource("/omdbapi.png"));
+        OmdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/omdbapi.png"));
 
     providerInfo.setVersion(OmdbMetadataProvider.class);
 

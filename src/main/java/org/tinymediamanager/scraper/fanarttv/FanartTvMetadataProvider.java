@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +39,9 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import retrofit2.Response;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.util.ArrayList;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit2.Response;
 
 /**
  * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
@@ -58,7 +59,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
             "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
-            FanartTvMetadataProvider.class.getResource("/fanart_tv.png"));
+        FanartTvMetadataProvider.class.getResource("/org/tinymediamanager/scraper/fanart_tv.png"));
     providerInfo.setVersion(FanartTvMetadataProvider.class);
 
     // configure/load settings

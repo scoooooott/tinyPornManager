@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,10 +37,7 @@ import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import java.io.InterruptedIOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class HDTrailersNet. A trailer provider for the site hd-trailers.net
@@ -54,7 +55,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo pi = new MediaProviderInfo("hd-trailers", "hd-trailers.net",
             "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
-            HDTrailersNetTrailerProvider.class.getResource("/hd-trailers_net.png"));
+        HDTrailersNetTrailerProvider.class.getResource("/org/tinymediamanager/scraper/hd-trailers_net.png"));
     pi.setVersion(HDTrailersNetTrailerProvider.class);
     return pi;
   }

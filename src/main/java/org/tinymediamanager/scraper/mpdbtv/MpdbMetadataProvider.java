@@ -15,7 +15,12 @@
  */
 package org.tinymediamanager.scraper.mpdbtv;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -51,11 +56,7 @@ import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
@@ -74,7 +75,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv",
             "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
-            MpdbMetadataProvider.class.getResource("/mpdbtv.png"));
+        MpdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/mpdbtv.png"));
 
     providerInfo.setVersion(MpdbMetadataProvider.class);
     providerInfo.getConfig().addText("aboKey", "", false);

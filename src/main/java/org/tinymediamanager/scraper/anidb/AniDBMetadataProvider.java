@@ -15,7 +15,24 @@
  */
 package org.tinymediamanager.scraper.anidb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -49,23 +66,7 @@ import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB) https://wiki.anidb.net/w/UDP_API_Definition
@@ -86,7 +87,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("anidb", "aniDB",
             "<html><h3>aniDB</h3><br />AniDB stands for Anime DataBase. AniDB is a non-profit anime database that is open freely to the public.</html>",
-            AniDBMetadataProvider.class.getResource("/anidb_net.png"));
+        AniDBMetadataProvider.class.getResource("/org/tinymediamanager/scraper/anidb_net.png"));
     providerInfo.setVersion(AniDBMetadataProvider.class);
     return providerInfo;
   }

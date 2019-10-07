@@ -15,29 +15,30 @@
  */
 package org.tinymediamanager.scraper.kyradb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.kyradb.entities.Image;
-import org.tinymediamanager.scraper.kyradb.entities.KyraEntity;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.kyradb.entities.Image;
+import org.tinymediamanager.scraper.kyradb.entities.KyraEntity;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import retrofit2.Response;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.util.ArrayList;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit2.Response;
 
 /**
  * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
@@ -56,7 +57,7 @@ public class AnimatedMetadataProvider implements IMovieArtworkProvider {
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("animated", "KyraAnimated",
             "<html><h3>KyraDB Animated Posters</h3><br />as seen on https://forum.kodi.tv/showthread.php?tid=343391 :)</html>",
-            AnimatedMetadataProvider.class.getResource("/kyradb_logo.png"));
+        AnimatedMetadataProvider.class.getResource("/org/tinymediamanager/scraper/kyradb_logo.png"));
     providerInfo.setVersion(AnimatedMetadataProvider.class);
 
     // configure/load settings

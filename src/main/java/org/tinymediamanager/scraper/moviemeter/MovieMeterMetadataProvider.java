@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +45,7 @@ import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class MoviemeterMetadataProvider. A meta data provider for the site moviemeter.nl
@@ -65,7 +66,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("moviemeter", "moviemeter.nl",
             "<html><h3>Moviemeter.nl</h3><br />A dutch movie database.<br /><br />Available languages: NL</html>",
-            MovieMeterMetadataProvider.class.getResource("/moviemeter_nl.png"));
+        MovieMeterMetadataProvider.class.getResource("/org/tinymediamanager/scraper/moviemeter_nl.png"));
     providerInfo.setVersion(MovieMeterMetadataProvider.class);
 
     // configure/load settings
