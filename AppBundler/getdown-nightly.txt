@@ -51,6 +51,18 @@ resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
 
+# nativefiledialogs native libs
+resource = [windows-x86] native/windows-x86/lwjgl.dll
+resource = [windows-x86] native/windows-x86/lwjgl_nfd.dll
+resource = [windows-amd64] native/windows-x64/lwjgl.dll
+resource = [windows-amd64] native/windows-x64/lwjgl_nfd.dll
+resource = [mac os x] native/mac/lwjgl.dylib
+resource = [mac os x] native/mac/lwjgl_nfd.dylib
+resource = [linux-x86] native/linux-x86/lwjgl.so
+resource = [linux-x86] native/linux-x86/lwjgl_nfd.so
+resource = [linux-amd64] native/linux-x64/lwjgl.so
+resource = [linux-amd64] native/linux-x64/lwjgl_nfd.so
+
 # templates
 uresource = templates/templates.jar
 

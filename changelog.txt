@@ -1,6 +1,7 @@
 upcoming version
 =======================
 + support for rendering animated gifs
++ changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems)
 
 
 Version 3.0.5

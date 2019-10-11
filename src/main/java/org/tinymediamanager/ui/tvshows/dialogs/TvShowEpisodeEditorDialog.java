@@ -52,6 +52,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -357,7 +358,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           @Override
           public void mouseClicked(MouseEvent e) {
             String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
-            Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path); //$NON-NLS-1$
+            Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path, //$NON-NLS-1$
+                new FileNameExtensionFilter("Image files", ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tbn"));
             if (file != null && Utils.isRegularFile(file)) {
               String fileName = file.toAbsolutePath().toString();
               TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);

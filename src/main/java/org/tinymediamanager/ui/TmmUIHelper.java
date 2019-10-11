@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Desktop;
-import java.awt.FileDialog;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,12 +34,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.util.nfd.NativeFileDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
-import org.tinymediamanager.ui.components.NativeFileChooser;
 import org.tinymediamanager.ui.dialogs.ImagePreviewDialog;
 
 /**
@@ -53,47 +54,31 @@ public class TmmUIHelper {
   protected static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public static Path selectDirectory(String title, String initialPath) {
-    // on mac try to take the AWT FileDialog
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+    // try to open with NFD
+    try {
+      PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
+
       try {
-        // open directory chooser
-        return openDirectoryDialog(title, initialPath);
-      }
-      catch (Exception | Error e) {
-        LOGGER.warn("cannot open AWT directory chooser" + e.getMessage());
+        int result = NativeFileDialog.NFD_PickFolder(initialPath, outPath);
+        if (result == NativeFileDialog.NFD_OKAY) {
+          return Paths.get(outPath.getStringUTF8());
+        }
+        else {
+          return null;
+        }
       }
       finally {
-        // reset system property
-        System.setProperty("apple.awt.fileDialogForDirectories", "false");
+        NativeFileDialog.nNFD_Free(outPath.get(0));
+        MemoryUtil.memFree(outPath);
       }
+
+    }
+    catch (Exception | Error e) {
+      LOGGER.error("could not call nfd - {}", e.getMessage());
     }
 
     // open JFileChooser
     return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, initialPath, true, null, null);
-  }
-
-  private static Path openDirectoryDialog(String title, String initialPath) throws Error {
-    // set system property to choose directories
-    System.setProperty("apple.awt.fileDialogForDirectories", "true");
-
-    FileDialog chooser = new FileDialog(MainWindow.getFrame(), title);
-    if (StringUtils.isNotBlank(initialPath)) {
-      Path path = Paths.get(initialPath);
-      if (Files.exists(path)) {
-        chooser.setDirectory(path.toFile().getAbsolutePath());
-      }
-    }
-    chooser.setVisible(true);
-
-    // reset system property
-    System.setProperty("apple.awt.fileDialogForDirectories", "false");
-
-    if (StringUtils.isNotEmpty(chooser.getFile())) {
-      return Paths.get(chooser.getDirectory(), chooser.getFile());
-    }
-    else {
-      return null;
-    }
   }
 
   private static Path openJFileChooser(int mode, String dialogTitle, String initialPath, boolean open, String filename,
@@ -106,12 +91,12 @@ public class TmmUIHelper {
     else if (StringUtils.isNotBlank(initialPath)) {
       Path path = Paths.get(initialPath);
       if (Files.exists(path)) {
-        fileChooser = new NativeFileChooser(path.toFile());
+        fileChooser = new JFileChooser(path.toFile());
       }
     }
 
     if (fileChooser == null) {
-      fileChooser = new NativeFileChooser();
+      fileChooser = new JFileChooser();
     }
 
     fileChooser.setFileSelectionMode(mode);
@@ -136,56 +121,66 @@ public class TmmUIHelper {
     return null;
   }
 
-  public static Path selectFile(String title, String initialPath) {
-    // try to open AWT dialog on OSX
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+  public static Path selectFile(String title, String initialPath, FileNameExtensionFilter filter) {
+    // try to open with NFD
+    try {
+      PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
+
       try {
-        // open file chooser
-        return openFileDialog(title, initialPath, FileDialog.LOAD, null);
+        String filterList = null;
+        if (filter != null) {
+          filterList = String.join(",", filter.getExtensions());
+          filterList = filterList.replaceAll("\\.", "");
+        }
+        int result = NativeFileDialog.NFD_OpenDialog(filterList, initialPath, outPath);
+        if (result == NativeFileDialog.NFD_OKAY) {
+          return Paths.get(outPath.getStringUTF8());
+        }
+        else {
+          return null;
+        }
       }
-      catch (Exception | Error e) {
-        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
+      finally {
+        NativeFileDialog.nNFD_Free(outPath.get(0));
+        MemoryUtil.memFree(outPath);
       }
+
+    }
+    catch (Exception | Error e) {
+      LOGGER.error("could not call nfd - {}", e.getMessage());
     }
 
     // open JFileChooser
-    return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, true, null, null);
-  }
-
-  private static Path openFileDialog(String title, String initialPath, int mode, String filename) throws Error {
-    FileDialog chooser = new FileDialog(MainWindow.getFrame(), title, mode);
-    if (StringUtils.isNotBlank(initialPath)) {
-      Path path = Paths.get(initialPath);
-      if (Files.exists(path)) {
-        chooser.setDirectory(path.toFile().getAbsolutePath());
-      }
-    }
-    if (mode == FileDialog.SAVE) {
-      chooser.setFile(filename);
-    }
-    chooser.setVisible(true);
-
-    if (StringUtils.isNotEmpty(chooser.getFile())) {
-      return Paths.get(chooser.getDirectory(), chooser.getFile());
-    }
-    else {
-      return null;
-    }
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, true, null, filter);
   }
 
   public static Path saveFile(String title, String initialPath, String filename, FileNameExtensionFilter filter) {
-    // try to open AWT dialog on OSX
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+    // try to open with NFD
+    try {
+      PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
+
       try {
-        // open file chooser
-        return openFileDialog(title, initialPath, FileDialog.SAVE, filename);
+        String filterList = null;
+        if (filter != null) {
+          filterList = String.join(",", filter.getExtensions());
+          filterList = filterList.replaceAll("\\.", "");
+        }
+        int result = NativeFileDialog.NFD_SaveDialog(filterList, initialPath, outPath);
+        if (result == NativeFileDialog.NFD_OKAY) {
+          return Paths.get(outPath.getStringUTF8());
+        }
+        else {
+          return null;
+        }
       }
-      catch (Exception e) {
-        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
+      finally {
+        NativeFileDialog.nNFD_Free(outPath.get(0));
+        MemoryUtil.memFree(outPath);
       }
-      catch (Error e) {
-        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
-      }
+
+    }
+    catch (Exception | Error e) {
+      LOGGER.error("could not call nfd - {}", e.getMessage());
     }
 
     return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, false, filename, filter);
