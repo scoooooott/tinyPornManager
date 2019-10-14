@@ -1,0 +1,87 @@
+{
+  "error": 0,
+  "message": "successful",
+  "number_of_posters": 2,
+  "posters": [
+    {
+      "name": "9f3856c0dbe25dfdda3e0cfd4bad5370efb54e343f3b0b3e61efac53cf6ecf771.gif",
+      "resolution": "480 x 720",
+      "width": "480",
+      "height": "720",
+      "date_added": "2018-11-30 21:09:02"
+    },
+    {
+      "name": "f33c38b7e431130df6c7dec779326d704c8504dcbeecca7de233eeb5281489851.gif",
+      "resolution": "500 x 713",
+      "width": "500",
+      "height": "713",
+      "date_added": "2018-11-30 21:08:51"
+    }
+  ],
+  "number_of_backgrounds": 8,
+  "backgrounds": [
+    {
+      "name": "200bdf129b777a8dfdc92f773ff316665d97ab382a20052a2054599d2482581d1.gif",
+      "resolution": "725 x 300",
+      "width": "725",
+      "height": "300",
+      "date_added": "2018-11-30 21:07:22"
+    },
+    {
+      "name": "23cea59612cffe19199aa80aee0bec5ea03ca4696821b57d591f5f76e2db23361.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:07:30"
+    },
+    {
+      "name": "4c1492de0ded1f91838e2065803a8720f7cf9b68bcb1cf00ade8f6fefe8209961.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:08:04"
+    },
+    {
+      "name": "533e22a93c2c1f4a421016f6aa52b957662b334e3f7dabba5b8d1c01f82a53831.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:07:43"
+    },
+    {
+      "name": "5ec9690743669bb39d656ca27c6ea5daa4500eed47eadbbef7a42399c0b296c81.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:08:41"
+    },
+    {
+      "name": "68976e92e9f1a1d1cdff6c2d0baa2496764137dd17da0245d75bdef603ce2b611.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:07:54"
+    },
+    {
+      "name": "8d1e3958ba85060a68872a7e1d8542b3085cfef152fdd03b16d7a831b817f1021.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:08:15"
+    },
+    {
+      "name": "93918de0b4289aac79e13b891c599f3c1892e3869bea70e8e9db3f100a3ef82c1.gif",
+      "resolution": "1080 x 450",
+      "width": "1080",
+      "height": "450",
+      "date_added": "2018-11-30 21:08:27"
+    }
+  ],
+  "base_url_posters": "https:\/\/www.kyradb.com\/posters\/w342",
+  "base_url_backgrounds": "https:\/\/www.kyradb.com\/backgrounds\/original",
+  "base_url_character_art": "https:\/\/www.kyradb.com\/characters\/original",
+  "base_url_actor_art": "https:\/\/www.kyradb.com\/actors\/original",
+  "base_url_logos": "https:\/\/www.kyradb.com\/logos\/original",
+  "timezone_str": "Europe\/London",
+  "timezone": "GMT"
+}

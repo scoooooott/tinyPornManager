@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -20,99 +20,98 @@
         <tag>HEAD</tag>
     </scm>
 
+    <properties>
+        <okhttp.version>3.12.1</okhttp.version>
+    </properties>
+
     <dependencies>
-        <!-- TMM dependencies -->
         <dependency>
-            <groupId>org.tinymediamanager</groupId>
-            <artifactId>api-scraper</artifactId>
-            <version>3.0.5</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
         </dependency>
         <dependency>
-            <groupId>org.tinymediamanager</groupId>
-            <artifactId>tinyMediaManager-LaF</artifactId>
-            <version>3.1</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-gson</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-urlconnection</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10.2</version>
         </dependency>
 
-        <!-- our plugins - all provided for dependency resolution -->
+        <!-- J9 / J10 / J11 deps -->
         <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-anidb</artifactId>
-            <version>3.1</version>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.7</version>
         </dependency>
         <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-fanarttv</artifactId>
-            <version>3.1</version>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.turri</groupId>
+            <artifactId>aXMLRPC</artifactId>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-hdtrailers</artifactId>
-            <version>3.0</version>
+            <groupId>com.uwetrottmann.tmdb2</groupId>
+            <artifactId>tmdb-java</artifactId>
+            <version>2.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-imdb</artifactId>
-            <version>3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-kodi</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-moviemeter</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-ofdb</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-omdbapi</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-opensubtitles</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-animated</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <!-- REMOVED RottenTomatoes removed free access to the API <dependency> 
-            <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-rottentomatoes</artifactId> 
-            <version>2.0-SNAPSHOT</version> <scope>provided</scope> </dependency> -->
-        <!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> 
-            <version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-tmdb</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-trakt</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-tvdb</artifactId>
-            <version>3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-universal-movie</artifactId>
-            <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tinymediamanager.plugins</groupId>
-            <artifactId>scraper-mpdbtv</artifactId>
-            <version>3.0</version>
+            <groupId>com.uwetrottmann.thetvdb-java</groupId>
+            <artifactId>thetvdb-java</artifactId>
+            <version>2.1.0</version>
         </dependency>
 
         <dependency>
@@ -200,6 +199,22 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-nfd</artifactId>
             <version>3.2.3</version>
+        </dependency>
+
+        <!-- for score testing -->
+        <dependency>
+            <groupId>info.debatty</groupId>
+            <artifactId>java-string-similarity</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- for HTTP testing -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -328,19 +343,6 @@
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
-                    <execution>
-                        <!-- our scraper plugins -->
-                        <id>copy-tmm-plugins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeGroupIds>org.tinymediamanager.plugins</includeGroupIds>
-                            <stripVersion>true</stripVersion>
-                            <outputDirectory>${project.build.directory}/dependency-plugins</outputDirectory>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -376,6 +378,15 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>java9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
         <profile>
             <id>gitlab-ci</id>
             <build>

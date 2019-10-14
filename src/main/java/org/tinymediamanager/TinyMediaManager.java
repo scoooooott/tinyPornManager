@@ -56,7 +56,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.thirdparty.KodiRPC;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
 import org.tinymediamanager.thirdparty.upnp.Upnp;
@@ -283,11 +283,7 @@ public class TinyMediaManager {
             splash.update();
           }
           // just instantiate static - will block (takes a few secs)
-          PluginManager.getInstance();
-          if (ReleaseInfo.isGitBuild()) {
-            PluginManager.getInstance().loadClasspathPlugins();
-          }
-          PluginManager.getInstance().afterInitialization();
+          MediaProviders.loadMediaProviders();
 
           if (g2 != null) {
             updateProgress(g2, "starting services", 60);

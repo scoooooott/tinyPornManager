@@ -89,9 +89,6 @@
 		<copy todir="${build.dir}/lib">
 			<fileset dir="target/dependency" />
 		</copy>
-		<copy todir="${build.dir}/plugins">
-			<fileset dir="target/dependency-plugins" />
-		</copy>
 
 		<!-- ===================================================== -->
 		<!-- replace classpath -->
@@ -108,25 +105,6 @@
 		</pathconvert>
 		<!--echo message="${gd.code}" /-->
 		<replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}" />
-
-		<!-- ===================================================== -->
-		<!-- replace plugins -->
-		<!-- ===================================================== -->
-		<pathconvert property="gd.plugins" pathsep="">
-			<mapper>
-				<chainedmapper>
-					<flattenmapper />
-					<globmapper from="*" to="resource = plugins/*${line.separator}" />
-				</chainedmapper>
-			</mapper>
-			<path>
-				<fileset dir="${build.dir}/plugins">
-					<include name="*.jar" />
-				</fileset>
-			</path>
-		</pathconvert>
-		<!-- echo message="${gd.plugins}" /-->
-		<replace file="${build.dir}/getdown.txt" token="%PLUGINS%" value="${gd.plugins}" />
 
 		<echo message="=====================================================" />
 		<echo message="prepare build for MacOS X" />

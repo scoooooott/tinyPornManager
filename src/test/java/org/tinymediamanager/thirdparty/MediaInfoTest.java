@@ -3,9 +3,6 @@ package org.tinymediamanager.thirdparty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 
@@ -312,37 +309,37 @@ public class MediaInfoTest extends BasicTest {
     }
   }
 
-  @Test
-  public void displayVersion() {
-    System.out.println(MediaInfo.staticOption("Info_Version"));
-  }
-
-  /**
-   * displays all known parameters you could fetch
-   */
-  @Test
-  public void displayInfoParameters() {
-    System.out.println(MediaInfo.staticOption("Info_Parameters"));
-  }
-
-  @Test
-  public void displayInfoCapacities() {
-    System.out.println(MediaInfo.staticOption("Info_Capacities"));
-  }
-
-  @Test
-  public void displayInfoOutputFormats() {
-    // since version 17.10
-    System.out.println(MediaInfo.staticOption("Info_OutputFormats"));
-  }
-
-  /**
-   * displays all supported codecs
-   */
-  @Test
-  public void displayInfoCodecs() {
-    System.out.println(MediaInfo.staticOption("Info_Codecs"));
-  }
+  // @Test
+  // public void displayVersion() {
+  // System.out.println(MediaInfo.staticOption("Info_Version"));
+  // }
+  //
+  // /**
+  // * displays all known parameters you could fetch
+  // */
+  // @Test
+  // public void displayInfoParameters() {
+  // System.out.println(MediaInfo.staticOption("Info_Parameters"));
+  // }
+  //
+  // @Test
+  // public void displayInfoCapacities() {
+  // System.out.println(MediaInfo.staticOption("Info_Capacities"));
+  // }
+  //
+  // @Test
+  // public void displayInfoOutputFormats() {
+  // // since version 17.10
+  // System.out.println(MediaInfo.staticOption("Info_OutputFormats"));
+  // }
+  //
+  // /**
+  // * displays all supported codecs
+  // */
+  // @Test
+  // public void displayInfoCodecs() {
+  // System.out.println(MediaInfo.staticOption("Info_Codecs"));
+  // }
 
   @Test
   public void mediaFile() {
@@ -432,39 +429,39 @@ public class MediaInfoTest extends BasicTest {
     System.out.println(To_Display);
   }
 
-  @Test
-  public void listDirectForAll() {
-    MediaInfo mi = new MediaInfo();
-
-    DirectoryStream<Path> stream = null;
-    try {
-      stream = Files.newDirectoryStream(Paths.get("src/test/resources/samples"));
-      for (Path path : stream) {
-        if (mi.open(path)) {
-
-          // https://github.com/MediaArea/MediaInfoLib/blob/master/Source/Resource/Text/Stream/Audio.csv
-          // Format;;;N YTY;;;Format used;;
-          // Format/String;;;Y NT;;;Format used + additional features
-          // Format/Info;;;Y NT;;;Info about the format;;
-          // Format_Commercial;;;N YT;;;Commercial name used by vendor for theses setings or Format field if there is no difference;;
-          // Format_Profile;;;Y YTY;;;Profile of the Format (old XML: 'Profile@Level' format; MIXML: 'Profile' only)
-          // Format_AdditionalFeatures;;;N YTY;;;Format features needed for fully supporting the content
-
-          String ret = path + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/String") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/Info") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Commercial") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Profile") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_AdditionalFeatures") + "\n";
-
-          System.out.println(ret);
-          mi.close();
-        }
-      }
-    }
-    catch (Exception e) {
-      // TODO: handle exception
-    }
-  }
+  // @Test
+  // public void listDirectForAll() {
+  // MediaInfo mi = new MediaInfo();
+  //
+  // DirectoryStream<Path> stream = null;
+  // try {
+  // stream = Files.newDirectoryStream(Paths.get("src/test/resources/samples"));
+  // for (Path path : stream) {
+  // if (mi.open(path)) {
+  //
+  // // https://github.com/MediaArea/MediaInfoLib/blob/master/Source/Resource/Text/Stream/Audio.csv
+  // // Format;;;N YTY;;;Format used;;
+  // // Format/String;;;Y NT;;;Format used + additional features
+  // // Format/Info;;;Y NT;;;Info about the format;;
+  // // Format_Commercial;;;N YT;;;Commercial name used by vendor for theses setings or Format field if there is no difference;;
+  // // Format_Profile;;;Y YTY;;;Profile of the Format (old XML: 'Profile@Level' format; MIXML: 'Profile' only)
+  // // Format_AdditionalFeatures;;;N YTY;;;Format features needed for fully supporting the content
+  //
+  // String ret = path + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/String") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/Info") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Commercial") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Profile") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_AdditionalFeatures") + "\n";
+  //
+  // System.out.println(ret);
+  // mi.close();
+  // }
+  // }
+  // }
+  // catch (Exception e) {
+  // // TODO: handle exception
+  // }
+  // }
 }
