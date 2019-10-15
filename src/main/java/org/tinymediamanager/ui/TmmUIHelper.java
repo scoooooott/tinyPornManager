@@ -61,14 +61,15 @@ public class TmmUIHelper {
       try {
         int result = NativeFileDialog.NFD_PickFolder(initialPath, outPath);
         if (result == NativeFileDialog.NFD_OKAY) {
-          return Paths.get(outPath.getStringUTF8());
+          Path path = Paths.get(outPath.getStringUTF8());
+          NativeFileDialog.nNFD_Free(outPath.get(0));
+          return path;
         }
         else {
           return null;
         }
       }
       finally {
-        NativeFileDialog.nNFD_Free(outPath.get(0));
         MemoryUtil.memFree(outPath);
       }
 
@@ -134,14 +135,15 @@ public class TmmUIHelper {
         }
         int result = NativeFileDialog.NFD_OpenDialog(filterList, initialPath, outPath);
         if (result == NativeFileDialog.NFD_OKAY) {
-          return Paths.get(outPath.getStringUTF8());
+          Path path = Paths.get(outPath.getStringUTF8());
+          NativeFileDialog.nNFD_Free(outPath.get(0));
+          return path;
         }
         else {
           return null;
         }
       }
       finally {
-        NativeFileDialog.nNFD_Free(outPath.get(0));
         MemoryUtil.memFree(outPath);
       }
 
@@ -167,14 +169,15 @@ public class TmmUIHelper {
         }
         int result = NativeFileDialog.NFD_SaveDialog(filterList, initialPath, outPath);
         if (result == NativeFileDialog.NFD_OKAY) {
-          return Paths.get(outPath.getStringUTF8());
+          Path path = Paths.get(outPath.getStringUTF8());
+          NativeFileDialog.nNFD_Free(outPath.get(0));
+          return path;
         }
         else {
           return null;
         }
       }
       finally {
-        NativeFileDialog.nNFD_Free(outPath.get(0));
         MemoryUtil.memFree(outPath);
       }
 
