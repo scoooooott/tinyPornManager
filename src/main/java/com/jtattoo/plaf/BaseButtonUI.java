@@ -1,21 +1,33 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is dual licensed. You can use it under the terms and conditions of the
- * GNU General Public License version 2.0 or later as published by the Free Software
- * Foundation.
- *
- * see: gpl-2.0.txt
- *
- * Registered users (this who payed for a license) could use the software under the
- * terms and conditions of the GNU Lesser General Public License version 2.0 or later
- * with classpath exception as published by the Free Software Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+* 
+* JTattoo is dual licensed. You can use it under the terms and conditions of the
+* GNU General Public License version 2.0 or later as published by the Free Software
+* Foundation.
+* 
+* see: gpl-2.0.txt
+* 
+* Registered users (this who payed for a license) could use the software under the
+* terms and conditions of the GNU Lesser General Public License version 2.0 or later
+* with classpath exception as published by the Free Software Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+*/
 
 package com.jtattoo.plaf;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
@@ -33,32 +45,22 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 
 /**
  * @author Michael Hagen
  */
 public class BaseButtonUI extends BasicButtonUI {
 
-  protected static Rectangle viewRect = new Rectangle();
-  protected static Rectangle textRect = new Rectangle();
-  protected static Rectangle iconRect = new Rectangle();
-  protected static Color[] defaultColors = null;
+  protected static Rectangle viewRect      = new Rectangle();
+  protected static Rectangle textRect      = new Rectangle();
+  protected static Rectangle iconRect      = new Rectangle();
+  protected static Color[]   defaultColors = null;
 
   public static ComponentUI createUI(JComponent c) {
     return new BaseButtonUI();
   }
 
+  @Override
   protected void installKeyboardActions(AbstractButton b) {
     super.installKeyboardActions(b);
     InputMap im = (InputMap) UIManager.get("Button.focusInputMap");
@@ -71,18 +73,21 @@ public class BaseButtonUI extends BasicButtonUI {
     }
   }
 
+  @Override
   public void installDefaults(AbstractButton b) {
     super.installDefaults(b);
     b.setOpaque(false);
     b.setRolloverEnabled(true);
   }
 
+  @Override
   protected void uninstallDefaults(AbstractButton b) {
     super.uninstallDefaults(b);
     b.setOpaque(true);
     b.setRolloverEnabled(false);
   }
 
+  @Override
   protected BasicButtonListener createButtonListener(AbstractButton b) {
     return new BaseButtonListener(b);
   }
@@ -102,25 +107,32 @@ public class BaseButtonUI extends BasicButtonUI {
       if (background instanceof ColorUIResource) {
         if (model.isPressed() && model.isArmed()) {
           colors = AbstractLookAndFeel.getTheme().getPressedColors();
-        } else if (b.isRolloverEnabled() && model.isRollover()) {
+        }
+        else if (b.isRolloverEnabled() && model.isRollover()) {
           colors = AbstractLookAndFeel.getTheme().getRolloverColors();
-        } else if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
           colors = AbstractLookAndFeel.getTheme().getFocusColors();
-        } else if (JTattooUtilities.isFrameActive(b) && (b.getRootPane() != null) && (b.equals(b.getRootPane().getDefaultButton()))) {
+        }
+        else if (JTattooUtilities.isFrameActive(b) && (b.getRootPane() != null) && (b.equals(b.getRootPane().getDefaultButton()))) {
           colors = defaultColors;
         }
-      } else {
+      }
+      else {
         if (model.isPressed() && model.isArmed()) {
           colors = ColorHelper.createColorArr(ColorHelper.darker(background, 30), ColorHelper.darker(background, 10), 20);
-        } else {
+        }
+        else {
           if (b.isRolloverEnabled() && model.isRollover()) {
             colors = ColorHelper.createColorArr(ColorHelper.brighter(background, 50), ColorHelper.brighter(background, 10), 20);
-          } else {
+          }
+          else {
             colors = ColorHelper.createColorArr(ColorHelper.brighter(background, 30), ColorHelper.darker(background, 10), 20);
           }
         }
       }
-    } else { // disabled
+    }
+    else { // disabled
       colors = AbstractLookAndFeel.getTheme().getDisabledColors();
     }
 
@@ -131,20 +143,17 @@ public class BaseButtonUI extends BasicButtonUI {
       int w = insets.right > 0 ? width - 1 : width;
       int h = insets.bottom > 0 ? height - 1 : height;
       JTattooUtilities.fillHorGradient(g, colors, x, y, w - x, h - y);
-    } else {
+    }
+    else {
       JTattooUtilities.fillHorGradient(g, colors, 0, 0, width, height);
     }
   }
 
+  @Override
   protected void paintText(Graphics g, AbstractButton b, Rectangle textRect, String text) {
     ButtonModel model = b.getModel();
     FontMetrics fm = JTattooUtilities.getFontMetrics(b, g, b.getFont());
-    int mnemIndex;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      mnemIndex = b.getDisplayedMnemonicIndex();
-    } else {
-      mnemIndex = JTattooUtilities.findDisplayedMnemonicIndex(b.getText(), model.getMnemonic());
-    }
+    int mnemIndex = b.getDisplayedMnemonicIndex();
 
     if (model.isEnabled()) {
       Color foreground = b.getForeground();
@@ -163,16 +172,20 @@ public class BaseButtonUI extends BasicButtonUI {
       if (background instanceof ColorUIResource) {
         if (model.isPressed() && model.isArmed()) {
           g.setColor(AbstractLookAndFeel.getTheme().getPressedForegroundColor());
-        } else if (model.isRollover()) {
+        }
+        else if (model.isRollover()) {
           g.setColor(AbstractLookAndFeel.getTheme().getRolloverForegroundColor());
-        } else {
+        }
+        else {
           g.setColor(foreground);
         }
-      } else {
+      }
+      else {
         g.setColor(foreground);
       }
       JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + offs, textRect.y + offs + fm.getAscent());
-    } else {
+    }
+    else {
       if (ColorHelper.getGrayValue(b.getForeground()) < 128) {
         g.setColor(Color.white);
         JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
@@ -182,11 +195,13 @@ public class BaseButtonUI extends BasicButtonUI {
     }
   }
 
+  @Override
   protected void paintFocus(Graphics g, AbstractButton b, Rectangle viewRect, Rectangle textRect, Rectangle iconRect) {
     g.setColor(AbstractLookAndFeel.getFocusColor());
     BasicGraphicsUtils.drawDashedRect(g, 4, 3, b.getWidth() - 8, b.getHeight() - 6);
   }
 
+  @Override
   public void paint(Graphics g, JComponent c) {
     Graphics2D g2D = (Graphics2D) g;
 
@@ -204,12 +219,9 @@ public class BaseButtonUI extends BasicButtonUI {
     textRect.x = textRect.y = textRect.width = textRect.height = 0;
     iconRect.x = iconRect.y = iconRect.width = iconRect.height = 0;
 
-    int iconTextGap = defaultTextIconGap;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      iconTextGap = b.getIconTextGap();
-    }
+    int iconTextGap = b.getIconTextGap();
     String text = SwingUtilities.layoutCompoundLabel(c, fm, b.getText(), b.getIcon(), b.getVerticalAlignment(), b.getHorizontalAlignment(),
-            b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, b.getText() == null ? 0 : iconTextGap);
+        b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, b.getText() == null ? 0 : iconTextGap);
 
     paintBackground(g, b);
 
@@ -220,7 +232,8 @@ public class BaseButtonUI extends BasicButtonUI {
         g2D.setComposite(alpha);
         paintIcon(g, c, iconRect);
         g2D.setComposite(savedComposite);
-      } else {
+      }
+      else {
         if (b.getModel().isPressed() && b.getModel().isRollover()) {
           iconRect.x++;
           iconRect.y++;
@@ -241,7 +254,8 @@ public class BaseButtonUI extends BasicButtonUI {
         if (AbstractLookAndFeel.getTheme().isTextAntiAliasingOn()) {
           g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, savedRenderingHint);
         }
-      } else {
+      }
+      else {
         paintText(g, b, textRect, text);
       }
     }
@@ -250,4 +264,5 @@ public class BaseButtonUI extends BasicButtonUI {
       paintFocus(g, b, viewRect, textRect, iconRect);
     }
   }
-}
+
+} // end of class BaseButtonUI

@@ -1,38 +1,27 @@
 /*
  * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
+ *  
  * JTattoo is multiple licensed. If your are an open source developer you can use
  * it under the terms and conditions of the GNU General Public License version 2.0
  * or later as published by the Free Software Foundation.
- *
+ *  
  * see: gpl-2.0.txt
- *
+ * 
  * If you pay for a license you will become a registered user who could use the
  * software under the terms and conditions of the GNU Lesser General Public License
  * version 2.0 or later with classpath exception as published by the Free Software
  * Foundation.
- *
+ * 
  * see: lgpl-2.0.txt
  * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
+ * 
+ * Registered users could also use JTattoo under the terms and conditions of the 
  * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
+ *  
  * see: APACHE-LICENSE-2.0.txt
  */
 package com.jtattoo.plaf;
 
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicRootPaneUI;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -59,6 +48,18 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicRootPaneUI;
+
 /**
  * This source is a modified copy of javax.swing.plaf.metal.MetalRootPaneUI Provides the base look and feel implementation of <code>RootPaneUI</code>.
  * <p>
@@ -70,62 +71,62 @@ import java.beans.PropertyChangeListener;
  * <p>
  * <strong>Warning:</strong> Serialized objects of this class will not be compatible with future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running the same version of Swing. As of 1.4, support for long term storage of all
- * JavaBeans<sup><font size="-2">TM</font></sup> has been added to the <code>java.beans</code> package. Please see {@link java.beans.XMLEncoder}.
+ * JavaBeans TM has been added to the <code>java.beans</code> package. Please see {@link java.beans.XMLEncoder}.
  *
+ * @version 1.20 04/27/04
  * @author Terry Kellerman
  * @author Michael Hagen
- * @version 1.20 04/27/04
  * @since 1.4
  */
 public class BaseRootPaneUI extends BasicRootPaneUI {
 
   // Konstanten aus javax.swing.JRootPane damit Attribute aus Java 1.4 sich mit Java 1.3 uebersetzen lassen
 
-  public static final int NONE = 0;
-  public static final int FRAME = 1;
-  public static final int PLAIN_DIALOG = 2;
-  public static final int INFORMATION_DIALOG = 3;
-  public static final int ERROR_DIALOG = 4;
-  public static final int COLOR_CHOOSER_DIALOG = 5;
-  public static final int FILE_CHOOSER_DIALOG = 6;
-  public static final int QUESTION_DIALOG = 7;
-  public static final int WARNING_DIALOG = 8;
+  public static final int        NONE                  = 0;
+  public static final int        FRAME                 = 1;
+  public static final int        PLAIN_DIALOG          = 2;
+  public static final int        INFORMATION_DIALOG    = 3;
+  public static final int        ERROR_DIALOG          = 4;
+  public static final int        COLOR_CHOOSER_DIALOG  = 5;
+  public static final int        FILE_CHOOSER_DIALOG   = 6;
+  public static final int        QUESTION_DIALOG       = 7;
+  public static final int        WARNING_DIALOG        = 8;
   // Konstanten aus java.awt.Frame damit Attribute aus Java 1.4 sich mit Java 1.3 uebersetzen lassen
-  public static final int MAXIMIZED_HORIZ = 2;
-  public static final int MAXIMIZED_VERT = 4;
-  public static final int MAXIMIZED_BOTH = MAXIMIZED_VERT | MAXIMIZED_HORIZ;
-  private static final String[] borderKeys = new String[]{null, "RootPane.frameBorder", "RootPane.plainDialogBorder",
-          "RootPane.informationDialogBorder", "RootPane.errorDialogBorder", "RootPane.colorChooserDialogBorder", "RootPane.fileChooserDialogBorder",
-          "RootPane.questionDialogBorder", "RootPane.warningDialogBorder"};
+  public static final int        MAXIMIZED_HORIZ       = 2;
+  public static final int        MAXIMIZED_VERT        = 4;
+  public static final int        MAXIMIZED_BOTH        = MAXIMIZED_VERT | MAXIMIZED_HORIZ;
+  private static final String[]  borderKeys            = new String[] { null, "RootPane.frameBorder", "RootPane.plainDialogBorder",
+      "RootPane.informationDialogBorder", "RootPane.errorDialogBorder", "RootPane.colorChooserDialogBorder", "RootPane.fileChooserDialogBorder",
+      "RootPane.questionDialogBorder", "RootPane.warningDialogBorder" };
   /**
    * The minimum/maximum size of a Window
    */
-  private static final Dimension MINIMUM_SIZE = new Dimension(120, 80);
-  private static final Dimension MAXIMUM_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
+  private static final Dimension MINIMUM_SIZE          = new Dimension(120, 80);
+  private static final Dimension MAXIMUM_SIZE          = Toolkit.getDefaultToolkit().getScreenSize();
   /**
    * The amount of space (in pixels) that the cursor is changed on.
    */
-  private static final int CORNER_DRAG_WIDTH = 16;
+  private static final int       CORNER_DRAG_WIDTH     = 16;
   /**
    * Region from edges that dragging is active from.
    */
-  private static final int BORDER_DRAG_THICKNESS = 5;
+  private static final int       BORDER_DRAG_THICKNESS = 5;
   /**
    * Window the <code>JRootPane</code> is in.
    */
-  private Window window;
+  private Window                 window;
   /**
    * <code>JComponent</code> providing window decorations. This will be null if not providing window decorations.
    */
-  private JComponent titlePane;
+  private JComponent             titlePane;
   /**
    * <code>MouseInputListener</code> that is added to the parent <code>Window</code> the <code>JRootPane</code> is contained in.
    */
-  private MouseInputListener mouseInputListener;
+  private MouseInputListener     mouseInputListener;
   /**
    * <code>WindowListener</code> that is added to the parent <code>Window</code> the <code>JRootPane</code> is contained in.
    */
-  private WindowListener windowListener;
+  private WindowListener         windowListener;
   /**
    * <code>WindowListener</code> that is added to the parent <code>Window</code> the <code>JRootPane</code> is contained in.
    */
@@ -133,17 +134,17 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
   /**
    * The <code>LayoutManager</code> that is set on the <code>JRootPane</code>.
    */
-  private LayoutManager layoutManager;
+  private LayoutManager          layoutManager;
   /**
    * <code>LayoutManager</code> of the <code>JRootPane</code> before we replaced it.
    */
-  private LayoutManager savedOldLayout;
+  private LayoutManager          savedOldLayout;
   /**
    * <code>JRootPane</code> providing the look and feel for.
    */
-  private JRootPane root;
+  private JRootPane              root;
 
-  private Cursor savedCursor = null;
+  private Cursor                 savedCursor           = null;
 
   /**
    * <code>Cursor</code> used to track the cursor set by the user. This is initially <code>Cursor.DEFAULT_CURSOR</code>.
@@ -151,21 +152,24 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
   /**
    * Creates a UI for a <code>JRootPane</code>.
    *
-   * @param c the JRootPane the RootPaneUI will be created for
+   * @param c
+   *          the JRootPane the RootPaneUI will be created for
    * @return the RootPaneUI implementation for the passed in JRootPane
    */
   public static ComponentUI createUI(JComponent c) {
     return new BaseRootPaneUI();
   }
 
+  @Override
   public void installUI(JComponent c) {
     super.installUI(c);
     root = (JRootPane) c;
-    if (DecorationHelper.getWindowDecorationStyle(root) != NONE) {
+    if (root.getWindowDecorationStyle() != NONE) {
       installClientDecorations(root);
     }
   }
 
+  @Override
   public void uninstallUI(JComponent c) {
     super.uninstallUI(c);
     uninstallClientDecorations(root);
@@ -174,24 +178,28 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     root = null;
   }
 
+  @Override
   protected void installListeners(JRootPane root) {
     super.installListeners(root);
 
-    if (DecorationHelper.getWindowDecorationStyle(root) == NONE) {
+    if (root.getWindowDecorationStyle() == NONE) {
       propertyChangeListener = new PropertyChangeListener() {
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
           if ("ancestor".equals(evt.getPropertyName())) {
             if (getRootPane() != null && getRootPane().getParent() instanceof Window) {
               window = (Window) getRootPane().getParent();
               windowListener = new WindowAdapter() {
 
+                @Override
                 public void windowActivated(WindowEvent e) {
                   if (getRootPane() != null) {
                     getRootPane().repaint();
                   }
                 }
 
+                @Override
                 public void windowDeactivated(WindowEvent e) {
                   if (getRootPane() != null) {
                     getRootPane().repaint();
@@ -207,9 +215,10 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     }
   }
 
+  @Override
   protected void uninstallListeners(JRootPane root) {
     super.uninstallListeners(root);
-    if (DecorationHelper.getWindowDecorationStyle(root) == NONE) {
+    if (root.getWindowDecorationStyle() == NONE) {
       if (root.getParent() instanceof Window && windowListener != null) {
         window = (Window) root.getParent();
         window.removeWindowListener(windowListener);
@@ -219,10 +228,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
   }
 
   public void installBorder(JRootPane root) {
-    int style = DecorationHelper.getWindowDecorationStyle(root);
+    int style = root.getWindowDecorationStyle();
     if (style == NONE) {
       LookAndFeel.uninstallBorder(root);
-    } else {
+    }
+    else {
       LookAndFeel.installBorder(root, borderKeys[style]);
     }
   }
@@ -231,6 +241,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * Removes any border that may have been installed.
    *
    * @param root
+   *          The root pane
    */
   public void uninstallBorder(JRootPane root) {
     LookAndFeel.uninstallBorder(root);
@@ -242,12 +253,15 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * This takes the parent so that cleanup can be done from <code>removeNotify</code>, at which point the parent hasn't been reset yet.
    *
    * @param root
-   * @param parent The parent of the JRootPane
+   *          The root pane
+   * @param parent
+   *          The parent of the JRootPane
    */
   public void installWindowListeners(JRootPane root, Component parent) {
     if (parent instanceof Window) {
       window = (Window) parent;
-    } else {
+    }
+    else {
       window = SwingUtilities.getWindowAncestor(parent);
     }
     if (window != null) {
@@ -256,21 +270,6 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       }
       window.addMouseListener(mouseInputListener);
       window.addMouseMotionListener(mouseInputListener);
-      // fixes a problem with netbeans, decorated windows and java 1.5
-      // the MetalLookAndFeel seems to have the same problem
-      if ((JTattooUtilities.getJavaVersion() >= 1.5) && (JTattooUtilities.getJavaVersion() <= 1.6)) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-          public void run() {
-            if (window != null) {
-              if (window instanceof JFrame) {
-                JFrame frame = (JFrame) window;
-                frame.update(frame.getGraphics());
-              }
-            }
-          }
-        });
-      }
     }
   }
 
@@ -278,6 +277,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * Uninstalls the necessary Listeners on the <code>Window</code> the Listeners were last installed on.
    *
    * @param root
+   *          The root pane
    */
   public void uninstallWindowListeners(JRootPane root) {
     if (window != null) {
@@ -290,6 +290,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * Installs the appropriate LayoutManager on the <code>JRootPane</code> to render the window decorations.
    *
    * @param root
+   *          The root pane
    */
   public void installLayout(JRootPane root) {
     if (layoutManager == null) {
@@ -325,7 +326,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     uninstallWindowListeners(root);
     setTitlePane(root, null);
     uninstallLayout(root);
-    int style = DecorationHelper.getWindowDecorationStyle(root);
+    int style = root.getWindowDecorationStyle();
     if (style == NONE) {
       root.repaint();
       root.revalidate();
@@ -342,7 +343,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * Returns the <code>JComponent</code> to render the window decoration style.
    *
    * @param root
-   * @return
+   *          The root pane
+   * @return The title pane
    */
   public JComponent createTitlePane(JRootPane root) {
     return new BaseTitlePane(root, this);
@@ -352,7 +354,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * Returns a <code>MouseListener</code> that will be added to the <code>Window</code> containing the <code>JRootPane</code>.
    *
    * @param root
-   * @return
+   *          The root pane
+   * @return The mouse listener
    */
   public MouseInputListener createWindowMouseInputListener(JRootPane root) {
     return new MouseInputHandler();
@@ -361,7 +364,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
   /**
    * Returns a <code>LayoutManager</code> that will be set on the <code>JRootPane</code>.
    *
-   * @return
+   * @return The layout manager
    */
   public LayoutManager createLayoutManager() {
     return new BaseRootLayout();
@@ -372,8 +375,10 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
    * whose look and feel are controlled by the plaf. The plaf creates and sets this value; the default is null, implying a native operating system
    * window title pane.
    *
-   * @param root      the <code>JRootPane</code> where to set the title pane
-   * @param titlePane the <code>JComponent</code> to use for the window title pane.
+   * @param root
+   *          the <code>JRootPane</code> where to set the title pane
+   * @param titlePane
+   *          the <code>JComponent</code> to use for the window title pane.
    */
   public void setTitlePane(JRootPane root, JComponent titlePane) {
     JComponent oldTitlePane = internalGetTitlePane();
@@ -413,40 +418,28 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     return root;
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent e) {
     super.propertyChange(e);
 
     String propertyName = e.getPropertyName();
-    JRootPane root = (JRootPane) e.getSource();
+    JRootPane rp = (JRootPane) e.getSource();
     if ("windowDecorationStyle".equals(propertyName)) {
-      int style = DecorationHelper.getWindowDecorationStyle(root);
+      int style = rp.getWindowDecorationStyle();
 
       // This is potentially more than needs to be done,
       // but it rarely happens and makes the install/uninstall process
       // simpler. BaseTitlePane also assumes it will be recreated if
       // the decoration style changes.
-      uninstallClientDecorations(root);
+      uninstallClientDecorations(rp);
       if (style != NONE) {
-        installClientDecorations(root);
+        installClientDecorations(rp);
       }
-      // if (!JTattooUtilities.isMac() && (window instanceof Frame)) {
-      // Frame frame = (Frame) window;
-      // if (frame != null) {
-      // GraphicsConfiguration gc = frame.getGraphicsConfiguration();
-      // Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
-      // Rectangle screenBounds = gc.getBounds();
-      // int x = Math.max(0, screenInsets.left);
-      // int y = Math.max(0, screenInsets.top);
-      // int w = screenBounds.width - (screenInsets.left + screenInsets.right);
-      // int h = screenBounds.height - (screenInsets.top + screenInsets.bottom);
-      // // Keep taskbar visible
-      // frame.setMaximizedBounds(new Rectangle(x, y, w, h));
-      // }
-      // }
-    } else if ("ancestor".equals(propertyName)) {
-      uninstallWindowListeners(root);
-      if (DecorationHelper.getWindowDecorationStyle(root) != NONE) {
-        installWindowListeners(root, root.getParent());
+    }
+    else if ("ancestor".equals(propertyName)) {
+      uninstallWindowListeners(rp);
+      if (rp.getWindowDecorationStyle() != NONE) {
+        installWindowListeners(rp, rp.getParent());
       }
     }
   }
@@ -461,9 +454,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     /**
      * Returns the amount of space the layout would like to have.
      *
-     * @param the Container for which this layout manager is being used
+     * @param the
+     *          Container for which this layout manager is being used
      * @return a Dimension object containing the layout's preferred size
      */
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
       Dimension cpd, mbd, tpd;
       int cpWidth = 0;
@@ -476,7 +471,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
 
       if (root.getContentPane() != null) {
         cpd = root.getContentPane().getPreferredSize();
-      } else {
+      }
+      else {
         cpd = root.getSize();
       }
       if (cpd != null) {
@@ -492,7 +488,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
         }
       }
 
-      if (DecorationHelper.getWindowDecorationStyle(root) != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
+      if (root.getWindowDecorationStyle() != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
         JComponent titlePane = ((BaseRootPaneUI) root.getUI()).internalGetTitlePane();
         if (titlePane != null) {
           tpd = titlePane.getPreferredSize();
@@ -508,9 +504,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     /**
      * Returns the minimum amount of space the layout needs.
      *
-     * @param the Container for which this layout manager is being used
+     * @param the
+     *          Container for which this layout manager is being used
      * @return a Dimension object containing the layout's minimum size
      */
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
       return MINIMUM_SIZE;
     }
@@ -518,9 +516,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     /**
      * Returns the maximum amount of space the layout can use.
      *
-     * @param the Container for which this layout manager is being used
+     * @param the
+     *          Container for which this layout manager is being used
      * @return a Dimension object containing the layout's maximum size
      */
+    @Override
     public Dimension maximumLayoutSize(Container target) {
       return MAXIMUM_SIZE;
     }
@@ -528,8 +528,10 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     /**
      * Instructs the layout manager to perform the layout for the specified container.
      *
-     * @param the Container for which this layout manager is being used
+     * @param the
+     *          Container for which this layout manager is being used
      */
+    @Override
     public void layoutContainer(Container parent) {
       JRootPane root = (JRootPane) parent;
       Rectangle b = root.getBounds();
@@ -542,20 +544,21 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
         root.getLayeredPane().setBounds(i.left, i.top, w, h);
       }
       if (root.getGlassPane() != null) {
-        if (DecorationHelper.getWindowDecorationStyle(root) != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
+        if (root.getWindowDecorationStyle() != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
           JComponent titlePane = ((BaseRootPaneUI) root.getUI()).internalGetTitlePane();
           int titleHeight = 0;
           if (titlePane != null) {
             titleHeight = titlePane.getSize().height;
           }
           root.getGlassPane().setBounds(i.left, i.top + titleHeight, w, h - titleHeight);
-        } else {
+        }
+        else {
           root.getGlassPane().setBounds(i.left, i.top, w, h);
         }
       }
       // Note: This is laying out the children in the layeredPane,
       // technically, these are not our children.
-      if (DecorationHelper.getWindowDecorationStyle(root) != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
+      if (root.getWindowDecorationStyle() != NONE && (root.getUI() instanceof BaseRootPaneUI)) {
         JComponent titlePane = ((BaseRootPaneUI) root.getUI()).internalGetTitlePane();
         if (titlePane != null) {
           Dimension tpd = titlePane.getPreferredSize();
@@ -576,23 +579,29 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       }
     }
 
+    @Override
     public void addLayoutComponent(String name, Component comp) {
     }
 
+    @Override
     public void removeLayoutComponent(Component comp) {
     }
 
+    @Override
     public void addLayoutComponent(Component comp, Object constraints) {
     }
 
+    @Override
     public float getLayoutAlignmentX(Container target) {
       return 0.0f;
     }
 
+    @Override
     public float getLayoutAlignmentY(Container target) {
       return 0.0f;
     }
 
+    @Override
     public void invalidateLayout(Container target) {
     }
   }
@@ -600,13 +609,12 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
   /**
    * Maps from positions to cursor type. Refer to calculateCorner and calculatePosition for details of this.
    */
-  private static final int[] cursorMapping = new int[]{Cursor.NW_RESIZE_CURSOR, Cursor.NW_RESIZE_CURSOR, Cursor.N_RESIZE_CURSOR,
-          Cursor.NE_RESIZE_CURSOR, Cursor.NE_RESIZE_CURSOR, Cursor.NW_RESIZE_CURSOR, 0, 0, 0, Cursor.NE_RESIZE_CURSOR, Cursor.W_RESIZE_CURSOR, 0, 0, 0,
-          Cursor.E_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR, 0, 0, 0, Cursor.SE_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR,
-          Cursor.S_RESIZE_CURSOR, Cursor.SE_RESIZE_CURSOR, Cursor.SE_RESIZE_CURSOR};
+  private static final int[] cursorMapping = new int[] { Cursor.NW_RESIZE_CURSOR, Cursor.NW_RESIZE_CURSOR, Cursor.N_RESIZE_CURSOR,
+      Cursor.NE_RESIZE_CURSOR, Cursor.NE_RESIZE_CURSOR, Cursor.NW_RESIZE_CURSOR, 0, 0, 0, Cursor.NE_RESIZE_CURSOR, Cursor.W_RESIZE_CURSOR, 0, 0, 0,
+      Cursor.E_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR, 0, 0, 0, Cursor.SE_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR, Cursor.SW_RESIZE_CURSOR,
+      Cursor.S_RESIZE_CURSOR, Cursor.SE_RESIZE_CURSOR, Cursor.SE_RESIZE_CURSOR };
 
   // ------------------------------------------------------------------------------
-
   /**
    * MouseInputHandler is responsible for handling resize/moving of the Window. It sets the cursor directly on the Window when then mouse moves over a
    * hot spot.
@@ -616,39 +624,40 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
     /**
      * Set to true if the drag operation is moving the window.
      */
-    private boolean isMovingWindow;
+    private boolean       isMovingWindow;
     /**
      * Set to true if the drag operation is resizing the window.
      */
-    private boolean isResizingWindow;
+    private boolean       isResizingWindow;
     /**
      * Used to determine the corner the resize is occuring from.
      */
-    private int dragCursor;
+    private int           dragCursor;
     /**
      * X location the mouse went down on for a drag operation.
      */
-    private int dragOffsetX;
+    private int           dragOffsetX;
     /**
      * Y location the mouse went down on for a drag operation.
      */
-    private int dragOffsetY;
+    private int           dragOffsetY;
     /**
      * Width of the window when the drag started.
      */
-    private int dragWidth;
+    private int           dragWidth;
     /**
      * Height of the window when the drag started.
      */
-    private int dragHeight;
-    private Container savedContentPane = null;
-    private ResizingPanel resizingPanel = null;
+    private int           dragHeight;
+    private Container     savedContentPane = null;
+    private ResizingPanel resizingPanel    = null;
 
+    @Override
     public void mousePressed(MouseEvent ev) {
       Window w = (Window) ev.getSource();
       if (w instanceof Window) {
         JRootPane root = getRootPane();
-        if (DecorationHelper.getWindowDecorationStyle(root) == NONE) {
+        if (root.getWindowDecorationStyle() == NONE) {
           return;
         }
         w.toFront();
@@ -661,34 +670,34 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
 
         if (w instanceof Frame) {
           f = (Frame) w;
-        } else if (w instanceof Dialog) {
+        }
+        else if (w instanceof Dialog) {
           d = (Dialog) w;
         }
 
-        int frameState = (f != null) ? DecorationHelper.getExtendedState(f) : 0;
+        int frameState = (f != null) ? f.getExtendedState() : 0;
 
         if (internalGetTitlePane() != null && internalGetTitlePane().contains(convertedDragWindowOffset)) {
           if ((f != null && ((frameState & BaseRootPaneUI.MAXIMIZED_BOTH) == 0) || (d != null)) && dragWindowOffset.y >= BORDER_DRAG_THICKNESS
-                  && dragWindowOffset.x >= BORDER_DRAG_THICKNESS && dragWindowOffset.x < w.getWidth() - BORDER_DRAG_THICKNESS) {
+              && dragWindowOffset.x >= BORDER_DRAG_THICKNESS && dragWindowOffset.x < w.getWidth() - BORDER_DRAG_THICKNESS) {
             isMovingWindow = true;
             dragOffsetX = dragWindowOffset.x;
             dragOffsetY = dragWindowOffset.y;
             if (window instanceof JFrame) {
               JFrame frame = (JFrame) window;
-              PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-              for (int i = 0; i < pcl.length; i++) {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
+              for (PropertyChangeListener pcl : frame.getPropertyChangeListeners()) {
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
               }
             }
             if (window instanceof JDialog) {
               JDialog dialog = (JDialog) window;
-              PropertyChangeListener[] pcl = dialog.getPropertyChangeListeners();
-              for (int i = 0; i < pcl.length; i++) {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
+              for (PropertyChangeListener pcl : dialog.getPropertyChangeListeners()) {
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
               }
             }
           }
-        } else if (f != null && f.isResizable() && ((frameState & BaseRootPaneUI.MAXIMIZED_BOTH) == 0) || (d != null && d.isResizable())) {
+        }
+        else if (f != null && f.isResizable() && ((frameState & BaseRootPaneUI.MAXIMIZED_BOTH) == 0) || (d != null && d.isResizable())) {
           isResizingWindow = true;
           if (!isDynamicLayout()) {
             savedContentPane = getRootPane().getContentPane();
@@ -705,22 +714,21 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
           dragCursor = getCursor(calculateCorner(w, dragWindowOffset.x, dragWindowOffset.y));
           if (window instanceof JFrame) {
             JFrame frame = (JFrame) window;
-            PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-            for (int i = 0; i < pcl.length; i++) {
-              pcl[i].propertyChange(new PropertyChangeEvent(window, "windowResizing", Boolean.FALSE, Boolean.FALSE));
+            for (PropertyChangeListener pcl : frame.getPropertyChangeListeners()) {
+              pcl.propertyChange(new PropertyChangeEvent(window, "windowResizing", Boolean.FALSE, Boolean.FALSE));
             }
           }
           if (window instanceof JDialog) {
             JDialog dialog = (JDialog) window;
-            PropertyChangeListener[] pcl = dialog.getPropertyChangeListeners();
-            for (int i = 0; i < pcl.length; i++) {
-              pcl[i].propertyChange(new PropertyChangeEvent(window, "windowResizing", Boolean.FALSE, Boolean.FALSE));
+            for (PropertyChangeListener pcl : dialog.getPropertyChangeListeners()) {
+              pcl.propertyChange(new PropertyChangeEvent(window, "windowResizing", Boolean.FALSE, Boolean.FALSE));
             }
           }
         }
       }
     }
 
+    @Override
     public void mouseReleased(MouseEvent ev) {
       if (ev.getSource() instanceof Window) {
         Window w = (Window) ev.getSource();
@@ -729,7 +737,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
             getRootPane().setContentPane(savedContentPane);
             getRootPane().updateUI();
             resizingPanel = null;
-          } else if (dragCursor != 0 && !window.isValid()) {
+          }
+          else if (dragCursor != 0 && !window.isValid()) {
             // Some Window systems validate as you resize, others won't,
             // thus the check for validity before repainting.
             w.validate();
@@ -738,23 +747,23 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
 
           if (window instanceof JFrame) {
             JFrame frame = (JFrame) window;
-            PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-            for (int i = 0; i < pcl.length; i++) {
+            for (PropertyChangeListener pcl : frame.getPropertyChangeListeners()) {
               if (isMovingWindow) {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowMoved", Boolean.FALSE, Boolean.FALSE));
-              } else {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowResized", Boolean.FALSE, Boolean.FALSE));
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowMoved", Boolean.FALSE, Boolean.FALSE));
+              }
+              else {
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowResized", Boolean.FALSE, Boolean.FALSE));
               }
             }
           }
           if (window instanceof JDialog) {
             JDialog dialog = (JDialog) window;
-            PropertyChangeListener[] pcl = dialog.getPropertyChangeListeners();
-            for (int i = 0; i < pcl.length; i++) {
+            for (PropertyChangeListener pcl : dialog.getPropertyChangeListeners()) {
               if (isMovingWindow) {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowMoved", Boolean.FALSE, Boolean.FALSE));
-              } else {
-                pcl[i].propertyChange(new PropertyChangeEvent(window, "windowResized", Boolean.FALSE, Boolean.FALSE));
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowMoved", Boolean.FALSE, Boolean.FALSE));
+              }
+              else {
+                pcl.propertyChange(new PropertyChangeEvent(window, "windowResized", Boolean.FALSE, Boolean.FALSE));
               }
             }
           }
@@ -765,10 +774,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       }
     }
 
+    @Override
     public void mouseMoved(MouseEvent ev) {
       if (ev.getSource() instanceof Window) {
         JRootPane root = getRootPane();
-        if (DecorationHelper.getWindowDecorationStyle(root) == NONE) {
+        if (root.getWindowDecorationStyle() == NONE) {
           return;
         }
 
@@ -778,20 +788,21 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
 
         if (w instanceof Frame) {
           f = (Frame) w;
-        } else if (w instanceof Dialog) {
+        }
+        else if (w instanceof Dialog) {
           d = (Dialog) w;
         }
 
         // Update the cursor
         int cursor = getCursor(calculateCorner(w, ev.getX(), ev.getY()));
         if (!isMovingWindow && cursor != 0
-                && ((f != null && (f.isResizable() && (DecorationHelper.getExtendedState(f) & BaseRootPaneUI.MAXIMIZED_BOTH) == 0))
-                || (d != null && d.isResizable()))) {
+            && ((f != null && (f.isResizable() && (f.getExtendedState() & BaseRootPaneUI.MAXIMIZED_BOTH) == 0)) || (d != null && d.isResizable()))) {
           if (savedCursor == null) {
             savedCursor = w.getCursor();
           }
           w.setCursor(Cursor.getPredefinedCursor(cursor));
-        } else if (savedCursor != null) {
+        }
+        else if (savedCursor != null) {
           w.setCursor(savedCursor);
           savedCursor = null;
         }
@@ -837,13 +848,16 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       return minScreenY;
     }
 
+    @Override
     public void mouseDragged(MouseEvent ev) {
       if (ev.getSource() instanceof Window) {
         Window w = (Window) ev.getSource();
-
+        if (!w.isShowing()) {
+          return;
+        }
         if (w instanceof Frame) {
           Frame frame = (Frame) w;
-          int frameState = DecorationHelper.getExtendedState(frame);
+          int frameState = frame.getExtendedState();
           if ((frameState & BaseRootPaneUI.MAXIMIZED_BOTH) != 0) {
             if (internalGetTitlePane() instanceof TitlePane) {
               Point pt = ev.getPoint();
@@ -859,9 +873,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
                 dragOffsetX = nx;
                 dragOffsetY = ny;
                 isMovingWindow = true;
-                PropertyChangeListener[] pcl = frame.getPropertyChangeListeners();
-                for (int i = 0; i < pcl.length; i++) {
-                  pcl[i].propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
+                for (PropertyChangeListener pcl : frame.getPropertyChangeListeners()) {
+                  pcl.propertyChange(new PropertyChangeEvent(window, "windowMoving", Boolean.FALSE, Boolean.FALSE));
                 }
               }
             }
@@ -870,20 +883,12 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
 
         int minScreenY = getMinScreenY();
         if (isMovingWindow) {
-          if (JTattooUtilities.getJavaVersion() < 1.6) {
-            Point pt = ev.getPoint();
-            Point location = w.getLocationOnScreen();
-            location.x += pt.x - dragOffsetX;
-            location.y += pt.y - dragOffsetY;
-            location.y = Math.max(minScreenY, location.y);
-            w.setLocation(location);
-          } else {
-            Point location = ev.getLocationOnScreen();
-            location.x -= dragOffsetX;
-            location.y = Math.max(minScreenY, location.y - dragOffsetY);
-            w.setLocation(location);
-          }
-        } else if (dragCursor != 0) {
+          Point location = ev.getLocationOnScreen();
+          location.x -= dragOffsetX;
+          location.y = Math.max(minScreenY, location.y - dragOffsetY);
+          w.setLocation(location);
+        }
+        else if (dragCursor != 0) {
           Point pt = ev.getPoint();
           Rectangle bounds = w.getBounds();
           Rectangle startBounds = new Rectangle(bounds);
@@ -929,10 +934,12 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       }
     }
 
+    @Override
     public void mouseEntered(MouseEvent ev) {
       mouseMoved(ev);
     }
 
+    @Override
     public void mouseExited(MouseEvent ev) {
       if (ev.getSource() instanceof Window && savedCursor != null) {
         Window w = (Window) ev.getSource();
@@ -941,6 +948,7 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       }
     }
 
+    @Override
     public void mouseClicked(MouseEvent ev) {
       if (ev.getSource() instanceof Window) {
         Window window = (Window) ev.getSource();
@@ -949,12 +957,13 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
         }
         Frame frame = (Frame) window;
         Point convertedPoint = SwingUtilities.convertPoint(window, ev.getPoint(), internalGetTitlePane());
-        int state = DecorationHelper.getExtendedState(frame);
+        int state = frame.getExtendedState();
         if (titlePane != null && titlePane instanceof TitlePane && titlePane.contains(convertedPoint) && frame.isResizable()) {
           if ((ev.getClickCount() % 2) == 0 && ((ev.getModifiers() & InputEvent.BUTTON1_MASK) != 0)) {
             if ((state & BaseRootPaneUI.MAXIMIZED_BOTH) != 0) {
               ((TitlePane) titlePane).restore();
-            } else {
+            }
+            else {
               ((TitlePane) titlePane).maximize();
             }
           }
@@ -1017,9 +1026,11 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
       this.bi = bi;
     }
 
+    @Override
     public void paint(Graphics g) {
       super.paint(g);
       g.drawImage(bi, 0, 0, null);
     }
-  }
-}
+  } // end of class ResizingPanel
+
+} // end of class BaseRootPaneUI

@@ -1,27 +1,29 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+ * Copyright 2012 - 2018 Manuel Laggner
  *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * see: gpl-2.0.txt
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.jtattoo.plaf;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ButtonModel;
 import javax.swing.JComponent;
@@ -33,14 +35,6 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.UIResource;
 import javax.swing.plaf.basic.BasicMenuUI;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
 
 /**
  * @author Michael Hagen
@@ -53,29 +47,34 @@ public class BaseMenuUI extends BasicMenuUI {
     return new BaseMenuUI();
   }
 
+  @Override
   public void installUI(JComponent c) {
     super.installUI(c);
     c.setOpaque(false);
   }
 
+  @Override
   public void uninstallUI(JComponent c) {
     c.setOpaque(true);
     super.uninstallUI(c);
   }
 
+  @Override
   public void update(Graphics g, JComponent c) {
     paintBackground(g, c, 0, 0, c.getWidth(), c.getHeight());
     paint(g, c);
   }
 
+  @Override
   protected void installDefaults() {
     super.installDefaults();
     Boolean isRolloverEnabled = (Boolean) UIManager.get("MenuBar.rolloverEnabled");
-    if (isRolloverEnabled.booleanValue()) {
+    if (isRolloverEnabled) {
       menuItem.setRolloverEnabled(true);
     }
   }
 
+  @Override
   protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
     if (menuItem.isOpaque()) {
       int w = menuItem.getWidth();
@@ -106,12 +105,14 @@ public class BaseMenuUI extends BasicMenuUI {
         }
         g.setColor(AbstractLookAndFeel.getMenuSelectionForegroundColor());
       }
-    } else {
+    }
+    else {
       if (model.isArmed() || model.isRollover() || (c instanceof JMenu && model.isSelected())) {
         g.setColor(AbstractLookAndFeel.getMenuSelectionBackgroundColor());
         g.fillRect(x, y, w, h);
         g.setColor(AbstractLookAndFeel.getMenuSelectionForegroundColor());
-      } else if (!AbstractLookAndFeel.getTheme().isMenuOpaque()) {
+      }
+      else if (!AbstractLookAndFeel.getTheme().isMenuOpaque()) {
         Graphics2D g2D = (Graphics2D) g;
         Composite savedComposite = g2D.getComposite();
         AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, AbstractLookAndFeel.getTheme().getMenuAlpha());
@@ -120,7 +121,8 @@ public class BaseMenuUI extends BasicMenuUI {
         g2D.fillRect(x, y, w, h);
         g2D.setComposite(savedComposite);
         g2D.setColor(AbstractLookAndFeel.getMenuForegroundColor());
-      } else {
+      }
+      else {
         g.setColor(backColor);
         g.fillRect(x, y, w, h);
         g.setColor(AbstractLookAndFeel.getMenuForegroundColor());
@@ -128,6 +130,7 @@ public class BaseMenuUI extends BasicMenuUI {
     }
   }
 
+  @Override
   protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect, String text) {
     ButtonModel model = menuItem.getModel();
     Graphics2D g2D = (Graphics2D) g;
@@ -140,9 +143,11 @@ public class BaseMenuUI extends BasicMenuUI {
       if (model.isRollover() || model.isArmed() || (menuItem instanceof JMenu && model.isSelected())) {
         g.setColor(AbstractLookAndFeel.getMenuSelectionForegroundColor());
       }
-    } else if (model.isArmed() || model.isRollover()) {
+    }
+    else if (model.isArmed() || model.isRollover()) {
       g.setColor(AbstractLookAndFeel.getMenuSelectionForegroundColor());
-    } else {
+    }
+    else {
       Color foreColor = menuItem.getForeground();
       if (foreColor instanceof UIResource) {
         foreColor = AbstractLookAndFeel.getMenuForegroundColor();
@@ -155,20 +160,18 @@ public class BaseMenuUI extends BasicMenuUI {
     }
   }
 
+  @Override
   protected MouseInputListener createMouseInputListener(JComponent c) {
-    if (JTattooUtilities.getJavaVersion() >= 1.5) {
-      return new MyMouseInputHandler();
-    } else {
-      return super.createMouseInputListener(c);
-    }
+    return new MyMouseInputHandler();
   }
 
   // ------------------------------------------------------------------------------
   // inner classes
   // ------------------------------------------------------------------------------
 
-  protected class MyMouseInputHandler extends BasicMenuUI.MouseInputHandler {
+  protected class MyMouseInputHandler extends MouseInputHandler {
 
+    @Override
     public void mouseEntered(MouseEvent evt) {
       super.mouseEntered(evt);
 
@@ -179,6 +182,7 @@ public class BaseMenuUI extends BasicMenuUI {
       }
     }
 
+    @Override
     public void mouseExited(MouseEvent evt) {
       super.mouseExited(evt);
 
@@ -189,5 +193,6 @@ public class BaseMenuUI extends BasicMenuUI {
         menuItem.repaint();
       }
     }
-  }
-}
+  } // end of class MyMouseInputHandler
+
+} // end of class BaseMenuUI

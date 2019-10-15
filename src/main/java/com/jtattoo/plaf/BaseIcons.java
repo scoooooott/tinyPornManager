@@ -1,35 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
-import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.plaf.UIResource;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -47,90 +40,98 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.plaf.UIResource;
+
 /**
  * @author Michael Hagen
  */
 public class BaseIcons {
 
-  public static final LazyImageIcon PEARL_RED_SMALL = new LazyImageIcon("icons/small/pearl_red_24x24.png");
-  public static final LazyImageIcon PEARL_YELLOW_SMALL = new LazyImageIcon("icons/small/pearl_yellow_24x24.png");
-  public static final LazyImageIcon PEARL_GREEN_SMALL = new LazyImageIcon("icons/small/pearl_green_24x24.png");
-  public static final LazyImageIcon PEARL_GREY_SMALL = new LazyImageIcon("icons/small/pearl_grey_24x24.png");
-  public static final LazyImageIcon PEARL_RED_MEDIUM = new LazyImageIcon("icons/medium/pearl_red_28x28.png");
-  public static final LazyImageIcon PEARL_YELLOW_MEDIUM = new LazyImageIcon("icons/medium/pearl_yellow_28x28.png");
-  public static final LazyImageIcon PEARL_GREEN_MEDIUM = new LazyImageIcon("icons/medium/pearl_green_28x28.png");
-  public static final LazyImageIcon PEARL_GREY_MEDIUM = new LazyImageIcon("icons/medium/pearl_grey_28x28.png");
-  public static final LazyImageIcon PEARL_RED_LARGE = new LazyImageIcon("icons/large/pearl_red_32x32.png");
-  public static final LazyImageIcon PEARL_YELLOW_LARGE = new LazyImageIcon("icons/large/pearl_yellow_32x32.png");
-  public static final LazyImageIcon PEARL_GREEN_LARGE = new LazyImageIcon("icons/large/pearl_green_32x32.png");
-  public static final LazyImageIcon PEARL_GREY_LARGE = new LazyImageIcon("icons/large/pearl_grey_32x32.png");
+  public static final LazyImageIcon PEARL_RED_SMALL           = new LazyImageIcon("icons/small/pearl_red_24x24.png");
+  public static final LazyImageIcon PEARL_YELLOW_SMALL        = new LazyImageIcon("icons/small/pearl_yellow_24x24.png");
+  public static final LazyImageIcon PEARL_GREEN_SMALL         = new LazyImageIcon("icons/small/pearl_green_24x24.png");
+  public static final LazyImageIcon PEARL_GREY_SMALL          = new LazyImageIcon("icons/small/pearl_grey_24x24.png");
+  public static final LazyImageIcon PEARL_RED_MEDIUM          = new LazyImageIcon("icons/medium/pearl_red_28x28.png");
+  public static final LazyImageIcon PEARL_YELLOW_MEDIUM       = new LazyImageIcon("icons/medium/pearl_yellow_28x28.png");
+  public static final LazyImageIcon PEARL_GREEN_MEDIUM        = new LazyImageIcon("icons/medium/pearl_green_28x28.png");
+  public static final LazyImageIcon PEARL_GREY_MEDIUM         = new LazyImageIcon("icons/medium/pearl_grey_28x28.png");
+  public static final LazyImageIcon PEARL_RED_LARGE           = new LazyImageIcon("icons/large/pearl_red_32x32.png");
+  public static final LazyImageIcon PEARL_YELLOW_LARGE        = new LazyImageIcon("icons/large/pearl_yellow_32x32.png");
+  public static final LazyImageIcon PEARL_GREEN_LARGE         = new LazyImageIcon("icons/large/pearl_green_32x32.png");
+  public static final LazyImageIcon PEARL_GREY_LARGE          = new LazyImageIcon("icons/large/pearl_grey_32x32.png");
 
-  public static final LazyImageIcon ICONIZER_SMALL = new LazyImageIcon("icons/small/iconizer_10x10.png");
-  public static final LazyImageIcon MINIMIZER_SMALL = new LazyImageIcon("icons/small/minimizer_10x10.png");
-  public static final LazyImageIcon MAXIMIZER_SMALL = new LazyImageIcon("icons/small/maximizer_10x10.png");
-  public static final LazyImageIcon CLOSER_SMALL = new LazyImageIcon("icons/small/closer_10x10.png");
-  public static final LazyImageIcon ICONIZER_MEDIUM = new LazyImageIcon("icons/medium/iconizer_12x12.png");
-  public static final LazyImageIcon MINIMIZER_MEDIUM = new LazyImageIcon("icons/medium/minimizer_12x12.png");
-  public static final LazyImageIcon MAXIMIZER_MEDIUM = new LazyImageIcon("icons/medium/maximizer_12x12.png");
-  public static final LazyImageIcon CLOSER_MEDIUM = new LazyImageIcon("icons/medium/closer_12x12.png");
-  public static final LazyImageIcon ICONIZER_LARGE = new LazyImageIcon("icons/large/iconizer_12x12.png");
-  public static final LazyImageIcon MINIMIZER_LARGE = new LazyImageIcon("icons/large/minimizer_12x12.png");
-  public static final LazyImageIcon MAXIMIZER_LARGE = new LazyImageIcon("icons/large/maximizer_12x12.png");
-  public static final LazyImageIcon CLOSER_LARGE = new LazyImageIcon("icons/large/closer_12x12.png");
+  public static final LazyImageIcon ICONIZER_SMALL            = new LazyImageIcon("icons/small/iconizer_10x10.png");
+  public static final LazyImageIcon MINIMIZER_SMALL           = new LazyImageIcon("icons/small/minimizer_10x10.png");
+  public static final LazyImageIcon MAXIMIZER_SMALL           = new LazyImageIcon("icons/small/maximizer_10x10.png");
+  public static final LazyImageIcon CLOSER_SMALL              = new LazyImageIcon("icons/small/closer_10x10.png");
+  public static final LazyImageIcon ICONIZER_MEDIUM           = new LazyImageIcon("icons/medium/iconizer_12x12.png");
+  public static final LazyImageIcon MINIMIZER_MEDIUM          = new LazyImageIcon("icons/medium/minimizer_12x12.png");
+  public static final LazyImageIcon MAXIMIZER_MEDIUM          = new LazyImageIcon("icons/medium/maximizer_12x12.png");
+  public static final LazyImageIcon CLOSER_MEDIUM             = new LazyImageIcon("icons/medium/closer_12x12.png");
+  public static final LazyImageIcon ICONIZER_LARGE            = new LazyImageIcon("icons/large/iconizer_12x12.png");
+  public static final LazyImageIcon MINIMIZER_LARGE           = new LazyImageIcon("icons/large/minimizer_12x12.png");
+  public static final LazyImageIcon MAXIMIZER_LARGE           = new LazyImageIcon("icons/large/maximizer_12x12.png");
+  public static final LazyImageIcon CLOSER_LARGE              = new LazyImageIcon("icons/large/closer_12x12.png");
 
-  public static final LazyImageIcon EMPTY_8x8 = new LazyImageIcon("icons/empty_8x8.png");
+  public static final LazyImageIcon EMPTY_8x8                 = new LazyImageIcon("icons/empty_8x8.png");
 
-  protected static Icon checkBoxIcon = null;
-  protected static Icon menuCheckBoxIcon = null;
-  protected static Icon radioButtonIcon = null;
-  protected static Icon menuRadioButtonIcon = null;
-  protected static Icon optionPaneErrorIcon = null;
-  protected static Icon optionPaneWarningIcon = null;
-  protected static Icon optionPaneInformationIcon = null;
-  protected static Icon optionPaneQuestionIcon = null;
+  protected static Icon             checkBoxIcon              = null;
+  protected static Icon             menuCheckBoxIcon          = null;
+  protected static Icon             radioButtonIcon           = null;
+  protected static Icon             menuRadioButtonIcon       = null;
+  protected static Icon             optionPaneErrorIcon       = null;
+  protected static Icon             optionPaneWarningIcon     = null;
+  protected static Icon             optionPaneInformationIcon = null;
+  protected static Icon             optionPaneQuestionIcon    = null;
 
-  protected static Icon fileChooserUpFolderIcon = null;
-  protected static Icon fileChooserHomeFolderIcon = null;
-  protected static Icon fileChooserNewFolderIcon = null;
-  protected static Icon fileChooserListViewIcon = null;
-  protected static Icon fileChooserDetailViewIcon = null;
-  protected static Icon fileViewComputerIcon = null;
-  protected static Icon fileViewFloppyDriveIcon = null;
-  protected static Icon fileViewHardDriveIcon = null;
+  protected static Icon             fileChooserUpFolderIcon   = null;
+  protected static Icon             fileChooserHomeFolderIcon = null;
+  protected static Icon             fileChooserNewFolderIcon  = null;
+  protected static Icon             fileChooserListViewIcon   = null;
+  protected static Icon             fileChooserDetailViewIcon = null;
+  protected static Icon             fileViewComputerIcon      = null;
+  protected static Icon             fileViewFloppyDriveIcon   = null;
+  protected static Icon             fileViewHardDriveIcon     = null;
 
-  protected static Icon treeOpenedIcon = null;
-  protected static Icon treeClosedIcon = null;
-  protected static Icon treeLeafIcon = null;
-  protected static Icon treeExpandedIcon = null;
-  protected static Icon treeCollapsedIcon = null;
+  protected static Icon             treeOpenedIcon            = null;
+  protected static Icon             treeClosedIcon            = null;
+  protected static Icon             treeLeafIcon              = null;
+  protected static Icon             treeExpandedIcon          = null;
+  protected static Icon             treeCollapsedIcon         = null;
 
-  protected static Icon paletteCloseIcon = null;
-  protected static Icon menuIcon = null;
+  protected static Icon             paletteCloseIcon          = null;
+  protected static Icon             menuIcon                  = null;
 
-  protected static Icon iconIcon = null;
-  protected static Icon maxIcon = null;
-  protected static Icon minIcon = null;
-  protected static Icon closeIcon = null;
+  protected static Icon             iconIcon                  = null;
+  protected static Icon             maxIcon                   = null;
+  protected static Icon             minIcon                   = null;
+  protected static Icon             closeIcon                 = null;
 
-  protected static Icon upArrowIcon = null;
-  protected static Icon upArrowInverseIcon = null;
-  protected static Icon downArrowIcon = null;
-  protected static Icon downArrowInverseIcon = null;
-  protected static Icon leftArrowIcon = null;
-  protected static Icon leftArrowInverseIcon = null;
-  protected static Icon rightArrowIcon = null;
-  protected static Icon rightArrowInverseIcon = null;
-  protected static Icon menuArrowIcon = null;
-  protected static Icon splitterUpArrowIcon = null;
-  protected static Icon splitterDownArrowIcon = null;
-  protected static Icon splitterLeftArrowIcon = null;
-  protected static Icon splitterRightArrowIcon = null;
-  protected static Icon splitterHorBumpIcon = null;
-  protected static Icon splitterVerBumpIcon = null;
-  protected static Icon thumbHorIcon = null;
-  protected static Icon thumbVerIcon = null;
-  protected static Icon thumbHorIconRollover = null;
-  protected static Icon thumbVerIconRollover = null;
+  protected static Icon             upArrowIcon               = null;
+  protected static Icon             upArrowInverseIcon        = null;
+  protected static Icon             downArrowIcon             = null;
+  protected static Icon             downArrowInverseIcon      = null;
+  protected static Icon             leftArrowIcon             = null;
+  protected static Icon             leftArrowInverseIcon      = null;
+  protected static Icon             rightArrowIcon            = null;
+  protected static Icon             rightArrowInverseIcon     = null;
+  protected static Icon             menuArrowIcon             = null;
+  protected static Icon             splitterUpArrowIcon       = null;
+  protected static Icon             splitterDownArrowIcon     = null;
+  protected static Icon             splitterLeftArrowIcon     = null;
+  protected static Icon             splitterRightArrowIcon    = null;
+  protected static Icon             splitterHorBumpIcon       = null;
+  protected static Icon             splitterVerBumpIcon       = null;
+  protected static Icon             thumbHorIcon              = null;
+  protected static Icon             thumbVerIcon              = null;
+  protected static Icon             thumbHorIconRollover      = null;
+  protected static Icon             thumbVerIconRollover      = null;
 
   public static void initDefaults() {
     checkBoxIcon = null;
@@ -209,9 +210,11 @@ public class BaseIcons {
     if (optionPaneErrorIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         optionPaneErrorIcon = new LazyImageIcon("icons/medium/error_32x32.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         optionPaneErrorIcon = new LazyImageIcon("icons/medium/error_32x32.png");
-      } else {
+      }
+      else {
         optionPaneErrorIcon = new LazyImageIcon("icons/large/error_48x48.png");
       }
     }
@@ -222,9 +225,11 @@ public class BaseIcons {
     if (optionPaneWarningIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         optionPaneWarningIcon = new LazyImageIcon("icons/medium/warning_32x32.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         optionPaneWarningIcon = new LazyImageIcon("icons/medium/warning_32x32.png");
-      } else {
+      }
+      else {
         optionPaneWarningIcon = new LazyImageIcon("icons/large/warning_48x48.png");
       }
     }
@@ -235,9 +240,11 @@ public class BaseIcons {
     if (optionPaneInformationIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         optionPaneInformationIcon = new LazyImageIcon("icons/medium/information_32x32.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         optionPaneInformationIcon = new LazyImageIcon("icons/medium/information_32x32.png");
-      } else {
+      }
+      else {
         optionPaneInformationIcon = new LazyImageIcon("icons/large/information_48x48.png");
       }
     }
@@ -248,9 +255,11 @@ public class BaseIcons {
     if (optionPaneQuestionIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         optionPaneQuestionIcon = new LazyImageIcon("icons/medium/question_32x32.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         optionPaneQuestionIcon = new LazyImageIcon("icons/medium/question_32x32.png");
-      } else {
+      }
+      else {
         optionPaneQuestionIcon = new LazyImageIcon("icons/large/question_48x48.png");
       }
     }
@@ -319,9 +328,11 @@ public class BaseIcons {
     if (treeOpenedIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         treeOpenedIcon = new LazyImageIcon("icons/small/folder_opened_16x16.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         treeOpenedIcon = new LazyImageIcon("icons/medium/folder_opened_20x20.png");
-      } else {
+      }
+      else {
         treeOpenedIcon = new LazyImageIcon("icons/large/folder_opened_24x24.png");
       }
     }
@@ -332,9 +343,11 @@ public class BaseIcons {
     if (treeClosedIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         treeClosedIcon = new LazyImageIcon("icons/small/folder_closed_16x16.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         treeClosedIcon = new LazyImageIcon("icons/medium/folder_closed_20x20.png");
-      } else {
+      }
+      else {
         treeClosedIcon = new LazyImageIcon("icons/large/folder_closed_24x24.png");
       }
     }
@@ -345,9 +358,11 @@ public class BaseIcons {
     if (treeLeafIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         treeLeafIcon = new LazyImageIcon("icons/small/document_16x16.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         treeLeafIcon = new LazyImageIcon("icons/medium/document_20x20.png");
-      } else {
+      }
+      else {
         treeLeafIcon = new LazyImageIcon("icons/large/document_24x24.png");
       }
     }
@@ -358,9 +373,11 @@ public class BaseIcons {
     if (treeCollapsedIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         treeCollapsedIcon = new LazyImageIcon("icons/small/tree_collapsed_9x9.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         treeCollapsedIcon = new LazyImageIcon("icons/medium/tree_collapsed_11x11.png");
-      } else {
+      }
+      else {
         treeCollapsedIcon = new LazyImageIcon("icons/large/tree_collapsed_14x14.png");
       }
     }
@@ -371,9 +388,11 @@ public class BaseIcons {
     if (treeExpandedIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         treeExpandedIcon = new LazyImageIcon("icons/small/tree_expanded_9x9.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         treeExpandedIcon = new LazyImageIcon("icons/medium/tree_expanded_11x11.png");
-      } else {
+      }
+      else {
         treeExpandedIcon = new LazyImageIcon("icons/large/tree_expanded_14x14.png");
       }
     }
@@ -385,9 +404,11 @@ public class BaseIcons {
     if (menuIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         menuIcon = new LazyImageIcon("icons/small/cup_16x16.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         menuIcon = new LazyImageIcon("icons/medium/cup_20x20.png");
-      } else {
+      }
+      else {
         menuIcon = new LazyImageIcon("icons/large/cup_24x24.png");
       }
     }
@@ -398,7 +419,8 @@ public class BaseIcons {
     if (iconIcon == null) {
       if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
         iconIcon = new MacIconIcon();
-      } else {
+      }
+      else {
         Color iconColor = AbstractLookAndFeel.getTheme().getWindowIconColor();
         Color iconRolloverColor = AbstractLookAndFeel.getTheme().getWindowIconRolloverColor();
         iconIcon = new IconSymbol(iconColor, null, iconRolloverColor);
@@ -411,7 +433,8 @@ public class BaseIcons {
     if (maxIcon == null) {
       if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
         maxIcon = new MacMaxIcon();
-      } else {
+      }
+      else {
         Color iconColor = AbstractLookAndFeel.getTheme().getWindowIconColor();
         Color iconRolloverColor = AbstractLookAndFeel.getTheme().getWindowIconRolloverColor();
         maxIcon = new MaxSymbol(iconColor, null, iconRolloverColor);
@@ -424,7 +447,8 @@ public class BaseIcons {
     if (minIcon == null) {
       if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
         minIcon = new MacMinIcon();
-      } else {
+      }
+      else {
         Color iconColor = AbstractLookAndFeel.getTheme().getWindowIconColor();
         Color iconRolloverColor = AbstractLookAndFeel.getTheme().getWindowIconRolloverColor();
         minIcon = new MinSymbol(iconColor, null, iconRolloverColor);
@@ -437,7 +461,8 @@ public class BaseIcons {
     if (closeIcon == null) {
       if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
         closeIcon = new MacCloseIcon();
-      } else {
+      }
+      else {
         Color iconColor = AbstractLookAndFeel.getTheme().getWindowIconColor();
         Color iconRolloverColor = AbstractLookAndFeel.getTheme().getWindowIconRolloverColor();
         closeIcon = new CloseSymbol(iconColor, null, iconRolloverColor);
@@ -480,9 +505,11 @@ public class BaseIcons {
     if (upArrowIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         upArrowIcon = new LazyImageIcon("icons/small/arrow_up_7x4.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         upArrowIcon = new LazyImageIcon("icons/medium/arrow_up_9x6.png");
-      } else {
+      }
+      else {
         upArrowIcon = new LazyImageIcon("icons/large/arrow_up_11x8.png");
       }
     }
@@ -493,9 +520,11 @@ public class BaseIcons {
     if (upArrowInverseIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         upArrowInverseIcon = new LazyImageIcon("icons/small/arrow_up_inverse_7x4.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         upArrowInverseIcon = new LazyImageIcon("icons/medium/arrow_up_inverse_9x6.png");
-      } else {
+      }
+      else {
         upArrowInverseIcon = new LazyImageIcon("icons/large/arrow_up_inverse_11x8.png");
       }
     }
@@ -506,9 +535,11 @@ public class BaseIcons {
     if (downArrowIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         downArrowIcon = new LazyImageIcon("icons/small/arrow_down_7x4.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         downArrowIcon = new LazyImageIcon("icons/medium/arrow_down_9x6.png");
-      } else {
+      }
+      else {
         downArrowIcon = new LazyImageIcon("icons/large/arrow_down_11x8.png");
       }
     }
@@ -519,9 +550,11 @@ public class BaseIcons {
     if (downArrowInverseIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         downArrowInverseIcon = new LazyImageIcon("icons/small/arrow_down_inverse_7x4.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         downArrowInverseIcon = new LazyImageIcon("icons/medium/arrow_down_inverse_9x6.png");
-      } else {
+      }
+      else {
         downArrowInverseIcon = new LazyImageIcon("icons/large/arrow_down_inverse_11x8.png");
       }
     }
@@ -532,9 +565,11 @@ public class BaseIcons {
     if (leftArrowIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         leftArrowIcon = new LazyImageIcon("icons/small/arrow_left_4x7.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         leftArrowIcon = new LazyImageIcon("icons/medium/arrow_left_6x9.png");
-      } else {
+      }
+      else {
         leftArrowIcon = new LazyImageIcon("icons/large/arrow_left_8x11.png");
       }
     }
@@ -545,9 +580,11 @@ public class BaseIcons {
     if (leftArrowInverseIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         leftArrowInverseIcon = new LazyImageIcon("icons/small/arrow_left_inverse_4x7.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         leftArrowInverseIcon = new LazyImageIcon("icons/medium/arrow_left_inverse_6x9.png");
-      } else {
+      }
+      else {
         leftArrowInverseIcon = new LazyImageIcon("icons/large/arrow_left_inverse_8x11.png");
       }
     }
@@ -558,9 +595,11 @@ public class BaseIcons {
     if (rightArrowIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         rightArrowIcon = new LazyImageIcon("icons/small/arrow_right_4x7.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         rightArrowIcon = new LazyImageIcon("icons/medium/arrow_right_6x9.png");
-      } else {
+      }
+      else {
         rightArrowIcon = new LazyImageIcon("icons/large/arrow_right_8x11.png");
       }
     }
@@ -571,9 +610,11 @@ public class BaseIcons {
     if (rightArrowInverseIcon == null) {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         rightArrowInverseIcon = new LazyImageIcon("icons/small/arrow_right_inverse_4x7.png");
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         rightArrowInverseIcon = new LazyImageIcon("icons/medium/arrow_right_inverse_6x9.png");
-      } else {
+      }
+      else {
         rightArrowInverseIcon = new LazyImageIcon("icons/large/arrow_right_inverse_8x11.png");
       }
     }
@@ -655,14 +696,15 @@ public class BaseIcons {
   // -----------------------------------------------------------------------------------------------------------
   private static class CheckBoxIcon implements Icon {
 
-    private static int GAP = 2;
-    private static final Icon SMALL_CHECK_ICON = new LazyImageIcon("icons/small/check_symbol_10x10.png");
-    private static final Icon SMALL_CHECK_DISABLED_ICON = new LazyImageIcon("icons/small/check_symbol_disabled_10x10.png");
-    private static final Icon MEDIUM_CHECK_ICON = new LazyImageIcon("icons/medium/check_symbol_12x12.png");
+    private static int        GAP                        = 2;
+    private static final Icon SMALL_CHECK_ICON           = new LazyImageIcon("icons/small/check_symbol_10x10.png");
+    private static final Icon SMALL_CHECK_DISABLED_ICON  = new LazyImageIcon("icons/small/check_symbol_disabled_10x10.png");
+    private static final Icon MEDIUM_CHECK_ICON          = new LazyImageIcon("icons/medium/check_symbol_12x12.png");
     private static final Icon MEDIUM_CHECK_DISABLED_ICON = new LazyImageIcon("icons/medium/check_symbol_disabled_12x12.png");
-    private static final Icon LARGE_CHECK_ICON = new LazyImageIcon("icons/large/check_symbol_14x14.png");
-    private static final Icon LARGE_CHECK_DISABLED_ICON = new LazyImageIcon("icons/large/check_symbol_disabled_14x14.png");
+    private static final Icon LARGE_CHECK_ICON           = new LazyImageIcon("icons/large/check_symbol_14x14.png");
+    private static final Icon LARGE_CHECK_DISABLED_ICON  = new LazyImageIcon("icons/large/check_symbol_disabled_14x14.png");
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       if (!JTattooUtilities.isLeftToRight(c)) {
         x += GAP;
@@ -676,18 +718,22 @@ public class BaseIcons {
         g.fillRect(x, y, w, h);
         if (button.isEnabled()) {
           g.setColor(AbstractLookAndFeel.getFrameColor());
-        } else {
+        }
+        else {
           g.setColor(ColorHelper.brighter(AbstractLookAndFeel.getFrameColor(), 40));
         }
         g.drawRect(x, y, w, h);
-      } else {
+      }
+      else {
         if (button.isEnabled()) {
           if ((button.isRolloverEnabled() && model.isRollover())) {
             JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), x, y, w, h);
-          } else {
+          }
+          else {
             if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && button.hasFocus()) {
               JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getFocusColors(), x, y, w, h);
-            } else {
+            }
+            else {
               JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getCheckBoxColors(), x, y, w, h);
             }
             if (!model.isPressed()) {
@@ -703,11 +749,13 @@ public class BaseIcons {
             g.drawRect(x - 1, y - 1, w + 2, h + 2);
             g.setColor(loColor);
             g.drawRect(x, y, w, h);
-          } else {
+          }
+          else {
             g.setColor(AbstractLookAndFeel.getFrameColor());
             g.drawRect(x, y, w, h);
           }
-        } else {
+        }
+        else {
           JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDisabledColors(), x, y, w, h);
           g.setColor(ColorHelper.brighter(AbstractLookAndFeel.getFrameColor(), 40));
           g.drawRect(x, y, w, h);
@@ -719,10 +767,12 @@ public class BaseIcons {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         checkIcon = SMALL_CHECK_ICON;
         checkDisabledIcon = SMALL_CHECK_DISABLED_ICON;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         checkIcon = MEDIUM_CHECK_ICON;
         checkDisabledIcon = MEDIUM_CHECK_DISABLED_ICON;
-      } else {
+      }
+      else {
         checkIcon = LARGE_CHECK_ICON;
         checkDisabledIcon = LARGE_CHECK_DISABLED_ICON;
       }
@@ -735,33 +785,41 @@ public class BaseIcons {
         g.drawRect(x + 3, y + 3, w - 6, h - 6);
         g.setColor(bc);
         g.fillRect(x + 4, y + 4, w - 7, h - 7);
-      } else if (model.isSelected()) {
+      }
+      else if (model.isSelected()) {
         if (button.isEnabled()) {
           checkIcon.paintIcon(c, g, xi, yi);
-        } else {
+        }
+        else {
           checkDisabledIcon.paintIcon(c, g, xi, yi);
         }
       }
     }
 
+    @Override
     public int getIconWidth() {
       int w;
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         w = 15;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         w = 17;
-      } else {
+      }
+      else {
         w = 19;
       }
       return w + GAP;
     }
 
+    @Override
     public int getIconHeight() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 15;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 17;
-      } else {
+      }
+      else {
         return 19;
       }
     }
@@ -772,6 +830,7 @@ public class BaseIcons {
 
     private static int GAP = 2;
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       if (!JTattooUtilities.isLeftToRight(c)) {
         x += GAP;
@@ -788,14 +847,17 @@ public class BaseIcons {
         if (button.isEnabled()) {
           if ((button.isRolloverEnabled() && model.isRollover()) || (model.isPressed() && model.isArmed())) {
             colors = AbstractLookAndFeel.getTheme().getRolloverColors();
-          } else {
+          }
+          else {
             if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && button.hasFocus()) {
               colors = AbstractLookAndFeel.getTheme().getFocusColors();
-            } else {
+            }
+            else {
               colors = AbstractLookAndFeel.getTheme().getCheckBoxColors();
             }
           }
-        } else {
+        }
+        else {
           colors = AbstractLookAndFeel.getTheme().getDisabledColors();
         }
         cHi = colors[0];
@@ -816,18 +878,22 @@ public class BaseIcons {
       if (c instanceof JRadioButtonMenuItem) {
         g.setColor(Color.white);
         g.fillRect(x, y, w, h);
-      } else {
+      }
+      else {
         if (button.isEnabled()) {
           if ((button.isRolloverEnabled() && model.isRollover()) || (model.isPressed() && model.isArmed())) {
             JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), x, y, w, h);
-          } else {
+          }
+          else {
             if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && button.hasFocus()) {
               JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getFocusColors(), x, y, w, h);
-            } else {
+            }
+            else {
               JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getCheckBoxColors(), x, y, w, h);
             }
           }
-        } else {
+        }
+        else {
           JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDisabledColors(), x, y, w, h);
         }
       }
@@ -851,11 +917,13 @@ public class BaseIcons {
           g.drawOval(x - 1, y - 1, w + 2, h + 2);
           g.setColor(loColor);
           g2D.drawOval(x, y, w, h);
-        } else {
+        }
+        else {
           g.setColor(AbstractLookAndFeel.getFrameColor());
           g2D.drawOval(x, y, w, h);
         }
-      } else {
+      }
+      else {
         g.setColor(ColorHelper.brighter(AbstractLookAndFeel.getFrameColor(), 40));
         g2D.drawOval(x, y, w, h);
       }
@@ -866,56 +934,70 @@ public class BaseIcons {
           if (ColorHelper.getGrayValue(cLo) < 128) {
             if (ColorHelper.getGrayValue(fc) < 128) {
               g2D.setColor(Color.white);
-            } else {
-              g2D.setColor(fc);
             }
-          } else {
-            if (ColorHelper.getGrayValue(fc) > 128) {
-              g2D.setColor(Color.black);
-            } else {
+            else {
               g2D.setColor(fc);
             }
           }
-        } else {
+          else {
+            if (ColorHelper.getGrayValue(fc) > 128) {
+              g2D.setColor(Color.black);
+            }
+            else {
+              g2D.setColor(fc);
+            }
+          }
+        }
+        else {
           g.setColor(AbstractLookAndFeel.getDisabledForegroundColor());
         }
         if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
           g2D.fillOval(x + 4, y + 4, w - 7, h - 7);
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           g2D.fillOval(x + 4, y + 4, w - 7, h - 7);
-        } else {
+        }
+        else {
           g2D.fillOval(x + 5, y + 5, w - 9, h - 9);
         }
       }
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
     }
 
+    @Override
     public int getIconWidth() {
       int w;
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         w = 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         w = 16;
-      } else {
+      }
+      else {
         w = 18;
       }
       return w + GAP;
     }
 
+    @Override
     public int getIconHeight() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 16;
-      } else {
+      }
+      else {
         return 18;
       }
     }
-  }
+
+  } // end of class RadioButtonIcon
 
   // -----------------------------------------------------------------------------------------------------------
   public static class MacCloseIcon implements Icon, UIResource {
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       AbstractButton btn = (AbstractButton) c;
       ButtonModel model = btn.getModel();
@@ -929,13 +1011,15 @@ public class BaseIcons {
         if (!JTattooUtilities.isActive(btn)) {
           pearlIcon = PEARL_GREY_SMALL;
         }
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         closerIcon = CLOSER_MEDIUM;
         pearlIcon = PEARL_RED_MEDIUM;
         if (!JTattooUtilities.isActive(btn)) {
           pearlIcon = PEARL_GREY_MEDIUM;
         }
-      } else {
+      }
+      else {
         closerIcon = CLOSER_LARGE;
         pearlIcon = PEARL_RED_LARGE;
         if (!JTattooUtilities.isActive(btn)) {
@@ -952,17 +1036,21 @@ public class BaseIcons {
       }
     }
 
+    @Override
     public int getIconHeight() {
       return 24;
     }
 
+    @Override
     public int getIconWidth() {
       return 24;
     }
-  }
+
+  } // end of class MacCloseIcon
 
   public static class MacIconIcon implements Icon, UIResource {
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       AbstractButton btn = (AbstractButton) c;
       ButtonModel model = btn.getModel();
@@ -977,13 +1065,15 @@ public class BaseIcons {
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           iconizerIcon = ICONIZER_MEDIUM;
           pearlIcon = PEARL_YELLOW_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           iconizerIcon = ICONIZER_LARGE;
           pearlIcon = PEARL_YELLOW_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
@@ -991,20 +1081,23 @@ public class BaseIcons {
           }
         }
 
-      } else {
+      }
+      else {
         if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
           iconizerIcon = ICONIZER_SMALL;
           pearlIcon = PEARL_GREEN_SMALL;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           iconizerIcon = ICONIZER_MEDIUM;
           pearlIcon = PEARL_GREEN_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           iconizerIcon = ICONIZER_LARGE;
           pearlIcon = PEARL_GREEN_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
@@ -1022,17 +1115,21 @@ public class BaseIcons {
       }
     }
 
+    @Override
     public int getIconHeight() {
       return 24;
     }
 
+    @Override
     public int getIconWidth() {
       return 24;
     }
-  }
+
+  } // end of class MacIconIcon
 
   public static class MacMaxIcon implements Icon, UIResource {
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       AbstractButton btn = (AbstractButton) c;
       ButtonModel model = btn.getModel();
@@ -1047,33 +1144,38 @@ public class BaseIcons {
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           maximizerIcon = MAXIMIZER_MEDIUM;
           pearlIcon = PEARL_GREEN_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           maximizerIcon = MAXIMIZER_LARGE;
           pearlIcon = PEARL_GREEN_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_LARGE;
           }
         }
-      } else {
+      }
+      else {
         if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
           maximizerIcon = MAXIMIZER_SMALL;
           pearlIcon = PEARL_YELLOW_SMALL;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           maximizerIcon = MAXIMIZER_MEDIUM;
           pearlIcon = PEARL_YELLOW_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           maximizerIcon = MAXIMIZER_LARGE;
           pearlIcon = PEARL_YELLOW_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
@@ -1091,17 +1193,21 @@ public class BaseIcons {
       }
     }
 
+    @Override
     public int getIconHeight() {
       return 24;
     }
 
+    @Override
     public int getIconWidth() {
       return 24;
     }
-  }
+
+  } // end of class MacMaxIcon
 
   public static class MacMinIcon implements Icon, UIResource {
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       AbstractButton btn = (AbstractButton) c;
       ButtonModel model = btn.getModel();
@@ -1116,33 +1222,38 @@ public class BaseIcons {
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           minimizerIcon = MINIMIZER_MEDIUM;
           pearlIcon = PEARL_GREEN_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           minimizerIcon = MINIMIZER_LARGE;
           pearlIcon = PEARL_GREEN_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_LARGE;
           }
         }
-      } else {
+      }
+      else {
         if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
           minimizerIcon = MINIMIZER_SMALL;
           pearlIcon = PEARL_YELLOW_SMALL;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_SMALL;
           }
-        } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+        }
+        else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
           minimizerIcon = MINIMIZER_MEDIUM;
           pearlIcon = PEARL_YELLOW_MEDIUM;
           if (!JTattooUtilities.isActive(btn)) {
             pearlIcon = PEARL_GREY_MEDIUM;
           }
-        } else {
+        }
+        else {
           minimizerIcon = MINIMIZER_LARGE;
           pearlIcon = PEARL_YELLOW_LARGE;
           if (!JTattooUtilities.isActive(btn)) {
@@ -1160,24 +1271,27 @@ public class BaseIcons {
       }
     }
 
+    @Override
     public int getIconHeight() {
       return 24;
     }
 
+    @Override
     public int getIconWidth() {
       return 24;
     }
-  }
+
+  } // end of class MacMinIcon
 
   // -----------------------------------------------------------------------------------------------------------
   public static class IconSymbol implements Icon {
 
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Color rolloverColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Color  rolloverColor           = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public IconSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -1197,7 +1311,7 @@ public class BaseIcons {
     }
 
     public IconSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor, Color inactiveForegroundColor, Color inactiveShadowColor,
-                      Insets insets) {
+        Insets insets) {
       this.foregroundColor = foregroundColor;
       this.shadowColor = shadowColor;
       this.rolloverColor = rolloverColor;
@@ -1206,14 +1320,17 @@ public class BaseIcons {
       this.insets = insets;
     }
 
+    @Override
     public int getIconHeight() {
       return 16;
     }
 
+    @Override
     public int getIconWidth() {
       return 16;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Graphics2D g2D = (Graphics2D) g;
       g2D.translate(insets.left, insets.top);
@@ -1240,7 +1357,8 @@ public class BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawLine(dx + 1, h - dy, w - dx + 1, h - dy);
@@ -1250,17 +1368,18 @@ public class BaseIcons {
       g2D.setStroke(savedStroke);
       g2D.translate(-insets.left, -insets.top);
     }
-  }
+
+  } // end of class IconSymbol
 
   // -----------------------------------------------------------------------------------------------------------
   public static class MaxSymbol implements Icon {
 
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color rolloverColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  rolloverColor           = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public MaxSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -1280,7 +1399,7 @@ public class BaseIcons {
     }
 
     public MaxSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor, Color inactiveForegroundColor, Color inactiveShadowColor,
-                     Insets insets) {
+        Insets insets) {
       this.foregroundColor = foregroundColor;
       this.shadowColor = shadowColor;
       this.rolloverColor = rolloverColor;
@@ -1289,14 +1408,17 @@ public class BaseIcons {
       this.insets = insets;
     }
 
+    @Override
     public int getIconHeight() {
       return 16;
     }
 
+    @Override
     public int getIconWidth() {
       return 16;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Graphics2D g2D = (Graphics2D) g;
       g2D.translate(insets.left, insets.top);
@@ -1322,7 +1444,8 @@ public class BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawRect(dx + 1, dy + 1, w - (2 * dx), h - (2 * dy));
@@ -1335,17 +1458,18 @@ public class BaseIcons {
       g2D.setStroke(savedStroke);
       g2D.translate(-insets.left, -insets.top);
     }
-  }
+
+  } // end of class MaxSymbol
 
   // -----------------------------------------------------------------------------------------------------------
   public static class MinSymbol implements Icon {
 
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color rolloverColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  rolloverColor           = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public MinSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -1365,7 +1489,7 @@ public class BaseIcons {
     }
 
     public MinSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor, Color inactiveForegroundColor, Color inactiveShadowColor,
-                     Insets insets) {
+        Insets insets) {
       this.foregroundColor = foregroundColor;
       this.shadowColor = shadowColor;
       this.rolloverColor = rolloverColor;
@@ -1374,14 +1498,17 @@ public class BaseIcons {
       this.insets = insets;
     }
 
+    @Override
     public int getIconHeight() {
       return 16;
     }
 
+    @Override
     public int getIconWidth() {
       return 16;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Graphics2D g2D = (Graphics2D) g;
       g2D.translate(insets.left, insets.top);
@@ -1444,17 +1571,18 @@ public class BaseIcons {
       g2D.drawLine(x, y + lw, x + w, y + lw);
 
     }
-  }
+
+  } // end of class MinSymbol
 
   // -----------------------------------------------------------------------------------------------------------
   public static class CloseSymbol implements Icon {
 
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color rolloverColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  rolloverColor           = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public CloseSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -1474,7 +1602,7 @@ public class BaseIcons {
     }
 
     public CloseSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor, Color inactiveForegroundColor, Color inactiveShadowColor,
-                       Insets insets) {
+        Insets insets) {
       this.foregroundColor = foregroundColor;
       this.shadowColor = shadowColor;
       this.rolloverColor = rolloverColor;
@@ -1483,14 +1611,17 @@ public class BaseIcons {
       this.insets = insets;
     }
 
+    @Override
     public int getIconHeight() {
       return 16;
     }
 
+    @Override
     public int getIconWidth() {
       return 16;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Graphics2D g2D = (Graphics2D) g;
       g2D.translate(insets.left, insets.top);
@@ -1519,7 +1650,8 @@ public class BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawLine(dx + 1, dy + 1, w - dx + 1, h - dy + 1);
@@ -1533,5 +1665,7 @@ public class BaseIcons {
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
       g2D.translate(-insets.left, -insets.top);
     }
-  }
-}
+
+  } // end of class CloseSymbol
+
+} // end of class BaseIcons

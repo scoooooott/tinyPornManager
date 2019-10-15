@@ -1,30 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.Icon;
-import javax.swing.UIManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -33,6 +31,9 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+
+import javax.swing.Icon;
+import javax.swing.UIManager;
 
 /**
  * @author Michael Hagen
@@ -79,6 +80,7 @@ public abstract class XPScrollButton extends BaseScrollButton {
     return Color.white;
   }
 
+  @Override
   public void paint(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
     Composite savedComposite = g2D.getComposite();
@@ -96,7 +98,8 @@ public abstract class XPScrollButton extends BaseScrollButton {
     if (isPressed) {
       c1 = ColorHelper.darker(c1, 5);
       c2 = ColorHelper.darker(c2, 5);
-    } else if (isRollover) {
+    }
+    else if (isRollover) {
       c1 = ColorHelper.brighter(c1, 20);
       c2 = ColorHelper.brighter(c2, 20);
     }
@@ -131,37 +134,45 @@ public abstract class XPScrollButton extends BaseScrollButton {
     int y;
     Icon icon;
     // paint the icon
-    if (getDirection() == NORTH) {
-      icon = getUpArrowIcon();
-      x = (width / 2) - (icon.getIconWidth() / 2);
-      y = (height / 2) - (icon.getIconHeight() / 2);
-    } else if (getDirection() == SOUTH) {
-      icon = getDownArrowIcon();
-      x = (width / 2) - (icon.getIconWidth() / 2);
-      y = (height / 2) - (icon.getIconHeight() / 2) + 1;
-    } else if (getDirection() == WEST) {
-      icon = getLeftArrowIcon();
-      x = (width / 2) - (icon.getIconWidth() / 2);
-      y = (height / 2) - (icon.getIconHeight() / 2);
-    } else {
-      icon = getRightArrowIcon();
-      x = (width / 2) - (icon.getIconWidth() / 2) + 1;
-      y = (height / 2) - (icon.getIconHeight() / 2);
+    switch (getDirection()) {
+      case NORTH:
+        icon = getUpArrowIcon();
+        x = (width / 2) - (icon.getIconWidth() / 2);
+        y = (height / 2) - (icon.getIconHeight() / 2);
+        break;
+      case SOUTH:
+        icon = getDownArrowIcon();
+        x = (width / 2) - (icon.getIconWidth() / 2);
+        y = (height / 2) - (icon.getIconHeight() / 2) + 1;
+        break;
+      case WEST:
+        icon = getLeftArrowIcon();
+        x = (width / 2) - (icon.getIconWidth() / 2);
+        y = (height / 2) - (icon.getIconHeight() / 2);
+        break;
+      default:
+        icon = getRightArrowIcon();
+        x = (width / 2) - (icon.getIconWidth() / 2) + 1;
+        y = (height / 2) - (icon.getIconHeight() / 2);
+        break;
     }
     icon.paintIcon(this, g, x, y);
   }
 
+  @Override
   public Dimension getPreferredSize() {
-    if (getDirection() == NORTH) {
-      return new Dimension(buttonWidth, buttonWidth);
-    } else if (getDirection() == SOUTH) {
-      return new Dimension(buttonWidth, buttonWidth);
-    } else if (getDirection() == EAST) {
-      return new Dimension(buttonWidth, buttonWidth);
-    } else if (getDirection() == WEST) {
-      return new Dimension(buttonWidth, buttonWidth);
-    } else {
-      return new Dimension(0, 0);
+    switch (getDirection()) {
+      case NORTH:
+        return new Dimension(buttonWidth, buttonWidth);
+      case SOUTH:
+        return new Dimension(buttonWidth, buttonWidth);
+      case EAST:
+        return new Dimension(buttonWidth, buttonWidth);
+      case WEST:
+        return new Dimension(buttonWidth, buttonWidth);
+      default:
+        return new Dimension(0, 0);
     }
   }
-}
+
+} // end of class XPScrollButton

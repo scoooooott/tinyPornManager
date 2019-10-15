@@ -1,37 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicSpinnerUI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -40,23 +31,34 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicSpinnerUI;
+
 /**
+ *
  * @author Michael Hagen
  */
 public class BaseSpinnerUI extends BasicSpinnerUI {
   /**
    * Used by the default LayoutManager class - SpinnerLayout for missing (null) editor/nextButton/previousButton children.
    */
-  private static final Dimension zeroSize = new Dimension(0, 0);
+  private static final Dimension zeroSize        = new Dimension(0, 0);
 
-  private MyLayoutManager myLayoutManager = null;
+  private MyLayoutManager        myLayoutManager = null;
 
   /**
    * Returns a new instance of BaseSpinnerUI. SpinnerListUI delegates are allocated one per JSpinner.
    *
-   * @param c the JSpinner (not used)
-   * @return a new BasicSpinnerUI object
+   * @param c
+   *          the JSpinner (not used)
    * @see ComponentUI#createUI
+   * @return a new BasicSpinnerUI object
    */
   public static ComponentUI createUI(JComponent c) {
     return new BaseSpinnerUI();
@@ -72,6 +74,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
    * @see #createPreviousButton
    * @see #createEditor
    */
+  @Override
   protected LayoutManager createLayout() {
     if (myLayoutManager == null) {
       myLayoutManager = new MyLayoutManager();
@@ -79,12 +82,14 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
     return myLayoutManager;
   }
 
+  @Override
   protected Component createNextButton() {
     JButton button = new SpinButton(SwingConstants.NORTH);
     if (JTattooUtilities.isLeftToRight(spinner)) {
       Border border = BorderFactory.createMatteBorder(0, 1, 1, 0, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createMatteBorder(0, 0, 1, 1, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
     }
@@ -92,12 +97,14 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
     return button;
   }
 
+  @Override
   protected Component createPreviousButton() {
     JButton button = new SpinButton(SwingConstants.SOUTH);
     if (JTattooUtilities.isLeftToRight(spinner)) {
       Border border = BorderFactory.createMatteBorder(0, 1, 0, 0, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createMatteBorder(0, 0, 0, 1, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
     }
@@ -110,8 +117,8 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
   // -----------------------------------------------------------------------------------------
   public static class SpinButton extends NoFocusButton {
 
-    private static final Dimension minSize = new Dimension(14, 12);
-    private int direction = SwingConstants.NORTH;
+    private static final Dimension minSize   = new Dimension(14, 12);
+    private int                    direction = SwingConstants.NORTH;
 
     public SpinButton(int aDirection) {
       super();
@@ -119,6 +126,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       direction = aDirection;
     }
 
+    @Override
     public Dimension getPreferredSize() {
       Dimension size = super.getPreferredSize();
       size.width = Math.max(size.width, minSize.width);
@@ -126,21 +134,23 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       return size;
     }
 
+    @Override
     public void paint(Graphics g) {
       Color colors[];
       if (isEnabled()) {
-        ButtonModel model = getModel();
-        if (model.isPressed() && model.isArmed()) {
+        if (getModel().isPressed() && getModel().isArmed()) {
           colors = AbstractLookAndFeel.getTheme().getPressedColors();
-        } else {
-          if (model.isRollover())
+        }
+        else {
+          if (getModel().isRollover())
             colors = AbstractLookAndFeel.getTheme().getRolloverColors();
           else if (JTattooUtilities.isFrameActive(this))
             colors = AbstractLookAndFeel.getTheme().getButtonColors();
           else
             colors = AbstractLookAndFeel.getTheme().getInActiveColors();
         }
-      } else {
+      }
+      else {
         colors = AbstractLookAndFeel.getTheme().getDisabledColors();
       }
       JTattooUtilities.fillHorGradient(g, colors, 0, 0, getWidth(), getHeight());
@@ -154,7 +164,8 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
         for (int i = 0; i < h; i++) {
           g.drawLine(x + (h - i) - 1, y + i, x + w - (h - i) + 1, y + i);
         }
-      } else {
+      }
+      else {
         for (int i = 0; i < h; i++) {
           g.drawLine(x + i, y + i, x + w - i, y + i);
         }
@@ -163,31 +174,37 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
 
   }
 
-  // ----------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // inner classes
-  // ----------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   private static class MyLayoutManager implements LayoutManager {
 
-    private Component nextButton = null;
+    private Component nextButton     = null;
     private Component previousButton = null;
-    private Component editor = null;
+    private Component editor         = null;
 
+    @Override
     public void addLayoutComponent(String name, Component c) {
       if ("Next".equals(name)) {
         nextButton = c;
-      } else if ("Previous".equals(name)) {
+      }
+      else if ("Previous".equals(name)) {
         previousButton = c;
-      } else if ("Editor".equals(name)) {
+      }
+      else if ("Editor".equals(name)) {
         editor = c;
       }
     }
 
+    @Override
     public void removeLayoutComponent(Component c) {
       if (c == nextButton) {
         nextButton = null;
-      } else if (c == previousButton) {
+      }
+      else if (c == previousButton) {
         previousButton = null;
-      } else if (c == editor) {
+      }
+      else if (c == editor) {
         editor = null;
       }
     }
@@ -196,6 +213,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       return (c == null) ? zeroSize : c.getPreferredSize();
     }
 
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
       Dimension nextD = preferredSize(nextButton);
       Dimension previousD = preferredSize(previousButton);
@@ -212,6 +230,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       return size;
     }
 
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
       return preferredLayoutSize(parent);
     }
@@ -222,6 +241,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       }
     }
 
+    @Override
     public void layoutContainer(Container parent) {
       int width = parent.getWidth();
       int height = parent.getHeight();
@@ -248,7 +268,8 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
         editorX = insets.left;
         editorWidth = width - insets.left - buttonsWidth - buttonInsets.right;
         buttonsX = width - buttonsWidth - buttonInsets.right;
-      } else {
+      }
+      else {
         buttonsX = buttonInsets.left;
         editorX = buttonsX + buttonsWidth;
         editorWidth = width - buttonInsets.left - buttonsWidth - insets.right;
@@ -264,6 +285,6 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
       setBounds(previousButton, buttonsX, previousY, buttonsWidth, previousHeight);
     }
 
-  }
+  } // end of class MyLayoutManager
 
-}
+} // end of class BaseSpinnerUI

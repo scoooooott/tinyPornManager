@@ -1,26 +1,41 @@
 /*
  * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
+ *  
  * JTattoo is multiple licensed. If your are an open source developer you can use
  * it under the terms and conditions of the GNU General Public License version 2.0
  * or later as published by the Free Software Foundation.
- *
+ *  
  * see: gpl-2.0.txt
- *
+ * 
  * If you pay for a license you will become a registered user who could use the
  * software under the terms and conditions of the GNU Lesser General Public License
  * version 2.0 or later with classpath exception as published by the Free Software
  * Foundation.
- *
+ * 
  * see: lgpl-2.0.txt
  * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
+ * 
+ * Registered users could also use JTattoo under the terms and conditions of the 
  * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
+ *  
  * see: APACHE-LICENSE-2.0.txt
  */
 package com.jtattoo.plaf;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Container;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -29,31 +44,20 @@ import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalToolTipUI;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.image.BufferedImage;
 
 /**
  * @author Michael Hagen, Daniel Raedel
  */
 public class BaseToolTipUI extends MetalToolTipUI {
 
-  private boolean fancyLayout = false;
+  private boolean           fancyLayout         = false;
   private ComponentListener popupWindowListener = null;
 
   public static ComponentUI createUI(JComponent c) {
     return new BaseToolTipUI();
   }
 
+  @Override
   public void installUI(JComponent c) {
     super.installUI(c);
     int borderSize = AbstractLookAndFeel.getTheme().getTooltipBorderSize();
@@ -66,17 +70,20 @@ public class BaseToolTipUI extends MetalToolTipUI {
       if (parent instanceof JPanel) {
         ((JPanel) c.getParent()).setOpaque(false);
       }
-    } else {
+    }
+    else {
       c.setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize, borderSize, borderSize));
     }
   }
 
+  @Override
   protected void installListeners(JComponent c) {
     super.installListeners(c);
 
     // We must set the popup window to opaque because it is cached and reused within the PopupFactory
     popupWindowListener = new ComponentAdapter() {
 
+      @Override
       public void componentHidden(ComponentEvent e) {
         Window window = (Window) e.getComponent();
         DecorationHelper.setTranslucentWindow(window, false);
@@ -85,6 +92,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
     };
   }
 
+  @Override
   public void paint(Graphics g, JComponent c) {
     Graphics2D g2D = (Graphics2D) g;
     Composite savedComposit = g2D.getComposite();
@@ -125,7 +133,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
       }
       // draw the shadow
       g2D.setColor(AbstractLookAndFeel.getTheme().getShadowColor());
-      float[] composites = {0.01f, 0.02f, 0.04f, 0.06f, 0.08f, 0.12f};
+      float[] composites = { 0.01f, 0.02f, 0.04f, 0.06f, 0.08f, 0.12f };
       int shadowOffset = AbstractLookAndFeel.getTheme().isTooltipCastShadow() ? shadowSize : 0;
       for (int i = 0; i < shadowSize; i++) {
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, composites[i >= composites.length ? composites.length - 1 : i]));
@@ -137,7 +145,8 @@ public class BaseToolTipUI extends MetalToolTipUI {
       // Draw background with borders
       if (ColorHelper.getGrayValue(backColor) < 128) {
         g2D.setColor(ColorHelper.brighter(AbstractLookAndFeel.getTheme().getBackgroundColor(), 20));
-      } else {
+      }
+      else {
         g2D.setColor(Color.white);
 
       }
@@ -147,8 +156,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
       // g2D.drawRoundRect(shadowSize, 0, w - (2 * shadowSize) - 1, h - shadowSize - 1, 6, 6);
       g2D.drawRoundRect(shadowSize, 0, w - (2 * shadowSize) - 1, h - shadowSize - 1, shadowSize, shadowSize);
       g2D.setColor(ColorHelper.darker(backColor, 10));
-      // g2D.drawRect(borderSize + shadowSize - 1, borderSize - 1, w - (2 * borderSize) - (2 * shadowSize) + 1, h - (2 * borderSize) - shadowSize +
-      // 1); //ml210115
+      g2D.drawRect(borderSize + shadowSize - 1, borderSize - 1, w - (2 * borderSize) - (2 * shadowSize) + 1, h - (2 * borderSize) - shadowSize + 1);
 
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
       // Draw the text. This must be done within an offscreen image because of a bug
@@ -157,34 +165,68 @@ public class BaseToolTipUI extends MetalToolTipUI {
       BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
       Graphics2D big = bi.createGraphics();
       big.setClip(0, 0, w, h);
+      Paint savedPaint = big.getPaint();
+      Color cHi;
+      Color cLo;
+      if (ColorHelper.getGrayValue(backColor) < 128) {
+        cHi = ColorHelper.brighter(backColor, 10);
+        cLo = ColorHelper.darker(backColor, 20);
+      }
+      else {
+        cHi = ColorHelper.brighter(backColor, 40);
+        cLo = ColorHelper.darker(backColor, 5);
+      }
+      big.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize) - shadowSize, cLo));
       big.fillRect(borderSize + shadowSize, borderSize, w - (2 * borderSize) - (2 * shadowSize), h - (2 * borderSize) - shadowSize);
 
-      // big.setPaint(savedPaint); //ml210115
+      big.setPaint(savedPaint);
 
       if (c instanceof JToolTip) {
-        // JToolTip tip = (JToolTip) c; //ml210115
-        // if (tip.getComponent() != null && tip.getComponent().isEnabled()) { //ml210115
-        c.setForeground(AbstractLookAndFeel.getTheme().getTooltipForegroundColor());
-        // } else { //ml210115
-        // c.setForeground(AbstractLookAndFeel.getTheme().getDisabledForegroundColor()); //ml210115
-        // } //ml210115
+        JToolTip tip = (JToolTip) c;
+        if (tip.getComponent() != null && tip.getComponent().isEnabled()) {
+          c.setForeground(AbstractLookAndFeel.getTheme().getTooltipForegroundColor());
+        }
+        else {
+          c.setForeground(AbstractLookAndFeel.getTheme().getDisabledForegroundColor());
+        }
       }
       super.paint(big, c);
       g2D.setClip(borderSize + shadowSize, borderSize, w - (2 * borderSize) - (2 * shadowSize), h - (2 * borderSize) - shadowSize);
       g2D.drawImage(bi, 0, 0, null);
 
-    } else {
+    }
+    else {
       // Draw background with borders
       if (ColorHelper.getGrayValue(backColor) < 128) {
         g2D.setColor(ColorHelper.brighter(AbstractLookAndFeel.getTheme().getBackgroundColor(), 20));
-      } else {
+      }
+      else {
         g2D.setColor(Color.white);
       }
       g2D.fillRect(0, 0, w, h);
       g2D.setColor(ColorHelper.darker(backColor, 40));
       g2D.drawRect(0, 0, w - 1, h - 1);
+      g2D.setColor(ColorHelper.darker(backColor, 10));
+      g2D.drawRect(borderSize - 1, borderSize - 1, w - (2 * borderSize - 1), h - (2 * borderSize - 1));
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
+
+      Paint savedPaint = g2D.getPaint();
+      Color cHi;
+      Color cLo;
+      if (ColorHelper.getGrayValue(backColor) < 128) {
+        cHi = ColorHelper.brighter(backColor, 10);
+        cLo = ColorHelper.darker(backColor, 20);
+      }
+      else {
+        cHi = ColorHelper.brighter(backColor, 40);
+        cLo = ColorHelper.darker(backColor, 5);
+      }
+      g2D.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize), cLo));
+      g2D.fillRect(borderSize, borderSize, w - (2 * borderSize), h - (2 * borderSize));
+      g2D.setPaint(savedPaint);
+
       super.paint(g, c);
     }
   }
-}
+
+} // end of class BaseToolTipUI

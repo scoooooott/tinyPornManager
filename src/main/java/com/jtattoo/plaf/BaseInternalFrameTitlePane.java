@@ -1,41 +1,21 @@
 /*
- * Copyright 2003 Sun Microsystems, Inc. All rights reserved.
- * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
-/*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+ * Copyright 2012 - 2018 Manuel Laggner
  *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * see: gpl-2.0.txt
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.jtattoo.plaf;
 
-import javax.swing.AbstractButton;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -52,9 +32,18 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractButton;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+
 /**
  * This class is a modified copy of the javax.swing.plaf.metal.MetalInternalFrameTitlePane
- * <p>
+ *
  * Class that manages a JLF title bar
  * <p>
  *
@@ -65,19 +54,20 @@ import java.beans.PropertyChangeListener;
 public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane implements ActionListener {
 
   public static final String PAINT_ACTIVE = "paintActive";
-  public static final String ICONIFY = "Iconify";
-  public static final String MAXIMIZE = "Maximize";
-  public static final String CLOSE = "Close";
-  protected boolean isPalette = false;
-  protected Icon paletteCloseIcon;
-  protected int paletteTitleHeight;
-  protected int buttonsWidth = 0;
-  protected JPanel customTitlePanel;
+  public static final String ICONIFY      = "Iconify";
+  public static final String MAXIMIZE     = "Maximize";
+  public static final String CLOSE        = "Close";
+  protected boolean          isPalette    = false;
+  protected Icon             paletteCloseIcon;
+  protected int              paletteTitleHeight;
+  protected int              buttonsWidth = 0;
+  protected JPanel           customTitlePanel;
 
   public BaseInternalFrameTitlePane(JInternalFrame f) {
     super(f);
   }
 
+  @Override
   protected void installDefaults() {
     super.installDefaults();
     setFont(UIManager.getFont("InternalFrame.font"));
@@ -106,6 +96,7 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     repaint();
   }
 
+  @Override
   protected void createButtons() {
     iconButton = new BaseTitleButton(iconifyAction, ICONIFY, iconIcon, 1.0f);
     maxButton = new BaseTitleButton(maximizeAction, MAXIMIZE, maxIcon, 1.0f);
@@ -113,6 +104,7 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     setButtonIcons();
   }
 
+  @Override
   protected void setButtonIcons() {
     super.setButtonIcons();
     iconButton.setToolTipText(null);
@@ -120,27 +112,33 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     closeButton.setToolTipText(null);
   }
 
+  @Override
   protected void enableActions() {
     super.enableActions();
     maximizeAction.setEnabled(frame.isMaximizable());
   }
 
+  @Override
   protected void assembleSystemMenu() {
   }
 
+  @Override
   protected void addSystemMenuItems(JMenu systemMenu) {
   }
 
+  @Override
   protected void addSubComponents() {
     add(iconButton);
     add(maxButton);
     add(closeButton);
   }
 
+  @Override
   protected PropertyChangeListener createPropertyChangeListener() {
     return new BasePropertyChangeHandler();
   }
 
+  @Override
   protected LayoutManager createLayout() {
     return new BaseTitlePaneLayout();
   }
@@ -185,7 +183,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
       if (frame.isIconifiable()) {
         remove(iconButton);
       }
-    } else {
+    }
+    else {
       closeButton.setIcon(closeIcon);
       if (frame.isMaximizable()) {
         add(maxButton);
@@ -198,6 +197,7 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     repaint();
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     AbstractButton button = (AbstractButton) e.getSource();
     button.getModel().setRollover(false);
@@ -208,7 +208,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     int height = getHeight();
     if (JTattooUtilities.isFrameActive(this)) {
       JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getWindowTitleColors(), 0, 0, width, height);
-    } else {
+    }
+    else {
       JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getWindowInactiveTitleColors(), 0, 0, width, height);
     }
   }
@@ -216,7 +217,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
   public void paintBackground(Graphics g) {
     if (isActive()) {
       JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getWindowTitleColors(), 0, 0, getWidth(), getHeight());
-    } else {
+    }
+    else {
       JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getWindowInactiveTitleColors(), 0, 0, getWidth(), getHeight());
     }
   }
@@ -224,7 +226,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
   private Image iconToImage(Icon icon) {
     if (icon instanceof ImageIcon) {
       return ((ImageIcon) icon).getImage();
-    } else if (icon != null) {
+    }
+    else if (icon != null) {
       int w = icon.getIconWidth();
       int h = icon.getIconHeight();
       BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -257,15 +260,14 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     if (image != null) {
       Graphics2D g2D = (Graphics2D) g;
       Object savedHint = g2D.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-      if (JTattooUtilities.getJavaVersion() >= 1.6) {
-        g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-      }
+      g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
       int h = getHeight();
       int ih = image.getHeight(null);
       int iw = image.getWidth(null);
       if (ih <= h) {
         g2D.drawImage(image, x, (h - ih) / 2, iw, ih, null);
-      } else {
+      }
+      else {
         double fac = (double) iw / (double) ih;
         ih = h;
         iw = (int) (fac * (double) ih);
@@ -282,12 +284,14 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
   public void paintText(Graphics g, int x, int y, String title) {
     if (isActive()) {
       g.setColor(AbstractLookAndFeel.getWindowTitleForegroundColor());
-    } else {
+    }
+    else {
       g.setColor(AbstractLookAndFeel.getWindowInactiveTitleForegroundColor());
     }
     JTattooUtilities.drawString(frame, g, title, x, y);
   }
 
+  @Override
   public void paintBorder(Graphics g) {
     Color borderColor = AbstractLookAndFeel.getWindowInactiveBorderColor();
     if (isActive() || isPalette) {
@@ -296,6 +300,7 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     JTattooUtilities.draw3DBorder(g, ColorHelper.brighter(borderColor, 20), ColorHelper.darker(borderColor, 10), 0, 0, getWidth(), getHeight());
   }
 
+  @Override
   public void paintComponent(Graphics g) {
     if (isPalette) {
       paintPalette(g);
@@ -321,7 +326,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         x += buttonsWidth + ((titleWidth - titleLength) / 2);
         paintIcon(g, x);
         x += iconWidth + 4;
-      } else {
+      }
+      else {
         int iconWidth = paintIcon(g, x);
         titleWidth -= iconWidth + 4;
         frameTitle = JTattooUtilities.getClippedText(frameTitle, fm, titleWidth);
@@ -329,11 +335,13 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
           int titleLength = fm.stringWidth(frameTitle);
           x += iconWidth + 4;
           x += (titleWidth - titleLength) / 2;
-        } else {
+        }
+        else {
           x += iconWidth + 4;
         }
       }
-    } else {
+    }
+    else {
       int iconWidth = getIconWidth();
       if (isMacStyleWindowDecoration()) {
         titleWidth -= iconWidth + 4;
@@ -341,7 +349,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         int titleLength = fm.stringWidth(frameTitle);
         x = buttonsWidth + 4 + ((titleWidth - titleLength) / 2);
         paintIcon(g, x + titleLength + 4);
-      } else {
+      }
+      else {
         x = width - iconWidth;
         paintIcon(g, x);
         titleWidth -= iconWidth + 4;
@@ -349,7 +358,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         int titleLength = fm.stringWidth(frameTitle);
         if (AbstractLookAndFeel.getTheme().isCenterWindowTitleOn()) {
           x = buttonsWidth + 4 + ((titleWidth - titleLength) / 2);
-        } else {
+        }
+        else {
           x = width - iconWidth - 4 - titleLength;
         }
       }
@@ -359,8 +369,9 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
     paintBorder(g);
   }
 
-  class BasePropertyChangeHandler extends BasicInternalFrameTitlePane.PropertyChangeHandler {
+  class BasePropertyChangeHandler extends PropertyChangeHandler {
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       String prop = (String) evt.getPropertyName();
       if (prop.equals(JInternalFrame.IS_SELECTED_PROPERTY)) {
@@ -368,9 +379,10 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         iconButton.putClientProperty(PAINT_ACTIVE, b);
         closeButton.putClientProperty(PAINT_ACTIVE, b);
         maxButton.putClientProperty(PAINT_ACTIVE, b);
-        if (b.booleanValue()) {
+        if (b) {
           activateFrame();
-        } else {
+        }
+        else {
           deactivateFrame();
         }
         repaint();
@@ -384,16 +396,20 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
   // ------------------------------------------------------------------------------
   class BaseTitlePaneLayout extends TitlePaneLayout {
 
+    @Override
     public void addLayoutComponent(String name, Component c) {
     }
 
+    @Override
     public void removeLayoutComponent(Component c) {
     }
 
+    @Override
     public Dimension preferredLayoutSize(Container c) {
       return minimumLayoutSize(c);
     }
 
+    @Override
     public Dimension minimumLayoutSize(Container c) {
       int width = 30;
       if (frame.isClosable()) {
@@ -413,7 +429,8 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
       if (title_length > 2) {
         int subtitle_w = fm.stringWidth(frame.getTitle().substring(0, 2) + "...");
         width += (title_w < subtitle_w) ? title_w : subtitle_w;
-      } else {
+      }
+      else {
         width += title_w;
       }
 
@@ -422,17 +439,20 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         Icon icon = isMacStyleWindowDecoration() ? null : frame.getFrameIcon();
         if (icon == null) {
           height = Math.max(fm.getHeight() + 6, 16);
-        } else {
+        }
+        else {
           height = Math.max(fm.getHeight() + 6, Math.min(icon.getIconHeight(), 24));
         }
       }
       return new Dimension(width, height);
     }
 
+    @Override
     public void layoutContainer(Container c) {
       if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
         layoutMacStyle(c);
-      } else {
+      }
+      else {
         layoutDefault(c);
       }
     }
@@ -528,5 +548,6 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         buttonsWidth += cpw + 5;
       }
     }
-  } // end class BaseTitlePaneLayout
-}
+  } // end of class BaseTitlePaneLayout
+
+} // end of class BaseInternalFrameTitlePane

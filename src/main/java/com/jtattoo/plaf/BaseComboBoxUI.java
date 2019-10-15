@@ -1,25 +1,25 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
@@ -49,18 +49,20 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 
 public class BaseComboBoxUI extends BasicComboBoxUI {
 
-  private PropertyChangeListener propertyChangeListener = null;
-  private FocusListener focusListener = null;
-  private Border orgBorder = null;
-  private Color orgBackgroundColor = null;
+  private PropertyChangeListener myPpropertyChangeListener = null;
+  private FocusListener          myFocusListener           = null;
+  private Border                 orgBorder                 = null;
+  private Color                  orgBackgroundColor        = null;
 
   public static ComponentUI createUI(JComponent c) {
     return new BaseComboBoxUI();
   }
 
+  @Override
   public void installUI(JComponent c) {
     super.installUI(c);
     comboBox.setRequestFocusEnabled(true);
+    comboBox.setLightWeightPopupEnabled(false);
     if (comboBox.getEditor() != null) {
       if (comboBox.getEditor().getEditorComponent() instanceof JTextField) {
         ((JTextField) (comboBox.getEditor().getEditorComponent())).setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -68,14 +70,16 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
     }
   }
 
+  @Override
   protected void installListeners() {
     super.installListeners();
-    propertyChangeListener = new PropertyChangeHandler();
-    comboBox.addPropertyChangeListener(propertyChangeListener);
+    myPpropertyChangeListener = new PropertyChangeHandler();
+    comboBox.addPropertyChangeListener(myPpropertyChangeListener);
 
     if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {
-      focusListener = new FocusListener() {
+      myFocusListener = new FocusListener() {
 
+        @Override
         public void focusGained(FocusEvent e) {
           if (comboBox != null) {
             orgBorder = comboBox.getBorder();
@@ -92,6 +96,7 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
           }
         }
 
+        @Override
         public void focusLost(FocusEvent e) {
           if (comboBox != null) {
             if (orgBorder instanceof UIResource) {
@@ -101,18 +106,20 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
           }
         }
       };
-      comboBox.addFocusListener(focusListener);
+      comboBox.addFocusListener(myFocusListener);
     }
   }
 
+  @Override
   protected void uninstallListeners() {
-    comboBox.removePropertyChangeListener(propertyChangeListener);
-    comboBox.removeFocusListener(focusListener);
-    propertyChangeListener = null;
-    focusListener = null;
+    comboBox.removePropertyChangeListener(myPpropertyChangeListener);
+    comboBox.removeFocusListener(myFocusListener);
+    myPpropertyChangeListener = null;
+    myFocusListener = null;
     super.uninstallListeners();
   }
 
+  @Override
   public Dimension getPreferredSize(JComponent c) {
     Dimension size = super.getPreferredSize(c);
     if (comboBox.getGraphics() != null) {
@@ -126,12 +133,14 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
     return new Dimension(size.width + 2, size.height + 2);
   }
 
+  @Override
   public JButton createArrowButton() {
     JButton button = new ArrowButton();
     if (JTattooUtilities.isLeftToRight(comboBox)) {
       Border border = BorderFactory.createMatteBorder(0, 1, 0, 0, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createMatteBorder(0, 0, 0, 1, AbstractLookAndFeel.getFrameColor());
       button.setBorder(border);
     }
@@ -142,7 +151,8 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
     if (JTattooUtilities.isLeftToRight(comboBox)) {
       Border border = BorderFactory.createMatteBorder(0, 1, 0, 0, AbstractLookAndFeel.getFrameColor());
       arrowButton.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createMatteBorder(0, 0, 0, 1, AbstractLookAndFeel.getFrameColor());
       arrowButton.setBorder(border);
     }
@@ -150,6 +160,7 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
 
   public class PropertyChangeHandler implements PropertyChangeListener {
 
+    @Override
     public void propertyChange(PropertyChangeEvent e) {
       String name = e.getPropertyName();
       if (name.equals("componentOrientation")) {
@@ -161,18 +172,22 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
 
   public static class ArrowButton extends NoFocusButton {
 
+    @Override
     public void paint(Graphics g) {
       Dimension size = getSize();
-      Color[] colors;
+      Color colors[];
       if (isEnabled()) {
         if (getModel().isArmed() && getModel().isPressed()) {
           colors = AbstractLookAndFeel.getTheme().getPressedColors();
-        } else if (getModel().isRollover()) {
+        }
+        else if (getModel().isRollover()) {
           colors = AbstractLookAndFeel.getTheme().getRolloverColors();
-        } else {
+        }
+        else {
           colors = AbstractLookAndFeel.getTheme().getButtonColors();
         }
-      } else {
+      }
+      else {
         colors = AbstractLookAndFeel.getTheme().getDisabledColors();
       }
       JTattooUtilities.fillHorGradient(g, colors, 0, 0, size.width, size.height);
@@ -188,7 +203,8 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
       g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
       if (getModel().isPressed() && getModel().isArmed()) {
         icon.paintIcon(this, g, x + 2, y + 1);
-      } else {
+      }
+      else {
         icon.paintIcon(this, g, x + 1, y);
       }
       g2D.setComposite(savedComposite);
@@ -196,4 +212,5 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
 
     }
   }
-}
+
+} // end of class BaseComboBoxUI

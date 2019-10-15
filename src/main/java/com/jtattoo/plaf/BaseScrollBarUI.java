@@ -1,34 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JScrollBar;
-import javax.swing.UIManager;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -39,20 +33,28 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JScrollBar;
+import javax.swing.UIManager;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+
 /**
  * @author Michael Hagen
  */
 public class BaseScrollBarUI extends BasicScrollBarUI {
 
-  protected int scrollBarWidth = 17;
-  protected int incrGap = 0;
-  protected int decrGap = 0;
-  protected boolean isRollover = false;
+  protected int     scrollBarWidth = 17;
+  protected int     incrGap        = 0;
+  protected int     decrGap        = 0;
+  protected boolean isRollover     = false;
 
   public static ComponentUI createUI(JComponent c) {
     return new BaseScrollBarUI();
   }
 
+  @Override
   protected void installDefaults() {
     super.installDefaults();
 
@@ -70,11 +72,13 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
         scrollBarWidth *= 1.15;
         incrGap *= 1.15;
         decrGap *= 1.15;
-      } else if ("small".equals(scaleKey)) {
+      }
+      else if ("small".equals(scaleKey)) {
         scrollBarWidth *= 0.857;
         incrGap *= 0.857;
         decrGap *= 0.857;
-      } else if ("mini".equals(scaleKey)) {
+      }
+      else if ("mini".equals(scaleKey)) {
         scrollBarWidth *= 0.714;
         incrGap *= 0.714;
         decrGap *= 0.714;
@@ -82,46 +86,57 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
     }
   }
 
+  @Override
   protected JButton createDecreaseButton(int orientation) {
     if (AbstractLookAndFeel.getTheme().isMacStyleScrollBarOn()) {
       return new InvisibleScrollButton();
-    } else {
+    }
+    else {
       return new BaseScrollButton(orientation, scrollBarWidth);
     }
   }
 
+  @Override
   protected JButton createIncreaseButton(int orientation) {
     if (AbstractLookAndFeel.getTheme().isMacStyleScrollBarOn()) {
       return new InvisibleScrollButton();
-    } else {
+    }
+    else {
       return new BaseScrollButton(orientation, scrollBarWidth);
     }
   }
 
+  @Override
   public TrackListener createTrackListener() {
     return new MyTrackListener();
   }
 
+  @Override
   public Dimension getPreferredSize(JComponent c) {
     if (AbstractLookAndFeel.getTheme().isMacStyleScrollBarOn()) {
       if (scrollbar.getOrientation() == JScrollBar.VERTICAL) {
         return new Dimension(scrollBarWidth + 1, scrollBarWidth * 3);
-      } else {
+      }
+      else {
         return new Dimension(scrollBarWidth * 3, scrollBarWidth);
       }
-    } else {
+    }
+    else {
       if (scrollbar.getOrientation() == JScrollBar.VERTICAL) {
         return new Dimension(scrollBarWidth, scrollBarWidth * 3 + 16);
-      } else {
+      }
+      else {
         return new Dimension(scrollBarWidth * 3 + 16, scrollBarWidth);
       }
     }
   }
 
+  @Override
   protected Dimension getMinimumThumbSize() {
     return new Dimension(scrollBarWidth, scrollBarWidth);
   }
 
+  @Override
   protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
     int w = c.getWidth();
     int h = c.getHeight();
@@ -129,10 +144,12 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
       Color bc = ColorHelper.darker(AbstractLookAndFeel.getTheme().getBackgroundColor(), 4);
       g.setColor(bc);
       g.fillRect(0, 0, w, h);
-    } else {
+    }
+    else {
       if (scrollbar.getOrientation() == JScrollBar.VERTICAL) {
         JTattooUtilities.fillVerGradient(g, AbstractLookAndFeel.getTheme().getTrackColors(), 0, 0, w, h);
-      } else {
+      }
+      else {
         JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getTrackColors(), 0, 0, w, h);
       }
     }
@@ -141,13 +158,16 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
   protected Color[] getThumbColors() {
     if (isRollover || isDragging) {
       return AbstractLookAndFeel.getTheme().getRolloverColors();
-    } else if (!JTattooUtilities.isActive(scrollbar)) {
+    }
+    else if (!JTattooUtilities.isActive(scrollbar)) {
       return AbstractLookAndFeel.getTheme().getInActiveColors();
-    } else {
+    }
+    else {
       return AbstractLookAndFeel.getTheme().getThumbColors();
     }
   }
 
+  @Override
   protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
     if (!c.isEnabled()) {
       return;
@@ -189,7 +209,8 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
         }
       }
       g2D.setComposite(savedComposite);
-    } else { // HORIZONTAL
+    }
+    else { // HORIZONTAL
       JTattooUtilities.fillHorGradient(g, colors, 1, 1, thumbBounds.width - 1, thumbBounds.height - 1);
       JTattooUtilities.draw3DBorder(g, frameColorLo, ColorHelper.darker(frameColorLo, 10), 0, 0, thumbBounds.width, thumbBounds.height);
 
@@ -221,6 +242,7 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
     g.translate(-thumbBounds.x, -thumbBounds.y);
   }
 
+  @Override
   protected void layoutVScrollbar(JScrollBar sb) {
     if (AbstractLookAndFeel.getTheme().isLinuxStyleScrollBarOn() && incrButton.isVisible() && decrButton.isVisible()) {
       Dimension sbSize = sb.getSize();
@@ -269,7 +291,8 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
        */
       if (thumbH > trackH) {
         setThumbBounds(0, 0, 0, 0);
-      } else {
+      }
+      else {
         setThumbBounds(itemX, thumbY, itemW, thumbH);
       }
       decrButton.setBounds(itemX, decrButtonY, itemW, itemH);
@@ -280,11 +303,13 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
        */
       trackRect.setBounds(itemX, 0, itemW, (int) trackH);
 
-    } else {
+    }
+    else {
       super.layoutVScrollbar(sb);
     }
   }
 
+  @Override
   protected void layoutHScrollbar(JScrollBar sb) {
     if (AbstractLookAndFeel.getTheme().isLinuxStyleScrollBarOn() && incrButton.isVisible() && decrButton.isVisible()) {
       Dimension sbSize = sb.getSize();
@@ -333,7 +358,8 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
        */
       if (thumbW > trackW) {
         setThumbBounds(0, 0, 0, 0);
-      } else {
+      }
+      else {
         setThumbBounds(thumbX, itemY, thumbW, itemH);
       }
       decrButton.setBounds(decrButtonX, itemY, itemW, itemH);
@@ -344,7 +370,8 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
        */
       trackRect.setBounds(0, itemY, (int) trackW, itemH);
 
-    } else {
+    }
+    else {
       super.layoutHScrollbar(sb);
     }
   }
@@ -354,6 +381,7 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
   // -----------------------------------------------------------------------------
   protected class MyTrackListener extends TrackListener {
 
+    @Override
     public void mouseEntered(MouseEvent e) {
       super.mouseEntered(e);
       isRollover = true;
@@ -361,6 +389,7 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
       scrollbar.repaint(r.x, r.y, r.width, r.height);
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
       super.mouseExited(e);
       isRollover = false;
@@ -368,18 +397,21 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
       scrollbar.repaint(r.x, r.y, r.width, r.height);
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
       super.mousePressed(e);
       Rectangle r = getTrackBounds();
       scrollbar.repaint(r.x, r.y, r.width, r.height);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       super.mouseReleased(e);
       Rectangle r = getTrackBounds();
       scrollbar.repaint(r.x, r.y, r.width, r.height);
     }
-  }
+
+  } // end of class MyTrackListener
 
   // -----------------------------------------------------------------------------
   private static class InvisibleScrollButton extends JButton {
@@ -389,9 +421,11 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
       setVisible(false);
     }
 
+    @Override
     public Dimension getPreferredSize() {
       return new Dimension(0, 0);
     }
 
-  }
-}
+  } // end of class InvisibleScrollButton
+
+} // end of class BaseScrollBarUI

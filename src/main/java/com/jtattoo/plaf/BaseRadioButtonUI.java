@@ -1,27 +1,36 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
@@ -34,13 +43,6 @@ import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.plaf.basic.BasicRadioButtonUI;
 import javax.swing.text.View;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 
 /**
  * @author Michael Hagen
@@ -52,10 +54,10 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
    * These Dimensions/Rectangles are allocated once for all RadioButtonUI.paint() calls. Re-using rectangles rather than allocating them in each paint
    * call substantially reduced the time it took paint to run. Obviously, this method can't be re-entered.
    */
-  protected static Dimension size = new Dimension();
-  protected static Rectangle viewRect = new Rectangle();
-  protected static Rectangle iconRect = new Rectangle();
-  protected static Rectangle textRect = new Rectangle();
+  protected static Dimension       size          = new Dimension();
+  protected static Rectangle       viewRect      = new Rectangle();
+  protected static Rectangle       iconRect      = new Rectangle();
+  protected static Rectangle       textRect      = new Rectangle();
 
   public static ComponentUI createUI(JComponent c) {
     if (radioButtonUI == null) {
@@ -64,12 +66,14 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     return radioButtonUI;
   }
 
+  @Override
   public void installDefaults(AbstractButton b) {
     super.installDefaults(b);
     b.setRolloverEnabled(true);
     icon = UIManager.getIcon("RadioButton.icon");
   }
 
+  @Override
   public void paint(Graphics g, JComponent c) {
     AbstractButton b = (AbstractButton) c;
     g.setFont(c.getFont());
@@ -84,12 +88,9 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     iconRect.x = iconRect.y = iconRect.width = iconRect.height = 0;
     textRect.x = textRect.y = textRect.width = textRect.height = 0;
     Icon altIcon = b.getIcon();
-    int iconTextGap = getDefaultTextIconGap(b);
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      iconTextGap = b.getIconTextGap();
-    }
+    int iconTextGap = b.getIconTextGap();
     String text = SwingUtilities.layoutCompoundLabel(c, fm, b.getText(), altIcon != null ? altIcon : getDefaultIcon(), b.getVerticalAlignment(),
-            b.getHorizontalAlignment(), b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, iconTextGap);
+        b.getHorizontalAlignment(), b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, iconTextGap);
 
     // fill background
     if (c.isOpaque()) {
@@ -112,6 +113,7 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     g.fillRect(0, 0, c.getWidth(), c.getHeight());
   }
 
+  @Override
   protected void paintIcon(Graphics g, JComponent c, Rectangle iconRect) {
     AbstractButton b = (AbstractButton) c;
     ButtonModel model = b.getModel();
@@ -119,23 +121,29 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     if (!model.isEnabled()) {
       if (b.isSelected()) {
         ico = b.getDisabledSelectedIcon();
-      } else {
+      }
+      else {
         ico = b.getDisabledIcon();
       }
-    } else {
+    }
+    else {
       if (model.isPressed()) {
         ico = b.getPressedIcon();
-      } else {
+      }
+      else {
         if (model.isRollover()) {
           if (b.isSelected()) {
             ico = b.getRolloverSelectedIcon();
-          } else {
+          }
+          else {
             ico = b.getRolloverIcon();
           }
-        } else {
+        }
+        else {
           if (b.isSelected()) {
             ico = b.getSelectedIcon();
-          } else {
+          }
+          else {
             ico = b.getIcon();
           }
         }
@@ -144,10 +152,12 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
 
     if (ico != null) {
       ico.paintIcon(c, g, iconRect.x, iconRect.y - 1);
-    } else {
+    }
+    else {
       if (b.getIcon() != null) {
         b.getIcon().paintIcon(c, g, iconRect.x, iconRect.y - 1);
-      } else {
+      }
+      else {
         getDefaultIcon().paintIcon(c, g, iconRect.x, iconRect.y - 1);
       }
     }
@@ -166,22 +176,19 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
       if (AbstractLookAndFeel.getTheme().isTextAntiAliasingOn()) {
         g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, savedRenderingHint);
       }
-    } else {
+    }
+    else {
       AbstractButton b = (AbstractButton) c;
       ButtonModel model = b.getModel();
       g.setFont(b.getFont());
       FontMetrics fm = JTattooUtilities.getFontMetrics(b, g, b.getFont());
-      int mnemIndex;
-      if (JTattooUtilities.getJavaVersion() >= 1.4) {
-        mnemIndex = b.getDisplayedMnemonicIndex();
-      } else {
-        mnemIndex = JTattooUtilities.findDisplayedMnemonicIndex(b.getText(), model.getMnemonic());
-      }
+      int mnemIndex = b.getDisplayedMnemonicIndex();
       if (model.isEnabled()) {
         g.setColor(b.getForeground());
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x, textRect.y + fm.getAscent());
-      } else {
-        g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
+      }
+      else {
+        g.setColor(Color.white);
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
         g.setColor(AbstractLookAndFeel.getDisabledForegroundColor());
         JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x, textRect.y + fm.getAscent());
@@ -189,8 +196,10 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     }
   }
 
+  @Override
   protected void paintFocus(Graphics g, Rectangle t, Dimension d) {
     g.setColor(AbstractLookAndFeel.getFocusColor());
     BasicGraphicsUtils.drawDashedRect(g, t.x, t.y - 1, t.width + 1, t.height + 1);
   }
-}
+
+} // end of class BaseRadioButtonUI

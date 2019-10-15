@@ -1,35 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JSplitPane;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -42,25 +35,31 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JSplitPane;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+
 /**
  * @author Michael Hagen
  */
 public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
 
   protected boolean centerOneTouchButtons = true;
-  protected boolean flatMode = false;
+  protected boolean flatMode              = false;
 
   public BaseSplitPaneDivider(BasicSplitPaneUI ui) {
     super(ui);
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      if (UIManager.get("SplitPane.centerOneTouchButtons") != null) {
-        centerOneTouchButtons = UIManager.getBoolean("SplitPane.centerOneTouchButtons");
-      }
+    if (UIManager.get("SplitPane.centerOneTouchButtons") != null) {
+      centerOneTouchButtons = UIManager.getBoolean("SplitPane.centerOneTouchButtons");
     }
     setLayout(new MyDividerLayout());
     Object flatModeProperty = ui.getSplitPane().getClientProperty("flatMode");
     if (flatModeProperty instanceof Boolean) {
-      flatMode = ((Boolean) flatModeProperty).booleanValue();
+      flatMode = ((Boolean) flatModeProperty);
     }
   }
 
@@ -72,6 +71,7 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
     this.flatMode = flatMode;
   }
 
+  @Override
   public Border getBorder() {
     return null;
   }
@@ -80,6 +80,7 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
     return ColorHelper.darker(AbstractLookAndFeel.getTheme().getRolloverColor(), 16);
   }
 
+  @Override
   public void paint(Graphics g) {
     if (!isFlatMode()) {
       Graphics2D g2D = (Graphics2D) g;
@@ -115,13 +116,15 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
               horBumps.paintIcon(this, g, x, y);
               y = centerY + 40;
               horBumps.paintIcon(this, g, x, y);
-            } else {
+            }
+            else {
               int x = (width - horBumps.getIconWidth()) / 2 + dx;
               int y = (height - horBumps.getIconHeight()) / 2;
               horBumps.paintIcon(this, g, x, y);
             }
           }
-        } else {
+        }
+        else {
           JTattooUtilities.fillHorGradient(g, colors, 0, 0, width, height);
           Icon verBumps = laf.getIconFactory().getSplitterVerBumpIcon();
           if ((verBumps != null) && (height > verBumps.getIconHeight())) {
@@ -134,7 +137,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
               verBumps.paintIcon(this, g, x, y);
               x = centerX + 40;
               verBumps.paintIcon(this, g, x, y);
-            } else {
+            }
+            else {
               int x = (width - verBumps.getIconWidth()) / 2;
               int y = (height - verBumps.getIconHeight()) / 2 + dy;
               verBumps.paintIcon(this, g, x, y);
@@ -147,9 +151,11 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
     paintComponents(g);
   }
 
+  @Override
   protected JButton createLeftOneTouchButton() {
     JButton b = new JButton() {
 
+      @Override
       public void paint(Graphics g) {
         Color color = getBackground();
         int w = getSize().width;
@@ -157,7 +163,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
         if (getModel().isPressed() && getModel().isArmed()) {
           g.setColor(ColorHelper.darker(color, 40));
           g.fillRect(0, 0, w, h);
-        } else if (getModel().isRollover()) {
+        }
+        else if (getModel().isRollover()) {
           g.setColor(getRolloverColor());
           g.fillRect(0, 0, w, h);
         }
@@ -166,7 +173,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
           AbstractLookAndFeel lf = (AbstractLookAndFeel) UIManager.getLookAndFeel();
           if (orientation == JSplitPane.HORIZONTAL_SPLIT) {
             icon = lf.getIconFactory().getSplitterLeftArrowIcon();
-          } else {
+          }
+          else {
             icon = lf.getIconFactory().getSplitterUpArrowIcon();
           }
           int x = (w - icon.getIconWidth()) / 2;
@@ -176,12 +184,14 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
         if (getModel().isArmed()) {
           if (getModel().isPressed()) {
             JTattooUtilities.draw3DBorder(g, ColorHelper.darker(color, 30), ColorHelper.brighter(color, 80), 0, 0, w, h);
-          } else {
+          }
+          else {
             JTattooUtilities.draw3DBorder(g, ColorHelper.brighter(color, 80), ColorHelper.darker(color, 30), 0, 0, w, h);
           }
         }
       }
 
+      @Override
       public boolean isFocusTraversable() {
         return false;
       }
@@ -194,9 +204,11 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
     return b;
   }
 
+  @Override
   protected JButton createRightOneTouchButton() {
     JButton b = new JButton() {
 
+      @Override
       public void paint(Graphics g) {
         Color color = getBackground();
         int w = getSize().width;
@@ -204,7 +216,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
         if (getModel().isPressed() && getModel().isArmed()) {
           g.setColor(ColorHelper.darker(color, 40));
           g.fillRect(0, 0, w, h);
-        } else if (getModel().isRollover()) {
+        }
+        else if (getModel().isRollover()) {
           g.setColor(getRolloverColor());
           g.fillRect(0, 0, w, h);
         }
@@ -213,7 +226,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
           AbstractLookAndFeel laf = (AbstractLookAndFeel) UIManager.getLookAndFeel();
           if (orientation == JSplitPane.HORIZONTAL_SPLIT) {
             icon = laf.getIconFactory().getSplitterRightArrowIcon();
-          } else {
+          }
+          else {
             icon = laf.getIconFactory().getSplitterDownArrowIcon();
           }
           int x = (w - icon.getIconWidth()) / 2;
@@ -223,12 +237,14 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
         if (getModel().isArmed()) {
           if (getModel().isPressed()) {
             JTattooUtilities.draw3DBorder(g, ColorHelper.darker(color, 30), ColorHelper.brighter(color, 80), 0, 0, w, h);
-          } else {
+          }
+          else {
             JTattooUtilities.draw3DBorder(g, ColorHelper.brighter(color, 80), ColorHelper.darker(color, 30), 0, 0, w, h);
           }
         }
       }
 
+      @Override
       public boolean isFocusTraversable() {
         return false;
       }
@@ -243,10 +259,10 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
 
   /**
    * Used to layout a <code>BasicSplitPaneDivider</code>. Layout for the divider involves appropriately moving the left/right buttons around.
-   * <p>
    */
   protected class MyDividerLayout implements LayoutManager {
 
+    @Override
     public void layoutContainer(Container c) {
       if (leftButton != null && rightButton != null && c == BaseSplitPaneDivider.this) {
         if (splitPane.isOneTouchExpandable()) {
@@ -269,7 +285,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
             int y = (c.getSize().height - blockSize) / 2;
             leftButton.setBounds(xOffs + extraX, y, blockSize * 2, blockSize);
             rightButton.setBounds(xOffs + extraX + blockSize * 2 + 1, y, blockSize * 2, blockSize);
-          } else {
+          }
+          else {
             int extraY = (insets != null) ? insets.top : 0;
             if (insets != null) {
               blockSize -= (insets.left + insets.right);
@@ -279,13 +296,15 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
             leftButton.setBounds(x, yOffs + extraY, blockSize, blockSize * 2);
             rightButton.setBounds(x, yOffs + extraY + blockSize * 2 + 1, blockSize, blockSize * 2);
           }
-        } else {
+        }
+        else {
           leftButton.setBounds(-5, -5, 1, 1);
           rightButton.setBounds(-5, -5, 1, 1);
         }
       }
     }
 
+    @Override
     public Dimension minimumLayoutSize(Container c) {
       // NOTE: This isn't really used, refer to
       // BasicSplitPaneDivider.getPreferredSize for the reason.
@@ -312,7 +331,8 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
           height = Math.max(height, size);
         }
         width = 1;
-      } else {
+      }
+      else {
         if (buttonMinSize != null) {
           int size = buttonMinSize.width;
           if (insets != null) {
@@ -325,15 +345,19 @@ public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
       return new Dimension(width, height);
     }
 
+    @Override
     public Dimension preferredLayoutSize(Container c) {
       return minimumLayoutSize(c);
     }
 
+    @Override
     public void removeLayoutComponent(Component c) {
     }
 
+    @Override
     public void addLayoutComponent(String string, Component c) {
     }
 
-  } // end class MyDividerLayout
-}
+  } // end of class MyDividerLayout
+
+} // end of class BaseSplitPaneDivieder

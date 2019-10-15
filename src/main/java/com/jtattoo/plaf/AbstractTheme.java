@@ -1,210 +1,207 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.RenderingHints;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.Icon;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.metal.MetalTheme;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.RenderingHints;
-import java.io.FileInputStream;
-import java.util.Properties;
 
 public abstract class AbstractTheme extends MetalTheme {
 
-  public static final int TEXT_ANTIALIAS_DEFAULT = 0;
-  public static final int TEXT_ANTIALIAS_GRAY = 1;
-  public static final int TEXT_ANTIALIAS_HRGB = 2;
-  public static final int TEXT_ANTIALIAS_HBGR = 3;
-  public static final int TEXT_ANTIALIAS_VRGB = 4;
-  public static final int TEXT_ANTIALIAS_VBGR = 5;
-  public static final String DIALOG = "Dialog";
+  public static final int             TEXT_ANTIALIAS_DEFAULT             = 0;
+  public static final int             TEXT_ANTIALIAS_GRAY                = 1;
+  public static final int             TEXT_ANTIALIAS_HRGB                = 2;
+  public static final int             TEXT_ANTIALIAS_HBGR                = 3;
+  public static final int             TEXT_ANTIALIAS_VRGB                = 4;
+  public static final int             TEXT_ANTIALIAS_VBGR                = 5;
+  public static final String          DIALOG                             = "Dialog";
 
-  public static final ColorUIResource red = new ColorUIResource(255, 0, 0);
-  public static final ColorUIResource green = new ColorUIResource(0, 255, 255);
-  public static final ColorUIResource cyan = new ColorUIResource(0, 255, 255);
-  public static final ColorUIResource white = new ColorUIResource(255, 255, 255);
-  public static final ColorUIResource superLightGray = new ColorUIResource(248, 248, 248);
-  public static final ColorUIResource extraLightGray = new ColorUIResource(232, 232, 232);
-  public static final ColorUIResource lightGray = new ColorUIResource(196, 196, 196);
-  public static final ColorUIResource gray = new ColorUIResource(164, 164, 164);
-  public static final ColorUIResource darkGray = new ColorUIResource(148, 148, 148);
-  public static final ColorUIResource extraDarkGray = new ColorUIResource(96, 96, 96);
-  public static final ColorUIResource black = new ColorUIResource(0, 0, 0);
-  public static final ColorUIResource orange = new ColorUIResource(255, 200, 0);
-  public static final ColorUIResource lightOrange = new ColorUIResource(255, 220, 96);
-  public static final ColorUIResource yellow = new ColorUIResource(255, 255, 196);
-  public static final ColorUIResource blue = new ColorUIResource(0, 128, 255);
-  public static final ColorUIResource darkBlue = new ColorUIResource(0, 64, 128);
+  public static final ColorUIResource RED                                = new ColorUIResource(255, 0, 0);
+  public static final ColorUIResource GREEN                              = new ColorUIResource(0, 255, 255);
+  public static final ColorUIResource CYAN                               = new ColorUIResource(0, 255, 255);
+  public static final ColorUIResource WHITE                              = new ColorUIResource(255, 255, 255);
+  public static final ColorUIResource SUPER_LIGHT_GRAY                   = new ColorUIResource(248, 248, 248);
+  public static final ColorUIResource EXTRA_LIGHT_GRAY                   = new ColorUIResource(232, 232, 232);
+  public static final ColorUIResource LIGHT_GRAY                         = new ColorUIResource(196, 196, 196);
+  public static final ColorUIResource GRAY                               = new ColorUIResource(164, 164, 164);
+  public static final ColorUIResource DARK_GRAY                          = new ColorUIResource(148, 148, 148);
+  public static final ColorUIResource EXTRA_DARK_GRAY                    = new ColorUIResource(96, 96, 96);
+  public static final ColorUIResource BLACK                              = new ColorUIResource(0, 0, 0);
+  public static final ColorUIResource ORANGE                             = new ColorUIResource(255, 200, 0);
+  public static final ColorUIResource LIGHT_ORANGE                       = new ColorUIResource(255, 220, 96);
+  public static final ColorUIResource YELLOW                             = new ColorUIResource(255, 255, 196);
+  public static final ColorUIResource BLUE                               = new ColorUIResource(0, 128, 255);
+  public static final ColorUIResource DARK_BLUE                          = new ColorUIResource(0, 64, 128);
 
-  protected static String internalName = "Default";
-  protected static boolean windowDecoration = false;
-  protected static boolean macStyleWindowDecoration = false;
-  protected static boolean centerWindowTitle = false;
-  protected static boolean linuxStyleScrollBar = false;
-  protected static boolean macStyleScrollBar = false;
-  protected static boolean dynamicLayout = false;
-  protected static boolean textShadow = false;
-  protected static boolean textAntiAliasing = false;
-  protected static int textAntiAliasingMode = TEXT_ANTIALIAS_HRGB;
-  protected static boolean backgroundPattern = true;
-  protected static boolean brightMode = false;
-  protected static boolean showFocusFrame = false;
-  protected static boolean drawSquareButtons = false;
-  protected static boolean toolbarDecorated = true;
+  protected static String             internalName                       = "Default";
+  protected static boolean            windowDecoration                   = false;
+  protected static boolean            macStyleWindowDecoration           = false;
+  protected static boolean            centerWindowTitle                  = false;
+  protected static boolean            linuxStyleScrollBar                = false;
+  protected static boolean            macStyleScrollBar                  = false;
+  protected static boolean            dynamicLayout                      = false;
+  protected static boolean            textShadow                         = false;
+  protected static boolean            textAntiAliasing                   = true;
+  protected static int                textAntiAliasingMode               = TEXT_ANTIALIAS_HRGB;
+  protected static boolean            backgroundPattern                  = true;
+  protected static boolean            brightMode                         = false;
+  protected static boolean            showFocusFrame                     = false;
+  protected static boolean            drawSquareButtons                  = false;
+  protected static boolean            toolbarDecorated                   = true;
 
-  protected static boolean menuOpaque = true;
-  protected static float menuAlpha = 0.9f;
-  protected static int defaultFontSize = 12;
-  protected static String logoString = "JTattoo";
-  protected static FontUIResource controlFont = null;
-  protected static FontUIResource systemFont = null;
-  protected static FontUIResource userFont = null;
-  protected static FontUIResource smallFont = null;
-  protected static FontUIResource menuFont = null;
-  protected static FontUIResource windowTitleFont = null;
-  protected static ColorUIResource foregroundColor = null;
-  protected static ColorUIResource backgroundColor = null;
-  protected static ColorUIResource backgroundColorLight = null;
-  protected static ColorUIResource backgroundColorDark = null;
-  protected static ColorUIResource alterBackgroundColor = null;
-  protected static ColorUIResource disabledForegroundColor = null;
-  protected static ColorUIResource disabledBackgroundColor = null;
-  protected static ColorUIResource inputBackgroundColor = null;
-  protected static ColorUIResource inputForegroundColor = null;
-  protected static ColorUIResource selectionForegroundColor = null;
-  protected static ColorUIResource selectionBackgroundColorLight = null;
-  protected static ColorUIResource selectionBackgroundColorDark = null;
-  protected static ColorUIResource selectionBackgroundColor = null;
-  protected static ColorUIResource rolloverForegroundColor = null;
-  protected static ColorUIResource rolloverColor = null;
-  protected static ColorUIResource rolloverColorLight = null;
-  protected static ColorUIResource rolloverColorDark = null;
-  protected static ColorUIResource pressedForegroundColor = null;
-  protected static ColorUIResource pressedBackgroundColor = null;
-  protected static ColorUIResource pressedBackgroundColorLight = null;
-  protected static ColorUIResource pressedBackgroundColorDark = null;
-  protected static ColorUIResource focusColor = null;
-  protected static ColorUIResource focusCellColor = null;
-  protected static ColorUIResource focusFrameColor = null;
-  protected static ColorUIResource focusBackgroundColor = null;
-  protected static ColorUIResource focusForegroundColor = null;
-  protected static ColorUIResource frameColor = null;
-  protected static ColorUIResource gridColor = null;
-  protected static ColorUIResource selectedGridColor = null;
-  protected static ColorUIResource shadowColor = null;
-  protected static ColorUIResource buttonForegroundColor = null;
-  protected static ColorUIResource buttonBackgroundColor = null;
-  protected static ColorUIResource buttonColorLight = null;
-  protected static ColorUIResource buttonColorDark = null;
-  protected static ColorUIResource controlForegroundColor = null;
-  protected static ColorUIResource controlBackgroundColor = null;
-  protected static ColorUIResource controlHighlightColor = null;
-  protected static ColorUIResource controlShadowColor = null;
-  protected static ColorUIResource controlDarkShadowColor = null;
-  protected static ColorUIResource controlColorLight = null;
-  protected static ColorUIResource controlColorDark = null;
-  protected static ColorUIResource windowTitleForegroundColor = null;
-  protected static ColorUIResource windowTitleBackgroundColor = null;
-  protected static ColorUIResource windowTitleColorLight = null;
-  protected static ColorUIResource windowTitleColorDark = null;
-  protected static ColorUIResource windowBorderColor = null;
-  protected static ColorUIResource windowIconColor = null;
-  protected static ColorUIResource windowIconShadowColor = null;
-  protected static ColorUIResource windowIconRolloverColor = null;
-  protected static ColorUIResource linkForegroundColor = null;
+  protected static boolean            menuOpaque                         = true;
+  protected static float              menuAlpha                          = 0.9f;
+  protected static String             logoString                         = "JTattoo";
+  protected static FontUIResource     controlFont                        = null;
+  protected static FontUIResource     systemFont                         = null;
+  protected static FontUIResource     userFont                           = null;
+  protected static FontUIResource     smallFont                          = null;
+  protected static FontUIResource     menuFont                           = null;
+  protected static FontUIResource     windowTitleFont                    = null;
+  protected static ColorUIResource    foregroundColor                    = null;
+  protected static ColorUIResource    backgroundColor                    = null;
+  protected static ColorUIResource    backgroundColorLight               = null;
+  protected static ColorUIResource    backgroundColorDark                = null;
+  protected static ColorUIResource    alterBackgroundColor               = null;
+  protected static ColorUIResource    disabledForegroundColor            = null;
+  protected static ColorUIResource    disabledBackgroundColor            = null;
+  protected static ColorUIResource    inputBackgroundColor               = null;
+  protected static ColorUIResource    inputForegroundColor               = null;
+  protected static ColorUIResource    selectionForegroundColor           = null;
+  protected static ColorUIResource    selectionBackgroundColorLight      = null;
+  protected static ColorUIResource    selectionBackgroundColorDark       = null;
+  protected static ColorUIResource    selectionBackgroundColor           = null;
+  protected static ColorUIResource    rolloverForegroundColor            = null;
+  protected static ColorUIResource    rolloverColor                      = null;
+  protected static ColorUIResource    rolloverColorLight                 = null;
+  protected static ColorUIResource    rolloverColorDark                  = null;
+  protected static ColorUIResource    pressedForegroundColor             = null;
+  protected static ColorUIResource    pressedBackgroundColor             = null;
+  protected static ColorUIResource    pressedBackgroundColorLight        = null;
+  protected static ColorUIResource    pressedBackgroundColorDark         = null;
+  protected static ColorUIResource    focusColor                         = null;
+  protected static ColorUIResource    focusCellColor                     = null;
+  protected static ColorUIResource    focusFrameColor                    = null;
+  protected static ColorUIResource    focusBackgroundColor               = null;
+  protected static ColorUIResource    focusForegroundColor               = null;
+  protected static ColorUIResource    frameColor                         = null;
+  protected static ColorUIResource    gridColor                          = null;
+  protected static ColorUIResource    shadowColor                        = null;
+  protected static ColorUIResource    buttonForegroundColor              = null;
+  protected static ColorUIResource    buttonBackgroundColor              = null;
+  protected static ColorUIResource    buttonColorLight                   = null;
+  protected static ColorUIResource    buttonColorDark                    = null;
+  protected static ColorUIResource    controlForegroundColor             = null;
+  protected static ColorUIResource    controlBackgroundColor             = null;
+  protected static ColorUIResource    controlHighlightColor              = null;
+  protected static ColorUIResource    controlShadowColor                 = null;
+  protected static ColorUIResource    controlDarkShadowColor             = null;
+  protected static ColorUIResource    controlColorLight                  = null;
+  protected static ColorUIResource    controlColorDark                   = null;
+  protected static ColorUIResource    windowTitleForegroundColor         = null;
+  protected static ColorUIResource    windowTitleBackgroundColor         = null;
+  protected static ColorUIResource    windowTitleColorLight              = null;
+  protected static ColorUIResource    windowTitleColorDark               = null;
+  protected static ColorUIResource    windowBorderColor                  = null;
+  protected static ColorUIResource    windowIconColor                    = null;
+  protected static ColorUIResource    windowIconShadowColor              = null;
+  protected static ColorUIResource    windowIconRolloverColor            = null;
 
-  protected static ColorUIResource windowInactiveTitleForegroundColor = null;
-  protected static ColorUIResource windowInactiveTitleBackgroundColor = null;
-  protected static ColorUIResource windowInactiveTitleColorLight = null;
-  protected static ColorUIResource windowInactiveTitleColorDark = null;
-  protected static ColorUIResource windowInactiveBorderColor = null;
-  protected static ColorUIResource menuForegroundColor = null;
-  protected static ColorUIResource menuBackgroundColor = null;
-  protected static ColorUIResource menuSelectionForegroundColor = null;
-  protected static ColorUIResource menuSelectionBackgroundColor = null;
-  protected static ColorUIResource menuSelectionBackgroundColorLight = null;
-  protected static ColorUIResource menuSelectionBackgroundColorDark = null;
-  protected static ColorUIResource menuColorLight = null;
-  protected static ColorUIResource menuColorDark = null;
-  protected static ColorUIResource toolbarForegroundColor = null;
-  protected static ColorUIResource toolbarBackgroundColor = null;
-  protected static ColorUIResource toolbarColorLight = null;
-  protected static ColorUIResource toolbarColorDark = null;
-  protected static ColorUIResource tabAreaBackgroundColor = null;
-  protected static ColorUIResource tabForegroundColor = null;
-  protected static ColorUIResource tabSelectionForegroundColor = null;
-  protected static ColorUIResource tabSelectionBackgroundColor = null;
-  protected static ColorUIResource desktopColor = null;
-  protected static ColorUIResource tooltipForegroundColor = null;
-  protected static ColorUIResource tooltipBackgroundColor = null;
-  protected static int tooltipBorderSize = 6;
-  protected static int tooltipShadowSize = 6;
-  protected static boolean tooltipCastShadow = false;
+  protected static ColorUIResource    windowInactiveTitleForegroundColor = null;
+  protected static ColorUIResource    windowInactiveTitleBackgroundColor = null;
+  protected static ColorUIResource    windowInactiveTitleColorLight      = null;
+  protected static ColorUIResource    windowInactiveTitleColorDark       = null;
+  protected static ColorUIResource    windowInactiveBorderColor          = null;
+  protected static ColorUIResource    menuForegroundColor                = null;
+  protected static ColorUIResource    menuBackgroundColor                = null;
+  protected static ColorUIResource    menuSelectionForegroundColor       = null;
+  protected static ColorUIResource    menuSelectionBackgroundColor       = null;
+  protected static ColorUIResource    menuSelectionBackgroundColorLight  = null;
+  protected static ColorUIResource    menuSelectionBackgroundColorDark   = null;
+  protected static ColorUIResource    menuColorLight                     = null;
+  protected static ColorUIResource    menuColorDark                      = null;
+  protected static ColorUIResource    toolbarForegroundColor             = null;
+  protected static ColorUIResource    toolbarBackgroundColor             = null;
+  protected static ColorUIResource    toolbarColorLight                  = null;
+  protected static ColorUIResource    toolbarColorDark                   = null;
+  protected static ColorUIResource    tabAreaBackgroundColor             = null;
+  protected static ColorUIResource    tabSelectionForegroundColor        = null;
+  protected static ColorUIResource    desktopColor                       = null;
+  protected static ColorUIResource    tooltipForegroundColor             = null;
+  protected static ColorUIResource    tooltipBackgroundColor             = null;
+  protected static int                tooltipBorderSize                  = 6;
+  protected static int                tooltipShadowSize                  = 6;
+  protected static boolean            tooltipCastShadow                  = false;
 
-  protected static Color DEFAULT_COLORS[] = null;
-  protected static Color HIDEFAULT_COLORS[] = null;
-  protected static Color ACTIVE_COLORS[] = null;
-  protected static Color INACTIVE_COLORS[] = null;
-  protected static Color ROLLOVER_COLORS[] = null;
-  protected static Color SELECTED_COLORS[] = null;
-  protected static Color SELECTION_COLORS[] = null;
-  protected static Color FOCUS_COLORS[] = null;
-  protected static Color MENU_SELECTION_COLORS[] = null;
-  protected static Color PRESSED_COLORS[] = null;
-  protected static Color DISABLED_COLORS[] = null;
-  protected static Color WINDOW_TITLE_COLORS[] = null;
-  protected static Color WINDOW_INACTIVE_TITLE_COLORS[] = null;
-  protected static Color TOOLBAR_COLORS[] = null;
-  protected static Color MENUBAR_COLORS[] = null;
-  protected static Color BUTTON_COLORS[] = null;
-  protected static Color CHECKBOX_COLORS[] = null;
-  protected static Color TAB_COLORS[] = null;
-  protected static Color COL_HEADER_COLORS[] = null;
-  protected static Color TRACK_COLORS[] = null;
-  protected static Color THUMB_COLORS[] = null;
-  protected static Color SLIDER_COLORS[] = null;
-  protected static Color PROGRESSBAR_COLORS[] = null;
-  protected static Color GRID_COLORS[] = null;
+  protected static Color              DEFAULT_COLORS[]                   = null;
+  protected static Color              HIDEFAULT_COLORS[]                 = null;
+  protected static Color              ACTIVE_COLORS[]                    = null;
+  protected static Color              INACTIVE_COLORS[]                  = null;
+  protected static Color              ROLLOVER_COLORS[]                  = null;
+  protected static Color              SELECTED_COLORS[]                  = null;
+  protected static Color              SELECTION_COLORS[]                 = null;
+  protected static Color              FOCUS_COLORS[]                     = null;
+  protected static Color              MENU_SELECTION_COLORS[]            = null;
+  protected static Color              PRESSED_COLORS[]                   = null;
+  protected static Color              DISABLED_COLORS[]                  = null;
+  protected static Color              WINDOW_TITLE_COLORS[]              = null;
+  protected static Color              WINDOW_INACTIVE_TITLE_COLORS[]     = null;
+  protected static Color              TOOLBAR_COLORS[]                   = null;
+  protected static Color              MENUBAR_COLORS[]                   = null;
+  protected static Color              BUTTON_COLORS[]                    = null;
+  protected static Color              CHECKBOX_COLORS[]                  = null;
+  protected static Color              TAB_COLORS[]                       = null;
+  protected static Color              COL_HEADER_COLORS[]                = null;
+  protected static Color              TRACK_COLORS[]                     = null;
+  protected static Color              THUMB_COLORS[]                     = null;
+  protected static Color              SLIDER_COLORS[]                    = null;
+  protected static Color              PROGRESSBAR_COLORS[]               = null;
 
-  protected static String textureSet = "Default";
-  protected static boolean darkTexture = true;
-  protected static Icon windowTexture = null;
-  protected static Icon backgroundTexture = null;
-  protected static Icon alterBackgroundTexture = null;
-  protected static Icon selectedTexture = null;
-  protected static Icon rolloverTexture = null;
-  protected static Icon pressedTexture = null;
-  protected static Icon disabledTexture = null;
-  protected static Icon menubarTexture = null;
+  protected static String             textureSet                         = "Default";
+  protected static boolean            darkTexture                        = true;
+  protected static Icon               windowTexture                      = null;
+  protected static Icon               backgroundTexture                  = null;
+  protected static Icon               alterBackgroundTexture             = null;
+  protected static Icon               selectedTexture                    = null;
+  protected static Icon               rolloverTexture                    = null;
+  protected static Icon               pressedTexture                     = null;
+  protected static Icon               disabledTexture                    = null;
+  protected static Icon               menubarTexture                     = null;
 
   public AbstractTheme() {
     super();
   }
 
+  @Override
   public String getName() {
     return getInternalName();
   }
@@ -224,12 +221,12 @@ public abstract class AbstractTheme extends MetalTheme {
   public void setUpColor() {
     windowDecoration = true;
     macStyleWindowDecoration = JTattooUtilities.isMac();
-    centerWindowTitle = JTattooUtilities.isWindows() && JTattooUtilities.getOSVersion() >= 6.2;
+    centerWindowTitle = JTattooUtilities.isWindows() && JTattooUtilities.getOSVersion() >= 6.2 && JTattooUtilities.getOSVersion() < 10.0;
     linuxStyleScrollBar = !JTattooUtilities.isWindows();
     macStyleScrollBar = JTattooUtilities.isMac();
     dynamicLayout = true;
     textShadow = false;
-    textAntiAliasing = false;
+    textAntiAliasing = true;
     textAntiAliasingMode = TEXT_ANTIALIAS_HRGB;
     backgroundPattern = true;
     brightMode = false;
@@ -247,93 +244,85 @@ public abstract class AbstractTheme extends MetalTheme {
     menuFont = null;
     windowTitleFont = null;
 
-    foregroundColor = black;
-    backgroundColor = extraLightGray;
-    backgroundColorLight = white;
-    backgroundColorDark = extraLightGray;
-    alterBackgroundColor = lightGray;
-    disabledForegroundColor = gray;
-    disabledBackgroundColor = superLightGray;
-    inputBackgroundColor = white;
-    inputForegroundColor = black;
-    selectionForegroundColor = black;
-    selectionBackgroundColor = lightGray;
-    selectionBackgroundColorLight = extraLightGray;
-    selectionBackgroundColorDark = lightGray;
-    focusColor = orange;
-    focusCellColor = orange;
+    foregroundColor = BLACK;
+    backgroundColor = EXTRA_LIGHT_GRAY;
+    backgroundColorLight = WHITE;
+    backgroundColorDark = EXTRA_LIGHT_GRAY;
+    alterBackgroundColor = LIGHT_GRAY;
+    disabledForegroundColor = GRAY;
+    disabledBackgroundColor = SUPER_LIGHT_GRAY;
+    inputBackgroundColor = WHITE;
+    inputForegroundColor = BLACK;
+    selectionForegroundColor = BLACK;
+    selectionBackgroundColor = LIGHT_GRAY;
+    selectionBackgroundColorLight = EXTRA_LIGHT_GRAY;
+    selectionBackgroundColorDark = LIGHT_GRAY;
+    focusColor = ORANGE;
+    focusCellColor = ORANGE;
     focusFrameColor = new ColorUIResource(230, 191, 116);
     focusBackgroundColor = new ColorUIResource(255, 250, 212);
-    focusForegroundColor = black;
-    frameColor = darkGray;
-    gridColor = gray;
-    selectedGridColor = gridColor;
+    focusForegroundColor = BLACK;
+    frameColor = DARK_GRAY;
+    gridColor = GRAY;
     shadowColor = new ColorUIResource(0, 24, 0);
-    linkForegroundColor = new ColorUIResource(Color.blue);
 
-    rolloverForegroundColor = black;
-    rolloverColor = extraLightGray;
-    rolloverColorLight = white;
-    rolloverColorDark = extraLightGray;
+    rolloverForegroundColor = BLACK;
+    rolloverColor = EXTRA_LIGHT_GRAY;
+    rolloverColorLight = WHITE;
+    rolloverColorDark = EXTRA_LIGHT_GRAY;
 
-    pressedForegroundColor = black;
-    // pressedBackgroundColor = lightGray;
-    // pressedBackgroundColorLight = new ColorUIResource(ColorHelper.brighter(pressedBackgroundColor, 20));
-    // pressedBackgroundColorDark = new ColorUIResource(ColorHelper.darker(pressedBackgroundColor, 4));
-    pressedBackgroundColor = red;
-    pressedBackgroundColorLight = red;
-    pressedBackgroundColorDark = blue;
+    pressedForegroundColor = BLACK;
+    pressedBackgroundColor = LIGHT_GRAY;
+    pressedBackgroundColorLight = new ColorUIResource(ColorHelper.brighter(pressedBackgroundColor, 20));
+    pressedBackgroundColorDark = new ColorUIResource(ColorHelper.darker(pressedBackgroundColor, 4));
 
-    buttonForegroundColor = black;
-    buttonBackgroundColor = lightGray;
-    buttonColorLight = white;
-    buttonColorDark = lightGray;
+    buttonForegroundColor = BLACK;
+    buttonBackgroundColor = LIGHT_GRAY;
+    buttonColorLight = WHITE;
+    buttonColorDark = LIGHT_GRAY;
 
-    controlForegroundColor = black;
-    controlBackgroundColor = lightGray;
-    controlHighlightColor = white;
-    controlShadowColor = lightGray;
-    controlDarkShadowColor = darkGray;
-    controlColorLight = white;
-    controlColorDark = lightGray;
+    controlForegroundColor = BLACK;
+    controlBackgroundColor = LIGHT_GRAY;
+    controlHighlightColor = WHITE;
+    controlShadowColor = LIGHT_GRAY;
+    controlDarkShadowColor = DARK_GRAY;
+    controlColorLight = WHITE;
+    controlColorDark = LIGHT_GRAY;
 
-    windowTitleForegroundColor = black;
-    windowTitleBackgroundColor = blue;
-    windowTitleColorLight = extraLightGray;
-    windowTitleColorDark = lightGray;
-    windowBorderColor = lightGray;
-    windowIconColor = black;
-    windowIconShadowColor = white;
-    windowIconRolloverColor = red;
+    windowTitleForegroundColor = BLACK;
+    windowTitleBackgroundColor = BLUE;
+    windowTitleColorLight = EXTRA_LIGHT_GRAY;
+    windowTitleColorDark = LIGHT_GRAY;
+    windowBorderColor = LIGHT_GRAY;
+    windowIconColor = BLACK;
+    windowIconShadowColor = WHITE;
+    windowIconRolloverColor = RED;
 
-    windowInactiveTitleForegroundColor = black;
-    windowInactiveTitleBackgroundColor = extraLightGray;
-    windowInactiveTitleColorLight = white;
-    windowInactiveTitleColorDark = extraLightGray;
-    windowInactiveBorderColor = extraLightGray;
+    windowInactiveTitleForegroundColor = BLACK;
+    windowInactiveTitleBackgroundColor = EXTRA_LIGHT_GRAY;
+    windowInactiveTitleColorLight = WHITE;
+    windowInactiveTitleColorDark = EXTRA_LIGHT_GRAY;
+    windowInactiveBorderColor = EXTRA_LIGHT_GRAY;
 
-    menuForegroundColor = black;
-    menuBackgroundColor = extraLightGray;
-    menuSelectionForegroundColor = black;
-    menuSelectionBackgroundColor = lightGray;
-    menuSelectionBackgroundColorLight = extraLightGray;
-    menuSelectionBackgroundColorDark = lightGray;
-    menuColorLight = extraLightGray;
-    menuColorDark = lightGray;
+    menuForegroundColor = BLACK;
+    menuBackgroundColor = EXTRA_LIGHT_GRAY;
+    menuSelectionForegroundColor = BLACK;
+    menuSelectionBackgroundColor = LIGHT_GRAY;
+    menuSelectionBackgroundColorLight = EXTRA_LIGHT_GRAY;
+    menuSelectionBackgroundColorDark = LIGHT_GRAY;
+    menuColorLight = EXTRA_LIGHT_GRAY;
+    menuColorDark = LIGHT_GRAY;
 
-    toolbarForegroundColor = black;
-    toolbarBackgroundColor = lightGray;
-    toolbarColorLight = white;
-    toolbarColorDark = lightGray;
+    toolbarForegroundColor = BLACK;
+    toolbarBackgroundColor = LIGHT_GRAY;
+    toolbarColorLight = WHITE;
+    toolbarColorDark = LIGHT_GRAY;
 
     tabAreaBackgroundColor = backgroundColor;
-    tabForegroundColor = foregroundColor;
     tabSelectionForegroundColor = selectionForegroundColor;
-    tabSelectionBackgroundColor = selectionForegroundColor;
-
-    desktopColor = darkBlue;
-    tooltipForegroundColor = black;
-    tooltipBackgroundColor = yellow;
+    desktopColor = DARK_BLUE;
+    tooltipForegroundColor = BLACK;
+    tooltipBackgroundColor = YELLOW;
     tooltipBorderSize = 6;
     tooltipShadowSize = 6;
     tooltipCastShadow = false;
@@ -367,7 +356,6 @@ public abstract class AbstractTheme extends MetalTheme {
     THUMB_COLORS = DEFAULT_COLORS;
     SLIDER_COLORS = DEFAULT_COLORS;
     PROGRESSBAR_COLORS = DEFAULT_COLORS;
-    GRID_COLORS = DEFAULT_COLORS;
   }
 
   public void setProperties(Properties props) {
@@ -456,13 +444,6 @@ public abstract class AbstractTheme extends MetalTheme {
       if (props.getProperty("subTextFont") != null) {
         smallFont = createFont(props.getProperty("subTextFont"));
       }
-      if (props.getProperty("defaultFontSize") != null) {
-        try {
-          defaultFontSize = Integer.parseInt(props.getProperty("defaultFontSize"));
-        } catch (NumberFormatException ignored) {
-          // stick to the default one
-        }
-      }
 
       if (props.getProperty("foregroundColor") != null) {
         foregroundColor = createColor(props.getProperty("foregroundColor"), foregroundColor);
@@ -508,9 +489,6 @@ public abstract class AbstractTheme extends MetalTheme {
       }
       if (props.getProperty("gridColor") != null) {
         gridColor = createColor(props.getProperty("gridColor"), gridColor);
-      }
-      if (props.getProperty("selectedGridColor") != null) {
-        selectedGridColor = createColor(props.getProperty("selectedGridColor"), selectedGridColor);
       }
       if (props.getProperty("shadowColor") != null) {
         shadowColor = createColor(props.getProperty("shadowColor"), shadowColor);
@@ -673,11 +651,11 @@ public abstract class AbstractTheme extends MetalTheme {
       if (props.getProperty("tabAreaBackgroundColor") != null) {
         tabAreaBackgroundColor = createColor(props.getProperty("tabAreaBackgroundColor"), tabAreaBackgroundColor);
       }
+      else {
+        tabAreaBackgroundColor = backgroundColor;
+      }
       if (props.getProperty("tabSelectionForegroundColor") != null) {
         tabSelectionForegroundColor = createColor(props.getProperty("tabSelectionForegroundColor"), tabSelectionForegroundColor);
-      }
-      if (props.getProperty("tabSelectionBackgroundColor") != null) {
-        tabSelectionBackgroundColor = createColor(props.getProperty("tabSelectionBackgroundColor"), tabSelectionBackgroundColor);
       }
 
       if (props.getProperty("desktopColor") != null) {
@@ -764,13 +742,16 @@ public abstract class AbstractTheme extends MetalTheme {
       in = new FileInputStream(fileName);
       props.load(in);
       setProperties(props);
-    } catch (Exception ex) {
-    } finally {
+    }
+    catch (IOException ex) {
+    }
+    finally {
       try {
         if (in != null) {
           in.close();
         }
-      } catch (Exception ex) {
+      }
+      catch (IOException ex) {
       }
     }
   }
@@ -793,16 +774,17 @@ public abstract class AbstractTheme extends MetalTheme {
         int p2 = colorProp.indexOf(' ');
         if (p2 > 0) {
           r = Integer.parseInt(colorProp.substring(p1, p2));
+          p1 = p2 + 1;
+          p2 = colorProp.indexOf(' ', p1);
+          if (p2 > 0) {
+            g = Integer.parseInt(colorProp.substring(p1, p2));
+            b = Integer.parseInt(colorProp.substring(p2 + 1));
+          }
         }
-        p1 = p2 + 1;
-        p2 = colorProp.indexOf(' ', p1);
-        if (p2 > 0) {
-          g = Integer.parseInt(colorProp.substring(p1, p2));
-        }
-        b = Integer.parseInt(colorProp.substring(p2 + 1));
         return new ColorUIResource(r, g, b);
-      } catch (Exception ex) {
-        System.out.println("Exception while parsing color: " + colorProp);
+      }
+      catch (NumberFormatException ex) {
+        System.out.println("Exception while parsing color property: " + colorProp);
       }
     }
     return color;
@@ -812,8 +794,9 @@ public abstract class AbstractTheme extends MetalTheme {
     int val = defaultValue;
     try {
       val = Integer.parseInt(intProp);
-    } catch (Exception ex) {
-      System.out.println("Exception while parsing color: " + intProp);
+    }
+    catch (NumberFormatException ex) {
+      System.out.println("Exception while parsing int property: " + intProp);
     }
     return val;
   }
@@ -834,66 +817,78 @@ public abstract class AbstractTheme extends MetalTheme {
     return userFont.getSize() >= 16;
   }
 
+  @Override
   public FontUIResource getControlTextFont() {
     if (controlFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         controlFont = new FontUIResource(DIALOG, Font.BOLD, 14);
-      } else {
+      }
+      else {
         controlFont = new FontUIResource(DIALOG, Font.PLAIN, 12);
       }
     }
     return controlFont;
   }
 
+  @Override
   public FontUIResource getSystemTextFont() {
     if (systemFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         systemFont = new FontUIResource(DIALOG, Font.BOLD, 14);
-      } else {
+      }
+      else {
         systemFont = new FontUIResource(DIALOG, Font.PLAIN, 12);
       }
     }
     return systemFont;
   }
 
+  @Override
   public FontUIResource getUserTextFont() {
     if (userFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         userFont = new FontUIResource(DIALOG, Font.BOLD, 14);
-      } else {
+      }
+      else {
         userFont = new FontUIResource(DIALOG, Font.PLAIN, 12);
       }
     }
     return userFont;
   }
 
+  @Override
   public FontUIResource getMenuTextFont() {
     if (menuFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         menuFont = new FontUIResource(DIALOG, Font.BOLD, 14);
-      } else {
+      }
+      else {
         menuFont = new FontUIResource(DIALOG, Font.PLAIN, 12);
       }
     }
     return menuFont;
   }
 
+  @Override
   public FontUIResource getWindowTitleFont() {
     if (windowTitleFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         windowTitleFont = new FontUIResource(DIALOG, Font.BOLD, 14);
-      } else {
+      }
+      else {
         windowTitleFont = new FontUIResource(DIALOG, Font.BOLD, 12);
       }
     }
     return windowTitleFont;
   }
 
+  @Override
   public FontUIResource getSubTextFont() {
     if (smallFont == null) {
       if (JTattooUtilities.isLinux() && JTattooUtilities.isHiresScreen()) {
         smallFont = new FontUIResource(DIALOG, Font.BOLD, 12);
-      } else {
+      }
+      else {
         smallFont = new FontUIResource(DIALOG, Font.PLAIN, 10);
       }
     }
@@ -901,78 +896,97 @@ public abstract class AbstractTheme extends MetalTheme {
   }
 
   // -----------------------------------------------------------------------------------
+  @Override
   protected ColorUIResource getPrimary1() {
     return foregroundColor;
   }
 
+  @Override
   protected ColorUIResource getPrimary2() {
     return desktopColor;
   }
 
+  @Override
   protected ColorUIResource getPrimary3() {
     return selectionBackgroundColor;
   }
 
+  @Override
   protected ColorUIResource getSecondary1() {
     return frameColor;
   }
 
+  @Override
   protected ColorUIResource getSecondary2() {
     return controlBackgroundColor;
   }
 
+  @Override
   protected ColorUIResource getSecondary3() {
     return backgroundColor;
   }
 
+  @Override
   public ColorUIResource getControl() {
     return controlBackgroundColor;
   }
 
+  @Override
   public ColorUIResource getControlShadow() {
     return controlShadowColor;
   }
 
+  @Override
   public ColorUIResource getControlDarkShadow() {
     return controlDarkShadowColor;
   }
 
+  @Override
   public ColorUIResource getControlInfo() {
     return controlForegroundColor;
   }
 
+  @Override
   public ColorUIResource getControlHighlight() {
     return controlHighlightColor;
   }
 
+  @Override
   public ColorUIResource getControlDisabled() {
     return controlShadowColor;
   }
 
+  @Override
   public ColorUIResource getPrimaryControl() {
-    return extraLightGray;
+    return EXTRA_LIGHT_GRAY;
   }
 
+  @Override
   public ColorUIResource getPrimaryControlShadow() {
-    return lightGray;
+    return LIGHT_GRAY;
   }
 
+  @Override
   public ColorUIResource getPrimaryControlDarkShadow() {
-    return gray;
+    return GRAY;
   }
 
+  @Override
   public ColorUIResource getPrimaryControlInfo() {
-    return darkGray;
+    return DARK_GRAY;
   }
 
+  @Override
   public ColorUIResource getPrimaryControlHighlight() {
-    return white;
+    return WHITE;
   }
 
+  @Override
   public ColorUIResource getControlTextColor() {
     return controlForegroundColor;
   }
 
+  @Override
   public ColorUIResource getSystemTextColor() {
     return foregroundColor;
   }
@@ -1015,9 +1029,6 @@ public abstract class AbstractTheme extends MetalTheme {
   }
 
   public boolean isTextAntiAliasingOn() {
-    if (JTattooUtilities.getJavaVersion() < 1.4) {
-      return false;
-    }
     return textAntiAliasing;
   }
 
@@ -1027,23 +1038,20 @@ public abstract class AbstractTheme extends MetalTheme {
 
   public Object getTextAntiAliasingHint() {
     if (isTextAntiAliasingOn()) {
-      if (JTattooUtilities.getJavaVersion() >= 1.6) {
-        switch (textAntiAliasingMode) {
-          case TEXT_ANTIALIAS_DEFAULT:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT;
-          case TEXT_ANTIALIAS_HRGB:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
-          case TEXT_ANTIALIAS_HBGR:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR;
-          case TEXT_ANTIALIAS_VRGB:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB;
-          case TEXT_ANTIALIAS_VBGR:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR;
-          default:
-            return RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
-        }
+      switch (textAntiAliasingMode) {
+        case TEXT_ANTIALIAS_DEFAULT:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT;
+        case TEXT_ANTIALIAS_HRGB:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
+        case TEXT_ANTIALIAS_HBGR:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR;
+        case TEXT_ANTIALIAS_VRGB:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB;
+        case TEXT_ANTIALIAS_VBGR:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR;
+        default:
+          return RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
       }
-      return RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
     }
     return RenderingHints.VALUE_TEXT_ANTIALIAS_OFF;
   }
@@ -1136,18 +1144,11 @@ public abstract class AbstractTheme extends MetalTheme {
     return gridColor;
   }
 
-  public ColorUIResource getSelectedGridColor() {
-    return selectedGridColor;
-  }
-
   public ColorUIResource getShadowColor() {
     return shadowColor;
   }
 
-  public ColorUIResource getLinkForegroundColor() {
-    return linkForegroundColor;
-  }
-
+  @Override
   public ColorUIResource getFocusColor() {
     return focusColor;
   }
@@ -1340,18 +1341,11 @@ public abstract class AbstractTheme extends MetalTheme {
     return tabAreaBackgroundColor;
   }
 
-  public ColorUIResource getTabForegroundColor() {
-    return tabForegroundColor;
-  }
-
   public ColorUIResource getTabSelectionForegroundColor() {
     return tabSelectionForegroundColor;
   }
 
-  public ColorUIResource getTabSelectionBackgroundColor() {
-    return tabSelectionBackgroundColor;
-  }
-
+  @Override
   public ColorUIResource getDesktopColor() {
     return desktopColor;
   }
@@ -1468,10 +1462,6 @@ public abstract class AbstractTheme extends MetalTheme {
     return PROGRESSBAR_COLORS;
   }
 
-  public Color[] getGridColors() {
-    return GRID_COLORS;
-  }
-
   public String getTextureSet() {
     return textureSet;
   }
@@ -1512,9 +1502,4 @@ public abstract class AbstractTheme extends MetalTheme {
     return menubarTexture;
   }
 
-  public int getDefaultFontSize() {
-    return defaultFontSize;
-  }
-
-  public abstract AbstractBorderFactory getBorderFactory();
-}
+} // end of class AbstractTheme

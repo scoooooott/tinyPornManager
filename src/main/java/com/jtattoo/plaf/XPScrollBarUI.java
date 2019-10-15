@@ -1,31 +1,28 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *
- * see: gpl-2.0.txt
- *
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- *
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- *
- * Registered users could also use JTattoo under the terms and conditions of the
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *
- * see: APACHE-LICENSE-2.0.txt
- */
+* Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+*  
+* JTattoo is multiple licensed. If your are an open source developer you can use
+* it under the terms and conditions of the GNU General Public License version 2.0
+* or later as published by the Free Software Foundation.
+*  
+* see: gpl-2.0.txt
+* 
+* If you pay for a license you will become a registered user who could use the
+* software under the terms and conditions of the GNU Lesser General Public License
+* version 2.0 or later with classpath exception as published by the Free Software
+* Foundation.
+* 
+* see: lgpl-2.0.txt
+* see: classpath-exception.txt
+* 
+* Registered users could also use JTattoo under the terms and conditions of the 
+* Apache License, Version 2.0 as published by the Apache Software Foundation.
+*  
+* see: APACHE-LICENSE-2.0.txt
+*/
 
 package com.jtattoo.plaf;
 
-import javax.swing.JComponent;
-import javax.swing.JScrollBar;
-import javax.swing.plaf.ComponentUI;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -33,18 +30,24 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import javax.swing.JComponent;
+import javax.swing.JScrollBar;
+import javax.swing.plaf.ComponentUI;
+
 /**
+ *
  * @author Michael Hagen
  */
 public class XPScrollBarUI extends BaseScrollBarUI {
 
   protected static Color rolloverColors[] = null;
-  protected static Color dragColors[] = null;
+  protected static Color dragColors[]     = null;
 
   public static ComponentUI createUI(JComponent c) {
     return new XPScrollBarUI();
   }
 
+  @Override
   protected void installDefaults() {
     super.installDefaults();
     Color colors[] = AbstractLookAndFeel.getTheme().getThumbColors();
@@ -60,6 +63,7 @@ public class XPScrollBarUI extends BaseScrollBarUI {
     return Color.white;
   }
 
+  @Override
   protected Color[] getThumbColors() {
     if (isDragging) {
       return dragColors;
@@ -70,6 +74,7 @@ public class XPScrollBarUI extends BaseScrollBarUI {
     return AbstractLookAndFeel.getTheme().getThumbColors();
   }
 
+  @Override
   protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
     if (!c.isEnabled()) {
       return;
@@ -105,7 +110,8 @@ public class XPScrollBarUI extends BaseScrollBarUI {
           dy++;
         }
       }
-    } else {
+    }
+    else {
       JTattooUtilities.fillHorGradient(g, colors, 0, 0, width, height);
       if (!AbstractLookAndFeel.getTheme().isMacStyleScrollBarOn()) {
         int dx = width / 2 - 3;
@@ -150,4 +156,5 @@ public class XPScrollBarUI extends BaseScrollBarUI {
     g.translate(-x, -y);
     g2D.setComposite(savedComposite);
   }
-}
+
+} // end of class XPScrollBarUI
