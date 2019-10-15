@@ -23,17 +23,6 @@
 
 package com.jtattoo.plaf;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.UIResource;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -45,6 +34,18 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.UIResource;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 
 public class BaseComboBoxUI extends BasicComboBoxUI {
 
@@ -162,7 +163,7 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
 
     public void paint(Graphics g) {
       Dimension size = getSize();
-      Color colors[];
+      Color[] colors;
       if (isEnabled()) {
         if (getModel().isArmed() && getModel().isPressed()) {
           colors = AbstractLookAndFeel.getTheme().getPressedColors();

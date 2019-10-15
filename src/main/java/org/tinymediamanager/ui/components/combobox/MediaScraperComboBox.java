@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -167,7 +166,7 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   class MediaScraperComboBoxRenderer extends JLabel implements ListCellRenderer<MediaScraper> {
-    protected final DefaultListCellRenderer defaultRenderer  = new DefaultListCellRenderer();
+    protected final ListCellRenderer defaultRenderer;
     private static final long               serialVersionUID = -4726883292397768525L;
 
     public MediaScraperComboBoxRenderer() {
@@ -176,6 +175,10 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       setVerticalAlignment(CENTER);
       setBorder(BorderFactory.createEmptyBorder(4, 5, 4, 5));
       imageCache = new HashMap<>();
+
+      // get the default renderer from a JComboBox
+      JComboBox box = new JComboBox();
+      defaultRenderer = box.getRenderer();
     }
 
     /*

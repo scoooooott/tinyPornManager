@@ -2,6 +2,7 @@ upcoming version
 =======================
 + support for rendering animated gifs
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
++ visually enhanced the CheckComboBox
 
 
 Version 3.0.5

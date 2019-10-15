@@ -53,8 +53,9 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
   protected final TriStateCheckBox      checkBox;
   protected final JLabel                label;
   protected final JComponent            filterComponent;
-  protected final ActionListener        actionListener        = e -> filterChanged();
-  protected final ChangeListener        changeListener        = e -> filterChanged();
+  protected final ActionListener        checkBoxActionListener;
+  protected final ActionListener        filterComponentActionListener;
+  protected final ChangeListener        changeListener;
 
   protected final PropertyChangeSupport propertyChangeSupport = new SwingPropertyChangeSupport(this, true);
 
@@ -64,31 +65,51 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
     this.label = createLabel();
     this.filterComponent = createFilterComponent();
 
-    this.checkBox.addActionListener(actionListener);
+    // always fire the change event if the checkbox has been changed
+    checkBoxActionListener = e -> filterChanged();
+    this.checkBox.addActionListener(checkBoxActionListener);
+
+    // the filter components only need to fire the change listener if the checkbox is active
+    filterComponentActionListener = e -> {
+      if (getFilterState() != FilterState.INACTIVE) {
+        filterChanged();
+      }
+    };
+    changeListener = e -> {
+      if (getFilterState() != FilterState.INACTIVE) {
+        filterChanged();
+      }
+    };
 
     if (this.filterComponent instanceof JTextComponent) {
       ((JTextComponent) this.filterComponent).getDocument().addDocumentListener(new DocumentListener() {
         @Override
         public void removeUpdate(DocumentEvent e) {
-          filterChanged();
+          if (getFilterState() != FilterState.INACTIVE) {
+            filterChanged();
+          }
         }
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-          filterChanged();
+          if (getFilterState() != FilterState.INACTIVE) {
+            filterChanged();
+          }
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-          filterChanged();
+          if (getFilterState() != FilterState.INACTIVE) {
+            filterChanged();
+          }
         }
       });
     }
     else if (this.filterComponent instanceof AbstractButton) {
-      ((AbstractButton) this.filterComponent).addActionListener(actionListener);
+      ((AbstractButton) this.filterComponent).addActionListener(filterComponentActionListener);
     }
     else if (this.filterComponent instanceof JComboBox) {
-      ((JComboBox<?>) this.filterComponent).addActionListener(actionListener);
+      ((JComboBox<?>) this.filterComponent).addActionListener(filterComponentActionListener);
     }
     else if (this.filterComponent instanceof JSpinner) {
       ((JSpinner) this.filterComponent).addChangeListener(changeListener);

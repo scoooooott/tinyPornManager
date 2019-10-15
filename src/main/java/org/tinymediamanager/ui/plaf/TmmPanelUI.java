@@ -15,14 +15,15 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BasePanelUI;
-
-import javax.swing.JComponent;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+
+import javax.swing.JComponent;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BasePanelUI;
 
 /**
  * The Class TmmPanelUI.
@@ -30,13 +31,13 @@ import java.awt.RenderingHints;
  * @author Manuel Laggner
  */
 public class TmmPanelUI extends BasePanelUI {
-  protected static String CLASS = "class";
-  protected static String ROUNDED_PANEL = "roundedPanel";
-  protected static String BORDER_RADIUS = "borderRadius";
-  protected static String TOOLBAR_PANEL = "toolbarPanel";
-  protected static String ROOT_PANEL = "rootPanel";
+  protected static String   CLASS         = "class";
+  protected static String   ROUNDED_PANEL = "roundedPanel";
+  protected static String   BORDER_RADIUS = "borderRadius";
+  protected static String   TOOLBAR_PANEL = "toolbarPanel";
+  protected static String   ROOT_PANEL    = "rootPanel";
 
-  private static TmmPanelUI panelUI = null;
+  private static TmmPanelUI panelUI       = null;
 
   public static ComponentUI createUI(JComponent c) {
     if (panelUI == null) {
@@ -52,15 +53,18 @@ public class TmmPanelUI extends BasePanelUI {
       if (panelClass != null && panelClass instanceof String && ROUNDED_PANEL.equals(panelClass.toString())) {
         // draw a rounded panel
         updateRoundedPanel(g, c);
-      } else if (panelClass != null && panelClass instanceof String && TOOLBAR_PANEL.equals(panelClass.toString())) {
+      }
+      else if (panelClass != null && panelClass instanceof String && TOOLBAR_PANEL.equals(panelClass.toString())) {
         // draw the toolbar panel
         c.setBackground(AbstractLookAndFeel.getWindowTitleBackgroundColor());
         super.update(g, c);
-      } else if (panelClass != null && panelClass instanceof String && ROOT_PANEL.equals(panelClass.toString())) {
+      }
+      else if (panelClass != null && panelClass instanceof String && ROOT_PANEL.equals(panelClass.toString())) {
         // draw the root panel
         c.setBackground(AbstractLookAndFeel.getTheme().getAlterBackgroundColor());
         super.update(g, c);
-      } else {
+      }
+      else {
         // default drawing
         super.update(g, c);
       }

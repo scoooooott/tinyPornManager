@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseComboBoxUI;
-import com.jtattoo.plaf.NoFocusButton;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,11 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseComboBoxUI;
+import com.jtattoo.plaf.NoFocusButton;
 
 /**
  * @author Manuel Laggner
@@ -54,10 +55,17 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
     if (comboBox.getEditor() != null) {
       if (comboBox.getEditor().getEditorComponent() instanceof JTextField) {
         ((JTextField) (comboBox.getEditor().getEditorComponent())).setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
-      } else if (comboBox.getEditor().getEditorComponent() instanceof JLabel) {
+      }
+      else if (comboBox.getEditor().getEditorComponent() instanceof JLabel) {
         ((JLabel) (comboBox.getEditor().getEditorComponent())).setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
       }
     }
+  }
+
+  @Override
+  protected void installDefaults() {
+    super.installDefaults();
+    squareButton = false;
   }
 
   @Override
@@ -66,7 +74,7 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
     return new Dimension(size.width + 2, size.height + 4);
   }
 
-  @SuppressWarnings({"unchecked"})
+  @SuppressWarnings({ "unchecked" })
   @Override
   public void paintCurrentValue(Graphics g, Rectangle bounds, boolean hasFocus) {
     @SuppressWarnings("rawtypes")
@@ -75,7 +83,8 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
 
     if (hasFocus && !isPopupVisible(comboBox)) {
       c = renderer.getListCellRendererComponent(listBox, comboBox.getSelectedItem(), -1, true, false);
-    } else {
+    }
+    else {
       c = renderer.getListCellRendererComponent(listBox, comboBox.getSelectedItem(), -1, false, false);
       c.setBackground(UIManager.getColor("ComboBox.background"));
     }
@@ -84,7 +93,8 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
     if (comboBox.isEnabled()) {
       c.setForeground(comboBox.getForeground());
       c.setBackground(comboBox.getBackground());
-    } else {
+    }
+    else {
       c.setForeground(UIManager.getColor("ComboBox.disabledForeground", c.getLocale()));
       c.setBackground(UIManager.getColor("ComboBox.disabledBackground", c.getLocale()));
     }
@@ -111,7 +121,8 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
     Color t = g.getColor();
     if (comboBox.isEnabled()) {
       g.setColor(UIManager.getColor("ComboBox.background", comboBox.getLocale()));
-    } else {
+    }
+    else {
       g.setColor(UIManager.getColor("ComboBox.disabledBackground", comboBox.getLocale()));
     }
     g.fillRect(0, 0, comboBox.getWidth(), comboBox.getHeight());
@@ -125,6 +136,11 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
   private class ArrowButton extends NoFocusButton {
     private static final long serialVersionUID = -2765755741007665606L;
 
+    public ArrowButton() {
+      super();
+      setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    }
+
     @Override
     public void paint(Graphics g) {
       int w = getWidth();
@@ -132,8 +148,8 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
 
       g.setColor(AbstractLookAndFeel.getButtonForegroundColor());
 
-      int[] xPoints = {w / 2 + 5, w / 2 - 5, w / 2};
-      int[] yPoints = {h / 2 - 1, h / 2 - 1, h / 2 + 4};
+      int[] xPoints = { w / 2 + 5, w / 2 - 5, w / 2 };
+      int[] yPoints = { h / 2 - 1, h / 2 - 1, h / 2 + 4 };
       g.fillPolygon(xPoints, yPoints, xPoints.length);
     }
   }
