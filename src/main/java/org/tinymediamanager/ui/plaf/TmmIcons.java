@@ -462,7 +462,13 @@ public class TmmIcons extends BaseIcons {
   }
 
   private static int calculateFontIconSize(float scaleFactor) {
-    return (int) Math.floor(AbstractLookAndFeel.getDefaultFontSize() * scaleFactor);
+    try {
+      return (int) Math.floor(AbstractLookAndFeel.getDefaultFontSize() * scaleFactor);
+    }
+    catch (Exception e) {
+      return 12;
+    }
+
   }
 
   /**
