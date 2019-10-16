@@ -15,11 +15,13 @@
  */
 package org.tinymediamanager.ui.plaf.dark;
 
-import com.jtattoo.plaf.AbstractBorderFactory;
-import org.tinymediamanager.ui.plaf.TmmTheme;
+import java.awt.Color;
 
 import javax.swing.plaf.ColorUIResource;
-import java.awt.Color;
+
+import org.tinymediamanager.ui.plaf.TmmTheme;
+
+import com.jtattoo.plaf.AbstractBorderFactory;
 
 public class TmmDarkDefaultTheme extends TmmTheme {
 
@@ -52,7 +54,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     disabledForegroundColor = foregroundColor;
     disabledBackgroundColor = backgroundColorLight;
 
-    selectionForegroundColor = white;
+    selectionForegroundColor = WHITE;
     selectionBackgroundColor = new ColorUIResource(85, 85, 85);
     // selectionBackgroundColor = new ColorUIResource(119, 153, 187);
 
@@ -71,18 +73,18 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     inputBackgroundColor = alterBackgroundColor;
     inputForegroundColor = foregroundColor;
 
-    controlForegroundColor = black;
+    controlForegroundColor = BLACK;
     controlBackgroundColor = alterBackgroundColor;
-    controlColorLight = white;
+    controlColorLight = WHITE;
     controlColorDark = new ColorUIResource(214, 208, 197);
 
-    windowTitleForegroundColor = white;
+    windowTitleForegroundColor = WHITE;
     windowTitleBackgroundColor = new ColorUIResource(46, 46, 46);
     windowTitleColorLight = new ColorUIResource(46, 46, 46);
     windowTitleColorDark = new ColorUIResource(46, 46, 46);
     windowBorderColor = new ColorUIResource(41, 41, 41);
 
-    windowInactiveTitleForegroundColor = white;
+    windowInactiveTitleForegroundColor = WHITE;
     windowInactiveTitleBackgroundColor = windowTitleBackgroundColor;
     windowInactiveTitleColorLight = windowInactiveTitleBackgroundColor;
     windowInactiveTitleColorDark = windowInactiveTitleBackgroundColor;
@@ -109,7 +111,7 @@ public class TmmDarkDefaultTheme extends TmmTheme {
     gridColor = new ColorUIResource(85, 85, 85);
     selectedGridColor = new ColorUIResource(55, 55, 56);
 
-    textAntiAliasingMode = TEXT_ANTIALIAS_DEFAULT;
+    textAntiAliasingMode = TEXT_ANTIALIAS_HRGB;
     textAntiAliasing = true;
 
     linkForegroundColor = new ColorUIResource(114, 161, 252);

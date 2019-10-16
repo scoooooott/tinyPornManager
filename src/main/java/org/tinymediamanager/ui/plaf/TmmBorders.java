@@ -15,25 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseBorders;
-import com.jtattoo.plaf.ColorHelper;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
-import javax.swing.JComboBox;
-import javax.swing.JMenuBar;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.UIResource;
-import javax.swing.text.JTextComponent;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -51,6 +32,26 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JComboBox;
+import javax.swing.JMenuBar;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.UIResource;
+import javax.swing.text.JTextComponent;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseBorders;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * @author Manuel Laggner
@@ -313,10 +314,10 @@ public class TmmBorders extends BaseBorders {
     private static final long serialVersionUID = 1227394113801329301L;
 
     public InternalFrameBorder() {
-      insets.top = 3;
-      insets.left = 2;
-      insets.right = 2;
-      insets.bottom = 2;
+      INSETS.top = 3;
+      INSETS.left = 2;
+      INSETS.right = 2;
+      INSETS.bottom = 2;
     }
 
     @Override

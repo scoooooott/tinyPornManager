@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.plaf;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.lang.reflect.Field;
 
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
@@ -44,6 +45,23 @@ public class TmmPanelUI extends BasePanelUI {
       panelUI = new TmmPanelUI();
     }
     return panelUI;
+  }
+
+  @Override
+  public void installUI(JComponent jComponent) {
+    super.installUI(jComponent);
+
+    // hack to force heavy weight popups
+    try {
+      Class clazz = Class.forName("javax.swing.ClientPropertyKey");
+      Field field = clazz.getDeclaredField("PopupFactory_FORCE_HEAVYWEIGHT_POPUP");
+
+      field.setAccessible(true);
+      jComponent.putClientProperty(field.get(null), Boolean.TRUE);
+    }
+    catch (Exception ignored) {
+      // just ignore
+    }
   }
 
   @Override

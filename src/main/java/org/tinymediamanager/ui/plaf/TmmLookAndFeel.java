@@ -16,6 +16,17 @@
 
 package org.tinymediamanager.ui.plaf;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.swing.BorderFactory;
+import javax.swing.UIDefaults;
+
+import org.tinymediamanager.ui.plaf.dark.TmmDarkBorderFactory;
+
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseCheckBoxMenuItemUI;
 import com.jtattoo.plaf.BaseDesktopPaneUI;
@@ -30,15 +41,6 @@ import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.BaseSeparatorUI;
 import com.jtattoo.plaf.BaseSliderUI;
 import com.jtattoo.plaf.BaseToolTipUI;
-import org.tinymediamanager.ui.plaf.dark.TmmDarkBorderFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.UIDefaults;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
 
@@ -153,8 +155,8 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
   @Override
   protected void initComponentDefaults(UIDefaults table) {
     super.initComponentDefaults(table);
-    table.put("ScrollBar.incrementButtonGap", new Integer(-1));
-    table.put("ScrollBar.decrementButtonGap", new Integer(-1));
+    table.put("ScrollBar.incrementButtonGap", -1);
+    table.put("ScrollBar.decrementButtonGap", -1);
     table.put("CheckBox.icon", getIconFactory().getCheckBoxIcon());
     table.put("TextPane.foreground", getForegroundColor());
     table.put("OptionPane.foreground", getForegroundColor());

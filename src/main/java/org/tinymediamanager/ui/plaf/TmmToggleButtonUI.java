@@ -15,17 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseToggleButtonUI;
-import com.jtattoo.plaf.ColorHelper;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
-import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.ComponentUI;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -37,9 +26,21 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JComponent;
+import javax.swing.JMenuBar;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseToggleButtonUI;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.JTattooUtilities;
+
 public class TmmToggleButtonUI extends BaseToggleButtonUI {
   protected boolean isFlatButton = false;
-  protected int focusWidth = 2;
+  protected int     focusWidth   = 2;
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmToggleButtonUI();
@@ -94,7 +95,8 @@ public class TmmToggleButtonUI extends BaseToggleButtonUI {
 
     if ((model.isPressed()) && (model.isArmed()) || model.isSelected()) {
       g2D.setColor(AbstractLookAndFeel.getTheme().getPressedBackgroundColor());
-    } else {
+    }
+    else {
       g2D.setColor(AbstractLookAndFeel.getButtonBackgroundColor());
     }
 
@@ -108,12 +110,7 @@ public class TmmToggleButtonUI extends BaseToggleButtonUI {
 
     FontMetrics fm = getFontMetrics(b, g, b.getFont());
 
-    int mnemIndex;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      mnemIndex = b.getDisplayedMnemonicIndex();
-    } else {
-      mnemIndex = JTattooUtilities.findDisplayedMnemonicIndex(b.getText(), model.getMnemonic());
-    }
+    int mnemIndex = b.getDisplayedMnemonicIndex();
 
     if (model.isEnabled()) {
       Color foreground = b.getForeground();
@@ -132,16 +129,20 @@ public class TmmToggleButtonUI extends BaseToggleButtonUI {
       if (background instanceof ColorUIResource) {
         if ((model.isPressed() && model.isArmed()) || model.isSelected()) {
           g.setColor(AbstractLookAndFeel.getTheme().getPressedForegroundColor());
-        } else if (model.isRollover()) {
+        }
+        else if (model.isRollover()) {
           g.setColor(AbstractLookAndFeel.getTheme().getRolloverForegroundColor());
-        } else {
+        }
+        else {
           g.setColor(foreground);
         }
-      } else {
+      }
+      else {
         g.setColor(foreground);
       }
       JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + offs, textRect.y + offs + fm.getAscent());
-    } else {
+    }
+    else {
       if (ColorHelper.getGrayValue(b.getForeground()) < 128) {
         g.setColor(Color.white);
         JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());

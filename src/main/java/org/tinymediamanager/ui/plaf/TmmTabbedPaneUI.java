@@ -15,13 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseTabbedPaneUI;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.JComponent;
-import javax.swing.UIManager;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -30,6 +23,14 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+
+import javax.swing.JComponent;
+import javax.swing.UIManager;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseTabbedPaneUI;
+import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * The Class TmmTabbedPaneUI.
@@ -184,10 +185,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
 
     // plain text
     g.setFont(font);
-    int mnemIndex = -1;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      mnemIndex = tabPane.getDisplayedMnemonicIndexAt(tabIndex);
-    }
+    int mnemIndex = tabPane.getDisplayedMnemonicIndexAt(tabIndex);
 
     if (tabPane.isEnabled() && tabPane.isEnabledAt(tabIndex)) {
       if (isSelected) {

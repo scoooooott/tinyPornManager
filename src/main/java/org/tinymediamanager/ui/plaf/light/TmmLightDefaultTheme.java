@@ -15,11 +15,13 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.AbstractBorderFactory;
-import org.tinymediamanager.ui.plaf.TmmTheme;
+import java.awt.Color;
 
 import javax.swing.plaf.ColorUIResource;
-import java.awt.Color;
+
+import org.tinymediamanager.ui.plaf.TmmTheme;
+
+import com.jtattoo.plaf.AbstractBorderFactory;
 
 public class TmmLightDefaultTheme extends TmmTheme {
 
@@ -51,7 +53,7 @@ public class TmmLightDefaultTheme extends TmmTheme {
     foregroundColor = new ColorUIResource(107, 107, 107);
     disabledForegroundColor = new ColorUIResource(157, 157, 157);
 
-    selectionForegroundColor = black;
+    selectionForegroundColor = BLACK;
     selectionBackgroundColor = new ColorUIResource(197, 207, 213);
 
     frameColor = new ColorUIResource(46, 46, 46);
@@ -70,12 +72,12 @@ public class TmmLightDefaultTheme extends TmmTheme {
     // inputBackgroundColor = alterBackgroundColor;
     inputForegroundColor = foregroundColor;
 
-    controlForegroundColor = black;
+    controlForegroundColor = BLACK;
     controlBackgroundColor = alterBackgroundColor;
-    controlColorLight = white;
+    controlColorLight = WHITE;
     controlColorDark = new ColorUIResource(214, 208, 197);
 
-    windowTitleForegroundColor = white;
+    windowTitleForegroundColor = WHITE;
     windowTitleBackgroundColor = new ColorUIResource(46, 46, 46);
     windowTitleColorLight = new ColorUIResource(46, 46, 46);
     windowTitleColorDark = new ColorUIResource(46, 46, 46);
@@ -87,8 +89,8 @@ public class TmmLightDefaultTheme extends TmmTheme {
     windowInactiveTitleColorDark = windowInactiveTitleBackgroundColor;
     windowInactiveBorderColor = windowBorderColor;
 
-    menuBackgroundColor = white;
-    menuSelectionForegroundColor = white;
+    menuBackgroundColor = WHITE;
+    menuSelectionForegroundColor = WHITE;
     menuSelectionBackgroundColor = selectionBackgroundColor;
     menuColorLight = new ColorUIResource(248, 247, 241);
     menuColorDark = backgroundColor;
@@ -106,7 +108,7 @@ public class TmmLightDefaultTheme extends TmmTheme {
     gridColor = new ColorUIResource(206, 206, 206);
     selectedGridColor = new ColorUIResource(78, 107, 126);
 
-    textAntiAliasingMode = TEXT_ANTIALIAS_DEFAULT;
+    textAntiAliasingMode = TEXT_ANTIALIAS_HRGB;
     textAntiAliasing = true;
 
     linkForegroundColor = new ColorUIResource(40, 123, 222);

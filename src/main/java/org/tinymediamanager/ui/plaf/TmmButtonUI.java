@@ -15,22 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseButtonUI;
-import com.jtattoo.plaf.ColorHelper;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
-import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicGraphicsUtils;
-import javax.swing.plaf.basic.BasicHTML;
-import javax.swing.text.View;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -44,12 +28,29 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JComponent;
+import javax.swing.JMenuBar;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicGraphicsUtils;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseButtonUI;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.JTattooUtilities;
+
 /**
  * @author Manuel Laggner
  */
 public class TmmButtonUI extends BaseButtonUI {
   protected boolean isFlatButton = false;
-  protected int focusWidth = 2;
+  protected int     focusWidth   = 2;
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmButtonUI();
@@ -108,7 +109,8 @@ public class TmmButtonUI extends BaseButtonUI {
 
     if ((model.isPressed()) && (model.isArmed())) {
       g2D.setColor(AbstractLookAndFeel.getTheme().getPressedBackgroundColor());
-    } else {
+    }
+    else {
       g2D.setColor(AbstractLookAndFeel.getButtonBackgroundColor());
     }
 
@@ -122,12 +124,7 @@ public class TmmButtonUI extends BaseButtonUI {
 
     FontMetrics fm = getFontMetrics(b, g, b.getFont());
 
-    int mnemIndex;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      mnemIndex = b.getDisplayedMnemonicIndex();
-    } else {
-      mnemIndex = JTattooUtilities.findDisplayedMnemonicIndex(b.getText(), model.getMnemonic());
-    }
+    int mnemIndex = b.getDisplayedMnemonicIndex();
 
     if (model.isEnabled()) {
       Color foreground = b.getForeground();
@@ -146,16 +143,20 @@ public class TmmButtonUI extends BaseButtonUI {
       if (background instanceof ColorUIResource && !isFlatButton) {
         if (model.isPressed() && model.isArmed()) {
           g.setColor(AbstractLookAndFeel.getTheme().getPressedForegroundColor());
-        } else if (model.isRollover()) {
+        }
+        else if (model.isRollover()) {
           g.setColor(AbstractLookAndFeel.getTheme().getRolloverForegroundColor());
-        } else {
+        }
+        else {
           g.setColor(foreground);
         }
-      } else {
+      }
+      else {
         g.setColor(foreground);
       }
       JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + offs, textRect.y + offs + fm.getAscent());
-    } else {
+    }
+    else {
       if (ColorHelper.getGrayValue(b.getForeground()) < 128) {
         g.setColor(Color.white);
         JTattooUtilities.drawStringUnderlineCharAt(b, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
@@ -187,12 +188,9 @@ public class TmmButtonUI extends BaseButtonUI {
     textRect.x = textRect.y = textRect.width = textRect.height = 0;
     iconRect.x = iconRect.y = iconRect.width = iconRect.height = 0;
 
-    int iconTextGap = defaultTextIconGap;
-    if (JTattooUtilities.getJavaVersion() >= 1.4) {
-      iconTextGap = b.getIconTextGap();
-    }
+    int iconTextGap = b.getIconTextGap();
     String text = SwingUtilities.layoutCompoundLabel(c, fm, b.getText(), b.getIcon(), b.getVerticalAlignment(), b.getHorizontalAlignment(),
-            b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, b.getText() == null ? 0 : iconTextGap);
+        b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect, iconRect, textRect, b.getText() == null ? 0 : iconTextGap);
 
     paintBackground(g, b);
 
@@ -203,7 +201,8 @@ public class TmmButtonUI extends BaseButtonUI {
         g2D.setComposite(alpha);
         paintIcon(g, c, iconRect);
         g2D.setComposite(savedComposite);
-      } else {
+      }
+      else {
         paintIcon(g, c, iconRect);
       }
     }
@@ -220,7 +219,8 @@ public class TmmButtonUI extends BaseButtonUI {
         if (AbstractLookAndFeel.getTheme().isTextAntiAliasingOn()) {
           g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, savedRenderingHint);
         }
-      } else {
+      }
+      else {
         paintText(g, b, textRect, text);
       }
     }
