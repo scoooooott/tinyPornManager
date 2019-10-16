@@ -206,24 +206,18 @@ public class BaseToolTipUI extends MetalToolTipUI {
       g2D.fillRect(0, 0, w, h);
       g2D.setColor(ColorHelper.darker(backColor, 40));
       g2D.drawRect(0, 0, w - 1, h - 1);
-      g2D.setColor(ColorHelper.darker(backColor, 10));
-      g2D.drawRect(borderSize - 1, borderSize - 1, w - (2 * borderSize - 1), h - (2 * borderSize - 1));
+      /*
+       * g2D.setColor(ColorHelper.darker(backColor, 10)); g2D.drawRect(borderSize - 1, borderSize - 1, w - (2 * borderSize - 1), h - (2 * borderSize -
+       * 1));
+       */
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
 
-      Paint savedPaint = g2D.getPaint();
-      Color cHi;
-      Color cLo;
-      if (ColorHelper.getGrayValue(backColor) < 128) {
-        cHi = ColorHelper.brighter(backColor, 10);
-        cLo = ColorHelper.darker(backColor, 20);
-      }
-      else {
-        cHi = ColorHelper.brighter(backColor, 40);
-        cLo = ColorHelper.darker(backColor, 5);
-      }
-      g2D.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize), cLo));
-      g2D.fillRect(borderSize, borderSize, w - (2 * borderSize), h - (2 * borderSize));
-      g2D.setPaint(savedPaint);
+      /*
+       * Paint savedPaint = g2D.getPaint(); Color cHi; Color cLo; if (ColorHelper.getGrayValue(backColor) < 128) { cHi =
+       * ColorHelper.brighter(backColor, 10); cLo = ColorHelper.darker(backColor, 20); } else { cHi = ColorHelper.brighter(backColor, 40); cLo =
+       * ColorHelper.darker(backColor, 5); } g2D.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize), cLo));
+       * g2D.fillRect(borderSize, borderSize, w - (2 * borderSize), h - (2 * borderSize)); g2D.setPaint(savedPaint);
+       */
 
       super.paint(g, c);
     }

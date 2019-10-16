@@ -124,6 +124,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
     ColorUIResource progressBarBackground = new ColorUIResource(ColorHelper.brighter(c, 20));
 
     // DEFAULTS TABLE
+    // @formatter:off
     Object[] defaults = {
             "controlTextFont", getControlTextFont(),
             "systemTextFont ", getSystemTextFont(),
@@ -218,7 +219,8 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "Slider.background", getBackgroundColor(),
             "Slider.focus", getFocusColor(),
             "Slider.focusInsets", new InsetsUIResource(0, 0, 0, 0),
-        "Slider.trackWidth", 7, "Slider.majorTickLength", 6,
+            "Slider.trackWidth", 7,
+            "Slider.majorTickLength", 6,
             // Progress Bar
             "ProgressBar.border", progressBarBorder,
             "ProgressBar.background", progressBarBackground,
@@ -256,7 +258,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "InternalFrame.border", getBorderFactory().getInternalFrameBorder(),
             "InternalFrame.font", getWindowTitleFont(),
             "InternalFrame.paletteBorder", getBorderFactory().getPaletteBorder(),
-        "InternalFrame.paletteTitleHeight", 11,
+            "InternalFrame.paletteTitleHeight", 11,
             "InternalFrame.paletteCloseIcon", getIconFactory().getPaletteCloseIcon(),
             "InternalFrame.icon", getIconFactory().getMenuIcon(),
             "InternalFrame.iconifyIcon", getIconFactory().getIconIcon(),
@@ -284,7 +286,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "ScrollBar.thumb", getControlBackgroundColor(),
             "ScrollBar.thumbShadow", getControlShadowColor(),
             "ScrollBar.thumbHighlight", getControlHighlightColor(),
-        "ScrollBar.width", 17,
+            "ScrollBar.width", 17,
             "ScrollBar.allowsAbsolutePositioning", Boolean.TRUE,
             // ScrollPane
             "ScrollPane.border", scrollPaneBorder,
@@ -400,7 +402,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "Separator.foreground", getControlForegroundColor(),
             // SplitPane
             "SplitPane.centerOneTouchButtons", Boolean.TRUE,
-        "SplitPane.dividerSize", 7,
+            "SplitPane.dividerSize", 7,
             "SplitPane.border", BorderFactory.createEmptyBorder(),
             // Tree
             "Tree.background", getInputBackgroundColor(),
@@ -428,7 +430,11 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "ToolBar.dockingBackground", getToolbarBackgroundColor(),
             "ToolBar.dockingForeground", getToolbarDockingColor(),
             "ToolBar.floatingBackground", getToolbarBackgroundColor(),
-        "ToolBar.floatingForeground", getToolbarForegroundColor(), };
+            "ToolBar.floatingForeground", getToolbarForegroundColor(),
+
+            "Focus.color", getFocusColor()
+    };
+    // @formatter:on
     table.putDefaults(defaults);
 
     table.put("Spinner.font", getControlTextFont());
@@ -711,6 +717,10 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
 
   public static ColorUIResource getTooltipBackgroundColor() {
     return getTheme().getTooltipBackgroundColor();
+  }
+
+  public static int getDefaultFontSize() {
+    return getTheme().getDefaultFontSize();
   }
 
 } // end of class AbstractLookAndFeel

@@ -68,5 +68,9 @@ public interface AbstractBorderFactory {
 
   public Border getProgressBarBorder();
 
+  public Border getTreeNodeBorder();
+
+  public Border getTitledBorder();
+
 } // end of interface AbstractBorderFactory
 

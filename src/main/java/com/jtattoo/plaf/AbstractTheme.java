@@ -80,6 +80,7 @@ public abstract class AbstractTheme extends MetalTheme {
 
   protected static boolean            menuOpaque                         = true;
   protected static float              menuAlpha                          = 0.9f;
+  protected static int                defaultFontSize                    = 12;
   protected static String             logoString                         = "JTattoo";
   protected static FontUIResource     controlFont                        = null;
   protected static FontUIResource     systemFont                         = null;
@@ -115,6 +116,7 @@ public abstract class AbstractTheme extends MetalTheme {
   protected static ColorUIResource    focusForegroundColor               = null;
   protected static ColorUIResource    frameColor                         = null;
   protected static ColorUIResource    gridColor                          = null;
+  protected static ColorUIResource    selectedGridColor                  = null;
   protected static ColorUIResource    shadowColor                        = null;
   protected static ColorUIResource    buttonForegroundColor              = null;
   protected static ColorUIResource    buttonBackgroundColor              = null;
@@ -135,6 +137,7 @@ public abstract class AbstractTheme extends MetalTheme {
   protected static ColorUIResource    windowIconColor                    = null;
   protected static ColorUIResource    windowIconShadowColor              = null;
   protected static ColorUIResource    windowIconRolloverColor            = null;
+  protected static ColorUIResource    linkForegroundColor                = null;
 
   protected static ColorUIResource    windowInactiveTitleForegroundColor = null;
   protected static ColorUIResource    windowInactiveTitleBackgroundColor = null;
@@ -154,7 +157,9 @@ public abstract class AbstractTheme extends MetalTheme {
   protected static ColorUIResource    toolbarColorLight                  = null;
   protected static ColorUIResource    toolbarColorDark                   = null;
   protected static ColorUIResource    tabAreaBackgroundColor             = null;
+  protected static ColorUIResource    tabForegroundColor                 = null;
   protected static ColorUIResource    tabSelectionForegroundColor        = null;
+  protected static ColorUIResource    tabSelectionBackgroundColor        = null;
   protected static ColorUIResource    desktopColor                       = null;
   protected static ColorUIResource    tooltipForegroundColor             = null;
   protected static ColorUIResource    tooltipBackgroundColor             = null;
@@ -185,6 +190,7 @@ public abstract class AbstractTheme extends MetalTheme {
   protected static Color              THUMB_COLORS[]                     = null;
   protected static Color              SLIDER_COLORS[]                    = null;
   protected static Color              PROGRESSBAR_COLORS[]               = null;
+  protected static Color              GRID_COLORS[]                      = null;
 
   protected static String             textureSet                         = "Default";
   protected static boolean            darkTexture                        = true;
@@ -264,7 +270,9 @@ public abstract class AbstractTheme extends MetalTheme {
     focusForegroundColor = BLACK;
     frameColor = DARK_GRAY;
     gridColor = GRAY;
+    selectedGridColor = gridColor;
     shadowColor = new ColorUIResource(0, 24, 0);
+    linkForegroundColor = new ColorUIResource(Color.BLUE);
 
     rolloverForegroundColor = BLACK;
     rolloverColor = EXTRA_LIGHT_GRAY;
@@ -319,7 +327,10 @@ public abstract class AbstractTheme extends MetalTheme {
     toolbarColorDark = LIGHT_GRAY;
 
     tabAreaBackgroundColor = backgroundColor;
+    tabForegroundColor = foregroundColor;
     tabSelectionForegroundColor = selectionForegroundColor;
+    tabSelectionBackgroundColor = selectionForegroundColor;
+
     desktopColor = DARK_BLUE;
     tooltipForegroundColor = BLACK;
     tooltipBackgroundColor = YELLOW;
@@ -356,6 +367,7 @@ public abstract class AbstractTheme extends MetalTheme {
     THUMB_COLORS = DEFAULT_COLORS;
     SLIDER_COLORS = DEFAULT_COLORS;
     PROGRESSBAR_COLORS = DEFAULT_COLORS;
+    GRID_COLORS = DEFAULT_COLORS;
   }
 
   public void setProperties(Properties props) {
@@ -444,6 +456,14 @@ public abstract class AbstractTheme extends MetalTheme {
       if (props.getProperty("subTextFont") != null) {
         smallFont = createFont(props.getProperty("subTextFont"));
       }
+      if (props.getProperty("defaultFontSize") != null) {
+        try {
+          defaultFontSize = Integer.parseInt(props.getProperty("defaultFontSize"));
+        }
+        catch (NumberFormatException ignored) {
+          // stick to the default one
+        }
+      }
 
       if (props.getProperty("foregroundColor") != null) {
         foregroundColor = createColor(props.getProperty("foregroundColor"), foregroundColor);
@@ -489,6 +509,9 @@ public abstract class AbstractTheme extends MetalTheme {
       }
       if (props.getProperty("gridColor") != null) {
         gridColor = createColor(props.getProperty("gridColor"), gridColor);
+      }
+      if (props.getProperty("selectedGridColor") != null) {
+        selectedGridColor = createColor(props.getProperty("selectedGridColor"), selectedGridColor);
       }
       if (props.getProperty("shadowColor") != null) {
         shadowColor = createColor(props.getProperty("shadowColor"), shadowColor);
@@ -651,11 +674,11 @@ public abstract class AbstractTheme extends MetalTheme {
       if (props.getProperty("tabAreaBackgroundColor") != null) {
         tabAreaBackgroundColor = createColor(props.getProperty("tabAreaBackgroundColor"), tabAreaBackgroundColor);
       }
-      else {
-        tabAreaBackgroundColor = backgroundColor;
-      }
       if (props.getProperty("tabSelectionForegroundColor") != null) {
         tabSelectionForegroundColor = createColor(props.getProperty("tabSelectionForegroundColor"), tabSelectionForegroundColor);
+      }
+      if (props.getProperty("tabSelectionBackgroundColor") != null) {
+        tabSelectionBackgroundColor = createColor(props.getProperty("tabSelectionBackgroundColor"), tabSelectionBackgroundColor);
       }
 
       if (props.getProperty("desktopColor") != null) {
@@ -1144,8 +1167,16 @@ public abstract class AbstractTheme extends MetalTheme {
     return gridColor;
   }
 
+  public ColorUIResource getSelectedGridColor() {
+    return selectedGridColor;
+  }
+
   public ColorUIResource getShadowColor() {
     return shadowColor;
+  }
+
+  public ColorUIResource getLinkForegroundColor() {
+    return linkForegroundColor;
   }
 
   @Override
@@ -1341,8 +1372,16 @@ public abstract class AbstractTheme extends MetalTheme {
     return tabAreaBackgroundColor;
   }
 
+  public ColorUIResource getTabForegroundColor() {
+    return tabForegroundColor;
+  }
+
   public ColorUIResource getTabSelectionForegroundColor() {
     return tabSelectionForegroundColor;
+  }
+
+  public ColorUIResource getTabSelectionBackgroundColor() {
+    return tabSelectionBackgroundColor;
   }
 
   @Override
@@ -1462,6 +1501,10 @@ public abstract class AbstractTheme extends MetalTheme {
     return PROGRESSBAR_COLORS;
   }
 
+  public Color[] getGridColors() {
+    return GRID_COLORS;
+  }
+
   public String getTextureSet() {
     return textureSet;
   }
@@ -1501,5 +1544,11 @@ public abstract class AbstractTheme extends MetalTheme {
   public Icon getMenubarTexture() {
     return menubarTexture;
   }
+
+  public int getDefaultFontSize() {
+    return defaultFontSize;
+  }
+
+  public abstract AbstractBorderFactory getBorderFactory();
 
 } // end of class AbstractTheme
