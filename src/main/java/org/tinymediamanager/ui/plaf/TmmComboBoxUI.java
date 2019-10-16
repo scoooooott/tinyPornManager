@@ -71,7 +71,7 @@ public class TmmComboBoxUI extends BaseComboBoxUI {
   @Override
   public Dimension getPreferredSize(JComponent c) {
     Dimension size = super.getPreferredSize(c);
-    return new Dimension(size.width + 2, size.height + 4);
+    return new Dimension(size.width + 6, size.height); // +6 to do not crop the content in the editor
   }
 
   @SuppressWarnings({ "unchecked" })
