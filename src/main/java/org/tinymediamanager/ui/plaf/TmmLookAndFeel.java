@@ -40,7 +40,6 @@ import com.jtattoo.plaf.BaseRadioButtonMenuItemUI;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.BaseSeparatorUI;
 import com.jtattoo.plaf.BaseSliderUI;
-import com.jtattoo.plaf.BaseToolTipUI;
 
 public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
 
@@ -109,7 +108,6 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
     Object[] uiDefaults = {
             // BaseLookAndFeel classes
             "SeparatorUI", BaseSeparatorUI.class.getName(),
-            "ToolTipUI", BaseToolTipUI.class.getName(),
             "SliderUI", BaseSliderUI.class.getName(),
             "FileChooserUI", BaseFileChooserUI.class.getName(),
             "MenuBarUI", BaseMenuBarUI.class.getName(),
@@ -147,6 +145,7 @@ public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
             "FormattedTextFieldUI", BaseFormattedTextFieldUI.class.getName(),
             "SpinnerUI", TmmSpinnerUI.class.getName(),
             "ViewportUI", TmmViewportUI.class.getName(),
+            "ToolTipUI", TmmToolTipUI.class.getName(),
     };
     table.putDefaults(uiDefaults);
     // @formatter:on

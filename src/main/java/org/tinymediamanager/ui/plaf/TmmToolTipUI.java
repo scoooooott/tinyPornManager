@@ -1,35 +1,26 @@
 /*
- * Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
- *  
- * JTattoo is multiple licensed. If your are an open source developer you can use
- * it under the terms and conditions of the GNU General Public License version 2.0
- * or later as published by the Free Software Foundation.
- *  
- * see: gpl-2.0.txt
- * 
- * If you pay for a license you will become a registered user who could use the
- * software under the terms and conditions of the GNU Lesser General Public License
- * version 2.0 or later with classpath exception as published by the Free Software
- * Foundation.
- * 
- * see: lgpl-2.0.txt
- * see: classpath-exception.txt
- * 
- * Registered users could also use JTattoo under the terms and conditions of the 
- * Apache License, Version 2.0 as published by the Apache Software Foundation.
- *  
- * see: APACHE-LICENSE-2.0.txt
+ * Copyright 2012 - 2019 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package com.jtattoo.plaf;
+package org.tinymediamanager.ui.plaf;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Container;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
@@ -45,16 +36,16 @@ import javax.swing.ToolTipManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalToolTipUI;
 
-/**
- * @author Michael Hagen, Daniel Raedel
- */
-public class BaseToolTipUI extends MetalToolTipUI {
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.ColorHelper;
+import com.jtattoo.plaf.DecorationHelper;
 
+public class TmmToolTipUI extends MetalToolTipUI {
   private boolean           fancyLayout         = false;
   private ComponentListener popupWindowListener = null;
 
   public static ComponentUI createUI(JComponent c) {
-    return new BaseToolTipUI();
+    return new TmmToolTipUI();
   }
 
   @Override
@@ -156,7 +147,6 @@ public class BaseToolTipUI extends MetalToolTipUI {
       // g2D.drawRoundRect(shadowSize, 0, w - (2 * shadowSize) - 1, h - shadowSize - 1, 6, 6);
       g2D.drawRoundRect(shadowSize, 0, w - (2 * shadowSize) - 1, h - shadowSize - 1, shadowSize, shadowSize);
       g2D.setColor(ColorHelper.darker(backColor, 10));
-      g2D.drawRect(borderSize + shadowSize - 1, borderSize - 1, w - (2 * borderSize) - (2 * shadowSize) + 1, h - (2 * borderSize) - shadowSize + 1);
 
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
       // Draw the text. This must be done within an offscreen image because of a bug
@@ -165,30 +155,10 @@ public class BaseToolTipUI extends MetalToolTipUI {
       BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
       Graphics2D big = bi.createGraphics();
       big.setClip(0, 0, w, h);
-      Paint savedPaint = big.getPaint();
-      Color cHi;
-      Color cLo;
-      if (ColorHelper.getGrayValue(backColor) < 128) {
-        cHi = ColorHelper.brighter(backColor, 10);
-        cLo = ColorHelper.darker(backColor, 20);
-      }
-      else {
-        cHi = ColorHelper.brighter(backColor, 40);
-        cLo = ColorHelper.darker(backColor, 5);
-      }
-      big.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize) - shadowSize, cLo));
       big.fillRect(borderSize + shadowSize, borderSize, w - (2 * borderSize) - (2 * shadowSize), h - (2 * borderSize) - shadowSize);
 
-      big.setPaint(savedPaint);
-
       if (c instanceof JToolTip) {
-        JToolTip tip = (JToolTip) c;
-        if (tip.getComponent() != null && tip.getComponent().isEnabled()) {
-          c.setForeground(AbstractLookAndFeel.getTheme().getTooltipForegroundColor());
-        }
-        else {
-          c.setForeground(AbstractLookAndFeel.getTheme().getDisabledForegroundColor());
-        }
+        c.setForeground(AbstractLookAndFeel.getTheme().getTooltipForegroundColor());
       }
       super.paint(big, c);
       g2D.setClip(borderSize + shadowSize, borderSize, w - (2 * borderSize) - (2 * shadowSize), h - (2 * borderSize) - shadowSize);
@@ -206,26 +176,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
       g2D.fillRect(0, 0, w, h);
       g2D.setColor(ColorHelper.darker(backColor, 40));
       g2D.drawRect(0, 0, w - 1, h - 1);
-
-      g2D.setColor(ColorHelper.darker(backColor, 10));
-      g2D.drawRect(borderSize - 1, borderSize - 1, w - (2 * borderSize - 1), h - (2 * borderSize - 1));
-
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
-
-      Paint savedPaint = g2D.getPaint();
-      Color cHi;
-      Color cLo;
-      if (ColorHelper.getGrayValue(backColor) < 128) {
-        cHi = ColorHelper.brighter(backColor, 10);
-        cLo = ColorHelper.darker(backColor, 20);
-      }
-      else {
-        cHi = ColorHelper.brighter(backColor, 40);
-        cLo = ColorHelper.darker(backColor, 5);
-      }
-      g2D.setPaint(new GradientPaint(0, borderSize, cHi, 0, h - (2 * borderSize), cLo));
-      g2D.fillRect(borderSize, borderSize, w - (2 * borderSize), h - (2 * borderSize));
-      g2D.setPaint(savedPaint);
 
       super.paint(g, c);
     }
