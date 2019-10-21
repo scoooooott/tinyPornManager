@@ -392,9 +392,8 @@ public class TvShowRenamer {
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
-    // skip renamer, if all templates are empty!
-    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
-        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+    // skip renamer, if all episode related templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()) {
       LOGGER.info("NOT renaming TvShow '{}' Episode {} - renaming patterns are empty!", episode.getTvShow().getTitle(), episode.getEpisode());
       return;
     }

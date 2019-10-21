@@ -3,6 +3,7 @@ upcoming version
 + support for rendering animated gifs
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox
+x do not move episode files if the episode and season renamer patterns are empty #667
 
 
 Version 3.0.5
