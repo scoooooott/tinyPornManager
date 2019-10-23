@@ -15,18 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.text.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.LaunchUtil;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.scraper.util.StrgUtils;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -79,7 +68,18 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
+import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.text.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.LaunchUtil;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class Utils.
@@ -1363,6 +1363,9 @@ public class Utils {
     try {
       // check if file exists
       env.put("create", String.valueOf(!Files.exists(zipFile)));
+      // and use temp files rather than everything in memory
+      env.put("useTempFile", "true");
+
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
