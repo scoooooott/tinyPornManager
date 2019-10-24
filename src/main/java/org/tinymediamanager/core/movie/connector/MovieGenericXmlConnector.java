@@ -418,15 +418,17 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
   /**
    * add our own id store in the new kodi form<br />
-   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   * <uniqueid type="{scraper}" default="true/false">{id}</uniqueid>
    *
-   * only imdb has default = true
+   * imdb should have default="true", but if no imdb ID is available, we must ensure that at least one entry has default="true"
    */
   protected void addIds() {
+    String defaultScraper = detectDefaultScraper();
+
     for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.IMDB.equals(entry.getKey()) || movie.getIds().size() == 1) {
+      if (defaultScraper.equals(entry.getKey())) {
         uniqueid.setAttribute("default", "true");
       }
       else {
@@ -708,4 +710,23 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     return transformer;
   }
 
+  /**
+   * try to detect the default scraper by the given ids
+   *
+   * @return the scraper where the default should be set
+   */
+  private String detectDefaultScraper() {
+    // IMDB first
+    if (movie.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
+    }
+
+    // TMDB second
+    if (movie.getIds().containsKey(MediaMetadata.TMDB)) {
+      return MediaMetadata.TMDB;
+    }
+
+    // the first found as fallback
+    return movie.getIds().keySet().stream().findFirst().orElse("");
+  }
 }

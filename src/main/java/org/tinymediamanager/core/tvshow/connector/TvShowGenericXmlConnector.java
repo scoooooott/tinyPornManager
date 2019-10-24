@@ -526,15 +526,17 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
   /**
    * add our own id store in the new kodi form<br />
-   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   * <uniqueid type="{scraper}" default="true/false">{id}</uniqueid>
    *
-   * only imdb has default = true
+   * imdb should have default="true", but if no imdb ID is available, we must ensure that at least one entry has default="true"
    */
   protected void addIds() {
+    String defaultScraper = detectDefaultScraper();
+
     for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.TVDB.equals(entry.getKey()) || tvShow.getIds().size() == 1) {
+      if (defaultScraper.equals(entry.getKey())) {
         uniqueid.setAttribute("default", "true");
       }
       else {
@@ -727,5 +729,30 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
     return transformer;
+  }
+
+  /**
+   * try to detect the default scraper by the given ids
+   * 
+   * @return the scraper where the default should be set
+   */
+  private String detectDefaultScraper() {
+    // IMDB first
+    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
+    }
+
+    // TVDB second
+    if (tvShow.getIds().containsKey(MediaMetadata.TVDB)) {
+      return MediaMetadata.TVDB;
+    }
+
+    // TMDB third
+    if (tvShow.getIds().containsKey(MediaMetadata.TMDB)) {
+      return MediaMetadata.TMDB;
+    }
+
+    // the first found as fallback
+    return tvShow.getIds().keySet().stream().findFirst().orElse("");
   }
 }
