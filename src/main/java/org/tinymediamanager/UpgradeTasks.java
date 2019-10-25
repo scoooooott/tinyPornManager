@@ -270,6 +270,40 @@ public class UpgradeTasks {
         Settings.getInstance().setCleanupFileTypes(newEntries);
       }
     }
+
+    // add HDR10 Strings for old booleans
+    if (StrgUtils.compareVersion(v, "3.0.6") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.0.6");
+
+      for (Movie movie : MovieList.getInstance().getMovies()) {
+        boolean dirty = false;
+        for (MediaFile mf : movie.getMediaFiles()) {
+          if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+            mf.setHdrFormat("HDR10");
+            dirty = true;
+          }
+        }
+        if (dirty) {
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          boolean dirty = false;
+          for (MediaFile mf : episode.getMediaFiles()) {
+            if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+              mf.setHdrFormat("HDR10");
+              dirty = true;
+            }
+          }
+          if (dirty) {
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
   }
 
   /**

@@ -365,6 +365,7 @@ public class MediaInfoTest extends BasicTest {
     System.out.println("FPS: " + mf.getFrameRate());
     System.out.println("var: " + mf.getAspectRatio());
     System.out.println("ws?: " + mf.isWidescreen());
+    System.out.println("hdr?: " + mf.getHdrFormat());
 
     System.out.println("----------------------");
     System.out.println("acodec: " + mf.getAudioCodec());

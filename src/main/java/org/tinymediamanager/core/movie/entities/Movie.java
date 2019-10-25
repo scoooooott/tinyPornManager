@@ -2262,7 +2262,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public String getVideoHDRFormat() {
-    return getMainVideoFile().isHDR() ? "HDR" : "";
+    return getMainVideoFile().getHdrFormat();
   }
 
   public MovieEdition getEdition() {

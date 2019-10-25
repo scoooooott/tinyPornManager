@@ -184,8 +184,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private boolean                                    isISO                    = false;
   @JsonProperty
   private boolean                                    isAnimatedGraphic        = false;
+  @Deprecated
   @JsonProperty
-  private boolean                                    HDR                      = false;
+  public boolean                                     HDR                      = false;
+  @JsonProperty
+  private String                                     hdrFormat                = "";
 
   /**
    * "clones" a new media file.
@@ -1756,12 +1759,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.isAnimatedGraphic = isAnimatedGraphic;
   }
 
-  public boolean isHDR() {
-    return HDR;
+  public boolean idsHDR() {
+    return !getHdrFormat().isEmpty();
   }
 
-  public void setHDR(boolean hdrange) {
-    HDR = hdrange;
+  public void setHdrFormat(String format) {
+    this.hdrFormat = format;
+  }
+
+  public String getHdrFormat() {
+    return this.hdrFormat;
   }
 
   /**
@@ -2255,10 +2262,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     }
 
-    String hdr = getMediaInfo(StreamKind.Video, 0, "colour_primaries");
-    if (hdr.contains("2020")) {
-      setHDR(true);
-    }
+    // prefer commercial "hdr10+" naming over technical
+    hdrFormat = getMediaInfo(StreamKind.Video, 0, "HDR_Format_Commercial");
 
     // TODO: season/episode parsing
     // int season = parseToInt(getMediaInfo(StreamKind.General, 0, "Season"));
