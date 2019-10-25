@@ -1759,8 +1759,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.isAnimatedGraphic = isAnimatedGraphic;
   }
 
-  public boolean idsHDR() {
-    return !getHdrFormat().isEmpty();
+  @Deprecated
+  public boolean isHDR() {
+    return HDR;
   }
 
   public void setHdrFormat(String format) {
