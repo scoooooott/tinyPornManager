@@ -253,6 +253,15 @@ public class JTattooUtilities {
 
   public static FontMetrics getFontMetrics(JComponent c, Graphics g, Font f) {
     FontMetrics fm = null;
+
+    // basically the same as in the SwingUtilities
+    if (c != null) {
+      // Note: We assume that we're using the FontMetrics
+      // from the widget to layout out text, otherwise we can get
+      // mismatches when printing.
+      fm = c.getFontMetrics(f);
+    }
+
     if (fm == null) {
       if (g == null) {
         if (c != null) {

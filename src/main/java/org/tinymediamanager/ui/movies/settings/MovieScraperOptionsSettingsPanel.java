@@ -120,8 +120,8 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDefaults, lblDefaultsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
-        MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
-        panelDefaults.add(movieScraperMetadataPanel, "cell 1 0 2 1,grow");
+        MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel();
+        panelDefaults.add(movieScraperMetadataPanel, "cell 1 0 2 1");
       }
     }
     {
@@ -157,7 +157,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
 
         JTextArea tpScraperThresholdHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
         TmmFontHelper.changeFont(tpScraperThresholdHint, L2);
-        panelAutomaticScrape.add(tpScraperThresholdHint, "cell 1 1 3 1,growx");
+        panelAutomaticScrape.add(tpScraperThresholdHint, "cell 1 1 3 1, growx, wmin 0");
       }
     }
   }

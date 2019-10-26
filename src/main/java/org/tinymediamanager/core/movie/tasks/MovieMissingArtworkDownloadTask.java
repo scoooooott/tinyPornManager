@@ -28,6 +28,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -46,14 +47,16 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieMissingArtworkDownloadTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+  private static final Logger               LOGGER = LoggerFactory.getLogger(MovieMissingArtworkDownloadTask.class);
+  private static final ResourceBundle       BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
 
-  private List<Movie>                 moviesToScrape;
+  private final List<Movie>                 moviesToScrape;
+  private final MovieSearchAndScrapeOptions scrapeOptions;
 
-  public MovieMissingArtworkDownloadTask(List<Movie> moviesToScrape) {
+  public MovieMissingArtworkDownloadTask(List<Movie> moviesToScrape, MovieSearchAndScrapeOptions scrapeOptions) {
     super(BUNDLE.getString("task.missingartwork"));
     this.moviesToScrape = moviesToScrape;
+    this.scrapeOptions = scrapeOptions;
   }
 
   @Override
@@ -63,7 +66,7 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
     start();
 
     for (Movie movie : moviesToScrape) {
-      if (MovieArtworkHelper.hasMissingArtwork(movie)) {
+      if (MovieArtworkHelper.hasMissingArtwork(movie, scrapeOptions.getScraperMetadataConfig())) {
         submitTask(new Worker(movie));
       }
     }
@@ -80,18 +83,17 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
   /****************************************************************************************
    * Helper classes
    ****************************************************************************************/
-  private class Worker implements Runnable {
-    private MovieList movieList;
-    private Movie     movie;
+  private static class Worker implements Runnable {
+    private Movie movie;
 
-    public Worker(Movie movie) {
+    private Worker(Movie movie) {
       this.movie = movie;
     }
 
     @Override
     public void run() {
       try {
-        movieList = MovieList.getInstance();
+        MovieList movieList = MovieList.getInstance();
         // set up scrapers
         List<MediaArtwork> artwork = new ArrayList<>();
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
@@ -115,7 +117,8 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.subtitlefailed", new String[] { ":", e.getLocalizedMessage() }));
           }
-          catch (MissingIdException ignored) {
+          catch (MissingIdException e) {
+            LOGGER.debug("missing ID for scraper {}", artworkProvider.getProviderInfo().getId());
           }
         }
 

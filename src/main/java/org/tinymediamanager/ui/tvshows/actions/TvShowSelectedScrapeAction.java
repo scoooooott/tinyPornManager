@@ -64,8 +64,10 @@ public class TvShowSelectedScrapeAction extends TmmAction {
     TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.setVisible(true);
+
     // get options from dialog
     TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+
     // do we want to scrape?
     if (dialog.shouldStartScrape()) {
       // scrape

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * The Class MovieSearchAndScrapeOptions.
@@ -26,23 +27,18 @@ import org.tinymediamanager.scraper.MediaScraper;
  * @author Manuel Laggner
  */
 public class MovieSearchAndScrapeOptions {
-  private MovieScraperMetadataConfig scraperMetadataConfig;
-  private MediaScraper               metadataScraper;
-
-  private List<MediaScraper>         artworkScrapers = new ArrayList<>();
-  private List<MediaScraper>         trailerScrapers = new ArrayList<>();
-
-  /**
-   * Instantiates a new movie search and scrape config.
-   */
-  public MovieSearchAndScrapeOptions() {
-  }
+  private MediaLanguages                   language;
+  private MediaScraper                     metadataScraper;
+  private List<MediaScraper>               artworkScrapers = new ArrayList<>();
+  private List<MediaScraper>               trailerScrapers = new ArrayList<>();
+  private List<MovieScraperMetadataConfig> scraperMetadataConfig;
 
   /**
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
+    language = MovieModuleManager.SETTINGS.getScraperLanguage();
+
     // metadata
     metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 
@@ -51,6 +47,9 @@ public class MovieSearchAndScrapeOptions {
 
     // trailer
     trailerScrapers.addAll(MovieList.getInstance().getDefaultTrailerScrapers());
+
+    // scraper config
+    scraperMetadataConfig = new ArrayList<>(MovieModuleManager.SETTINGS.getScraperMetadataConfig());
   }
 
   /**
@@ -58,7 +57,7 @@ public class MovieSearchAndScrapeOptions {
    * 
    * @return the scraper metadata config
    */
-  public MovieScraperMetadataConfig getScraperMetadataConfig() {
+  public List<MovieScraperMetadataConfig> getScraperMetadataConfig() {
     return scraperMetadataConfig;
   }
 
@@ -95,7 +94,7 @@ public class MovieSearchAndScrapeOptions {
    * @param scraperMetadataConfig
    *          the new scraper metadata config
    */
-  public void setScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
+  public void setScraperMetadataConfig(List<MovieScraperMetadataConfig> scraperMetadataConfig) {
     this.scraperMetadataConfig = scraperMetadataConfig;
   }
 
@@ -110,22 +109,43 @@ public class MovieSearchAndScrapeOptions {
   }
 
   /**
-   * Adds the artwork scraper.
+   * Set the artwork scrapers.
    * 
-   * @param artworkScraper
-   *          the artwork scraper
+   * @param artworkScrapers
+   *          the artwork scrapers
    */
-  public void addArtworkScraper(MediaScraper artworkScraper) {
-    this.artworkScrapers.add(artworkScraper);
+  public void setArtworkScraper(List<MediaScraper> artworkScrapers) {
+    this.artworkScrapers.clear();
+    this.artworkScrapers.addAll(artworkScrapers);
   }
 
   /**
-   * Adds the trailer scraper.
+   * Set the trailer scrapers.
    * 
    * @param trailerScraper
-   *          the trailer scraper
+   *          the trailer scrapers
    */
-  public void addTrailerScraper(MediaScraper trailerScraper) {
-    this.trailerScrapers.add(trailerScraper);
+  public void setTrailerScraper(List<MediaScraper> trailerScraper) {
+    this.trailerScrapers.clear();
+    this.trailerScrapers.addAll(trailerScraper);
+  }
+
+  /**
+   * get the language to scrape
+   *
+   * @return the language to scrape
+   */
+  public MediaLanguages getLanguage() {
+    return language;
+  }
+
+  /**
+   * set the language to scrape
+   *
+   * @param language
+   *          the language to scrape
+   */
+  public void setLanguage(MediaLanguages language) {
+    this.language = language;
   }
 }

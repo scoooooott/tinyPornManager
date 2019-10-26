@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -354,32 +355,41 @@ public class MovieArtworkHelper {
    *          the movie to check artwork for
    * @return true/false
    */
-  public static boolean hasMissingArtwork(Movie movie) {
-    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+  public static boolean hasMissingArtwork(Movie movie, List<MovieScraperMetadataConfig> config) {
+    if (config.contains(MovieScraperMetadataConfig.POSTER) && !MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.FANART) && !MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.FANART).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.BANNER) && !MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.DISCART) && !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.DISC).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.LOGO) && !MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.CLEARLOGO) && !MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.CLEARART) && !MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.THUMB) && !MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
       return true;
     }
-    if (!MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty() && movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
+    if (config.contains(MovieScraperMetadataConfig.KEYART) && !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty()
+        && movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
       return true;
     }
 
@@ -757,67 +767,99 @@ public class MovieArtworkHelper {
    * @param artwork
    *          a list of all artworks to be set
    */
-  public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
+  public static void setArtwork(Movie movie, List<MediaArtwork> artwork, List<MovieScraperMetadataConfig> config) {
+    if (!ScraperMetadataConfig.containsAnyArtwork(config)) {
+      return;
+    }
+
     // sort artwork once again (langu/rating)
     artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage()));
 
     // poster
-    setBestPoster(movie, artwork);
+    if (config.contains(MovieScraperMetadataConfig.POSTER)) {
+      setBestPoster(movie, artwork);
+    }
 
     // fanart
-    setBestFanart(movie, artwork);
+    if (config.contains(MovieScraperMetadataConfig.FANART)) {
+      setBestFanart(movie, artwork);
+    }
 
     // works now for single & multimovie
-    setBestArtwork(movie, artwork, MediaArtworkType.LOGO, !MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, !MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, !MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.BANNER, !MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.THUMB, !MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.DISC, !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty());
-    setBestArtwork(movie, artwork, MediaArtworkType.KEYART, !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty());
+    if (config.contains(MovieScraperMetadataConfig.LOGO)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.LOGO, !MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.CLEARLOGO)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, !MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.CLEARART)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, !MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.BANNER)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.BANNER, !MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.THUMB)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.THUMB, !MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.DISCART)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.DISC, !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.KEYART)) {
+      setBestArtwork(movie, artwork, MediaArtworkType.KEYART, !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty());
+    }
 
     // extrathumbs
-    List<String> extrathumbs = new ArrayList<>();
-    if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && MovieModuleManager.SETTINGS.getImageExtraThumbsCount() > 0) {
-      // sort the fanarts
-      List<MediaArtwork> sortedFanarts = sortArtwork(artwork, MediaArtworkType.BACKGROUND,
-          MovieModuleManager.SETTINGS.getImageFanartSize().getOrder(), MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage());
+    if (config.contains(MovieScraperMetadataConfig.EXTRATHUMB)) {
+      List<String> extrathumbs = new ArrayList<>();
+      if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && MovieModuleManager.SETTINGS.getImageExtraThumbsCount() > 0) {
+        // sort the fanarts
+        List<MediaArtwork> sortedFanarts = sortArtwork(artwork, MediaArtworkType.BACKGROUND,
+            MovieModuleManager.SETTINGS.getImageFanartSize().getOrder(), MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage());
 
-      // and add them according to the want amount
-      for (MediaArtwork art : sortedFanarts) {
-        extrathumbs.add(art.getDefaultUrl());
-        if (extrathumbs.size() >= MovieModuleManager.SETTINGS.getImageExtraThumbsCount()) {
-          break;
+        // and add them according to the want amount
+        for (MediaArtwork art : sortedFanarts) {
+          extrathumbs.add(art.getDefaultUrl());
+          if (extrathumbs.size() >= MovieModuleManager.SETTINGS.getImageExtraThumbsCount()) {
+            break;
+          }
         }
-      }
 
-      movie.setExtraThumbs(extrathumbs);
-      if (!extrathumbs.isEmpty()) {
-        if (!movie.isMultiMovieDir()) {
-          downloadArtwork(movie, MediaFileType.EXTRATHUMB);
+        movie.setExtraThumbs(extrathumbs);
+        if (!extrathumbs.isEmpty()) {
+          if (!movie.isMultiMovieDir()) {
+            downloadArtwork(movie, MediaFileType.EXTRATHUMB);
+          }
         }
       }
     }
 
     // extrafanarts
-    List<String> extrafanarts = new ArrayList<>();
-    if (MovieModuleManager.SETTINGS.isImageExtraFanart() && MovieModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
-      // sort the fanarts
-      List<MediaArtwork> sortedFanarts = sortArtwork(artwork, MediaArtworkType.BACKGROUND,
-          MovieModuleManager.SETTINGS.getImageFanartSize().getOrder(), MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage());
+    if (config.contains(MovieScraperMetadataConfig.EXTRAFANART)) {
+      List<String> extrafanarts = new ArrayList<>();
+      if (MovieModuleManager.SETTINGS.isImageExtraFanart() && MovieModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
+        // sort the fanarts
+        List<MediaArtwork> sortedFanarts = sortArtwork(artwork, MediaArtworkType.BACKGROUND,
+            MovieModuleManager.SETTINGS.getImageFanartSize().getOrder(), MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage());
 
-      // and add them according to the want amount
-      for (MediaArtwork art : sortedFanarts) {
-        extrafanarts.add(art.getDefaultUrl());
-        if (extrafanarts.size() >= MovieModuleManager.SETTINGS.getImageExtraFanartCount()) {
-          break;
+        // and add them according to the want amount
+        for (MediaArtwork art : sortedFanarts) {
+          extrafanarts.add(art.getDefaultUrl());
+          if (extrafanarts.size() >= MovieModuleManager.SETTINGS.getImageExtraFanartCount()) {
+            break;
+          }
         }
-      }
 
-      movie.setExtraFanarts(extrafanarts);
-      if (!extrafanarts.isEmpty()) {
-        if (!movie.isMultiMovieDir()) {
-          downloadArtwork(movie, MediaFileType.EXTRAFANART);
+        movie.setExtraFanarts(extrafanarts);
+        if (!extrafanarts.isEmpty()) {
+          if (!movie.isMultiMovieDir()) {
+            downloadArtwork(movie, MediaFileType.EXTRAFANART);
+          }
         }
       }
     }

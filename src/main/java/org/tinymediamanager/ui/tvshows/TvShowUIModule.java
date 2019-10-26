@@ -15,7 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import net.miginfocom.swing.MigLayout;
+import java.awt.CardLayout;
+
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -47,7 +56,6 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesWoArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
@@ -74,14 +82,7 @@ import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsNode;
 
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import java.awt.CardLayout;
+import net.miginfocom.swing.MigLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
   private final static String       ID       = "tvShows";
@@ -236,7 +237,6 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
-    popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
     popupMenu.add(createAndRegisterAction(TvShowMissingEpisodeListAction.class));
@@ -321,7 +321,6 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     searchPopupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
-    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
 

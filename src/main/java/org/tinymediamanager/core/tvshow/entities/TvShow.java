@@ -54,7 +54,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
@@ -811,97 +810,103 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
+  public void setMetadata(MediaMetadata metadata, List<TvShowScraperMetadataConfig> config) {
     // check against null metadata (e.g. aborted request)
     if (metadata == null) {
       LOGGER.error("metadata was null");
       return;
     }
 
-    // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getTitle())) {
-      LOGGER.warn("wanted to save empty metadata for " + getTitle());
+    // check if metadata has at least an id (aka it is not empty)
+    if (metadata.getIds().isEmpty()) {
+      LOGGER.warn("wanted to save empty metadata for {}", getTitle());
       return;
     }
 
     // populate ids
-    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
-      setId(entry.getKey(), entry.getValue().toString());
-    }
+    setIds(metadata.getIds());
 
-    // if option is set capitalize the first letter of each word
-    // in title and original title
-    if (config.isTitle()) {
+    if (config.contains(TvShowScraperMetadataConfig.TITLE)) {
+      // Capitalize first letter of original title if setting is set!
       if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
         setTitle(WordUtils.capitalize(metadata.getTitle()));
-        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
       }
       else {
         setTitle(metadata.getTitle());
+      }
+    }
+
+    if (config.contains(TvShowScraperMetadataConfig.ORIGINAL_TITLE)) {
+      // Capitalize first letter of original title if setting is set!
+      if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
         setOriginalTitle(metadata.getOriginalTitle());
       }
     }
 
-    if (config.isPlot()) {
+    if (config.contains(TvShowScraperMetadataConfig.PLOT)) {
       setPlot(metadata.getPlot());
     }
 
-    if (config.isYear()) {
+    if (config.contains(TvShowScraperMetadataConfig.YEAR)) {
       setYear(metadata.getYear());
     }
 
-    if (config.isRating()) {
-      clearRatings();
+    if (config.contains(TvShowScraperMetadataConfig.RATING)) {
+      Map<String, Rating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        setRating(new Rating(mediaRating));
+        Rating rating = new Rating(mediaRating);
+        newRatings.put(rating.getId(), rating);
       }
+      setRatings(newRatings);
     }
 
-    if (config.isAired()) {
+    if (config.contains(TvShowScraperMetadataConfig.AIRED)) {
       setFirstAired(metadata.getReleaseDate());
     }
 
-    if (config.isStatus()) {
+    if (config.contains(TvShowScraperMetadataConfig.STATUS)) {
       setStatus(metadata.getStatus());
     }
 
-    if (config.isRuntime()) {
+    if (config.contains(TvShowScraperMetadataConfig.RUNTIME)) {
       setRuntime(metadata.getRuntime());
     }
 
-    if (config.isCountry()) {
+    if (config.contains(TvShowScraperMetadataConfig.COUNTRY)) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
     }
 
-    if (config.isStudio()) {
+    if (config.contains(TvShowScraperMetadataConfig.STUDIO)) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
     }
 
-    if (config.isCast()) {
+    if (config.contains(TvShowScraperMetadataConfig.CERTIFICATION)) {
+      if (!metadata.getCertifications().isEmpty()) {
+        setCertification(metadata.getCertifications().get(0));
+      }
+    }
 
-      List<Person> actors = new ArrayList<>();
+    if (config.contains(TvShowScraperMetadataConfig.ACTORS)) {
+      List<Person> newActors = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            actors.add(new Person(member));
+            newActors.add(new Person(member));
             break;
 
           default:
             break;
         }
       }
-      setActors(actors);
+      setActors(newActors);
       writeActorImages();
     }
 
-    if (config.isCertification()) {
-      if (metadata.getCertifications().size() > 0) {
-        setCertification(metadata.getCertifications().get(0));
-      }
-    }
-
-    if (config.isGenres()) {
+    if (config.contains(TvShowScraperMetadataConfig.GENRES)) {
       setGenres(metadata.getGenres());
     }
 
@@ -926,10 +931,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  public void setArtwork(List<MediaArtwork> artwork, TvShowScraperMetadataConfig config) {
-    if (config.isArtwork()) {
-      TvShowArtworkHelper.setArtwork(this, artwork);
-    }
+  public void setArtwork(List<MediaArtwork> artwork, List<TvShowScraperMetadataConfig> config) {
+    TvShowArtworkHelper.setArtwork(this, artwork, config);
   }
 
   /**

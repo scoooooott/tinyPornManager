@@ -35,10 +35,12 @@ import javax.swing.BorderFactory;
 import javax.swing.ComboBoxEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.tinymediamanager.ui.IconManager;
@@ -62,6 +64,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
   protected List<TmmCheckComboBoxSelectionListener> changedListeners = new Vector<>();
 
   protected Object                                  nullObject       = new Object();
+  protected JComponent                              editor           = null;
 
   /**
    * create the CheckComboBox without any items
@@ -112,8 +115,23 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
   protected TmmCheckComboBox(final Set<E> objs, boolean selected) {
     resetObjs(objs, selected);
+    init();
+  }
+
+  /**
+   * initializations
+   */
+  protected void init() {
     setEditor(new CheckBoxEditor());
     setEditable(true);
+  }
+
+  @Override
+  public void setEditor(ComboBoxEditor anEditor) {
+    super.setEditor(anEditor);
+    if (anEditor instanceof JComponent) {
+      this.editor = (JComponent) anEditor;
+    }
   }
 
   /**
@@ -184,7 +202,6 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
     }
 
     reset();
-    repaint();
   }
 
   /**
@@ -209,6 +226,16 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
     setRenderer();
     addActionListener(this);
+
+    // force the JComboBox to re-calculate the size
+    if (editor != null) {
+      SwingUtilities.invokeLater(() -> {
+        editor.firePropertyChange("border", true, false);
+        editor.revalidate();
+      });
+    }
+    revalidate();
+    repaint();
   }
 
   /**
@@ -378,8 +405,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
     }
   }
 
-  private class CheckBoxEditor extends JPanel implements ComboBoxEditor {
-
+  protected class CheckBoxEditor extends JPanel implements ComboBoxEditor {
     public CheckBoxEditor() {
       super();
 
@@ -402,14 +428,18 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
         add(new JLabel(BUNDLE.getString("ComboBox.select"))); //$NON-NLS-1$
       }
       else {
-        for (Object obj : objs) {
-          add(new CheckBoxEditorItem((E) obj));
+        for (E obj : objs) {
+          add(getEditorItem(obj));
         }
       }
 
       // force the JComboBox to re-calculate the size
       firePropertyChange("border", true, false);
       revalidate();
+    }
+
+    protected JComponent getEditorItem(E userObject) {
+      return new CheckBoxEditorItem(userObject);
     }
 
     @Override
@@ -433,23 +463,19 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
     }
   }
 
-  private class CheckBoxEditorItem extends JPanel {
-    private E       userObject;
-    private JLabel  label;
-    private JButton button;
+  protected class CheckBoxEditorItem extends JPanel {
 
     public CheckBoxEditorItem(E userObject) {
       super();
       putClientProperty("class", "roundedPanel");
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 5));
-      this.userObject = userObject;
 
-      label = new JLabel(userObject.toString());
+      JLabel label = new JLabel(userObject.toString());
       label.setBorder(BorderFactory.createEmptyBorder());
       add(label);
 
-      button = new FlatButton(IconManager.DELETE);
+      JButton button = new FlatButton(IconManager.DELETE);
       button.setBorder(BorderFactory.createEmptyBorder());
       button.addActionListener(e -> {
         selectedItems.put(userObject, false);

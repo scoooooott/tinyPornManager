@@ -39,6 +39,7 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowCharacterartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearlogoNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowDiscartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowFanartNaming;
@@ -64,120 +65,123 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class TvShowSettings extends AbstractSettings {
-  private static final Logger                  LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
+  private static final Logger                      LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
 
-  public final static String                   DEFAULT_RENAMER_FOLDER_PATTERN = "${showTitle} (${showYear})";
-  public final static String                   DEFAULT_RENAMER_SEASON_PATTERN = "Season ${seasonNr}";
-  public final static String                   DEFAULT_RENAMER_FILE_PATTERN   = "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}";
+  public static final String                       DEFAULT_RENAMER_FOLDER_PATTERN = "${showTitle} (${showYear})";
+  public static final String                       DEFAULT_RENAMER_SEASON_PATTERN = "Season ${seasonNr}";
+  public static final String                       DEFAULT_RENAMER_FILE_PATTERN   = "${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}";
 
-  private final static String                  CONFIG_FILE                    = "tvShows.json";
+  private static final String                      CONFIG_FILE                    = "tvShows.json";
 
-  private static TvShowSettings                instance;
+  private static TvShowSettings                    instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String                  TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
-  private final static String                  ARTWORK_SCRAPERS               = "artworkScrapers";
+  private static final String                      TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
+  private static final String                      ARTWORK_SCRAPERS               = "artworkScrapers";
 
-  private final static String                  CERTIFICATION_COUNTRY          = "certificationCountry";
-  private final static String                  RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
-  private final static String                  BAD_WORD                       = "badWord";
-  private final static String                  SKIP_FOLDER                    = "skipFolder";
-  private final static String                  SUBTITLE_SCRAPERS              = "subtitleScrapers";
-  private final static String                  UI_FILTERS                     = "uiFilters";
-  private final static String                  NFO_FILENAME                   = "nfoFilename";
-  private final static String                  POSTER_FILENAME                = "posterFilename";
-  private final static String                  FANART_FILENAME                = "fanartFilename";
-  private final static String                  BANNER_FILENAME                = "bannerFilename";
-  private final static String                  CLEARART_FILENAME              = "clearartFilename";
-  private final static String                  THUMB_FILENAME                 = "thumbFilename";
-  private final static String                  LOGO_FILENAME                  = "logoFilename";
-  private final static String                  CLEARLOGO_FILENAME             = "clearlogoFilename";
-  private final static String                  CHARACTERART_FILENAME          = "characterartFilename";
-  private final static String                  KEYART_FILENAME                = "keyartFilename";
-  private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
-  private final static String                  SEASON_BANNER_FILENAME         = "seasonBannerFilename";
-  private final static String                  SEASON_THUMB_FILENAME          = "seasonThumbFilename";
-  private final static String                  EPISODE_NFO_FILENAME           = "episodeNfoFilename";
-  private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
-  private final static String                  EPISODE_CHECK_IMAGES           = "episodeCheckImages";
-  private final static String                  SEASON_CHECK_IMAGES            = "seasonCheckImages";
-  private final static String                  TVSHOW_CHECK_IMAGES            = "TvShowCheckImages";
+  private static final String                      CERTIFICATION_COUNTRY          = "certificationCountry";
+  private static final String                      RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
+  private static final String                      BAD_WORD                       = "badWord";
+  private static final String                      SKIP_FOLDER                    = "skipFolder";
+  private static final String                      SUBTITLE_SCRAPERS              = "subtitleScrapers";
+  private static final String                      UI_FILTERS                     = "uiFilters";
+  private static final String                      NFO_FILENAME                   = "nfoFilename";
+  private static final String                      POSTER_FILENAME                = "posterFilename";
+  private static final String                      FANART_FILENAME                = "fanartFilename";
+  private static final String                      BANNER_FILENAME                = "bannerFilename";
+  private static final String                      DISCART_FILENAME               = "discartFilename";
+  private static final String                      CLEARART_FILENAME              = "clearartFilename";
+  private static final String                      THUMB_FILENAME                 = "thumbFilename";
+  private static final String                      LOGO_FILENAME                  = "logoFilename";
+  private static final String                      CLEARLOGO_FILENAME             = "clearlogoFilename";
+  private static final String                      CHARACTERART_FILENAME          = "characterartFilename";
+  private static final String                      KEYART_FILENAME                = "keyartFilename";
+  private static final String                      SEASON_POSTER_FILENAME         = "seasonPosterFilename";
+  private static final String                      SEASON_BANNER_FILENAME         = "seasonBannerFilename";
+  private static final String                      SEASON_THUMB_FILENAME          = "seasonThumbFilename";
+  private static final String                      EPISODE_NFO_FILENAME           = "episodeNfoFilename";
+  private static final String                      EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
+  private static final String                      EPISODE_CHECK_IMAGES           = "episodeCheckImages";
+  private static final String                      SEASON_CHECK_IMAGES            = "seasonCheckImages";
+  private static final String                      TVSHOW_CHECK_IMAGES            = "TvShowCheckImages";
 
-  private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<>());
-  private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<>());
-  private final List<String>                   artworkScrapers                = ObservableCollections.observableList(new ArrayList<>());
-  private final List<String>                   skipFolders                    = ObservableCollections.observableList(new ArrayList<>());
-  private final List<String>                   subtitleScrapers               = ObservableCollections.observableList(new ArrayList<>());
-  private final List<TvShowNfoNaming>          nfoFilenames                   = new ArrayList<>();
-  private final List<TvShowPosterNaming>       posterFilenames                = new ArrayList<>();
-  private final List<TvShowFanartNaming>       fanartFilenames                = new ArrayList<>();
-  private final List<TvShowBannerNaming>       bannerFilenames                = new ArrayList<>();
-  private final List<TvShowClearartNaming>     clearartFilenames              = new ArrayList<>();
-  private final List<TvShowThumbNaming>        thumbFilenames                 = new ArrayList<>();
-  private final List<TvShowClearlogoNaming>    clearlogoFilenames             = new ArrayList<>();
-  private final List<TvShowLogoNaming>         logoFilenames                  = new ArrayList<>();
-  private final List<TvShowCharacterartNaming> characterartFilenames          = new ArrayList<>();
-  private final List<TvShowKeyartNaming>       keyartFilenames                = new ArrayList<>();
-  private final List<TvShowSeasonPosterNaming> seasonPosterFilenames          = new ArrayList<>();
-  private final List<TvShowSeasonBannerNaming> seasonBannerFilenames          = new ArrayList<>();
-  private final List<TvShowSeasonThumbNaming>  seasonThumbFilenames           = new ArrayList<>();
-  private final List<TvShowEpisodeNfoNaming>   episodeNfoFilenames            = new ArrayList<>();
-  private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
-  private final List<MediaArtworkType>         episodeCheckImages             = new ArrayList<>();
-  private final List<MediaArtworkType>         seasonCheckImages              = new ArrayList<>();
-  private final List<MediaArtworkType>         tvShowCheckImages              = new ArrayList<>();
+  private final List<String>                       tvShowDataSources              = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                       badWords                       = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                       artworkScrapers                = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                       skipFolders                    = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>                       subtitleScrapers               = ObservableCollections.observableList(new ArrayList<>());
+  private final List<TvShowNfoNaming>              nfoFilenames                   = new ArrayList<>();
+  private final List<TvShowPosterNaming>           posterFilenames                = new ArrayList<>();
+  private final List<TvShowFanartNaming>           fanartFilenames                = new ArrayList<>();
+  private final List<TvShowBannerNaming>           bannerFilenames                = new ArrayList<>();
+  private final List<TvShowDiscartNaming>          discartFilenames               = new ArrayList<>();
+  private final List<TvShowClearartNaming>         clearartFilenames              = new ArrayList<>();
+  private final List<TvShowThumbNaming>            thumbFilenames                 = new ArrayList<>();
+  private final List<TvShowClearlogoNaming>        clearlogoFilenames             = new ArrayList<>();
+  private final List<TvShowLogoNaming>             logoFilenames                  = new ArrayList<>();
+  private final List<TvShowCharacterartNaming>     characterartFilenames          = new ArrayList<>();
+  private final List<TvShowKeyartNaming>           keyartFilenames                = new ArrayList<>();
+  private final List<TvShowSeasonPosterNaming>     seasonPosterFilenames          = new ArrayList<>();
+  private final List<TvShowSeasonBannerNaming>     seasonBannerFilenames          = new ArrayList<>();
+  private final List<TvShowSeasonThumbNaming>      seasonThumbFilenames           = new ArrayList<>();
+  private final List<TvShowEpisodeNfoNaming>       episodeNfoFilenames            = new ArrayList<>();
+  private final List<TvShowEpisodeThumbNaming>     episodeThumbFilenames          = new ArrayList<>();
+  private final List<MediaArtworkType>             episodeCheckImages             = new ArrayList<>();
+  private final List<MediaArtworkType>             seasonCheckImages              = new ArrayList<>();
+  private final List<MediaArtworkType>             tvShowCheckImages              = new ArrayList<>();
 
-  private List<UIFilters>                      uiFilters                      = new ArrayList<>();
-  private final List<String>                   tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
+  private List<UIFilters>                          uiFilters                      = new ArrayList<>();
+  private final List<String>                       tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
 
   // data sources / NFO settings
-  private boolean                              buildImageCacheOnImport        = false;
-  private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
-  private CertificationStyle                   certificationStyle             = CertificationStyle.LARGE;
-  private boolean                              writeCleanNfo                  = false;
-  private MediaLanguages                       nfoLanguage                    = MediaLanguages.en;
+  private boolean                                  buildImageCacheOnImport        = false;
+  private TvShowConnectors                         tvShowConnector                = TvShowConnectors.XBMC;
+  private CertificationStyle                       certificationStyle             = CertificationStyle.LARGE;
+  private boolean                                  writeCleanNfo                  = false;
+  private MediaLanguages                           nfoLanguage                    = MediaLanguages.en;
 
   // renamer
-  private boolean                              renameAfterScrape              = false;
-  private String                               renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
-  private String                               renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
-  private String                               renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
-  private boolean                              renamerSpaceSubstitution       = false;
-  private String                               renamerSpaceReplacement        = "_";
-  private String                               renamerColonReplacement        = "";
-  private boolean                              asciiReplacement               = false;
-  private boolean                              specialSeason                  = true;
+  private boolean                                  renameAfterScrape              = false;
+  private String                                   renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
+  private String                                   renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
+  private String                                   renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
+  private boolean                                  renamerSpaceSubstitution       = false;
+  private String                                   renamerSpaceReplacement        = "_";
+  private String                                   renamerColonReplacement        = "";
+  private boolean                                  asciiReplacement               = false;
+  private boolean                                  specialSeason                  = true;
 
   // meta data scraper
-  private String                               scraper                        = Constants.TVDB;
-  private MediaLanguages                       scraperLanguage                = MediaLanguages.en;
-  private CountryCode                          certificationCountry           = CountryCode.US;
-  private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
+  private String                                   scraper                        = Constants.TVDB;
+  private MediaLanguages                           scraperLanguage                = MediaLanguages.en;
+  private CountryCode                              certificationCountry           = CountryCode.US;
+  private List<TvShowScraperMetadataConfig>        tvShowScraperMetadataConfig    = new ArrayList<>();
+  private List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig   = new ArrayList<>();
 
   // artwork scraper
-  private boolean                              scrapeBestImage                = true;
-  private boolean                              writeActorImages               = false;
-  private boolean                              imageExtraFanart               = false;
-  private int                                  imageExtraFanartCount          = 5;
+  private boolean                                  scrapeBestImage                = true;
+  private boolean                                  writeActorImages               = false;
+  private boolean                                  imageExtraFanart               = false;
+  private int                                      imageExtraFanartCount          = 5;
 
   // subtitle scraper
-  private MediaLanguages                       subtitleScraperLanguage        = MediaLanguages.en;
-  private LanguageStyle                        subtitleLanguageStyle          = LanguageStyle.ISO3T;
+  private MediaLanguages                           subtitleScraperLanguage        = MediaLanguages.en;
+  private LanguageStyle                            subtitleLanguageStyle          = LanguageStyle.ISO3T;
 
   // misc
-  private boolean                              syncTrakt                      = false;
-  private boolean                              dvdOrder                       = false;
-  private boolean                              preferPersonalRating           = true;
-  private String                               preferredRating                = "tvdb";
+  private boolean                                  syncTrakt                      = false;
+  private boolean                                  dvdOrder                       = false;
+  private boolean                                  preferPersonalRating           = true;
+  private String                                   preferredRating                = "tvdb";
 
   // ui
-  private boolean                              storeUiFilters                 = false;
-  private boolean                              displayMissingEpisodes         = false;
-  private boolean                              displayMissingSpecials         = false;
-  private boolean                              capitalWordsinTitles           = false;
-  private boolean                              showLogosPanel                 = true;
+  private boolean                                  storeUiFilters                 = false;
+  private boolean                                  displayMissingEpisodes         = false;
+  private boolean                                  displayMissingSpecials         = false;
+  private boolean                                  capitalWordsinTitles           = false;
+  private boolean                                  showLogosPanel                 = true;
 
   public TvShowSettings() {
     super();
@@ -186,8 +190,6 @@ public class TvShowSettings extends AbstractSettings {
     addDefaultEntries();
 
     addPropertyChangeListener(evt -> setDirty());
-    scraperMetadataConfig = new TvShowScraperMetadataConfig();
-    scraperMetadataConfig.addPropertyChangeListener(ect -> setDirty());
   }
 
   private void addDefaultEntries() {
@@ -202,6 +204,9 @@ public class TvShowSettings extends AbstractSettings {
 
     bannerFilenames.clear();
     addBannerFilename(TvShowBannerNaming.BANNER);
+
+    discartFilenames.clear();
+    addDiscartFilename(TvShowDiscartNaming.DISCART);
 
     clearartFilenames.clear();
     addClearartFilename(TvShowClearartNaming.CLEARART);
@@ -249,6 +254,8 @@ public class TvShowSettings extends AbstractSettings {
     addTvShowCheckImages(MediaArtworkType.BACKGROUND);
     addTvShowCheckImages(MediaArtworkType.BANNER);
 
+    tvShowScraperMetadataConfig.addAll(Arrays.asList(TvShowScraperMetadataConfig.values()));
+    episodeScraperMetadataConfig.addAll(Arrays.asList(TvShowEpisodeScraperMetadataConfig.values()));
   }
 
   @Override
@@ -261,7 +268,7 @@ public class TvShowSettings extends AbstractSettings {
    *
    * @return single instance of TvShowSettings
    */
-  public synchronized static TvShowSettings getInstance() {
+  public static synchronized TvShowSettings getInstance() {
     return getInstance(Globals.settings.getSettingsFolder());
   }
 
@@ -271,7 +278,7 @@ public class TvShowSettings extends AbstractSettings {
    *
    * @return single instance of TvShowSettings
    */
-  public synchronized static TvShowSettings getInstance(String folder) {
+  public static synchronized TvShowSettings getInstance(String folder) {
     if (instance == null) {
       instance = (TvShowSettings) getInstance(folder, CONFIG_FILE, TvShowSettings.class);
     }
@@ -330,7 +337,7 @@ public class TvShowSettings extends AbstractSettings {
         saveSettings();
       }
       catch (IOException e) {
-        LOGGER.warn("Could not migrate movie datasources! {}", e);
+        LOGGER.warn("Could not migrate TV show datasources!", e);
       }
     }
 
@@ -677,19 +684,41 @@ public class TvShowSettings extends AbstractSettings {
    *
    * @return the tv show scraper metadata config
    */
-  public TvShowScraperMetadataConfig getScraperMetadataConfig() {
-    return scraperMetadataConfig;
+  public List<TvShowScraperMetadataConfig> getTvShowScraperMetadataConfig() {
+    return tvShowScraperMetadataConfig;
   }
 
   /**
    * Sets the tv show scraper metadata config.
    *
-   * @param scraperMetadataConfig
+   * @param tvShowScraperMetadataConfig
    *          the new tv show scraper metadata config
    */
-  public void setScraperMetadataConfig(TvShowScraperMetadataConfig scraperMetadataConfig) {
-    this.scraperMetadataConfig = scraperMetadataConfig;
-    this.scraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
+  public void setTvShowScraperMetadataConfig(List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig) {
+    this.tvShowScraperMetadataConfig.clear();
+    this.tvShowScraperMetadataConfig.addAll(tvShowScraperMetadataConfig);
+    firePropertyChange("scraperMetadataConfig", null, tvShowScraperMetadataConfig);
+  }
+
+  /**
+   * Gets the episode scraper metadata config.
+   *
+   * @return the episode scraper metadata config
+   */
+  public List<TvShowEpisodeScraperMetadataConfig> getEpisodeScraperMetadataConfig() {
+    return episodeScraperMetadataConfig;
+  }
+
+  /**
+   * Sets the episode scraper metadata config.
+   *
+   * @param scraperMetadataConfig
+   *          the new episode scraper metadata config
+   */
+  public void setEpisodeScraperMetadataConfig(List<TvShowEpisodeScraperMetadataConfig> scraperMetadataConfig) {
+    this.episodeScraperMetadataConfig.clear();
+    this.episodeScraperMetadataConfig.addAll(scraperMetadataConfig);
+    firePropertyChange("episodeScraperMetadataConfig", null, episodeScraperMetadataConfig);
   }
 
   public void addNfoFilename(TvShowNfoNaming filename) {
@@ -754,6 +783,22 @@ public class TvShowSettings extends AbstractSettings {
 
   public List<TvShowBannerNaming> getBannerFilenames() {
     return new ArrayList<>(this.bannerFilenames);
+  }
+
+  public void addDiscartFilename(TvShowDiscartNaming filename) {
+    if (!discartFilenames.contains(filename)) {
+      discartFilenames.add(filename);
+      firePropertyChange(DISCART_FILENAME, null, discartFilenames);
+    }
+  }
+
+  public void clearDiscartFilenames() {
+    discartFilenames.clear();
+    firePropertyChange(DISCART_FILENAME, null, discartFilenames);
+  }
+
+  public List<TvShowDiscartNaming> getDiscartFilenames() {
+    return new ArrayList<>(this.discartFilenames);
   }
 
   public void addClearartFilename(TvShowClearartNaming filename) {
@@ -1103,6 +1148,9 @@ public class TvShowSettings extends AbstractSettings {
     bannerFilenames.clear();
     bannerFilenames.add(TvShowBannerNaming.BANNER);
 
+    discartFilenames.clear();
+    discartFilenames.add(TvShowDiscartNaming.DISCART);
+
     clearartFilenames.clear();
     clearartFilenames.add(TvShowClearartNaming.CLEARART);
 
@@ -1161,6 +1209,9 @@ public class TvShowSettings extends AbstractSettings {
 
     bannerFilenames.clear();
     bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    discartFilenames.clear();
+    discartFilenames.add(TvShowDiscartNaming.DISCART);
 
     clearartFilenames.clear();
     clearartFilenames.add(TvShowClearartNaming.CLEARART);
@@ -1221,6 +1272,9 @@ public class TvShowSettings extends AbstractSettings {
     bannerFilenames.clear();
     bannerFilenames.add(TvShowBannerNaming.BANNER);
 
+    discartFilenames.clear();
+    discartFilenames.add(TvShowDiscartNaming.DISCART);
+
     clearartFilenames.clear();
     clearartFilenames.add(TvShowClearartNaming.CLEARART);
 
@@ -1279,6 +1333,9 @@ public class TvShowSettings extends AbstractSettings {
 
     bannerFilenames.clear();
     bannerFilenames.add(TvShowBannerNaming.BANNER);
+
+    discartFilenames.clear();
+    discartFilenames.add(TvShowDiscartNaming.DISCART);
 
     clearartFilenames.clear();
     clearartFilenames.add(TvShowClearartNaming.CLEARART);

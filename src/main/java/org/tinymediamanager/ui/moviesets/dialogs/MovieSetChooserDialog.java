@@ -374,10 +374,10 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
             movieSetToScrape.saveToDb();
           }
           // get images?
-          if (MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig().isArtwork()) {
-            // get artwork asynchronous
-            model.startArtworkScrapeTask(movieSetToScrape, MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig());
-          }
+          // if (MovieModuleManager.SETTINGS.getScraperMetadataConfig().isArtwork()) {
+          // get artwork asynchronous
+          // model.startArtworkScrapeTask(movieSetToScrape, MovieModuleManager.SETTINGS.getScraperMetadataConfig());
+          // }
         }
         setVisible(false);
       }

@@ -72,40 +72,11 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   @Override
-  public Dimension getPreferredSize() {
-    return getUI().getPreferredSize(this);
-  }
-
-  @Override
-  public Dimension getMinimumSize() {
-    return getUI().getPreferredSize(this);
-  }
-
-  @Override
-  public Dimension getMaximumSize() {
-    return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
-  }
-
-  @Override
   public void setSelectedItem(Object anObject) {
     MediaScraper ms = (MediaScraper) anObject;
     if (ms != null && ms.isEnabled()) {
       // only allow to choose scraper when active
       super.setSelectedItem(anObject);
-    }
-  }
-
-  /**
-   * Small hack to get pop up menu size bigger enough to show items even though the combo box size could be smaller
-   */
-  @Override
-  public void doLayout() {
-    try {
-      layingOut = true;
-      super.doLayout();
-    }
-    finally {
-      layingOut = false;
     }
   }
 

@@ -29,6 +29,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
@@ -152,7 +153,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       try {
         movieList = MovieList.getInstance();
         // set up scrapers
-        MovieScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
+        List<MovieScraperMetadataConfig> scraperMetadataConfig = options.getScraperMetadataConfig();
         MediaScraper mediaMetadataScraper = options.getMetadataScraper();
         List<MediaScraper> artworkScrapers = options.getArtworkScrapers();
         List<MediaScraper> trailerScrapers = options.getTrailerScrapers();
@@ -215,17 +216,17 @@ public class MovieScrapeTask extends TmmThreadPool {
               LOGGER.warn("unsupported media type: " + mediaMetadataScraper.getMediaProvider().getProviderInfo().getId());
             }
 
-            if (scraperMetadataConfig.isMetadata()) {
+            if (ScraperMetadataConfig.containsAnyMetadata(scraperMetadataConfig) || ScraperMetadataConfig.containsAnyCast(scraperMetadataConfig)) {
               movie.setMetadata(md, scraperMetadataConfig);
             }
 
             // scrape artwork if wanted
-            if (scraperMetadataConfig.isArtwork()) {
+            if (ScraperMetadataConfig.containsAnyArtwork(scraperMetadataConfig)) {
               movie.setArtwork(getArtwork(movie, md, artworkScrapers), scraperMetadataConfig);
             }
 
             // scrape trailer if wanted
-            if (scraperMetadataConfig.isTrailer()) {
+            if (ScraperMetadataConfig.containsAnyCast(scraperMetadataConfig)) {
               movie.setTrailers(getTrailers(movie, md, trailerScrapers));
               movie.saveToDb();
               movie.writeNFO();

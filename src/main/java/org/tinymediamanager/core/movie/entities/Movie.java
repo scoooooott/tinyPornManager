@@ -56,8 +56,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -76,6 +78,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -694,22 +697,23 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
+  public void setMetadata(MediaMetadata metadata, List<MovieScraperMetadataConfig> config) {
     if (metadata == null) {
       LOGGER.error("metadata was null");
       return;
     }
 
-    // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getTitle())) {
-      LOGGER.warn("wanted to save empty metadata for " + getTitle());
+    // check if metadata has at least an id (aka it is not empty)
+    if (metadata.getIds().isEmpty()) {
+      LOGGER.warn("wanted to save empty metadata for {}", getTitle());
       return;
     }
 
+    // populate ids
     setIds(metadata.getIds());
 
     // set chosen metadata
-    if (config.isTitle()) {
+    if (config.contains(MovieScraperMetadataConfig.TITLE)) {
       // Capitalize first letter of title if setting is set!
       if (MovieModuleManager.SETTINGS.getCapitalWordsInTitles()) {
         setTitle(WordUtils.capitalize(metadata.getTitle()));
@@ -719,7 +723,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    if (config.isOriginalTitle()) {
+    if (config.contains(MovieScraperMetadataConfig.ORIGINAL_TITLE)) {
       // Capitalize first letter of original title if setting is set!
       if (MovieModuleManager.SETTINGS.getCapitalWordsInTitles()) {
         setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
@@ -729,93 +733,111 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    if (config.isTagline()) {
+    if (config.contains(MovieScraperMetadataConfig.TAGLINE)) {
       setTagline(metadata.getTagline());
     }
 
-    if (config.isPlot()) {
+    if (config.contains(MovieScraperMetadataConfig.PLOT)) {
       setPlot(metadata.getPlot());
     }
 
-    if (config.isYear()) {
+    if (config.contains(MovieScraperMetadataConfig.YEAR)) {
       setYear(metadata.getYear());
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.RELEASE_DATE)) {
       setReleaseDate(metadata.getReleaseDate());
     }
 
-    if (config.isRating()) {
-      clearRatings();
+    if (config.contains(MovieScraperMetadataConfig.RATING)) {
+      Map<String, Rating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        setRating(new Rating(mediaRating));
+        Rating rating = new Rating(mediaRating);
+        newRatings.put(rating.getId(), rating);
       }
+      setRatings(newRatings);
+    }
+
+    if (config.contains(MovieScraperMetadataConfig.TOP250)) {
       setTop250(metadata.getTop250());
     }
 
-    if (config.isRuntime()) {
+    if (config.contains(MovieScraperMetadataConfig.RUNTIME)) {
       setRuntime(metadata.getRuntime());
     }
 
-    setSpokenLanguages(StringUtils.join(metadata.getSpokenLanguages(), ", "));
+    if (config.contains(MovieScraperMetadataConfig.SPOKEN_LANGUAGES)) {
+      setSpokenLanguages(StringUtils.join(metadata.getSpokenLanguages(), ", "));
+    }
+
+    // country
+    if (config.contains(MovieScraperMetadataConfig.COUNTRY)) {
+      setCountry(StringUtils.join(metadata.getCountries(), ", "));
+    }
 
     // certifications
-    if (config.isCertification()) {
-      if (metadata.getCertifications() != null && metadata.getCertifications().size() > 0) {
+    if (config.contains(MovieScraperMetadataConfig.CERTIFICATION)) {
+      if (!metadata.getCertifications().isEmpty()) {
         setCertification(metadata.getCertifications().get(0));
       }
     }
 
-    // country
-    if (config.isCountry()) {
-      setCountry(StringUtils.join(metadata.getCountries(), ", "));
-    }
-
     // studio
-    if (config.isStudio()) {
+    if (config.contains(MovieScraperMetadataConfig.PRODUCTION_COMPANY)) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
     }
 
     // cast
-    if (config.isCast()) {
-
-      List<Person> actors = new ArrayList<>();
-      List<Person> producers = new ArrayList<>();
-      List<Person> directors = new ArrayList<>();
-      List<Person> writers = new ArrayList<>();
+    if (ScraperMetadataConfig.containsAnyCast(config)) {
+      List<Person> newActors = new ArrayList<>();
+      List<Person> newProducers = new ArrayList<>();
+      List<Person> newDirectors = new ArrayList<>();
+      List<Person> newWriters = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            actors.add(new Person(member));
+            newActors.add(new Person(member));
             break;
 
           case DIRECTOR:
-            directors.add(new Person(member));
+            newDirectors.add(new Person(member));
             break;
 
           case WRITER:
-            writers.add(new Person(member));
+            newWriters.add(new Person(member));
             break;
 
           case PRODUCER:
-            producers.add(new Person(member));
+            newProducers.add(new Person(member));
             break;
 
           default:
             break;
         }
       }
-      setActors(actors);
-      setDirectors(directors);
-      setWriters(writers);
-      setProducers(producers);
+
+      if (config.contains(MovieScraperMetadataConfig.ACTORS)) {
+        setActors(newActors);
+      }
+      if (config.contains(MovieScraperMetadataConfig.DIRECTORS)) {
+        setDirectors(newDirectors);
+      }
+      if (config.contains(MovieScraperMetadataConfig.WRITERS)) {
+        setWriters(newWriters);
+      }
+      if (config.contains(MovieScraperMetadataConfig.PRODUCERS)) {
+        setProducers(newProducers);
+      }
     }
 
     // genres
-    if (config.isGenres()) {
+    if (config.contains(MovieScraperMetadataConfig.GENRES)) {
       setGenres(metadata.getGenres());
     }
 
     // tags
-    if (config.isTags()) {
+    if (config.contains(MovieScraperMetadataConfig.TAGS)) {
       for (String tag : metadata.getTags()) {
         addToTags(tag);
       }
@@ -825,12 +847,13 @@ public class Movie extends MediaEntity implements IMediaInformation {
     setScraped(true);
 
     // create MovieSet
-    if (config.isCollection()) {
+    if (config.contains(MovieScraperMetadataConfig.COLLECTION)) {
       int col = 0;
       try {
         col = (int) metadata.getId(MediaMetadata.TMDB_SET);
       }
       catch (Exception ignored) {
+        // no need to log here
       }
       if (col != 0) {
         MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName(), col);
@@ -838,9 +861,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
           movieSet.setTmdbId(col);
           // get movieset metadata
           try {
-            List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
-            if (sets != null && sets.size() > 0) {
-              MediaScraper first = sets.get(0); // just get first
+            List<MediaScraper> movieSetMediaScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
+            if (!movieSetMediaScrapers.isEmpty()) {
+              MediaScraper first = movieSetMediaScrapers.get(0); // just get first
               IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
@@ -876,7 +899,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
           setMovieSet(null);
 
           // add to new movieset
-          // movieSet.addMovie(this);
           setMovieSet(movieSet);
           movieSet.insertMovie(this);
           movieSet.saveToDb();
@@ -894,7 +916,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // write actor images after possible rename (to have a good folder structure)
-    if (config.isCast()) {
+    if (ScraperMetadataConfig.containsAnyCast(config)) {
       writeActorImages();
     }
   }
@@ -984,7 +1006,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  public void setArtwork(MediaMetadata md, MovieScraperMetadataConfig config) {
+  public void setArtwork(MediaMetadata md, List<MovieScraperMetadataConfig> config) {
     setArtwork(md.getMediaArt(MediaArtworkType.ALL), config);
   }
 
@@ -996,10 +1018,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
-    if (config.isArtwork()) {
-      MovieArtworkHelper.setArtwork(this, artwork);
-    }
+  public void setArtwork(List<MediaArtwork> artwork, List<MovieScraperMetadataConfig> config) {
+    MovieArtworkHelper.setArtwork(this, artwork, config);
   }
 
   @Override

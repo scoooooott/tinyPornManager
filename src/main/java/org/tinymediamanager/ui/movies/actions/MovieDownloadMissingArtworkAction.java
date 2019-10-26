@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieMissingArtworkDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -15,6 +16,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
+import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
 
 /**
  * The class MovieDownloadMissingArtworkAction is used to download missing artwork for the selected movies
@@ -40,7 +42,16 @@ public class MovieDownloadMissingArtworkAction extends TmmAction {
       return;
     }
 
-    MovieMissingArtworkDownloadTask task = new MovieMissingArtworkDownloadTask(selectedMovies);
-    TmmTaskManager.getInstance().addDownloadTask(task);
+    MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.downloadmissingartwork")); //$NON-NLS-1$
+    dialog.setVisible(true);
+
+    // get options from dialog
+    MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+
+    // do we want to scrape?
+    if (dialog.shouldStartScrape()) {
+      MovieMissingArtworkDownloadTask task = new MovieMissingArtworkDownloadTask(selectedMovies, options);
+      TmmTaskManager.getInstance().addDownloadTask(task);
+    }
   }
 }

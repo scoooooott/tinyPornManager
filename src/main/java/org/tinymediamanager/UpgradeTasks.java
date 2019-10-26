@@ -271,9 +271,8 @@ public class UpgradeTasks {
       }
     }
 
-    // add HDR10 Strings for old booleans
-    if (StrgUtils.compareVersion(v, "3.0.6") < 0) {
-      LOGGER.info("Performing database upgrade tasks to version 3.0.6");
+    if (StrgUtils.compareVersion(v, "3.1") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.1");
 
       for (Movie movie : MovieList.getInstance().getMovies()) {
         boolean dirty = false;
@@ -303,7 +302,6 @@ public class UpgradeTasks {
         }
       }
     }
-
   }
 
   /**

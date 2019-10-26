@@ -225,7 +225,7 @@ public class MovieChooserModel extends AbstractModelObject {
         return;
       }
       catch (UnsupportedMediaTypeException ignored) {
-        LOGGER.warn("unsupported media type: " + metadataProvider.getMediaProvider().getProviderInfo().getId());
+        LOGGER.warn("unsupported media type for {}", metadataProvider.getMediaProvider().getProviderInfo().getId());
         return;
       }
       setOriginalTitle(metadata.getOriginalTitle());
@@ -313,7 +313,7 @@ public class MovieChooserModel extends AbstractModelObject {
     return tagline;
   }
 
-  public void startArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+  public void startArtworkScrapeTask(Movie movie, List<MovieScraperMetadataConfig> config) {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(movie, config));
   }
 
@@ -322,10 +322,10 @@ public class MovieChooserModel extends AbstractModelObject {
   }
 
   private class ArtworkScrapeTask extends TmmTask {
-    private Movie                      movieToScrape;
-    private MovieScraperMetadataConfig config;
+    private Movie                            movieToScrape;
+    private List<MovieScraperMetadataConfig> config;
 
-    public ArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+    public ArtworkScrapeTask(Movie movie, List<MovieScraperMetadataConfig> config) {
       super(BUNDLE.getString("message.scrape.artwork") + " " + movie.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieToScrape = movie;
       this.config = config;
@@ -365,7 +365,8 @@ public class MovieChooserModel extends AbstractModelObject {
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, movieToScrape, "message.scrape.movieartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
         }
-        catch (MissingIdException ignored) {
+        catch (MissingIdException e) {
+          LOGGER.debug("no id found for scraper {}", artworkScraper.getMediaProvider().getProviderInfo().getId());
         }
       }
 
@@ -426,12 +427,13 @@ public class MovieChooserModel extends AbstractModelObject {
               new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
         }
         catch (MissingIdException | UnsupportedMediaTypeException ignored) {
+          LOGGER.debug("no id found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());
         }
       }
 
       // add local trailers!
       for (MediaFile mf : movieToScrape.getMediaFiles(MediaFileType.TRAILER)) {
-        LOGGER.debug("adding local trailer " + mf.getFilename());
+        LOGGER.debug("adding local trailer {}", mf.getFilename());
         MovieTrailer mt = new MovieTrailer();
         mt.setName(mf.getFilename());
         mt.setProvider("downloaded");

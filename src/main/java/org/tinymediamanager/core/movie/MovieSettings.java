@@ -147,7 +147,7 @@ public class MovieSettings extends AbstractSettings {
   private CountryCode                      certificationCountry                = CountryCode.US;
   private double                           scraperThreshold                    = 0.75;
   private boolean                          scraperFallback                     = false;
-  private MovieScraperMetadataConfig       movieScraperMetadataConfig          = null;
+  private List<MovieScraperMetadataConfig> scraperMetadataConfig               = new ArrayList<>();
   private boolean                          capitalWordsInTitles                = false;
 
   // artwork scraper
@@ -198,8 +198,6 @@ public class MovieSettings extends AbstractSettings {
     addDefaultEntries();
 
     addPropertyChangeListener(evt -> setDirty());
-    movieScraperMetadataConfig = new MovieScraperMetadataConfig();
-    movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
   }
 
   private void addDefaultEntries() {
@@ -255,6 +253,8 @@ public class MovieSettings extends AbstractSettings {
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
       addMovieSubtitleScraper(ms.getId());
     }
+
+    scraperMetadataConfig.addAll(Arrays.asList(MovieScraperMetadataConfig.values()));
   }
 
   @Override
@@ -1187,13 +1187,14 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
   }
 
-  public MovieScraperMetadataConfig getMovieScraperMetadataConfig() {
-    return movieScraperMetadataConfig;
+  public List<MovieScraperMetadataConfig> getScraperMetadataConfig() {
+    return scraperMetadataConfig;
   }
 
-  public void setMovieScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
-    this.movieScraperMetadataConfig = scraperMetadataConfig;
-    this.movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
+  public void setScraperMetadataConfig(List<MovieScraperMetadataConfig> newValues) {
+    scraperMetadataConfig.clear();
+    scraperMetadataConfig.addAll(newValues);
+    firePropertyChange("scraperMetadataConfig", null, scraperMetadataConfig);
   }
 
   public boolean isWriteCleanNfo() {

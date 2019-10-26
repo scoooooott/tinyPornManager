@@ -34,8 +34,8 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.movies.panels.MovieScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -45,13 +45,13 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
-  private static final long           serialVersionUID           = 3826984454317979241L;
+  private static final long                                              serialVersionUID = 3826984454317979241L;
 
-  private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
-  private MediaScraperComboBox        cbMetadataScraper;
-  private MediaScraperCheckComboBox   cbArtworkScraper;
-  private MediaScraperCheckComboBox   cbTrailerScraper;
-  private boolean                     startScrape                = false;
+  private MediaScraperComboBox                                           cbMetadataScraper;
+  private MediaScraperCheckComboBox                                      cbArtworkScraper;
+  private MediaScraperCheckComboBox                                      cbTrailerScraper;
+  private boolean                                                        startScrape      = false;
+  private ScraperMetadataConfigCheckComboBox<MovieScraperMetadataConfig> cbScraperConfig;
 
   /**
    * Instantiates a new movie scrape metadata.
@@ -80,29 +80,6 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
         selectedTrailerScrapers.add(trailerScraper);
       }
     }
-
-    // copy the values
-    MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
-
-    MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
-    scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
-    scraperMetadataConfig.setTagline(settings.isTagline());
-    scraperMetadataConfig.setPlot(settings.isPlot());
-    scraperMetadataConfig.setRating(settings.isRating());
-    scraperMetadataConfig.setRuntime(settings.isRuntime());
-    scraperMetadataConfig.setYear(settings.isYear());
-    scraperMetadataConfig.setCertification(settings.isCertification());
-    scraperMetadataConfig.setCast(settings.isCast());
-    scraperMetadataConfig.setCountry(settings.isCountry());
-    scraperMetadataConfig.setStudio(settings.isStudio());
-    scraperMetadataConfig.setGenres(settings.isGenres());
-    scraperMetadataConfig.setArtwork(settings.isArtwork());
-    scraperMetadataConfig.setTrailer(settings.isTrailer());
-    scraperMetadataConfig.setCollection(settings.isCollection());
-    scraperMetadataConfig.setTags(settings.isTags());
-
-    movieSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
 
     {
       JPanel panelCenter = new JPanel();
@@ -134,8 +111,8 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
       panelCenter.add(lblScrapeFollowingItems, "cell 0 5 2 1,growx");
 
-      JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelCenter.add(panelScraperMetadataSetting, "cell 0 6 2 1,grow");
+      cbScraperConfig = new ScraperMetadataConfigCheckComboBox<>(MovieScraperMetadataConfig.values());
+      panelCenter.add(cbScraperConfig, "cell 0 6 2 1,grow, wmin 0");
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
@@ -163,6 +140,9 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     if (!selectedTrailerScrapers.isEmpty()) {
       cbTrailerScraper.setSelectedItems(selectedTrailerScrapers);
     }
+
+    // pre-set config
+    cbScraperConfig.setSelectedItems(MovieModuleManager.SETTINGS.getScraperMetadataConfig());
   }
 
   /**
@@ -171,18 +151,19 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
    * @return the movie search and scrape config
    */
   public MovieSearchAndScrapeOptions getMovieSearchAndScrapeConfig() {
+    MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
+
     // metadata provider
     movieSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork scrapers
-    for (MediaScraper scraper : cbArtworkScraper.getSelectedItems()) {
-      movieSearchAndScrapeConfig.addArtworkScraper(scraper);
-    }
+    movieSearchAndScrapeConfig.setArtworkScraper(cbArtworkScraper.getSelectedItems());
 
     // tailer scraper
-    for (MediaScraper scraper : cbTrailerScraper.getSelectedItems()) {
-      movieSearchAndScrapeConfig.addTrailerScraper(scraper);
-    }
+    movieSearchAndScrapeConfig.setTrailerScraper(cbTrailerScraper.getSelectedItems());
+
+    // config
+    movieSearchAndScrapeConfig.setScraperMetadataConfig(cbScraperConfig.getSelectedItems());
 
     return movieSearchAndScrapeConfig;
   }

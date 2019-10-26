@@ -96,7 +96,7 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDefaults, lblDefaultsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
-        TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
+        TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel();
         panelDefaults.add(scraperMetadataPanel, "cell 1 0 2 1,grow");
       }
     }

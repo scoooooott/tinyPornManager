@@ -49,8 +49,8 @@ import com.jtattoo.plaf.JTattooUtilities;
 
 public class TmmIcons extends BaseIcons {
 
-  public static Color COLOR = Color.GRAY;
-  public static Color COLOR_HOVER = Color.WHITE;
+  public static Color           COLOR       = Color.GRAY;
+  public static Color           COLOR_HOVER = Color.WHITE;
 
   public final static ImageIcon EMPTY_IMAGE = new ImageIcon(TmmIcons.class.getResource("empty.png"));
 
@@ -104,12 +104,12 @@ public class TmmIcons extends BaseIcons {
   }
 
   private static class CloseSymbol implements Icon {
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color rolloverColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  rolloverColor           = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public CloseSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -157,7 +157,8 @@ public class TmmIcons extends BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawLine(dx + 1, dy + 1, w - dx + 1, h - dy + 1);
@@ -174,12 +175,12 @@ public class TmmIcons extends BaseIcons {
   }
 
   private static class IconSymbol implements Icon {
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Color rolloverColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Color  rolloverColor           = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public IconSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -224,7 +225,8 @@ public class TmmIcons extends BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawLine(dx + 1, h - dy, w - dx + 1, h - dy);
@@ -237,12 +239,12 @@ public class TmmIcons extends BaseIcons {
   }
 
   private static class MaxSymbol implements Icon {
-    private Color foregroundColor = null;
-    private Color shadowColor = null;
-    private Color rolloverColor = null;
-    private Color inactiveForegroundColor = null;
-    private Color inactiveShadowColor = null;
-    private Insets insets = new Insets(0, 0, 0, 0);
+    private Color  foregroundColor         = null;
+    private Color  shadowColor             = null;
+    private Color  rolloverColor           = null;
+    private Color  inactiveForegroundColor = null;
+    private Color  inactiveShadowColor     = null;
+    private Insets insets                  = new Insets(0, 0, 0, 0);
 
     public MaxSymbol(Color foregroundColor, Color shadowColor, Color rolloverColor) {
       this.foregroundColor = foregroundColor;
@@ -287,7 +289,8 @@ public class TmmIcons extends BaseIcons {
       if (shadowColor != null) {
         if (!active) {
           g2D.setColor(inactiveShadowColor);
-        } else {
+        }
+        else {
           g2D.setColor(shadowColor);
         }
         g2D.drawRect(dx + 1, dy + 1, w - (2 * dx), h - (2 * dy));
@@ -323,9 +326,11 @@ public class TmmIcons extends BaseIcons {
     public int getIconWidth() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 15;
-      } else {
+      }
+      else {
         return 18;
       }
     }
@@ -334,9 +339,11 @@ public class TmmIcons extends BaseIcons {
     public int getIconHeight() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 15;
-      } else {
+      }
+      else {
         return 18;
       }
     }
@@ -363,9 +370,11 @@ public class TmmIcons extends BaseIcons {
     public int getIconWidth() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 15;
-      } else {
+      }
+      else {
         return 18;
       }
     }
@@ -374,18 +383,20 @@ public class TmmIcons extends BaseIcons {
     public int getIconHeight() {
       if (AbstractLookAndFeel.getTheme().isSmallFontSize()) {
         return 14;
-      } else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
+      }
+      else if (AbstractLookAndFeel.getTheme().isMediumFontSize()) {
         return 15;
-      } else {
+      }
+      else {
         return 18;
       }
     }
   }
 
   private static class SquareCheckBoxIcon implements Icon {
-    private static final int SIZE = AbstractLookAndFeel.getDefaultFontSize() + 4;
+    private static final int       SIZE             = AbstractLookAndFeel.getDefaultFontSize() + 4;
     private static final ImageIcon SMALL_CHECK_ICON = createFontAwesomeIcon('\uF00C', AbstractLookAndFeel.getTheme().getFocusColor());
-    private static final ImageIcon TRI_STATE_ICON = createFontAwesomeIcon('\uF068', AbstractLookAndFeel.getTheme().getFocusColor());
+    private static final ImageIcon TRI_STATE_ICON   = createFontAwesomeIcon('\uF068', AbstractLookAndFeel.getTheme().getFocusColor());
 
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -402,16 +413,17 @@ public class TmmIcons extends BaseIcons {
 
       // paint background (and shadow)
       g.setColor(AbstractLookAndFeel.getTheme().getBackgroundColorDark());
-      g.fillRoundRect(x + 1, y + 1, SIZE, SIZE, SIZE / 2, SIZE / 2);
+      g.fillRoundRect(x + 1, y + 2, SIZE, SIZE, SIZE / 2, SIZE / 2);
       g.setColor(AbstractLookAndFeel.getTheme().getInputBackgroundColor());
-      g.fillRoundRect(x, y, SIZE, SIZE, SIZE / 2, SIZE / 2);
+      g.fillRoundRect(x, y + 1, SIZE, SIZE, SIZE / 2, SIZE / 2);
 
       Icon icon = null;
       int offsetX = 0;
       if (isTriStateButtonModelStatusMixed(model)) {
         icon = TRI_STATE_ICON;
         offsetX = 2;
-      } else if (model.isSelected()) {
+      }
+      else if (model.isSelected()) {
         icon = SMALL_CHECK_ICON;
       }
 
@@ -420,7 +432,7 @@ public class TmmIcons extends BaseIcons {
           icon = new ImageIcon(GrayFilter.createDisabledImage(SMALL_CHECK_ICON.getImage()));
         }
 
-        icon.paintIcon(c, g, x + offsetX, y);
+        icon.paintIcon(c, g, x + offsetX, y + 1);
       }
 
       g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRenderingHint);
@@ -431,10 +443,11 @@ public class TmmIcons extends BaseIcons {
         // check the model state via reflection
         try {
           Method method = model.getClass().getMethod("isMixed");
-          if ((Boolean) method.invoke(model)) {
+          if ((boolean) method.invoke(model)) {
             return true;
           }
-        } catch (Exception ignored) {
+        }
+        catch (Exception ignored) {
         }
       }
       return false;
@@ -442,19 +455,20 @@ public class TmmIcons extends BaseIcons {
 
     @Override
     public int getIconWidth() {
-      return SIZE + 2;
+      return Math.max(SMALL_CHECK_ICON.getIconWidth(), TRI_STATE_ICON.getIconWidth());
     }
 
     @Override
     public int getIconHeight() {
-      return SIZE;
+      return Math.max(SMALL_CHECK_ICON.getIconHeight(), TRI_STATE_ICON.getIconHeight());
     }
   }
 
   /**
    * create a image off the font awesome icon font in the default size 14px for 12pt base font size.
    *
-   * @param iconId the icon id
+   * @param iconId
+   *          the icon id
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId) {
@@ -474,8 +488,10 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a image off the font awesome icon font in given size (scaling to the base font size of 12pt applied!)
    *
-   * @param iconId the icon id
-   * @param size   the desired font size
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, int size) {
@@ -485,8 +501,10 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a image off the awesome icon font with the given scaling factor
    *
-   * @param iconId      the icon id
-   * @param scaleFactor the scale factor to apply
+   * @param iconId
+   *          the icon id
+   * @param scaleFactor
+   *          the scale factor to apply
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, float scaleFactor) {
@@ -496,8 +514,10 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a image off the awesome icon font size 14pt for 12pt base font size.
    *
-   * @param iconId the icon id
-   * @param color  the color to create the icon in
+   * @param iconId
+   *          the icon id
+   * @param color
+   *          the color to create the icon in
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, Color color) {
@@ -507,9 +527,12 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a image off the awesome icon font
    *
-   * @param iconId the icon id
-   * @param size   the desired font size
-   * @param color  the color to create the icon in
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
+   * @param color
+   *          the color to create the icon in
    * @return the generated icon
    */
   public static ImageIcon createFontAwesomeIcon(char iconId, int size, Color color) {
@@ -523,8 +546,10 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a text icon in the default Label.foreground color
    *
-   * @param text the text to be painted
-   * @param size the text size
+   * @param text
+   *          the text to be painted
+   * @param size
+   *          the text size
    * @return an icon containing the text
    */
   public static ImageIcon createTextIcon(String text, int size) {
@@ -534,9 +559,12 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a text icon in the given color
    *
-   * @param text  the text to be painted
-   * @param size  the text size
-   * @param color the color to draw in
+   * @param text
+   *          the text to be painted
+   * @param size
+   *          the text size
+   * @param color
+   *          the color to draw in
    * @return an icon containing the text
    */
   public static ImageIcon createTextIcon(String text, int size, Color color) {
@@ -551,9 +579,12 @@ public class TmmIcons extends BaseIcons {
   /**
    * create a font icon - draw an icon off a font with the given text/character
    *
-   * @param font  the font to be used
-   * @param text  the text to be painted
-   * @param color the color to draw in
+   * @param font
+   *          the font to be used
+   * @param text
+   *          the text to be painted
+   * @param color
+   *          the color to draw in
    * @return an icon containing the text
    */
   public static ImageIcon createFontIcon(Font font, String text, Color color) {
@@ -598,7 +629,8 @@ public class TmmIcons extends BaseIcons {
       g2.drawString(text, (int) ((iconWidth - Math.ceil(bounds.getWidth())) / 2), -y);
       g2.dispose();
       return new ImageIcon(buffer);
-    } catch (Exception ignored) {
+    }
+    catch (Exception ignored) {
     }
 
     return EMPTY_IMAGE;

@@ -58,6 +58,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieList;
@@ -80,6 +81,7 @@ import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
@@ -87,7 +89,6 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
-import org.tinymediamanager.ui.movies.panels.MovieScraperMetadataPanel;
 import org.tinymediamanager.ui.renderer.BorderTableCellRenderer;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -107,42 +108,42 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long             serialVersionUID      = -3104541519073924724L;
+  private static final long                                              serialVersionUID      = -3104541519073924724L;
 
-  private static final Logger           LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final Logger                                            LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                     movieList             = MovieList.getInstance();
-  private Movie                         movieToScrape;
-  private MovieScraperMetadataConfig    scraperMetadataConfig;
-  private MediaScraper                  mediaScraper;
-  private List<MediaScraper>            artworkScrapers;
-  private List<MediaScraper>            trailerScrapers;
-  private boolean                       continueQueue         = true;
-  private boolean                       navigateBack          = false;
+  private MovieList                                                      movieList             = MovieList.getInstance();
+  private Movie                                                          movieToScrape;
+  private MediaScraper                                                   mediaScraper;
+  private List<MediaScraper>                                             artworkScrapers;
+  private List<MediaScraper>                                             trailerScrapers;
+  private boolean                                                        continueQueue         = true;
+  private boolean                                                        navigateBack          = false;
 
-  private SortedList<MovieChooserModel> searchResultEventList = null;
-  private EventList<Person>             castMemberEventList   = null;
-  private MovieChooserModel             selectedResult        = null;
+  private SortedList<MovieChooserModel>                                  searchResultEventList = null;
+  private EventList<Person>                                              castMemberEventList   = null;
+  private MovieChooserModel                                              selectedResult        = null;
 
-  private SearchTask                    activeSearchTask;
+  private SearchTask                                                     activeSearchTask;
 
   /**
    * UI components
    */
-  private JTextField                    textFieldSearchString;
-  private MediaScraperComboBox          cbScraper;
-  private TmmTable                      tableSearchResults;
-  private JLabel                        lblTitle;
-  private JTextArea                     taMovieDescription;
-  private ImageLabel                    lblMoviePoster;
-  private JLabel                        lblProgressAction;
-  private JProgressBar                  progressBar;
-  private JLabel                        lblTagline;
-  private JButton                       okButton;
-  private JLabel                        lblPath;
-  private JComboBox                     cbLanguage;
-  private JLabel                        lblOriginalTitle;
-  private TmmTable                      tableCastMembers;
+  private JTextField                                                     textFieldSearchString;
+  private MediaScraperComboBox                                           cbScraper;
+  private TmmTable                                                       tableSearchResults;
+  private JLabel                                                         lblTitle;
+  private JTextArea                                                      taMovieDescription;
+  private ImageLabel                                                     lblMoviePoster;
+  private JLabel                                                         lblProgressAction;
+  private JProgressBar                                                   progressBar;
+  private JLabel                                                         lblTagline;
+  private JButton                                                        okButton;
+  private JLabel                                                         lblPath;
+  private JComboBox                                                      cbLanguage;
+  private JLabel                                                         lblOriginalTitle;
+  private TmmTable                                                       tableCastMembers;
+  private ScraperMetadataConfigCheckComboBox<MovieScraperMetadataConfig> cbScraperConfig;
 
   /**
    * Create the dialog.
@@ -160,9 +161,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     mediaScraper = movieList.getDefaultMediaScraper();
     artworkScrapers = movieList.getDefaultArtworkScrapers();
     trailerScrapers = movieList.getDefaultTrailerScrapers();
-
-    // copy the values
-    scraperMetadataConfig = new MovieScraperMetadataConfig(MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig());
 
     // table format for the search result
     searchResultEventList = new SortedList<>(
@@ -195,7 +193,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
             TmmUIHelper.openFile(mf.getFileAsPath());
           }
           catch (Exception ex) {
-            LOGGER.error("open file", e);
+            LOGGER.error("open file", ex);
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
           }
@@ -218,7 +216,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
-        // cbScraper = new JComboBox(MovieScrapers.values());
         cbScraper = new MediaScraperComboBox(movieList.getAvailableMediaScrapers());
         MediaScraper defaultScraper = movieList.getDefaultMediaScraper();
         cbScraper.setSelectedItem(defaultScraper);
@@ -316,8 +313,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx");
 
-      JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "cell 0 5,grow");
+      cbScraperConfig = new ScraperMetadataConfigCheckComboBox<>(MovieScraperMetadataConfig.values());
+      contentPanel.add(cbScraperConfig, "cell 0 5,grow, wmin 0");
     }
 
     {
@@ -442,6 +439,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     {
       movieToScrape = movie;
       progressBar.setVisible(false);
+      cbScraperConfig.setSelectedItems(MovieModuleManager.SETTINGS.getScraperMetadataConfig());
 
       textFieldSearchString.setText(movieToScrape.getTitle());
       lblPath.setText(movieToScrape.getPathNIO().resolve(movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()).toString());
@@ -470,32 +468,51 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           }
 
           // set scraped metadata
-          movieToScrape.setMetadata(md, scraperMetadataConfig);
+          List<MovieScraperMetadataConfig> scraperConfig = cbScraperConfig.getSelectedItems();
+          movieToScrape.setMetadata(md, scraperConfig);
 
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
           // get images?
-          if (scraperMetadataConfig.isArtwork()) {
+          if (ScraperMetadataConfig.containsAnyArtwork(scraperConfig)) {
             // let the user choose the images
             if (!MovieModuleManager.SETTINGS.isScrapeBestImage()) {
-              chooseArtwork(MediaFileType.POSTER);
-              chooseArtwork(MediaFileType.FANART);
-              chooseArtwork(MediaFileType.BANNER);
-              chooseArtwork(MediaFileType.LOGO);
-              chooseArtwork(MediaFileType.CLEARLOGO);
-              chooseArtwork(MediaFileType.CLEARART);
-              chooseArtwork(MediaFileType.DISC);
-              chooseArtwork(MediaFileType.THUMB);
-              chooseArtwork(MediaFileType.KEYART);
+              if (scraperConfig.contains(MovieScraperMetadataConfig.POSTER)) {
+                chooseArtwork(MediaFileType.POSTER);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.FANART) || scraperConfig.contains(MovieScraperMetadataConfig.EXTRAFANART)) {
+                chooseArtwork(MediaFileType.FANART);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.BANNER)) {
+                chooseArtwork(MediaFileType.BANNER);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.LOGO)) {
+                chooseArtwork(MediaFileType.LOGO);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.CLEARLOGO)) {
+                chooseArtwork(MediaFileType.CLEARLOGO);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.CLEARART)) {
+                chooseArtwork(MediaFileType.CLEARART);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.DISCART)) {
+                chooseArtwork(MediaFileType.DISC);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.THUMB) || scraperConfig.contains(MovieScraperMetadataConfig.EXTRATHUMB)) {
+                chooseArtwork(MediaFileType.THUMB);
+              }
+              if (scraperConfig.contains(MovieScraperMetadataConfig.KEYART)) {
+                chooseArtwork(MediaFileType.KEYART);
+              }
             }
             else {
               // get artwork asynchronous
-              model.startArtworkScrapeTask(movieToScrape, scraperMetadataConfig);
+              model.startArtworkScrapeTask(movieToScrape, scraperConfig);
             }
           }
 
           // get trailers?
-          if (scraperMetadataConfig.isTrailer()) {
+          if (scraperConfig.contains(MovieScraperMetadataConfig.TRAILER)) {
             model.startTrailerScrapeTask(movieToScrape);
           }
 

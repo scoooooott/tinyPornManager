@@ -15,430 +15,119 @@
  */
 package org.tinymediamanager.core.movie;
 
-import org.tinymediamanager.core.AbstractModelObject;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * The Class MovieScraperMetadataConfig.
+ * The enum MovieScraperMetadataConfig is used to control which fields will be set after scraping
  * 
  * @author Manuel Laggner
  */
-@JsonAutoDetect
-public class MovieScraperMetadataConfig extends AbstractModelObject {
+public enum MovieScraperMetadataConfig implements ScraperMetadataConfig {
+  // meta data
+  TITLE(Type.METADATA),
+  ORIGINAL_TITLE(Type.METADATA, "metatag.originaltitle"),
+  TAGLINE(Type.METADATA),
+  PLOT(Type.METADATA),
+  YEAR(Type.METADATA),
+  RELEASE_DATE(Type.METADATA, "metatag.releasedate"),
+  RATING(Type.METADATA),
+  TOP250(Type.METADATA),
+  RUNTIME(Type.METADATA),
+  CERTIFICATION(Type.METADATA),
+  GENRES(Type.METADATA, "metatag.genre"),
+  SPOKEN_LANGUAGES(Type.METADATA, "metatag.language"),
+  COUNTRY(Type.METADATA),
+  PRODUCTION_COMPANY(Type.METADATA, "metatag.studio"),
+  TAGS(Type.METADATA),
+  COLLECTION(Type.METADATA, "metatag.movieset", "Settings.movieset.scraper.hint"),
+  TRAILER(Type.METADATA),
 
-  /**
-   * these booleans indicate which metadata should be scraped
-   */
-  private boolean title         = true;
-  private boolean originalTitle = true;
-  private boolean tagline       = true;
-  private boolean plot          = true;
-  private boolean rating        = true;
-  private boolean runtime       = true;
-  private boolean year          = true;
-  private boolean certification = true;
-  private boolean cast          = true;
-  private boolean country       = true;
-  private boolean studio        = true;
-  private boolean genres        = true;
-  private boolean artwork       = true;
-  private boolean trailer       = true;
-  private boolean collection    = true;
-  private boolean tags          = true;
+  // cast
+  ACTORS(Type.CAST),
+  PRODUCERS(Type.CAST),
+  DIRECTORS(Type.CAST),
+  WRITERS(Type.CAST),
 
-  /**
-   * default constructor - true for all fields
-   */
-  public MovieScraperMetadataConfig() {
+  // artwork
+  POSTER(Type.ARTWORK),
+  FANART(Type.ARTWORK),
+  BANNER(Type.ARTWORK),
+  CLEARART(Type.ARTWORK),
+  THUMB(Type.ARTWORK),
+  LOGO(Type.ARTWORK),
+  CLEARLOGO(Type.ARTWORK),
+  DISCART(Type.ARTWORK, "mediafiletype.disc"),
+  KEYART(Type.ARTWORK),
+  EXTRAFANART(Type.ARTWORK),
+  EXTRATHUMB(Type.ARTWORK);
+
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private Type                        type;
+  private String                      description;
+  private String                      tooltip;
+
+  MovieScraperMetadataConfig(Type type) {
+    this(type, null, null);
   }
 
-  /**
-   * custom constructor - set all fields to the given value
-   * 
-   * @param value
-   *          the value to set all fields to
-   */
-  public MovieScraperMetadataConfig(boolean value) {
-    title = value;
-    originalTitle = value;
-    tagline = value;
-    plot = value;
-    rating = value;
-    runtime = value;
-    year = value;
-    certification = value;
-    cast = value;
-    country = value;
-    studio = value;
-    genres = value;
-    artwork = value;
-    trailer = value;
-    collection = value;
-    tags = value;
+  MovieScraperMetadataConfig(Type type, String description) {
+    this(type, description, null);
   }
 
-  /**
-   * copy constructor
-   *
-   * @param original
-   *          the original object to inherit data from
-   */
-  public MovieScraperMetadataConfig(MovieScraperMetadataConfig original) {
-    title = original.title;
-    originalTitle = original.originalTitle;
-    tagline = original.tagline;
-    plot = original.plot;
-    rating = original.rating;
-    runtime = original.runtime;
-    year = original.year;
-    certification = original.certification;
-    cast = original.cast;
-    country = original.country;
-    studio = original.studio;
-    genres = original.genres;
-    artwork = original.artwork;
-    trailer = original.trailer;
-    collection = original.collection;
-    tags = original.tags;
+  MovieScraperMetadataConfig(Type type, String description, String tooltip) {
+    this.type = type;
+    this.description = description;
+    this.tooltip = tooltip;
   }
 
-  public boolean isMetadata() {
-    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || country
-            || studio || genres || collection || tags;
+  @Override
+  public Type getType() {
+    return type;
   }
 
-  /**
-   * Checks if is title.
-   * 
-   * @return true, if is title
-   */
-  public boolean isTitle() {
-    return title;
+  @Override
+  public String getDescription() {
+    if (StringUtils.isBlank(description)) {
+      try {
+        if (type == Type.ARTWORK) {
+          return BUNDLE.getString("mediafiletype." + name().toLowerCase(Locale.ROOT));
+        }
+        else {
+          return BUNDLE.getString("metatag." + name().toLowerCase(Locale.ROOT));
+        }
+      }
+      catch (Exception ignored) {
+        // just not crash
+      }
+    }
+    else {
+      try {
+        return BUNDLE.getString(description);
+      }
+      catch (Exception ignored) {
+        // just not crash
+      }
+    }
+    return "";
   }
 
-  /**
-   * Checks if is original title.
-   * 
-   * @return true, if is original title
-   */
-  public boolean isOriginalTitle() {
-    return originalTitle;
-  }
-
-  /**
-   * Checks if is tagline.
-   * 
-   * @return true, if is tagline
-   */
-  public boolean isTagline() {
-    return tagline;
-  }
-
-  /**
-   * Checks if is plot.
-   * 
-   * @return true, if is plot
-   */
-  public boolean isPlot() {
-    return plot;
-  }
-
-  /**
-   * Checks if is rating.
-   * 
-   * @return true, if is rating
-   */
-  public boolean isRating() {
-    return rating;
-  }
-
-  /**
-   * Checks if is runtime.
-   * 
-   * @return true, if is runtime
-   */
-  public boolean isRuntime() {
-    return runtime;
-  }
-
-  /**
-   * Checks if is year.
-   * 
-   * @return true, if is year
-   */
-  public boolean isYear() {
-    return year;
-  }
-
-  /**
-   * Checks if is certification.
-   * 
-   * @return true, if is certification
-   */
-  public boolean isCertification() {
-    return certification;
-  }
-
-  /**
-   * Checks if is cast.
-   * 
-   * @return true, if is cast
-   */
-  public boolean isCast() {
-    return cast;
-  }
-
-  /**
-   * Checks if is country
-   *
-   * @return true, if is country
-   */
-  public boolean isCountry() {
-    return country;
-  }
-
-  /**
-   * Checks if is studio
-   *
-   * @return true, if is country
-   */
-  public boolean isStudio() {
-    return studio;
-  }
-
-  /**
-   * Checks if is genres.
-   * 
-   * @return true, if is genres
-   */
-  public boolean isGenres() {
-    return genres;
-  }
-
-  /**
-   * Checks if is artwork.
-   * 
-   * @return true, if is artwork
-   */
-  public boolean isArtwork() {
-    return artwork;
-  }
-
-  /**
-   * Checks if is trailer.
-   * 
-   * @return true, if is trailer
-   */
-  public boolean isTrailer() {
-    return trailer;
-  }
-
-  /**
-   * Checks if is collection.
-   * 
-   * @return true, if is collection
-   */
-  public boolean isCollection() {
-    return collection;
-  }
-
-  /**
-   * Check if is tags
-   * 
-   * @return true, is is tags
-   */
-  public boolean isTags() {
-    return tags;
-  }
-
-  /**
-   * Sets the title.
-   * 
-   * @param newValue
-   *          the new title
-   */
-  public void setTitle(boolean newValue) {
-    boolean oldValue = this.title;
-    this.title = newValue;
-    firePropertyChange("title", oldValue, newValue);
-  }
-
-  /**
-   * Sets the original title.
-   * 
-   * @param newValue
-   *          the new original title
-   */
-  public void setOriginalTitle(boolean newValue) {
-    boolean oldValue = this.originalTitle;
-    this.originalTitle = newValue;
-    firePropertyChange("originalTitle", oldValue, newValue);
-  }
-
-  /**
-   * Sets the tagline.
-   * 
-   * @param newValue
-   *          the new tagline
-   */
-  public void setTagline(boolean newValue) {
-    boolean oldValue = this.tagline;
-    this.tagline = newValue;
-    firePropertyChange("tagline", oldValue, newValue);
-  }
-
-  /**
-   * Sets the plot.
-   * 
-   * @param newValue
-   *          the new plot
-   */
-  public void setPlot(boolean newValue) {
-    boolean oldValue = this.plot;
-    this.plot = newValue;
-    firePropertyChange("plot", oldValue, newValue);
-  }
-
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
-  public void setRating(boolean rating) {
-    this.rating = rating;
-  }
-
-  /**
-   * Sets the runtime.
-   * 
-   * @param newValue
-   *          the new runtime
-   */
-  public void setRuntime(boolean newValue) {
-    boolean oldValue = this.runtime;
-    this.runtime = newValue;
-    firePropertyChange("runtime", oldValue, newValue);
-  }
-
-  /**
-   * Sets the year.
-   * 
-   * @param newValue
-   *          the new year
-   */
-  public void setYear(boolean newValue) {
-    boolean oldValue = this.year;
-    this.year = newValue;
-    firePropertyChange("year", oldValue, newValue);
-  }
-
-  /**
-   * Sets the certification.
-   * 
-   * @param newValue
-   *          the new certification
-   */
-  public void setCertification(boolean newValue) {
-    boolean oldValue = this.certification;
-    this.certification = newValue;
-    firePropertyChange("certification", oldValue, newValue);
-  }
-
-  /**
-   * Sets the cast.
-   * 
-   * @param newValue
-   *          the new cast
-   */
-  public void setCast(boolean newValue) {
-    boolean oldValue = this.cast;
-    this.cast = newValue;
-    firePropertyChange("cast", oldValue, newValue);
-  }
-
-  /**
-   * Sets the country
-   *
-   * @param newValue
-   *          the new country
-   */
-  public void setCountry(boolean newValue) {
-    boolean oldValue = this.country;
-    this.country = newValue;
-    firePropertyChange("country", oldValue, newValue);
-  }
-
-  /**
-   * Sets the studio
-   * 
-   * @param newValue
-   *          the new studio
-   */
-  public void setStudio(boolean newValue) {
-    boolean oldValue = this.studio;
-    this.studio = newValue;
-    firePropertyChange("studio", oldValue, newValue);
-  }
-
-  /**
-   * Sets the genres.
-   * 
-   * @param newValue
-   *          the new genres
-   */
-  public void setGenres(boolean newValue) {
-    boolean oldValue = this.genres;
-    this.genres = newValue;
-    firePropertyChange("genres", oldValue, newValue);
-  }
-
-  /**
-   * Sets the artwork.
-   * 
-   * @param newValue
-   *          the new artwork
-   */
-  public void setArtwork(boolean newValue) {
-    boolean oldValue = this.artwork;
-    this.artwork = newValue;
-    firePropertyChange("artwork", oldValue, newValue);
-  }
-
-  /**
-   * Sets the trailer.
-   * 
-   * @param newValue
-   *          the new trailer
-   */
-  public void setTrailer(boolean newValue) {
-    boolean oldValue = this.trailer;
-    this.trailer = newValue;
-    firePropertyChange("trailer", oldValue, newValue);
-  }
-
-  /**
-   * Sets the collection (movie set).
-   * 
-   * @param newValue
-   *          the new collection (movie set)
-   */
-  public void setCollection(boolean newValue) {
-    boolean oldValue = this.trailer;
-    this.collection = newValue;
-    firePropertyChange("collection", oldValue, newValue);
-  }
-
-  /**
-   * Set the tags
-   * 
-   * @param newValue
-   *          the tag
-   */
-  public void setTags(boolean newValue) {
-    boolean oldValue = this.tags;
-    this.tags = newValue;
-    firePropertyChange("tags", oldValue, newValue);
+  @Override
+  public String getToolTip() {
+    if (StringUtils.isBlank(tooltip)) {
+      return null;
+    }
+    try {
+      return BUNDLE.getString(tooltip);
+    }
+    catch (Exception ignored) {
+      // just not crash
+    }
+    return null;
   }
 }

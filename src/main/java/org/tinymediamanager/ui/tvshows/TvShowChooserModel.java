@@ -173,6 +173,14 @@ public class TvShowChooserModel extends AbstractModelObject {
     return combinedName;
   }
 
+  public MediaScraper getMediaScraper() {
+    return mediaScraper;
+  }
+
+  public List<MediaScraper> getArtworkScrapers() {
+    return artworkScrapers;
+  }
+
   /**
    * Scrape meta data.
    */
@@ -186,7 +194,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       options.setLanguage(language.toLocale());
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
-      LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+      LOGGER.info("Scrape metadata with scraper: {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
@@ -249,7 +257,8 @@ public class TvShowChooserModel extends AbstractModelObject {
       LOGGER.warn("missing id for scrape");
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "scraper.error.missingid"));
     }
-    catch (UnsupportedMediaTypeException ignored) {
+    catch (UnsupportedMediaTypeException e) {
+      LOGGER.warn("unsupported media type for {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
     }
     return episodes;
   }
@@ -272,15 +281,15 @@ public class TvShowChooserModel extends AbstractModelObject {
     return language;
   }
 
-  public void startArtworkScrapeTask(TvShow tvShow, TvShowScraperMetadataConfig config) {
+  public void startArtworkScrapeTask(TvShow tvShow, List<TvShowScraperMetadataConfig> config) {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(tvShow, config));
   }
 
   private class ArtworkScrapeTask extends TmmTask {
-    private TvShow                      tvShowToScrape;
-    private TvShowScraperMetadataConfig config;
+    private TvShow                            tvShowToScrape;
+    private List<TvShowScraperMetadataConfig> config;
 
-    public ArtworkScrapeTask(TvShow tvShow, TvShowScraperMetadataConfig config) {
+    public ArtworkScrapeTask(TvShow tvShow, List<TvShowScraperMetadataConfig> config) {
       super(BUNDLE.getString("message.scrape.artwork") + " " + tvShow.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.tvShowToScrape = tvShow;
       this.config = config;
@@ -315,7 +324,8 @@ public class TvShowChooserModel extends AbstractModelObject {
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, tvShowToScrape, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
         }
-        catch (MissingIdException ignored) {
+        catch (MissingIdException e) {
+          LOGGER.debug("no id found for scraper {}", artworkScraper.getMediaProvider().getProviderInfo().getId());
         }
       }
 

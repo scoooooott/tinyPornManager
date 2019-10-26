@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * The Class TvShowSearchAndScrapeOptions.
@@ -26,37 +27,50 @@ import org.tinymediamanager.scraper.MediaScraper;
  * @author Manuel Laggner
  */
 public class TvShowSearchAndScrapeOptions {
-  private TvShowScraperMetadataConfig scraperMetadataConfig;
-  private MediaScraper                metadataScraper;
-  private List<MediaScraper>          artworkScrapers = new ArrayList<>();
-
-  /**
-   * Instantiates a new movie search and scrape config.
-   */
-  public TvShowSearchAndScrapeOptions() {
-  }
+  private MediaLanguages                           language;
+  private MediaScraper                             metadataScraper;
+  private List<MediaScraper>                       artworkScrapers = new ArrayList<>();
+  private List<TvShowScraperMetadataConfig>        tvShowScraperMetadataConfig;
+  private List<TvShowEpisodeScraperMetadataConfig> tvShowEpisodeScraperMetadataConfig;
+  private boolean                                  episodeList;
 
   /**
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
-    scraperMetadataConfig.setEpisodeList(TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes());
+    // language
+    language = TvShowModuleManager.SETTINGS.getScraperLanguage();
 
     // metadata
     metadataScraper = TvShowList.getInstance().getDefaultMediaScraper();
 
     // artwork
     artworkScrapers.addAll(TvShowList.getInstance().getDefaultArtworkScrapers());
+
+    // scraper config
+    tvShowScraperMetadataConfig = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig());
+    tvShowEpisodeScraperMetadataConfig = new ArrayList<>(TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig());
+
+    // scrape episodelist?
+    episodeList = TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes();
   }
 
   /**
-   * Gets the scraper metadata config.
+   * get the scraper config for TV shows
    * 
-   * @return the scraper metadata config
+   * @return the scraper config
    */
-  public TvShowScraperMetadataConfig getScraperMetadataConfig() {
-    return scraperMetadataConfig;
+  public List<TvShowScraperMetadataConfig> getTvShowScraperMetadataConfig() {
+    return tvShowScraperMetadataConfig;
+  }
+
+  /**
+   * get the scraper config for episodes
+   *
+   * @return the scraper config
+   */
+  public List<TvShowEpisodeScraperMetadataConfig> getTvShowEpisodeScraperMetadataConfig() {
+    return tvShowEpisodeScraperMetadataConfig;
   }
 
   /**
@@ -78,13 +92,23 @@ public class TvShowSearchAndScrapeOptions {
   }
 
   /**
-   * Sets the scraper metadata config.
+   * set the scraper config for TV shows
    * 
-   * @param scraperMetadataConfig
-   *          the new scraper metadata config
+   * @param tvShowScraperMetadataConfig
+   *          the new scraper config
    */
-  public void setScraperMetadataConfig(TvShowScraperMetadataConfig scraperMetadataConfig) {
-    this.scraperMetadataConfig = scraperMetadataConfig;
+  public void setTvShowScraperMetadataConfig(List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig) {
+    this.tvShowScraperMetadataConfig = tvShowScraperMetadataConfig;
+  }
+
+  /**
+   * set the scraper config for episodes
+   * 
+   * @param tvShowEpisodeScraperMetadataConfig
+   *          the new scraper config
+   */
+  public void setTvShowEpisodeScraperMetadataConfig(List<TvShowEpisodeScraperMetadataConfig> tvShowEpisodeScraperMetadataConfig) {
+    this.tvShowEpisodeScraperMetadataConfig = tvShowEpisodeScraperMetadataConfig;
   }
 
   /**
@@ -98,12 +122,51 @@ public class TvShowSearchAndScrapeOptions {
   }
 
   /**
-   * Adds the artwork scraper.
+   * Set the artwork scrapers.
    * 
-   * @param artworkScraper
-   *          the artwork scraper
+   * @param artworkScrapers
+   *          the artwork scrapers
    */
-  public void addArtworkScraper(MediaScraper artworkScraper) {
-    this.artworkScrapers.add(artworkScraper);
+  public void setArtworkScraper(List<MediaScraper> artworkScrapers) {
+    this.artworkScrapers.clear();
+    this.artworkScrapers.addAll(artworkScrapers);
+  }
+
+  /**
+   * get the language to scrape
+   * 
+   * @return the language to scrape
+   */
+  public MediaLanguages getLanguage() {
+    return language;
+  }
+
+  /**
+   * set the language to scrape
+   * 
+   * @param language
+   *          the language to scrape
+   */
+  public void setLanguage(MediaLanguages language) {
+    this.language = language;
+  }
+
+  /**
+   * scrape the episode list
+   * 
+   * @return true/false
+   */
+  public boolean isEpisodeList() {
+    return episodeList;
+  }
+
+  /**
+   * scrape the episode list too
+   * 
+   * @param episodeList
+   *          true/false
+   */
+  public void setEpisodeList(boolean episodeList) {
+    this.episodeList = episodeList;
   }
 }
