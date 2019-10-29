@@ -637,6 +637,7 @@ public class MovieNfoParser {
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
+    supportedElements.add("tmdbCollectionId");
     supportedElements.add("uniqueid");
 
     // id tag & check against imdb pattern (otherwise we cannot say for which provider this id is)
@@ -722,6 +723,17 @@ public class MovieNfoParser {
             ids.put(entry.tagName(), entry.ownText());
           }
         }
+      }
+    }
+
+    // the tmdb collection id
+    element = getSingleElement(root, "tmdbCollectionId");
+    if (element != null) {
+      try {
+        ids.put(MediaMetadata.TMDB_SET, MetadataUtil.parseInt(element.ownText()));
+      }
+      catch (NumberFormatException ignored) {
+        // just ignore
       }
     }
 
