@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
@@ -64,12 +65,13 @@ public class MovieSelectedScrapeMetadataAction extends TmmAction {
     dialog.setVisible(true);
 
     // get options from dialog
-    MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+    MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeOptions();
+    List<MovieScraperMetadataConfig> config = dialog.getMovieScraperMetadataConfig();
 
     // do we want to scrape?
     if (dialog.shouldStartScrape()) {
       // scrape
-      TmmThreadPool scrapeTask = new MovieScrapeTask(selectedMovies, false, options);
+      TmmThreadPool scrapeTask = new MovieScrapeTask(selectedMovies, false, options, config);
       if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

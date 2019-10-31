@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
 
-import java.util.List;
-
-import org.tinymediamanager.scraper.entities.MediaType;
+package org.tinymediamanager.scraper.interfaces;
 
 /**
- * just a dedicated interface, for JSPF to find all "special" Kodi impls.<br>
- * 
- * @author Myron Boyle
+ * The Interface {@link IMovieImdbMetadataProvider}. All scrapers providing movie meta data by IMDB id must implement this interface
+ *
+ * @author Manuel Laggner
  * @since 3.0
  */
-public interface IKodiMetadataProvider extends IMediaProvider {
-  /**
-   * get all Kodi scraper-plugins for the desired type
-   * 
-   * @param type
-   *          the desired media type
-   * @return all found plugins
-   */
-  List<IMediaProvider> getPluginsForType(MediaType type);
+public interface IMovieImdbMetadataProvider {
 }

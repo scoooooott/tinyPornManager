@@ -54,6 +54,7 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowThumbNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 
@@ -161,6 +162,9 @@ public class TvShowSettings extends AbstractSettings {
   private List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig   = new ArrayList<>();
 
   // artwork scraper
+  private MediaLanguages                           imageScraperLanguage           = MediaLanguages.en;
+  private MediaArtwork.PosterSizes                 imagePosterSize                = MediaArtwork.PosterSizes.LARGE;
+  private MediaArtwork.FanartSizes                 imageFanartSize                = MediaArtwork.FanartSizes.LARGE;
   private boolean                                  scrapeBestImage                = true;
   private boolean                                  writeActorImages               = false;
   private boolean                                  imageExtraFanart               = false;
@@ -719,6 +723,36 @@ public class TvShowSettings extends AbstractSettings {
     this.episodeScraperMetadataConfig.clear();
     this.episodeScraperMetadataConfig.addAll(scraperMetadataConfig);
     firePropertyChange("episodeScraperMetadataConfig", null, episodeScraperMetadataConfig);
+  }
+
+  public MediaLanguages getImageScraperLanguage() {
+    return imageScraperLanguage;
+  }
+
+  public void setImageScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.imageScraperLanguage;
+    this.imageScraperLanguage = newValue;
+    firePropertyChange("imageScraperLanguage", oldValue, newValue);
+  }
+
+  public MediaArtwork.PosterSizes getImagePosterSize() {
+    return imagePosterSize;
+  }
+
+  public void setImagePosterSize(MediaArtwork.PosterSizes newValue) {
+    MediaArtwork.PosterSizes oldValue = this.imagePosterSize;
+    this.imagePosterSize = newValue;
+    firePropertyChange("imagePosterSize", oldValue, newValue);
+  }
+
+  public MediaArtwork.FanartSizes getImageFanartSize() {
+    return imageFanartSize;
+  }
+
+  public void setImageFanartSize(MediaArtwork.FanartSizes newValue) {
+    MediaArtwork.FanartSizes oldValue = this.imageFanartSize;
+    this.imageFanartSize = newValue;
+    firePropertyChange("imageFanartSize", oldValue, newValue);
   }
 
   public void addNfoFilename(TvShowNfoNaming filename) {

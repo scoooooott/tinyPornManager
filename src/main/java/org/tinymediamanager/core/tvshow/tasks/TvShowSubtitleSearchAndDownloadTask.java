@@ -32,12 +32,13 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.scraper.util.MediaIdUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -98,9 +99,10 @@ public class TvShowSubtitleSearchAndDownloadTask extends TmmThreadPool {
           try {
             MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
 
-            IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-            SubtitleSearchOptions options = new SubtitleSearchOptions(mf.getFileAsPath().toFile());
-            options.setLanguage(language.toLocale());
+            ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+            SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.TV_EPISODE);
+            options.setFile(mf.getFileAsPath().toFile());
+            options.setLanguage(language);
             options.setSeason(episode.getSeason());
             options.setEpisode(episode.getEpisode());
 

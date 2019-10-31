@@ -55,12 +55,12 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieNfoParser;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.tasks.ImageCacheTask;
 import org.tinymediamanager.core.tasks.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -890,7 +890,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case TRAILER:
             mf.gatherMediaInformation(); // do this exceptionally here, to set
                                          // quality in one rush
-            MovieTrailer mt = new MovieTrailer();
+            MediaTrailer mt = new MediaTrailer();
             mt.setName(mf.getFilename());
             mt.setProvider("downloaded");
             mt.setQuality(mf.getVideoFormat());

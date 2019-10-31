@@ -18,18 +18,18 @@ package org.tinymediamanager.ui.converter;
 import java.util.Locale;
 
 import org.jdesktop.beansbinding.Converter;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 
 /**
  * the class {@link RatingConverter} is used to display the rating with the max value
  *
  * @author Manuel Laggner
  */
-public class RatingConverter extends Converter<Rating, String> {
+public class RatingConverter extends Converter<MediaRating, String> {
   private Locale locale = Locale.getDefault();
 
   @Override
-  public String convertForward(Rating arg0) {
+  public String convertForward(MediaRating arg0) {
     if (arg0 != null) {
       return String.format(locale, "%.1f / %,d", arg0.getRating(), arg0.getMaxValue());
     }
@@ -37,7 +37,7 @@ public class RatingConverter extends Converter<Rating, String> {
   }
 
   @Override
-  public Rating convertReverse(String arg0) {
+  public MediaRating convertReverse(String arg0) {
     return null;
   }
 }

@@ -70,23 +70,20 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -128,7 +125,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private TvShowEpisode                           episodeToEdit;
   private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<>());
   private List<MediaFile>                         mediaFiles       = new ArrayList<>();
-  private Rating                                  userRating;
+  private MediaRating                             userMediaRating;
   private boolean                                 continueQueue    = true;
   private boolean                                 navigateBack     = false;
   private int                                     queueIndex;
@@ -194,7 +191,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
     this.ratings = MediaRatingTable.convertRatingMapToEventList(episode.getRatings(), false);
-    this.userRating = episodeToEdit.getRating(Rating.USER);
+    this.userMediaRating = episodeToEdit.getRating(MediaRating.USER);
 
     initComponents();
     bindingGroup = initDataBindings();
@@ -211,7 +208,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       spDisplaySeason.setModel(new SpinnerNumberModel(episodeToEdit.getDisplaySeason(), -1, 9999, 1));
       spDisplayEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getDisplayEpisode(), -1, 9999, 1));
       spDateAdded.setValue(episodeToEdit.getDateAdded());
-      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 10.0, 0.1));
 
       lblThumb.setImagePath(episodeToEdit.getArtworkFilename(MediaFileType.THUMB));
       tfThumb.setText(episodeToEdit.getArtworkUrl(MediaFileType.THUMB));
@@ -680,7 +677,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         writers.clear();
         directors.clear();
 
-        for (MediaCastMember member : metadata.getCastMembers()) {
+        // force copy constructors here
+        for (Person member : metadata.getCastMembers()) {
           switch (member.getType()) {
             case ACTOR:
               guests.add(new Person(member));
@@ -747,16 +745,16 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.fireEventForChangedMediaInformation();
 
       // user rating
-      Map<String, Rating> ratings = new HashMap<>();
+      Map<String, MediaRating> ratings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        ratings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
+        ratings.put(MediaRating.USER, new MediaRating(MediaRating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
       for (MediaRatingTable.MediaRating mediaRating : TvShowEpisodeEditorDialog.this.ratings) {
         if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.votes > 0) {
-          Rating rating = new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
+          MediaRating rating = new MediaRating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue);
           ratings.put(mediaRating.key, rating);
         }
       }
@@ -828,9 +826,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     @Override
     protected Void doInBackground() {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
-      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions();
+      options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage());
+
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
@@ -842,8 +840,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       options.setId(MediaMetadata.EPISODE_NR_DVD, spDvdEpisode.getValue().toString());
       try {
         LOGGER.info("=====================================================");
-        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId() + ", "
-            + mediaScraper.getMediaProvider().getProviderInfo().getVersion());
+        LOGGER.info("Scraper metadata with scraper: {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
         LOGGER.info(options.toString());
         LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
@@ -871,7 +868,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           directors.clear();
           writers.clear();
 
-          for (MediaCastMember member : metadata.getCastMembers()) {
+          // force copy constructors here
+          for (Person member : metadata.getCastMembers()) {
             switch (member.getType()) {
               case ACTOR:
                 guests.add(new Person(member));
@@ -908,8 +906,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, TvShowEpisodeEditorDialog.this.episodeToEdit, "scraper.error.missingid"));
       }
-      catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
-        // nothing to be done here
+      catch (NothingFoundException ignored) {
+        LOGGER.debug("nothing found");
       }
 
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

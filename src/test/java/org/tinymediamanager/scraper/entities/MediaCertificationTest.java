@@ -19,8 +19,9 @@ package org.tinymediamanager.scraper.entities;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.tinymediamanager.core.MediaCertification;
 
-public class CertificationTest {
+public class MediaCertificationTest {
 
   // @Test
   // public void testCertificationNames() {
@@ -31,15 +32,15 @@ public class CertificationTest {
 
   @Test
   public void testParseCertification() {
-    assertThat(Certification.findCertification("FSK12")).isEqualTo(Certification.DE_FSK12);
-    assertThat(Certification.findCertification("PG")).isEqualTo(Certification.US_PG);
-    assertThat(Certification.findCertification("NR")).isEqualTo(Certification.NOT_RATED);
-    assertThat(Certification.findCertification("not rated")).isEqualTo(Certification.NOT_RATED);
-    assertThat(Certification.findCertification("V.M.14")).isEqualTo(Certification.IT_VM14);
-    assertThat(Certification.findCertification("ab 18")).isEqualTo(Certification.DE_FSK18);
+    assertThat(MediaCertification.findCertification("FSK12")).isEqualTo(MediaCertification.DE_FSK12);
+    assertThat(MediaCertification.findCertification("PG")).isEqualTo(MediaCertification.US_PG);
+    assertThat(MediaCertification.findCertification("NR")).isEqualTo(MediaCertification.NOT_RATED);
+    assertThat(MediaCertification.findCertification("not rated")).isEqualTo(MediaCertification.NOT_RATED);
+    assertThat(MediaCertification.findCertification("V.M.14")).isEqualTo(MediaCertification.IT_VM14);
+    assertThat(MediaCertification.findCertification("ab 18")).isEqualTo(MediaCertification.DE_FSK18);
 
-    assertThat(Certification.findCertification("")).isEqualTo(Certification.UNKNOWN);
-    assertThat(Certification.findCertification("asdf")).isEqualTo(Certification.UNKNOWN);
+    assertThat(MediaCertification.findCertification("")).isEqualTo(MediaCertification.UNKNOWN);
+    assertThat(MediaCertification.findCertification("asdf")).isEqualTo(MediaCertification.UNKNOWN);
   }
 
 }

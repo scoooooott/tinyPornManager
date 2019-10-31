@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.core.tasks.DownloadTask;
 
@@ -32,7 +32,7 @@ import org.tinymediamanager.core.tasks.DownloadTask;
  */
 public class MovieTrailerDownloadTask extends DownloadTask {
 
-  public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) throws Exception {
+  public MovieTrailerDownloadTask(MediaTrailer trailer, Movie movie) throws Exception {
     super(trailer.getUrl(), movie.getPathNIO().resolve(movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER)), movie, MediaFileType.TRAILER);
 
     List<MovieTrailerNaming> trailernames = new ArrayList<>();

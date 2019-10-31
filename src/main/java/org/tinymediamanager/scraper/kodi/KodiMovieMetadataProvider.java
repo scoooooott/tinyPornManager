@@ -15,24 +15,25 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.w3c.dom.Document;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the real Kodi meta data provider for movies
@@ -47,17 +48,17 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
-    LOGGER.debug("Kodi: getMetadata(): " + options);
-    if (options.getResult() == null || !scraper.getProviderInfo().getId().equals(options.getResult().getProviderId())) {
-      throw new MissingIdException("scraping with Kodi scrapers only with a prior result possible");
-    }
-    return _getMetadata(options);
+  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+    return _search(options);
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException {
-    return _search(options);
+  public MediaMetadata getMetadata(MovieSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    LOGGER.debug("Kodi: getMetadata(): {}", options);
+    if (options.getSearchResult() == null || !scraper.getProviderInfo().getId().equals(options.getSearchResult().getProviderId())) {
+      throw new MissingIdException("scraping with Kodi scrapers only with a prior result possible");
+    }
+    return _getMetadata(options);
   }
 
   @Override
@@ -73,7 +74,7 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
 
     Document xml = parseXmlString(xmlDetails);
     addMetadata(md, xml.getDocumentElement());
-    LOGGER.debug("MetaData: " + md.toString());
+    LOGGER.debug("MetaData: {}", md);
   }
 
   @Override
@@ -82,16 +83,21 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws ScrapeException {
-    LOGGER.debug("******* BEGIN ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException {
+    LOGGER.debug("******* BEGIN ARTWORK XML FOR {} ***********", options.getArtworkType());
     List<MediaArtwork> mas = new ArrayList<>();
     // scrape again to get Kodi XML (thank god we have a mem cachedUrl)
     try {
-      MediaMetadata md = getMetadata(arg0);
-      mas.addAll(md.getMediaArt(arg0.getArtworkType()));
-      LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
-    } catch (Exception e) {
-      LOGGER.error("problem getting artwork: " + e.getMessage());
+      if (options.getSearchResult() == null || !scraper.getProviderInfo().getId().equals(options.getSearchResult().getProviderId())) {
+        throw new MissingIdException("scraping with Kodi scrapers only with a prior result possible");
+      }
+
+      MediaMetadata md = _getMetadata(options);
+      mas.addAll(md.getMediaArt(options.getArtworkType()));
+      LOGGER.debug("******* END ARTWORK XML FOR {} ***********", options.getArtworkType());
+    }
+    catch (Exception e) {
+      LOGGER.error("problem getting artwork: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 

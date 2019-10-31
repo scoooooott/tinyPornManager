@@ -1,26 +1,26 @@
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.Test;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
 
 public class ITHDTrailersNetTrailerProviderTest {
 
   @Test
   public void testScrapeTrailer() {
-    IMovieTrailerProvider mp;
+    ITrailerProvider mp;
     try {
       mp = new HDTrailersNetTrailerProvider();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.MOVIE);
 
       MediaMetadata md = new MediaMetadata("foo");
       md.setOriginalTitle("Iron Man 3");

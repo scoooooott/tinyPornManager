@@ -26,15 +26,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -42,23 +41,23 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  *
  * @author Myron Boyle
  */
-public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(HDTrailersNetTrailerProvider.class);
+public class HDTrailersNetTrailerProvider implements ITrailerProvider {
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNetTrailerProvider.class);
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  public HDTrailersNetTrailerProvider() {
-  }
-
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo pi = new MediaProviderInfo("hd-trailers", "hd-trailers.net",
-            "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
+    return new MediaProviderInfo("hd-trailers", "hd-trailers.net",
+        "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
         HDTrailersNetTrailerProvider.class.getResource("/org/tinymediamanager/scraper/hd-trailers_net.png"));
-    pi.setVersion(HDTrailersNetTrailerProvider.class);
-    return pi;
   }
 
   @Override
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
+  public String getId() {
+    return providerInfo.getId();
+  }
+
+  @Override
+  public List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getTrailers() - {}", options);
     List<MediaTrailer> trailers = new ArrayList<>();
     MediaMetadata md = options.getMetadata();
@@ -71,7 +70,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     String ot = md.getOriginalTitle();
 
     // best guess
-    String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase(Locale.ROOT) + "/";
+    String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replace("--", "-").toLowerCase(Locale.ROOT) + "/";
 
     LOGGER.debug("Guessed HD-Trailers Url: {}", search);
 
@@ -136,18 +135,22 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
           trailer.setProvider(getProviderFromUrl(tr2url));
           LOGGER.debug("found trailer: {}", trailer);
           trailers.add(trailer);
-        } catch (IndexOutOfBoundsException i) {
+        }
+        catch (IndexOutOfBoundsException i) {
           // ignore parse errors per line
           LOGGER.warn("Error parsing HD-Trailers line. Possible missing quality.");
         }
       }
-    } catch (InterruptedException | InterruptedIOException e) {
+    }
+    catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
       Thread.currentThread().interrupt();
-    } catch (HttpException e) {
+    }
+    catch (HttpException e) {
       LOGGER.info("could not find a trailer on hd-trailers.net");
-    } catch (Exception e) {
-      LOGGER.error("cannot parse HD-Trailers movie: {}", e);
+    }
+    catch (Exception e) {
+      LOGGER.error("cannot parse HD-Trailers movie: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -167,7 +170,8 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   /**
    * Returns the "Source" for this trailer by parsing the URL.
    *
-   * @param url the url
+   * @param url
+   *          the url
    * @return the provider from url
    */
   private static String getProviderFromUrl(String url) {
@@ -175,19 +179,26 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     String source = "unknown";
     if (url.contains("youtube.com")) {
       source = "youtube";
-    } else if (url.contains("apple.com")) {
+    }
+    else if (url.contains("apple.com")) {
       source = "apple";
-    } else if (url.contains("aol.com")) {
+    }
+    else if (url.contains("aol.com")) {
       source = "aol";
-    } else if (url.contains("yahoo.com")) {
+    }
+    else if (url.contains("yahoo.com")) {
       source = "yahoo";
-    } else if (url.contains("hd-trailers.net")) {
+    }
+    else if (url.contains("hd-trailers.net")) {
       source = "hdtrailers";
-    } else if (url.contains("moviefone.com")) {
+    }
+    else if (url.contains("moviefone.com")) {
       source = "moviefone";
-    } else if (url.contains("mtv.com")) {
+    }
+    else if (url.contains("mtv.com")) {
       source = "mtv";
-    } else if (url.contains("ign.com")) {
+    }
+    else if (url.contains("ign.com")) {
       source = "ign";
     }
     return source;

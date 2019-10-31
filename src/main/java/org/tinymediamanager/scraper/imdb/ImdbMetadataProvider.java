@@ -20,45 +20,44 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieImdbMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieImdbMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
 /**
- * The Class ImdbMetadataProvider. A meta data provider for the site imdb.com
+ * The public ImdbMetadataProvider() {
+ * 
+ * }Class ImdbMetadataProvider. A meta data provider for the site imdb.com
  *
  * @author Manuel Laggner
  */
 public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieImdbMetadataProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  public static final String     USE_TMDB_FOR_MOVIES   = "useTmdbForMovies";
+  public static final String     USE_TMDB_FOR_TV_SHOWS = "useTmdbForTvShows";
+  public static final String     ID                    = "imdb";
 
-  public static final String USE_TMDB_FOR_MOVIES = "useTmdbForMovies";
-  public static final String USE_TMDB_FOR_TV_SHOWS = "useTmdbForTvShows";
+  static final MediaProviderInfo providerInfo          = createMediaProviderInfo();
+  static final ExecutorService   executor              = Executors.newFixedThreadPool(4);
 
-  static final MediaProviderInfo providerInfo = createMediaProviderInfo();
-  static final ExecutorService executor = Executors.newFixedThreadPool(4);
+  static final String            CAT_TITLE             = "&s=tt";
+  static final String            CAT_TV                = "&s=tt&ttype=tv&ref_=fn_tv";
 
-  static final String CAT_TITLE = "&s=tt";
-  static final String CAT_TV = "&s=tt&ttype=tv&ref_=fn_tv";
-
-  private ImdbSiteDefinition imdbSite;
-
-  public ImdbMetadataProvider() {
-    imdbSite = ImdbSiteDefinition.IMDB_COM;
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "IMDb.com",
+        "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
+        ImdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/imdb_com.png"));
 
     // configure/load settings
     providerInfo.getConfig().addBoolean("filterUnwantedCategories", true);
@@ -69,14 +68,8 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
 
     providerInfo.getConfig().load();
-  }
 
-  private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo mpi = new MediaProviderInfo("imdb", "IMDb.com",
-            "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
-        ImdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/imdb_com.png"));
-    mpi.setVersion(ImdbMetadataProvider.class);
-    return mpi;
+    return providerInfo;
   }
 
   @Override
@@ -85,52 +78,43 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options)
-          throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException {
-    LOGGER.debug("getMetadata() " + options.toString());
-
-    switch (options.getType()) {
-      case MOVIE:
-        return (new ImdbMovieParser(imdbSite)).getMovieMetadata(options);
-
-      case TV_SHOW:
-        return (new ImdbTvShowParser(imdbSite)).getTvShowMetadata(options);
-
-      case TV_EPISODE:
-        return (new ImdbTvShowParser(imdbSite)).getEpisodeMetadata(options);
-
-      default:
-        throw new UnsupportedMediaTypeException(options.getType());
-    }
+  public String getId() {
+    return ID;
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions query) throws ScrapeException, UnsupportedMediaTypeException {
-    LOGGER.debug("search() " + query.toString());
-
-    switch (query.getMediaType()) {
-      case MOVIE:
-        return (new ImdbMovieParser(imdbSite)).search(query);
-
-      case TV_SHOW:
-        return (new ImdbTvShowParser(imdbSite)).search(query);
-
-      default:
-        throw new UnsupportedMediaTypeException(query.getMediaType());
-    }
+  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+    return (new ImdbMovieParser()).search(options);
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException {
-    LOGGER.debug("getEpisodeList() " + options.toString());
-    switch (options.getType()) {
-      case TV_SHOW:
-      case TV_EPISODE:
-        return new ImdbTvShowParser(imdbSite).getEpisodeList(options);
+  public MediaMetadata getMetadata(MovieSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    return (new ImdbMovieParser()).getMovieMetadata(options);
+  }
 
-      default:
-        throw new UnsupportedMediaTypeException(options.getType());
-    }
+  @Override
+  public MediaMetadata getMetadata(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    return (new ImdbTvShowParser()).getTvShowMetadata(options);
+  }
+
+  @Override
+  public MediaMetadata getMetadata(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    return (new ImdbTvShowParser()).getEpisodeMetadata(options);
+  }
+
+  @Override
+  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+    return (new ImdbTvShowParser()).search(options);
+  }
+
+  @Override
+  public List<MediaMetadata> getEpisodeList(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    return new ImdbTvShowParser().getEpisodeList(options);
+  }
+
+  @Override
+  public List<MediaMetadata> getEpisodeList(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    return new ImdbTvShowParser().getEpisodeList(options);
   }
 
   static void processMediaArt(MediaMetadata md, MediaArtworkType type, String image) {

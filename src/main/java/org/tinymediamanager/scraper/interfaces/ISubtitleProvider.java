@@ -13,37 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 import java.util.List;
 
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface {@link IMovieTrailerProvider}. All scrapers providing movie trailers must implement this interface
+ * The Interface {@link ISubtitleProvider}. All scrapers providing subtitles must implement this interface
  * 
- * @author Manuel Laggner
+ * @author Myron Boyle, Manuel Laggner
  * @since 3.0
  */
-public interface IMovieTrailerProvider extends IMediaProvider {
+public interface ISubtitleProvider extends IMediaProvider {
 
   /**
-   * Gets the trailers.
+   * searches for subtitles for MediaFile
    * 
    * @param options
-   *          the options
-   * @return the trailers
+   *          the options for searching the subtitles
+   * @return the MediaSearchResults
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
    * @throws MissingIdException
    *           indicates that there was no usable id to scrape
-   * @throws UnsupportedMediaTypeException
-   *           indicates that the requested media type is not supported
    */
-  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException;
+  List<SubtitleSearchResult> search(SubtitleSearchAndScrapeOptions options) throws ScrapeException, MissingIdException;
 }

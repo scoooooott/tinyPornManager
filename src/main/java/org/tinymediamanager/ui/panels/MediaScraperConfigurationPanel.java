@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.config.MediaProviderConfigObject;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmLabel;

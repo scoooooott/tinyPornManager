@@ -1,19 +1,19 @@
 package org.tinymediamanager.scraper.moviemeter;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.Test;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 
 public class ITMoviemeterMetadataProviderTest {
 
@@ -21,7 +21,8 @@ public class ITMoviemeterMetadataProviderTest {
   public void testSearch() {
     try {
       IMovieMetadataProvider rt = new MovieMeterMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Avatar");
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setSearchQuery("Avatar");
 
       List<MediaSearchResult> results = rt.search(options);
       assertThat(results.size()).isGreaterThanOrEqualTo(3);
@@ -40,7 +41,8 @@ public class ITMoviemeterMetadataProviderTest {
     try {
       IMovieMetadataProvider rt = new MovieMeterMetadataProvider();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setLanguage(MediaLanguages.nl);
       options.setId(rt.getProviderInfo().getId(), "17552");
       MediaMetadata md = rt.getMetadata(options);
 
@@ -51,8 +53,9 @@ public class ITMoviemeterMetadataProviderTest {
 
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getId()).isNotEmpty();
       assertThat(mediaRating.getRating()).isGreaterThan(0);
-      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getVotes()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(5);
 
       assertThat(md.getPlot()).startsWith("Jake Sully (Sam Worthington) is een verlamde oorlogsveteraan in de toekomst, die met enkele");
@@ -60,8 +63,8 @@ public class ITMoviemeterMetadataProviderTest {
       assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0499549");
       assertThat(md.getRuntime()).isEqualTo(162);
       assertThat(md.getGenres().size()).isEqualTo(2);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(3);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isEqualTo(1);
+      assertThat(md.getCastMembers(ACTOR).size()).isEqualTo(3);
+      assertThat(md.getCastMembers(DIRECTOR).size()).isEqualTo(1);
     } catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());

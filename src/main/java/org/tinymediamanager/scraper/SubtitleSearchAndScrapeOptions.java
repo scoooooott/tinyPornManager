@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,42 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.tinymediamanager.scraper;
 
 import java.io.File;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The class SubtitleSearchOptions. Pass arguments to the scraper searches
+ * the class SubtitleSearchAndScrapeOptions is used to pass data to the artwork scrapers
  * 
  * @author Manuel Laggner
- * @since 2.0
  */
-public class SubtitleSearchOptions extends MediaSearchOptions {
+public class SubtitleSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
   private int  season  = -1;
   private int  episode = -1;
 
   private File file;
 
-  public SubtitleSearchOptions() {
-    super(MediaType.SUBTITLE);
+  public SubtitleSearchAndScrapeOptions(MediaType type) {
+    super(type);
   }
 
-  public SubtitleSearchOptions(File file) {
-    super(MediaType.SUBTITLE);
-    this.file = file;
-  }
-
-  public SubtitleSearchOptions(String query) {
-    super(MediaType.SUBTITLE, query);
-  }
-
-  public SubtitleSearchOptions(File file, String query) {
-    super(MediaType.SUBTITLE, query);
-    this.file = file;
+  protected SubtitleSearchAndScrapeOptions(SubtitleSearchAndScrapeOptions original) {
+    super(original);
+    this.season = original.season;
+    this.episode = original.episode;
+    this.file = original.file;
   }
 
   /**
@@ -100,16 +91,11 @@ public class SubtitleSearchOptions extends MediaSearchOptions {
 
   /**
    * Set the file for subtitle scraping
-   * 
+   *
    * @param file
    *          the file for creating hashes
    */
   public void setFile(File file) {
     this.file = file;
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }

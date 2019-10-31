@@ -23,8 +23,8 @@ import java.nio.file.Paths;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
 
 public class TvShowEpisodeNfoParserTest {
 
@@ -64,7 +64,7 @@ public class TvShowEpisodeNfoParserTest {
       for (String fanart : episode.thumbs) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(episode.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(true);
@@ -143,7 +143,7 @@ public class TvShowEpisodeNfoParserTest {
       for (String fanart : episode.thumbs) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(episode.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);
@@ -222,7 +222,7 @@ public class TvShowEpisodeNfoParserTest {
       for (String fanart : episode.thumbs) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(episode.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);
@@ -301,7 +301,7 @@ public class TvShowEpisodeNfoParserTest {
       for (String fanart : episode.thumbs) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(episode.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(episode.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(episode.ids).contains(entry("tvdb", 250800));
       assertThat(episode.releaseDate).isEqualTo("1987-04-12");
       assertThat(episode.watched).isEqualTo(false);

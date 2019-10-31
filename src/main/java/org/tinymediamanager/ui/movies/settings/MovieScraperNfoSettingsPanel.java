@@ -32,11 +32,11 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
@@ -231,7 +231,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     @Override
     public String toString() {
       String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ROOT));
-      return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
+      return bundleTag.replace("{}", CertificationStyle.formatCertification(MediaCertification.DE_FSK16, style));
     }
   }
 

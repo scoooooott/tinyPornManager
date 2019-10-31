@@ -44,13 +44,14 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -158,7 +159,7 @@ public class TvShowEpisodeNfoParser {
     public int                        displayepisode      = -1;
     public String                     plot                = "";
     public int                        runtime             = 0;
-    public Certification              certification       = Certification.UNKNOWN;
+    public MediaCertification         certification       = MediaCertification.UNKNOWN;
     public Date                       releaseDate         = null;
     public boolean                    watched             = false;
     public int                        playcount           = 0;
@@ -1287,7 +1288,7 @@ public class TvShowEpisodeNfoParser {
 
       for (Map.Entry<String, TvShowEpisodeNfoParser.Rating> entry : ratings.entrySet()) {
         TvShowEpisodeNfoParser.Rating r = entry.getValue();
-        episode.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
+        episode.setRating(new MediaRating(r.id, r.rating, r.votes, r.maxValue));
       }
 
       episode.setYear(year);

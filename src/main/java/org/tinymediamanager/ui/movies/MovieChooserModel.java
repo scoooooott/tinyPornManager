@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,31 +32,30 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -201,14 +204,15 @@ public class MovieChooserModel extends AbstractModelObject {
       // poster for preview
       setPosterUrl(result.getPosterUrl());
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-      options.setResult(result);
-      options.setLanguage(language.toLocale());
-      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setSearchResult(result);
+      options.setLanguage(language);
+      options.setIds(result.getIds());
+
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId() + ", "
           + metadataProvider.getMediaProvider().getProviderInfo().getVersion());
-      LOGGER.info(options.toString());
+      LOGGER.info("{}", options);
       LOGGER.info("=====================================================");
       try {
         metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
@@ -224,15 +228,12 @@ public class MovieChooserModel extends AbstractModelObject {
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "scraper.error.missingid"));
         return;
       }
-      catch (UnsupportedMediaTypeException ignored) {
-        LOGGER.warn("unsupported media type for {}", metadataProvider.getMediaProvider().getProviderInfo().getId());
-        return;
-      }
+
       setOriginalTitle(metadata.getOriginalTitle());
 
       List<Person> castMembers = new ArrayList<>();
       int i = 0;
-      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.DIRECTOR)) {
+      for (Person castMember : metadata.getCastMembers(DIRECTOR)) {
         castMembers.add(new Person(castMember));
 
         // display at max 2 directors
@@ -242,7 +243,7 @@ public class MovieChooserModel extends AbstractModelObject {
       }
 
       i = 0;
-      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.PRODUCER)) {
+      for (Person castMember : metadata.getCastMembers(PRODUCER)) {
         castMembers.add(new Person(castMember));
 
         // display at max 2 producers
@@ -251,7 +252,7 @@ public class MovieChooserModel extends AbstractModelObject {
         }
       }
 
-      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.ACTOR)) {
+      for (Person castMember : metadata.getCastMembers(ACTOR)) {
         castMembers.add(new Person(castMember));
       }
       setCastMembers(castMembers);
@@ -339,18 +340,11 @@ public class MovieChooserModel extends AbstractModelObject {
 
       List<MediaArtwork> artwork = new ArrayList<>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.MOVIE);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
-      try {
-        options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
-      }
-      catch (Exception e) {
-        options.setTmdbId(0);
-      }
-      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
-      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setIds(metadata.getIds());
+      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
       options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
@@ -397,9 +391,9 @@ public class MovieChooserModel extends AbstractModelObject {
         return;
       }
 
-      List<MovieTrailer> trailer = new ArrayList<>();
+      List<MediaTrailer> trailer = new ArrayList<>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.MOVIE);
       options.setMetadata(metadata);
       options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
       try {
@@ -408,25 +402,20 @@ public class MovieChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(language.toLocale());
-      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setLanguage(language);
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {
         try {
-          IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
-          List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
-          for (MediaTrailer mediaTrailer : foundTrailers) {
-            MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);
-            trailer.add(movieTrailer);
-          }
+          ITrailerProvider trailerProvider = (ITrailerProvider) trailerScraper.getMediaProvider();
+          trailer.addAll(trailerProvider.getTrailers(options));
         }
         catch (ScrapeException e) {
           LOGGER.error("getTrailers {}", e.getMessage());
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
         }
-        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
+        catch (MissingIdException ignored) {
           LOGGER.debug("no id found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());
         }
       }
@@ -434,7 +423,7 @@ public class MovieChooserModel extends AbstractModelObject {
       // add local trailers!
       for (MediaFile mf : movieToScrape.getMediaFiles(MediaFileType.TRAILER)) {
         LOGGER.debug("adding local trailer {}", mf.getFilename());
-        MovieTrailer mt = new MovieTrailer();
+        MediaTrailer mt = new MediaTrailer();
         mt.setName(mf.getFilename());
         mt.setProvider("downloaded");
         mt.setQuality(mf.getVideoFormat());

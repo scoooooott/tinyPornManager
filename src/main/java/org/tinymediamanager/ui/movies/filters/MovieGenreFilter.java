@@ -20,8 +20,8 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**

@@ -28,9 +28,9 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.w3c.dom.Element;
 
 /**
@@ -62,16 +62,16 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
   @Override
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(prepareTrailerForXbmc(movieTrailer));
+    for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(prepareTrailerForXbmc(mediaTrailer));
         break;
       }
     }
     root.appendChild(trailer);
   }
 
-  private String prepareTrailerForXbmc(MovieTrailer trailer) {
+  private String prepareTrailerForXbmc(MediaTrailer trailer) {
     // youtube trailer are stored in a special notation: plugin://plugin.video.youtube/?action=play_video&videoid=<ID>
     // parse out the ID from the url and store it in the right notation
     Pattern pattern = Pattern.compile("https{0,1}://.*youtube..*/watch\\?v=(.*)$");

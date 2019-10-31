@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 import org.tinymediamanager.scraper.MediaProviderInfo;
 
@@ -33,10 +33,9 @@ public interface IMediaProvider {
   MediaProviderInfo getProviderInfo();
 
   /**
-   * Method will be called, after ALL plugins have been loaded<br>
-   * This comes handy, when you need to initialize something depending on other plugins.
+   * get the id from this scraper
+   * 
+   * @return the scraper id
    */
-  default void afterInitialization() {
-
-  }
+  String getId();
 }

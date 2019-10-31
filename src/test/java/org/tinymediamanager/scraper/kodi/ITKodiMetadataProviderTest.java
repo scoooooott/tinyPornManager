@@ -1,27 +1,30 @@
 package org.tinymediamanager.scraper.kodi;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import org.junit.Assert;
-import org.junit.Test;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-
-import java.util.List;
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 public class ITKodiMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -68,17 +71,18 @@ public class ITKodiMetadataProviderTest {
       assertThat(show).isNotNull();
 
       // search show
-      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.TV_SHOW, "21 Jump Street");
-      searchOptions.setYear(1987);
-      searchOptions.setLanguage(Locale.GERMAN);
+      TvShowSearchAndScrapeOptions searchOptions = new TvShowSearchAndScrapeOptions();
+      searchOptions.setSearchQuery("21 Jump Street");
+      searchOptions.setSearchYear(1987);
+      searchOptions.setLanguage(MediaLanguages.de);
       List<MediaSearchResult> results = show.search(searchOptions);
       for (MediaSearchResult mediaSearchResult : results) {
         System.out.println(mediaSearchResult);
       }
 
       // scrape show details (and cache episodes!)
-      MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.TV_SHOW);
-      scrapeOptions.setResult(results.get(0));
+      TvShowSearchAndScrapeOptions scrapeOptions = new TvShowSearchAndScrapeOptions();
+      scrapeOptions.setSearchResult(results.get(0));
       MediaMetadata md = show.getMetadata(scrapeOptions);
       scrapeOptions.setMetadata(md);
 
@@ -89,12 +93,12 @@ public class ITKodiMetadataProviderTest {
       // }
 
       // get single episode (when cached)
-      scrapeOptions = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      scrapeOptions.setId("metadata.tvdb.com", "77585");
-      scrapeOptions.setId(MediaMetadata.SEASON_NR, "2");
-      scrapeOptions.setId(MediaMetadata.EPISODE_NR, "4");
-      scrapeOptions.setMetadata(md);
-      MediaMetadata ep = show.getMetadata(scrapeOptions);
+      TvShowEpisodeSearchAndScrapeOptions episodeOptions = new TvShowEpisodeSearchAndScrapeOptions();
+      episodeOptions.setId("metadata.tvdb.com", "77585");
+      episodeOptions.setId(MediaMetadata.SEASON_NR, "2");
+      episodeOptions.setId(MediaMetadata.EPISODE_NR, "4");
+      episodeOptions.setMetadata(md);
+      MediaMetadata ep = show.getMetadata(episodeOptions);
       System.out.println(ep);
 
     } catch (Exception e) {
@@ -120,17 +124,18 @@ public class ITKodiMetadataProviderTest {
       assertThat(tmdb).isNotNull();
 
       // search
-      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter and the Philosopher's Stone");
-      searchOptions.setYear(2001);
-      searchOptions.setLanguage(Locale.ENGLISH);
+      MovieSearchAndScrapeOptions searchOptions = new MovieSearchAndScrapeOptions();
+      searchOptions.setSearchQuery("Harry Potter and the Philosopher's Stone");
+      searchOptions.setSearchYear(2001);
+      searchOptions.setLanguage(MediaLanguages.en);
       List<MediaSearchResult> results = tmdb.search(searchOptions);
 
       assertThat(results).isNotNull();
       assertThat(results.size()).isGreaterThan(0);
 
       // scrape
-      MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE);
-      scrapeOptions.setResult(results.get(0));
+      MovieSearchAndScrapeOptions scrapeOptions = new MovieSearchAndScrapeOptions();
+      scrapeOptions.setSearchResult(results.get(0));
       MediaMetadata md = tmdb.getMetadata(scrapeOptions);
 
       assertEquals("Harry Potter and the Philosopher's Stone", md.getTitle());
@@ -143,14 +148,14 @@ public class ITKodiMetadataProviderTest {
       assertEquals("Let the Magic Begin.", md.getTagline());
       assertEquals("Harry Potter Collection", md.getCollectionName());
 
-      assertNotNull(md.getCastMembers(CastType.ACTOR));
-      assertThat(md.getCastMembers(CastType.ACTOR).size()).isGreaterThan(0);
-      assertThat(md.getCastMembers(CastType.ACTOR).get(0).getName()).isNotEmpty();
-      assertThat(md.getCastMembers(CastType.ACTOR).get(0).getCharacter()).isNotEmpty();
+      assertNotNull(md.getCastMembers(ACTOR));
+      assertThat(md.getCastMembers(ACTOR).size()).isGreaterThan(0);
+      assertThat(md.getCastMembers(ACTOR).get(0).getName()).isNotEmpty();
+      assertThat(md.getCastMembers(ACTOR).get(0).getRole()).isNotEmpty();
 
-      assertNotNull(md.getCastMembers(CastType.DIRECTOR));
-      assertThat(md.getCastMembers(CastType.DIRECTOR).size()).isGreaterThan(0);
-      assertThat(md.getCastMembers(CastType.DIRECTOR).get(0).getName()).isNotEmpty();
+      assertNotNull(md.getCastMembers(DIRECTOR));
+      assertThat(md.getCastMembers(DIRECTOR).size()).isGreaterThan(0);
+      assertThat(md.getCastMembers(DIRECTOR).get(0).getName()).isNotEmpty();
     } catch (Exception e) {
       fail(e.getMessage());
     }

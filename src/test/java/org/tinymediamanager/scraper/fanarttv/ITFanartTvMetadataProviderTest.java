@@ -15,17 +15,17 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.Test;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 
 public class ITFanartTvMetadataProviderTest {
 
@@ -39,9 +39,9 @@ public class ITFanartTvMetadataProviderTest {
     try {
       artworkProvider = new FanartTvMetadataProvider();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.MOVIE);
       options.setTmdbId(19995);
-      options.setLanguage(MediaLanguages.en.toLocale());
+      options.setLanguage(MediaLanguages.en);
       options.setArtworkType(MediaArtwork.MediaArtworkType.POSTER);
 
       List<MediaArtwork> images = artworkProvider.getArtwork(options);
@@ -51,7 +51,8 @@ public class ITFanartTvMetadataProviderTest {
       assertThat(images.get(0).getImageSizes()).isNotNull().isNotEmpty();
       assertThat(images.get(0).getImageSizes().get(0).getHeight()).isGreaterThan(images.get(0).getImageSizes().get(0).getWidth());
       assertThat(images.get(0).getImageSizes().get(0).getWidth()).isLessThan(images.get(0).getImageSizes().get(0).getHeight());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }

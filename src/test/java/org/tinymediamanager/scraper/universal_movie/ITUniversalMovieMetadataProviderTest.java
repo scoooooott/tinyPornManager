@@ -19,18 +19,16 @@ package org.tinymediamanager.scraper.universal_movie;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviders;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 
 public class ITUniversalMovieMetadataProviderTest {
 
@@ -68,12 +66,12 @@ public class ITUniversalMovieMetadataProviderTest {
   private void callSearch(String providerId, String searchString) {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("search", providerId);
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, searchString);
-      options.setLanguage(Locale.ENGLISH);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setSearchQuery(searchString);
+      options.setLanguage(MediaLanguages.en);
       List<MediaSearchResult> results = mp.search(options);
 
       // did we get a result?
@@ -85,11 +83,13 @@ public class ITUniversalMovieMetadataProviderTest {
         // except.. omdbapi does not have an own id - use imdb id here
         if ("omdbapi".equals(providerId)) {
           assertThat(result.getIdAsString("imdb")).isNotBlank();
-        } else {
+        }
+        else {
           assertThat(result.getIdAsString(providerId)).isNotBlank();
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -99,13 +99,12 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromTmdbTwelveMonkeys() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       prepareTmdbConfig(mp);
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "63");
-      options.setLanguage(new Locale("de"));
+      options.setLanguage(MediaLanguages.de);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -128,7 +127,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isEmpty(); // no collection available for this movie
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -138,13 +138,12 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromTmdbDespicableMe() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       prepareTmdbConfig(mp);
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "20352");
-      options.setLanguage(new Locale("en"));
+      options.setLanguage(MediaLanguages.en);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -167,7 +166,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isNotEmpty();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -198,7 +198,6 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromTmdbImdbTwelveMonkeys() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("title", "tmdb");
       mp.getProviderInfo().getConfig().setValue("originalTitle", "tmdb");
@@ -219,9 +218,9 @@ public class ITUniversalMovieMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("tags", "tmdb");
       mp.getProviderInfo().getConfig().setValue("collectionName", "tmdb");
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "63");
-      options.setLanguage(new Locale("de"));
+      options.setLanguage(MediaLanguages.en);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -244,7 +243,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isEmpty(); // no collection available for this movie
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -255,7 +255,6 @@ public class ITUniversalMovieMetadataProviderTest {
     // movie #2: Despicable Me
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("title", "tmdb");
       mp.getProviderInfo().getConfig().setValue("originalTitle", "tmdb");
@@ -276,9 +275,9 @@ public class ITUniversalMovieMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("tags", "tmdb");
       mp.getProviderInfo().getConfig().setValue("collectionName", "tmdb");
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "20352");
-      options.setLanguage(new Locale("en"));
+      options.setLanguage(MediaLanguages.en);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -301,7 +300,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isNotEmpty();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -311,7 +311,6 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromTmdbImdbOmdbapiTwelveMonkeys() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("title", "tmdb");
       mp.getProviderInfo().getConfig().setValue("originalTitle", "tmdb");
@@ -332,9 +331,9 @@ public class ITUniversalMovieMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("tags", "tmdb");
       mp.getProviderInfo().getConfig().setValue("collectionName", "tmdb");
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "63");
-      options.setLanguage(new Locale("de"));
+      options.setLanguage(MediaLanguages.de);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -357,7 +356,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isEmpty(); // no collection available for this movie
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -367,7 +367,6 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromMovieMeterImdbTwelveMonkeys() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("title", "moviemeter");
       mp.getProviderInfo().getConfig().setValue("originalTitle", "imdb");
@@ -388,9 +387,9 @@ public class ITUniversalMovieMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("tags", "imdb");
       mp.getProviderInfo().getConfig().setValue("collectionName", "imdb");
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("tmdb", "63");
-      options.setLanguage(new Locale("nl"));
+      options.setLanguage(MediaLanguages.nl);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -413,7 +412,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isEmpty(); // this movie has no tag
       assertThat(mediaMetadata.getCollectionName()).isEmpty(); // no collection available for this movie
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -423,7 +423,6 @@ public class ITUniversalMovieMetadataProviderTest {
   public void testScrapeFromTmdbTraktTwelveMonkeys() {
     try {
       IMovieMetadataProvider mp = new UniversalMovieMetadataProvider();
-      mp.afterInitialization();
 
       mp.getProviderInfo().getConfig().setValue("title", "trakt");
       mp.getProviderInfo().getConfig().setValue("originalTitle", "tmdb");
@@ -444,9 +443,9 @@ public class ITUniversalMovieMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("tags", "tmdb");
       mp.getProviderInfo().getConfig().setValue("collectionName", "tmdb");
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setId("imdb", "tt0114746");
-      options.setLanguage(new Locale("de"));
+      options.setLanguage(MediaLanguages.de);
 
       MediaMetadata mediaMetadata = mp.getMetadata(options);
 
@@ -469,7 +468,8 @@ public class ITUniversalMovieMetadataProviderTest {
       assertThat(mediaMetadata.getMediaArt()).isNotEmpty();
       assertThat(mediaMetadata.getTags()).isNotEmpty();
       assertThat(mediaMetadata.getCollectionName()).isEmpty(); // no collection available for this movie
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }

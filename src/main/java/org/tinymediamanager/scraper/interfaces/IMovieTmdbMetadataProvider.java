@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 /**
- * The Interface {@link IMovieImdbMetadataProvider}. All scrapers providing movie meta data by IMDB id must implement this interface
+ * The Interface {@link IMovieTmdbMetadataProvider}. All scrapers providing movie meta by TMDB id data must implement this interface
  *
  * @author Manuel Laggner
  * @since 3.0
  */
-public interface IMovieImdbMetadataProvider {
+public interface IMovieTmdbMetadataProvider {
 }

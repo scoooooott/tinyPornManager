@@ -1,10 +1,7 @@
 package org.tinymediamanager.scraper.opensubtitles;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
-import org.tinymediamanager.scraper.SubtitleSearchResult;
-import org.tinymediamanager.scraper.opensubtitles.model.Info;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -14,12 +11,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.opensubtitles.model.Info;
 
 public class ITOpensubtitlesMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -67,8 +68,9 @@ public class ITOpensubtitlesMetadataProviderTest {
           }
 
           for (File file : files) {
-            SubtitleSearchOptions options = new SubtitleSearchOptions(file);
-            options.setLanguage(Locale.GERMAN);
+            SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.MOVIE);
+            options.setFile(file);
+            options.setLanguage(MediaLanguages.de);
             List<SubtitleSearchResult> results = os.search(options);
             if (!results.isEmpty()) {
               System.out.println("Subtitle for hash found: " + results.get(0).getUrl());
@@ -85,9 +87,9 @@ public class ITOpensubtitlesMetadataProviderTest {
   public void testSearchByTitle() {
     try {
       OpensubtitlesMetadataProvider mp = new OpensubtitlesMetadataProvider();
-      SubtitleSearchOptions options = new SubtitleSearchOptions();
-      options.setQuery("The Matrix");
-      options.setLanguage(Locale.GERMAN);
+      SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.MOVIE);
+      options.setSearchQuery("The Matrix");
+      options.setLanguage(MediaLanguages.de);
       List<SubtitleSearchResult> results = mp.search(options);
       assertThat(results).isNotEmpty();
       assertThat(results.size()).isGreaterThanOrEqualTo(11);

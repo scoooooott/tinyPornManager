@@ -1,23 +1,24 @@
 package org.tinymediamanager.scraper.omdb;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.util.ApiKey;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.ApiKey;
 
 /**
  * @author Wolfgang Janes
@@ -51,8 +52,8 @@ public class ITOmdbMetadataProviderTest {
       mp.setVerbose(true);
 
       // Matrix
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-      options.setQuery("The Matrix");
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setSearchQuery("The Matrix");
       List<MediaSearchResult> resultList = mp.search(options);
       assertNotNull(resultList);
       assertThat(resultList.size()).isGreaterThan(0);
@@ -63,7 +64,7 @@ public class ITOmdbMetadataProviderTest {
       assertThat(resultList.get(0).getPosterUrl()).isNotEmpty();
 
       // Men in Black
-      options.setQuery("Men in Black");
+      options.setSearchQuery("Men in Black");
       resultList = mp.search(options);
       assertNotNull(resultList);
       assertThat(resultList.size()).isGreaterThan(0);
@@ -87,8 +88,8 @@ public class ITOmdbMetadataProviderTest {
       mp.getProviderInfo().getConfig().setValue("apiKey", ApiKey.decryptApikey("Isuaab2ym89iI1hOtF94nQ=="));
       mp.setVerbose(true);
 
-      MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE);
-      scrapeOptions.setLanguage(MediaLanguages.en.toLocale());
+      MovieSearchAndScrapeOptions scrapeOptions = new MovieSearchAndScrapeOptions();
+      scrapeOptions.setLanguage(MediaLanguages.en);
       MediaMetadata md = null;
 
       // Matrix
@@ -99,12 +100,12 @@ public class ITOmdbMetadataProviderTest {
       assertThat(md.getYear()).isEqualTo(new Integer(1999));
       assertThat(md.getReleaseDate()).isNotNull();
       assertThat(md.getRuntime()).isEqualTo(new Integer(136));
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isEqualTo(2);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER).size()).isEqualTo(2);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(4);
+      assertThat(md.getCastMembers(DIRECTOR)).isNotNull();
+      assertThat(md.getCastMembers(DIRECTOR).size()).isEqualTo(2);
+      assertThat(md.getCastMembers(WRITER)).isNotNull();
+      assertThat(md.getCastMembers(WRITER).size()).isEqualTo(2);
+      assertThat(md.getCastMembers(ACTOR)).isNotNull();
+      assertThat(md.getCastMembers(ACTOR).size()).isEqualTo(4);
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getCountries()).contains("USA");
       assertThat(md.getSpokenLanguages()).contains("English");
@@ -121,12 +122,12 @@ public class ITOmdbMetadataProviderTest {
       assertThat(md.getYear()).isEqualTo(new Integer(1997));
       assertThat(md.getReleaseDate()).isNotNull();
       assertThat(md.getRuntime()).isEqualTo(new Integer(98));
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isEqualTo(1);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER).size()).isEqualTo(3);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(4);
+      assertThat(md.getCastMembers(DIRECTOR)).isNotNull();
+      assertThat(md.getCastMembers(DIRECTOR).size()).isEqualTo(1);
+      assertThat(md.getCastMembers(WRITER)).isNotNull();
+      assertThat(md.getCastMembers(WRITER).size()).isEqualTo(3);
+      assertThat(md.getCastMembers(ACTOR)).isNotNull();
+      assertThat(md.getCastMembers(ACTOR).size()).isEqualTo(4);
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getCountries()).contains("USA");
       assertThat(md.getSpokenLanguages()).contains("English", "Spanish");

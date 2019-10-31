@@ -23,7 +23,7 @@ import javax.swing.ImageIcon;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
@@ -121,9 +121,9 @@ public class MovieSetTableFormat extends TmmTableFormat<TmmTreeNode> {
   private String getRating(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof Movie) {
-      Rating rating = ((MediaEntity) userObject).getRating();
-      if (rating != null && rating.getRating() > 0) {
-        return String.valueOf(rating.getRating());
+      MediaRating mediaRating = ((MediaEntity) userObject).getRating();
+      if (mediaRating != null && mediaRating.getRating() > 0) {
+        return String.valueOf(mediaRating.getRating());
       }
     }
     return null;

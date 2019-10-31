@@ -37,20 +37,20 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
   @BeforeClass
@@ -174,7 +174,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
     TvShow tvShow = new TvShow();
     tvShow.setPath(Paths.get(getSettingsFolder(), path).toString());
     tvShow.setTitle("21 Jump Street");
-    tvShow.setRating(new Rating(Rating.NFO, 9.0f, 8));
+    tvShow.setRating(new MediaRating(MediaRating.NFO, 9.0f, 8));
     tvShow.setYear(1987);
     tvShow.setPlot(
         "21 Jump Street was a FOX action/drama series that ran for five seasons (1987-1991). The show revolved around a group of young cops who would use their youthful appearance to go undercover and solve crimes involving teenagers and young adults. 21 Jump Street propelled Johnny Depp to stardom and was the basis for a 2012 comedy/action film of the same name.");
@@ -191,7 +191,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
     tvShow.setTvdbId("812");
     tvShow.setId("trakt", 655);
     tvShow.setProductionCompany("FOX (US)");
-    tvShow.setCertification(Certification.US_TVPG);
+    tvShow.setCertification(MediaCertification.US_TVPG);
     tvShow.setStatus(MediaAiredStatus.ENDED);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -257,7 +257,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
     episode1.setId(MediaMetadata.TVDB, 1234);
     episode1.setPlot(
         "Hanson gets assigned to the Jump Street unit, a special division of the police force which uses young cops to go undercover and stop juvenile crime, when his youthful appearance causes him to be underestimated while on patrol. His first case involves catching drug dealers.");
-    episode1.setRating(new Rating(Rating.NFO, 9.0f, 8));
+    episode1.setRating(new MediaRating(MediaRating.NFO, 9.0f, 8));
     episode1.setArtworkUrl("http://thumb1", MediaFileType.THUMB);
     episode1.setWatched(true);
 
@@ -306,7 +306,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
       episode2.setId(MediaMetadata.TVDB, 2345);
       episode2.setPlot(
           "Hanson gets assigned to the Jump Street unit, a special division of the police force which uses young cops to go undercover and stop juvenile crime, when his youthful appearance causes him to be underestimated while on patrol. His first case involves catching drug dealers.");
-      episode2.setRating(new Rating(Rating.NFO, 8.0f, 10));
+      episode2.setRating(new MediaRating(MediaRating.NFO, 8.0f, 10));
       episode2.setArtworkUrl("http://thumb1", MediaFileType.THUMB);
       episode2.setWatched(false);
 

@@ -22,15 +22,15 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -153,10 +153,10 @@ public class MediaScraper {
         plugins.addAll(MediaProviders.getProvidersForInterface(ITvShowArtworkProvider.class));
         break;
       case MOVIE_TRAILER:
-        plugins.addAll(MediaProviders.getProvidersForInterface(IMovieTrailerProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(ITrailerProvider.class));
         break;
       case SUBTITLE:
-        plugins.addAll(MediaProviders.getProvidersForInterface(IMediaSubtitleProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(ISubtitleProvider.class));
         break;
       default:
         break;

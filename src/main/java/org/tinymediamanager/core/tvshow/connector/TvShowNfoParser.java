@@ -43,13 +43,14 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -73,7 +74,7 @@ public class TvShowNfoParser {
   public int                        year                = -1;
   public String                     plot                = "";
   public int                        runtime             = 0;
-  public Certification              certification       = Certification.UNKNOWN;
+  public MediaCertification         certification       = MediaCertification.UNKNOWN;
   public Date                       releaseDate         = null;
   public MediaAiredStatus           status              = MediaAiredStatus.UNKNOWN;
   public boolean                    watched             = false;
@@ -1129,7 +1130,7 @@ public class TvShowNfoParser {
 
     for (Map.Entry<String, TvShowNfoParser.Rating> entry : ratings.entrySet()) {
       TvShowNfoParser.Rating r = entry.getValue();
-      show.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
+      show.setRating(new MediaRating(r.id, r.rating, r.votes, r.maxValue));
     }
 
     // year is initially -1, only take parsed values which are higher than -1

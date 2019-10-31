@@ -25,6 +25,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -65,7 +67,9 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
     dialog.setVisible(true);
 
     // get options from dialog
-    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeOptions();
+    List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig = dialog.getTvShowScraperMetadataConfig();
+    List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = dialog.getTvShowEpisodeScraperMetadataConfig();
 
     // add all episodes which are not part of a selected tv show
     for (Object obj : selectedObjects) {
@@ -84,7 +88,8 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
     }
 
     if (!selectedTvShows.isEmpty() || !selectedEpisodes.isEmpty()) {
-      TvShowMissingArtworkDownloadTask task = new TvShowMissingArtworkDownloadTask(selectedTvShows, new ArrayList<>(selectedEpisodes), options);
+      TvShowMissingArtworkDownloadTask task = new TvShowMissingArtworkDownloadTask(selectedTvShows, new ArrayList<>(selectedEpisodes), options,
+          tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
       TmmTaskManager.getInstance().addDownloadTask(task);
     }
   }

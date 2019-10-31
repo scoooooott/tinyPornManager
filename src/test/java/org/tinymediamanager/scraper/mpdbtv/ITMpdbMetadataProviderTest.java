@@ -15,20 +15,18 @@
  */
 package org.tinymediamanager.scraper.mpdbtv;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-
-import java.util.List;
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
 
 public class ITMpdbMetadataProviderTest {
 
@@ -44,7 +42,8 @@ public class ITMpdbMetadataProviderTest {
       assertThat(providerInfo.getDescription()).isNotNull();
       assertThat(providerInfo.getId()).isNotNull();
       assertThat(providerInfo.getName()).isNotNull();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -56,9 +55,9 @@ public class ITMpdbMetadataProviderTest {
     mp.getProviderInfo().getConfig().setValue("aboKey", System.getProperty("mpdb_aboKey"));
     mp.getProviderInfo().getConfig().setValue("username", System.getProperty("mpdb_username"));
 
-    MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-    options.setQuery("Batman");
-    options.setLanguage(new Locale("us"));
+    MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+    options.setSearchQuery("Batman");
+    options.setLanguage(MediaLanguages.en);
     List<MediaSearchResult> result = mp.search(options);
 
     assertThat(result).isNotNull();
@@ -72,9 +71,9 @@ public class ITMpdbMetadataProviderTest {
     mp.getProviderInfo().getConfig().setValue("aboKey", System.getProperty("mpdb_aboKey"));
     mp.getProviderInfo().getConfig().setValue("username", System.getProperty("mpdb_username"));
 
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+    MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
     options.setId("mpdbtv", "3193");
-    options.setLanguage(new Locale("fr"));
+    options.setLanguage(MediaLanguages.fr);
 
     MediaMetadata result = mp.getMetadata(options);
     assertThat(result).isNotNull();
@@ -84,8 +83,6 @@ public class ITMpdbMetadataProviderTest {
     assertThat(result.getRuntime()).isEqualTo(0);
     assertThat(result.getTitle()).isEqualTo("Star Wars : La Guerre des Clones");
 
-
   }
-
 
 }

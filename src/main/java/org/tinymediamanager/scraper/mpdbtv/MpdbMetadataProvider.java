@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.scraper.mpdbtv;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -26,20 +30,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mpdbtv.entities.Actor;
 import org.tinymediamanager.scraper.mpdbtv.entities.Director;
 import org.tinymediamanager.scraper.mpdbtv.entities.DiscArt;
@@ -62,23 +65,24 @@ import org.tinymediamanager.scraper.util.ApiKey;
  * @author Wolfgang Janes
  */
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MpdbMetadataProvider.class);
-  private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static final String API_KEY = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
-  private static final String FORMAT = "json";
+  public static final String             ID           = "mpdbtv";
 
-  private Controller controller;
+  private static final Logger            LOGGER       = LoggerFactory.getLogger(MpdbMetadataProvider.class);
+  private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
+  private static final String            API_KEY      = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
+  private static final String            FORMAT       = "json";
+
+  private Controller                     controller;
 
   public MpdbMetadataProvider() {
     this.controller = new Controller(false);
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("mpdbtv", "mpdb.tv",
-            "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "mpdb.tv",
+        "<html><h3>MPDB.tv</h3><br />The MPDB.tv API is a RESTful web service to obtain movie information, all content and images on the site are contributed and maintained by our users. <br /><br />This is a private meta data provider, you may need to become a member there to use this service (more infos at http://www.mpdb.tv/)<br /><br />Available languages: FR</html>\"",
         MpdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/mpdbtv.png"));
 
-    providerInfo.setVersion(MpdbMetadataProvider.class);
     providerInfo.getConfig().addText("aboKey", "", false);
     providerInfo.getConfig().addText("username", "", false);
     providerInfo.getConfig().load();
@@ -87,8 +91,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions mediaSearchOptions) throws ScrapeException {
-    LOGGER.debug("search() {} ", mediaSearchOptions);
+  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+    LOGGER.debug("search(): {}", options);
 
     List<MediaSearchResult> mediaResult = new ArrayList<>();
     List<SearchEntity> searchResult;
@@ -98,12 +102,13 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       throw new ScrapeException(new HttpException(401, "Unauthorized"));
     }
 
-    LOGGER.info("========= BEGIN MPDB.tv Scraper Search for Movie: {} ", mediaSearchOptions.getQuery());
+    LOGGER.info("========= BEGIN MPDB.tv Scraper Search for Movie: {} ", options.getSearchQuery());
 
     try {
-      searchResult = controller.getSearchInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(), mediaSearchOptions.getQuery(),
-              mediaSearchOptions.getLanguage(), true, FORMAT);
-    } catch (IOException e) {
+      searchResult = controller.getSearchInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(), options.getSearchQuery(),
+          options.getLanguage().toLocale(), true, FORMAT);
+    }
+    catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -120,7 +125,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       result.setOriginalTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
       if (StringUtils.isEmpty(entity.title)) {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.original_title));
-      } else {
+      }
+      else {
         result.setTitle(StringEscapeUtils.unescapeHtml4(entity.title));
       }
       result.setYear(entity.year);
@@ -136,9 +142,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions) throws ScrapeException {
-
-    LOGGER.debug("scrape() {}", mediaScrapeOptions);
+  public MediaMetadata getMetadata(MovieSearchAndScrapeOptions mediaScrapeOptions) throws ScrapeException {
+    LOGGER.debug("getMetadata(): {}", mediaScrapeOptions);
 
     MediaMetadata metadata = new MediaMetadata(MpdbMetadataProvider.providerInfo.getId());
     MovieEntity scrapeResult;
@@ -151,8 +156,9 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     LOGGER.info("========= BEGIN MPDB.tv scraping");
     try {
       scrapeResult = controller.getScrapeInformation(API_KEY, getEncodedUserName(), getSubscriptionKey(),
-              Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())), mediaScrapeOptions.getLanguage(), null, FORMAT);
-    } catch (IOException e) {
+          Integer.parseInt(mediaScrapeOptions.getIdAsString(providerInfo.getId())), mediaScrapeOptions.getLanguage().toLocale(), null, FORMAT);
+    }
+    catch (IOException e) {
       LOGGER.error("error searching: {} ", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -165,8 +171,8 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     // Rating
     if (scrapeResult.rating != null) {
       MediaRating rating = new MediaRating(providerInfo.getId());
-      rating.setRating(scrapeResult.rating);
-      rating.setVoteCount(scrapeResult.ratingVotes);
+      rating.setRating(scrapeResult.rating.floatValue());
+      rating.setVotes(scrapeResult.ratingVotes);
       rating.setMaxValue(10);
 
       metadata.addRating(rating);
@@ -203,38 +209,33 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     metadata.setProductionCompanies(productionCompanies);
 
     // Cast
-    ArrayList<MediaCastMember> castMembers = new ArrayList<>();
+    ArrayList<Person> castMembers = new ArrayList<>();
 
     for (Director director : scrapeResult.directors) {
-      MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
-      mediaCastMember.setName(director.name);
-      mediaCastMember.setPart(director.departement);
-      mediaCastMember.setImageUrl(director.thumb);
-      mediaCastMember.setCharacter(director.role);
+      Person mediaCastMember = new Person(DIRECTOR);
       mediaCastMember.setId(providerInfo.getId(), director.id);
-
+      mediaCastMember.setName(director.name);
+      mediaCastMember.setRole(director.departement);
+      mediaCastMember.setThumbUrl(director.thumb);
+      mediaCastMember.setId(providerInfo.getId(), director.id);
       castMembers.add(mediaCastMember);
     }
 
     for (Actor actor : scrapeResult.actors) {
-      MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.ACTOR);
+      Person mediaCastMember = new Person(ACTOR);
       mediaCastMember.setId(providerInfo.getId(), actor.id);
       mediaCastMember.setName(actor.name);
-      mediaCastMember.setPart(actor.departement);
-      mediaCastMember.setImageUrl(actor.thumb);
-      mediaCastMember.setCharacter(actor.role);
-
+      mediaCastMember.setRole(actor.role);
+      mediaCastMember.setThumbUrl(actor.thumb);
       castMembers.add(mediaCastMember);
     }
 
     for (Producer producer : scrapeResult.producers) {
-      MediaCastMember mediaCastMember = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
+      Person mediaCastMember = new Person(PRODUCER);
       mediaCastMember.setId(providerInfo.getId(), producer.id);
       mediaCastMember.setName(producer.name);
-      mediaCastMember.setPart(producer.departement);
-      mediaCastMember.setImageUrl(producer.thumb);
-      mediaCastMember.setCharacter(producer.role);
-
+      mediaCastMember.setRole(producer.departement);
+      mediaCastMember.setThumbUrl(producer.thumb);
       castMembers.add(mediaCastMember);
     }
     metadata.setCastMembers(castMembers);
@@ -305,6 +306,11 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     return providerInfo;
   }
 
+  @Override
+  public String getId() {
+    return ID;
+  }
+
   private String getAboKey() {
     return providerInfo.getConfig().getValue("aboKey");
   }
@@ -318,7 +324,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
   }
 
   private String getSubscriptionKey() {
-    return DigestUtils.shaHex(getUserName() + API_KEY + getAboKey());
+    return DigestUtils.sha1Hex(getUserName() + API_KEY + getAboKey());
   }
 
 }

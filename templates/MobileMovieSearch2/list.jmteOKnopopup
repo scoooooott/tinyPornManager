@@ -295,7 +295,7 @@ function goSearch(){
 		}
 		//rating
 		if (srchRating.length > 0){
-			//looking for only movies of a certain rating		
+			//looking for only movies of a certain rating
 			if (srchRating != srchResults.search_rating[i].value){
 				displayMovie = 0;
 			}

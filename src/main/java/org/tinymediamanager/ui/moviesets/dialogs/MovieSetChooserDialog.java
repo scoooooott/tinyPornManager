@@ -51,14 +51,13 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -279,11 +278,13 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
-          MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET, searchTerm);
-          options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
+          MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+          options.setSearchQuery(searchTerm);
+          options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage());
+
           List<MediaSearchResult> movieSets = mp.search(options);
           movieSetsFound.clear();
-          if (movieSets.size() == 0) {
+          if (movieSets.isEmpty()) {
             movieSetsFound.add(MovieSetChooserModel.emptyResult);
           }
           else {

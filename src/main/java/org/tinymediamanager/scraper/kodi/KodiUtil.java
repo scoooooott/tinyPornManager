@@ -15,13 +15,6 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.util.StrgUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,16 +25,23 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.util.StrgUtils;
+
 /**
  * This class has some common Kodi utils for the scraper
  *
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiUtil {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiUtil.class);
+  private static final Logger                     LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
   // prescan directory for ALL common XMLs
-  static final ArrayList<File> commonXmls = KodiUtil.getAllCommonXMLs();
-  static final List<AbstractKodiMetadataProvider> scrapers = KodiUtil.getAllScrapers();
+  static final ArrayList<File>                    commonXmls = KodiUtil.getAllCommonXMLs();
+  static final List<AbstractKodiMetadataProvider> scrapers   = KodiUtil.getAllScrapers();
 
   /**
    * Strips out unknown XML header values which might break validators<br>
@@ -124,9 +124,9 @@ class KodiUtil {
    * @return File or NULL
    */
   public static File detectKodiFolder() {
-    String[] appFolder = {"Kodi", "kodi", "xbmc", "XMBC"};
-    String[] installFolder = {System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"), System.getenv("ProgramData"), "/usr/share/",
-            "/usr/lib/", "/Applications/Kodi.app/Contents/Resources", "/Applications/XBMC.app/Contents/Resources"};
+    String[] appFolder = { "Kodi", "kodi", "xbmc", "XMBC" };
+    String[] installFolder = { System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"), System.getenv("ProgramData"), "/usr/share/",
+        "/usr/lib/", "/Applications/Kodi.app/Contents/Resources", "/Applications/XBMC.app/Contents/Resources" };
 
     for (String i : installFolder) {
       if (StringUtils.isEmpty(i)) {
@@ -150,9 +150,9 @@ class KodiUtil {
    */
   public static File detectKodiUserFolder() {
     // http://wiki.xbmc.org/?title=Userdata
-    String[] appFolder = {"Kodi", ".kodi", "kodi", "XMBC", ".xbmc", "xbmc"};
-    String[] userFolder = {System.getenv("APPDATA"), System.getProperty("user.home"),
-            "/Users/" + System.getProperty("user.name") + "/Library/Application Support"};
+    String[] appFolder = { "Kodi", ".kodi", "kodi", "XMBC", ".xbmc", "xbmc" };
+    String[] userFolder = { System.getenv("APPDATA"), System.getProperty("user.home"),
+        "/Users/" + System.getProperty("user.name") + "/Library/Application Support" };
 
     for (String u : userFolder) {
       if (StringUtils.isEmpty(u)) {
@@ -172,8 +172,10 @@ class KodiUtil {
   /**
    * gets a Kodi scraper object, selected by the filters<br>
    *
-   * @param dirFilter  the directory filter for addon search
-   * @param fileFilter the file filter for addon search
+   * @param dirFilter
+   *          the directory filter for addon search
+   * @param fileFilter
+   *          the file filter for addon search
    * @return a list of all found addons
    */
   private static List<KodiScraper> getKodiAddons(IOFileFilter dirFilter, IOFileFilter fileFilter) {
@@ -190,7 +192,8 @@ class KodiUtil {
     File addons = new File("./target/test-classes/kodi_scraper");
     if (addons != null && addons.exists()) {
       foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
-    } else {
+    }
+    else {
       // detect manually added addons
       addons = new File("kodi_scraper");
       if (addons != null && addons.exists()) {
@@ -221,17 +224,19 @@ class KodiUtil {
 
       if (!tmp.containsKey(x.getProviderInfo().getId())) {
         tmp.put(x.getProviderInfo().getId(), x);
-      } else {
+      }
+      else {
         // ok, scraper ID already added, now check for higher version.
         KodiScraper old = tmp.get(x.getProviderInfo().getId());
         if (StrgUtils.compareVersion(x.getProviderInfo().getVersion(), old.getProviderInfo().getVersion()) > 0) {
           // ok, new scraper has a higher version, replace this...
           LOGGER.debug(
-                  "replacing " + x.getProviderInfo().getId() + " v" + old.getProviderInfo().getVersion() + " with v" + x.getProviderInfo().getVersion());
+              "replacing " + x.getProviderInfo().getId() + " v" + old.getProviderInfo().getVersion() + " with v" + x.getProviderInfo().getVersion());
           tmp.remove(x.getProviderInfo().getId());
           tmp.put(x.getProviderInfo().getId(), x);
-        } else {
-          LOGGER.debug("not adding " + x.addonFolder.getAbsolutePath() + " - ID already imported, or version lower");
+        }
+        else {
+          LOGGER.debug("not adding {} - ID already imported, or version lower", x.addonFolder.getAbsolutePath());
         }
       }
     }
@@ -279,7 +284,8 @@ class KodiUtil {
 
     if (localScrapers.isEmpty()) {
       LOGGER.debug("Meh - could not find any scrapers...");
-    } else {
+    }
+    else {
       for (KodiScraper sc : localScrapers) {
         LOGGER.debug("Found scraper: " + sc.addonFolder + File.separator + sc.scraperXml);
       }
@@ -303,7 +309,8 @@ class KodiUtil {
           default:
             break;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("could not load scraper " + scraper.getProviderInfo().getId(), e);
       }
     }
@@ -397,7 +404,8 @@ class KodiUtil {
           // dir)
           LOGGER.debug("Found common: " + f);
           common.add(f);
-        } else {
+        }
+        else {
           LOGGER.debug("Skipped common: " + f);
         }
       }

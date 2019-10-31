@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
@@ -34,8 +34,8 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.fanarttv.entities.Image;
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -48,6 +48,7 @@ import retrofit2.Response;
  * @author Manuel Laggner
  */
 public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowArtworkProvider {
+  public static final String             ID           = "fanarttv";
   private static final Logger            LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
   private static final String            TMM_API_KEY  = ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3");
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -55,10 +56,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   private static FanartTv                api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "fanart.tv",
         "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
         FanartTvMetadataProvider.class.getResource("/org/tinymediamanager/scraper/fanart_tv.png"));
-    providerInfo.setVersion(FanartTvMetadataProvider.class);
 
     // configure/load settings
     providerInfo.getConfig().addText("clientKey", "", true);
@@ -96,7 +96,12 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  public String getId() {
+    return ID;
+  }
+
+  @Override
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     LOGGER.debug("getArtwork() - {}", options);
 
     // lazy initialization of the api
@@ -104,7 +109,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     List<MediaArtwork> artwork;
 
-    switch (options.getType()) {
+    switch (options.getMediaType()) {
       case MOVIE:
       case MOVIE_SET:
         artwork = getMovieArtwork(options);
@@ -128,13 +133,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   // http://webservice.fanart.tv/v3/movies/559
-  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  private List<MediaArtwork> getMovieArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
     String language = null;
     if (options.getLanguage() != null) {
       language = options.getLanguage().getLanguage();
-      if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-        language += "-" + options.getLanguage().getCountry();
+      if (options.getLanguage().toLocale() != null && StringUtils.isNotBlank(options.getLanguage().toLocale().getCountry())) {
+        language += "-" + options.getLanguage().toLocale().getCountry();
       }
     }
 
@@ -204,13 +209,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   // http://webservice.fanart.tv/v3/tv/79349
-  private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  private List<MediaArtwork> getTvShowArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     MediaArtworkType artworkType = options.getArtworkType();
     String language = null;
     if (options.getLanguage() != null) {
       language = options.getLanguage().getLanguage();
-      if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-        language += "-" + options.getLanguage().getCountry();
+      if (options.getLanguage().toLocale() != null && StringUtils.isNotBlank(options.getLanguage().toLocale().getCountry())) {
+        language += "-" + options.getLanguage().toLocale().getCountry();
       }
     }
 

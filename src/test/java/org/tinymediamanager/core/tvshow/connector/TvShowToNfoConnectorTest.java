@@ -36,17 +36,17 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class TvShowToNfoConnectorTest extends BasicTest {
 
@@ -202,7 +202,7 @@ public class TvShowToNfoConnectorTest extends BasicTest {
     TvShow tvShow = new TvShow();
     tvShow.setPath(Paths.get(getSettingsFolder(), path).toString());
     tvShow.setTitle("21 Jump Street");
-    tvShow.setRating(new Rating(Rating.NFO, 9.0f, 8));
+    tvShow.setRating(new MediaRating(MediaRating.NFO, 9.0f, 8));
     tvShow.setYear(1987);
     tvShow.setPlot(
         "21 Jump Street was a FOX action/drama series that ran for five seasons (1987-1991). The show revolved around a group of young cops who would use their youthful appearance to go undercover and solve crimes involving teenagers and young adults. 21 Jump Street propelled Johnny Depp to stardom and was the basis for a 2012 comedy/action film of the same name.");
@@ -219,7 +219,7 @@ public class TvShowToNfoConnectorTest extends BasicTest {
     tvShow.setTvdbId("812");
     tvShow.setId("trakt", 655);
     tvShow.setProductionCompany("FOX (US)");
-    tvShow.setCertification(Certification.US_TVPG);
+    tvShow.setCertification(MediaCertification.US_TVPG);
     tvShow.setStatus(MediaAiredStatus.ENDED);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

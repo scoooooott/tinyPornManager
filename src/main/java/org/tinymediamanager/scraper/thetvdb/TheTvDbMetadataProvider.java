@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.ALL;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BACKGROUND;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.BANNER;
@@ -38,30 +41,30 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.CacheMap;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.TvUtils;
@@ -91,22 +94,18 @@ import retrofit2.Response;
  * @author Manuel Laggner
  */
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-  private static String artworkUrl = "http://thetvdb.com/banners/";
-  private static final String TMM_API_KEY = ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
-  private static final String FALLBACK_LANGUAGE = "fallbackLanguage";
+  public static final String                                  ID                  = "tvdb";
 
-  private final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap;
+  private static final Logger                                 LOGGER              = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
+  private static final String                                 artworkUrl          = "http://thetvdb.com/banners/";
+  private static final String                                 TMM_API_KEY         = ApiKey
+      .decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
+  private static final String                                 FALLBACK_LANGUAGE   = "fallbackLanguage";
+  private static final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap = new CacheMap<>(600, 5);
+  private static final MediaProviderInfo                      providerInfo        = createMediaProviderInfo();
 
-  private final MediaProviderInfo providerInfo;
-  private TheTvdb tvdb;
-  private List<Language> tvdbLanguages;
-
-  public TheTvDbMetadataProvider() {
-    // create the providerinfo
-    providerInfo = createMediaProviderInfo();
-    episodeListCacheMap = new CacheMap<>(600, 5);
-  }
+  private TheTvdb                                             tvdb;
+  private List<Language>                                      tvdbLanguages;
 
   private synchronized void initAPI() throws ScrapeException {
     String apiKey = TMM_API_KEY;
@@ -150,18 +149,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           throw new Exception("Could not connect to TVDB");
         }
         tvdbLanguages = response.data;
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.warn("could not initialize API: {}", e.getMessage());
         throw new ScrapeException(e);
       }
     }
   }
 
-  private MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
-            "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork</html>",
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "thetvdb.com",
+        "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork</html>",
         TheTvDbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/thetvdb_com.png"));
-    providerInfo.setVersion(TheTvDbMetadataProvider.class);
 
     providerInfo.getConfig().addText("apiKey", "", true);
 
@@ -181,42 +180,221 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions)
-          throws ScrapeException, MissingIdException, UnsupportedMediaTypeException, NothingFoundException {
-    // lazy initialization of the api
-    initAPI();
-
-    LOGGER.debug("getting metadata: {}", mediaScrapeOptions);
-    switch (mediaScrapeOptions.getType()) {
-      case TV_SHOW:
-        return getTvShowMetadata(mediaScrapeOptions);
-
-      case TV_EPISODE:
-        return getEpisodeMetadata(mediaScrapeOptions);
-
-      default:
-        throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
-    }
+  public String getId() {
+    return ID;
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
+  public MediaMetadata getMetadata(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    LOGGER.debug("getMetadata(): {}", options);
+    // lazy initialization of the api
+    initAPI();
+
+    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+
+    // do we have an id from the options?
+    Integer id = options.getIdAsInteger(providerInfo.getId());
+    if (id == null || id == 0) {
+      LOGGER.warn("no id available");
+      throw new MissingIdException(providerInfo.getId());
+    }
+
+    String language = options.getLanguage().getLanguage();
+    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage(); // just 2 char
+
+    Series show = null;
+    try {
+      Response<SeriesResponse> httpResponse = tvdb.series().series(id, options.getLanguage().getLanguage()).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      show = httpResponse.body().data;
+      fillFallbackLanguages(language, fallbackLanguage, show);
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get meta data: {}", e.getMessage());
+      throw new ScrapeException(e);
+    }
+
+    if (show == null) {
+      throw new NothingFoundException();
+    }
+
+    // populate metadata
+    md.setId(providerInfo.getId(), show.id);
+    md.setTitle(show.seriesName);
+    if (StringUtils.isNotBlank(show.imdbId)) {
+      md.setId(MediaMetadata.IMDB, show.imdbId);
+    }
+    if (StringUtils.isNotBlank(show.zap2itId)) {
+      md.setId("zap2it", show.zap2itId);
+    }
+    md.setPlot(show.overview);
+
+    try {
+      md.setRuntime(Integer.parseInt(show.runtime));
+    }
+    catch (Exception e) {
+      LOGGER.trace("could not parse runtime: {}", e.getMessage());
+      md.setRuntime(0);
+    }
+
+    try {
+      MediaRating rating = new MediaRating(getProviderInfo().getId());
+      rating.setRating(show.siteRating.floatValue());
+      rating.setVotes(TvUtils.parseInt(show.siteRatingCount));
+      rating.setMaxValue(10);
+      md.addRating(rating);
+    }
+    catch (Exception e) {
+      LOGGER.trace("could not parse rating/vote count: {}", e.getMessage());
+    }
+
+    try {
+      md.setReleaseDate(StrgUtils.parseDate(show.firstAired));
+    }
+    catch (ParseException e) {
+      LOGGER.debug("could not parse date: {}", e.getMessage());
+    }
+
+    try {
+      Date date = StrgUtils.parseDate(show.firstAired);
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      int y = calendar.get(Calendar.YEAR);
+      md.setYear(y);
+      if (y != 0 && md.getTitle().contains(String.valueOf(y))) {
+        LOGGER.debug("Weird TVDB entry - removing date {} from title", y);
+        String t = show.seriesName.replace(String.valueOf(y), "").replaceAll("\\(\\)", "").trim();
+        md.setTitle(t);
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("could not parse date: {}", e.getMessage());
+    }
+
+    md.setStatus(show.status);
+    md.addProductionCompany(show.network);
+
+    List<Actor> actors = new ArrayList<>();
+    try {
+      Response<ActorsResponse> httpResponse = tvdb.series().actors(id).execute();
+      if (!httpResponse.isSuccessful()) {
+        throw new HttpException(httpResponse.code(), httpResponse.message());
+      }
+      actors.addAll(httpResponse.body().data);
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get actors: {}", e.getMessage());
+    }
+
+    for (Actor actor : actors) {
+      Person member = new Person(ACTOR);
+      member.setId(providerInfo.getId(), actor.id);
+      member.setName(actor.name);
+      member.setRole(actor.role);
+      if (StringUtils.isNotBlank(actor.image)) {
+        member.setThumbUrl(artworkUrl + actor.image);
+      }
+
+      md.addCastMember(member);
+    }
+
+    md.addCertification(MediaCertification.findCertification(show.rating));
+
+    // genres
+    for (String genreAsString : ListUtils.nullSafe(show.genre)) {
+      md.addGenre(MediaGenres.getGenre(genreAsString));
+    }
+
+    return md;
+  }
+
+  @Override
+  public MediaMetadata getMetadata(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    LOGGER.debug("getMetadata(): {}", options);
+
+    // lazy initialization of the api
+    initAPI();
+
+    boolean useDvdOrder = false;
+
+    // do we have an id from the options?
+    Integer showId = options.getIdAsInteger(providerInfo.getId());
+
+    if (showId == null || showId == 0) {
+      LOGGER.warn("no id available");
+      throw new MissingIdException(providerInfo.getId());
+    }
+
+    // get episode number and season number
+    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
+    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
+
+    if (seasonNr == -1 || episodeNr == -1) {
+      seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR_DVD, -1);
+      episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR_DVD, -1);
+      useDvdOrder = true;
+    }
+
+    Date releaseDate = null;
+    if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
+      releaseDate = options.getMetadata().getReleaseDate();
+    }
+    if (releaseDate == null && (seasonNr == -1 || episodeNr == -1)) {
+      LOGGER.warn("no aired date/season number/episode number found");
+      throw new MissingIdException(MediaMetadata.EPISODE_NR, MediaMetadata.SEASON_NR);
+    }
+
+    // get the episode via the episodesList() (is cached and contains all data with 1 call per 100 eps)
+    List<MediaMetadata> episodes = episodeListCacheMap.get(showId);
+    if (episodes == null) {
+      episodes = getEpisodeList(options);
+    }
+
+    // now search for the right episode in this list
+    MediaMetadata foundEpisode = null;
+    // first run - search with EP number
+    for (MediaMetadata episode : episodes) {
+      if (useDvdOrder && episode.getDvdSeasonNumber() == seasonNr && episode.getDvdEpisodeNumber() == episodeNr) {
+        foundEpisode = episode;
+        break;
+      }
+      else if (!useDvdOrder && episode.getSeasonNumber() == seasonNr && episode.getEpisodeNumber() == episodeNr) {
+        foundEpisode = episode;
+        break;
+      }
+    }
+    if (foundEpisode == null && releaseDate != null) {
+      // we did not find the episode via season/episode number - search via release date
+      for (MediaMetadata episode : episodes) {
+        if (episode.getReleaseDate() == releaseDate) {
+          foundEpisode = episode;
+          break;
+        }
+      }
+    }
+
+    if (foundEpisode == null) {
+      throw new NothingFoundException();
+    }
+
+    return foundEpisode;
+  }
+
+  @Override
+  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
     // lazy initialization of the api
     initAPI();
 
     LOGGER.debug("search() {}", options);
     List<MediaSearchResult> results = new ArrayList<>();
 
-    if (options.getMediaType() != MediaType.TV_SHOW) {
-      throw new UnsupportedMediaTypeException(options.getMediaType());
-    }
-
     // detect the string to search
     String searchString = "";
-    if (StringUtils.isNotEmpty(options.getQuery())) {
-      searchString = options.getQuery();
+    if (StringUtils.isNotEmpty(options.getSearchQuery())) {
+      searchString = options.getSearchQuery();
     }
-    // searchString = cleanString(searchString);
 
     String imdbId = options.getImdbId().isEmpty() ? null : options.getImdbId(); // do not submit empty string!
     if (MetadataUtil.isValidImdbId(searchString)) {
@@ -251,7 +429,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         Series res = httpResponse.body().data;
         fillFallbackLanguages(language, fallbackLanguage, res);
         series.add(res);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("problem getting data vom tvdb via ID: {}", e.getMessage());
       }
     }
@@ -281,7 +460,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           fillFallbackLanguages(language, fallbackLanguage, s);
         }
         series.addAll(res);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("problem getting data vom tvdb: {}", e.getMessage());
       }
     }
@@ -306,16 +486,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       result.setOverview(show.overview);
       try {
         result.setYear(Integer.parseInt(show.firstAired.substring(0, 4)));
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
         // ignore
       }
 
-      // do not get banners instead of posters
-      // if (StringUtils.isNotBlank(show.banner)) {
-      // result.setPosterUrl(artworkUrl + show.banner);
-      // }
-
-      // for how the api responds only a banner - we would like to have a poster here;
+      // for how the api responds only a banner - we would like to have a poster here
       // just try to fetch the poster url
       try {
         Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(show.id, "poster", null, null, null).execute();
@@ -325,19 +501,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             result.setPosterUrl(artworkUrl + response.data.get(0).fileName);
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.warn("could not get poster for search result: {}", e.getMessage());
       }
 
       float score = MetadataUtil.calculateScore(searchString, show.seriesName);
-      if (yearDiffers(options.getYear(), result.getYear())) {
-        float diff = (float) Math.abs(options.getYear() - result.getYear()) / 100;
+      if (yearDiffers(options.getSearchYear(), result.getYear())) {
+        float diff = (float) Math.abs(options.getSearchYear() - result.getYear()) / 100;
         LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
         score -= diff;
       }
       result.setScore(score);
-
-      // results.add(result);
       resultMap.put(show.id, result);
     }
 
@@ -391,7 +566,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // STILL empty? check with EN language...
     if ((StringUtils.isEmpty(episode.episodeName) || StringUtils.isEmpty(episode.overview)) && !fallbackLanguage.equals("en")
-            && !language.equals("en")) {
+        && !language.equals("en")) {
       LOGGER.trace("Getting episode S{}E{} in fallback language {}", episode.airedSeason, episode.airedEpisodeNumber, "en");
       httpResponse = tvdb.episodes().get(episode.id, "en").execute();
       if (!httpResponse.isSuccessful()) {
@@ -402,180 +577,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
   }
 
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-    MediaMetadata md = new MediaMetadata(providerInfo.getId());
-
-    // do we have an id from the options?
-    Integer id = options.getIdAsInteger(providerInfo.getId());
-    if (id == null || id == 0) {
-      LOGGER.warn("no id available");
-      throw new MissingIdException(providerInfo.getId());
-    }
-    String language = options.getLanguage().getLanguage();
-    String fallbackLanguage = MediaLanguages.get(providerInfo.getConfig().getValue(FALLBACK_LANGUAGE)).getLanguage(); // just 2 char
-
-    Series show = null;
-    try {
-      Response<SeriesResponse> httpResponse = tvdb.series().series(id, options.getLanguage().getLanguage()).execute();
-      if (!httpResponse.isSuccessful()) {
-        throw new HttpException(httpResponse.code(), httpResponse.message());
-      }
-      show = httpResponse.body().data;
-      fillFallbackLanguages(language, fallbackLanguage, show);
-    } catch (Exception e) {
-      LOGGER.error("failed to get meta data: {}", e.getMessage());
-      throw new ScrapeException(e);
-    }
-
-    if (show == null) {
-      throw new NothingFoundException();
-    }
-
-    // populate metadata
-    md.setId(providerInfo.getId(), show.id);
-    md.setTitle(show.seriesName);
-    if (StringUtils.isNotBlank(show.imdbId)) {
-      md.setId(MediaMetadata.IMDB, show.imdbId);
-    }
-    if (StringUtils.isNotBlank(show.zap2itId)) {
-      md.setId("zap2it", show.zap2itId);
-    }
-    md.setPlot(show.overview);
-
-    try {
-      md.setRuntime(Integer.valueOf(show.runtime));
-    } catch (NumberFormatException e) {
-      md.setRuntime(0);
-    }
-
-    MediaRating rating = new MediaRating(getProviderInfo().getId());
-    rating.setRating(show.siteRating);
-    rating.setVoteCount(TvUtils.parseInt(show.siteRatingCount));
-    rating.setMaxValue(10);
-    md.addRating(rating);
-
-    try {
-      md.setReleaseDate(StrgUtils.parseDate(show.firstAired));
-    } catch (ParseException ignored) {
-    }
-
-    try {
-      Date date = StrgUtils.parseDate(show.firstAired);
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
-      int y = calendar.get(Calendar.YEAR);
-      md.setYear(y);
-      if (y != 0 && md.getTitle().contains(String.valueOf(y))) {
-        LOGGER.debug("Weird TVDB entry - removing date {} from title", y);
-        String t = show.seriesName.replaceAll(String.valueOf(y), "").replaceAll("\\(\\)", "").trim();
-        md.setTitle(t);
-      }
-    } catch (Exception ignored) {
-    }
-
-    md.setStatus(show.status);
-    md.addProductionCompany(show.network);
-
-    List<Actor> actors = new ArrayList<>();
-    try {
-      Response<ActorsResponse> httpResponse = tvdb.series().actors(id).execute();
-      if (!httpResponse.isSuccessful()) {
-        throw new HttpException(httpResponse.code(), httpResponse.message());
-      }
-      actors.addAll(httpResponse.body().data);
-    } catch (Exception e) {
-      LOGGER.error("failed to get actors: {}", e.getMessage());
-    }
-
-    for (Actor actor : actors) {
-      MediaCastMember member = new MediaCastMember(CastType.ACTOR);
-      member.setId(providerInfo.getId(), actor.id);
-      member.setName(actor.name);
-      member.setCharacter(actor.role);
-      if (StringUtils.isNotBlank(actor.image)) {
-        member.setImageUrl(artworkUrl + actor.image);
-      }
-
-      md.addCastMember(member);
-    }
-
-    md.addCertification(Certification.findCertification(show.rating));
-
-    // genres
-    for (String genreAsString : show.genre) {
-      md.addGenre(MediaGenres.getGenre(genreAsString));
-    }
-
-    return md;
-  }
-
-  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws ScrapeException, NothingFoundException, MissingIdException {
-    boolean useDvdOrder = false;
-
-    // do we have an id from the options?
-    Integer showId = options.getIdAsInteger(providerInfo.getId());
-
-    if (showId == null || showId == 0) {
-      LOGGER.warn("no id available");
-      throw new MissingIdException(providerInfo.getId());
-    }
-
-    // get episode number and season number
-    int seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR, -1);
-    int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
-
-    if (seasonNr == -1 || episodeNr == -1) {
-      seasonNr = options.getIdAsIntOrDefault(MediaMetadata.SEASON_NR_DVD, -1);
-      episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR_DVD, -1);
-      useDvdOrder = true;
-    }
-
-    Date releaseDate = null;
-    if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
-      releaseDate = options.getMetadata().getReleaseDate();
-    }
-    if (releaseDate == null && (seasonNr == -1 || episodeNr == -1)) {
-      LOGGER.warn("no aired date/season number/episode number found");
-      throw new MissingIdException(MediaMetadata.EPISODE_NR, MediaMetadata.SEASON_NR);
-    }
-
-    // get the episode via the episodesList() (is cached and contains all data with 1 call per 100 eps)
-    List<MediaMetadata> episodes = episodeListCacheMap.get(showId);
-    if (episodes == null) {
-      episodes = getEpisodeList(options);
-    }
-
-    // now search for the right episode in this list
-    MediaMetadata foundEpisode = null;
-    // first run - search with EP number
-    for (MediaMetadata episode : episodes) {
-      if (useDvdOrder && episode.getDvdSeasonNumber() == seasonNr && episode.getDvdEpisodeNumber() == episodeNr) {
-        foundEpisode = episode;
-        break;
-      } else if (!useDvdOrder && episode.getSeasonNumber() == seasonNr && episode.getEpisodeNumber() == episodeNr) {
-        foundEpisode = episode;
-        break;
-      }
-    }
-    if (foundEpisode == null && releaseDate != null) {
-      // we did not find the episode via season/episode number - search via release date
-      for (MediaMetadata episode : episodes) {
-        if (episode.getReleaseDate() == releaseDate) {
-          foundEpisode = episode;
-          break;
-        }
-      }
-    }
-
-    if (foundEpisode == null) {
-      throw new NothingFoundException();
-    }
-
-    return foundEpisode;
-  }
-
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 
@@ -597,10 +600,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       SeriesImagesQueryParamResponse response = tvdb.series().imagesQueryParams(id).execute().body();
       for (SeriesImagesQueryParam param : response.data) {
         if (options.getArtworkType() == ALL || ("fanart".equals(param.keyType) && options.getArtworkType() == BACKGROUND)
-                || ("poster".equals(param.keyType) && options.getArtworkType() == POSTER)
-                || ("season".equals(param.keyType) && options.getArtworkType() == SEASON_POSTER)
-                || ("seasonwide".equals(param.keyType) && options.getArtworkType() == SEASON_BANNER)
-                || ("series".equals(param.keyType) && options.getArtworkType() == BANNER)) {
+            || ("poster".equals(param.keyType) && options.getArtworkType() == POSTER)
+            || ("season".equals(param.keyType) && options.getArtworkType() == SEASON_POSTER)
+            || ("seasonwide".equals(param.keyType) && options.getArtworkType() == SEASON_BANNER)
+            || ("series".equals(param.keyType) && options.getArtworkType() == BANNER)) {
 
           try {
             Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(id, param.keyType, null, null, null).execute();
@@ -608,12 +611,14 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
               throw new HttpException(httpResponse.code(), httpResponse.message());
             }
             images.addAll(httpResponse.body().data);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.error("could not get artwork from tvdb: {}", e.getMessage());
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("failed to get artwork: {}", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -643,7 +648,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           ma = new MediaArtwork(providerInfo.getId(), SEASON_POSTER);
           try {
             ma.setSeason(Integer.parseInt(image.subKey));
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.warn("could not parse season: {}", image.subKey);
           }
           break;
@@ -652,7 +658,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           ma = new MediaArtwork(providerInfo.getId(), SEASON_BANNER);
           try {
             ma.setSeason(Integer.parseInt(image.subKey));
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.warn("could not parse season: {}", image.subKey);
           }
           break;
@@ -680,11 +687,14 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
               case POSTER:
                 if (width >= 1000) {
                   ma.setSizeOrder(MediaArtwork.PosterSizes.LARGE.getOrder());
-                } else if (width >= 500) {
+                }
+                else if (width >= 500) {
                   ma.setSizeOrder(MediaArtwork.PosterSizes.BIG.getOrder());
-                } else if (width >= 342) {
+                }
+                else if (width >= 342) {
                   ma.setSizeOrder(MediaArtwork.PosterSizes.MEDIUM.getOrder());
-                } else {
+                }
+                else {
                   ma.setSizeOrder(MediaArtwork.PosterSizes.SMALL.getOrder());
                 }
                 break;
@@ -695,9 +705,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
                 }
                 if (width >= 1920) {
                   ma.setSizeOrder(MediaArtwork.FanartSizes.LARGE.getOrder());
-                } else if (width >= 1280) {
+                }
+                else if (width >= 1280) {
                   ma.setSizeOrder(MediaArtwork.FanartSizes.MEDIUM.getOrder());
-                } else {
+                }
+                else {
                   ma.setSizeOrder(MediaArtwork.FanartSizes.SMALL.getOrder());
                 }
                 break;
@@ -706,7 +718,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
                 break;
             }
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.debug("could not extract size from artwork: {}", image.resolution);
         }
       }
@@ -714,14 +727,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       // set size for banner & season poster (resolution not in api)
       if (ma.getType() == SEASON_BANNER || ma.getType() == SEASON_POSTER) {
         ma.setSizeOrder(MediaArtwork.FanartSizes.LARGE.getOrder());
-      } else if (ma.getType() == BANNER) {
+      }
+      else if (ma.getType() == BANNER) {
         ma.setSizeOrder(MediaArtwork.FanartSizes.MEDIUM.getOrder());
       }
 
       ma.setDefaultUrl(artworkUrl + image.fileName);
       if (StringUtils.isNotBlank(image.thumbnail)) {
         ma.setPreviewUrl(artworkUrl + image.thumbnail);
-      } else {
+      }
+      else {
         ma.setPreviewUrl(ma.getDefaultUrl());
       }
 
@@ -734,7 +749,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  public List<MediaMetadata> getEpisodeList(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getEpisodeList(): {}", options);
+    return _getEpisodeList(options);
+  }
+
+  @Override
+  public List<MediaMetadata> getEpisodeList(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getEpisodeList(): {}", options);
+    return _getEpisodeList(options);
+  }
+
+  private List<MediaMetadata> _getEpisodeList(MediaSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     // lazy initialization of the api
     initAPI();
 
@@ -760,7 +786,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         if (!httpResponse.isSuccessful() && counter == 1) {
           // error at the first fetch will result in an exception
           throw new HttpException(httpResponse.code(), httpResponse.message());
-        } else if (!httpResponse.isSuccessful() && counter > 1) {
+        }
+        else if (!httpResponse.isSuccessful() && counter > 1) {
           // we got at least one page with results - maybe the episode count is the same as the pagination count
           break;
         }
@@ -778,7 +805,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
         counter++;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("failed to get episode list: {}", e.getMessage());
       throw new ScrapeException(e);
     }
@@ -796,22 +824,28 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       try {
         episode.setReleaseDate(StrgUtils.parseDate(ep.firstAired));
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
         LOGGER.warn("Could not parse date: {}", ep.firstAired);
       }
 
-      MediaRating rating = new MediaRating(getProviderInfo().getId());
-      rating.setRating(ep.siteRating);
-      rating.setVoteCount(TvUtils.parseInt(ep.siteRatingCount));
-      rating.setMaxValue(10);
-      episode.addRating(rating);
+      try {
+        MediaRating rating = new MediaRating(getProviderInfo().getId());
+        rating.setRating(ep.siteRating.floatValue());
+        rating.setVotes(TvUtils.parseInt(ep.siteRatingCount));
+        rating.setMaxValue(10);
+        episode.addRating(rating);
+      }
+      catch (Exception e) {
+        LOGGER.trace("could not parse rating/vote count: {}", e.getMessage());
+      }
 
       // directors
       if (ep.directors != null && !ep.directors.isEmpty()) {
         for (String director : ep.directors) {
           String[] multiple = director.split(",");
           for (String g2 : multiple) {
-            MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
+            Person cm = new Person(DIRECTOR);
             cm.setName(g2.trim());
             episode.addCastMember(cm);
           }
@@ -823,7 +857,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         for (String writer : ep.writers) {
           String[] multiple = writer.split(",");
           for (String g2 : multiple) {
-            MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+            Person cm = new Person(WRITER);
             cm.setName(g2.trim());
             episode.addCastMember(cm);
           }
@@ -835,7 +869,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         for (String guest : ep.guestStars) {
           String[] multiple = guest.split(",");
           for (String g2 : multiple) {
-            MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
+            Person cm = new Person(ACTOR);
             cm.setName(g2.trim());
             episode.addCastMember(cm);
           }
@@ -843,7 +877,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
 
       // Thumb
-      if (StringUtils.isNotBlank(ep.filename) && (options.getArtworkType() == ALL || options.getArtworkType() == MediaArtworkType.THUMB)) {
+      if (StringUtils.isNotBlank(ep.filename)) {
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
         ma.setPreviewUrl(artworkUrl + ep.filename);
         ma.setDefaultUrl(artworkUrl + ep.filename);
@@ -883,7 +917,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
    **********************************************************************/
   private class ImageComparator implements Comparator<SeriesImageQueryResult> {
     private int preferredLangu = 0;
-    private int english = 0;
+    private int english        = 0;
 
     private ImageComparator(String language) {
       for (Language lang : tvdbLanguages) {

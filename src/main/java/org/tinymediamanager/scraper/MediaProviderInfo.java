@@ -16,12 +16,10 @@
 package org.tinymediamanager.scraper;
 
 import java.net.URL;
-import java.util.jar.Attributes;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.config.MediaProviderConfig;
-import org.tinymediamanager.scraper.util.JarUtils;
 
 /**
  * The class ProviderInfo is used to store provider related information for further usage.
@@ -118,30 +116,12 @@ public class MediaProviderInfo {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
-  public String getVersion() {
-    return version;
-  }
-
-  /**
-   * just a convenient method to set version as String<br>
-   * Better use {@link #setVersion(Class<?>)}
-   * 
-   * @param version
-   */
-  @Deprecated
   public void setVersion(String version) {
     this.version = version;
   }
 
-  /**
-   * sets the version of this plugin<br>
-   * Uses "class" to find correct jar in classpath, and extracts manifest information
-   * 
-   * @param clazz
-   *          the class, who is implementing this method
-   */
-  public void setVersion(Class<?> clazz) {
-    this.version = JarUtils.getManifestEntry(clazz, Attributes.Name.IMPLEMENTATION_VERSION.toString());
+  public String getVersion() {
+    return version;
   }
 
   /**

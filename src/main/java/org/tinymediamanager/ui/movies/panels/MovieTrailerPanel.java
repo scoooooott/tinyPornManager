@@ -39,8 +39,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -76,8 +76,8 @@ public class MovieTrailerPanel extends JPanel {
 
   private MovieSelectionModel                  movieSelectionModel;
   private TmmTable                             table;
-  private EventList<MovieTrailer>              trailerEventList  = null;
-  private DefaultEventTableModel<MovieTrailer> trailerTableModel = null;
+  private EventList<MediaTrailer>              trailerEventList  = null;
+  private DefaultEventTableModel<MediaTrailer> trailerTableModel = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -89,7 +89,7 @@ public class MovieTrailerPanel extends JPanel {
     this.movieSelectionModel = model;
 
     trailerEventList = GlazedListsSwing.swingThreadProxyList(
-        new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MovieTrailer.class)));
+        new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaTrailer.class)));
     trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     setLayout(new MigLayout("", "[400lp,grow]", "[250lp,grow]"));
     table = new TmmTable(trailerTableModel);
@@ -126,7 +126,7 @@ public class MovieTrailerPanel extends JPanel {
 
   }
 
-  private class TrailerTableFormat implements AdvancedTableFormat<MovieTrailer> {
+  private class TrailerTableFormat implements AdvancedTableFormat<MediaTrailer> {
     public TrailerTableFormat() {
     }
 
@@ -162,7 +162,7 @@ public class MovieTrailerPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MovieTrailer trailer, int column) {
+    public Object getColumnValue(MediaTrailer trailer, int column) {
       if (trailer == null) {
         return null;
       }
@@ -239,7 +239,7 @@ public class MovieTrailerPanel extends JPanel {
       // click on the download button
       if (col == 0) {
         row = table.convertRowIndexToModel(row);
-        MovieTrailer trailer = trailerEventList.get(row);
+        MediaTrailer trailer = trailerEventList.get(row);
 
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
           Movie movie = movieSelectionModel.getSelectedMovie();
@@ -265,7 +265,7 @@ public class MovieTrailerPanel extends JPanel {
       if (col == 1) {
         // try to open the browser
         row = table.convertRowIndexToModel(row);
-        MovieTrailer trailer = trailerEventList.get(row);
+        MediaTrailer trailer = trailerEventList.get(row);
         String url = trailer.getUrl();
         try {
           TmmUIHelper.browseUrl(url);

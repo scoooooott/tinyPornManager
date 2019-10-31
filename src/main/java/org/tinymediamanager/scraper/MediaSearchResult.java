@@ -74,7 +74,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          other MediaSerachResult
    */
   public void mergeFrom(MediaSearchResult msr) {
-    if (msr == null) {
+    if (msr == null || !StringUtils.equals(providerId, msr.providerId) || type != msr.getMediaType()) {
       return;
     }
 

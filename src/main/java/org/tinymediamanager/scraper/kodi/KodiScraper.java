@@ -15,18 +15,6 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,21 +26,38 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+
 public class KodiScraper implements IMediaProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiScraper.class);
+  private static final Logger          LOGGER    = LoggerFactory.getLogger(KodiScraper.class);
   private Map<String, ScraperFunction> functions = new TreeMap<>();
 
-  MediaType type;
-  String language;
-  String provider;
-  File addonFolder;
-  String scraperXml;
-  MediaProviderInfo providerInfo;
-  List<String> imports = new ArrayList<String>();
+  MediaType                            type;
+  String                               language;
+  String                               provider;
+  File                                 addonFolder;
+  String                               scraperXml;
+  MediaProviderInfo                    providerInfo;
+  List<String>                         imports   = new ArrayList<>();
 
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
+  }
+
+  @Override
+  public String getId() {
+    return providerInfo.getId();
   }
 
   /**
@@ -93,7 +98,7 @@ public class KodiScraper implements IMediaProvider {
       for (Element el : doc.getElementsByTag("import")) {
         String imp = el.attr("addon");
         if (!imp.isEmpty() && imp.startsWith("metadata.common")) {
-          LOGGER.debug("--> found common import: " + imp);
+          LOGGER.debug("--> found common import: {}", imp);
           imports.add(imp);
         }
       }
@@ -103,25 +108,28 @@ public class KodiScraper implements IMediaProvider {
         String point = el.attr("point");
         if (point.equals("xbmc.addon.metadata")) {
           Elements desc = el.getElementsByAttributeValue("lang", Locale.getDefault().getLanguage());
-          if (desc.size() == 0) {
+          if (desc.isEmpty()) {
             // fallback EN
             desc = el.getElementsByAttributeValue("lang", "en");
           }
           for (Element d : desc) {
             if (d.nodeName().equals("summary")) {
               summary = d.text();
-            } else if (d.nodeName().equals("description")) {
+            }
+            else if (d.nodeName().equals("description")) {
               description = d.text();
             }
           }
-        } else if (point.contains("metadata.scraper")) {
+        }
+        else if (point.contains("metadata.scraper")) {
           this.scraperXml = el.attr("library");
           this.language = el.attr("language");
 
           // more here http://wiki.xbmc.org/index.php?title=addon.xml#.3Cextension.3E
           if (point.equals("xbmc.metadata.scraper.movies")) {
             type = MediaType.MOVIE;
-          } else if (point.equals("xbmc.metadata.scraper.tvshows")) {
+          }
+          else if (point.equals("xbmc.metadata.scraper.tvshows")) {
             type = MediaType.TV_SHOW;
           }
           // else if (point.equals("xbmc.metadata.scraper.albums")) {
@@ -160,7 +168,8 @@ public class KodiScraper implements IMediaProvider {
         for (Element el : strings) {
           labelmap.put(el.id(), el.text());
         }
-      } else {
+      }
+      else {
         langFile = new File(langFolder, "strings.po");
         if (langFile.exists()) {
           // parse PO
@@ -231,7 +240,8 @@ public class KodiScraper implements IMediaProvider {
             case "bool":
               if (defaultValue.equalsIgnoreCase("true") || defaultValue.equalsIgnoreCase("false")) {
                 this.providerInfo.getConfig().addBoolean(setid, Boolean.valueOf(defaultValue));
-              } else {
+              }
+              else {
                 LOGGER.warn("This is not a boolean '" + setid + "=" + defaultValue + "' - ignoring");
               }
               break;
@@ -284,13 +294,15 @@ public class KodiScraper implements IMediaProvider {
       File logo = new File(scraperFolder, "icon.png");
       if (logo.exists()) {
         providerInfo.setProviderLogo(logo.toURI().toURL());
-      } else { // new http://kodi.wiki/view/Add-on_structure#Kodi_v17_Krypton_and_up
+      }
+      else { // new http://kodi.wiki/view/Add-on_structure#Kodi_v17_Krypton_and_up
         logo = new File(scraperFolder, "resources/icon.png");
         if (logo.exists()) {
           providerInfo.setProviderLogo(logo.toURI().toURL());
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -368,7 +380,8 @@ public class KodiScraper implements IMediaProvider {
     if (providerInfo.getId() == null) {
       if (other.providerInfo.getId() != null)
         return false;
-    } else if (!providerInfo.getId().equals(other.providerInfo.getId()))
+    }
+    else if (!providerInfo.getId().equals(other.providerInfo.getId()))
       return false;
     return true;
   }

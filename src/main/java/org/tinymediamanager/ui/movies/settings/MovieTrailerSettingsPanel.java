@@ -61,7 +61,7 @@ import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;

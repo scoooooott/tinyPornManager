@@ -13,36 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
+
+package org.tinymediamanager.scraper.interfaces;
 
 import java.util.List;
 
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
-import org.tinymediamanager.scraper.SubtitleSearchResult;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
- * The Interface {@link IMediaSubtitleProvider}. All scrapers providing subtitles must implement this interface
+ * The Interface {@link IMediaArtworkProvider}. All media providers for Artwork must implement this interface
  * 
- * @author Myron Boyle, Manuel Laggner
+ * @author Manuel Laggner
  * @since 3.0
  */
-public interface IMediaSubtitleProvider extends IMediaProvider {
+public interface IMediaArtworkProvider extends IMediaProvider {
 
   /**
-   * searches for subtitles for MediaFile
+   * Gets the artwork.
    * 
    * @param options
-   *          the options for searching the subtitles
-   * @return the MediaSearchResults
+   *          the options
+   * @return the artwork
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
    * @throws MissingIdException
    *           indicates that there was no usable id to scrape
-   * @throws UnsupportedMediaTypeException
-   *           indicates that the requested media type is not supported
    */
-  List<SubtitleSearchResult> search(SubtitleSearchOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException;
+  List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException;
 }

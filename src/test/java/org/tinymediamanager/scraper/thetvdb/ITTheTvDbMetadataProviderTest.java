@@ -1,31 +1,34 @@
 package org.tinymediamanager.scraper.thetvdb;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
 public class ITTheTvDbMetadataProviderTest {
 
@@ -56,8 +59,9 @@ public class ITTheTvDbMetadataProviderTest {
 
   private void searchShow(ITvShowMetadataProvider metadataProvider, String title, String language, String setId, String checkId, int year) {
     try {
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, title);
-      options.setLanguage(Locale.forLanguageTag(language));
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      options.setSearchQuery(title);
+      options.setLanguage(MediaLanguages.get(language));
       if (setId != null) {
         options.setId(metadataProvider.getProviderInfo().getId(), setId); // when set, just lookup, no search
       }
@@ -76,11 +80,13 @@ public class ITTheTvDbMetadataProviderTest {
       }
       if (year > 0) {
         assertThat(result.getYear()).isEqualTo(year);
-      } else {
+      }
+      else {
         assertThat(result.getYear()).isGreaterThan(0);
       }
       assertThat(result.getPosterUrl()).isNotEmpty();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail(e.getMessage());
     }
@@ -112,11 +118,10 @@ public class ITTheTvDbMetadataProviderTest {
      */
     try {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
-
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.en.toLocale());
+      options.setLanguage(MediaLanguages.en);
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -125,8 +130,8 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(md.getIds().size()).isGreaterThanOrEqualTo(2); // at least tvdb and imdb
       assertEquals("Psych", md.getTitle());
       assertEquals(
-              "Thanks to his police officer father's efforts, Shawn Spencer spent his childhood developing a keen eye for detail (and a lasting dislike of his dad).  Years later, Shawn's frequent tips to the police lead to him being falsely accused of a crime he solved.  Now, Shawn has no choice but to use his abilities to perpetuate his cover story: psychic crime-solving powers, all the while dragging his best friend, his dad, and the police along for the ride.",
-              md.getPlot());
+          "Thanks to his police officer father's efforts, Shawn Spencer spent his childhood developing a keen eye for detail (and a lasting dislike of his dad).  Years later, Shawn's frequent tips to the police lead to him being falsely accused of a crime he solved.  Now, Shawn has no choice but to use his abilities to perpetuate his cover story: psychic crime-solving powers, all the while dragging his best friend, his dad, and the police along for the ride.",
+          md.getPlot());
       assertEquals(2006, md.getYear());
 
       assertThat(md.getRatings()).isNotEmpty();
@@ -134,14 +139,15 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(rating.getId()).isEqualTo("tvdb");
       assertThat(rating.getMaxValue()).isEqualTo(10);
       assertThat(rating.getRating()).isGreaterThan(0);
-      assertThat(rating.getVoteCount()).isGreaterThan(0);
+      assertThat(rating.getVotes()).isGreaterThan(0);
 
       assertEquals(MediaAiredStatus.ENDED, md.getStatus());
       assertThat(md.getProductionCompanies()).isNotEmpty();
-      assertEquals(Certification.US_TVPG, md.getCertifications().get(0));
+      assertEquals(MediaCertification.US_TVPG, md.getCertifications().get(0));
       assertThat(md.getGenres()).containsExactly(MediaGenres.COMEDY, MediaGenres.CRIME, MediaGenres.DRAMA);
       assertThat(md.getRuntime()).isGreaterThan(0);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -156,10 +162,10 @@ public class ITTheTvDbMetadataProviderTest {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
       metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.tr.toLocale());
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.tr);
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -168,8 +174,8 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(md.getIds().size()).isGreaterThanOrEqualTo(2); // at least tvdb and imdb
       assertEquals("Psych", md.getTitle());
       assertEquals(
-              "Shawn Spencer ist selbsternannter Detektiv. Von seinem Vater Henry, einem angesehenen Polizisten, wurde er trainiert, sich alle Dinge in seinem Umfeld genau einzuprägen, seien sie auch noch so klein oder unwichtig. Über seine Erziehung unzufrieden kehrte Shawn seinem Vater jedoch den Rücken. Nach einigen misslungenen Lebensabschnitten erkennt er seine Gabe, ungelöste Fälle der Polizei mithilfe seines fotografischen Gedächtnisses lösen zu können. Dabei gibt Shawn aber stets vor ein Hellseher zu sein. Nachdem er der Polizei in mehreren Fällen helfen konnte und diese ihn immer wieder als Unterstützung anfordert, gründet Shawn schließlich mit seinem Freund Burton Guster eine eigene Detektei.",
-              md.getPlot());
+          "Shawn Spencer ist selbsternannter Detektiv. Von seinem Vater Henry, einem angesehenen Polizisten, wurde er trainiert, sich alle Dinge in seinem Umfeld genau einzuprägen, seien sie auch noch so klein oder unwichtig. Über seine Erziehung unzufrieden kehrte Shawn seinem Vater jedoch den Rücken. Nach einigen misslungenen Lebensabschnitten erkennt er seine Gabe, ungelöste Fälle der Polizei mithilfe seines fotografischen Gedächtnisses lösen zu können. Dabei gibt Shawn aber stets vor ein Hellseher zu sein. Nachdem er der Polizei in mehreren Fällen helfen konnte und diese ihn immer wieder als Unterstützung anfordert, gründet Shawn schließlich mit seinem Freund Burton Guster eine eigene Detektei.",
+          md.getPlot());
       assertEquals(2006, md.getYear());
 
       assertThat(md.getRatings()).isNotEmpty();
@@ -177,14 +183,15 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(rating.getId()).isEqualTo("tvdb");
       assertThat(rating.getMaxValue()).isEqualTo(10);
       assertThat(rating.getRating()).isGreaterThan(0);
-      assertThat(rating.getVoteCount()).isGreaterThan(0);
+      assertThat(rating.getVotes()).isGreaterThan(0);
 
       assertEquals(MediaAiredStatus.ENDED, md.getStatus());
       assertThat(md.getProductionCompanies()).isNotEmpty();
-      assertEquals(Certification.US_TVPG, md.getCertifications().get(0));
+      assertEquals(MediaCertification.US_TVPG, md.getCertifications().get(0));
       assertThat(md.getGenres()).containsExactly(MediaGenres.COMEDY, MediaGenres.CRIME, MediaGenres.DRAMA);
       assertThat(md.getRuntime()).isGreaterThan(0);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -200,13 +207,12 @@ public class ITTheTvDbMetadataProviderTest {
     try {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.en.toLocale());
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.en);
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "2");
-      options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -220,9 +226,9 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(md.getTitle()).isEqualTo("The Spelling Bee");
       assertThat(md.getPlot()).startsWith("When what begins as a little competitive sabotage in a regional spelling");
       assertEquals("14-07-2006", sdf.format(md.getReleaseDate()));
-      assertEquals(18, md.getCastMembers(MediaCastMember.CastType.ACTOR).size());
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isGreaterThan(0);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER).size()).isGreaterThan(0);
+      assertEquals(18, md.getCastMembers(ACTOR).size());
+      assertThat(md.getCastMembers(DIRECTOR).size()).isGreaterThan(0);
+      assertThat(md.getCastMembers(WRITER).size()).isGreaterThan(0);
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.THUMB)).isNotEmpty();
 
       assertThat(md.getRatings()).isNotEmpty();
@@ -230,8 +236,9 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(rating.getId()).isEqualTo("tvdb");
       assertThat(rating.getMaxValue()).isEqualTo(10);
       assertThat(rating.getRating()).isGreaterThan(0);
-      assertThat(rating.getVoteCount()).isGreaterThan(0);
-    } catch (Exception e) {
+      assertThat(rating.getVotes()).isGreaterThan(0);
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -248,13 +255,12 @@ public class ITTheTvDbMetadataProviderTest {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
       metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.tr.toLocale());
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.tr);
       options.setId(MediaMetadata.SEASON_NR, "1");
       options.setId(MediaMetadata.EPISODE_NR, "2");
-      options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       MediaMetadata md = metadataProvider.getMetadata(options);
 
       // did we get metadata?
@@ -267,11 +273,11 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(md.getDvdSeasonNumber()).isEqualTo(1);
       assertThat(md.getTitle()).isEqualTo("So spannend kann ein Buchstabierwettbewerb sein!");
       assertThat(md.getPlot()).startsWith(
-              "In Santa Barbara findet der alljährliche Buchstabier-Wettbewerb statt. Gus, der als Knirps selbst einmal an dieser Veranstaltung teilgenommen hatte, aber ausgeschieden war, weil der im Publikum sitzende Shawn ihm falsch vorgesagt hatte, ist vor Begeisterung kaum zu halten und verfolgt die Veranstaltung mangels Tickets als Live-Übertragung im Fernsehen. Shawn dagegen hält die Veranstaltung für eine reine Freakshow und ist von Gus' Enthusiasmus mehr als genervt. Als Brendan Vu, der haushohe Favorit der Veranstaltung, auf Grund eines mysteriösen Ohnmachtsanfalles ausscheiden muss, werden Shawn und Gus mit der Untersuchung des Falles beauftragt. Kurz nachdem sie am Veranstaltungsort eintreffen, stürzt der altgediente Spielleiter des Buchstabierwettbewerbes, Elvin Cavanaugh, bewusstlos aus seiner Loge in das Publikum und ist auf der Stelle tot. Für die Polizei, insbesondere den zynischen Detective Carlton Lassiter scheint dieser Fall sonnenklar zu sein: Der stark übergewichtige Cavanaugh habe einen Herzinfarkt erlitten und sei deshalb in den Tod gestürzt. Lassiters neue Kollegin Juliet O'Hara, auf die Shawn sofort ein Auge wirft, zweifelt jedoch an dieser Theorie. Auch Shawn und Gus vermuten mehr dahinter, für sie deuten die Zeichen eindeutig auf ein Fremdverschulden hin.");
+          "In Santa Barbara findet der alljährliche Buchstabier-Wettbewerb statt. Gus, der als Knirps selbst einmal an dieser Veranstaltung teilgenommen hatte, aber ausgeschieden war, weil der im Publikum sitzende Shawn ihm falsch vorgesagt hatte, ist vor Begeisterung kaum zu halten und verfolgt die Veranstaltung mangels Tickets als Live-Übertragung im Fernsehen. Shawn dagegen hält die Veranstaltung für eine reine Freakshow und ist von Gus' Enthusiasmus mehr als genervt. Als Brendan Vu, der haushohe Favorit der Veranstaltung, auf Grund eines mysteriösen Ohnmachtsanfalles ausscheiden muss, werden Shawn und Gus mit der Untersuchung des Falles beauftragt. Kurz nachdem sie am Veranstaltungsort eintreffen, stürzt der altgediente Spielleiter des Buchstabierwettbewerbes, Elvin Cavanaugh, bewusstlos aus seiner Loge in das Publikum und ist auf der Stelle tot. Für die Polizei, insbesondere den zynischen Detective Carlton Lassiter scheint dieser Fall sonnenklar zu sein: Der stark übergewichtige Cavanaugh habe einen Herzinfarkt erlitten und sei deshalb in den Tod gestürzt. Lassiters neue Kollegin Juliet O'Hara, auf die Shawn sofort ein Auge wirft, zweifelt jedoch an dieser Theorie. Auch Shawn und Gus vermuten mehr dahinter, für sie deuten die Zeichen eindeutig auf ein Fremdverschulden hin.");
       assertEquals("14-07-2006", sdf.format(md.getReleaseDate()));
-      assertEquals(18, md.getCastMembers(MediaCastMember.CastType.ACTOR).size());
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isGreaterThan(0);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.WRITER).size()).isGreaterThan(0);
+      assertEquals(18, md.getCastMembers(ACTOR).size());
+      assertThat(md.getCastMembers(DIRECTOR).size()).isGreaterThan(0);
+      assertThat(md.getCastMembers(WRITER).size()).isGreaterThan(0);
       assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.THUMB)).isNotEmpty();
 
       assertThat(md.getRatings()).isNotEmpty();
@@ -279,8 +285,9 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(rating.getId()).isEqualTo("tvdb");
       assertThat(rating.getMaxValue()).isEqualTo(10);
       assertThat(rating.getRating()).isGreaterThan(0);
-      assertThat(rating.getVoteCount()).isGreaterThan(0);
-    } catch (Exception e) {
+      assertThat(rating.getVotes()).isGreaterThan(0);
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -296,7 +303,7 @@ public class ITTheTvDbMetadataProviderTest {
       ITvShowArtworkProvider artworkProvider = (ITvShowArtworkProvider) metadataProvider;
 
       // all scrape
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.TV_SHOW);
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
 
@@ -306,7 +313,7 @@ public class ITTheTvDbMetadataProviderTest {
       MediaArtwork ma = artwork.get(0);
       assertThat(ma.getDefaultUrl()).isNotEmpty();
       assertThat(ma.getType()).isIn(MediaArtwork.MediaArtworkType.BANNER, MediaArtwork.MediaArtworkType.POSTER,
-              MediaArtwork.MediaArtworkType.BACKGROUND, MediaArtwork.MediaArtworkType.SEASON_POSTER, MediaArtwork.MediaArtworkType.SEASON_BANNER);
+          MediaArtwork.MediaArtworkType.BACKGROUND, MediaArtwork.MediaArtworkType.SEASON_POSTER, MediaArtwork.MediaArtworkType.SEASON_BANNER);
       assertThat(ma.getImageSizes()).isNotEmpty();
 
       // season poster scrape
@@ -330,7 +337,8 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(ma.getDefaultUrl()).isNotEmpty();
       assertThat(ma.getType()).isEqualTo(MediaArtwork.MediaArtworkType.SEASON_BANNER);
       assertThat(ma.getSeason()).isGreaterThan(-1);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -344,11 +352,11 @@ public class ITTheTvDbMetadataProviderTest {
     try {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.en.toLocale());
-      options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.en);
+
       List<MediaMetadata> episodes = metadataProvider.getEpisodeList(options);
 
       // did we get metadata?
@@ -371,7 +379,8 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(episode.getPlot()).startsWith("When what begins as a little competitive sabotage in a regional spelling");
       assertThat(episode.getReleaseDate()).isEqualTo("2006-07-14");
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }
@@ -386,11 +395,11 @@ public class ITTheTvDbMetadataProviderTest {
       ITvShowMetadataProvider metadataProvider = new TheTvDbMetadataProvider();
       metadataProvider.getProviderInfo().getConfig().setValue("fallbackLanguage", MediaLanguages.de.toString());
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
       options.setId(metadataProvider.getProviderInfo().getId(), "79335");
-      options.setCountry(CountryCode.US);
-      options.setLanguage(MediaLanguages.tr.toLocale());
-      options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
+      TvShowModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.tr);
+
       List<MediaMetadata> episodes = metadataProvider.getEpisodeList(options);
 
       // did we get metadata?
@@ -411,9 +420,10 @@ public class ITTheTvDbMetadataProviderTest {
       assertThat(episode.getDvdSeasonNumber()).isEqualTo(1);
       assertThat(episode.getTitle()).isEqualTo("So spannend kann ein Buchstabierwettbewerb sein!");
       assertThat(episode.getPlot()).startsWith(
-              "In Santa Barbara findet der alljährliche Buchstabier-Wettbewerb statt. Gus, der als Knirps selbst einmal an dieser Veranstaltung teilgenommen hatte, aber ausgeschieden war, weil der im Publikum sitzende Shawn ihm falsch vorgesagt hatte, ist vor Begeisterung kaum zu halten und verfolgt die Veranstaltung mangels Tickets als Live-Übertragung im Fernsehen. Shawn dagegen hält die Veranstaltung für eine reine Freakshow und ist von Gus' Enthusiasmus mehr als genervt. Als Brendan Vu, der haushohe Favorit der Veranstaltung, auf Grund eines mysteriösen Ohnmachtsanfalles ausscheiden muss, werden Shawn und Gus mit der Untersuchung des Falles beauftragt. Kurz nachdem sie am Veranstaltungsort eintreffen, stürzt der altgediente Spielleiter des Buchstabierwettbewerbes, Elvin Cavanaugh, bewusstlos aus seiner Loge in das Publikum und ist auf der Stelle tot. Für die Polizei, insbesondere den zynischen Detective Carlton Lassiter scheint dieser Fall sonnenklar zu sein: Der stark übergewichtige Cavanaugh habe einen Herzinfarkt erlitten und sei deshalb in den Tod gestürzt. Lassiters neue Kollegin Juliet O'Hara, auf die Shawn sofort ein Auge wirft, zweifelt jedoch an dieser Theorie. Auch Shawn und Gus vermuten mehr dahinter, für sie deuten die Zeichen eindeutig auf ein Fremdverschulden hin.");
+          "In Santa Barbara findet der alljährliche Buchstabier-Wettbewerb statt. Gus, der als Knirps selbst einmal an dieser Veranstaltung teilgenommen hatte, aber ausgeschieden war, weil der im Publikum sitzende Shawn ihm falsch vorgesagt hatte, ist vor Begeisterung kaum zu halten und verfolgt die Veranstaltung mangels Tickets als Live-Übertragung im Fernsehen. Shawn dagegen hält die Veranstaltung für eine reine Freakshow und ist von Gus' Enthusiasmus mehr als genervt. Als Brendan Vu, der haushohe Favorit der Veranstaltung, auf Grund eines mysteriösen Ohnmachtsanfalles ausscheiden muss, werden Shawn und Gus mit der Untersuchung des Falles beauftragt. Kurz nachdem sie am Veranstaltungsort eintreffen, stürzt der altgediente Spielleiter des Buchstabierwettbewerbes, Elvin Cavanaugh, bewusstlos aus seiner Loge in das Publikum und ist auf der Stelle tot. Für die Polizei, insbesondere den zynischen Detective Carlton Lassiter scheint dieser Fall sonnenklar zu sein: Der stark übergewichtige Cavanaugh habe einen Herzinfarkt erlitten und sei deshalb in den Tod gestürzt. Lassiters neue Kollegin Juliet O'Hara, auf die Shawn sofort ein Auge wirft, zweifelt jedoch an dieser Theorie. Auch Shawn und Gus vermuten mehr dahinter, für sie deuten die Zeichen eindeutig auf ein Fremdverschulden hin.");
       assertThat(episode.getReleaseDate()).isEqualTo("2006-07-14");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
     }

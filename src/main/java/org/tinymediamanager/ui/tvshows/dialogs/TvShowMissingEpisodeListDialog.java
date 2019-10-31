@@ -15,19 +15,19 @@ import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
@@ -179,27 +179,29 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
     }
 
     private List<MediaMetadata> getEpisodes(TvShow tvShow) {
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      options.setLanguage(language);
 
-        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
-        options.setLanguage(language.toLocale());
-        options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
-
-        MediaScraper mediaScraper = TvShowList.getInstance().getDefaultMediaScraper();
-        MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());
-        options.setMetadata(md);
+      MediaScraper mediaScraper = TvShowList.getInstance().getDefaultMediaScraper();
+      MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());
+      options.setMetadata(md);
 
       for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
-          options.setId(entry.getKey(), entry.getValue().toString());
-        }
+        options.setId(entry.getKey(), entry.getValue().toString());
+      }
 
-        try {
-
-          return ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options);
-
-        }
-        catch (ScrapeException | UnsupportedMediaTypeException | MissingIdException e1) {
-          e1.printStackTrace();
-        }
+      try {
+        return ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options);
+      }
+      catch (ScrapeException e) {
+        LOGGER.error("getMetadata", e);
+        MessageManager.instance.pushMessage(
+            new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.metadataepisodefailed", new String[] { ":", e.getLocalizedMessage() }));
+      }
+      catch (MissingIdException e) {
+        LOGGER.warn("missing id for scrape");
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, tvShow, "scraper.error.missingid"));
+      }
       return null;
     }
 

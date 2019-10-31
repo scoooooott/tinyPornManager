@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -25,7 +26,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.entities.Certification;
 
 /**
  * a collection of various helpers for the movie module
@@ -47,8 +47,8 @@ public class MovieHelpers {
   // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
   // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
-  public static Certification parseCertificationStringForMovieSetupCountry(String name) {
-    Certification cert = Certification.UNKNOWN;
+  public static MediaCertification parseCertificationStringForMovieSetupCountry(String name) {
+    MediaCertification cert = MediaCertification.UNKNOWN;
     name = name.trim();
     if (name.contains("/")) {
       // multiple countries
@@ -58,14 +58,14 @@ public class MovieHelpers {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1]);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1]);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
         else {
-          cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
@@ -76,14 +76,14 @@ public class MovieHelpers {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = Certification.findCertification(cs[1]);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.findCertification(cs[1]);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
         else {
-          cert = Certification.findCertification(c);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.findCertification(c);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
@@ -93,16 +93,16 @@ public class MovieHelpers {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
-        cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
+        cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
       }
       else {
         // no country? try to find only by name
-        cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
+        cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate
-    if (cert == Certification.UNKNOWN) {
-      cert = Certification.findCertification(name);
+    if (cert == MediaCertification.UNKNOWN) {
+      cert = MediaCertification.findCertification(name);
     }
     return cert;
   }

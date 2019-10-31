@@ -34,7 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -42,8 +44,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -258,7 +258,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         panelContent.add(lblCertificationT, "cell 0 3,alignx right");
 
         final JComboBox cbCertification = new JComboBox();
-        for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
+        for (MediaCertification cert : MediaCertification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
           cbCertification.addItem(cert);
         }
         panelContent.add(cbCertification, "cell 1 3,growx");
@@ -269,7 +269,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         btnCertification.addActionListener(e -> {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          Certification cert = (Certification) cbCertification.getSelectedItem();
+          MediaCertification cert = (MediaCertification) cbCertification.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.setCertification(cert);
 

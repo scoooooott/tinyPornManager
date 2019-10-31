@@ -75,8 +75,6 @@ public class MovieSettings extends AbstractSettings {
    * Constants mainly for events
    */
   private final static String              MOVIE_DATA_SOURCE                   = "movieDataSource";
-  private final static String              IMAGE_POSTER_SIZE                   = "imagePosterSize";
-  private final static String              IMAGE_FANART_SIZE                   = "imageFanartSize";
   private final static String              NFO_FILENAME                        = "nfoFilename";
   private final static String              POSTER_FILENAME                     = "posterFilename";
   private final static String              FANART_FILENAME                     = "fanartFilename";
@@ -151,7 +149,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          capitalWordsInTitles                = false;
 
   // artwork scraper
-  private PosterSizes                      imagePosterSize                     = PosterSizes.BIG;
+  private PosterSizes                      imagePosterSize                     = PosterSizes.LARGE;
   private FanartSizes                      imageFanartSize                     = FanartSizes.LARGE;
   private boolean                          imageExtraThumbs                    = false;
   private boolean                          imageExtraThumbsResize              = true;
@@ -163,7 +161,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          enableMovieSetArtworkFolder         = false;
   private String                           movieSetArtworkFolder               = "MoviesetArtwork";
   private boolean                          scrapeBestImage                     = true;
-  private MediaLanguages                   imageScraperLanguage                = MediaLanguages.none;
+  private MediaLanguages                   imageScraperLanguage                = MediaLanguages.en;
   private boolean                          imageLanguagePriority               = true;
   private boolean                          writeActorImages                    = false;
 
@@ -560,7 +558,7 @@ public class MovieSettings extends AbstractSettings {
   public void setImagePosterSize(PosterSizes newValue) {
     PosterSizes oldValue = this.imagePosterSize;
     this.imagePosterSize = newValue;
-    firePropertyChange(IMAGE_POSTER_SIZE, oldValue, newValue);
+    firePropertyChange("imagePosterSize", oldValue, newValue);
   }
 
   public FanartSizes getImageFanartSize() {
@@ -570,7 +568,7 @@ public class MovieSettings extends AbstractSettings {
   public void setImageFanartSize(FanartSizes newValue) {
     FanartSizes oldValue = this.imageFanartSize;
     this.imageFanartSize = newValue;
-    firePropertyChange(IMAGE_FANART_SIZE, oldValue, newValue);
+    firePropertyChange("imageFanartSize", oldValue, newValue);
   }
 
   public boolean isImageExtraThumbs() {

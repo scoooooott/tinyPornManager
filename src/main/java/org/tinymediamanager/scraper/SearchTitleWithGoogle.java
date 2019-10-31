@@ -34,7 +34,7 @@ public class SearchTitleWithGoogle {
    * @param options
    * @return MediaSearchResult, but NO id filled. Scraper MUST work with url-only!
    */
-  public List<MediaSearchResult> search(String site, MediaProviderInfo mpi, MediaSearchOptions options) {
+  public List<MediaSearchResult> search(String site, MediaProviderInfo mpi, MediaSearchAndScrapeOptions options) {
     LOGGER.debug("SearchTitleWithGoogle() - {}", options);
     List<MediaSearchResult> resultList = new ArrayList<>();
 
@@ -42,13 +42,13 @@ public class SearchTitleWithGoogle {
     String searchTerm = "";
 
     try {
-      if (StringUtils.isNotEmpty(options.getQuery())) {
+      if (StringUtils.isNotEmpty(options.getSearchQuery())) {
         if (!site.startsWith("http")) {
           site = "http://" + site;
         }
         site = new URL(site).getHost();
-        searchTerm = options.getQuery();
-        String lang = options.getLanguage().getLanguage();
+        searchTerm = options.getSearchQuery();
+        String lang = options.getLanguage().toLocale().getLanguage();
         searchUrl = "https://www.google." + lang + "/search?q=" + URLEncoder.encode("site:" + site + " " + searchTerm, PAGE_ENCODING);
         LOGGER.debug("search for: {} ({})", searchTerm, searchUrl);
       }

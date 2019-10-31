@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 import java.util.List;
 
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
 
 /**
  * The interface {@link ITvShowMetadataProvider}. To provide metadata for TV shows/episodes
@@ -38,7 +37,7 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * Gets the metadata for the given TV show
    * 
    * @param options
-   *          the scrape options (containing the type (TV_SHOW or TV_EPISODE) and the ID of the TV show)
+   *          the scrape options (containing the type TV_SHOW and the ID of the TV show)
    * @return the metadata
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
@@ -46,11 +45,23 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    *           indicates that there was no usable id to scrape
    * @throws NothingFoundException
    *           indicated that nothing has been found
-   * @throws UnsupportedMediaTypeException
-   *           indicates that the requested media type is not supported
    */
-  MediaMetadata getMetadata(MediaScrapeOptions options)
-      throws ScrapeException, MissingIdException, NothingFoundException, UnsupportedMediaTypeException;
+  MediaMetadata getMetadata(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException;
+
+  /**
+   * Gets the metadata for the given episode
+   *
+   * @param options
+   *          the scrape options (containing the type TV_EPISODE and the ID of the TV show/episode)
+   * @return the metadata
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   * @throws NothingFoundException
+   *           indicated that nothing has been found
+   */
+  MediaMetadata getMetadata(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException;
 
   /**
    * Search for a TV show
@@ -60,10 +71,8 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * @return the list
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
-   * @throws UnsupportedMediaTypeException
-   *           indicates that the requested media type is not supported
    */
-  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException;
+  List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException;
 
   /**
    * Gets an episode list for the given TV show
@@ -75,8 +84,19 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    *           any exception which can be thrown while scraping
    * @throws MissingIdException
    *           indicates that there was no usable id to scrape
-   * @throws UnsupportedMediaTypeException
-   *           indicates that the requested media type is not supported
    */
-  List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException, UnsupportedMediaTypeException;
+  List<MediaMetadata> getEpisodeList(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException;
+
+  /**
+   * Gets an episode list through the given episode
+   *
+   * @param options
+   *          scrape options (containing the ID of the TV show)
+   * @return a list of episodes
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
+   */
+  List<MediaMetadata> getEpisodeList(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException;
 }

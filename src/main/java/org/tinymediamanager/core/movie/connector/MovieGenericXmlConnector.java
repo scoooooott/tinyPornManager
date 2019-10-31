@@ -39,21 +39,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -242,30 +242,30 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Float rating10;
 
     // the default rating
-    Map<String, Rating> ratings = movie.getRatings();
-    Rating mainRating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
+    Map<String, MediaRating> ratings = movie.getRatings();
+    MediaRating mainMediaRating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
 
     // is there any rating which is not the user rating?
-    if (mainRating == null) {
-      for (Rating r : ratings.values()) {
+    if (mainMediaRating == null) {
+      for (MediaRating r : ratings.values()) {
         // skip user ratings here
-        if (Rating.USER.equals(r.getId())) {
+        if (MediaRating.USER.equals(r.getId())) {
           continue;
         }
-        mainRating = r;
+        mainMediaRating = r;
       }
     }
 
     // just create one to not pass null
-    if (mainRating == null) {
-      mainRating = new Rating();
+    if (mainMediaRating == null) {
+      mainMediaRating = new MediaRating();
     }
 
-    if (mainRating.getMaxValue() > 0) {
-      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    if (mainMediaRating.getMaxValue() > 0) {
+      rating10 = mainMediaRating.getRating() * 10 / mainMediaRating.getMaxValue();
     }
     else {
-      rating10 = mainRating.getRating();
+      rating10 = mainMediaRating.getRating();
     }
 
     Element rating = document.createElement("rating");
@@ -280,13 +280,13 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
 
-    Rating rating = movie.getRating(Rating.USER);
+    MediaRating mediaRating = movie.getRating(MediaRating.USER);
 
-    if (rating.getMaxValue() > 0) {
-      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    if (mediaRating.getMaxValue() > 0) {
+      rating10 = mediaRating.getRating() * 10 / mediaRating.getMaxValue();
     }
     else {
-      rating10 = rating.getRating();
+      rating10 = mediaRating.getRating();
     }
 
     Element UserRating = document.createElement("userrating");
@@ -376,7 +376,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     if (movie.getCertification() != null) {
       if (movie.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        mpaa.setTextContent(Certification.getMPAAString(movie.getCertification()));
+        mpaa.setTextContent(MediaCertification.getMPAAString(movie.getCertification()));
       }
       else {
         mpaa.setTextContent(CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle()));
@@ -634,9 +634,9 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(movieTrailer.getUrl());
+    for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(mediaTrailer.getUrl());
         break;
       }
     }

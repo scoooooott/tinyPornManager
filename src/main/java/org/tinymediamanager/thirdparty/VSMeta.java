@@ -1,5 +1,9 @@
 package org.tinymediamanager.thirdparty;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -23,19 +27,17 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import com.google.gson.stream.JsonReader;
 
@@ -481,11 +483,11 @@ public class VSMeta {
     }
 
     if (rating > 0) {
-      Rating r = new Rating(Rating.NFO, rating);
+      MediaRating r = new MediaRating(MediaRating.NFO, rating);
       m.setRating(r);
     }
 
-    m.setCertification(Certification.findCertification(info.classification));
+    m.setCertification(MediaCertification.findCertification(info.classification));
 
     if (movieSet != null) {
       m.setMovieSet(movieSet);
@@ -498,17 +500,17 @@ public class VSMeta {
       m.addGenre(MediaGenres.getGenre(g));
     }
     for (String cast : info.list.cast) {
-      MediaCastMember mcm = new MediaCastMember(CastType.ACTOR);
+      Person mcm = new Person(ACTOR);
       mcm.setName(cast);
       m.addActor(new Person(mcm));
     }
     for (String dir : info.list.director) {
-      MediaCastMember mcm = new MediaCastMember(CastType.DIRECTOR);
+      Person mcm = new Person(DIRECTOR);
       mcm.setName(dir);
       m.addDirector(new Person(mcm));
     }
     for (String writ : info.list.writer) {
-      MediaCastMember mcm = new MediaCastMember(CastType.WRITER);
+      Person mcm = new Person(WRITER);
       mcm.setName(writ);
       m.addWriter(new Person(mcm));
     }
@@ -533,7 +535,7 @@ public class VSMeta {
     }
 
     if (rating > 0) {
-      Rating r = new Rating(Rating.NFO, rating);
+      MediaRating r = new MediaRating(MediaRating.NFO, rating);
       ep.setRating(r);
     }
     // tv.setCertification(certification);
@@ -542,17 +544,17 @@ public class VSMeta {
       ep.setArtworkUrl(ma.getDefaultUrl(), MediaFileType.getMediaFileType(ma.getType()));
     }
     for (String cast : info.list.cast) {
-      MediaCastMember mcm = new MediaCastMember(CastType.ACTOR);
+      Person mcm = new Person(ACTOR);
       mcm.setName(cast);
       ep.addActor(new Person(mcm));
     }
     for (String dir : info.list.director) {
-      MediaCastMember mcm = new MediaCastMember(CastType.DIRECTOR);
+      Person mcm = new Person(DIRECTOR);
       mcm.setName(dir);
       ep.addDirector(new Person(mcm));
     }
     for (String writ : info.list.writer) {
-      MediaCastMember mcm = new MediaCastMember(CastType.WRITER);
+      Person mcm = new Person(WRITER);
       mcm.setName(writ);
       ep.addWriter(new Person(mcm));
     }

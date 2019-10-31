@@ -68,6 +68,7 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.ScraperMetadataConfig;
@@ -75,8 +76,8 @@ import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
@@ -91,11 +92,8 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -303,8 +301,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     for (Person writer : source.getWriters()) {
       writers.add(new Person(writer));
     }
-    for (Rating rating : source.getRatings().values()) {
-      ratings.put(rating.getId(), new Rating(rating));
+    for (MediaRating mediaRating : source.getRatings().values()) {
+      ratings.put(mediaRating.getId(), new MediaRating(mediaRating));
     }
   }
 
@@ -525,38 +523,38 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the main (preferred) rating
    */
   @Override
-  public Rating getRating() {
-    Rating rating = null;
+  public MediaRating getRating() {
+    MediaRating mediaRating = null;
 
     // the user rating
     if (TvShowModuleManager.SETTINGS.getPreferPersonalRating()) {
-      rating = ratings.get(Rating.USER);
+      mediaRating = ratings.get(MediaRating.USER);
     }
 
     // the default rating
-    if (rating == null) {
-      rating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    if (mediaRating == null) {
+      mediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
     }
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   /**
@@ -686,51 +684,26 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     if (config.contains(TvShowEpisodeScraperMetadataConfig.RATING)) {
-      Map<String, Rating> newRatings = new HashMap<>();
+      Map<String, MediaRating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        Rating rating = new Rating(mediaRating);
-        newRatings.put(rating.getId(), rating);
+        newRatings.put(mediaRating.getId(), mediaRating);
       }
       setRatings(newRatings);
     }
 
     if (ScraperMetadataConfig.containsAnyCast(config)) {
-      List<Person> newActors = new ArrayList<>();
-      List<Person> newDirectors = new ArrayList<>();
-      List<Person> newWriters = new ArrayList<>();
-
-      for (MediaCastMember member : metadata.getCastMembers()) {
-        switch (member.getType()) {
-          case ACTOR:
-            newActors.add(new Person(member));
-            break;
-
-          case DIRECTOR:
-            newDirectors.add(new Person(member));
-            break;
-
-          case WRITER:
-            newWriters.add(new Person(member));
-            break;
-
-          default:
-            break;
-        }
-      }
-
       if (config.contains(TvShowEpisodeScraperMetadataConfig.ACTORS)) {
-        setActors(newActors);
+        setActors(metadata.getCastMembers(Person.Type.ACTOR));
+        writeActorImages();
       }
 
       if (config.contains(TvShowEpisodeScraperMetadataConfig.DIRECTORS)) {
-        setDirectors(newDirectors);
+        setDirectors(metadata.getCastMembers(Person.Type.DIRECTOR));
       }
 
       if (config.contains(TvShowEpisodeScraperMetadataConfig.WRITERS)) {
-        setWriters(newWriters);
+        setWriters(metadata.getCastMembers(Person.Type.WRITER));
       }
-
-      writeActorImages();
     }
 
     if (config.contains(TvShowEpisodeScraperMetadataConfig.THUMB)) {
@@ -1414,7 +1387,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
-  public Certification getCertification() {
+  public MediaCertification getCertification() {
     return getTvShow().getCertification();
   }
 

@@ -109,7 +109,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                     note              = "";
 
   @JsonProperty
-  protected Map<String, Rating>        ratings           = new ConcurrentHashMap<>(0);
+  protected Map<String, MediaRating>   ratings           = new ConcurrentHashMap<>(0);
   @JsonProperty
   private List<MediaFile>              mediaFiles        = new ArrayList<>();
   @JsonProperty
@@ -332,12 +332,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
-  public Map<String, Rating> getRatings() {
+  public Map<String, MediaRating> getRatings() {
     return ratings;
   }
 
-  public Rating getRating(String id) {
-    return ratings.getOrDefault(id, new Rating());
+  public MediaRating getRating(String id) {
+    return ratings.getOrDefault(id, new MediaRating());
   }
 
   /**
@@ -345,28 +345,28 @@ public abstract class MediaEntity extends AbstractModelObject {
    * 
    * @return the main (preferred) rating
    */
-  public Rating getRating() {
-    Rating rating = ratings.get(Rating.USER);
+  public MediaRating getRating() {
+    MediaRating mediaRating = ratings.get(MediaRating.USER);
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   public int getYear() {
@@ -407,8 +407,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeRating(String id) {
-    Rating removedRating = ratings.remove(id);
-    if (removedRating != null) {
+    MediaRating removedMediaRating = ratings.remove(id);
+    if (removedMediaRating != null) {
       firePropertyChange(RATING, null, ratings);
     }
   }
@@ -418,24 +418,24 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(RATING, null, ratings);
   }
 
-  public void setRatings(Map<String, Rating> newRatings) {
+  public void setRatings(Map<String, MediaRating> newRatings) {
     // preserve the user rating here
-    Rating userRating = ratings.get(Rating.USER);
+    MediaRating userMediaRating = ratings.get(MediaRating.USER);
 
     ratings.clear();
-    for (Entry<String, Rating> entry : newRatings.entrySet()) {
+    for (Entry<String, MediaRating> entry : newRatings.entrySet()) {
       setRating(entry.getValue());
     }
 
-    if (userRating != null && !newRatings.containsKey(Rating.USER)) {
-      setRating(userRating);
+    if (userMediaRating != null && !newRatings.containsKey(MediaRating.USER)) {
+      setRating(userMediaRating);
     }
   }
 
-  public void setRating(Rating rating) {
-    if (rating != null && StringUtils.isNotBlank(rating.getId())) {
-      ratings.put(rating.getId(), rating);
-      firePropertyChange(RATING, null, rating);
+  public void setRating(MediaRating mediaRating) {
+    if (mediaRating != null && StringUtils.isNotBlank(mediaRating.getId())) {
+      ratings.put(mediaRating.getId(), mediaRating);
+      firePropertyChange(RATING, null, mediaRating);
     }
   }
 

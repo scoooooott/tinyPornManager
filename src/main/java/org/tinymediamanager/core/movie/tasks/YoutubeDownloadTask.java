@@ -34,8 +34,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.scraper.http.StreamingUrl;
@@ -60,7 +60,7 @@ public class YoutubeDownloadTask extends TmmTask {
   private static final char[]         ILLEGAL_FILENAME_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"',
       ':' };
   private static final ResourceBundle BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control());                      //$NON-NLS-1$
-  private MovieTrailer                movieTrailer;
+  private MediaTrailer                mediaTrailer;
   private Movie                       movie;
   private YoutubeMedia                mediaDetails;
 
@@ -71,12 +71,12 @@ public class YoutubeDownloadTask extends TmmTask {
   private long                        bytesDonePrevious           = 0;
   private double                      speed                       = 0;
 
-  public YoutubeDownloadTask(MovieTrailer movieTrailer, Movie movie) {
-    super(BUNDLE.getString("task.download") + " " + movieTrailer.getName(), 100, TaskType.BACKGROUND_TASK);
-    this.movieTrailer = movieTrailer;
+  public YoutubeDownloadTask(MediaTrailer mediaTrailer, Movie movie) {
+    super(BUNDLE.getString("task.download") + " " + mediaTrailer.getName(), 100, TaskType.BACKGROUND_TASK);
+    this.mediaTrailer = mediaTrailer;
     this.movie = movie;
 
-    setTaskDescription(movieTrailer.getName());
+    setTaskDescription(mediaTrailer.getName());
   }
 
   @Override
@@ -85,10 +85,10 @@ public class YoutubeDownloadTask extends TmmTask {
     try {
       String trailerFilename = movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER) + "." + Extension.MP4.getText();
 
-      mediaDetails = new YoutubeMedia(YoutubeHelper.extractId(movieTrailer.getUrl()));
+      mediaDetails = new YoutubeMedia(YoutubeHelper.extractId(mediaTrailer.getUrl()));
       mediaDetails.parseVideo();
 
-      VideoFormat videoFormat = mediaDetails.findVideo(VideoQuality.getVideoQuality(movieTrailer.getQuality()), Extension.MP4);
+      VideoFormat videoFormat = mediaDetails.findVideo(VideoQuality.getVideoQuality(mediaTrailer.getQuality()), Extension.MP4);
       AudioFormat audioFormat = mediaDetails.findBestAudio(Extension.MP4);
 
       if (videoFormat == null || audioFormat == null) {
@@ -153,7 +153,7 @@ public class YoutubeDownloadTask extends TmmTask {
     catch (Exception e) {
       MessageManager.instance.pushMessage(
           new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.downloadfailed", new String[] { movie.getTitle() }));
-      LOGGER.error("download of movieTrailer {} failed", movieTrailer.getUrl());
+      LOGGER.error("download of movieTrailer {} failed", mediaTrailer.getUrl());
     }
   }
 

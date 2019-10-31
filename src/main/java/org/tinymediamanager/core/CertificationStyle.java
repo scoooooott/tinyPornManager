@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.core;
 
-import org.tinymediamanager.scraper.entities.Certification;
-
 /**
  * The enum CertificationStyle represents all certification styles which we support writing
  *
@@ -39,8 +37,8 @@ public enum CertificationStyle {
    *          the style how the certification should be formatted
    * @return the formatted certification style
    */
-  public static String formatCertification(Certification cert, CertificationStyle style) {
-    if (cert == Certification.UNKNOWN) {
+  public static String formatCertification(MediaCertification cert, CertificationStyle style) {
+    if (cert == MediaCertification.UNKNOWN) {
       return "";
     }
 
@@ -55,10 +53,10 @@ public enum CertificationStyle {
         return cert.getCountry().getName() + ": " + cert.getName();
 
       case LARGE:
-        return Certification.generateCertificationStringWithAlternateNames(cert);
+        return MediaCertification.generateCertificationStringWithAlternateNames(cert);
 
       case LARGE_FULL:
-        return Certification.generateCertificationStringWithAlternateNames(cert, true);
+        return MediaCertification.generateCertificationStringWithAlternateNames(cert, true);
 
       case TECHNICAL:
         return cert.name();

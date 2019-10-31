@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie.entities;
+package org.tinymediamanager.core.entities;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.Comparator;
+import java.util.Date;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,8 +34,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class MovieTrailer extends AbstractModelObject implements Comparable<MovieTrailer> {
-  private static final Logger LOGGER   = LoggerFactory.getLogger(MovieTrailer.class);
+public class MediaTrailer extends AbstractModelObject implements Comparable<MediaTrailer> {
+  private static final Logger LOGGER   = LoggerFactory.getLogger(MediaTrailer.class);
 
   @JsonProperty
   private String              name     = "";
@@ -46,26 +48,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
   @JsonProperty
   private Boolean             inNfo    = Boolean.FALSE;
   @JsonProperty
-  private String              date     = "";
-
-  public MovieTrailer() {
-  }
-
-  /**
-   * create a MovieTrailer object from a given MovieTrailer instance
-   * 
-   * @param mediaTrailer
-   *          the MediaTrailer instance
-   */
-  public MovieTrailer(MediaTrailer mediaTrailer) {
-    if (mediaTrailer != null) {
-      name = mediaTrailer.getName();
-      url = mediaTrailer.getUrl();
-      quality = mediaTrailer.getQuality();
-      provider = mediaTrailer.getProvider();
-      date = mediaTrailer.getDate();
-    }
-  }
+  private Date                date     = null;
 
   public String getName() {
     return name;
@@ -73,7 +56,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   public void setName(String newValue) {
     String oldValue = this.name;
-    this.name = newValue;
+    this.name = StrgUtils.getNonNullString(newValue);
     firePropertyChange("name", oldValue, newValue);
   }
 
@@ -83,7 +66,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   public void setUrl(String newValue) {
     String oldValue = this.url;
-    this.url = newValue;
+    this.url = StrgUtils.getNonNullString(newValue);
     firePropertyChange("url", oldValue, newValue);
   }
 
@@ -93,7 +76,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   public void setQuality(String newValue) {
     String oldValue = this.quality;
-    this.quality = newValue;
+    this.quality = StrgUtils.getNonNullString(newValue);
     firePropertyChange("quality", oldValue, newValue);
   }
 
@@ -103,7 +86,7 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   public void setProvider(String newValue) {
     String oldValue = this.provider;
-    this.provider = newValue;
+    this.provider = StrgUtils.getNonNullString(newValue);
     firePropertyChange("provider", oldValue, newValue);
   }
 
@@ -121,12 +104,24 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
     firePropertyChange("inNfo", oldValue, newValue);
   }
 
-  public String getDate() {
+  public Date getDate() {
     return date;
   }
 
+  /**
+   * convenient method to set the date (parsed from string).
+   */
   public void setDate(String newValue) {
-    String oldValue = this.date;
+    try {
+      setDate(StrgUtils.parseDate(newValue));
+    }
+    catch (ParseException e) {
+      LOGGER.trace("could not parse date: {}", e.getMessage());
+    }
+  }
+
+  public void setDate(Date newValue) {
+    Date oldValue = this.date;
     this.date = newValue;
     firePropertyChange("date", oldValue, newValue);
   }
@@ -143,14 +138,14 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
 
   @Override
   public boolean equals(Object mt2) {
-    if (mt2 instanceof MovieTrailer) {
-      return compareTo((MovieTrailer) mt2) == 0;
+    if (mt2 instanceof MediaTrailer) {
+      return compareTo((MediaTrailer) mt2) == 0;
     }
     return false;
   }
 
   @Override
-  public int compareTo(MovieTrailer mt2) {
+  public int compareTo(MediaTrailer mt2) {
     return this.getUrl().compareTo(mt2.getUrl());
   }
 
@@ -162,20 +157,22 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
   /**
    * the comparator QualityComparator is used to sort the trailers on their quality to take the "best" one
    */
-  public static class QualityComparator implements Comparator<MovieTrailer> {
+  public static class QualityComparator implements Comparator<MediaTrailer> {
     @Override
-    public int compare(MovieTrailer o1, MovieTrailer o2) {
+    public int compare(MediaTrailer o1, MediaTrailer o2) {
       int quality1 = 0;
       int quality2 = 0;
       try {
         quality1 = Integer.parseInt(o1.quality.replace("p", ""));
       }
       catch (Exception ignored) {
+        // no need to log here
       }
       try {
         quality2 = Integer.parseInt(o2.quality.replace("p", ""));
       }
       catch (Exception ignored) {
+        // no need to log here
       }
       return quality2 - quality1;
     }

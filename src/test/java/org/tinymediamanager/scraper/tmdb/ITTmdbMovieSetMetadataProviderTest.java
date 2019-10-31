@@ -1,26 +1,31 @@
 package org.tinymediamanager.scraper.tmdb;
 
-import org.apache.commons.lang3.LocaleUtils;
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
+import java.util.List;
+
+import org.junit.Test;
+import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+
 /**
  * @author Nikolas Mavropoylos
  */
-public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBaseTest {
+public class ITTmdbMovieSetMetadataProviderTest {
   @Test
   public void testCollectionSearchDataIntegrity() throws Exception {
-    searchOptions = new MediaSearchOptions(MediaType.MOVIE_SET, "F*ck You, Goethe Collection");
-    searchOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    searchResults = movieSetMetadataProvider.search(searchOptions);
+    MovieSetSearchAndScrapeOptions searchOptions = new MovieSetSearchAndScrapeOptions();
+    searchOptions.setSearchQuery("F*ck You, Goethe Collection");
+    searchOptions.setLanguage(MediaLanguages.en);
+
+    List<MediaSearchResult> searchResults = mp.search(searchOptions);
     // did we get a result?
     assertNotNull("Result", searchResults);
 
@@ -32,10 +37,13 @@ public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBa
 
   @Test
   public void testCollectionSearchDataIntegrityInGerman() throws Exception {
-    searchOptions = new MediaSearchOptions(MediaType.MOVIE_SET, "F*ck You, Goethe Collection");
-    searchOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.de.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    searchResults = movieSetMetadataProvider.search(searchOptions);
+    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+    options.setSearchQuery("F*ck You, Goethe Collection");
+    options.setLanguage(MediaLanguages.de);
+
+    List<MediaSearchResult> searchResults = mp.search(options);
     // did we get a result?
     assertNotNull("Result", searchResults);
 
@@ -46,10 +54,13 @@ public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBa
 
   @Test
   public void testCollectionSearchDataIntegrityInGreek() throws Exception {
-    searchOptions = new MediaSearchOptions(MediaType.MOVIE_SET, "F*ck You, Goethe Collection");
-    searchOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    searchResults = movieSetMetadataProvider.search(searchOptions);
+    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+    options.setSearchQuery("F*ck You, Goethe Collection");
+    options.setLanguage(MediaLanguages.el);
+
+    List<MediaSearchResult> searchResults = mp.search(options);
     // did we get a result?
     assertNotNull("Result", searchResults);
 
@@ -60,14 +71,16 @@ public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBa
 
   @Test
   public void testCollectionSearchDataIntegrityInGreekWithFallbackLanguageEnglish() throws Exception {
-
     providerInfo.getConfig().setValue("titleFallback", true);
     providerInfo.getConfig().setValue("titleFallbackLanguage", MediaLanguages.en.toString());
 
-    searchOptions = new MediaSearchOptions(MediaType.MOVIE_SET, "F*ck You, Goethe Collection");
-    searchOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    searchResults = movieSetMetadataProvider.search(searchOptions);
+    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+    options.setSearchQuery("F*ck You, Goethe Collection");
+    options.setLanguage(MediaLanguages.el);
+
+    List<MediaSearchResult> searchResults = mp.search(options);
     // did we get a result?
     assertNotNull("Result", searchResults);
 
@@ -80,11 +93,13 @@ public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBa
 
   @Test
   public void testCollectionScrapeDataIntegrityWithoutFallbackLanguageReturnMissingData() throws Exception {
-    scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE_SET);
-    scrapeOptions.setId(movieSetMetadataProvider.getProviderInfo().getId(), "257960");
-    scrapeOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    md = movieSetMetadataProvider.getMetadata(scrapeOptions);
+    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+    options.setId(mp.getId(), "257960");
+    options.setLanguage(MediaLanguages.el);
+
+    MediaMetadata md = mp.getMetadata(options);
 
     assertThat(md).isNotNull();
     assertThat(md.getTitle()).isEqualTo("The Raid Collection");
@@ -98,15 +113,16 @@ public class ITTmdbMovieSetMetadataProviderTest extends ITTmdbMetadataProviderBa
 
   @Test
   public void testCollectionScrapeDataIntegrityWithFallbackLanguageReturnCorrectData() throws Exception {
-
     providerInfo.getConfig().setValue("titleFallback", true);
     providerInfo.getConfig().setValue("titleFallbackLanguage", MediaLanguages.en.toString());
 
-    scrapeOptions = new MediaScrapeOptions(MediaType.MOVIE_SET);
-    scrapeOptions.setId(movieSetMetadataProvider.getProviderInfo().getId(), "257960");
-    scrapeOptions.setLanguage(LocaleUtils.toLocale(MediaLanguages.el.name()));
+    IMovieSetMetadataProvider mp = new TmdbMetadataProvider();
 
-    md = movieSetMetadataProvider.getMetadata(scrapeOptions);
+    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+    options.setId(mp.getId(), "257960");
+    options.setLanguage(MediaLanguages.el);
+
+    MediaMetadata md = mp.getMetadata(options);
 
     assertThat(md).isNotNull();
     assertThat(md.getTitle()).isEqualTo("The Raid Collection");

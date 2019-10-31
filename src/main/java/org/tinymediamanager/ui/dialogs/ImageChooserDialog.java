@@ -70,7 +70,7 @@ import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
@@ -79,7 +79,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaArtworkProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -936,16 +936,15 @@ public class ImageChooserDialog extends TmmDialog {
       for (MediaScraper scraper : artworkScrapers) {
         try {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
-          MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
+
+          ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
-            options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
-            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+            options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
             options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
-            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
-            options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage());
           }
           else {
             continue;

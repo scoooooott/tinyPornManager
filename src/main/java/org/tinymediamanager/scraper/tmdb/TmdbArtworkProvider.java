@@ -15,21 +15,6 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.entities.Image;
-import com.uwetrottmann.tmdb2.entities.Images;
-import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.util.ListUtils;
-
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,13 +23,29 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.util.ListUtils;
+
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Image;
+import com.uwetrottmann.tmdb2.entities.Images;
+import com.uwetrottmann.tmdb2.exceptions.TmdbNotFoundException;
+
 /**
  * The class TmdbArtworkProvider. For managing all artwork provided tasks with tmdb
  */
 class TmdbArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbArtworkProvider.class);
 
-  private final Tmdb api;
+  private final Tmdb          api;
 
   public TmdbArtworkProvider(Tmdb api) {
     this.api = api;
@@ -53,12 +54,14 @@ class TmdbArtworkProvider {
   /**
    * get the artwork for the given type/id
    *
-   * @param options the options for getting the artwork
+   * @param options
+   *          the options for getting the artwork
    * @return a list of all found artworks
-   * @throws ScrapeException any exception which can be thrown while scraping
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
    */
-  List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
-    LOGGER.debug("getArtwork() " + options.toString());
+  List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getArtwork(): {}", options);
     MediaArtwork.MediaArtworkType artworkType = options.getArtworkType();
 
     int tmdbId = options.getTmdbId();
@@ -66,7 +69,7 @@ class TmdbArtworkProvider {
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
-      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
+      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getMediaType());
     }
 
     if (tmdbId == 0) {
@@ -78,7 +81,7 @@ class TmdbArtworkProvider {
     synchronized (api) {
       try {
         // posters and fanart
-        switch (options.getType()) {
+        switch (options.getMediaType()) {
           case MOVIE:
             images = api.moviesService().images(tmdbId, null).execute().body();
             break;
@@ -100,9 +103,11 @@ class TmdbArtworkProvider {
             }
             break;
         }
-      } catch (TmdbNotFoundException e) {
+      }
+      catch (TmdbNotFoundException e) {
         LOGGER.info("nothing found");
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
 
         // if the thread has been interrupted, to no rethrow that exception
@@ -129,7 +134,8 @@ class TmdbArtworkProvider {
     return artwork;
   }
 
-  private List<MediaArtwork> prepareArtwork(Images tmdbArtwork, MediaArtwork.MediaArtworkType artworkType, int tmdbId, MediaScrapeOptions options) {
+  private List<MediaArtwork> prepareArtwork(Images tmdbArtwork, MediaArtwork.MediaArtworkType artworkType, int tmdbId,
+      ArtworkSearchAndScrapeOptions options) {
     List<MediaArtwork> artwork = new ArrayList<>();
     String baseUrl = TmdbMetadataProvider.configuration.images.base_url;
 
@@ -139,10 +145,10 @@ class TmdbArtworkProvider {
 
     // first sort the artwork
     if (tmdbArtwork.posters != null) {
-      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage()));
+      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage().toLocale()));
     }
     if (tmdbArtwork.backdrops != null) {
-      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage()));
+      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage().toLocale()));
     }
 
     // prepare posters
@@ -205,7 +211,7 @@ class TmdbArtworkProvider {
     return artwork;
   }
 
-  private void prepareDefaultPoster(MediaArtwork ma, MediaScrapeOptions options) {
+  private void prepareDefaultPoster(MediaArtwork ma, ArtworkSearchAndScrapeOptions options) {
     for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
       // XLARGE
       if (image.getWidth() >= 2000) {
@@ -255,7 +261,7 @@ class TmdbArtworkProvider {
     }
   }
 
-  private void prepareDefaultFanart(MediaArtwork ma, MediaScrapeOptions options) {
+  private void prepareDefaultFanart(MediaArtwork ma, ArtworkSearchAndScrapeOptions options) {
     for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
       // X-LARGE
       if (image.getWidth() >= 3840) {
@@ -305,7 +311,8 @@ class TmdbArtworkProvider {
     private ImageComparator(Locale locale) {
       if (locale == null) {
         this.preferredLangu = null;
-      } else {
+      }
+      else {
         this.preferredLangu = locale.getLanguage();
       }
     }

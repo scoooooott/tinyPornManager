@@ -35,16 +35,20 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviders;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
@@ -56,11 +60,8 @@ public class ImdbMovieParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbMovieParser.class);
   private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
 
-  private ImdbSiteDefinition   imdbSite;
-
-  ImdbMovieParser(ImdbSiteDefinition imdbSite) {
+  ImdbMovieParser() {
     super(MediaType.MOVIE);
-    this.imdbSite = imdbSite;
   }
 
   @Override
@@ -77,13 +78,8 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   @Override
-  protected ImdbSiteDefinition getImdbSite() {
-    return imdbSite;
-  }
-
-  @Override
-  protected MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-    return getMovieMetadata(options);
+  protected MediaMetadata getMetadata(MediaSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+    return getMovieMetadata((MovieSearchAndScrapeOptions) options);
   }
 
   @Override
@@ -91,20 +87,25 @@ public class ImdbMovieParser extends ImdbParser {
     return CAT_TITLE;
   }
 
-  MediaMetadata getMovieMetadata(MediaScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+  @Override
+  protected CountryCode getCountry() {
+    return MovieModuleManager.SETTINGS.getCertificationCountry();
+  }
+
+  MediaMetadata getMovieMetadata(MovieSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     // check if there is a md in the result
-    if (options.getResult() != null && options.getResult().getMediaMetadata() != null) {
-      LOGGER.debug("IMDB: getMetadata from cache: " + options.getResult());
-      return options.getResult().getMediaMetadata();
+    if (options.getMetadata() != null) {
+      LOGGER.debug("IMDB: got metadata from cache: {}", options.getMetadata());
+      return options.getMetadata();
     }
 
     String imdbId = "";
 
     // imdbId from searchResult
-    if (options.getResult() != null) {
-      imdbId = options.getResult().getIMDBId();
+    if (options.getSearchResult() != null) {
+      imdbId = options.getSearchResult().getIMDBId();
     }
 
     // imdbid from scraper option
@@ -117,33 +118,33 @@ public class ImdbMovieParser extends ImdbParser {
       throw new MissingIdException(MediaMetadata.IMDB);
     }
 
-    LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
+    LOGGER.debug("IMDB: getMetadata(imdbId): {}", imdbId);
     md.setId(providerInfo.getId(), imdbId);
 
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
 
     // worker for imdb request (/reference)
-    String url = imdbSite.getSite() + "title/" + imdbId + "/reference";
-    Callable<Document> worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    String url = IMDB_SITE + "title/" + imdbId + "/reference";
+    Callable<Document> worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
     Future<Document> futureReference = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary;
-    url = imdbSite.getSite() + "title/" + imdbId + "/plotsummary";
-    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    url = IMDB_SITE + "title/" + imdbId + "/plotsummary";
+    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
     futurePlotsummary = compSvcImdb.submit(worker);
 
     // worker for imdb request (/releaseinfo)
     Future<Document> futureReleaseinfo;
-    url = imdbSite.getSite() + "title/" + imdbId + "/releaseinfo";
-    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
+    url = IMDB_SITE + "title/" + imdbId + "/releaseinfo";
+    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
     futureReleaseinfo = compSvcImdb.submit(worker);
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
     if (isUseTmdbForMovies() || isScrapeCollectionInfo()) {
-      Callable<MediaMetadata> worker2 = new TmdbMovieWorker(imdbId, options.getLanguage(), options.getCountry());
+      Callable<MediaMetadata> worker2 = new TmdbMovieWorker(options);
       futureTmdb = compSvcTmdb.submit(worker2);
     }
 
@@ -156,17 +157,15 @@ public class ImdbMovieParser extends ImdbParser {
       parsePlotsummaryPage(doc, options, md);
 
       // title also from chosen site if we are not scraping akas.imdb.com
-      if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
-        Element title = doc.getElementById("tn15title");
-        if (title != null) {
-          Element element;
-          // title
-          Elements elements = title.getElementsByClass("main");
-          if (elements.size() > 0) {
-            element = elements.first();
-            String movieTitle = cleanString(element.ownText());
-            md.setTitle(movieTitle);
-          }
+      Element title = doc.getElementById("tn15title");
+      if (title != null) {
+        Element element;
+        // title
+        Elements elements = title.getElementsByClass("main");
+        if (!elements.isEmpty()) {
+          element = elements.first();
+          String movieTitle = cleanString(element.ownText());
+          md.setTitle(movieTitle);
         }
       }
 
@@ -185,7 +184,7 @@ public class ImdbMovieParser extends ImdbParser {
       md.setId(providerInfo.getId(), imdbId);
     }
     catch (Exception e) {
-      LOGGER.error("problem while scraping: " + e.getMessage());
+      LOGGER.error("problem while scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
 
@@ -232,7 +231,8 @@ public class ImdbMovieParser extends ImdbParser {
           }
         }
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        getLogger().debug("could not get data from tmdb: {}", e.getMessage());
       }
     }
 
@@ -247,7 +247,7 @@ public class ImdbMovieParser extends ImdbParser {
     return md;
   }
 
-  private void parseReleaseinfoPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  private void parseReleaseinfoPage(Document doc, MediaSearchAndScrapeOptions options, MediaMetadata md) {
     Date releaseDate = null;
     Pattern pattern = Pattern.compile("/calendar/\\?region=(.{2})");
 
@@ -260,7 +260,7 @@ public class ImdbMovieParser extends ImdbParser {
         Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
         if (anchor != null) {
           Matcher matcher = pattern.matcher(anchor.attr("href"));
-          if (matcher.find() && options.getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
             Element column = row.getElementsByClass("release_date").first();
             if (column != null) {
               releaseDate = parseDate(column.text());
@@ -277,14 +277,14 @@ public class ImdbMovieParser extends ImdbParser {
         Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
         if (anchor != null) {
           Matcher matcher = pattern.matcher(anchor.attr("href"));
-          if (matcher.find() && options.getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
             Element column = row.getElementsByClass("release-date-item__date").first();
             if (column != null) {
               releaseDate = parseDate(column.text());
             }
           }
           else {
-            LOGGER.trace("country {} does not match ours {}", matcher.group(1), options.getCountry().getAlpha2());
+            LOGGER.trace("country {} does not match ours {}", matcher.group(1), getCountry().getAlpha2());
           }
         }
       }
@@ -304,7 +304,7 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   // AKAs and original title
-  private MediaMetadata parseReleaseinfoPageAKAs(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+  private MediaMetadata parseReleaseinfoPageAKAs(Document doc, MediaSearchAndScrapeOptions options, MediaMetadata md) {
     // <table id="akas" class="subpage_data spEven2Col">
     // <tr class="even">
     // <td>(original title)</td>
@@ -345,28 +345,22 @@ public class ImdbMovieParser extends ImdbParser {
   }
 
   private static class TmdbMovieWorker implements Callable<MediaMetadata> {
-    private String      imdbId;
-    private Locale      language;
-    private CountryCode certificationCountry;
+    private MovieSearchAndScrapeOptions options;
 
-    public TmdbMovieWorker(String imdbId, Locale language, CountryCode certificationCountry) {
-      this.imdbId = imdbId;
-      this.language = language;
-      this.certificationCountry = certificationCountry;
+    TmdbMovieWorker(MovieSearchAndScrapeOptions options) {
+      this.options = options;
     }
 
     @Override
-    public MediaMetadata call() throws Exception {
+    public MediaMetadata call() {
       try {
         IMediaProvider tmdb = MediaProviders.getProviderById(MediaMetadata.TMDB);
         if (tmdb == null) {
           return null;
         }
 
-        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-        options.setLanguage(language);
-        options.setCountry(certificationCountry);
-        options.setImdbId(imdbId);
+        MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions(this.options);
+        options.setMetadataScraper(new MediaScraper(ScraperType.MOVIE, tmdb));
         return ((IMovieMetadataProvider) tmdb).getMetadata(options);
       }
       catch (Exception e) {

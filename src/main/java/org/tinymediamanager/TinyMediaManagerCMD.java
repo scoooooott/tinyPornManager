@@ -37,6 +37,7 @@ import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
@@ -46,9 +47,12 @@ import org.tinymediamanager.core.tasks.UpdaterTask;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowComparator;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -313,23 +317,24 @@ public class TinyMediaManagerCMD {
         if (scrapeUnscraped) {
           LOGGER.info("Commandline - scraping all unscraped movies...");
           List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
-          if (unscrapedMovies.size() > 0) {
+          if (!unscrapedMovies.isEmpty()) {
             scrape.addAll(unscrapedMovies);
           }
         }
         moviesToScrape.addAll(new ArrayList<>(scrape));
       }
 
-      if (moviesToScrape.size() > 0) {
+      if (!moviesToScrape.isEmpty()) {
         MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+        List<MovieScraperMetadataConfig> config = MovieModuleManager.SETTINGS.getScraperMetadataConfig();
         options.loadDefaults();
         if (dryRun) {
           for (Movie movie : moviesToScrape) {
-            LOGGER.info("DRYRUN: would have scraped " + movie.getTitle());
+            LOGGER.info("DRYRUN: would have scraped {}", movie.getTitle());
           }
         }
         else {
-          task = new MovieScrapeTask(moviesToScrape, true, options);
+          task = new MovieScrapeTask(moviesToScrape, true, options, config);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
@@ -467,6 +472,9 @@ public class TinyMediaManagerCMD {
       // do the scrape
       // *****************
       TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
+      List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig();
+
       options.loadDefaults();
       if (!showToScrape.isEmpty()) {
         if (dryRun) {
@@ -475,7 +483,7 @@ public class TinyMediaManagerCMD {
           }
         }
         else {
-          task = new TvShowScrapeTask(showToScrape, true, options);
+          task = new TvShowScrapeTask(showToScrape, true, options, tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
@@ -490,7 +498,10 @@ public class TinyMediaManagerCMD {
           }
         }
         else {
-          task = new TvShowEpisodeScrapeTask(episodeToScrape, options);
+          TvShowEpisodeSearchAndScrapeOptions options1 = new TvShowEpisodeSearchAndScrapeOptions();
+          options1.setDataFromOtherOptions(options);
+
+          task = new TvShowEpisodeScrapeTask(episodeToScrape, options1, episodeScraperMetadataConfig);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {

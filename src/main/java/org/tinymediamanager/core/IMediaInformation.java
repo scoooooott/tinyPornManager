@@ -18,7 +18,6 @@ package org.tinymediamanager.core;
 import java.util.List;
 
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.scraper.entities.Certification;
 
 /**
  * The interface IMediaInformation is used to provide an interface to common media related infos
@@ -32,7 +31,7 @@ public interface IMediaInformation {
    * 
    * @return the certification
    */
-  Certification getCertification();
+  MediaCertification getCertification();
 
   /**
    * gets the main video file

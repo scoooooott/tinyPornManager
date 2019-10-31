@@ -62,10 +62,10 @@ import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
@@ -492,14 +492,12 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             List<TvShowEpisode> episodesToScrape = tvShowToScrape.getEpisodesToScrape();
             // scrape episodes in a task
             if (!episodesToScrape.isEmpty()) {
-              TvShowSearchAndScrapeOptions scrapeOptions = new TvShowSearchAndScrapeOptions();
+              TvShowEpisodeSearchAndScrapeOptions scrapeOptions = new TvShowEpisodeSearchAndScrapeOptions();
               scrapeOptions.setMetadataScraper(model.getMediaScraper());
               scrapeOptions.setArtworkScraper(model.getArtworkScrapers());
-              scrapeOptions.setTvShowScraperMetadataConfig(tvShowScraperMetadataConfig);
-              scrapeOptions.setTvShowEpisodeScraperMetadataConfig(episodeScraperMetadataConfig);
               scrapeOptions.setLanguage(model.getLanguage());
 
-              TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, scrapeOptions);
+              TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, scrapeOptions, episodeScraperMetadataConfig);
               TmmTaskManager.getInstance().addUnnamedTask(task);
             }
           }

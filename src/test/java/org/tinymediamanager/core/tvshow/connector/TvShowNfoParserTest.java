@@ -23,9 +23,9 @@ import java.nio.file.Paths;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
 
 public class TvShowNfoParserTest {
 
@@ -108,7 +108,7 @@ public class TvShowNfoParserTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
       assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
@@ -201,7 +201,7 @@ public class TvShowNfoParserTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
       assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
@@ -294,7 +294,7 @@ public class TvShowNfoParserTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
       assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);
@@ -387,7 +387,7 @@ public class TvShowNfoParserTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_TVPG);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_TVPG);
       assertThat(parser.ids).contains(entry("tvdb", 77585));
       assertThat(parser.releaseDate).isEqualTo("1987-04-12");
       assertThat(parser.status).isEqualTo(MediaAiredStatus.ENDED);

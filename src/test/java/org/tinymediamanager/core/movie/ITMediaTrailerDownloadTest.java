@@ -25,11 +25,12 @@ import java.util.Locale;
 import org.junit.Test;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
+import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
 
-public class ITMovieTrailerDownloadTest {
+public class ITMediaTrailerDownloadTest {
 
   @Test
   public void downloadDirectTrailerTest() {
@@ -41,7 +42,7 @@ public class ITMovieTrailerDownloadTest {
       MediaFile mf = new MediaFile(Paths.get("target/test-classes/testmovies/trailerdownload/movie1.avi"), MediaFileType.VIDEO);
       m.addToMediaFiles(mf);
 
-      MovieTrailer t = new MovieTrailer();
+      MediaTrailer t = new MediaTrailer();
       t.setUrl("http://movietrailers.apple.com/movies/disney/coco/coco-trailer-3_h480p.mov");
       m.addTrailer(t);
 
@@ -73,12 +74,13 @@ public class ITMovieTrailerDownloadTest {
       MediaFile mf = new MediaFile(Paths.get("target/test-classes/testmovies/trailerdownload/movie2.avi"), MediaFileType.VIDEO);
       m.addToMediaFiles(mf);
 
-      MovieTrailer t = new MovieTrailer();
+      MediaTrailer t = new MediaTrailer();
       t.setProvider("youtube");
+      t.setQuality("720P");
       t.setUrl("https://www.youtube.com/watch?v=zNCz4mQzfEI");
       m.addTrailer(t);
 
-      MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(t, m);
+      YoutubeDownloadTask task = new YoutubeDownloadTask(t, m);
       Thread thread = new Thread(task);
       thread.start();
       while (thread.isAlive()) {

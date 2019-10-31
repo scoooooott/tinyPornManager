@@ -15,22 +15,23 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.entities.Videos;
-import com.uwetrottmann.tmdb2.entities.Videos.Video;
-import com.uwetrottmann.tmdb2.enumerations.VideoType;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Videos;
+import com.uwetrottmann.tmdb2.entities.Videos.Video;
+import com.uwetrottmann.tmdb2.enumerations.VideoType;
 
 /**
  * The class TmdbTrailerProvider. For managing all trailer provided tasks with tmdb
@@ -38,7 +39,7 @@ import java.util.List;
 class TmdbTrailerProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTrailerProvider.class);
 
-  private final Tmdb api;
+  private final Tmdb          api;
 
   TmdbTrailerProvider(Tmdb api) {
     this.api = api;
@@ -47,13 +48,16 @@ class TmdbTrailerProvider {
   /**
    * get the trailer for the given type/id
    *
-   * @param options the options for getting the trailers
+   * @param options
+   *          the options for getting the trailers
    * @return a list of all found trailers
-   * @throws ScrapeException    any exception which can be thrown while scraping
-   * @throws MissingIdException indicates that there was no usable id to scrape
+   * @throws ScrapeException
+   *           any exception which can be thrown while scraping
+   * @throws MissingIdException
+   *           indicates that there was no usable id to scrape
    */
-  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
-    LOGGER.debug("getTrailers() " + options.toString());
+  List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getTrailers(): {}", options);
     List<MediaTrailer> trailers = new ArrayList<>();
 
     int tmdbId = options.getTmdbId();
@@ -61,7 +65,7 @@ class TmdbTrailerProvider {
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
-      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getType());
+      tmdbId = new TmdbMetadataProvider().getTmdbIdFromImdbId(imdbId, options.getMediaType());
     }
 
     if (tmdbId == 0) {
@@ -70,11 +74,11 @@ class TmdbTrailerProvider {
     }
 
     String language = options.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-      language += "-" + options.getLanguage().getCountry();
+    if (options.getLanguage().toLocale() != null && StringUtils.isNotBlank(options.getLanguage().toLocale().getCountry())) {
+      language += "-" + options.getLanguage().toLocale().getCountry();
     }
 
-    LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
+    LOGGER.debug("TMDB: getTrailers(tmdbId): {}", +tmdbId);
 
     List<Video> videos = new ArrayList<>();
     synchronized (api) {
@@ -85,8 +89,9 @@ class TmdbTrailerProvider {
 
         videos.addAll(tmdbVideos.results);
         videos.addAll(tmdbVideosWoLang.results);
-      } catch (Exception e) {
-        LOGGER.debug("failed to get trailer: " + e.getMessage());
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get trailer: {}", e.getMessage());
         throw new ScrapeException(e);
       }
     }

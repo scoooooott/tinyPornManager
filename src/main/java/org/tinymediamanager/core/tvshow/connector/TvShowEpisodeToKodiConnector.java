@@ -24,7 +24,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.w3c.dom.Element;
 
@@ -54,9 +54,9 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
   protected void addRating(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     Element ratings = document.createElement("ratings");
 
-    for (Rating r : episode.getRatings().values()) {
+    for (MediaRating r : episode.getRatings().values()) {
       // skip user ratings here
-      if (Rating.USER.equals(r.getId())) {
+      if (MediaRating.USER.equals(r.getId())) {
         continue;
       }
 
@@ -64,8 +64,8 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
       rating.setAttribute("name", r.getId());
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
-      Rating mainRating = episode.getRating();
-      rating.setAttribute("default", r == mainRating ? "true" : "false");
+      MediaRating mainMediaRating = episode.getRating();
+      rating.setAttribute("default", r == mainMediaRating ? "true" : "false");
 
       Element value = document.createElement("value");
       value.setTextContent(Float.toString(r.getRating()));

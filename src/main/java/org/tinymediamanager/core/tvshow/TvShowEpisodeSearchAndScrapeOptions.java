@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The class TvShowSearchAndScrapeOptions is used to hold scrape and search related data for TV shows
+ * The class TvShowEpisodeSearchAndScrapeOptions is used to hold scrape and search related data for episodes
  * 
  * @author Manuel Laggner
  */
-public class TvShowSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
+public class TvShowEpisodeSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
 
-  public TvShowSearchAndScrapeOptions() {
-    super(MediaType.TV_SHOW);
+  public TvShowEpisodeSearchAndScrapeOptions() {
+    super(MediaType.TV_EPISODE);
   }
 
   /**
@@ -35,7 +35,7 @@ public class TvShowSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
    * @param original
    *          the original to copy
    */
-  public TvShowSearchAndScrapeOptions(TvShowSearchAndScrapeOptions original) {
+  public TvShowEpisodeSearchAndScrapeOptions(TvShowEpisodeSearchAndScrapeOptions original) {
     super(original);
   }
 

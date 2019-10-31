@@ -25,7 +25,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -172,9 +172,9 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
   private String getRating(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow || userObject instanceof TvShowEpisode) {
-      Rating rating = ((MediaEntity) userObject).getRating();
-      if (rating != null && rating.getRating() > 0) {
-        return String.valueOf(rating.getRating());
+      MediaRating mediaRating = ((MediaEntity) userObject).getRating();
+      if (mediaRating != null && mediaRating.getRating() > 0) {
+        return String.valueOf(mediaRating.getRating());
       }
     }
     return "";

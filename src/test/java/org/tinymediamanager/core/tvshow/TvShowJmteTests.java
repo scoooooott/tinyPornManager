@@ -26,12 +26,14 @@ import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
@@ -40,8 +42,6 @@ import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.DynaEnum;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import com.floreysoft.jmte.Engine;
 
@@ -167,8 +167,8 @@ public class TvShowJmteTests {
     tvShow.setPath("/media/tvshows/#/1987/21 Jump Street");
     tvShow.setTitle("The 4400");
     tvShow.setYear(1987);
-    tvShow.setRating(new Rating(Rating.NFO, 7.4f, 8));
-    tvShow.setCertification(Certification.US_TVPG);
+    tvShow.setRating(new MediaRating(MediaRating.NFO, 7.4f, 8));
+    tvShow.setCertification(MediaCertification.US_TVPG);
     tvShow.setGenres(Arrays.asList(MediaGenres.ACTION, MediaGenres.ADVENTURE, MediaGenres.DRAMA));
     tvShow.setTvdbId("77585");
     tvShow.setFirstAired("1987-04-12");

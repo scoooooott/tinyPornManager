@@ -20,21 +20,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -62,10 +62,10 @@ public class MediaMetadata {
   private final HashMap<String, Object> ids                  = new HashMap<>();
   // multi value
   private final List<MediaRating>       ratings              = new ArrayList<>();
-  private final List<MediaCastMember>   castMembers          = new ArrayList<>();
+  private final List<Person>             castMembers          = new ArrayList<>();
   private final List<MediaArtwork>      artwork              = new ArrayList<>();
   private final List<MediaGenres>       genres               = new ArrayList<>();
-  private final List<Certification>     certifications       = new ArrayList<>();
+  private final List<MediaCertification> certifications       = new ArrayList<>();
   private final List<String>            productionCompanies  = new ArrayList<>();
   private final List<String>            spokenLanguages      = new ArrayList<>();
   private final List<String>            countries            = new ArrayList<>();
@@ -148,8 +148,8 @@ public class MediaMetadata {
     castMembers.removeAll(md.getCastMembers());
     castMembers.addAll(md.getCastMembers());
 
-    artwork.removeAll(md.getFanart());
-    artwork.addAll(md.getFanart());
+    artwork.removeAll(md.getMediaArt());
+    artwork.addAll(md.getMediaArt());
 
     genres.removeAll(md.getGenres());
     genres.addAll(md.getGenres());
@@ -238,19 +238,9 @@ public class MediaMetadata {
    *          the type
    * @return the cast members
    */
-  public List<MediaCastMember> getCastMembers(CastType type) {
-    if (type == CastType.ALL) {
-      return castMembers;
-    }
-
+  public List<Person> getCastMembers(Person.Type type) {
     // get all cast members for the given type
-    List<MediaCastMember> l = new ArrayList<>(castMembers.size());
-    for (MediaCastMember cm : castMembers) {
-      if (cm.getType() == type) {
-        l.add(cm);
-      }
-    }
-    return l;
+    return castMembers.stream().filter(person -> person.getType() == type).collect(Collectors.toList());
   }
 
   /**
@@ -261,20 +251,12 @@ public class MediaMetadata {
    * @return the media art
    */
   public List<MediaArtwork> getMediaArt(MediaArtworkType type) {
-    List<MediaArtwork> mediaArt = getFanart();
-    if (mediaArt == null || type == MediaArtworkType.ALL) {
-      return mediaArt;
+    if (type == MediaArtworkType.ALL) {
+      return artwork;
     }
 
     // get all artwork
-    List<MediaArtwork> l = new ArrayList<>(mediaArt.size());
-    for (MediaArtwork ma : mediaArt) {
-      if (ma.getType() == type) {
-        l.add(ma);
-      }
-    }
-    return l;
-
+    return artwork.stream().filter(ma -> ma.getType() == type).collect(Collectors.toList());
   }
 
   /**
@@ -292,14 +274,14 @@ public class MediaMetadata {
   /**
    * Adds the cast member.
    * 
-   * @param cm
+   * @param castMember
    *          the cast member
    */
-  public void addCastMember(MediaCastMember cm) {
-    if (containsCastMember(cm)) {
+  public void addCastMember(Person castMember) {
+    if (containsCastMember(castMember)) {
       return;
     }
-    castMembers.add(cm);
+    castMembers.add(castMember);
   }
 
   /**
@@ -358,7 +340,7 @@ public class MediaMetadata {
    * 
    * @return the cast members
    */
-  public List<MediaCastMember> getCastMembers() {
+  public List<Person> getCastMembers() {
     return castMembers;
   }
 
@@ -368,20 +350,11 @@ public class MediaMetadata {
    * @param castMembers
    *          a list of cast members to be set
    */
-  public void setCastMembers(List<MediaCastMember> castMembers) {
+  public void setCastMembers(List<Person> castMembers) {
     this.castMembers.clear();
     if (castMembers != null) {
       this.castMembers.addAll(castMembers);
     }
-  }
-
-  /**
-   * Gets the fanart.
-   * 
-   * @return the fanart
-   */
-  public List<MediaArtwork> getFanart() {
-    return artwork;
   }
 
   /**
@@ -408,20 +381,12 @@ public class MediaMetadata {
   /**
    * Contains cast member.
    * 
-   * @param cm
+   * @param castMember
    *          the cm
    * @return true, if successful
    */
-  private boolean containsCastMember(MediaCastMember cm) {
-    boolean found = false;
-    for (MediaCastMember m : castMembers) {
-      if (m.getType() == cm.getType() && (m.getName() != null && m.getName().equals(cm.getName()))) {
-        found = true;
-        break;
-      }
-    }
-
-    return found;
+  private boolean containsCastMember(Person castMember) {
+    return castMembers.stream().anyMatch(cm -> cm.getType() == castMember.getType() && StringUtils.equals(cm.getName(), castMember.getName()));
   }
 
   /**
@@ -430,7 +395,7 @@ public class MediaMetadata {
    * @param certification
    *          the certification
    */
-  public void addCertification(Certification certification) {
+  public void addCertification(MediaCertification certification) {
     if (certification != null) {
       certifications.add(certification);
     }
@@ -441,7 +406,7 @@ public class MediaMetadata {
    * 
    * @return the certifications
    */
-  public List<Certification> getCertifications() {
+  public List<MediaCertification> getCertifications() {
     return certifications;
   }
 
@@ -451,7 +416,7 @@ public class MediaMetadata {
    * @param certifications
    *          a list of all certifications to set
    */
-  public void setCertifications(List<Certification> certifications) {
+  public void setCertifications(List<MediaCertification> certifications) {
     this.certifications.clear();
     if (certifications != null) {
       this.certifications.addAll(certifications);
@@ -501,8 +466,14 @@ public class MediaMetadata {
    *          the id
    */
   public void setId(String key, Object object) {
-    if (StringUtils.isNotBlank(key) && object != null) {
-      ids.put(key, object);
+    if (StringUtils.isNotBlank(key)) {
+      String v = String.valueOf(object);
+      if ("".equals(v) || "0".equals(v) || "null".equals(v)) {
+        ids.remove(key);
+      }
+      else {
+        ids.put(key, object);
+      }
     }
   }
 
@@ -526,7 +497,7 @@ public class MediaMetadata {
    * 
    * @return the IDs
    */
-  public HashMap<String, Object> getIds() {
+  public Map<String, Object> getIds() {
     return ids;
   }
 

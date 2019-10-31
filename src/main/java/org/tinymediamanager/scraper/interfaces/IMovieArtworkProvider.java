@@ -13,7 +13,7 @@
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 /**
  * The Interface {@link IMovieArtworkProvider}. All movie artwork providers must implement this interface

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2018 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper.entities;
+package org.tinymediamanager.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.tinymediamanager.scraper.entities.CountryCode;
 
 /**
  * The enum Certification. This enum holds all (to tinyMediaManager) known certifications including some parsing information. You can parse a string
@@ -27,7 +29,7 @@ import java.util.List;
  * @author Manuel Laggner / Myron Boyle
  * @since 1.0
  */
-public enum Certification {
+public enum MediaCertification {
 
   // @formatter:off
     US_G(CountryCode.US, "G", new String[] { "G", "Rated G" }),
@@ -251,7 +253,7 @@ public enum Certification {
    * @param possibleNotations
    *          the possible notations
    */
-  Certification(CountryCode country, String name, String[] possibleNotations) {
+  MediaCertification(CountryCode country, String name, String[] possibleNotations) {
     this.country = country;
     this.name = name;
     this.possibleNotations = possibleNotations;
@@ -291,10 +293,10 @@ public enum Certification {
    *          the country
    * @return the certifications for the given country
    */
-  public static List<Certification> getCertificationsforCountry(CountryCode country) {
-    List<Certification> certifications = new ArrayList<>();
+  public static List<MediaCertification> getCertificationsforCountry(CountryCode country) {
+    List<MediaCertification> certifications = new ArrayList<>();
 
-    for (Certification cert : Certification.values()) {
+    for (MediaCertification cert : MediaCertification.values()) {
       if (cert.getCountry() == country) {
         certifications.add(cert);
       }
@@ -322,7 +324,7 @@ public enum Certification {
    *          the name
    * @return the certification
    */
-  public static Certification getCertification(String country, String name) {
+  public static MediaCertification getCertification(String country, String name) {
     CountryCode countryCode = CountryCode.getByCode(country);
     return getCertification(countryCode, name);
   }
@@ -334,12 +336,12 @@ public enum Certification {
    *          list of certifications
    * @return certification string like "US:R / UK:15 / SW:15"
    */
-  public static String generateCertificationStringFromList(ArrayList<Certification> certs) {
+  public static String generateCertificationStringFromList(ArrayList<MediaCertification> certs) {
     if (certs == null || certs.isEmpty()) {
       return "";
     }
     String certstring = "";
-    for (Certification c : certs) {
+    for (MediaCertification c : certs) {
       if (c.getCountry() == CountryCode.GB) {
         certstring += " / UK:" + c.getName();
       }
@@ -359,7 +361,7 @@ public enum Certification {
    *          the cert
    * @return certification string like "US:R / UK:15 / SW:15"
    */
-  public static String generateCertificationStringWithAlternateNames(Certification cert) {
+  public static String generateCertificationStringWithAlternateNames(MediaCertification cert) {
     return generateCertificationStringWithAlternateNames(cert, false);
   }
 
@@ -374,7 +376,7 @@ public enum Certification {
    *          true/false
    * @return certification string like "US:R / UK:15 / SW:15"
    */
-  public static String generateCertificationStringWithAlternateNames(Certification cert, boolean withCountryName) {
+  public static String generateCertificationStringWithAlternateNames(MediaCertification cert, boolean withCountryName) {
     if (cert == null) {
       return "";
     }
@@ -408,8 +410,8 @@ public enum Certification {
    *          the name
    * @return the certification
    */
-  public static Certification findCertification(String name) {
-    for (Certification cert : Certification.values()) {
+  public static MediaCertification findCertification(String name) {
+    for (MediaCertification cert : MediaCertification.values()) {
       // check if the ENUM name matches
       if (cert.name().equalsIgnoreCase(name)) {
         return cert;
@@ -437,9 +439,9 @@ public enum Certification {
    *          the name
    * @return the certification
    */
-  public static Certification getCertification(CountryCode country, String name) {
+  public static MediaCertification getCertification(CountryCode country, String name) {
     // try to find the certification
-    for (Certification cert : Certification.getCertificationsforCountry(country)) {
+    for (MediaCertification cert : MediaCertification.getCertificationsforCountry(country)) {
       // check if the ENUM name matches
       if (cert.name().equalsIgnoreCase(name)) {
         return cert;
@@ -461,7 +463,7 @@ public enum Certification {
   /**
    * gets the MPAA String from any US (!) movie/TV show certification<br>
    */
-  public static String getMPAAString(Certification cert) {
+  public static String getMPAAString(MediaCertification cert) {
     // http://en.wikipedia.org/wiki/Motion_picture_rating_system#Comparison
     switch (cert) {
       // movies

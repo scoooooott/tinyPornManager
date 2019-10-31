@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.scraper.util.CacheMap;
 
 /**
@@ -31,9 +31,10 @@ import org.tinymediamanager.scraper.util.CacheMap;
  * @author Manuel Laggner
  */
 public class KodiMetadataProvider implements IKodiMetadataProvider {
-  private static MediaProviderInfo                providerInfo = new MediaProviderInfo("kodi", "kodi.tv", "Generic Kodi type scraper");
+  public static final String                      ID           = "kodi";
+  private static MediaProviderInfo                providerInfo = new MediaProviderInfo(ID, "kodi.tv", "Generic Kodi type scraper");
   // cache one hour
-  protected final static CacheMap<String, String> XML_CACHE    = new CacheMap<>(60 * 60, 60);
+  protected static final CacheMap<String, String> XML_CACHE    = new CacheMap<>(60 * 60, 60);
 
   public KodiMetadataProvider() {
     // preload scrapers
@@ -43,6 +44,11 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
+  }
+
+  @Override
+  public String getId() {
+    return ID;
   }
 
   /**

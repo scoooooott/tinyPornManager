@@ -15,23 +15,23 @@
  */
 package org.tinymediamanager.scraper.anidb;
 
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
 public class ITAniDBMetadataProviderTest {
 
@@ -39,8 +39,8 @@ public class ITAniDBMetadataProviderTest {
   public void testSearch() {
     ITvShowMetadataProvider mp = new AniDBMetadataProvider();
 
-    MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW);
-    options.setQuery("Spider Riders");
+    TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+    options.setSearchQuery("Spider Riders");
     try {
       List<MediaSearchResult> results = mp.search(options);
 
@@ -48,7 +48,7 @@ public class ITAniDBMetadataProviderTest {
         System.out.println(result.getTitle() + " " + result.getId() + " " + result.getScore());
       }
 
-      options.setQuery("Spice and Wolf");
+      options.setSearchQuery("Spice and Wolf");
       results = mp.search(options);
     } catch (Exception e) {
       // TODO Auto-generated catch block
@@ -61,8 +61,9 @@ public class ITAniDBMetadataProviderTest {
     ITvShowMetadataProvider mp = new AniDBMetadataProvider();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+    TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
     options.setId("anidb", "4242");
+    options.setLanguage(MediaLanguages.en);
     try {
       MediaMetadata md = mp.getMetadata(options);
       assertEquals("2006-03-25", sdf.format(md.getReleaseDate()));
@@ -74,22 +75,24 @@ public class ITAniDBMetadataProviderTest {
 
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);
-      assertEquals(5.66d, mediaRating.getRating(), 0.5);
-      assertThat(mediaRating.getVoteCount()).isGreaterThanOrEqualTo(56);
+      assertThat(mediaRating.getId()).isNotEmpty();
+      assertThat(mediaRating.getId()).isNotEmpty();
+      assertThat(mediaRating.getRating()).isGreaterThan(0);
+      assertThat(mediaRating.getVotes()).isGreaterThanOrEqualTo(56);
       assertEquals("http://img7.anidb.net/pics/anime/11059.jpg", md.getMediaArt(MediaArtworkType.POSTER).get(0).getDefaultUrl());
       assertEquals("Anime", md.getGenres().get(0).toString());
 
       // first actor
-      MediaCastMember member = md.getCastMembers().get(0);
-      assertEquals("Hunter Steele", member.getCharacter());
+      Person member = md.getCastMembers().get(0);
+      assertEquals("Hunter Steele", member.getRole());
       assertEquals("Kumai Motoko", member.getName());
-      assertEquals("http://img7.anidb.net/pics/anime/38865.jpg", member.getImageUrl());
+      assertEquals("http://img7.anidb.net/pics/anime/38865.jpg", member.getThumbUrl());
 
       // second
       member = md.getCastMembers().get(1);
-      assertEquals("Corona", member.getCharacter());
+      assertEquals("Corona", member.getRole());
       assertEquals("Chiba Saeko", member.getName());
-      assertEquals("http://img7.anidb.net/pics/anime/44706.jpg", member.getImageUrl());
+      assertEquals("http://img7.anidb.net/pics/anime/44706.jpg", member.getThumbUrl());
     } catch (Exception e) {
       e.printStackTrace();
       fail();
@@ -99,7 +102,8 @@ public class ITAniDBMetadataProviderTest {
   @Test
   public void testScrapeEpisode() {
     ITvShowMetadataProvider mp = new AniDBMetadataProvider();
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+    TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions();
+    options.setLanguage(MediaLanguages.en);
     options.setId("anidb", "4242");
     options.setId("episodeNr", "1");
     options.setId("seasonNr", "1");

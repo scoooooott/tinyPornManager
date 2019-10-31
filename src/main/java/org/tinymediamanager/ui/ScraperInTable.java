@@ -30,7 +30,7 @@ import org.imgscalr.Scalr;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 
 /**
  * The class {@link ScraperInTable} is used to display scrapers in a table
@@ -83,7 +83,12 @@ public class ScraperInTable extends AbstractModelObject {
   }
 
   public String getScraperName() {
-    return scraper.getName() + " - " + scraper.getVersion();
+    if (StringUtils.isNotBlank(scraper.getVersion())) {
+      return scraper.getName() + " - " + scraper.getVersion();
+    }
+    else {
+      return scraper.getName();
+    }
   }
 
   public String getScraperDescription() {

@@ -15,36 +15,6 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.commons.text.translate.UnicodeUnescaper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.util.DOMUtils;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.scraper.util.StrgUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -56,26 +26,57 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.text.translate.UnicodeUnescaper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.util.DOMUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.StrgUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+
 /**
  * The abstract class for the main Kodi plugin parsing logic
  *
  * @author Manuel Laggner
  */
 public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
-  private final UnicodeUnescaper uu = new UnicodeUnescaper();
+  private static final Logger          LOGGER       = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
+  private final UnicodeUnescaper       uu           = new UnicodeUnescaper();
   private final DocumentBuilderFactory factory;
 
-  public KodiScraper scraper;
-  protected KodiAddonProcessor processor = null;
-  private String baseImageUrl = "";
+  public KodiScraper                   scraper;
+  protected KodiAddonProcessor         processor    = null;
+  private String                       baseImageUrl = "";
 
   public AbstractKodiMetadataProvider(KodiScraper scraper) {
     KodiScraperParser parser = new KodiScraperParser();
     try {
       scraper = parser.parseScraper(scraper, KodiUtil.commonXmls);
-    } catch (Exception e) {
-      LOGGER.error("Failed to Load Kodi Scraper: " + scraper);
+    }
+    catch (Exception e) {
+      LOGGER.error("Failed to Load Kodi Scraper: {}", scraper);
       throw new RuntimeException("Failed to Load Kodi Scraper: " + scraper, e);
     }
     this.scraper = scraper;
@@ -87,12 +88,17 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return scraper.getProviderInfo();
   }
 
-  protected List<MediaSearchResult> _search(MediaSearchOptions options) throws ScrapeException {
+  @Override
+  public String getId() {
+    return scraper.getId();
+  }
+
+  protected List<MediaSearchResult> _search(MediaSearchAndScrapeOptions options) throws ScrapeException {
     // always reset/instantiate on search
     processor = new KodiAddonProcessor(scraper);
 
     List<MediaSearchResult> l = new ArrayList<>();
-    String arg = options.getQuery();
+    String arg = options.getSearchQuery();
 
     // cannot search without any title/query
     if (StringUtils.isBlank(arg)) {
@@ -103,8 +109,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     String args[] = parseTitle(arg);
     String title = args[0];
     int year = 0;
-    if (options.getYear() != 0) {
-      year = options.getYear();
+    if (options.getSearchYear() != 0) {
+      year = options.getSearchYear();
     }
 
     try {
@@ -114,9 +120,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       }
       String xmlString = processor.getSearchResults(url);
 
-      LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
+      LOGGER.debug("========= BEGIN Kodi Scraper Search Xml Results: Url: {}", url);
       LOGGER.debug(xmlString);
-      LOGGER.debug("========= END Kodi Scraper Search Xml Results: Url: " + url);
+      LOGGER.debug("========= END Kodi Scraper Search Xml Results: Url: {}", url);
 
       Document xml = parseXmlString(xmlString);
 
@@ -147,7 +153,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
           sr.setTitle(t);
           try {
             sr.setYear(Integer.parseInt(y));
-          } catch (Exception ignored) {
+          }
+          catch (Exception ignored) {
           }
           float score = MetadataUtil.calculateScore(arg, t);
           // if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
@@ -156,7 +163,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
           // }
           if (yearDiffers(sr.getYear(), year)) {
             float diff = (float) Math.abs(year - sr.getYear()) / 100;
-            LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+            LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
             score -= diff;
           }
           sr.setScore(score);
@@ -164,7 +171,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
           if (!l.contains(sr)) {
             l.add(sr);
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
         }
       }
@@ -173,8 +181,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       Collections.reverse(l);
 
       return l;
-    } catch (Exception e) {
-      LOGGER.error("problem searching: " + e.getMessage());
+    }
+    catch (Exception e) {
+      LOGGER.error("problem searching: {}", e.getMessage());
       throw new ScrapeException(e);
     }
   }
@@ -186,10 +195,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return i1 > 0 && i2 > 0 && i1 != i2;
   }
 
-  protected MediaMetadata _getMetadata(MediaScrapeOptions options) throws ScrapeException {
+  protected MediaMetadata _getMetadata(MediaSearchAndScrapeOptions options) throws ScrapeException {
     try {
       MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
-      MediaSearchResult result = options.getResult();
+      MediaSearchResult result = options.getSearchResult();
 
       if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {
         md.setId(MediaMetadata.IMDB, result.getIMDBId());
@@ -213,8 +222,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       }
 
       return md;
-    } catch (Exception e) {
-      LOGGER.error("problem scraping: " + e.getMessage());
+    }
+    catch (Exception e) {
+      LOGGER.error("problem scraping: {}", e.getMessage());
       throw new ScrapeException(e);
     }
   }
@@ -262,11 +272,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     // xml = StringEscapeUtils.escapeXml(xml);
 
     Document doc = null;
-    for (String charset : new String[]{"UTF-8", "ISO-8859-1", "US-ASCII"}) {
+    for (String charset : new String[] { "UTF-8", "ISO-8859-1", "US-ASCII" }) {
       try {
         doc = parser.parse(new ByteArrayInputStream(xml.getBytes(charset)));
         break;
-      } catch (Throwable t) {
+      }
+      catch (Throwable t) {
         LOGGER.error("Failed to parse xml using charset: " + charset + " - " + t.getMessage());
       }
     }
@@ -304,21 +315,24 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     if (StringUtils.isNotBlank(year)) {
       try {
         md.setYear(Integer.parseInt(year));
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
       }
     }
     String aired = getInfoFromScraperFunctionOrBase("aired", details, subDetails);
     if (StringUtils.isNotBlank(aired)) {
       try {
         md.setReleaseDate(StrgUtils.parseDate(aired));
-      } catch (ParseException ignored) {
+      }
+      catch (ParseException ignored) {
       }
     }
     String premiered = getInfoFromScraperFunctionOrBase("premiered", details, subDetails);
     if (StringUtils.isNotBlank(premiered)) {
       try {
         md.setReleaseDate(StrgUtils.parseDate(premiered));
-      } catch (ParseException ignored) {
+      }
+      catch (ParseException ignored) {
       }
     }
     if (md.getYear() == 0 && md.getReleaseDate() != null) {
@@ -360,21 +374,24 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         String votes = getInfoFromScraperFunctionOrBase("votes", details, subDetails);
         if (StringUtils.isNotBlank(votes)) {
           try {
-            rat.setVoteCount(Integer.parseInt(votes));
-          } catch (NumberFormatException ignored) {
-            LOGGER.warn("unparsable votecount: " + votes);
+            rat.setVotes(Integer.parseInt(votes));
+          }
+          catch (NumberFormatException ignored) {
+            LOGGER.trace("unparsable votecount: {}", votes);
           }
         }
-      } else {
+      }
+      else {
         value = NumberUtils.toFloat(val.getTextContent().trim());
-        rat.setVoteCount(DOMUtils.getElementIntValue(rating, "votes"));
+        rat.setVotes(DOMUtils.getElementIntValue(rating, "votes"));
       }
       rat.setRating(value);
 
       int maxValue = NumberUtils.toInt(rating.getAttribute("max"));
       if (maxValue > 0) {
         rat.setMaxValue(maxValue);
-      } else {
+      }
+      else {
         // try an educated guess of value...
         if (value > 10) {
           rat.setMaxValue(100);
@@ -403,7 +420,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     if (StringUtils.isNotBlank(runtime)) {
       try {
         md.setRuntime(Integer.parseInt(runtime));
-      } catch (NumberFormatException ignored) {
+      }
+      catch (NumberFormatException ignored) {
       }
     }
 
@@ -424,7 +442,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       NodeList thumbs = fanart.getElementsByTagName("thumb");
       if (thumbs != null && thumbs.getLength() > 0) {
         processMediaArt(md, MediaArtworkType.BACKGROUND, "Backgrounds", thumbs, url);
-      } else {
+      }
+      else {
         if (!StringUtils.isEmpty(url)) {
           processMediaArt(md, MediaArtworkType.BACKGROUND, "Background", url);
         }
@@ -443,13 +462,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     nl = details.getElementsByTagName("actor");
     for (int i = 0; i < nl.getLength(); i++) {
       Element actor = (Element) nl.item(i);
-      MediaCastMember cm = new MediaCastMember();
-      cm.setType(MediaCastMember.CastType.ACTOR);
+      Person cm = new Person(Person.Type.ACTOR);
       cm.setName(DOMUtils.getElementValue(actor, "name"));
-      cm.setCharacter(DOMUtils.getElementValue(actor, "role"));
+      cm.setRole(DOMUtils.getElementValue(actor, "role"));
       String pic = DOMUtils.getElementValue(actor, "thumb");
-      if (pic != null && !pic.isEmpty()) {
-        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
+      if (StringUtils.isNotBlank(pic)) {
+        cm.setThumbUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
@@ -458,13 +476,11 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     nl = details.getElementsByTagName("director");
     for (int i = 0; i < nl.getLength(); i++) {
       Element el = (Element) nl.item(i);
-      MediaCastMember cm = new MediaCastMember();
-      cm.setType(MediaCastMember.CastType.DIRECTOR);
+      Person cm = new Person(Person.Type.DIRECTOR);
       cm.setName(StringUtils.trim(el.getTextContent()));
-      cm.setPart("Director");
       String pic = DOMUtils.getElementValue(el, "thumb");
-      if (pic != null && !pic.isEmpty()) {
-        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
+      if (StringUtils.isNotBlank(pic)) {
+        cm.setThumbUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
@@ -473,13 +489,11 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     nl = details.getElementsByTagName("credits");
     for (int i = 0; i < nl.getLength(); i++) {
       Element el = (Element) nl.item(i);
-      MediaCastMember cm = new MediaCastMember();
-      cm.setType(MediaCastMember.CastType.WRITER);
+      Person cm = new Person(Person.Type.WRITER);
       cm.setName(StringUtils.trim(el.getTextContent()));
-      cm.setPart("Writer");
       String pic = DOMUtils.getElementValue(el, "thumb");
-      if (pic != null && !pic.isEmpty()) {
-        cm.setImageUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
+      if (StringUtils.isNotBlank(pic)) {
+        cm.setThumbUrl(pic.startsWith("http") ? pic : baseImageUrl + pic);
       }
       md.addCastMember(cm);
     }
@@ -501,8 +515,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   /**
    * first search the tag in any <details> (from a scraperfunction), then in base
    *
-   * @param tag        the tag to search for
-   * @param subDetails a node list
+   * @param tag
+   *          the tag to search for
+   * @param subDetails
+   *          a node list
    * @return the found info or an empty String
    */
   private String getInfoFromScraperFunctionOrBase(String tag, Element details, NodeList subDetails) {
@@ -511,7 +527,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     for (int i = 0; i < subDetails.getLength(); i++) {
       Element subDetail = (Element) subDetails.item(i);
       NodeList nl = subDetail.getElementsByTagName(tag);
-      for (int j = 0; j < nl.getLength(); ) {
+      for (int j = 0; j < nl.getLength();) {
         Element el = (Element) nl.item(j);
         info = el.getTextContent();
         break;
@@ -571,11 +587,12 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
    * <p>
    * parses the title in the format Title YEAR or Title (YEAR)
    *
-   * @param title the title
+   * @param title
+   *          the title
    * @return the string[]
    */
   private String[] parseTitle(String title) {
-    String v[] = {"", ""};
+    String v[] = { "", "" };
     if (title == null)
       return v;
 
@@ -584,7 +601,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     if (m.find()) {
       v[0] = m.group(1);
       v[1] = m.group(2);
-    } else {
+    }
+    else {
       v[0] = title;
     }
     return v;
@@ -593,7 +611,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   /**
    * add leadingZero if only 1 char
    *
-   * @param num the number
+   * @param num
+   *          the number
    * @return the string with a leading 0
    */
   protected String lz(int num) {
@@ -612,7 +631,8 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
       LSSerializer serializer = lsImpl.createLSSerializer();
       serializer.getDomConfig().setParameter("xml-declaration", false);
       return serializer.writeToString(el);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("Could not parse XML element!");
     }
     return null;

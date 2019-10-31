@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper.interfaces;
 
 import java.util.List;
 
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 
 /**
- * The Interface {@link IMediaArtworkProvider}. All media providers for Artwork must implement this interface
+ * The Interface {@link ITrailerProvider}. All scrapers providing movie trailers must implement this interface
  * 
  * @author Manuel Laggner
  * @since 3.0
  */
-public interface IMediaArtworkProvider extends IMediaProvider {
+public interface ITrailerProvider extends IMediaProvider {
 
   /**
-   * Gets the artwork.
+   * Gets the trailers.
    * 
    * @param options
    *          the options
-   * @return the artwork
+   * @return the trailers
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
    * @throws MissingIdException
    *           indicates that there was no usable id to scrape
    */
-  List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws ScrapeException, MissingIdException;
+  List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException;
 }

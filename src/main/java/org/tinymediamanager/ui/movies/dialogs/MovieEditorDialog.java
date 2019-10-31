@@ -66,25 +66,25 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
@@ -98,7 +98,6 @@ import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.components.MediaRatingTable;
-import org.tinymediamanager.ui.components.MediaRatingTable.MediaRating;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
@@ -135,14 +134,14 @@ public class MovieEditorDialog extends TmmDialog {
   private MovieList                          movieList           = MovieList.getInstance();
 
   private List<MediaGenres>                  genres              = ObservableCollections.observableList(new ArrayList<>());
-  private List<MovieTrailer>                 trailers            = ObservableCollections.observableList(new ArrayList<>());
+  private List<MediaTrailer>                      trailers            = ObservableCollections.observableList(new ArrayList<>());
   private List<String>                       tags                = ObservableCollections.observableList(new ArrayList<>());
   private EventList<MediaId>                 ids;
-  private EventList<MediaRating>             ratings;
+  private EventList<MediaRatingTable.MediaRating> mediaRatings;
   private List<MediaFile>                    mediaFiles          = new ArrayList<>();
   private List<String>                       extrathumbs         = null;
   private List<String>                       extrafanarts        = null;
-  private Rating                             userRating;
+  private MediaRating                             userMediaRating;
   private boolean                            continueQueue       = true;
   private boolean                            navigateBack        = false;
   private int                                queueIndex;
@@ -166,7 +165,7 @@ public class MovieEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres>  cbGenres;
   private AutoCompleteSupport<MediaGenres>   cbGenresAutoCompleteSupport;
   private JSpinner                           spRating;
-  private JComboBox<Certification>           cbCertification;
+  private JComboBox<MediaCertification>           cbCertification;
   private JCheckBox                          cbWatched;
   private JTextField                         tfTagline;
   private JTextField                         tfNote;
@@ -247,8 +246,8 @@ public class MovieEditorDialog extends TmmDialog {
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
     this.ids = MediaIdTable.convertIdMapToEventList(movieToEdit.getIds());
-    this.ratings = MediaRatingTable.convertRatingMapToEventList(movieToEdit.getRatings(), false);
-    this.userRating = movieToEdit.getRating(Rating.USER);
+    this.mediaRatings = MediaRatingTable.convertRatingMapToEventList(movieToEdit.getRatings(), false);
+    this.userMediaRating = movieToEdit.getRating(MediaRating.USER);
 
     for (MediaFile mf : movie.getMediaFiles()) {
       mediaFiles.add(new MediaFile(mf));
@@ -260,11 +259,12 @@ public class MovieEditorDialog extends TmmDialog {
     {
       int year = movieToEdit.getYear();
 
-      List<Certification> availableCertifications = Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      List<MediaCertification> availableCertifications = MediaCertification
+          .getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
       if (!availableCertifications.contains(movieToEdit.getCertification())) {
         availableCertifications.add(0, movieToEdit.getCertification());
       }
-      for (Certification cert : availableCertifications) {
+      for (MediaCertification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
 
@@ -304,7 +304,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
-      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 10.0, 0.1));
       tfNote.setText(movieToEdit.getNote());
 
       for (Person origCast : movieToEdit.getActors()) {
@@ -363,10 +363,10 @@ public class MovieEditorDialog extends TmmDialog {
       // click on the checkbox
       if (arg0.getColumn() == 0) {
         int row = arg0.getFirstRow();
-        MovieTrailer changedTrailer = trailers.get(row);
+        MediaTrailer changedTrailer = trailers.get(row);
         // if flag inNFO was changed, change all other trailers flags
         if (changedTrailer.getInNfo()) {
-          for (MovieTrailer trailer : trailers) {
+          for (MediaTrailer trailer : trailers) {
             if (trailer != changedTrailer) {
               trailer.setInNfo(Boolean.FALSE);
             }
@@ -518,7 +518,7 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPaneRatings = new JScrollPane();
         details1Panel.add(scrollPaneRatings, "cell 1 11 5 1,grow,wmin 0");
 
-        tableRatings = new MediaRatingTable(ratings);
+        tableRatings = new MediaRatingTable(mediaRatings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
       }
@@ -1238,8 +1238,8 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       Object certification = cbCertification.getSelectedItem();
-      if (certification instanceof Certification) {
-        movieToEdit.setCertification((Certification) certification);
+      if (certification instanceof MediaCertification) {
+        movieToEdit.setCertification((MediaCertification) certification);
       }
 
       // sync media files with the media file editor and fire the mediaFiles event
@@ -1340,7 +1340,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setGenres(genres);
 
       movieToEdit.removeAllTrailers();
-      for (MovieTrailer trailer : trailers) {
+      for (MediaTrailer trailer : trailers) {
         movieToEdit.addTrailer(trailer);
       }
 
@@ -1364,16 +1364,16 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       // user rating
-      Map<String, Rating> newRatings = new HashMap<>();
+      Map<String, MediaRating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
+        newRatings.put(MediaRating.USER, new MediaRating(MediaRating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
-      for (MediaRating mediaRating : MovieEditorDialog.this.ratings) {
+      for (MediaRatingTable.MediaRating mediaRating : MovieEditorDialog.this.mediaRatings) {
         if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
-          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
+          newRatings.put(mediaRating.key, new MediaRating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
       movieToEdit.setRatings(newRatings);
@@ -1416,7 +1416,7 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaRating mediaRating = new MediaRating("");
+      MediaRatingTable.MediaRating mediaRating = new MediaRatingTable.MediaRating("");
       // default values
       mediaRating.maxValue = 10;
       mediaRating.votes = 1;
@@ -1425,7 +1425,7 @@ public class MovieEditorDialog extends TmmDialog {
       dialog.setVisible(true);
 
       if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
-        ratings.add(mediaRating);
+        mediaRatings.add(mediaRating);
       }
     }
   }
@@ -1443,7 +1443,7 @@ public class MovieEditorDialog extends TmmDialog {
       int row = tableRatings.getSelectedRow();
       if (row > -1) {
         row = tableRatings.convertRowIndexToModel(row);
-        ratings.remove(row);
+        mediaRatings.remove(row);
       }
     }
   }
@@ -1641,7 +1641,7 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MovieTrailer trailer = new MovieTrailer();
+      MediaTrailer trailer = new MediaTrailer();
       trailer.setName("unknown");
       trailer.setProvider("unknown");
       trailer.setQuality("unknown");
@@ -2085,22 +2085,22 @@ public class MovieEditorDialog extends TmmDialog {
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    JTableBinding<MovieTrailer, List<MovieTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
+    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
         tableTrailer);
     //
-    BeanProperty<MovieTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
+    BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
     //
-    BeanProperty<MovieTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
     //
-    BeanProperty<MovieTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_2);
     //
-    BeanProperty<MovieTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_3);
     //
-    BeanProperty<MovieTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
     jTableBinding_1.bind();

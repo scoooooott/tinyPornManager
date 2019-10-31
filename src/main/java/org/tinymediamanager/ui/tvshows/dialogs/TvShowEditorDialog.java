@@ -63,10 +63,13 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -74,9 +77,6 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
@@ -91,7 +91,6 @@ import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.components.MediaRatingTable;
-import org.tinymediamanager.ui.components.MediaRatingTable.MediaRating;
 import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
@@ -133,11 +132,11 @@ public class TvShowEditorDialog extends TmmDialog {
   private EventList<Person>                 actors;
   private List<MediaGenres>                 genres              = ObservableCollections.observableList(new ArrayList<>());
   private EventList<MediaId>                ids;
-  private EventList<MediaRating>            ratings;
+  private EventList<MediaRatingTable.MediaRating> mediaRatings;
   private List<String>                      tags                = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer> episodes;
   private List<String>                      extrafanarts        = null;
-  private Rating                            userRating;
+  private MediaRating                             userMediaRating;
   private boolean                           continueQueue       = true;
   private boolean                           navigateBack        = false;
   private int                               queueIndex;
@@ -159,7 +158,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private AutocompleteComboBox<MediaGenres> cbGenres;
   private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
   private JSpinner                          spRating;
-  private JComboBox<Certification>          cbCertification;
+  private JComboBox<MediaCertification>           cbCertification;
   private JComboBox<MediaAiredStatus>       cbStatus;
 
   private AutocompleteComboBox<String>      cbTags;
@@ -221,8 +220,8 @@ public class TvShowEditorDialog extends TmmDialog {
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
     ids = MediaIdTable.convertIdMapToEventList(tvShowToEdit.getIds());
-    ratings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), false);
-    userRating = tvShowToEdit.getRating(Rating.USER);
+    mediaRatings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), false);
+    userMediaRating = tvShowToEdit.getRating(MediaRating.USER);
 
     // creation of lists
     actors = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -264,7 +263,7 @@ public class TvShowEditorDialog extends TmmDialog {
       int year = tvShow.getYear();
       spYear.setValue(year);
       spDateAdded.setValue(tvShow.getDateAdded());
-      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 10.0, 0.1));
 
       for (Person origCast : tvShow.getActors()) {
         actors.add(new Person(origCast));
@@ -276,11 +275,12 @@ public class TvShowEditorDialog extends TmmDialog {
         extrafanarts = new ArrayList<>(tvShowToEdit.getExtraFanartUrls());
       }
 
-      List<Certification> availableCertifications = Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      List<MediaCertification> availableCertifications = MediaCertification
+          .getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       if (!availableCertifications.contains(tvShowToEdit.getCertification())) {
         availableCertifications.add(0, tvShowToEdit.getCertification());
       }
-      for (Certification cert : availableCertifications) {
+      for (MediaCertification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
       cbCertification.setSelectedItem(tvShowToEdit.getCertification());
@@ -454,7 +454,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JScrollPane scrollPaneRatings = new JScrollPane();
         details1Panel.add(scrollPaneRatings, "cell 1 10 4 1,growx");
 
-        tableRatings = new MediaRatingTable(ratings);
+        tableRatings = new MediaRatingTable(mediaRatings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
       }
@@ -949,8 +949,8 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       Object certification = cbCertification.getSelectedItem();
-      if (certification instanceof Certification) {
-        tvShowToEdit.setCertification((Certification) certification);
+      if (certification instanceof MediaCertification) {
+        tvShowToEdit.setCertification((MediaCertification) certification);
       }
 
       if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
@@ -1046,16 +1046,16 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setStatus((MediaAiredStatus) cbStatus.getSelectedItem());
 
       // user rating
-      Map<String, Rating> newRatings = new HashMap<>();
+      Map<String, MediaRating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
+        newRatings.put(MediaRating.USER, new MediaRating(MediaRating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
-      for (MediaRating mediaRating : TvShowEditorDialog.this.ratings) {
+      for (MediaRatingTable.MediaRating mediaRating : TvShowEditorDialog.this.mediaRatings) {
         if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
-          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
+          newRatings.put(mediaRating.key, new MediaRating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
       tvShowToEdit.setRatings(newRatings);
@@ -1164,7 +1164,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaRating mediaRating = new MediaRating("");
+      MediaRatingTable.MediaRating mediaRating = new MediaRatingTable.MediaRating("");
       // default values
       mediaRating.maxValue = 10;
       mediaRating.votes = 1;
@@ -1173,7 +1173,7 @@ public class TvShowEditorDialog extends TmmDialog {
       dialog.setVisible(true);
 
       if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
-        ratings.add(mediaRating);
+        mediaRatings.add(mediaRating);
       }
     }
   }
@@ -1191,7 +1191,7 @@ public class TvShowEditorDialog extends TmmDialog {
       int row = tableRatings.getSelectedRow();
       if (row > -1) {
         row = tableRatings.convertRowIndexToModel(row);
-        ratings.remove(row);
+        mediaRatings.remove(row);
       }
     }
   }

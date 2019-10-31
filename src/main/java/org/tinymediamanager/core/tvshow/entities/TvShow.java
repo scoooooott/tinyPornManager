@@ -67,14 +67,17 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -88,13 +91,8 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MapUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -126,7 +124,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private String                             sortTitle             = "";
   @JsonProperty
-  private Certification                      certification         = Certification.UNKNOWN;
+  private MediaCertification                 certification         = MediaCertification.UNKNOWN;
   @JsonProperty
   private String                             country               = "";
 
@@ -312,7 +310,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setRuntime(runtime == 0 || force ? other.runtime : runtime);
     setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
     setStatus(status == MediaAiredStatus.UNKNOWN || force ? other.status : status);
-    setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
+    setCertification(certification == MediaCertification.NOT_RATED || force ? other.certification : certification);
     setCountry(StringUtils.isEmpty(country) || force ? other.country : country);
 
     // when force is set, clear the lists/maps and add all other values
@@ -408,38 +406,38 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the main (preferred) rating
    */
   @Override
-  public Rating getRating() {
-    Rating rating = null;
+  public MediaRating getRating() {
+    MediaRating mediaRating = null;
 
     // the user rating
     if (TvShowModuleManager.SETTINGS.getPreferPersonalRating()) {
-      rating = ratings.get(Rating.USER);
+      mediaRating = ratings.get(MediaRating.USER);
     }
 
     // the default rating
-    if (rating == null) {
-      rating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    if (mediaRating == null) {
+      mediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
     }
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   /**
@@ -855,10 +853,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     if (config.contains(TvShowScraperMetadataConfig.RATING)) {
-      Map<String, Rating> newRatings = new HashMap<>();
+      Map<String, MediaRating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        Rating rating = new Rating(mediaRating);
-        newRatings.put(rating.getId(), rating);
+        newRatings.put(mediaRating.getId(), mediaRating);
       }
       setRatings(newRatings);
     }
@@ -890,19 +887,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     if (config.contains(TvShowScraperMetadataConfig.ACTORS)) {
-      List<Person> newActors = new ArrayList<>();
-
-      for (MediaCastMember member : metadata.getCastMembers()) {
-        switch (member.getType()) {
-          case ACTOR:
-            newActors.add(new Person(member));
-            break;
-
-          default:
-            break;
-        }
-      }
-      setActors(newActors);
+      setActors(metadata.getCastMembers(Person.Type.ACTOR));
       writeActorImages();
     }
 
@@ -1318,7 +1303,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the certifications
    */
   @Override
-  public Certification getCertification() {
+  public MediaCertification getCertification() {
     return certification;
   }
 
@@ -1328,7 +1313,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param newValue
    *          the new certifications
    */
-  public void setCertification(Certification newValue) {
+  public void setCertification(MediaCertification newValue) {
     this.certification = newValue;
     firePropertyChange(CERTIFICATION, null, newValue);
   }

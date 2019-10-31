@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieMissingArtworkDownloadTask;
@@ -46,11 +47,12 @@ public class MovieDownloadMissingArtworkAction extends TmmAction {
     dialog.setVisible(true);
 
     // get options from dialog
-    MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+    MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeOptions();
+    List<MovieScraperMetadataConfig> config = dialog.getMovieScraperMetadataConfig();
 
     // do we want to scrape?
     if (dialog.shouldStartScrape()) {
-      MovieMissingArtworkDownloadTask task = new MovieMissingArtworkDownloadTask(selectedMovies, options);
+      MovieMissingArtworkDownloadTask task = new MovieMissingArtworkDownloadTask(selectedMovies, options, config);
       TmmTaskManager.getInstance().addDownloadTask(task);
     }
   }

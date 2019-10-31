@@ -25,6 +25,8 @@ import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
@@ -66,12 +68,14 @@ public class TvShowSelectedScrapeAction extends TmmAction {
     dialog.setVisible(true);
 
     // get options from dialog
-    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeOptions();
+    List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig = dialog.getTvShowScraperMetadataConfig();
+    List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = dialog.getTvShowEpisodeScraperMetadataConfig();
 
     // do we want to scrape?
     if (dialog.shouldStartScrape()) {
       // scrape
-      TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+      TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options, tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
       if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

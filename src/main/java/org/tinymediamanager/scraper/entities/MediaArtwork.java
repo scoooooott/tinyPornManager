@@ -26,8 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tinymediamanager.scraper.ApiResourceBundle;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * This class is used to represent an artwork for a media
@@ -36,7 +36,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @since 1.0
  */
 public class MediaArtwork {
-  private static final ResourceBundle BUNDLE = ApiResourceBundle.getResourceBundle();
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /**
    * The different types of artwork we know
@@ -318,7 +318,7 @@ public class MediaArtwork {
     List<ImageSizeAndUrl> descImageSizes = new ArrayList<>(imageSizes);
 
     // sort descending
-    Collections.sort(descImageSizes, Collections.reverseOrder());
+    descImageSizes.sort(Collections.reverseOrder());
 
     return descImageSizes;
   }
@@ -329,7 +329,7 @@ public class MediaArtwork {
    * @return the smallest artwork or null
    */
   public ImageSizeAndUrl getSmallestArtwork() {
-    if (imageSizes.size() > 0) {
+    if (!imageSizes.isEmpty()) {
       List<ImageSizeAndUrl> ascImageSizes = new ArrayList<>(imageSizes);
 
       // sort ascending
@@ -348,11 +348,11 @@ public class MediaArtwork {
    * @return the biggest artwork or null
    */
   public ImageSizeAndUrl getBiggestArtwork() {
-    if (imageSizes.size() > 0) {
+    if (!imageSizes.isEmpty()) {
       List<ImageSizeAndUrl> descImageSizes = new ArrayList<>(imageSizes);
 
       // sort descending
-      Collections.sort(descImageSizes, Collections.reverseOrder());
+      descImageSizes.sort(Collections.reverseOrder());
       ImageSizeAndUrl biggestImage = descImageSizes.get(0);
       if (biggestImage != null) {
         return biggestImage;
@@ -402,7 +402,7 @@ public class MediaArtwork {
   /**
    * is this an animated graphic?
    * 
-   * @return
+   * @return true if the graphic is animated; false otherwise
    */
   public boolean isAnimated() {
     return animated;
@@ -412,6 +412,7 @@ public class MediaArtwork {
    * set this graphic as animated
    * 
    * @param animated
+   *          the animated state
    */
   public void setAnimated(boolean animated) {
     this.animated = animated;
@@ -481,6 +482,23 @@ public class MediaArtwork {
     @Override
     public int compareTo(ImageSizeAndUrl obj) {
       return width - obj.width;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ImageSizeAndUrl that = (ImageSizeAndUrl) o;
+      return width == that.width && height == that.height && url.equals(that.url);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(width, height, url);
     }
 
     @Override

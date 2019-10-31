@@ -54,14 +54,11 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -537,26 +534,22 @@ public class TvShowList extends AbstractModelObject {
         provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
       }
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
-      options.setLanguage(language.toLocale());
-      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      options.setSearchQuery(searchTerm);
+      options.setLanguage(language);
+
       if (show != null) {
         options.setIds(show.getIds());
-        options.setQuery(show.getTitle());
-        if (show.getYear() != 0) {
-          try {
-            options.setYear(show.getYear());
-          }
-          catch (Exception ignored) {
-            // ignore parsing errors here
-          }
+        options.setSearchQuery(show.getTitle());
+        if (show.getYear() > 0) {
+          options.setSearchYear(show.getYear());
         }
       }
       if (Utils.isValidImdbId(searchTerm)) {
         options.setImdbId(searchTerm);
       }
       LOGGER.info("=====================================================");
-      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
+      LOGGER.info("Searching with scraper: {}", provider.getProviderInfo().getId());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       searchResult = provider.search(options);
@@ -581,10 +574,6 @@ public class TvShowList extends AbstractModelObject {
       LOGGER.error("searchTvShow", e);
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, this, "message.tvshow.searcherror", new String[] { ":", e.getLocalizedMessage() }));
-    }
-    catch (UnsupportedMediaTypeException e) {
-      // the search was not supported here.. HOW/WHY?
-      LOGGER.error("unsupported media type exception: {}", e.getMessage());
     }
 
     return searchResult;
@@ -924,6 +913,16 @@ public class TvShowList extends AbstractModelObject {
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
     return getSubtitleScrapers(MovieModuleManager.SETTINGS.getSubtitleScrapers());
+  }
+
+  /**
+   * get all default (specified via settings) trailer scrapers
+   *
+   * @return the specified trailer scrapers
+   */
+  public List<MediaScraper> getDefaultTrailerScrapers() {
+    // TODO
+    return new ArrayList<>();
   }
 
   /**

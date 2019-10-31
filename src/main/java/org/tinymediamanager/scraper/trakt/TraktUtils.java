@@ -1,8 +1,10 @@
 package org.tinymediamanager.scraper.trakt;
 
-import com.uwetrottmann.trakt5.entities.CastMember;
-import com.uwetrottmann.trakt5.entities.CrewMember;
-import com.uwetrottmann.trakt5.entities.SearchResult;
+import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.Instant;
@@ -10,15 +12,14 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneId;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
 
-import java.util.Date;
-
-import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+import com.uwetrottmann.trakt5.entities.CastMember;
+import com.uwetrottmann.trakt5.entities.CrewMember;
+import com.uwetrottmann.trakt5.entities.SearchResult;
 
 public class TraktUtils {
 
@@ -35,7 +36,8 @@ public class TraktUtils {
       Instant instant = date.atTime(time).atZone(ZoneId.systemDefault()).toInstant();
       Date d = DateTimeUtils.toDate(instant);
       return d;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
     return null;
   }
@@ -50,7 +52,8 @@ public class TraktUtils {
     try {
       Date d = DateTimeUtils.toDate(date.toInstant());
       return d;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
     return null;
   }
@@ -62,7 +65,7 @@ public class TraktUtils {
    * @param traktResult
    * @return
    */
-  public static MediaSearchResult morphTraktResultToTmmResult(MediaSearchOptions options, SearchResult traktResult) {
+  public static MediaSearchResult morphTraktResultToTmmResult(MediaSearchAndScrapeOptions options, SearchResult traktResult) {
     MediaSearchResult msr = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId(), options.getMediaType());
 
     // ok, some duplicate code
@@ -112,30 +115,33 @@ public class TraktUtils {
     return msr;
   }
 
-  public static MediaCastMember toTmmCast(CrewMember crew, MediaCastMember.CastType type) {
-    MediaCastMember cm = new MediaCastMember(type);
+  public static Person toTmmCast(CrewMember crew, Person.Type type) {
+    Person cm = new Person(type);
     cm.setName(crew.person.name);
-    cm.setPart(crew.job);
-    cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-    cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-    cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-    if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-      cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+    cm.setRole(crew.job);
+    if (crew.person.ids != null) {
+      cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+      cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+      cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
+      if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+        cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+      }
     }
     return cm;
   }
 
-  public static MediaCastMember toTmmCast(CastMember crew, MediaCastMember.CastType type) {
-    MediaCastMember cm = new MediaCastMember(type);
+  public static Person toTmmCast(CastMember crew, Person.Type type) {
+    Person cm = new Person(type);
     cm.setName(crew.person.name);
-    cm.setCharacter(crew.character);
-    cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
-    cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
-    cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
-    if (StringUtils.isNotBlank(crew.person.ids.slug)) {
-      cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+    cm.setRole(crew.character);
+    if (crew.person.ids != null) {
+      cm.setId(TraktMetadataProvider.providerInfo.getId(), crew.person.ids.trakt);
+      cm.setId(MediaMetadata.IMDB, crew.person.ids.imdb);
+      cm.setId(MediaMetadata.TMDB, crew.person.ids.tmdb);
+      if (StringUtils.isNotBlank(crew.person.ids.slug)) {
+        cm.setProfileUrl("https://trakt.tv/people/" + crew.person.ids.slug);
+      }
     }
     return cm;
   }
-
 }

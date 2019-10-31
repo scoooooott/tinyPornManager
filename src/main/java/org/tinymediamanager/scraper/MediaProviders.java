@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNetTrailerProvider;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.scraper.kodi.KodiMetadataProvider;
 import org.tinymediamanager.scraper.kyradb.KyradbMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.moviemeter.MovieMeterMetadataProvider;
 import org.tinymediamanager.scraper.mpdbtv.MpdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
@@ -75,6 +75,7 @@ public class MediaProviders {
 
     // register all compatible scrapers in the universal scraper
     MEDIA_PROVIDERS.forEach((key, value) -> UniversalMovieMetadataProvider.addProvider(value));
+    UniversalMovieMetadataProvider.afterInitialization();
 
     /////////////////////////////////////////////
     // TV SHOWS

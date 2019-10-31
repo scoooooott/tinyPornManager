@@ -17,6 +17,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,9 +60,8 @@ public class TvShowScrapeMissingEpisodesAction extends TmmAction {
 
     TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
     options.loadDefaults();
-    options.setEpisodeList(true);
 
-    TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+    TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options, new ArrayList<>(), new ArrayList<>());
     if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

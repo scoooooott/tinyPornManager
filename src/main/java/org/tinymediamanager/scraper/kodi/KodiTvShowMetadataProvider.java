@@ -15,29 +15,31 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the real Kodi meta data provider for TV shows
@@ -45,7 +47,7 @@ import java.util.List;
  * @author Manuel Laggner
  */
 public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiTvShowMetadataProvider.class);
+  private static final Logger LOGGER       = LoggerFactory.getLogger(KodiTvShowMetadataProvider.class);
   private static final String EPISODEGUIDE = "episodeguide";
 
   public KodiTvShowMetadataProvider(KodiScraper scraper) {
@@ -53,70 +55,25 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException {
+  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
     List<MediaSearchResult> results = _search(options);
-    if (results.isEmpty() && options.getYear() > 0) {
+    if (results.isEmpty() && options.getSearchYear() > 0) {
       // nothing found, try w/o year
       LOGGER.info("Search found nothing, try again without year...");
-      options.setYear(0);
+      options.setSearchYear(-1);
       results = _search(options);
     }
     return results;
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException {
-    LOGGER.debug("Kodi: getMetadata(): " + options);
-    // if (options.getResult() == null || !scraper.getProviderInfo().getId().equals(options.getResult().getProviderId())) {
-    // throw new Exception("scraping with Kodi scrapers only with a prior result possible");
-    // }
-
-    switch (options.getType()) {
-      case TV_SHOW:
-        return _getMetadata(options);
-
-      case TV_EPISODE:
-        // called for every single episode, S/E in options...
-        return getEpisodeMetadata(options);
-
-      default:
-        throw new UnsupportedMediaTypeException(options.getType());
-    }
+  public MediaMetadata getMetadata(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+    LOGGER.debug("getMetadata(): {}", options);
+    return _getMetadata(options);
   }
 
-  /**
-   * for TV_SHOW only, called with getShowDetails
-   */
   @Override
-  protected void processXmlContent(String xmlDetails, MediaMetadata md, MediaSearchResult result) throws Exception {
-    if (xmlDetails == null || StringUtils.isEmpty(xmlDetails)) {
-      LOGGER.warn("Cannot process empty Xml Contents.");
-      return;
-    }
-
-    LOGGER.debug("******* BEGIN XML ***********");
-    LOGGER.debug(xmlDetails);
-    LOGGER.debug("******* END XML ***********");
-
-    Document xml = parseXmlString(xmlDetails);
-    addMetadata(md, xml.getDocumentElement());
-
-    String showId = md.getId(scraper.getProviderInfo().getId()).toString();
-    // String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), EPISODEGUIDE);
-    // might be multiple!!
-    String episodeUrl = innerXml(DOMUtils.getElementByTagName(xml.getDocumentElement(), EPISODEGUIDE));
-    if (StringUtils.isEmpty(episodeUrl)) {
-      LOGGER.error("No Episode Data!");
-    } else {
-      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + "EPISODEGUIDE_URL", episodeUrl);
-      md.addExtraData(EPISODEGUIDE, episodeUrl);
-      result.setMetadata(md);
-    }
-    LOGGER.debug("MetaData: " + md.toString());
-    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), xmlDetails);
-  }
-
-  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) {
+  public MediaMetadata getMetadata(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
 
     // get episode number and season number
@@ -145,13 +102,12 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
     String epXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
     if (epXml == null) {
       // get episodes list with showId
-      MediaScrapeOptions mso = new MediaScrapeOptions(MediaType.TV_SHOW);
-      mso.setId(scraper.getProviderInfo().getId(), showId);
       try {
-        getEpisodeList(mso);
+        getEpisodeList(options);
         // now it should be cached!
         epXml = KodiMetadataProvider.XML_CACHE.get(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(seasonNr) + "_E" + lz(episodeNr));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("Could not fetch episodeslist!", e);
       }
     }
@@ -166,7 +122,7 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       String title = DOMUtils.getElementValue(el, "title");
       KodiUrl epUrl = new KodiUrl(DOMUtils.getElementValue(el, "url"));
 
-      LOGGER.info("Getting episode details S" + lz(season) + " E" + lz(ep) + " - " + title);
+      LOGGER.info("Getting episode details S{} E{} - {}", lz(season), lz(ep), title);
       String xmlDetails = processor.getEpisodeDetails(epUrl, id);
       LOGGER.debug("******** BEGIN EPISODE DETAILS XML ***********");
       LOGGER.debug(xmlDetails);
@@ -179,21 +135,66 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
       addMetadata(md, epXmlEl);
       md.setEpisodeNumber(ep);
       md.setSeasonNumber(season);
-      LOGGER.debug("MetaData: " + md.toString());
+      LOGGER.debug("MetaData: {}", md);
 
       // cache EPISODE MetaData as provideId_S00_E00
       KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_S" + lz(season) + "_E" + lz(ep) + "_DETAIL",
-              xmlDetails);
+          xmlDetails);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("Could not get episode details!");
     }
 
     return md;
   }
 
+  /**
+   * for TV_SHOW only, called with getShowDetails
+   */
   @Override
-  public List<MediaMetadata> getEpisodeList(MediaScrapeOptions options) throws ScrapeException, MissingIdException {
+  protected void processXmlContent(String xmlDetails, MediaMetadata md, MediaSearchResult result) throws Exception {
+    if (xmlDetails == null || StringUtils.isEmpty(xmlDetails)) {
+      LOGGER.warn("Cannot process empty Xml Contents.");
+      return;
+    }
+
+    LOGGER.debug("******* BEGIN XML ***********");
+    LOGGER.debug(xmlDetails);
+    LOGGER.debug("******* END XML ***********");
+
+    Document xml = parseXmlString(xmlDetails);
+    addMetadata(md, xml.getDocumentElement());
+
+    String showId = md.getId(scraper.getProviderInfo().getId()).toString();
+    // String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), EPISODEGUIDE);
+    // might be multiple!!
+    String episodeUrl = innerXml(DOMUtils.getElementByTagName(xml.getDocumentElement(), EPISODEGUIDE));
+    if (StringUtils.isEmpty(episodeUrl)) {
+      LOGGER.error("No Episode Data!");
+    }
+    else {
+      KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + "EPISODEGUIDE_URL", episodeUrl);
+      md.addExtraData(EPISODEGUIDE, episodeUrl);
+      result.setMetadata(md);
+    }
+    LOGGER.debug("MetaData: {}", md);
+    KodiMetadataProvider.XML_CACHE.put(scraper.getProviderInfo().getId() + "_" + showId + "_" + result.getId(), xmlDetails);
+  }
+
+  @Override
+  public List<MediaMetadata> getEpisodeList(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getEpisodeList(): {}", options);
+    return _getEpisodeList(options);
+  }
+
+  @Override
+  public List<MediaMetadata> getEpisodeList(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+    LOGGER.debug("getEpisodeList(): {}", options);
+    return _getEpisodeList(options);
+  }
+
+  private List<MediaMetadata> _getEpisodeList(MediaSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
     List<MediaMetadata> episodeList = new ArrayList<>();
 
     String showId = options.getIdAsString(scraper.getProviderInfo().getId());
@@ -261,12 +262,14 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
         // String epUrl = DOMUtils.getElementValue(el, "url"); // cannot save in ME!!!
         try {
           md.setReleaseDate(StrgUtils.parseDate(DOMUtils.getElementValue(el, "aired")));
-        } catch (Exception ignored) {
+        }
+        catch (Exception ignored) {
         }
 
         episodeList.add(md);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("problem scraping: " + e.getMessage());
       throw new ScrapeException(e);
     }
@@ -283,16 +286,21 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions arg0) throws ScrapeException {
-    LOGGER.debug("******* BEGIN ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException {
+    LOGGER.debug("******* BEGIN ARTWORK XML FOR {} ***********", options.getArtworkType());
     List<MediaArtwork> mas = new ArrayList<>();
     // scrape again to get Kodi XML (thank god we have a mem cachedUrl)
     try {
-      MediaMetadata md = getMetadata(arg0);
-      mas.addAll(md.getMediaArt(arg0.getArtworkType()));
-      LOGGER.debug("******* END ARTWORK XML FOR " + arg0.getArtworkType() + " ***********");
-    } catch (Exception e) {
-      LOGGER.error("error getting artwork: " + e.getMessage());
+      if (options.getSearchResult() == null || !scraper.getProviderInfo().getId().equals(options.getSearchResult().getProviderId())) {
+        throw new MissingIdException("scraping with Kodi scrapers only with a prior result possible");
+      }
+
+      MediaMetadata md = _getMetadata(options);
+      mas.addAll(md.getMediaArt(options.getArtworkType()));
+      LOGGER.debug("******* END ARTWORK XML FOR {} ***********", options.getArtworkType());
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting artwork: {}", e.getMessage());
       throw new ScrapeException(e);
     }
     return mas;

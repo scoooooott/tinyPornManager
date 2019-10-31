@@ -32,22 +32,22 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class MovieToNfoConnectorTest extends BasicTest {
 
@@ -102,7 +102,7 @@ public class MovieToNfoConnectorTest extends BasicTest {
       Movie movie = createMovie("kodi_nfo");
 
       // also add a second rating
-      movie.setRating(new Rating(MediaMetadata.TMDB, 7.7f, 56987));
+      movie.setRating(new MediaRating(MediaMetadata.TMDB, 7.7f, 56987));
 
       // write it
       List<MovieNfoNaming> nfoNames = Collections.singletonList(MovieNfoNaming.MOVIE_NFO);
@@ -205,7 +205,7 @@ public class MovieToNfoConnectorTest extends BasicTest {
     movie.setTitle("Aladdin");
     movie.setOriginalTitle("Disneys Aladdin");
     movie.setSortTitle("Aladdin");
-    movie.setRating(new Rating(Rating.NFO, 7.2f, 5987));
+    movie.setRating(new MediaRating(MediaRating.NFO, 7.2f, 5987));
     movie.setYear(1992);
     movie.setTop250(199);
     movie.setPlot("Princess Jasmine grows tired of being forced to remain in the...");
@@ -218,12 +218,12 @@ public class MovieToNfoConnectorTest extends BasicTest {
     movie.setId("trakt", 655);
     movie.setProductionCompany("Walt Disney");
     movie.setCountry("US");
-    movie.setCertification(Certification.US_G);
+    movie.setCertification(MediaCertification.US_G);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     movie.setReleaseDate(sdf.parse("1992-11-25"));
 
-    MovieTrailer trailer = new MovieTrailer();
+    MediaTrailer trailer = new MediaTrailer();
     trailer.setUrl("https://trailer");
     trailer.setInNfo(true);
     movie.addTrailer(trailer);

@@ -16,24 +16,23 @@
 
 package org.tinymediamanager.scraper.ofdb;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-
-import java.util.List;
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 
 public class ITOfdbMetadataProviderTest {
 
@@ -41,16 +40,16 @@ public class ITOfdbMetadataProviderTest {
   public void testSearch() {
     IMovieMetadataProvider mp = null;
     List<MediaSearchResult> results = null;
-    MediaSearchOptions options = null;
+    MovieSearchAndScrapeOptions options = null;
 
     try {
-      options = new MediaSearchOptions(MediaType.MOVIE);
       // Die Piefke Saga
       results = null;
       try {
         mp = new OfdbMetadataProvider();
-        options = new MediaSearchOptions(MediaType.MOVIE, "Die Piefke Saga");
-        options.setLanguage(Locale.GERMAN);
+        options = new MovieSearchAndScrapeOptions();
+        options.setSearchQuery("Die Piefke Saga");
+        options.setLanguage(MediaLanguages.de);
         results = mp.search(options);
         // did we get a result?
         assertNotNull("Result", results);
@@ -58,7 +57,8 @@ public class ITOfdbMetadataProviderTest {
 
         // result count
         assertEquals("Result count", 1, results.size());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         e.printStackTrace();
         fail();
       }
@@ -67,8 +67,9 @@ public class ITOfdbMetadataProviderTest {
       results = null;
       try {
         mp = new OfdbMetadataProvider();
-        options = new MediaSearchOptions(MediaType.MOVIE, "Slevin");
-        options.setLanguage(Locale.GERMAN);
+        options = new MovieSearchAndScrapeOptions();
+        options.setSearchQuery("Slevin");
+        options.setLanguage(MediaLanguages.de);
         results = mp.search(options);
         // did we get a result?
         assertNotNull("Result", results);
@@ -79,11 +80,13 @@ public class ITOfdbMetadataProviderTest {
         assertEquals("Lucky # Slevin", results.get(0).getTitle());
         assertEquals("Lucky Number Slevin", results.get(0).getOriginalTitle());
         assertEquals(2006, results.get(0).getYear());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         e.printStackTrace();
         fail();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Assert.fail();
     }
@@ -92,14 +95,14 @@ public class ITOfdbMetadataProviderTest {
   @Test
   public void testScrape() {
     IMovieMetadataProvider mp = null;
-    MediaScrapeOptions options = null;
+    MovieSearchAndScrapeOptions options = null;
     MediaMetadata md = null;
 
     // Merida
     try {
       mp = new OfdbMetadataProvider();
-      options = new MediaScrapeOptions(MediaType.MOVIE);
-      options.setLanguage(Locale.GERMAN);
+      options = new MovieSearchAndScrapeOptions();
+      options.setLanguage(MediaLanguages.de);
       options.setId(mp.getProviderInfo().getId(), "226045");
 
       md = mp.getMetadata(options);
@@ -108,22 +111,24 @@ public class ITOfdbMetadataProviderTest {
       assertThat(md.getOriginalTitle()).isEqualTo("Brave");
       assertThat(md.getYear()).isEqualTo(2012);
       assertThat(md.getPlot()).startsWith(
-              "Merida wächst als Erstgeborene von König Fergus an, der im schottischen Hochland sein Volk, bestehend aus vier Clans, anführt. Fergus hatte, als Merida noch ein Kleinkind war, einen Teil seines linken Beines im Kampf gegen einen riesigen, gefährlichen Bären verloren -");
+          "Merida wächst als Erstgeborene von König Fergus an, der im schottischen Hochland sein Volk, bestehend aus vier Clans, anführt. Fergus hatte, als Merida noch ein Kleinkind war, einen Teil seines linken Beines im Kampf gegen einen riesigen, gefährlichen Bären verloren -");
       assertThat(md.getTagline()).isEmpty();
 
       assertThat(md.getRatings().size()).isEqualTo(1);
       MediaRating mediaRating = md.getRatings().get(0);
+      assertThat(mediaRating.getId()).isNotEmpty();
       assertThat(mediaRating.getRating()).isGreaterThan(0);
-      assertThat(mediaRating.getVoteCount()).isGreaterThan(0);
+      assertThat(mediaRating.getVotes()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(10);
 
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(11);
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0).getName()).isEqualTo("Billy Connolly");
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0).getCharacter()).isEqualTo("Fergus");
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR).size()).isEqualTo(3);
-    } catch (Exception e) {
+      assertThat(md.getCastMembers(ACTOR)).isNotNull();
+      assertThat(md.getCastMembers(ACTOR).size()).isGreaterThanOrEqualTo(11);
+      assertThat(md.getCastMembers(ACTOR).get(0).getName()).isEqualTo("Billy Connolly");
+      assertThat(md.getCastMembers(ACTOR).get(0).getRole()).isEqualTo("Fergus");
+      assertThat(md.getCastMembers(DIRECTOR)).isNotNull();
+      assertThat(md.getCastMembers(DIRECTOR).size()).isEqualTo(3);
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -132,7 +137,7 @@ public class ITOfdbMetadataProviderTest {
     try {
       mp = new OfdbMetadataProvider();
 
-      MediaScrapeOptions scop = new MediaScrapeOptions(MediaType.MOVIE);
+      MovieSearchAndScrapeOptions scop = new MovieSearchAndScrapeOptions();
       scop.setId(MediaMetadata.IMDB, "tt1194173");
       md = mp.getMetadata(scop);
 
@@ -140,7 +145,8 @@ public class ITOfdbMetadataProviderTest {
       assertThat(md.getOriginalTitle()).isEqualTo("The Bourne Legacy");
       assertThat(md.getYear()).isEqualTo(2012);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }

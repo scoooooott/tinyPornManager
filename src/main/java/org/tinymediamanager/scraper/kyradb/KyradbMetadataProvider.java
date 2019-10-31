@@ -23,16 +23,16 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.kyradb.entities.Image;
 import org.tinymediamanager.scraper.kyradb.entities.KyraEntity;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -45,18 +45,19 @@ import retrofit2.Response;
  * @author Myron Boyle
  */
 public class KyradbMetadataProvider implements IMovieArtworkProvider {
+  public static final String       ID           = "animated";
+
   private static final Logger      LOGGER       = LoggerFactory.getLogger(KyradbMetadataProvider.class);
-  private static final String TMM_API_KEY = ApiKey.decryptApikey("ZCj2SXQCu+iVTt7RYUqlds0UoCJWuWTZpDIcAIZnvV3CoCeyu2srJQCcZVz5RFAT");
-  private static final String TMM_USER_KEY = ApiKey.decryptApikey("shv369dt1GcJH0bL7Dab3LseS1H0UyEBRKC361coeSM=");
+  private static final String      TMM_API_KEY  = ApiKey.decryptApikey("ZCj2SXQCu+iVTt7RYUqlds0UoCJWuWTZpDIcAIZnvV3CoCeyu2srJQCcZVz5RFAT");
+  private static final String      TMM_USER_KEY = ApiKey.decryptApikey("shv369dt1GcJH0bL7Dab3LseS1H0UyEBRKC361coeSM=");
 
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
-  private static KyraApi api = null;
+  private static KyraApi           api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("animated", "KyraAnimated",
-            "<html><h3>KyraDB Animated Posters</h3><br />as seen on https://forum.kodi.tv/showthread.php?tid=343391 :)</html>",
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "KyraAnimated",
+        "<html><h3>KyraDB Animated Posters</h3><br />as seen on https://forum.kodi.tv/showthread.php?tid=343391 :)</html>",
         KyradbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/kyradb_logo.png"));
-    providerInfo.setVersion(KyradbMetadataProvider.class);
 
     // configure/load settings
     providerInfo.getConfig().addText("apiKey", "", true);
@@ -66,15 +67,13 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
     return providerInfo;
   }
 
-  public KyradbMetadataProvider() {
-  }
-
   // thread safe initialization of the API
   private static synchronized void initAPI() throws ScrapeException {
     if (api == null) {
       try {
         api = new KyraApi();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("Error initializing KyraApi!", e);
         throw new ScrapeException(e);
       }
@@ -84,14 +83,16 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
     String apiKey = providerInfo.getConfig().getValue("apiKey");
     if (StringUtils.isNotBlank(apiKey) && !apiKey.equals(api.getApiKey())) {
       api.setApiKey(apiKey);
-    } else {
+    }
+    else {
       api.setApiKey(TMM_API_KEY);
     }
 
     String userKey = providerInfo.getConfig().getValue("userKey");
     if (StringUtils.isNotBlank(userKey) && !userKey.equals(api.getUserKey())) {
       api.setUserKey(userKey);
-    } else {
+    }
+    else {
       api.setUserKey(TMM_USER_KEY);
     }
 
@@ -103,7 +104,12 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws MissingIdException, ScrapeException {
+  public String getId() {
+    return ID;
+  }
+
+  @Override
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws MissingIdException, ScrapeException {
     LOGGER.debug("getArtwork() - {}", options);
 
     // lazy initialization of the api
@@ -111,7 +117,7 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
 
     List<MediaArtwork> artwork;
 
-    switch (options.getType()) {
+    switch (options.getMediaType()) {
       case MOVIE:
         artwork = getMovieArtwork(options);
         break;
@@ -122,14 +128,14 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
 
     // buffer the artwork
     MediaMetadata md = options.getMetadata();
-    if (md != null && artwork.size() > 0) {
+    if (md != null && !artwork.isEmpty()) {
       md.addMediaArt(artwork);
     }
 
     return artwork;
   }
 
-  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws MissingIdException, ScrapeException {
+  private List<MediaArtwork> getMovieArtwork(ArtworkSearchAndScrapeOptions options) throws MissingIdException, ScrapeException {
     MediaArtworkType artworkType = options.getArtworkType();
 
     String imdbId = options.getImdbId();
@@ -167,7 +173,8 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
             httpResponse = api.getMovieService().getAnimatedImages(tmdbId).execute();
             break;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
@@ -189,7 +196,8 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
             httpResponse = api.getMovieService().getAnimatedImages(imdbId).execute();
             break;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
         savedException = e;
       }
@@ -215,7 +223,8 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
       String message = "";
       try {
         message = httpResponse.errorBody().string();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         // ignore
       }
       LOGGER.warn("request was not successful: HTTP/{} - {}", httpResponse.code(), message);
@@ -289,7 +298,9 @@ public class KyradbMetadataProvider implements IMovieArtworkProvider {
    * the images base url is always sent with complete entity....
    *
    * @param kyra
+   *          the kyra entity
    * @param type
+   *          the artwork type
    * @return
    */
   private String getBaseUrl(KyraEntity kyra, MediaArtworkType type) {

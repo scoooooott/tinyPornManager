@@ -15,6 +15,32 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.exceptions.HttpException;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
 import com.uwetrottmann.trakt5.TraktV2;
 import com.uwetrottmann.trakt5.entities.CastMember;
 import com.uwetrottmann.trakt5.entities.Credits;
@@ -23,32 +49,8 @@ import com.uwetrottmann.trakt5.entities.Movie;
 import com.uwetrottmann.trakt5.entities.MovieTranslation;
 import com.uwetrottmann.trakt5.entities.SearchResult;
 import com.uwetrottmann.trakt5.enums.Extended;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.exceptions.HttpException;
-import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.exceptions.NothingFoundException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.util.ListUtils;
-import org.tinymediamanager.scraper.util.MetadataUtil;
+
 import retrofit2.Response;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
 
 /**
  * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
@@ -63,16 +65,16 @@ class TraktMovieMetadataProvider {
     this.api = api;
   }
 
-  List<MediaSearchResult> search(MediaSearchOptions options) throws ScrapeException, UnsupportedMediaTypeException {
+  List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
 
     String searchString = "";
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
-      searchString = options.getQuery();
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getSearchQuery())) {
+      searchString = options.getSearchQuery();
     }
 
     String year = null;
-    if (options.getYear() > 1800) {
-      year = String.valueOf(options.getYear());
+    if (options.getSearchYear() > 1800) {
+      year = String.valueOf(options.getSearchYear());
     }
 
     List<MediaSearchResult> results = new ArrayList<>();
@@ -107,14 +109,8 @@ class TraktMovieMetadataProvider {
     return results;
   }
 
-  MediaMetadata scrape(MediaScrapeOptions options) throws ScrapeException, UnsupportedMediaTypeException, MissingIdException, NothingFoundException {
-    LOGGER.debug("getMetadata() - {}", options.toString());
+  MediaMetadata scrape(MovieSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
-
-    if (options.getType() != MediaType.MOVIE) {
-      throw new UnsupportedMediaTypeException(options.getType());
-    }
-
     String id = options.getIdAsString(TraktMetadataProvider.providerInfo.getId());
 
     // alternatively we can take the imdbid
@@ -162,9 +158,9 @@ class TraktMovieMetadataProvider {
     // if foreign language, get new values and overwrite
     MovieTranslation trans = translations == null || translations.isEmpty() ? null : translations.get(0);
     if (trans != null) {
-      md.setTitle(trans.title.isEmpty() ? movie.title : trans.title);
-      md.setTagline(trans.tagline.isEmpty() ? movie.tagline : trans.tagline);
-      md.setPlot(trans.overview.isEmpty() ? movie.overview : trans.overview);
+      md.setTitle(StringUtils.isBlank(trans.title) ? movie.title : trans.title);
+      md.setTagline(StringUtils.isBlank(trans.tagline) ? movie.tagline : trans.tagline);
+      md.setPlot(StringUtils.isBlank(trans.overview) ? movie.overview : trans.overview);
     } else {
       md.setTitle(movie.title);
       md.setTagline(movie.tagline);
@@ -173,22 +169,29 @@ class TraktMovieMetadataProvider {
 
     md.setYear(movie.year);
     md.setRuntime(movie.runtime);
-    md.addCertification(Certification.findCertification(movie.certification));
+    md.addCertification(MediaCertification.findCertification(movie.certification));
     md.setReleaseDate(TraktUtils.toDate(movie.released));
 
-    MediaRating rating = new MediaRating("trakt");
-    rating.setRating(Math.round(movie.rating * 10.0) / 10.0); // hack to round to 1 decimal
-    rating.setVoteCount(movie.votes);
-    rating.setMaxValue(10);
-    md.addRating(rating);
+    try {
+      MediaRating rating = new MediaRating("trakt");
+      rating.setRating(Math.round(movie.rating * 10.0) / 10.0); // hack to round to 1 decimal
+      rating.setVotes(movie.votes);
+      rating.setMaxValue(10);
+      md.addRating(rating);
+    }
+    catch (Exception e) {
+      LOGGER.trace("could not parse rating/vote count: {}", e.getMessage());
+    }
 
     // ids
-    md.setId(TraktMetadataProvider.providerInfo.getId(), movie.ids.trakt);
-    if (movie.ids.tmdb != null && movie.ids.tmdb > 0) {
-      md.setId(TMDB, movie.ids.tmdb);
-    }
-    if (StringUtils.isNotBlank(movie.ids.imdb)) {
-      md.setId(IMDB, movie.ids.imdb);
+    if (movie.ids != null) {
+      md.setId(TraktMetadataProvider.providerInfo.getId(), movie.ids.trakt);
+      if (movie.ids.tmdb != null && movie.ids.tmdb > 0) {
+        md.setId(TMDB, movie.ids.tmdb);
+      }
+      if (StringUtils.isNotBlank(movie.ids.imdb)) {
+        md.setId(IMDB, movie.ids.imdb);
+      }
     }
 
     for (String genreAsString : ListUtils.nullSafe(movie.genres)) {
@@ -198,29 +201,17 @@ class TraktMovieMetadataProvider {
     // cast&crew
     if (credits != null) {
       for (CastMember cast : ListUtils.nullSafe(credits.cast)) {
-        md.addCastMember(TraktUtils.toTmmCast(cast, MediaCastMember.CastType.ACTOR));
+        md.addCastMember(TraktUtils.toTmmCast(cast, ACTOR));
       }
       if (credits.crew != null) {
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.directing)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.DIRECTOR));
+          md.addCastMember(TraktUtils.toTmmCast(crew, DIRECTOR));
         }
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.production)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.PRODUCER));
+          md.addCastMember(TraktUtils.toTmmCast(crew, PRODUCER));
         }
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.writing)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.WRITER));
-        }
-        for (CrewMember crew : ListUtils.nullSafe(credits.crew.costumeAndMakeUp)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
-        }
-        for (CrewMember crew : ListUtils.nullSafe(credits.crew.sound)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
-        }
-        for (CrewMember crew : ListUtils.nullSafe(credits.crew.camera)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
-        }
-        for (CrewMember crew : ListUtils.nullSafe(credits.crew.art)) {
-          md.addCastMember(TraktUtils.toTmmCast(crew, MediaCastMember.CastType.OTHER));
+          md.addCastMember(TraktUtils.toTmmCast(crew, WRITER));
         }
       }
     }

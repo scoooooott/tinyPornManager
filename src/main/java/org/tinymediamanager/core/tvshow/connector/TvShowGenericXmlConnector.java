@@ -44,20 +44,20 @@ import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -249,30 +249,30 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Float rating10;
 
     // the default rating
-    Map<String, Rating> ratings = tvShow.getRatings();
-    Rating mainRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    Map<String, MediaRating> ratings = tvShow.getRatings();
+    MediaRating mainMediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
 
     // is there any rating which is not the user rating?
-    if (mainRating == null) {
-      for (Rating r : ratings.values()) {
+    if (mainMediaRating == null) {
+      for (MediaRating r : ratings.values()) {
         // skip user ratings here
-        if (Rating.USER.equals(r.getId())) {
+        if (MediaRating.USER.equals(r.getId())) {
           continue;
         }
-        mainRating = r;
+        mainMediaRating = r;
       }
     }
 
     // just create one to not pass null
-    if (mainRating == null) {
-      mainRating = new Rating();
+    if (mainMediaRating == null) {
+      mainMediaRating = new MediaRating();
     }
 
-    if (mainRating.getMaxValue() > 0) {
-      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    if (mainMediaRating.getMaxValue() > 0) {
+      rating10 = mainMediaRating.getRating() * 10 / mainMediaRating.getMaxValue();
     }
     else {
-      rating10 = mainRating.getRating();
+      rating10 = mainMediaRating.getRating();
     }
 
     Element rating = document.createElement("rating");
@@ -287,13 +287,13 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
 
-    Rating rating = tvShow.getRating(Rating.USER);
+    MediaRating mediaRating = tvShow.getRating(MediaRating.USER);
 
-    if (rating.getMaxValue() > 0) {
-      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    if (mediaRating.getMaxValue() > 0) {
+      rating10 = mediaRating.getRating() * 10 / mediaRating.getMaxValue();
     }
     else {
-      rating10 = rating.getRating();
+      rating10 = mediaRating.getRating();
     }
 
     Element UserRating = document.createElement("userrating");
@@ -438,7 +438,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     if (tvShow.getCertification() != null) {
       if (tvShow.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        mpaa.setTextContent(Certification.getMPAAString(tvShow.getCertification()));
+        mpaa.setTextContent(MediaCertification.getMPAAString(tvShow.getCertification()));
       }
       else {
         mpaa.setTextContent(CertificationStyle.formatCertification(tvShow.getCertification(), TvShowModuleManager.SETTINGS.getCertificationStyle()));

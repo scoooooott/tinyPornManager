@@ -22,7 +22,8 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
@@ -61,12 +62,13 @@ public class TvShowScrapeEpisodesAction extends TmmAction {
     dialog.setVisible(true);
 
     // get options from dialog
-    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+    TvShowEpisodeSearchAndScrapeOptions options = dialog.getTvShowEpisodeSearchAndScrapeOptions();
+    List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = dialog.getTvShowEpisodeScraperMetadataConfig();
 
     // do we want to scrape?
     if (dialog.shouldStartScrape()) {
       // scrape
-      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, options);
+      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, options, episodeScraperMetadataConfig);
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }

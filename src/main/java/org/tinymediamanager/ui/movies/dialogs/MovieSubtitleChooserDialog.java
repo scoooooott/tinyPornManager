@@ -56,13 +56,13 @@ import org.tinymediamanager.core.movie.tasks.MovieSubtitleDownloadTask;
 import org.tinymediamanager.core.tasks.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -315,17 +315,20 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       for (MediaScraper scraper : scrapers) {
         try {
-          IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-          SubtitleSearchOptions options = new SubtitleSearchOptions(file, searchTerm);
+          ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+          SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.MOVIE);
+          options.setFile(file);
+          options.setSearchQuery(searchTerm);
           options.setImdbId(imdbId);
-          options.setLanguage(language.toLocale());
+          options.setLanguage(language);
           searchResults.addAll(subtitleProvider.search(options));
         }
         catch (ScrapeException e) {
           LOGGER.error("getSubtitles", e);
           MessageDialog.showExceptionWindow(e);
         }
-        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
+        catch (MissingIdException ignored) {
+          LOGGER.debug("missing id for scraper {}", scraper.getId());
         }
       }
 

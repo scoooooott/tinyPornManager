@@ -14,13 +14,29 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper.mediaprovider;
+package org.tinymediamanager.scraper;
+
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The Interface {@link IMovieTmdbMetadataProvider}. All scrapers providing movie meta by TMDB id data must implement this interface
+ * the class {@link TrailerSearchAndScrapeOptions} is used to pass all needed parameters to the trailer scrapers
  *
  * @author Manuel Laggner
- * @since 3.0
+ * @since 3.1
  */
-public interface IMovieTmdbMetadataProvider {
+public class TrailerSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
+
+  public TrailerSearchAndScrapeOptions(MediaType type) {
+    super(type);
+  }
+
+  /**
+   * copy constructor
+   * 
+   * @param original
+   *          the original to copy
+   */
+  public TrailerSearchAndScrapeOptions(TrailerSearchAndScrapeOptions original) {
+    super(original);
+  }
 }

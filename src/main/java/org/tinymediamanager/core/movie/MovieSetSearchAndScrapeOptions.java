@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.tvshow;
+package org.tinymediamanager.core.movie;
 
 import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The class TvShowSearchAndScrapeOptions is used to hold scrape and search related data for TV shows
- * 
+ * The class MovieSetSearchAndScrapeOptions is used to hold scrape and search related data for movie sets
+ *
  * @author Manuel Laggner
  */
-public class TvShowSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
+public class MovieSetSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
 
-  public TvShowSearchAndScrapeOptions() {
-    super(MediaType.TV_SHOW);
+  public MovieSetSearchAndScrapeOptions() {
+    super(MediaType.MOVIE_SET);
   }
 
   /**
    * copy constructor
-   * 
+   *
    * @param original
    *          the original to copy
    */
-  public TvShowSearchAndScrapeOptions(TvShowSearchAndScrapeOptions original) {
+  public MovieSetSearchAndScrapeOptions(MovieSearchAndScrapeOptions original) {
     super(original);
   }
 
@@ -43,19 +43,18 @@ public class TvShowSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
    * Load default Settings.
    */
   public void loadDefaults() {
-    // language
-    language = TvShowModuleManager.SETTINGS.getScraperLanguage();
+    language = MovieModuleManager.SETTINGS.getScraperLanguage();
 
     // metadata
-    metadataScraper = TvShowList.getInstance().getDefaultMediaScraper();
+    metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 
     // artwork
-    artworkScrapers.addAll(TvShowList.getInstance().getDefaultArtworkScrapers());
+    artworkScrapers.addAll(MovieList.getInstance().getDefaultArtworkScrapers());
 
     // trailer
-    trailerScrapers.addAll(TvShowList.getInstance().getDefaultTrailerScrapers());
+    trailerScrapers.addAll(MovieList.getInstance().getDefaultTrailerScrapers());
 
     // subtitle
-    subtitleScrapers.addAll(TvShowList.getInstance().getDefaultSubtitleScrapers());
+    subtitleScrapers.addAll(MovieList.getInstance().getDefaultSubtitleScrapers());
   }
 }
