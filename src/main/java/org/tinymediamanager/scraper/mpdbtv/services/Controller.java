@@ -20,6 +20,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.internal.bind.DateTypeAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +55,11 @@ public class Controller {
     }
     builder.addInterceptor(chain -> {
       Request request = chain.request();
-      okhttp3.Response response = chain.proceed(request);
+      Response response = chain.proceed(request);
       if (response.code() != 200) {
         throw new HttpException(response.code(), response.message());
       }
-      return chain.proceed(chain.request());
+      return response;
     });
     retrofit = buildRetrofitInstance(builder.build());
 
