@@ -25,7 +25,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * The Class TmmUILogCollector, collect all logs and store it for the UI.
  */
 public class TmmUILogCollector {
-  public final static String            APPENDER = "UI";
+  public static final String            APPENDER = "UI";
   public static final TmmUILogCollector instance = new TmmUILogCollector();
 
   private final TmmUILogAppender        logAppender;
@@ -43,7 +43,7 @@ public class TmmUILogCollector {
     encoder.setPattern("%d{HH:mm:ss.SSS} %-5level %logger{60} - %msg%n");
     encoder.start();
 
-    logAppender = new TmmUILogAppender("WARN");
+    logAppender = new TmmUILogAppender("ERROR");
     logAppender.setContext(rootLogger.getLoggerContext());
     logAppender.setEncoder(encoder);
     logAppender.start();

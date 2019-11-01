@@ -119,6 +119,7 @@ public class TvShowModuleManager implements ITmmModule {
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
+    mvStore.setCacheSize(8);
 
     // configure JSON
     ObjectMapper objectMapper = new ObjectMapper();
