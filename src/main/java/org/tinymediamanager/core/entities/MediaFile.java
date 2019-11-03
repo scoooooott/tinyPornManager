@@ -665,7 +665,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public List<String> getAudioCodecList() {
     List<String> audioCodecs = new ArrayList<>();
-    for (MediaFileAudioStream stream : audioStreams) {
+    for (MediaFileAudioStream stream : ListUtils.nullSafe(audioStreams)) {
       audioCodecs.add(stream.getCodec());
     }
     return audioCodecs;
