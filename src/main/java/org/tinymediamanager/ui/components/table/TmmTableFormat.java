@@ -23,7 +23,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaCertification;
-import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.ui.IconManager;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
@@ -256,7 +256,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
   public static class VideoFormatComparator implements Comparator<String> {
     @Override
     public int compare(String arg0, String arg1) {
-      return Integer.compare(MediaFile.VIDEO_FORMATS.indexOf(arg0), MediaFile.VIDEO_FORMATS.indexOf(arg1));
+      return Integer.compare(MediaFileHelper.VIDEO_FORMATS.indexOf(arg0), MediaFileHelper.VIDEO_FORMATS.indexOf(arg1));
     }
   }
 

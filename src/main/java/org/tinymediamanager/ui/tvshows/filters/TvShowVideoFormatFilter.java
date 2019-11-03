@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
-import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -33,7 +33,7 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
 
   public TvShowVideoFormatFilter() {
     super();
-    setValues(MediaFile.getVideoFormats());
+    setValues(MediaFileHelper.getVideoFormats());
   }
 
   @Override
@@ -48,11 +48,15 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
     for (String videoFormat : selectedValues) {
 
       for (TvShowEpisode episode : episodes) {
-        if (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) || MediaFile.VIDEO_FORMAT_SD.equals(videoFormat)) {
-          if (invert ^ (MediaFile.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
+        if (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) || MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat)
+            || MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat)) {
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) && isVideoUHD(episode.getMediaInfoVideoFormat()))) {
             return true;
           }
-          if (invert ^ (MediaFile.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
+            return true;
+          }
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
             return true;
           }
         }
@@ -72,23 +76,21 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
     return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
   }
 
-  private String[] getVideoFormats() {
-    return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P, MediaFile.VIDEO_FORMAT_720P,
-        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_2160P, MediaFile.VIDEO_FORMAT_4320P, MediaFile.VIDEO_FORMAT_SD,
-        MediaFile.VIDEO_FORMAT_HD };
+  private boolean isVideoUHD(String videoFormat) {
+    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_2160P)) {
+      return true;
+    }
+    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_4320P)) {
+      return true;
+    }
+    return false;
   }
 
   private boolean isVideoHD(String videoFormat) {
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_720P)) {
+    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_720P)) {
       return true;
     }
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_1080P)) {
-      return true;
-    }
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_2160P)) {
-      return true;
-    }
-    if (videoFormat.equals(MediaFile.VIDEO_FORMAT_4320P)) {
+    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_1080P)) {
       return true;
     }
     return false;

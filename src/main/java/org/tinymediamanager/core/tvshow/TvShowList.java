@@ -208,7 +208,7 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
     }
     catch (Exception e) {
-      LOGGER.error("problem removing TV show from DB: " + e.getMessage());
+      LOGGER.error("problem removing TV show from DB: {}", e.getMessage());
     }
 
     firePropertyChange(TV_SHOWS, null, tvShowList);
@@ -233,7 +233,7 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
     }
     catch (Exception e) {
-      LOGGER.error("problem removing TV show from DB: " + e.getMessage());
+      LOGGER.error("problem removing TV show from DB: {}", e.getMessage());
     }
 
     firePropertyChange(TV_SHOWS, null, tvShowList);

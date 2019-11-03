@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaAiredStatus;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -279,7 +280,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
     mf.setVideoHeight(720);
     mf.setVideoWidth(1280);
     mf.setDuration(5403);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
@@ -326,7 +327,7 @@ public class TvShowEpisodeToNfoConnectorTest extends BasicTest {
       mf.setVideoHeight(720);
       mf.setVideoWidth(1280);
       mf.setDuration(5403);
-      mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+      mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
       audio = new MediaFileAudioStream();
       audio.setCodec("AC3");

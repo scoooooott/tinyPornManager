@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -388,7 +389,7 @@ public class MovieSetArtworkHelper {
   public static void cleanMovieSetArtworkInMovieFolder(Movie movie) {
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO())) {
       for (Path entry : stream) {
-        Matcher matcher = MediaFile.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
+        Matcher matcher = MediaFileHelper.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
         if (matcher.find()) {
           Utils.deleteFileSafely(entry);
         }

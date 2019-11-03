@@ -40,6 +40,8 @@ public abstract class AbstractModelObject {
    *          the listener
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
+    // do not add any listener twice
+    removePropertyChangeListener(listener);
     propertyChangeSupport.addPropertyChangeListener(listener);
   }
 
@@ -52,6 +54,8 @@ public abstract class AbstractModelObject {
    *          the listener
    */
   public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    // do not add any listener twice
+    removePropertyChangeListener(propertyName, listener);
     propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
   }
 

@@ -134,4 +134,23 @@ public class MetadataUtil {
     }
   }
 
+  /**
+   * parse a String for its integer value with a default value<br />
+   * this method can parse normal integer values (e.g. 2001) as well as the style with digit separators (e.g. 2.001 or 2,001 or 2 001)
+   *
+   * @param intAsString
+   *          the String to be parsed
+   * @param defaultValue
+   *          the default value to return
+   * @return the integer
+   */
+  public static int parseInt(String intAsString, int defaultValue) {
+    // first try to parse that with the interal parsing logic
+    try {
+      return parseInt(intAsString);
+    }
+    catch (NumberFormatException e) {
+      return defaultValue;
+    }
+  }
 }

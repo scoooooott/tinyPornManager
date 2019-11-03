@@ -30,6 +30,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -196,7 +197,7 @@ public class MovieJmteTests {
     mf.setVideoWidth(1280);
     mf.setDuration(3600);
     mf.setOverallBitRate(3500);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     ArrayList<MediaFileAudioStream> audl = new ArrayList<>();
     MediaFileAudioStream audio = new MediaFileAudioStream();

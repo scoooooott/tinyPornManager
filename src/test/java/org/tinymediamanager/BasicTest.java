@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
@@ -127,7 +128,7 @@ public class BasicTest {
     mf.setVideoWidth(1280);
     mf.setDuration(3600);
     mf.setOverallBitRate(3500);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");
@@ -218,7 +219,7 @@ public class BasicTest {
     mf.setVideoWidth(1280);
     mf.setDuration(3600);
     mf.setOverallBitRate(3500);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");

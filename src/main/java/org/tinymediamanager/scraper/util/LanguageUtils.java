@@ -22,7 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is a helper class for language related tasks
@@ -370,5 +373,33 @@ public class LanguageUtils {
    */
   public static boolean doesStringEndWithLanguage(String string, String language) {
     return string.equalsIgnoreCase(language) || string.matches("(?i).*[ _.-]+" + Pattern.quote(language) + "$");
+  }
+
+  /**
+   * parse the language from a given String
+   * 
+   * @param string
+   *          the string to parse
+   * @return the language or an empty string
+   */
+  public static String parseLanguageFromString(String string) {
+    if (StringUtils.isBlank(string)) {
+      return "";
+    }
+
+    Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
+    string = string.replaceAll("(?i)Part [Ii]+", ""); // hardcoded; remove Part II which is no stacking marker; b/c II is a valid iso code :p
+    string = StringUtils.split(string, '/')[0].trim(); // possibly "de / de" - just take first
+    for (String s : langArray) {
+      try {
+        if (LanguageUtils.doesStringEndWithLanguage(string, s)) {// ends with lang + delimiter prefix
+          return LanguageUtils.getIso3LanguageFromLocalizedString(s);
+        }
+      }
+      catch (Exception ignored) {
+        // no need to log
+      }
+    }
+    return "";
   }
 }

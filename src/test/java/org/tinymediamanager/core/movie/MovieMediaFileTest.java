@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -110,16 +111,15 @@ public class MovieMediaFileTest extends BasicTest {
 
   @Test
   public void testAudioChannels() {
-    MediaFile mf = new MediaFile();
-    assertEqual(0, mf.parseChannelsAsInt(""));
-    assertEqual(4, mf.parseChannelsAsInt("4"));
-    assertEqual(6, mf.parseChannelsAsInt("5.1"));
-    assertEqual(6, mf.parseChannelsAsInt("5.1channels"));
-    assertEqual(8, mf.parseChannelsAsInt("8 / 6"));
-    assertEqual(8, mf.parseChannelsAsInt("8 / 6 Ch"));
-    assertEqual(11, mf.parseChannelsAsInt("4 / 5.2 / 8 / 6 / 7.3.1 / 9"));
-    assertEqual(8, mf.parseChannelsAsInt("Object Based / 8 channels"));
-    assertEqual(6, mf.parseChannelsAsInt("11 objects / 6 channels"));
-    assertEqual(6, mf.parseChannelsAsInt("11 objects / 5.1 channels"));
+    assertEqual(0, MediaFileHelper.parseChannelsAsInt(""));
+    assertEqual(4, MediaFileHelper.parseChannelsAsInt("4"));
+    assertEqual(6, MediaFileHelper.parseChannelsAsInt("5.1"));
+    assertEqual(6, MediaFileHelper.parseChannelsAsInt("5.1channels"));
+    assertEqual(8, MediaFileHelper.parseChannelsAsInt("8 / 6"));
+    assertEqual(8, MediaFileHelper.parseChannelsAsInt("8 / 6 Ch"));
+    assertEqual(11, MediaFileHelper.parseChannelsAsInt("4 / 5.2 / 8 / 6 / 7.3.1 / 9"));
+    assertEqual(8, MediaFileHelper.parseChannelsAsInt("Object Based / 8 channels"));
+    assertEqual(6, MediaFileHelper.parseChannelsAsInt("11 objects / 6 channels"));
+    assertEqual(6, MediaFileHelper.parseChannelsAsInt("11 objects / 5.1 channels"));
   }
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -92,19 +93,19 @@ public class MediaInfoTest extends BasicTest {
   public void testVideofiles() {
     MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FSBS.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_SBS);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_SBS);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HSBS.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HSBS);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_HSBS);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FTAB.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_TAB);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_TAB);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HTAB.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HTAB);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_HTAB);
   }
 
   @Test

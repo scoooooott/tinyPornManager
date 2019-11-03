@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -192,10 +193,10 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
-        if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
+        if (vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_SBS) || vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_HSBS)) {
           stereomode.setTextContent("left_right");
         }
-        else if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
+        else if (vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_TAB) || vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_HTAB)) {
           stereomode.setTextContent("top_bottom"); // maybe?
         }
         video.appendChild(stereomode);

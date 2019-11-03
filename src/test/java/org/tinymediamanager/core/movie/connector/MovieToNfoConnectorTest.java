@@ -33,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
@@ -241,7 +242,7 @@ public class MovieToNfoConnectorTest extends BasicTest {
     mf.setVideoHeight(720);
     mf.setVideoWidth(1280);
     mf.setDuration(3600);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     MediaFileAudioStream audio = new MediaFileAudioStream();
     audio.setCodec("AC3");

@@ -402,12 +402,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       for (MediaFile mf : mediaFiles) {
         if (!filesFound.contains(mf.getFileAsPath())) {
           if (!mf.exists()) {
-            LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
+            LOGGER.debug("removing orphaned file: {}", mf.getFileAsPath());
             tvShow.removeFromMediaFiles(mf);
             dirty = true;
           }
           else {
-            LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+            LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
           }
         }
       }
@@ -417,12 +417,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
-              LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
+              LOGGER.debug("removing orphaned file: {}", mf.getFileAsPath());
               episode.removeFromMediaFiles(mf);
               dirty = true;
             }
             else {
-              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+              LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
             }
           }
         }
@@ -886,7 +886,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           tvShow.setSeasonArtwork(season, mf);
         }
         catch (Exception e) {
-          LOGGER.warn("could not parse season number: {} MF:", e.getMessage(), mf.getFileAsPath().toAbsolutePath());
+          LOGGER.warn("could not parse season number: {} MF: {}", e.getMessage(), mf.getFileAsPath().toAbsolutePath());
         }
       }
 

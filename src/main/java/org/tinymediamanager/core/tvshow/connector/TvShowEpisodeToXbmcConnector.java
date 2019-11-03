@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -87,13 +88,13 @@ public class TvShowEpisodeToXbmcConnector extends TvShowEpisodeGenericXmlConnect
       Element stereomode = document.createElement("stereomode");
       // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
       switch (videoFile.getVideo3DFormat()) {
-        case MediaFile.VIDEO_3D_SBS:
-        case MediaFile.VIDEO_3D_HSBS:
+        case MediaFileHelper.VIDEO_3D_SBS:
+        case MediaFileHelper.VIDEO_3D_HSBS:
           stereomode.setTextContent("left_right");
           break;
 
-        case MediaFile.VIDEO_3D_TAB:
-        case MediaFile.VIDEO_3D_HTAB:
+        case MediaFileHelper.VIDEO_3D_TAB:
+        case MediaFileHelper.VIDEO_3D_HTAB:
           stereomode.setTextContent("top_bottom");
           break;
 

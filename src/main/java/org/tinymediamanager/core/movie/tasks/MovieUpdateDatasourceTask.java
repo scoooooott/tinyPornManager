@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractFileVisitor;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -375,7 +376,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         MediaFile mf = new MediaFile();
         mf.setPath(path.getParent().toString());
         mf.setFilename(path.getFileName().toString());
-        mf.setType(mf.parseType());
+        mf.setType(MediaFileHelper.parseMediaFileType(path));
 
         // System.out.println("************ " + mf);
         if (mf.getType() == MediaFileType.VIDEO) {
