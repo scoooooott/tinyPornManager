@@ -51,6 +51,8 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedLowerCaseRenderer;
+import org.tinymediamanager.core.jmte.NamedTitleCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
@@ -1135,6 +1137,8 @@ public class MovieRenamer {
       engine.registerRenderer(Number.class, new ZeroNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new NamedLowerCaseRenderer());
+      engine.registerNamedRenderer(new NamedTitleCaseRenderer());
       engine.registerNamedRenderer(new MovieNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
