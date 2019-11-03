@@ -174,7 +174,10 @@ public class MediaFileHelper {
 
     String ext = FilenameUtils.getExtension(filename).toLowerCase(Locale.ROOT);
     String basename = FilenameUtils.getBaseName(filename);
-    String foldername = pathToFile.getParent() == null ? "" : pathToFile.getParent().toString().toLowerCase(Locale.ROOT); // just path w/o filename
+    String foldername = FilenameUtils.getBaseName(pathToFile.getParent() == null ? "" : pathToFile.getParent().toString().toLowerCase(Locale.ROOT)); // just
+                                                                                                                                                     // path
+                                                                                                                                                     // w/o
+                                                                                                                                                     // filename
     String parentparent = "";
     try {
       parentparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().toString()).toLowerCase(Locale.ROOT);
@@ -761,39 +764,38 @@ public class MediaFileHelper {
         // Duration/String1;Play time in format : HHh MMmn SSs MMMms, XX om.if.z.
         // Duration/String2;Play time in format : XXx YYy only, YYy omited if zero
         // Duration/String3;Play time in format : HH:MM:SS.MMM
-        if (!mediaFile.isISO()) {
-          // ISO files get duration accumulated with snapshot
-          String dur = getMediaInfo(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration");
-          if (!dur.isEmpty()) {
-            try {
-              mediaFile.setDuration((int) (Double.parseDouble(dur) / 1000));
-            }
-            catch (NumberFormatException e) {
-              mediaFile.setDuration(0);
-            }
-          }
-        }
-        else {
-          long discFilesSizes = 0;
+
+        // ISO files have duration injected with snapshot
+        String dur = getMediaInfo(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration");
+        if (!dur.isEmpty()) {
           try {
-            discFilesSizes = Long.parseLong(getMediaInfo(miSnapshot, MediaInfo.StreamKind.General, 0, "DiscFileSize"));
+            mediaFile.setDuration((int) (Double.parseDouble(dur) / 1000));
           }
-          catch (Exception e) {
-            LOGGER.trace("could not parse injected disc file size: {}", e.getMessage());
-          }
-          if (discFilesSizes > 0 && mediaFile.getFilesize() > 0) {
-            // do some sanity check, to see, if we have an invalid DVD structure
-            // eg when the sum(filesize) way higher than ISO size
-            long diff = Math.abs(mediaFile.getFilesize() - discFilesSizes);
-            double ratio = diff * 100.0 / mediaFile.getFilesize();
-            LOGGER.debug("ISO size: {};  reportedDataSize: {};  = diff: {} ~ {}%", mediaFile.getFilesize(), discFilesSizes, diff, (int) ratio);
-            if (ratio > 10) {
-              LOGGER.error("ISO file seems to have an invalid structure - ignore duration");
-              // we set the ISO duration to zero so the standard getDuration() will always get the scraped duration
-              mediaFile.setDuration(0);
-            }
+          catch (NumberFormatException e) {
+            mediaFile.setDuration(0);
           }
         }
+
+        long discFilesSizes = 0;
+        try {
+          discFilesSizes = Long.parseLong(getMediaInfo(miSnapshot, MediaInfo.StreamKind.General, 0, "DiscFileSize"));
+        }
+        catch (Exception e) {
+          LOGGER.trace("could not parse injected disc file size: {}", e.getMessage());
+        }
+        if (discFilesSizes > 0 && mediaFile.getFilesize() > 0) {
+          // do some sanity check, to see, if we have an invalid DVD structure
+          // eg when the sum(filesize) way higher than ISO size
+          long diff = Math.abs(mediaFile.getFilesize() - discFilesSizes);
+          double ratio = diff * 100.0 / mediaFile.getFilesize();
+          LOGGER.debug("ISO size: {};  reportedDataSize: {};  = diff: {} ~ {}%", mediaFile.getFilesize(), discFilesSizes, diff, (int) ratio);
+          if (ratio > 10) {
+            LOGGER.error("ISO file seems to have an invalid structure - ignore duration");
+            // we set the ISO duration to zero so the standard getDuration() will always get the scraped duration
+            mediaFile.setDuration(0);
+          }
+        }
+
         break;
 
       default:
@@ -853,7 +855,7 @@ public class MediaFileHelper {
         // inject the duration into the main file
         Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = xml.getMainFile().snapshot;
         injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration",
-            String.valueOf(Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles())));
+            String.valueOf((Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles())) * 1000)); // in ms
 
         return miSnapshot;
       }

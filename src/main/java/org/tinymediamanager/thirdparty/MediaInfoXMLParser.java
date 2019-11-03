@@ -25,12 +25,12 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 public class MediaInfoXMLParser {
-  private final List<MiFile>  files                   = new ArrayList<>();
+  private final List<MiFile>   files                   = new ArrayList<>();
 
-  private static final Logger LOGGER                  = LoggerFactory.getLogger(MediaInfoXMLParser.class);
-  private static Pattern      DURATION_HOUR_PATTERN   = Pattern.compile("(\\d*?) h");
-  private static Pattern      DURATION_MINUTE_PATTERN = Pattern.compile("(\\d*?) min");
-  private static Pattern      DURATION_SECOND_PATTERN = Pattern.compile("(\\d*?) s");
+  private static final Logger  LOGGER                  = LoggerFactory.getLogger(MediaInfoXMLParser.class);
+  private static final Pattern DURATION_HOUR_PATTERN   = Pattern.compile("(\\d*?) h");
+  private static final Pattern DURATION_MINUTE_PATTERN = Pattern.compile("(\\d*?) min");
+  private static final Pattern DURATION_SECOND_PATTERN = Pattern.compile("(\\d*?) s");
 
   public static MediaInfoXMLParser parseXML(Path path) throws Exception {
     return new MediaInfoXMLParser(Jsoup.parse(new FileInputStream(path.toFile()), "UTF-8", "", Parser.xmlParser()));
@@ -69,7 +69,7 @@ public class MediaInfoXMLParser {
         miFile.tracks.add(miTrack);
       }
 
-      // do the magic - create same wird map as MediaInfoLib will do, so we can parse with our impl...
+      // do the magic - create same weird map as MediaInfoLib will do, so we can parse with our impl...
       miFile.createSnapshot();
 
       // dummy MF to get the type (now the filename should be always set)
