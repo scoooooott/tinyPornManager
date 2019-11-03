@@ -650,11 +650,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public void removeAllEpisodes() {
     int oldValue = episodes.size();
-    if (episodes.size() > 0) {
+    if (!episodes.isEmpty()) {
       for (int i = episodes.size() - 1; i >= 0; i--) {
         TvShowEpisode episode = episodes.get(i);
-        episodes.remove(episode);
-        episode.removePropertyChangeListener(propertyChangeListener);
+        // episode.removePropertyChangeListener(propertyChangeListener);
+        // removeFromSeason(episode);
+        // episodes.remove(episode);
+        removeEpisode(episode);
         TvShowList.getInstance().removeEpisodeFromDb(episode);
       }
     }
@@ -671,9 +673,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void removeEpisode(TvShowEpisode episode) {
     if (episodes.contains(episode)) {
       int oldValue = episodes.size();
-      episodes.remove(episode);
       episode.removePropertyChangeListener(propertyChangeListener);
       removeFromSeason(episode);
+      episodes.remove(episode);
       TvShowList.getInstance().removeEpisodeFromDb(episode);
       saveToDb();
 
@@ -711,10 +713,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void deleteEpisode(TvShowEpisode episode) {
     if (episodes.contains(episode)) {
       int oldValue = episodes.size();
-      episode.deleteFilesSafely();
-      episodes.remove(episode);
       episode.removePropertyChangeListener(propertyChangeListener);
+      episode.deleteFilesSafely();
       removeFromSeason(episode);
+      episodes.remove(episode);
       TvShowList.getInstance().removeEpisodeFromDb(episode);
       saveToDb();
 

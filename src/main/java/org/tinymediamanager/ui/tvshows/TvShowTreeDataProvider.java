@@ -344,6 +344,9 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShow(TvShow tvShow) {
+    // remove the propertychangelistener from this tv show
+    tvShow.removePropertyChangeListener(tvShowPropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(tvShow);
     if (cachedNode == null) {
       return;
@@ -353,12 +356,9 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     for (TvShowSeason season : tvShow.getSeasons()) {
       removeNodeFromCache(season);
     }
-    for (TvShowEpisode epsiode : tvShow.getEpisodesForDisplay()) {
-      removeNodeFromCache(epsiode);
+    for (TvShowEpisode episode : tvShow.getEpisodesForDisplay()) {
+      removeNodeFromCache(episode);
     }
-
-    // remove the propertychangelistener from this tv show
-    tvShow.removePropertyChangeListener(tvShowPropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
   }
@@ -395,13 +395,13 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShowEpisode(TvShowEpisode episode) {
+    // remove the propertychangelistener from this episode
+    episode.removePropertyChangeListener(episodePropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(episode);
     if (cachedNode == null) {
       return;
     }
-
-    // remove the propertychangelistener from this episode
-    episode.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
 
@@ -414,13 +414,13 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShowSeason(TvShowSeason season) {
+    // remove the propertychangelistener from this episode
+    season.removePropertyChangeListener(episodePropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(season);
     if (cachedNode == null) {
       return;
     }
-
-    // remove the propertychangelistener from this episode
-    season.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
   }

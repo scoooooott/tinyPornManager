@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.NAME;
 import static org.tinymediamanager.core.Constants.ROLE;
 import static org.tinymediamanager.core.Constants.THUMB;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class Person extends AbstractModelObject {
   @JsonProperty
   private String              profileUrl = "";
   @JsonProperty
-  private Map<String, Object> ids        = new HashMap<>(0);
+  private Map<String, Object> ids        = null;
 
   /**
    * JSON constructor - please do not use
@@ -104,7 +105,10 @@ public class Person extends AbstractModelObject {
     this.role = source.role;
     this.thumbUrl = source.thumbUrl;
     this.profileUrl = source.profileUrl;
-    this.ids.putAll(source.ids);
+
+    if (source.ids != null && !source.ids.isEmpty()) {
+      this.ids = new HashMap<>(source.ids);
+    }
   }
 
   /**
@@ -135,6 +139,10 @@ public class Person extends AbstractModelObject {
    *          the ID-value
    */
   public void setId(String key, Object value) {
+    if (this.ids == null) {
+      this.ids = new HashMap<>(0);
+    }
+
     // remove ID, if empty/0/null
     // if we only skipped it, the existing entry will stay although someone changed it to empty.
     String v = String.valueOf(value);
@@ -154,6 +162,10 @@ public class Person extends AbstractModelObject {
    * @return the id for this key
    */
   public Object getId(String key) {
+    if (this.ids == null) {
+      return null;
+    }
+
     return ids.get(key);
   }
 
@@ -163,6 +175,10 @@ public class Person extends AbstractModelObject {
    * @return a map of all IDs
    */
   public Map<String, Object> getIds() {
+    if (this.ids == null) {
+      return Collections.emptyMap();
+    }
+
     return ids;
   }
 
