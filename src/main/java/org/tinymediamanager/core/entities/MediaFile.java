@@ -733,7 +733,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * <b>DOES A DIRECT CALL TO MEDIAINFO</b>
    */
   public void setContainerFormatDirect() {
-    String extensions = MediaFileHelper.getMediaInfoDirect(this, StreamKind.General, 0, "Codec/Extensions", "Format");
+    String extensions = MediaFileHelper.getMediaInfoDirect(this, StreamKind.General, 0, "FileExtension", "Codec/Extensions", "Format/Extensions",
+        "Format");
+    // remove some well known false positives
+    extensions = extensions.replace("braw", ""); // appears when inspecting .mov files
+    extensions = extensions.replace("h3d", ""); // appears when inspecting .jpg files
     setContainerFormat(getFirstEntryViaScanner(extensions).toLowerCase(Locale.ROOT));
   }
 
