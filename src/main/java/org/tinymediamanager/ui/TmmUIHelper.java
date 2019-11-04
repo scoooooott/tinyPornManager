@@ -66,7 +66,8 @@ public class TmmUIHelper {
           return path;
         }
         else {
-          return null;
+          LOGGER.warn("NFD result was {} for path {}", result, initialPath);
+          // return null; // no, open fallback JFileChooser
         }
       }
       finally {
