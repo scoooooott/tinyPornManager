@@ -65,9 +65,11 @@ public class TmmUIHelper {
           NativeFileDialog.nNFD_Free(outPath.get(0));
           return path;
         }
+        else if (result == NativeFileDialog.NFD_CANCEL) {
+          return null;
+        }
         else {
-          LOGGER.warn("NFD result was {} for path {}", result, initialPath);
-          // return null; // no, open fallback JFileChooser
+          LOGGER.warn("NFD result was ERROR for path {}; trying JFileChooser", initialPath);
         }
       }
       finally {
