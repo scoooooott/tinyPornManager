@@ -204,7 +204,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     }
 
     JPanel contentPanel = new JPanel();
-    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:350lp,grow][shrink 0][][]"));
+    contentPanel.setLayout(new MigLayout("", "[600lp:900lp,grow]", "[][shrink 0][250lp:350lp,grow][shrink 0][][]"));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
 
     {

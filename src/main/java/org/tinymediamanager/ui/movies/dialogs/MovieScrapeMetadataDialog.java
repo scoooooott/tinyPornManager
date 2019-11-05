@@ -87,7 +87,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     {
       JPanel panelCenter = new JPanel();
       getContentPane().add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new MigLayout("", "[][300lp,grow]", "[][][][][shrink 0][][]"));
+      panelCenter.setLayout(new MigLayout("", "[][600lp:800lp,grow]", "[][][][][shrink 0][150lp:n, grow]"));
 
       JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language"));
       panelCenter.add(lblLanguageT, "cell 0 0,alignx trailing");
@@ -118,11 +118,16 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       JSeparator separator = new JSeparator();
       panelCenter.add(separator, "cell 0 4 2 1,growx");
 
-      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
-      panelCenter.add(lblScrapeFollowingItems, "cell 0 5 2 1,growx");
+      JPanel panelScraperConfig = new JPanel();
+      panelCenter.add(panelScraperConfig, "cell 0 5 2 1,grow");
+      panelScraperConfig.setLayout(new MigLayout("", "[300lp:500lp,grow]", "[][]"));
+      {
+        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
+        panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0");
 
-      cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
-      panelCenter.add(cbScraperConfig, "cell 0 6 2 1,wmin 0,grow");
+        cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
+        panelScraperConfig.add(cbScraperConfig, "cell 0 1 ,wmin 0,grow");
+      }
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$

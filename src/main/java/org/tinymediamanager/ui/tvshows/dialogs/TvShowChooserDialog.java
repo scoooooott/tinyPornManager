@@ -174,7 +174,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     /* UI components */
     JPanel contentPanel = new JPanel();
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new MigLayout("", "[800lp:n,grow]", "[][shrink 0][250lp:300lp,grow][shrink 0][]"));
+    contentPanel.setLayout(new MigLayout("", "[600lp:900lp,grow]", "[][shrink 0][250lp:300lp,grow][shrink 0][]"));
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "cell 0 0,grow");
@@ -281,14 +281,14 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         panelScraperConfig.add(lblTvShowsT, "cell 0 1,alignx trailing");
 
         cbTvShowScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowScraperMetadataConfig.values());
-        panelScraperConfig.add(cbTvShowScraperConfig, "cell 1 1,growx, wmin 0");
+        panelScraperConfig.add(cbTvShowScraperConfig, "cell 1 1,grow, wmin 0");
       }
       {
         JLabel lblEpisodesT = new TmmLabel(BUNDLE.getString("metatag.episodes"));
         panelScraperConfig.add(lblEpisodesT, "cell 0 2,alignx trailing");
 
         cbEpisodeScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowEpisodeScraperMetadataConfig.values());
-        panelScraperConfig.add(cbEpisodeScraperConfig, "cell 1 2,growx, wmin 0");
+        panelScraperConfig.add(cbEpisodeScraperConfig, "cell 1 2,grow, wmin 0");
       }
     }
     {

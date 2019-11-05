@@ -85,11 +85,11 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
    *          show the episode metadata config block?
    */
   public TvShowScrapeMetadataDialog(String title, boolean metadata, boolean artwork, boolean tvShowMetadata, boolean episodeMetadata) {
-    super(title, "updateMetadata");
+    super(title, "tvShowUpdateMetadata");
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new MigLayout("hidemode 3", "[][300lp,grow]", "[][][][shrink 0][][][][]"));
+    panelContent.setLayout(new MigLayout("hidemode 3", "[][600lp:800lp,grow]", "[][][][shrink 0][200lp:n, grow]"));
 
     JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language"));
     panelContent.add(lblLanguageT, "cell 0 0,alignx trailing");
@@ -119,7 +119,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     if (tvShowMetadata || episodeMetadata) {
       JPanel panelScraperConfig = new JPanel();
       panelContent.add(panelScraperConfig, "cell 0 4 2 1,grow");
-      panelScraperConfig.setLayout(new MigLayout("", "[][grow]", "[][][]"));
+      panelScraperConfig.setLayout(new MigLayout("", "[][300lp:500lp,grow]", "[][][]"));
       {
         JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape"));
         panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0 2 1");
@@ -129,7 +129,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
         panelScraperConfig.add(lblTvShowsT, "cell 0 1,alignx trailing");
 
         cbTvShowScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowScraperMetadataConfig.values());
-        panelScraperConfig.add(cbTvShowScraperConfig, "cell 1 1,growx, wmin 0");
+        panelScraperConfig.add(cbTvShowScraperConfig, "cell 1 1,grow, wmin 0");
       }
       if (episodeMetadata) {
 
@@ -137,7 +137,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
         panelScraperConfig.add(lblEpisodesT, "cell 0 2,alignx trailing");
 
         cbEpisodeScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowEpisodeScraperMetadataConfig.values());
-        panelScraperConfig.add(cbEpisodeScraperConfig, "cell 1 2,growx, wmin 0");
+        panelScraperConfig.add(cbEpisodeScraperConfig, "cell 1 2,grow, wmin 0");
       }
     }
     {
