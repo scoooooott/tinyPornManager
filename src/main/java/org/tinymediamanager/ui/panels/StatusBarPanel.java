@@ -137,7 +137,7 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0 n 0 n, hidemode 2", "[][50lp:n][grow][100lp][][15lp:n][]", "[]"));
+    setLayout(new MigLayout("insets 0 n 0 n, hidemode 2", "[][50lp:n][grow][100lp][][15lp:n][]", "[20lp:n]"));
     setOpaque(false);
     {
       lblMemory = new JLabel("");
