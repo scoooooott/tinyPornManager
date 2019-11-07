@@ -59,7 +59,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private JSlider                     sliderThreshold;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
-  private JCheckBox                   chckbxImageLanguage;
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox<CountryCode>      cbCertificationCountry;
   private JCheckBox                   chckbxScraperFallback;
@@ -133,9 +132,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
       {
         chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape"));
         panelImages.add(chckbxAutomaticallyScrapeImages, "cell 1 0 2 1");
-
-        chckbxImageLanguage = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape.language"));
-        panelImages.add(chckbxImageLanguage, "cell 1 1 2 1");
       }
     }
     {
@@ -168,16 +164,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
-    //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty, chckbxImageLanguage, jCheckBoxBeanProperty_1);
-    autoBinding_10.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("imageLanguagePriority");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
-    autoBinding_11.bind();
     //
     BeanProperty<MovieSettings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

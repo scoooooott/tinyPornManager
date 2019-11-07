@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -81,6 +82,7 @@ class MovieImageSettingsPanel extends JPanel {
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JComboBox<MediaLanguages>   cbScraperLanguage;
+  private JCheckBox                   chckbxPreferLanguage;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -211,6 +213,9 @@ class MovieImageSettingsPanel extends JPanel {
 
         cbImageFanartSize = new JComboBox(FanartSizes.values());
         panelOptions.add(cbImageFanartSize, "cell 1 2");
+
+        chckbxPreferLanguage = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape.language"));
+        panelOptions.add(chckbxPreferLanguage, "cell 1 3 2 1");
       }
     }
   }
@@ -218,6 +223,7 @@ class MovieImageSettingsPanel extends JPanel {
   protected void initDataBindings() {
     BeanProperty<MovieSettings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("imagePosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<MovieSettings, PosterSizes, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, cbImagePosterSize, jComboBoxBeanProperty);
     autoBinding_4.bind();
@@ -251,5 +257,11 @@ class MovieImageSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, MediaLanguages, JComboBox, Object> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty, cbScraperLanguage, jComboBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("imageLanguagePriority");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, chckbxPreferLanguage, jCheckBoxBeanProperty);
+    autoBinding_11.bind();
+    //
   }
 }
