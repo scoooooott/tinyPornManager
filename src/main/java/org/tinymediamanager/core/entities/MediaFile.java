@@ -802,7 +802,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public List<String> getAudioChannelsList() {
     List<String> audioChannels = new ArrayList<>();
-    for (MediaFileAudioStream stream : audioStreams) {
+    for (MediaFileAudioStream stream : ListUtils.nullSafe(audioStreams)) {
       audioChannels.add(stream.getAudioChannels() + "ch");
     }
     return audioChannels;
