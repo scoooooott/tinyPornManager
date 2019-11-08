@@ -94,6 +94,7 @@ public class MediaFileHelper {
   public static final String       VIDEO_FORMAT_576P  = "576p";
   public static final String       VIDEO_FORMAT_720P  = "720p";
   public static final String       VIDEO_FORMAT_1080P = "1080p";
+  public static final String       VIDEO_FORMAT_1440P = "1440p";
   public static final String       VIDEO_FORMAT_2160P = "2160p";
   public static final String       VIDEO_FORMAT_4320P = "4320p";
 
@@ -174,10 +175,9 @@ public class MediaFileHelper {
 
     String ext = FilenameUtils.getExtension(filename).toLowerCase(Locale.ROOT);
     String basename = FilenameUtils.getBaseName(filename);
-    String foldername = FilenameUtils.getBaseName(pathToFile.getParent() == null ? "" : pathToFile.getParent().toString().toLowerCase(Locale.ROOT)); // just
-                                                                                                                                                     // path
-                                                                                                                                                     // w/o
-                                                                                                                                                     // filename
+    // just path w/o filename
+    String foldername = FilenameUtils.getBaseName(pathToFile.getParent() == null ? "" : pathToFile.getParent().toString().toLowerCase(Locale.ROOT));
+
     String parentparent = "";
     try {
       parentparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().toString()).toLowerCase(Locale.ROOT);
@@ -454,6 +454,15 @@ public class MediaFileHelper {
     }
     else if (w <= blur(1620) && h <= blur(1080)) { // 1080p Rec. 601 3:2
       return VIDEO_FORMAT_1080P;
+    }
+    else if (w <= blur(1920) && h <= blur(1440)) { // 1440p HD Widescreen 4:3
+      return VIDEO_FORMAT_1440P;
+    }
+    else if (w <= blur(2160) && h <= blur(1440)) { // 1440p Rec. 601 3:2
+      return VIDEO_FORMAT_1440P;
+    }
+    else if (w <= blur(2560) && h <= blur(1440)) { // 1440p HD Widescreen 16:9
+      return VIDEO_FORMAT_1440P;
     }
     else if (w <= blur(3840) && h <= blur(2160)) { // 4K Ultra-high-definition television
       return VIDEO_FORMAT_2160P;

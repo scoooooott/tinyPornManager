@@ -12,6 +12,7 @@ x do not move episode files if the episode and season renamer patterns are empty
 x use temp files to create backups #678
 x more/better HDR format detection (you need to reload MediaInformation of your files!)
 x fix for writing Quicktime (Apple) trailers as .quicktime
+x added 1440p to the video formats (and some common 1440p resolutions to the detection) #686
 
 
 Version 3.0.5
