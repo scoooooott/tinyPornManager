@@ -32,7 +32,7 @@ public class MovieSettingsNode extends TmmSettingsNode {
   public MovieSettingsNode() {
     super(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.datasourceandnfo"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.sources"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
 
     TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel()); //$NON-NLS-1$
     scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new MovieScraperOptionsSettingsPanel()));//$NON-NLS-1$
