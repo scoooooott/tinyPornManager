@@ -406,6 +406,13 @@ class TmdbTvShowMetadataProvider {
       md.addGenre(TmdbMetadataProvider.getTmmGenre(genre));
     }
 
+    // season titles
+    for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
+      if (season.season_number != null && StringUtils.isNotBlank(season.name)) {
+        md.addSeasonName(season.season_number, season.name);
+      }
+    }
+
     return md;
   }
 

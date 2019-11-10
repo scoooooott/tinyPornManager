@@ -2,6 +2,7 @@ upcoming version
 =======================
 + completely reworked scraper configuration: you now have a better control what scraper fetches/updates
   DUE TO THE MASSIVE REWORK YOU MAY NEED TO REVIEW YOUR SCRAPER SETTINGS
++ support for named seasons
 + support for rendering animated gifs
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox

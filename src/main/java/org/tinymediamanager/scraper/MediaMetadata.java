@@ -45,55 +45,62 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class MediaMetadata {
   // some well known ids
-  public static final String            IMDB                 = "imdb";
-  public static final String            TMDB                 = "tmdb";
-  public static final String            TVDB                 = "tvdb";
-  public static final String            TMDB_SET             = "tmdbSet";
+  public static final String             IMDB                 = "imdb";
+  public static final String             TMDB                 = "tmdb";
+  public static final String             TVDB                 = "tvdb";
+  public static final String             TMDB_SET             = "tmdbSet";
 
   // some meta ids for TV show scraping
-  public static final String            EPISODE_NR           = "episodeNr";
-  public static final String            SEASON_NR            = "seasonNr";
-  public static final String            EPISODE_NR_DVD       = "dvdEpisodeNr";
-  public static final String            SEASON_NR_DVD        = "dvdSeasonNr";
+  public static final String             EPISODE_NR           = "episodeNr";
+  public static final String             SEASON_NR            = "seasonNr";
+  public static final String             EPISODE_NR_DVD       = "dvdEpisodeNr";
+  public static final String             SEASON_NR_DVD        = "dvdSeasonNr";
 
-  private final String                  providerId;
+  private final String                   providerId;
 
   // this map contains all set ids
-  private final HashMap<String, Object> ids                  = new HashMap<>();
+  private final HashMap<String, Object>  ids                  = new HashMap<>();
+
   // multi value
-  private final List<MediaRating>       ratings              = new ArrayList<>();
+  private final List<MediaRating>        ratings              = new ArrayList<>();
   private final List<Person>             castMembers          = new ArrayList<>();
-  private final List<MediaArtwork>      artwork              = new ArrayList<>();
-  private final List<MediaGenres>       genres               = new ArrayList<>();
+  private final List<MediaArtwork>       artwork              = new ArrayList<>();
+  private final List<MediaGenres>        genres               = new ArrayList<>();
   private final List<MediaCertification> certifications       = new ArrayList<>();
-  private final List<String>            productionCompanies  = new ArrayList<>();
-  private final List<String>            spokenLanguages      = new ArrayList<>();
-  private final List<String>            countries            = new ArrayList<>();
-  private final List<MediaTrailer>      trailers             = new ArrayList<>();
-  private final List<MediaMetadata>     subItems             = new ArrayList<>();
-  private final List<String>            tags                 = new ArrayList<>();
+  private final List<String>             productionCompanies  = new ArrayList<>();
+  private final List<String>             spokenLanguages      = new ArrayList<>();
+  private final List<String>             countries            = new ArrayList<>();
+  private final List<MediaTrailer>       trailers             = new ArrayList<>();
+  private final List<MediaMetadata>      subItems             = new ArrayList<>();
+  private final List<String>             tags                 = new ArrayList<>();
+
   // general media entity
-  private String                        title                = "";
-  private String                        originalTitle        = "";
-  private String                        originalLanguage     = "";
-  private int                           year                 = 0;
-  private Date                          releaseDate          = null;
-  private String                        plot                 = "";
-  private String                        tagline              = "";
-  private int                           runtime              = 0;
+  private String                         title                = "";
+  private String                         originalTitle        = "";
+  private String                         originalLanguage     = "";
+  private int                            year                 = 0;
+  private Date                           releaseDate          = null;
+  private String                         plot                 = "";
+  private String                         tagline              = "";
+  private int                            runtime              = 0;
+
   // movie
-  private String                        collectionName       = "";
-  private int                           top250               = 0;
+  private String                         collectionName       = "";
+  private int                            top250               = 0;
+
   // tv show
-  private int                           episodeNumber        = -1;
-  private int                           seasonNumber         = -1;
-  private int                           dvdEpisodeNumber     = -1;
-  private int                           dvdSeasonNumber      = -1;
-  private int                           displayEpisodeNumber = -1;
-  private int                           displaySeasonNumber  = -1;
-  private int                           absoluteNumber       = -1;
-  private MediaAiredStatus              status               = MediaAiredStatus.UNKNOWN;
-  private HashMap<String, Object>       extraData            = new HashMap<>();
+  private int                            episodeNumber        = -1;
+  private int                            seasonNumber         = -1;
+  private int                            dvdEpisodeNumber     = -1;
+  private int                            dvdSeasonNumber      = -1;
+  private int                            displayEpisodeNumber = -1;
+  private int                            displaySeasonNumber  = -1;
+  private int                            absoluteNumber       = -1;
+  private MediaAiredStatus               status               = MediaAiredStatus.UNKNOWN;
+  private Map<Integer, String>           seasonNames          = new HashMap<>();
+
+  // extra data
+  private Map<String, Object>            extraData            = new HashMap<>();
 
   /**
    * Instantiates a new media metadata for the given provider.
@@ -1244,6 +1251,29 @@ public class MediaMetadata {
    */
   public void removeTag(String tag) {
     tags.remove(tag);
+  }
+
+  /**
+   * Add a season name
+   * 
+   * @param seasonNumber
+   *          the season number
+   * @param name
+   *          the season name
+   */
+  public void addSeasonName(int seasonNumber, String name) {
+    if (StringUtils.isNotBlank(name)) {
+      seasonNames.put(seasonNumber, name);
+    }
+  }
+
+  /**
+   * get all set season names
+   * 
+   * @return the season names
+   */
+  public Map<Integer, String> getSeasonNames() {
+    return seasonNames;
   }
 
   /**

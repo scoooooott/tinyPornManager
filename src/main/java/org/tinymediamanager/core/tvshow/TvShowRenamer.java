@@ -113,6 +113,9 @@ public class TvShowRenamer {
     tokenMap.put("parent", "tvShow.parent");
     tokenMap.put("showNote", "tvShow.note");
 
+    // Season tags
+    tokenMap.put("seasonName", "season.title");
+
     // episode tags
     tokenMap.put("episodeNr", "episode.episode");
     tokenMap.put("episodeNr2", "episode.episode;number(%02d)");
@@ -208,8 +211,8 @@ public class TvShowRenamer {
       return;
     }
 
-    LOGGER.debug("TV show year: " + show.getYear());
-    LOGGER.debug("TV show path: " + show.getPathNIO());
+    LOGGER.debug("TV show year: {}", show.getYear());
+    LOGGER.debug("TV show path: {}", show.getPathNIO());
     String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
     String oldPathname = show.getPathNIO().toString();
 
@@ -1113,7 +1116,10 @@ public class TvShowRenamer {
       engine.registerNamedRenderer(new NamedArrayRenderer());
       engine.setModelAdaptor(new TvShowRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
-      root.put("episode", episode);
+      if (episode != null) {
+        root.put("episode", episode);
+        root.put("season", episode.getTvShowSeason());
+      }
       root.put("tvShow", show);
       return engine.transform(morphTemplate(token), root);
     }

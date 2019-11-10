@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -511,15 +512,20 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // return movieSet name
       if (getUserObject() instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) getUserObject();
-        if (season.getSeason() == -1) {
-          return BUNDLE.getString("tvshow.uncategorized");
+        if (StringUtils.isNotBlank(season.getTitle())) {
+          return season.getTitle();
         }
+        else {
+          if (season.getSeason() == -1) {
+            return BUNDLE.getString("tvshow.uncategorized");
+          }
 
-        if (season.getSeason() == 0) {
-          return BUNDLE.getString("metatag.specials");
+          if (season.getSeason() == 0) {
+            return BUNDLE.getString("metatag.specials");
+          }
+
+          return BUNDLE.getString("metatag.season") + " " + season.getSeason();
         }
-
-        return BUNDLE.getString("metatag.season") + " " + season.getSeason();
       }
 
       // fallback: call super

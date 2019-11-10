@@ -43,6 +43,7 @@ public enum TvShowScraperMetadataConfig implements ScraperMetadataConfig {
   STUDIO(Type.METADATA, "metatag.studio"),
   TAGS(Type.METADATA),
   TRAILER(Type.METADATA),
+  SEASON_NAMES(Type.METADATA, "metatag.seasonname"),
 
   // cast
   ACTORS(Type.CAST),

@@ -144,6 +144,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addTagline();
         addRuntime();
         addPoster();
+        addSeasonName();
         addSeasonPoster();
         addSeasonBanner();
         addSeasonThumb();
@@ -359,6 +360,21 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       thumb.setAttribute("aspect", "poster");
       thumb.setTextContent(posterUrl);
       root.appendChild(thumb);
+    }
+  }
+
+  /**
+   * add the season names in multiple <namedseason number="ss">xxx</namedseason> tags
+   */
+  protected void addSeasonName() {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonTitles().entrySet()) {
+      Element namedseason = document.createElement("namedseason");
+      String title = entry.getValue();
+      if (StringUtils.isNotBlank(title)) {
+        namedseason.setAttribute("number", entry.getKey().toString());
+        namedseason.setTextContent(title);
+        root.appendChild(namedseason);
+      }
     }
   }
 

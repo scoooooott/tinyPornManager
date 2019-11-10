@@ -402,7 +402,7 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().persistTvShow(tvShow);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist episode: " + tvShow.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to persist episode: {}  {}", tvShow.getTitle(), e.getMessage());
     }
   }
 
@@ -412,7 +412,7 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove episode: " + tvShow.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to remove episode: {} - {}", tvShow.getTitle(), e.getMessage());
     }
   }
 
@@ -422,8 +422,8 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().persistEpisode(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
-          + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to persist episode: {} - S{}E{} - {} : {}", episode.getTvShow().getTitle(), episode.getSeason(), episode.getEpisode(),
+          episode.getTitle(), e.getMessage());
     }
   }
 
@@ -433,8 +433,8 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeEpisodeFromDb(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
-          + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to remove episode: {} - S{}E{} - {} : {}", episode.getTvShow().getTitle(), episode.getSeason(), episode.getEpisode(),
+          episode.getTitle(), e.getMessage());
     }
   }
 

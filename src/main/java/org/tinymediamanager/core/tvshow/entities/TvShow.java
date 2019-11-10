@@ -80,6 +80,7 @@ import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -133,11 +134,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private List<String>                       tags                  = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
+  private Map<Integer, String>               seasonTitleMap        = new HashMap<>(0);
   @JsonProperty
-  private HashMap<Integer, String>           seasonBannerUrlMap    = new HashMap<>(0);
+  private Map<Integer, String>               seasonPosterUrlMap    = new HashMap<>(0);
   @JsonProperty
-  private HashMap<Integer, String>           seasonThumbUrlMap     = new HashMap<>(0);
+  private Map<Integer, String>               seasonBannerUrlMap    = new HashMap<>(0);
+  @JsonProperty
+  private Map<Integer, String>               seasonThumbUrlMap     = new HashMap<>(0);
   @JsonProperty
   private List<Person>                       actors                = new CopyOnWriteArrayList<>();
   @JsonProperty
@@ -146,9 +149,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private List<String>                       extraFanartUrls       = new CopyOnWriteArrayList<>();
 
   private List<TvShowEpisode>                episodes              = new CopyOnWriteArrayList<>();
-  private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
-  private HashMap<Integer, MediaFile>        seasonBanners         = new HashMap<>(0);
-  private HashMap<Integer, MediaFile>        seasonThumbs          = new HashMap<>(0);
+  private Map<Integer, MediaFile>            seasonPosters         = new HashMap<>(0);
+  private Map<Integer, MediaFile>            seasonBanners         = new HashMap<>(0);
+  private Map<Integer, MediaFile>            seasonThumbs          = new HashMap<>(0);
   private List<TvShowSeason>                 seasons               = new CopyOnWriteArrayList<>();
   private String                             titleSortable         = "";
   private Date                               lastWatched           = null;
@@ -213,6 +216,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // create season artwork maps
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER, MediaFileType.SEASON_BANNER, MediaFileType.SEASON_THUMB)) {
+      // do not process 0 byte files
+      if (mf.getFilesize() == 0) {
+        continue;
+      }
+
       int season = -1;
       try {
         if (mf.getFilename().startsWith("season-specials")) {
@@ -320,6 +328,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       actors.clear();
       extraFanartUrls.clear();
 
+      seasonTitleMap.clear();
       seasonPosterUrlMap.clear();
       seasonBannerUrlMap.clear();
       seasonThumbUrlMap.clear();
@@ -330,20 +339,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setActors(other.actors);
     setExtraFanartUrls(other.extraFanartUrls);
 
+    for (Integer season : other.seasonTitleMap.keySet()) {
+      seasonTitleMap.putIfAbsent(season, other.seasonTitleMap.get(season));
+    }
     for (Integer season : other.seasonPosterUrlMap.keySet()) {
-      if (!seasonPosterUrlMap.containsKey(season)) {
-        seasonPosterUrlMap.put(season, other.seasonPosterUrlMap.get(season));
-      }
+      seasonPosterUrlMap.putIfAbsent(season, other.seasonPosterUrlMap.get(season));
     }
     for (Integer season : other.seasonBannerUrlMap.keySet()) {
-      if (!seasonBannerUrlMap.containsKey(season)) {
-        seasonBannerUrlMap.put(season, other.seasonBannerUrlMap.get(season));
-      }
+      seasonBannerUrlMap.putIfAbsent(season, other.seasonBannerUrlMap.get(season));
     }
     for (Integer season : other.seasonThumbUrlMap.keySet()) {
-      if (!seasonThumbUrlMap.containsKey(season)) {
-        seasonThumbUrlMap.put(season, other.seasonThumbUrlMap.get(season));
-      }
+      seasonThumbUrlMap.putIfAbsent(season, other.seasonThumbUrlMap.get(season));
     }
 
     // get ours, and merge other values
@@ -365,10 +371,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public void setTitle(String newValue) {
-    String oldValue = this.title;
     super.setTitle(newValue);
 
-    oldValue = this.titleSortable;
+    String oldValue = this.titleSortable;
     titleSortable = "";
     firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
   }
@@ -611,6 +616,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     if (season == null) {
       int oldValue = seasons.size();
       season = new TvShowSeason(episode.getSeason(), this);
+      String seasonTitle = seasonTitleMap.get(episode.getSeason());
+      if (StringUtils.isNotBlank(seasonTitle)) {
+        season.setTitle(seasonTitle);
+      }
       seasons.add(season);
       firePropertyChange(ADDED_SEASON, null, season);
       firePropertyChange(SEASON_COUNT, oldValue, seasons.size());
@@ -895,6 +904,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (config.contains(TvShowScraperMetadataConfig.GENRES)) {
       setGenres(metadata.getGenres());
+    }
+
+    if (config.contains(TvShowScraperMetadataConfig.SEASON_NAMES)) {
+      // only take _non common_ season names
+      for (Map.Entry<Integer, String> entry : metadata.getSeasonNames().entrySet()) {
+        Matcher matcher = TvShowEpisodeAndSeasonParser.SEASON_PATTERN.matcher(entry.getValue());
+        if (!matcher.find()) {
+          seasonTitleMap.put(entry.getKey(), entry.getValue());
+        }
+      }
     }
 
     // set scraped
@@ -1840,6 +1859,34 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
+  }
+
+  /**
+   * add a season title to the internal season title map
+   * 
+   * @param season
+   *          the season to set the title for
+   * @param title
+   *          the title
+   */
+  public void addSeasonTitle(int season, String title) {
+    if (StringUtils.isNotBlank(title)) {
+      seasonTitleMap.put(season, title);
+    }
+    else {
+      seasonTitleMap.remove(season);
+    }
+
+    firePropertyChange("seasonTitle", null, seasonTitleMap);
+  }
+
+  /**
+   * get a map containing all set season titles
+   * 
+   * @return a map containing all season titles
+   */
+  public Map<Integer, String> getSeasonTitles() {
+    return seasonTitleMap;
   }
 
   /**

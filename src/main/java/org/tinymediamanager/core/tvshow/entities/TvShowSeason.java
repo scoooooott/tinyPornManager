@@ -51,6 +51,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  */
 public class TvShowSeason extends AbstractModelObject implements Comparable<TvShowSeason> {
   private int                    season      = -1;
+  private String                 title       = "";
   private TvShow                 tvShow;
   private List<TvShowEpisode>    episodes    = new CopyOnWriteArrayList<>();
   private Date                   lastWatched = null;
@@ -84,6 +85,19 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
 
   public int getSeason() {
     return season;
+  }
+
+  public void setTitle(String newValue) {
+    String oldValue = this.title;
+    this.title = newValue;
+    firePropertyChange("title", oldValue, newValue);
+
+    // store the title inside the TV show itself
+    getTvShow().addSeasonTitle(season, newValue);
+  }
+
+  public String getTitle() {
+    return this.title;
   }
 
   public TvShow getTvShow() {

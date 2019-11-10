@@ -40,7 +40,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeAndSeasonParser {
-  private final static Logger LOGGER              = LoggerFactory.getLogger(TvShowEpisodeAndSeasonParser.class);
+  private static final Logger LOGGER              = LoggerFactory.getLogger(TvShowEpisodeAndSeasonParser.class);
 
   // foo.yyyy.mm.dd.*
   private static Pattern      date1               = Pattern.compile("([0-9]{4})[.-]([0-9]{2})[.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
@@ -49,10 +49,10 @@ public class TvShowEpisodeAndSeasonParser {
   private static Pattern      date2               = Pattern.compile("([0-9]{2})[.-]([0-9]{2})[.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
 
   // new parsing logic
+  public static Pattern       SEASON_PATTERN      = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
   private static Pattern      episodePattern      = Pattern.compile("[epx_-]+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
   private static Pattern      episodePattern2     = Pattern.compile("(?:episode|ep)[\\. _-]*(\\d{1,3})", Pattern.CASE_INSENSITIVE);
   private static Pattern      romanPattern        = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonPattern       = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP       = Pattern.compile("s(\\d{1,4})[ ]?((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP2      = Pattern.compile("(\\d{1,4})(?=x)((?:([epx]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers2Pattern     = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
@@ -203,7 +203,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // season detection
     if (result.season == -1) {
-      regex = seasonPattern;
+      regex = SEASON_PATTERN;
       m = regex.matcher(foldername + basename);
       if (m.find()) {
         int s = result.season;
@@ -214,7 +214,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with max 2 numeric chars
         }
         result.season = s;
-        LOGGER.trace("add found season " + s);
+        LOGGER.trace("add found season {}", s);
       }
     }
 
@@ -442,7 +442,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     // try to clean the filename
-    result.cleanedName = cleanFilename(result.name, new Pattern[] { seasonPattern, seasonMultiEP, seasonMultiEP2, episodePattern, episodePattern2,
+    result.cleanedName = cleanFilename(result.name, new Pattern[] { SEASON_PATTERN, seasonMultiEP, seasonMultiEP2, episodePattern, episodePattern2,
         numbers3Pattern, numbers2Pattern, romanPattern, date1, date2 });
 
     Collections.sort(result.episodes);
