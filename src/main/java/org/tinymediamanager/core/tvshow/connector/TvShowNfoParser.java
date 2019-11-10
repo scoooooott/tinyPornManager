@@ -1178,7 +1178,7 @@ public class TvShowNfoParser {
     }
 
     for (Map.Entry<Integer, List<String>> entry : seasonPosters.entrySet()) {
-      if (entry.getValue().isEmpty()) {
+      if (!entry.getValue().isEmpty()) {
         show.setSeasonArtworkUrl(entry.getKey(), entry.getValue().get(0), SEASON_POSTER);
       }
     }

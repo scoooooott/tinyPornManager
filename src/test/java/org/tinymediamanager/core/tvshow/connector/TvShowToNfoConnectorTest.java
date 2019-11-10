@@ -168,6 +168,10 @@ public class TvShowToNfoConnectorTest extends BasicTest {
     assertThat(newTvShow.getRuntime()).isEqualTo(tvShow.getRuntime());
     assertThat(newTvShow.getArtworkUrl(MediaFileType.POSTER)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.POSTER));
     assertThat(newTvShow.getArtworkUrl(MediaFileType.FANART)).isEqualTo(tvShow.getArtworkUrl(MediaFileType.FANART));
+
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonTitles().entrySet()) {
+      assertThat(newTvShow.getSeasonTitles()).contains(entry);
+    }
     for (Map.Entry<Integer, String> entry : tvShow.getSeasonArtworkUrls(SEASON_POSTER).entrySet()) {
       String seasonPoster = newTvShow.getSeasonArtworkUrl(entry.getKey(), SEASON_POSTER);
       assertThat(seasonPoster).isEqualTo(entry.getValue());
@@ -209,6 +213,8 @@ public class TvShowToNfoConnectorTest extends BasicTest {
     tvShow.setRuntime(45);
     tvShow.setArtworkUrl("http://poster", MediaFileType.POSTER);
     tvShow.setArtworkUrl("http://fanart", MediaFileType.FANART);
+    tvShow.addSeasonTitle(1, "First Season");
+    tvShow.addSeasonTitle(2, "Second Season");
     tvShow.setSeasonArtworkUrl(1, "http://season1", SEASON_POSTER);
     tvShow.setSeasonArtworkUrl(2, "http://season2", SEASON_POSTER);
     tvShow.setSeasonArtworkUrl(1, "http://season-banner1", SEASON_BANNER);
