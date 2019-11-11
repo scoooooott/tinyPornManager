@@ -63,6 +63,7 @@ import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 import org.tinymediamanager.ui.tvshows.TvShowTableFormat;
 import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
+import org.tinymediamanager.ui.tvshows.TvShowTreeTextFilter;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 
@@ -116,7 +117,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   private void initComponents() {
     setLayout(new MigLayout("insets n n 0 n", "[200lp:n,grow][100lp:n,fill]", "[][200lp:n,grow]0[][][]"));
 
-    final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
+    final TmmTreeTextFilter<TmmTreeNode> searchField = new TvShowTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
 
     btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$

@@ -131,7 +131,7 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
     return false;
   }
 
-  private boolean checkParent(TmmTreeNode node, Pattern pattern) {
+  protected boolean checkParent(TmmTreeNode node, Pattern pattern) {
     if (node == null) {
       return false;
     }

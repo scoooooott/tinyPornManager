@@ -460,7 +460,18 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
   }
 
-  class TvShowTreeNode extends TmmTreeNode {
+  abstract static class AbstractTvShowTreeNode extends TmmTreeNode {
+
+    AbstractTvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+      super(userObject, dataProvider);
+    }
+
+    abstract String getTitle();
+
+    abstract String getOriginalTitle();
+  }
+
+  static class TvShowTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -1316609340104597133L;
 
     /**
@@ -469,7 +480,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      * @param userObject
      *          the user object
      */
-    public TvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+    TvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
       super(userObject, dataProvider);
     }
 
@@ -489,9 +500,29 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // fallback: call super
       return super.toString();
     }
+
+    @Override
+    public String getTitle() {
+      if (getUserObject() instanceof TvShow) {
+        TvShow tvShow = (TvShow) getUserObject();
+        return tvShow.getTitle();
+      }
+
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      if (getUserObject() instanceof TvShow) {
+        TvShow tvShow = (TvShow) getUserObject();
+        return tvShow.getOriginalTitle();
+      }
+
+      return toString();
+    }
   }
 
-  class TvShowSeasonTreeNode extends TmmTreeNode {
+  public static class TvShowSeasonTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -5734830011018805194L;
 
     /**
@@ -531,9 +562,19 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // fallback: call super
       return super.toString();
     }
+
+    @Override
+    public String getTitle() {
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      return toString();
+    }
   }
 
-  class TvShowEpisodeTreeNode extends TmmTreeNode {
+  public static class TvShowEpisodeTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -7108614568808831980L;
 
     /**
@@ -566,6 +607,26 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
       // fallback: call super
       return super.toString();
+    }
+
+    @Override
+    public String getTitle() {
+      if (getUserObject() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) getUserObject();
+        return episode.getTitle();
+      }
+
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      if (getUserObject() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) getUserObject();
+        return episode.getOriginalTitle();
+      }
+
+      return toString();
     }
   }
 }
