@@ -803,8 +803,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
-      // movie.addToMediaFiles(mf);
-      movie.setDateAddedFromMediaFile(mf);
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
@@ -882,7 +880,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         switch (mf.getType()) {
           case VIDEO:
             movie.addToMediaFiles(mf);
-            movie.setDateAddedFromMediaFile(mf);
+
             if (movie.getMediaSource() == MediaSource.UNKNOWN) {
               movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
             }

@@ -1920,6 +1920,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public MediaFile getMainFile() {
+    return getMainVideoFile();
+  }
+
+  @Override
   public MediaFile getMainVideoFile() {
     return new MediaFile();
   }

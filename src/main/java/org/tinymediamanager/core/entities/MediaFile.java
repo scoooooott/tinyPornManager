@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -93,6 +94,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                     stackingMarker    = "";
   @JsonProperty
   private String                     title             = "";
+  @JsonProperty
+  protected Date                     dateCreated       = null;
+  @JsonProperty
+  protected Date                     dateLastModified  = null;
 
   @JsonProperty
   private List<MediaFileAudioStream> audioStreams      = null;
@@ -826,6 +831,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public int getVideoHeight() {
     return videoHeight;
+  }
+
+  public Date getDateCreated() {
+    return dateCreated;
+  }
+
+  public void setDateCreated(Date newValue) {
+    Date oldValue = this.dateCreated;
+    this.dateCreated = newValue;
+    firePropertyChange("dateCreated", oldValue, newValue);
+  }
+
+  public Date getDateLastModified() {
+    return dateLastModified;
+  }
+
+  public void setDateLastModified(Date newValue) {
+    Date oldValue = this.dateLastModified;
+    this.dateLastModified = newValue;
+    firePropertyChange("exactVideoFormat", oldValue, newValue);
   }
 
   public void setVideoWidth(int newValue) {

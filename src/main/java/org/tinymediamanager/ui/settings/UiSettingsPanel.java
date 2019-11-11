@@ -39,6 +39,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.DateField;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -82,6 +83,7 @@ class UiSettingsPanel extends JPanel {
   private JComboBox                   cbTheme;
   private JLabel                      lblThemeHint;
   private JCheckBox                   chckbxShowMemory;
+  private JComboBox                   cbDatefield;
 
   UiSettingsPanel() {
     LocaleComboBox actualLocale = null;
@@ -224,12 +226,22 @@ class UiSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
+        JLabel lblDatefield = new JLabel(BUNDLE.getString("Settings.datefield"));
+        panelMisc.add(lblDatefield, "cell 1 0");
+
+        cbDatefield = new JComboBox(DateField.values());
+        panelMisc.add(cbDatefield, "cell 2 0");
+
+        JLabel lblDatefieldHint = new JLabel(BUNDLE.getString("Settings.datefield.desc"));
+        panelMisc.add(lblDatefieldHint, "cell 2 1");
+      }
+      {
         chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
-        panelMisc.add(chckbxStoreWindowPreferences, "cell 1 0 2 1");
+        panelMisc.add(chckbxStoreWindowPreferences, "cell 1 2 2 1");
       }
       {
         chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory")); //$NON-NLS-1$
-        panelMisc.add(chckbxShowMemory, "cell 1 1 2 1");
+        panelMisc.add(chckbxShowMemory, "cell 1 3 2 1");
       }
     }
   }
@@ -323,5 +335,11 @@ class UiSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxShowMemory, jCheckBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<Settings, DateField> settingsBeanProperty_2 = BeanProperty.create("dateField");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<Settings, DateField, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, cbDatefield, jComboBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

@@ -1413,6 +1413,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
+  public MediaFile getMainFile() {
+    return getMainVideoFile();
+  }
+
+  @Override
   public String getMediaInfoVideoResolution() {
     return getMainVideoFile().getVideoResolution();
   }

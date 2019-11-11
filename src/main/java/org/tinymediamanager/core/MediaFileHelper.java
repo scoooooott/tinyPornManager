@@ -30,6 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -595,6 +596,23 @@ public class MediaFileHelper {
    *          forces the execution, will not stop on already imported files
    */
   public static void gatherMediaInformation(MediaFile mediaFile, boolean force) {
+    // get basic infos
+    try {
+      BasicFileAttributes view = Files.readAttributes(mediaFile.getFileAsPath(), BasicFileAttributes.class);
+      // sanity check; need something litil bit bigger than 0
+      if (view.creationTime().toMillis() > 100000) {
+        Date creDat = new Date(view.creationTime().toMillis());
+        mediaFile.setDateCreated(creDat);
+      }
+      if (view.lastModifiedTime().toMillis() > 100000) {
+        Date modDat = new Date(view.lastModifiedTime().toMillis());
+        mediaFile.setDateLastModified(modDat);
+      }
+    }
+    catch (Exception e) {
+      LOGGER.warn("could not read filedate: {}", e);
+    }
+
     // check for supported filetype
     if (!mediaFile.isValidMediainfoFormat()) {
       // okay, we have no valid MI file, be sure it will not be triggered any more

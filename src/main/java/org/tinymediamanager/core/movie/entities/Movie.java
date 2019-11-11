@@ -2169,6 +2169,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public MediaFile getMainFile() {
+    return getMainVideoFile();
+  }
+
+  @Override
   public String getMediaInfoVideoResolution() {
     return getMainVideoFile().getVideoResolution();
   }

@@ -25,6 +25,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.DateField;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
@@ -44,19 +45,19 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class Settings extends AbstractSettings {
   private static final Logger   LOGGER                 = LoggerFactory.getLogger(Settings.class);
 
-  private final static String   CONFIG_FILE            = "tmm.json";
+  private static final String   CONFIG_FILE            = "tmm.json";
 
   private static Settings       instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String   TITLE_PREFIX           = "titlePrefixes";
-  private final static String   VIDEO_FILE_TYPE        = "videoFileType";
-  private final static String   AUDIO_FILE_TYPE        = "audioFileType";
-  private final static String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
-  private final static String   CLEANUP_FILE_TYPE      = "cleanupFileType";
-  private final static String   WOL_DEVICES            = "wolDevices";
+  private static final String   TITLE_PREFIX           = "titlePrefixes";
+  private static final String   VIDEO_FILE_TYPE        = "videoFileType";
+  private static final String   AUDIO_FILE_TYPE        = "audioFileType";
+  private static final String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
+  private static final String   CLEANUP_FILE_TYPE      = "cleanupFileType";
+  private static final String   WOL_DEVICES            = "wolDevices";
 
   private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<>());
@@ -99,6 +100,7 @@ public class Settings extends AbstractSettings {
   private String    fontFamily             = "Dialog";
 
   private boolean   storeWindowPreferences = true;
+  private DateField dateField              = DateField.DATE_ADDED;
 
   private boolean   deleteTrashOnExit      = false;
   private boolean   showMemory             = false;
@@ -996,6 +998,16 @@ public class Settings extends AbstractSettings {
    */
   public boolean isIgnoreSSLProblems() {
     return ignoreSSLProblems;
+  }
+
+  public DateField getDateField() {
+    return dateField;
+  }
+
+  public void setDateField(DateField newValue) {
+    DateField oldValue = this.dateField;
+    this.dateField = newValue;
+    firePropertyChange("dateField", oldValue, newValue);
   }
 
   /**

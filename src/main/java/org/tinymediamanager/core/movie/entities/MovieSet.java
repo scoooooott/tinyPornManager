@@ -403,6 +403,11 @@ public class MovieSet extends MediaEntity {
   }
 
   @Override
+  public MediaFile getMainFile() {
+    return new MediaFile();
+  }
+
+  @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
   }
 

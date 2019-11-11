@@ -42,10 +42,8 @@ import static org.tinymediamanager.core.Constants.TITLE;
 import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,6 +65,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
@@ -121,6 +120,13 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public MediaEntity() {
   }
+
+  /**
+   * get the main file for this entity
+   * 
+   * @return the main file
+   */
+  abstract public MediaFile getMainFile();
 
   /**
    * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
@@ -544,8 +550,41 @@ public abstract class MediaEntity extends AbstractModelObject {
     return dateAdded;
   }
 
+  public Date getDateAddedForUi() {
+    Date date = null;
+
+    switch (Settings.getInstance().getDateField()) {
+      case FILE_CREATION_DATE:
+        MediaFile mainMediaFile = getMainFile();
+        if (mainMediaFile != null) {
+          date = mainMediaFile.getDateCreated();
+        }
+        break;
+
+      case FILE_LAST_MODIFIED_DATE:
+        mainMediaFile = getMainFile();
+        if (mainMediaFile != null) {
+          date = mainMediaFile.getDateLastModified();
+        }
+        break;
+
+      default:
+        date = dateAdded;
+        break;
+
+    }
+
+    // sanity check - must not be null
+    if (date == null) {
+      date = dateAdded;
+    }
+
+    return date;
+  }
+
   public String getDateAddedAsString() {
-    if (dateAdded == null) {
+    Date date = getDateAddedForUi();
+    if (date == null) {
       return "";
     }
 
@@ -557,28 +596,6 @@ public abstract class MediaEntity extends AbstractModelObject {
     this.dateAdded = newValue;
     firePropertyChange(DATE_ADDED, oldValue, newValue);
     firePropertyChange(DATE_ADDED_AS_STRING, oldValue, newValue);
-  }
-
-  public void setDateAddedFromMediaFile(MediaFile mf) {
-    try {
-      BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
-      // sanity check; need something litil bit bigger than 0
-      if (view.creationTime().toMillis() > 100000) {
-        Date creDat = new Date(view.creationTime().toMillis());
-        if (creDat.compareTo(dateAdded) < 0) {
-          setDateAdded(creDat);
-        }
-      }
-      if (view.lastModifiedTime().toMillis() > 100000) {
-        Date modDat = new Date(view.lastModifiedTime().toMillis());
-        if (modDat.compareTo(dateAdded) < 0) {
-          setDateAdded(modDat);
-        }
-      }
-    }
-    catch (Exception ignored) {
-      LOGGER.warn("could not read filedate: {}", ignored);
-    }
   }
 
   public String getProductionCompany() {
