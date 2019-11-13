@@ -584,7 +584,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       // ParserUtils.ParserInfo video = ParserUtils.getCleanerString(new
       // String[] { videoName, movieDir.getName(), bdinfoTitle });
       // does not work reliable yet - user folder name
-      String[] video = ParserUtils.detectCleanMovienameAndYear(movieDir.getFileName().toString());
+      String[] video = ParserUtils.detectCleanTitleAndYear(movieDir.getFileName().toString(), MovieModuleManager.SETTINGS.getBadWord());
       movie.setTitle(video[0]);
       if (!video[1].isEmpty()) {
         try {
@@ -768,9 +768,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         if (movie == null) {
           // still NULL, create new movie movie from file
-          LOGGER.debug("| Create new movie from file: " + mf);
+          LOGGER.debug("| Create new movie from file: {}", mf);
           movie = new Movie();
-          String[] ty = ParserUtils.detectCleanMovienameAndYear(basename);
+          String[] ty = ParserUtils.detectCleanTitleAndYear(basename, MovieModuleManager.SETTINGS.getBadWord());
           movie.setTitle(ty[0]);
           if (!ty[1].isEmpty()) {
             try {

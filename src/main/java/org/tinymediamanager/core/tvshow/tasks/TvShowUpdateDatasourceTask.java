@@ -567,7 +567,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         if (StringUtils.isBlank(tvShow.getTitle()) || tvShow.getYear() <= 0) {
           // we have a tv show object, but without title or year; try to parse that our of the folder/filename
-          String[] ty = ParserUtils.detectCleanMovienameAndYear(showDir.getFileName().toString());
+          String[] ty = ParserUtils.detectCleanTitleAndYear(showDir.getFileName().toString(), TvShowModuleManager.SETTINGS.getBadWord());
           if (StringUtils.isBlank(tvShow.getTitle()) && StringUtils.isNotBlank(ty[0])) {
             tvShow.setTitle(ty[0]);
           }

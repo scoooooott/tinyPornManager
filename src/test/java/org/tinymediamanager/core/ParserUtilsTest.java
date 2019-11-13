@@ -1,5 +1,7 @@
 package org.tinymediamanager.core;
 
+import java.util.Collections;
+
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.util.ParserUtils;
@@ -127,7 +129,7 @@ public class ParserUtilsTest extends BasicTest {
   }
 
   private String detectTY(String filename) {
-    String[] s = ParserUtils.detectCleanMovienameAndYear(filename);
+    String[] s = ParserUtils.detectCleanTitleAndYear(filename, Collections.emptyList());
     String ret = s[0];
     if (!s[1].isEmpty()) {
       ret = ret + " | " + s[1];
