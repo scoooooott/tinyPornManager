@@ -133,7 +133,7 @@ public class MovieHelpers {
       }
     }
     catch (Exception e) {
-      logger.error("could not start trailer download: " + e.getMessage());
+      logger.error("could not start trailer download: {}", e.getMessage());
       MessageManager.instance.pushMessage(
           new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
     }

@@ -953,10 +953,12 @@ public class Settings extends AbstractSettings {
   /**
    * set the maximum amount of download threads
    * 
-   * @param maximumDownloadThreads
+   * @param newValue
    *          the maximum amount of download threads
    */
-  public void setMaximumDownloadThreads(int maximumDownloadThreads) {
-    this.maximumDownloadThreads = maximumDownloadThreads;
+  public void setMaximumDownloadThreads(int newValue) {
+    int oldValue = this.maximumDownloadThreads;
+    this.maximumDownloadThreads = newValue;
+    firePropertyChange("maximumDownloadThreads", oldValue, newValue);
   }
 }
