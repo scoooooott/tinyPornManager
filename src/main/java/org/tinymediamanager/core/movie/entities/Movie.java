@@ -1058,18 +1058,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
-    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      String name = mfs.get(0).getFilename();
-      if (isStacked()) {
-        // when movie IS stacked, remove stacking marker, else keep it!
-        name = Utils.cleanStackingMarkers(name);
-      }
-      return getNfoFilename(nfo, name);
+    String filename = "";
+
+    MediaFile mainFile = getMainFile();
+    if (mainFile != null) {
+      filename = mainFile.getFilename();
     }
-    else {
-      return getNfoFilename(nfo, ""); // no video files
+
+    if (isStacked()) {
+      // when movie IS stacked, remove stacking marker, else keep it!
+      filename = Utils.cleanStackingMarkers(filename);
     }
+    filename = getNfoFilename(nfo, filename);
+
+    LOGGER.trace("getNfoFilename: {} -> '{}'", nfo, filename);
+    return filename;
   }
 
   /**
@@ -1105,7 +1108,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
         filename = "";
         break;
     }
-    // LOGGER.trace("getNfoFilename: '" + newMovieFilename + "' / " + nfo + " -> '" + filename + "'");
+    LOGGER.trace("getNfoFilename: '{}' / {} -> '{}'", newMovieFilename, nfo, filename);
     return filename;
   }
 
@@ -1117,18 +1120,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the associated trailer filename
    */
   public String getTrailerFilename(MovieTrailerNaming trailer) {
-    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      String name = mfs.get(0).getFilename();
-      if (isStacked()) {
-        // when movie IS stacked, remove stacking marker, else keep it!
-        name = Utils.cleanStackingMarkers(name);
-      }
-      return getTrailerFilename(trailer, name);
+    String filename = "";
+
+    MediaFile mainFile = getMainFile();
+    if (mainFile != null) {
+      filename = mainFile.getFilename();
     }
-    else {
-      return getTrailerFilename(trailer, ""); // no video files
+
+    if (isStacked()) {
+      // when movie IS stacked, remove stacking marker, else keep it!
+      filename = Utils.cleanStackingMarkers(filename);
     }
+    filename = getTrailerFilename(trailer, filename);
+
+    LOGGER.trace("getTrailerFilename: {} -> '{}'", trailer, filename);
+    return filename;
   }
 
   /**
@@ -1155,13 +1161,17 @@ public class Movie extends MediaEntity implements IMediaInformation {
           filename += "-trailer";
         }
         break;
+
       case MOVIE_TRAILER:
         filename = "movie-trailer";
         break;
+
       default:
         filename = "";
         break;
     }
+
+    LOGGER.trace("getTrailerFilename: '{}' / {} -> '{}'", newMovieFilename, trailer, filename);
     return filename;
   }
 
