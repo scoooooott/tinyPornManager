@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -95,6 +96,7 @@ class UiSettingsPanel extends JPanel {
         actualLocale = localeComboBox;
       }
     }
+    Collections.sort(locales);
 
     // ui init
     initComponents();
@@ -284,7 +286,7 @@ class UiSettingsPanel extends JPanel {
   /**
    * Helper class for customized toString() method, to get the Name in localized language.
    */
-  private class LocaleComboBox {
+  private class LocaleComboBox implements Comparable<LocaleComboBox> {
     private Locale       loc;
     private List<Locale> countries;
 
@@ -321,6 +323,11 @@ class UiSettingsPanel extends JPanel {
       }
 
       return loc.getDisplayLanguage(loc);
+    }
+
+    @Override
+    public int compareTo(LocaleComboBox o) {
+      return toString().toLowerCase(Locale.ROOT).compareTo(o.toString().toLowerCase(Locale.ROOT));
     }
   }
 
