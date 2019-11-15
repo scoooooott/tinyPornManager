@@ -638,7 +638,8 @@ public class MovieNfoParser {
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
-    supportedElements.add("tmdbCollectionId");
+    supportedElements.add("tmdbcollectionid"); // add the lowercase variant to supported elements, since we have an LC contains check
+    supportedElements.add("tmdbCollectionId"); // but write the camelCase
     supportedElements.add("uniqueid");
 
     // id tag & check against imdb pattern (otherwise we cannot say for which provider this id is)
