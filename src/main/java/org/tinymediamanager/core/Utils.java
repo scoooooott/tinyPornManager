@@ -641,7 +641,7 @@ public class Utils {
             rename = true;
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallback): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -742,7 +742,7 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallback): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -1710,7 +1710,8 @@ public class Utils {
   /**
    * Method to get a list of files with the given regular expression
    *
-   * @param regexList list of regular expression
+   * @param regexList
+   *          list of regular expression
    * @return a list of files
    */
   public static HashSet<Path> getUnknownFilesByRegex(Path folder, List<String> regexList) {
@@ -1719,7 +1720,8 @@ public class Utils {
 
     try {
       Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("could not get unknown files: {}", e.getMessage());
     }
 
@@ -1729,7 +1731,7 @@ public class Utils {
   private static class GetUnknownFilesVisitor extends AbstractFileVisitor {
 
     private HashSet<Path> fileList = new HashSet<>();
-    private List<String> regexList;
+    private List<String>  regexList;
 
     GetUnknownFilesVisitor(List<String> regexList) {
       this.regexList = regexList;
