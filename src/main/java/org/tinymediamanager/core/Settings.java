@@ -17,8 +17,10 @@ package org.tinymediamanager.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -45,10 +47,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class Settings extends AbstractSettings {
   private static final Logger   LOGGER                 = LoggerFactory.getLogger(Settings.class);
 
-  private static final String   CONFIG_FILE            = "tmm.json";
-
-  private static Settings       instance;
-
   /**
    * Constants mainly for events
    */
@@ -58,6 +56,14 @@ public class Settings extends AbstractSettings {
   private static final String   SUBTITLE_FILE_TYPE     = "subtitleFileType";
   private static final String   CLEANUP_FILE_TYPE      = "cleanupFileType";
   private static final String   WOL_DEVICES            = "wolDevices";
+
+  /**
+   * statics
+   */
+  private static final String   CONFIG_FILE            = "tmm.json";
+  private static final int      DEFAULT_KODI_HTTP_PORT;
+
+  private static Settings       instance;
 
   private final List<String>    titlePrefixes          = ObservableCollections.observableList(new ArrayList<>());
   private final List<String>    videoFileTypes         = ObservableCollections.observableList(new ArrayList<>());
@@ -72,43 +78,47 @@ public class Settings extends AbstractSettings {
   private String                proxyPort;
   private String                proxyUsername;
   private String                proxyPassword;
+  private int                   maximumDownloadThreads = 2;
 
   private String                traktAccessToken       = "";
   private String                traktRefreshToken      = "";
 
-  private static int            DEFAULT_KODI_HTTP_PORT = 8080;
+  private String                kodiHost               = "";
+  private int                   kodiHttpPort           = DEFAULT_KODI_HTTP_PORT;
+  private int                   kodiTcpPort            = 9090;
+  private String                kodiUsername           = "";
+  private String                kodiPassword           = "";
+
+  private boolean               imageCache             = true;
+  private CacheType             imageCacheType         = CacheType.SMOOTH;
+
+  // language 2 char - saved to config
+  private String                language;
+  private String                mediaPlayer            = "";
+
+  private String                theme                  = "Light";
+  private int                   fontSize               = 12;
+  private String                fontFamily             = "Dialog";
+
+  private boolean               storeWindowPreferences = true;
+  private DateField             dateField              = DateField.DATE_ADDED;
+
+  private boolean               deleteTrashOnExit      = false;
+  private boolean               showMemory             = false;
+
+  private boolean               upnpShareLibrary       = false;
+  private boolean               upnpRemotePlay         = false;
+
+  private boolean               ignoreSSLProblems      = false;
+
   static {
     if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
       DEFAULT_KODI_HTTP_PORT = 80;
     }
+    else {
+      DEFAULT_KODI_HTTP_PORT = 8080;
+    }
   }
-  private String    kodiHost               = "";
-  private int       kodiHttpPort           = DEFAULT_KODI_HTTP_PORT;
-  private int       kodiTcpPort            = 9090;
-  private String    kodiUsername           = "";
-  private String    kodiPassword           = "";
-
-  private boolean   imageCache             = true;
-  private CacheType imageCacheType         = CacheType.SMOOTH;
-
-  // language 2 char - saved to config
-  private String    language;
-  private String    mediaPlayer            = "";
-
-  private String    theme                  = "Light";
-  private int       fontSize               = 12;
-  private String    fontFamily             = "Dialog";
-
-  private boolean   storeWindowPreferences = true;
-  private DateField dateField              = DateField.DATE_ADDED;
-
-  private boolean   deleteTrashOnExit      = false;
-  private boolean   showMemory             = false;
-
-  private boolean   upnpShareLibrary       = false;
-  private boolean   upnpRemotePlay         = false;
-
-  private boolean   ignoreSSLProblems      = false;
 
   /**
    * Instantiates a new settings.
@@ -140,119 +150,20 @@ public class Settings extends AbstractSettings {
     // default video file types derived from
     // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
     videoFileTypes.clear();
-    addVideoFileType(".3gp");
-    addVideoFileType(".asf");
-    addVideoFileType(".asx");
-    addVideoFileType(".avc");
-    addVideoFileType(".avi");
-    addVideoFileType(".bdmv");
-    addVideoFileType(".bin");
-    addVideoFileType(".bivx");
-    addVideoFileType(".dat");
-    addVideoFileType(".divx");
-    addVideoFileType(".dv");
-    addVideoFileType(".dvr-ms");
-    addVideoFileType(".disc"); // video stubs
-    addVideoFileType(".evo"); // hd-dvd
-    addVideoFileType(".fli");
-    addVideoFileType(".flv");
-    addVideoFileType(".h264");
-    addVideoFileType(".ifo"); // DVD; only needed for KodiRPC
-    addVideoFileType(".img");
-    addVideoFileType(".iso");
-    addVideoFileType(".mts");
-    addVideoFileType(".mt2s");
-    addVideoFileType(".m2ts");
-    addVideoFileType(".m2v");
-    addVideoFileType(".m4v");
-    addVideoFileType(".mkv");
-    addVideoFileType(".mk3d");
-    addVideoFileType(".mov");
-    addVideoFileType(".mp4");
-    addVideoFileType(".mpeg");
-    addVideoFileType(".mpg");
-    addVideoFileType(".nrg");
-    addVideoFileType(".nsv");
-    addVideoFileType(".nuv");
-    addVideoFileType(".ogm");
-    addVideoFileType(".pva");
-    addVideoFileType(".qt");
-    addVideoFileType(".rm");
-    addVideoFileType(".rmvb");
-    addVideoFileType(".strm");
-    addVideoFileType(".svq3");
-    addVideoFileType(".ts");
-    addVideoFileType(".ty");
-    addVideoFileType(".viv");
-    addVideoFileType(".vob");
-    addVideoFileType(".vp3");
-    addVideoFileType(".wmv");
-    addVideoFileType(".webm");
-    addVideoFileType(".xvid");
+    videoFileTypes.addAll(MediaFileHelper.DEFAULT_VIDEO_FILETYPES);
     Collections.sort(videoFileTypes);
+    firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
 
     audioFileTypes.clear();
-    addAudioFileType(".a52");
-    addAudioFileType(".aa3");
-    addAudioFileType(".aac");
-    addAudioFileType(".ac3");
-    addAudioFileType(".adt");
-    addAudioFileType(".adts");
-    addAudioFileType(".aif");
-    addAudioFileType(".aiff");
-    addAudioFileType(".alac");
-    addAudioFileType(".ape");
-    addAudioFileType(".at3");
-    addAudioFileType(".atrac");
-    addAudioFileType(".au");
-    addAudioFileType(".dts");
-    addAudioFileType(".flac");
-    addAudioFileType(".m4a");
-    addAudioFileType(".m4b");
-    addAudioFileType(".m4p");
-    addAudioFileType(".mid");
-    addAudioFileType(".midi");
-    addAudioFileType(".mka");
-    addAudioFileType(".mp3");
-    addAudioFileType(".mpa");
-    addAudioFileType(".mlp");
-    addAudioFileType(".oga");
-    addAudioFileType(".ogg");
-    addAudioFileType(".pcm");
-    addAudioFileType(".ra");
-    addAudioFileType(".ram");
-    addAudioFileType(".rm");
-    addAudioFileType(".tta");
-    addAudioFileType(".thd");
-    addAudioFileType(".wav");
-    addAudioFileType(".wave");
-    addAudioFileType(".wma");
+    audioFileTypes.addAll(MediaFileHelper.DEFAULT_AUDIO_FILETYPES);
     Collections.sort(audioFileTypes);
+    firePropertyChange(AUDIO_FILE_TYPE, null, audioFileTypes);
 
     // default subtitle files
     subtitleFileTypes.clear();
-    addSubtitleFileType(".aqt");
-    addSubtitleFileType(".cvd");
-    addSubtitleFileType(".dks");
-    addSubtitleFileType(".jss");
-    addSubtitleFileType(".sub");
-    addSubtitleFileType(".sup");
-    addSubtitleFileType(".ttxt");
-    addSubtitleFileType(".mpl");
-    addSubtitleFileType(".pjs");
-    addSubtitleFileType(".psb");
-    addSubtitleFileType(".rt");
-    addSubtitleFileType(".srt");
-    addSubtitleFileType(".smi");
-    addSubtitleFileType(".ssf");
-    addSubtitleFileType(".ssa");
-    addSubtitleFileType(".svcd");
-    addSubtitleFileType(".usf");
-    // addSubtitleFileType(".idx"); // not a subtitle! just index for .sub
-    addSubtitleFileType(".ass");
-    addSubtitleFileType(".pgs");
-    addSubtitleFileType(".vobsub");
+    subtitleFileTypes.addAll(MediaFileHelper.DEFAULT_SUBTITLE_FILETYPES);
     Collections.sort(subtitleFileTypes);
+    firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
 
     // default title prefix
     titlePrefixes.clear();
@@ -543,12 +454,16 @@ public class Settings extends AbstractSettings {
    * @return list
    */
   public List<String> getAllSupportedFileTypes() {
-    List<String> list = new ArrayList<>();
-    list.addAll(getAudioFileType());
-    list.addAll(getVideoFileType());
-    list.addAll(getSubtitleFileType());
-    list.add(".nfo");
-    return list;
+    Set<String> set = new HashSet<>();
+    set.addAll(MediaFileHelper.DEFAULT_VIDEO_FILETYPES);
+    set.addAll(MediaFileHelper.DEFAULT_AUDIO_FILETYPES);
+    set.addAll(MediaFileHelper.DEFAULT_SUBTITLE_FILETYPES);
+    MediaFileHelper.SUPPORTED_ARTWORK_FILETYPES.forEach(type -> set.add("." + type));
+    set.addAll(getAudioFileType());
+    set.addAll(getVideoFileType());
+    set.addAll(getSubtitleFileType());
+    set.add(".nfo");
+    return new ArrayList<>(set);
   }
 
   public void saveSettings() {
@@ -1024,5 +939,26 @@ public class Settings extends AbstractSettings {
       System.setProperty("tmm.trustallcerts", Boolean.valueOf(ignoreSSLProblems).toString());
       TmmHttpClient.recreateHttpClient();
     }
+  }
+
+  /**
+   * get the max. amount to download threads
+   * 
+   * @return the amount of download threads
+   */
+  public int getMaximumDownloadThreads() {
+    return maximumDownloadThreads;
+  }
+
+  /**
+   * set the maximum amount of download threads
+   * 
+   * @param newValue
+   *          the maximum amount of download threads
+   */
+  public void setMaximumDownloadThreads(int newValue) {
+    int oldValue = this.maximumDownloadThreads;
+    this.maximumDownloadThreads = newValue;
+    firePropertyChange("maximumDownloadThreads", oldValue, newValue);
   }
 }

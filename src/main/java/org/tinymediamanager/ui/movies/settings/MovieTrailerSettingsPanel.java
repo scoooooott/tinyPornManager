@@ -97,6 +97,7 @@ class MovieTrailerSettingsPanel extends JPanel {
   private JCheckBox                      cbTrailerFilename2;
 
   private ItemListener                   checkBoxListener;
+  private JLabel                         lblAutomaticTrailerDownloadHint;
 
   MovieTrailerSettingsPanel() {
     checkBoxListener = e -> checkChanges();
@@ -276,9 +277,9 @@ class MovieTrailerSettingsPanel extends JPanel {
         panelOptions.add(cbTrailerQuality, "cell 2 2");
 
         chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
-        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 1 3 2 1");
+        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 2 3");
 
-        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+        lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
         panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
         TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
 
@@ -420,5 +421,15 @@ class MovieTrailerSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_3, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox,
+        jCheckBoxBeanProperty, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty_1);
+    autoBinding_5.bind();
+    //
+    BeanProperty<JLabel, Boolean> jLabelBeanProperty = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JLabel, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox, jCheckBoxBeanProperty,
+        lblAutomaticTrailerDownloadHint, jLabelBeanProperty);
+    autoBinding_6.bind();
   }
 }

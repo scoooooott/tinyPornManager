@@ -68,6 +68,9 @@ public class MediaFileHelper {
       "featurettes", "interviews", "scenes", "shorts");
 
   public static final List<String> SUPPORTED_ARTWORK_FILETYPES;
+  public static final List<String> DEFAULT_VIDEO_FILETYPES;
+  public static final List<String> DEFAULT_AUDIO_FILETYPES;
+  public static final List<String> DEFAULT_SUBTITLE_FILETYPES;
 
   public static final Pattern      MOVIESET_ARTWORK_PATTERN;
   public static final Pattern      POSTER_PATTERN;
@@ -118,6 +121,21 @@ public class MediaFileHelper {
 
   static {
     SUPPORTED_ARTWORK_FILETYPES = Collections.unmodifiableList(Arrays.asList("jpg", "jpeg,", "png", "tbn", "gif", "bmp"));
+
+    // .disc = video stubs
+    // .evo = hd-dvd
+    // .ifo = DVD; only needed for KodiRPC
+    DEFAULT_VIDEO_FILETYPES = Collections.unmodifiableList(Arrays.asList(".3gp", ".asf", ".asx", ".avc", ".avi", ".bdmv", ".bin", ".bivx", ".braw",
+        ".dat", ".divx", ".dv", ".dvr-ms", ".disc", ".evo", ".fli", ".flv", ".h264", ".ifo", ".img", ".iso", ".mts", ".mt2s", ".m2ts", ".m2v", ".m4v",
+        ".mkv", ".mk3d", ".mov", ".mp4", ".mpeg", ".mpg", ".nrg", ".nsv", ".nuv", ".ogm", ".pva", ".qt", ".rm", ".rmvb", ".strm", ".svq3", ".ts",
+        ".ty", ".viv", ".vob", ".vp3", ".wmv", ".webm", ".xvid"));
+
+    DEFAULT_AUDIO_FILETYPES = Collections.unmodifiableList(Arrays.asList(".a52", ".aa3", ".aac", ".ac3", ".adt", ".adts", ".aif", ".aiff", ".alac",
+        ".ape", ".at3", ".atrac", ".au", ".dts", ".flac", ".m4a", ".m4b", ".m4p", ".mid", ".midi", ".mka", ".mp3", ".mpa", ".mlp", ".oga", ".ogg",
+        ".pcm", ".ra", ".ram", ".rm", ".tta", ".thd", ".wav", ".wave", ".wma"));
+
+    DEFAULT_SUBTITLE_FILETYPES = Collections.unmodifiableList(Arrays.asList(".aqt", ".cvd", ".dks", ".jss", ".sub", ".sup", ".ttxt", ".mpl", ".pjs",
+        ".psb", ".rt", ".srt", ".smi", ".ssf", ".ssa", ".svcd", ".usf", ".ass", ".pgs", ".vobsub"));
 
     String extensions = String.join("|", SUPPORTED_ARTWORK_FILETYPES);
 

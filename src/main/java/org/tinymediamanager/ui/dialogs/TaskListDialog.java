@@ -16,14 +16,13 @@
 
 package org.tinymediamanager.ui.dialogs;
 
-import java.awt.GridLayout;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.awt.BorderLayout;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -46,14 +45,10 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
   private static TaskListDialog                       instance;
 
   // a map of all active tasks
-  private final Map<TmmTaskHandle, TaskListComponent> taskMap          = new HashMap<>();
-  // a list of all tasks to be displayed
-  private final HashSet<TaskListComponent>            listComponents   = new HashSet<>();
-
+  private final Map<TmmTaskHandle, TaskListComponent> taskMap          = new ConcurrentHashMap<>();
   private final TaskListComponent                     noActiveTask;
 
   private final JPanel                                panelContent;
-  private final JScrollPane                           scrollPane;
 
   private TaskListDialog() {
     super(BUNDLE.getString("tasklist.title"), "taskList"); //$NON-NLS-1$
@@ -67,13 +62,10 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
       noActiveTask.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
       panelContent.add(noActiveTask);
 
-      GridLayout grid = new GridLayout(0, 1);
-      grid.setHgap(0);
-      grid.setVgap(5);
-      panelContent.setLayout(grid);
+      panelContent.setLayout(new MigLayout("wrap 1"));
       panelContent.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
-      scrollPane = new JScrollPane();
+      JScrollPane scrollPane = new JScrollPane();
       scrollPane.setOpaque(false);
       scrollPane.getViewport().setOpaque(false);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -82,17 +74,19 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
 
       JPanel rootPanel = new JPanel();
       rootPanel.setBackground(UIManager.getColor("Menu.background"));
-      rootPanel.setLayout(new MigLayout("insets 0", "[]", "[100lp:300lp]"));
-      rootPanel.add(scrollPane, "cell 0 0, top");
+      rootPanel.setLayout(new MigLayout("insets 0", "[]", "[100lp:300lp,grow]"));
+      rootPanel.add(scrollPane, "cell 0 0, top, grow");
 
-      getContentPane().add(rootPanel);
+      getContentPane().add(rootPanel, BorderLayout.CENTER);
+
+      JButton btnAbortAll = new JButton(BUNDLE.getString("Button.abortqueue"));
+      btnAbortAll.addActionListener(e -> taskMap.forEach((task, component) -> {
+        task.cancel();
+        removeListItem(task);
+      }));
+      addButton(btnAbortAll);
     }
     TmmTaskManager.getInstance().addTaskListener(this);
-  }
-
-  @Override
-  protected void initBottomPanel() {
-    // no bottom panel needed
   }
 
   @Override
@@ -149,14 +143,14 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
     // remove the no active task component (if available)
     panelContent.remove(noActiveTask);
 
-    // add the new component
-    listComponents.add(comp);
     comp.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
     panelContent.add(comp);
+    bottomPanel.setVisible(true);
 
     if (isShowing()) {
-      scrollPane.invalidate();
+      revalidate();
       pack();
+      repaint();
     }
   }
 
@@ -167,25 +161,20 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
    *          the task to be removed
    */
   private void removeListItem(TmmTaskHandle task) {
-    taskMap.remove(task);
-
-    Iterator<TaskListComponent> it = listComponents.iterator();
-    while (it.hasNext()) {
-      TaskListComponent comp = it.next();
-      if (comp.getHandle() == task) {
-        panelContent.remove(comp);
-        it.remove();
-        break;
-      }
+    TaskListComponent comp = taskMap.remove(task);
+    if (comp != null) {
+      panelContent.remove(comp);
     }
 
-    if (listComponents.isEmpty()) {
+    if (taskMap.isEmpty()) {
       panelContent.add(noActiveTask);
+      bottomPanel.setVisible(false);
     }
 
     if (isShowing()) {
-      scrollPane.invalidate();
+      revalidate();
       pack();
+      repaint();
     }
   }
 }

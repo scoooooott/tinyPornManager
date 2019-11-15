@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -108,17 +109,19 @@ public class DownloadTask extends TmmTask {
 
   @Override
   protected void doInBackground() {
+    Path tempFile = null;
     try {
       // verify the url is not empty and starts with at least
       if (StringUtils.isBlank(url) || !url.toLowerCase(Locale.ROOT).startsWith("http")) {
         return;
       }
 
-      // if file extension is empty, detect from url, or content type
+      // try to get the file extension from the destination filename
       String ext = FilenameUtils.getExtension(file.getFileName().toString()).toLowerCase(Locale.ROOT);
       if (ext != null && ext.length() > 4 || !Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
         ext = ""; // no extension when longer than 4 chars!
       }
+      // if file extension is empty, detect from url
       if (ext == null || ext.isEmpty()) {
         ext = UrlUtil.getExtension(url).toLowerCase(Locale.ROOT);
         if (!ext.isEmpty()) {
@@ -138,7 +141,23 @@ public class DownloadTask extends TmmTask {
         u.setUserAgent(userAgent);
       }
 
-      Path tempFile = file.resolveSibling(file.getFileName() + ".part");
+      long timestamp = System.currentTimeMillis();
+
+      try {
+        // create a temp file/folder inside the temp folder or tmm folder
+        Path tempFolder = Paths.get(Utils.getTempFolder());
+        if (!Files.exists(tempFolder)) {
+          Files.createDirectory(tempFolder);
+        }
+        tempFile = tempFolder.resolve(file.getFileName() + "." + timestamp + ".part"); // multi episode same file
+      }
+      catch (Exception e) {
+        LOGGER.debug("could not write to temp folder: {}", e.getMessage());
+
+        // could not create the temp folder somehow - put the files into the entity dir
+        tempFile = file.resolveSibling(file.getFileName() + "." + timestamp + ".part"); // multi episode same file
+      }
+
       // try to resume if the temp file exists
       boolean resume = false;
       if (Files.exists(tempFile)) {
@@ -272,6 +291,12 @@ public class DownloadTask extends TmmTask {
     }
     catch (Exception e) {
       LOGGER.error("problem downloading: ", e);
+    }
+    finally {
+      // remove temp file
+      if (tempFile != null && Files.exists(tempFile)) {
+        Utils.deleteFileSafely(tempFile);
+      }
     }
   }
 
