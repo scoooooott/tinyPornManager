@@ -177,9 +177,28 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         getTransformer().transform(new DOMSource(document), new StreamResult(out));
         String xml = out.toString().replaceAll("(?<!\r)\n", "\r\n"); // windows conform line endings
 
-        // write to file
         Path f = tvShow.getPathNIO().resolve(nfoFilename);
-        Utils.writeStringToFile(f, xml);
+
+        // compare old vs new
+        boolean changed = true;
+        try {
+          String xmlOld = Utils.readFileToString(f).replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", ""); // replace xml comments
+          String xmlNew = xml.replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", "");
+          if (xmlOld.equals(xmlNew)) {
+            changed = false;
+          }
+        }
+        catch (Exception e) {
+          // ignore
+        }
+
+        // write to file
+        if (changed) {
+          Utils.writeStringToFile(f, xml);
+        }
+        else {
+          getLogger().debug("NFO did not change - do not write it!");
+        }
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);

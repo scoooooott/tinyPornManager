@@ -200,9 +200,30 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           first = false;
         }
 
-        // write to file
+        String xml = xmlString.toString();
         Path f = firstEpisode.getPathNIO().resolve(nfoFilename);
-        Utils.writeStringToFile(f, xmlString.toString());
+
+        // compare old vs new
+        boolean changed = true;
+        try {
+          String xmlOld = Utils.readFileToString(f).replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", ""); // replace xml comments
+          String xmlNew = xml.replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", "");
+          if (xmlOld.equals(xmlNew)) {
+            changed = false;
+          }
+        }
+        catch (Exception e) {
+          // ignore
+        }
+
+        // write to file
+        if (changed) {
+          Utils.writeStringToFile(f, xml);
+        }
+        else {
+          getLogger().debug("NFO did not change - do not write it!");
+        }
+
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
