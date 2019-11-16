@@ -18,6 +18,7 @@ x added 1440p to the video formats (and some common 1440p resolutions to the det
 x changed date added logic: now it is configurable which date should be used #600
 x respect TV show bad words in the TV show update data source logic #692
 x do not rewrite NFO file, if nothing has changed #698 
+x IMDb: parse release date from releaseinfo page too #697
 
 
 Version 3.0.5

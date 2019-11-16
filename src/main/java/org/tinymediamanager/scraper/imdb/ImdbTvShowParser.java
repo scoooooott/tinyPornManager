@@ -155,6 +155,11 @@ public class ImdbTvShowParser extends ImdbParser {
     worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
     futurePlotsummary = compSvcImdb.submit(worker);
 
+    // worker for imdb request (/releaseinfo)
+    Future<Document> futureReleaseinfo;
+    url = IMDB_SITE + "title/" + imdbId + "/releaseinfo";
+    worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
+
     Document doc;
     try {
       doc = futureReference.get();
@@ -162,6 +167,12 @@ public class ImdbTvShowParser extends ImdbParser {
 
       doc = futurePlotsummary.get();
       parsePlotsummaryPage(doc, options, md);
+
+      // did we get a release date?
+      if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
+        // get the date from the releaseinfo page
+        parseReleaseinfoPage(compSvcImdb.submit(worker).get(), options, md);
+      }
 
       // if everything worked so far, we can set the given id
       md.setId(providerInfo.getId(), imdbId);

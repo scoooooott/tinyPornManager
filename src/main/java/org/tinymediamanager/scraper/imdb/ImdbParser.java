@@ -870,6 +870,62 @@ public abstract class ImdbParser {
     }
   }
 
+  protected void parseReleaseinfoPage(Document doc, MediaSearchAndScrapeOptions options, MediaMetadata md) {
+    Date releaseDate = null;
+    Pattern pattern = Pattern.compile("/calendar/\\?region=(.{2})");
+
+    Element tableReleaseDates = doc.getElementById("release_dates");
+    if (tableReleaseDates != null) {
+      Elements rows = tableReleaseDates.getElementsByTag("tr");
+      // first round: check the release date for the first one with the requested country
+      for (Element row : rows) {
+        // get the anchor
+        Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
+        if (anchor != null) {
+          Matcher matcher = pattern.matcher(anchor.attr("href"));
+          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+            Element column = row.getElementsByClass("release_date").first();
+            if (column != null) {
+              releaseDate = parseDate(column.text());
+            }
+          }
+        }
+      }
+    }
+
+    // new way; iterating over class name items
+    if (releaseDate == null) {
+      Elements rows = doc.getElementsByClass("release-date-item");
+      for (Element row : rows) {
+        Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
+        if (anchor != null) {
+          Matcher matcher = pattern.matcher(anchor.attr("href"));
+          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+            Element column = row.getElementsByClass("release-date-item__date").first();
+            if (column != null) {
+              releaseDate = parseDate(column.text());
+            }
+          }
+          else {
+            getLogger().trace("country {} does not match ours {}", matcher.group(1), getCountry().getAlpha2());
+          }
+        }
+      }
+    }
+
+    // no matching local release date found; take the first one
+    if (releaseDate == null && tableReleaseDates != null) {
+      Element column = tableReleaseDates.getElementsByClass("release_date").first();
+      if (column != null) {
+        releaseDate = parseDate(column.text());
+      }
+    }
+
+    if (releaseDate != null) {
+      md.setReleaseDate(releaseDate);
+    }
+  }
+
   protected Person parseCastMember(Element row) {
 
     Element nameElement = row.getElementsByAttributeValueStarting("itemprop", "name").first();
