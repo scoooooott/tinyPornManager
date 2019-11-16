@@ -35,6 +35,8 @@
 		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManager.exe" />
 		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerUpd.exe" />
 		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmdUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}"
+				  outfile="${dist.dir}/win/tinyMediaManagerCMDUpd.exe"/>
 	</target>
 	<target name="launch4j32" depends="checkArchitecture" unless="is64Bit">
 		<chmod file="AppBundler/launch4j-x86/bin/windres" perm="ugo+rx" />
@@ -43,6 +45,8 @@
 		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManager.exe" />
 		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerUpd.exe" />
 		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/win/tinyMediaManagerCMD.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmdUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}"
+				  outfile="${dist.dir}/win/tinyMediaManagerCMDUpd.exe"/>
 	</target>
 
     <target name="package-app" description="builds the packages" depends="setNightly, setPreRelease">
@@ -118,6 +122,8 @@
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerCMD-OSX.sh"
 			   perm="ugo+rx"/>
+		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerCUpdaterMD-OSX.sh"
+			   perm="ugo+rx"/>
 		<copy todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/">
 			<fileset dir="${build.dir}">
 				<include name="**/*" />
@@ -150,6 +156,7 @@
 		<chmod file="${dist.dir}/linux/tinyMediaManager.sh" perm="ugo+rx" />
 		<chmod file="${dist.dir}/linux/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
 		<chmod file="${dist.dir}/linux/tinyMediaManagerCMD.sh" perm="ugo+rx" />
+		<chmod file="${dist.dir}/linux/tinyMediaManagerUpdaterCMD.sh" perm="ugo+rx"/>
 		<copy todir="${dist.dir}/linux">
 			<fileset dir="${build.dir}">
 				<include name="**/*" />
@@ -165,13 +172,17 @@
 		<copy file="${dist.dir}/win/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
 		<copy file="${dist.dir}/win/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
 		<copy file="${dist.dir}/win/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
+		<copy file="${dist.dir}/win/tinyMediaManagerCMDUpd.exe" tofile="${build.dir}/tinyMediaManagerCMDUpd.new"/>
 
 		<copy file="${dist.dir}/linux/tinyMediaManager.sh" todir="${build.dir}" />
 		<copy file="${dist.dir}/linux/tinyMediaManagerUpdater.sh" todir="${build.dir}" />
 		<copy file="${dist.dir}/linux/tinyMediaManagerCMD.sh" todir="${build.dir}" />
+		<copy file="${dist.dir}/linux/tinyMediaManagerUpdaterCMD.sh" todir="${build.dir}"/>
 
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" todir="${build.dir}" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerCMD-OSX.sh"
+			  todir="${build.dir}"/>
+		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerUpdaterCMD-OSX.sh"
 			  todir="${build.dir}"/>
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" tofile="${build.dir}/JavaApplicationStub.new" />
 		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" todir="${build.dir}" />
@@ -212,7 +223,7 @@
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac"
-						includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh, **/tinyMediaManagerCMD-OSX.sh"/>
+						includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh, **/tinyMediaManagerCMD-OSX.sh, **/tinyMediaManagerUpdaterCMD-OSX.sh"/>
 		</zip>
 
 		<echo message="=====================================================" />
