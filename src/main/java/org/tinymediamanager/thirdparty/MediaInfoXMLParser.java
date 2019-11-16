@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +21,7 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
@@ -72,10 +73,9 @@ public class MediaInfoXMLParser {
       // do the magic - create same weird map as MediaInfoLib will do, so we can parse with our impl...
       miFile.createSnapshot();
 
-      // dummy MF to get the type (now the filename should be always set)
-      MediaFile mf = new MediaFile(Paths.get(miFile.filename));
-      if (mf.isVideo() || mf.getExtension().equalsIgnoreCase("mpls")) {
-        miFile.filename = mf.getFilename(); // so we have it w/o path
+      String ext = FilenameUtils.getExtension(miFile.filename).toLowerCase(Locale.ROOT);
+      if (Settings.getInstance().getAllSupportedFileTypes().contains("." + ext) || "mpls".equalsIgnoreCase(ext)) {
+        miFile.filename = Paths.get(miFile.filename).getFileName().toString(); // so we have it w/o path
         files.add(miFile);
       }
     }
