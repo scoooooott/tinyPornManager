@@ -2290,4 +2290,26 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(EDITION, oldValue, newValue);
     firePropertyChange(EDITION_AS_STRING, oldValue, newValue);
   }
+
+  @Override
+  public void removeFromMediaFiles(MediaFile mediaFile) {
+    super.removeFromMediaFiles(mediaFile);
+
+    boolean dirty = false;
+
+    // also remove from our trailer list
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      for (int i = trailer.size() - 1; i >= 0; i--) {
+        MediaTrailer mediaTrailer = trailer.get(i);
+        if (mediaTrailer.getUrl().equals(mediaFile.getFileAsPath().toUri().toString())) {
+          trailer.remove(mediaTrailer);
+          dirty = true;
+        }
+      }
+    }
+
+    if (dirty) {
+      firePropertyChange(TRAILER, null, trailer);
+    }
+  }
 }
