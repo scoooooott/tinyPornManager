@@ -1026,22 +1026,20 @@ public class ImageChooserDialog extends TmmDialog {
               continue;
             }
 
-            try {
-              Callable<DownloadChunk> callable = () -> {
-                Url url = new Url(art.getPreviewUrl());
-                BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
+            Callable<DownloadChunk> callable = () -> {
+              Url url = new Url(art.getPreviewUrl());
+              DownloadChunk chunk = new DownloadChunk();
+              chunk.artwork = art;
+              try {
+                chunk.image = ImageUtils.createImage(url.getBytesWithRetry(5));
+              }
+              catch (Exception e) {
+                // ignore, return empty chunk
+              }
+              return chunk;
+            };
 
-                DownloadChunk chunk = new DownloadChunk();
-                chunk.artwork = art;
-                chunk.image = bufferedImage;
-                return chunk;
-              };
-              service.submit(callable);
-            }
-            catch (Exception e) {
-              LOGGER.error("DownloadTask displaying: {}", e.getMessage());
-            }
-
+            service.submit(callable);
           }
         }
 
@@ -1069,8 +1067,11 @@ public class ImageChooserDialog extends TmmDialog {
       while (!pool.isTerminated()) {
         try {
           final Future<DownloadChunk> future = service.take();
-          publish(future.get());
-          imagesFound = true;
+          DownloadChunk dc = future.get();
+          if (dc.image != null) {
+            publish(dc);
+            imagesFound = true;
+          }
         }
         catch (InterruptedException e) { // NOSONAR
           return null;
