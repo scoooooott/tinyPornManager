@@ -52,7 +52,7 @@ public class TmmIcons extends BaseIcons {
   public static Color           COLOR       = Color.GRAY;
   public static Color           COLOR_HOVER = Color.WHITE;
 
-  public final static ImageIcon EMPTY_IMAGE = new ImageIcon(TmmIcons.class.getResource("empty.png"));
+  public static final ImageIcon EMPTY_IMAGE = new ImageIcon(TmmIcons.class.getResource("empty.png"));
 
   public static Icon getCloseIcon() {
     if (closeIcon == null) {

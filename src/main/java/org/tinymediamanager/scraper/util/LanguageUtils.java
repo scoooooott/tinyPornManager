@@ -35,10 +35,10 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class LanguageUtils {
   // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
-  public final static LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP;
-  public final static LinkedHashMap<String, Locale> KEY_TO_COUNTRY_LOCALE_MAP;
+  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP;
+  public static final LinkedHashMap<String, Locale> KEY_TO_COUNTRY_LOCALE_MAP;
 
-  private final static Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
+  private static final Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
 
   static {
     ISO_639_2B_EXCEPTIONS = createIso6392BExceptions();

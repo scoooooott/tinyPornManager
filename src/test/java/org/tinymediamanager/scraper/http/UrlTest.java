@@ -33,7 +33,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 public class UrlTest {
-  private final static MockWebServer mockWebServer = new MockWebServer();
+  private static final MockWebServer mockWebServer = new MockWebServer();
 
   @BeforeClass
   public static void setUp() throws Exception {

@@ -38,8 +38,8 @@ import org.tinymediamanager.Globals;
  * @author Manuel Laggner
  */
 public class TmmProperties {
-  private final static Logger  LOGGER          = LoggerFactory.getLogger(TmmProperties.class);
-  private final static String  PROPERTIES_FILE = "tmm.prop";
+  private static final Logger  LOGGER          = LoggerFactory.getLogger(TmmProperties.class);
+  private static final String  PROPERTIES_FILE = "tmm.prop";
   private static TmmProperties instance;
 
   private Properties           properties;

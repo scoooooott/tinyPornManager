@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * The class TmmAction is an abstract action-wrapper to provide base logging
  */
 public abstract class TmmAction extends AbstractAction {
-  private final static Logger LOGGER = LoggerFactory.getLogger(TmmAction.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmmAction.class);
 
   @Override
   public void actionPerformed(ActionEvent e) {

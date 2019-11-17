@@ -16,31 +16,6 @@
 
 package org.tinymediamanager.ui.dialogs;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.components.table.TmmTable;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,6 +27,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.components.table.TmmTable;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
+
 /**
  * show a dialog with all unwanted files
  *
@@ -59,7 +61,7 @@ import java.util.Set;
  */
 public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
+  private static final Logger                                 LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
 
   private EventList<CleanUpUnwantedFilesDialog.FileContainer> results;
   private TmmTable table;

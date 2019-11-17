@@ -29,7 +29,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class TvShowActorImageFetcherTask extends MediaEntityActorImageFetcherTask {
-  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowActorImageFetcherTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowActorImageFetcherTask.class);
 
   public TvShowActorImageFetcherTask(TvShow tvShow) {
     this.mediaEntity = tvShow;

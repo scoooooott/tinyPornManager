@@ -85,7 +85,7 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieUIModule extends AbstractTmmUIModule {
-  private final static String       ID       = "movies";
+  private static final String       ID       = "movies";
 
   private static MovieUIModule      instance = null;
 

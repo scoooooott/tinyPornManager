@@ -50,7 +50,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TvShowEpisodeDetailsPanel extends JPanel {
   private static final long                 serialVersionUID = -5598009673335010850L;
-  private final static Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
+  private static final Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 

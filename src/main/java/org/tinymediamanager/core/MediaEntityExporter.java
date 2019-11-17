@@ -36,7 +36,7 @@ import com.floreysoft.jmte.Engine;
 import com.floreysoft.jmte.encoder.XMLEncoder;
 
 public abstract class MediaEntityExporter {
-  private final static Logger   LOGGER             = LoggerFactory.getLogger(MediaEntityExporter.class);
+  private static final Logger   LOGGER             = LoggerFactory.getLogger(MediaEntityExporter.class);
   protected static final String TEMPLATE_DIRECTORY = "templates";
 
   protected Engine              engine;

@@ -55,7 +55,7 @@ import com.floreysoft.jmte.RenderFormatInfo;
  * @author Manuel Laggner
  */
 public class TvShowExporter extends MediaEntityExporter {
-  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowExporter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowExporter.class);
 
   public TvShowExporter(Path pathToTemplate) throws Exception {
     super(pathToTemplate, TemplateType.TV_SHOW);

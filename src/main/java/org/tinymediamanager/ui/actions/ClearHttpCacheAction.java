@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.UTF8Control;
 public class ClearHttpCacheAction extends TmmAction {
   private static final long           serialVersionUID = -4615019451671427233L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ClearHttpCacheAction.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ClearHttpCacheAction.class);
 
   public ClearHttpCacheAction() {
     putValue(NAME, BUNDLE.getString("tmm.clearhttpcache")); //$NON-NLS-1$

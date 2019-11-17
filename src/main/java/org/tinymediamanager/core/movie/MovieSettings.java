@@ -64,36 +64,36 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class MovieSettings extends AbstractSettings {
   private static final Logger              LOGGER                              = LoggerFactory.getLogger(MovieSettings.class);
 
-  public final static String               DEFAULT_RENAMER_FOLDER_PATTERN      = "${title} ${- ,edition,} (${year})";
-  public final static String               DEFAULT_RENAMER_FILE_PATTERN        = "${title} ${- ,edition,} (${year}) ${videoFormat} ${audioCodec}";
+  public static final String               DEFAULT_RENAMER_FOLDER_PATTERN      = "${title} ${- ,edition,} (${year})";
+  public static final String               DEFAULT_RENAMER_FILE_PATTERN        = "${title} ${- ,edition,} (${year}) ${videoFormat} ${audioCodec}";
 
-  private final static String              CONFIG_FILE                         = "movies.json";
+  private static final String              CONFIG_FILE                         = "movies.json";
 
   private static MovieSettings             instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String              MOVIE_DATA_SOURCE                   = "movieDataSource";
-  private final static String              NFO_FILENAME                        = "nfoFilename";
-  private final static String              POSTER_FILENAME                     = "posterFilename";
-  private final static String              FANART_FILENAME                     = "fanartFilename";
-  private final static String              BANNER_FILENAME                     = "bannerFilename";
-  private final static String              CLEARART_FILENAME                   = "clearartFilename";
-  private final static String              THUMB_FILENAME                      = "thumbFilename";
-  private final static String              LOGO_FILENAME                       = "logoFilename";
-  private final static String              CLEARLOGO_FILENAME                  = "clearlogoFilename";
-  private final static String              DISCART_FILENAME                    = "discartFilename";
-  private final static String              KEYART_FILENAME                     = "keyartFilename";
-  private final static String              TRAILER_FILENAME                    = "trailerFilename";
-  private final static String              ARTWORK_SCRAPERS                    = "artworkScrapers";
-  private final static String              TRAILER_SCRAPERS                    = "trailerScrapers";
-  private final static String              SUBTITLE_SCRAPERS                   = "subtitleScrapers";
-  private final static String              BAD_WORD                            = "badWord";
-  private final static String              UI_FILTERS                          = "uiFilters";
-  private final static String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
-  private final static String              SKIP_FOLDER                         = "skipFolder";
-  private final static String              CHECK_IMAGES_MOVIE                  = "checkImagesMovie";
+  private static final String              MOVIE_DATA_SOURCE                   = "movieDataSource";
+  private static final String              NFO_FILENAME                        = "nfoFilename";
+  private static final String              POSTER_FILENAME                     = "posterFilename";
+  private static final String              FANART_FILENAME                     = "fanartFilename";
+  private static final String              BANNER_FILENAME                     = "bannerFilename";
+  private static final String              CLEARART_FILENAME                   = "clearartFilename";
+  private static final String              THUMB_FILENAME                      = "thumbFilename";
+  private static final String              LOGO_FILENAME                       = "logoFilename";
+  private static final String              CLEARLOGO_FILENAME                  = "clearlogoFilename";
+  private static final String              DISCART_FILENAME                    = "discartFilename";
+  private static final String              KEYART_FILENAME                     = "keyartFilename";
+  private static final String              TRAILER_FILENAME                    = "trailerFilename";
+  private static final String              ARTWORK_SCRAPERS                    = "artworkScrapers";
+  private static final String              TRAILER_SCRAPERS                    = "trailerScrapers";
+  private static final String              SUBTITLE_SCRAPERS                   = "subtitleScrapers";
+  private static final String              BAD_WORD                            = "badWord";
+  private static final String              UI_FILTERS                          = "uiFilters";
+  private static final String              MOVIE_SET_UI_FILTERS                = "movieSetUiFilters";
+  private static final String              SKIP_FOLDER                         = "skipFolder";
+  private static final String              CHECK_IMAGES_MOVIE                  = "checkImagesMovie";
 
   private final List<String>               movieDataSources                    = ObservableCollections.observableList(new ArrayList<>());
   private final List<MovieNfoNaming>       nfoFilenames                        = new ArrayList<>();

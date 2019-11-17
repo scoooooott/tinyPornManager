@@ -17,8 +17,8 @@ import com.sun.jna.Platform;
  * Useful routines for launching Java applications from within other Java applications.
  */
 public class LaunchUtil {
-  private final static Logger LOGGER       = LoggerFactory.getLogger(LaunchUtil.class);
-  private final static String USR_BIN_JAVA = "/usr/bin/java";
+  private static final Logger LOGGER       = LoggerFactory.getLogger(LaunchUtil.class);
+  private static final String USR_BIN_JAVA = "/usr/bin/java";
 
   /**
    * Reconstructs the path to the JVM used to launch this process.

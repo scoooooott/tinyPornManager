@@ -27,7 +27,7 @@ import org.tinymediamanager.ui.settings.TmmSettingsNode;
  * @author Manuel Laggner
  */
 public class MovieSettingsNode extends TmmSettingsNode {
-  private final static ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieSettingsNode() {
     super(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$

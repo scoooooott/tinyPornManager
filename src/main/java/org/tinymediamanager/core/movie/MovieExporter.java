@@ -54,7 +54,7 @@ import com.floreysoft.jmte.RenderFormatInfo;
  * @author Myron Boyle / Manuel Laggner
  */
 public class MovieExporter extends MediaEntityExporter {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExporter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieExporter.class);
 
   public MovieExporter(Path pathToTemplate) throws Exception {
     super(pathToTemplate, TemplateType.MOVIE);

@@ -63,7 +63,7 @@ import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
  * @author Manuel Laggner
  */
 public class MovieScrapeTask extends TmmThreadPool {
-  private final static Logger              LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
+  private static final Logger              LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
   private static final ResourceBundle      BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<Movie>                      moviesToScrape;

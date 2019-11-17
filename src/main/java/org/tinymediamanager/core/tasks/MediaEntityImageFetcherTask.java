@@ -39,7 +39,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  * @author Manuel Laggner
  */
 public class MediaEntityImageFetcherTask implements Runnable {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
 
   private MediaEntity         entity;
   private String              url;

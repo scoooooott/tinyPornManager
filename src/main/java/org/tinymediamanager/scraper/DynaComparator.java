@@ -282,7 +282,7 @@ public class DynaComparator implements Comparator, Serializable {
    * @throws InvocationTargetException
    * @throws IllegalAccessException
    */
-  private final static Object invoke(Method method, Object obj) throws InvocationTargetException, IllegalAccessException {
+  private static final Object invoke(Method method, Object obj) throws InvocationTargetException, IllegalAccessException {
     return method.invoke(obj, null);
   }
 

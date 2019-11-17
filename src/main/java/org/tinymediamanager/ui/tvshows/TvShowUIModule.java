@@ -85,7 +85,7 @@ import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsNode;
 import net.miginfocom.swing.MigLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
-  private final static String       ID       = "tvShows";
+  private static final String       ID       = "tvShows";
 
   private static TvShowUIModule     instance = null;
 

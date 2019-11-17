@@ -84,7 +84,7 @@ import com.floreysoft.jmte.token.Token;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-  private final static Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
   private static final List<String>       KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
   private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
 

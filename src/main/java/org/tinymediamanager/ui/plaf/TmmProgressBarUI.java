@@ -15,12 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BaseProgressBarUI;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.JComponent;
-import javax.swing.JProgressBar;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -31,12 +25,19 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.JComponent;
+import javax.swing.JProgressBar;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.BaseProgressBarUI;
+import com.jtattoo.plaf.JTattooUtilities;
+
 /**
  * @author Manuel Laggner
  */
 public class TmmProgressBarUI extends BaseProgressBarUI {
 
-  private final static int PROGRESS_BAR_WIDTH = 6;
+  private static final int PROGRESS_BAR_WIDTH = 6;
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmProgressBarUI();

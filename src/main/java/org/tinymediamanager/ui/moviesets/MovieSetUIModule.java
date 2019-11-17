@@ -51,7 +51,7 @@ import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 public class MovieSetUIModule extends AbstractTmmUIModule {
-  private final static String          ID       = "movieSets";
+  private static final String          ID       = "movieSets";
 
   private static MovieSetUIModule      instance = null;
 

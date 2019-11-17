@@ -43,7 +43,7 @@ import org.tinymediamanager.ui.UTF8Control;
 public class ClearDatabaseAction extends TmmAction {
   private static final long           serialVersionUID = 5840749350843921771L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ClearDatabaseAction.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ClearDatabaseAction.class);
 
   public ClearDatabaseAction() {
     putValue(NAME, BUNDLE.getString("tmm.cleardatabase")); //$NON-NLS-1$

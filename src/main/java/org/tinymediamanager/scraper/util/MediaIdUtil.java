@@ -34,7 +34,7 @@ import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
  * @author Manuel Laggner
  */
 public class MediaIdUtil {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaIdUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaIdUtil.class);
 
   private MediaIdUtil() {
     // empty constructor for utility classes

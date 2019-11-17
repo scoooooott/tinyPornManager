@@ -43,7 +43,7 @@ public class ParserUtils {
   private static final Logger  LOGGER     = LoggerFactory.getLogger(ParserUtils.class);
   private static final String  DELIMITER  = "[\\[\\](){} _,.-]";
 
-  public final static String[] STOPWORDS  = { "1080", "1080i", "1080p", "2160p", "2160i", "3d", "480i", "480p", "576i", "576p", "720", "720i", "720p",
+  public static final String[] STOPWORDS  = { "1080", "1080i", "1080p", "2160p", "2160i", "3d", "480i", "480p", "576i", "576p", "720", "720i", "720p",
       "ac3", "ac3ld", "ac3md", "aoe", "atmos", "bd5", "bdrip", "bdrip", "blueray", "bluray", "brrip", "cam", "cd1", "cd2", "cd3", "cd4", "cd5", "cd6",
       "cd7", "cd8", "cd9", "complete", "custom", "dc", "disc1", "disc2", "disc3", "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "divx",
       "divx5", "dl", "docu", "dsr", "dsrip", "dts", "dtv", "dubbed", "dutch", "dvd", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8",
@@ -54,7 +54,7 @@ public class ParserUtils {
       "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
 
   // clean before splitting (needs delimiter in front!)
-  public final static String[] CLEANWORDS = { "24\\.000", "23\\.976", "23\\.98", "24\\.00" };
+  public static final String[] CLEANWORDS = { "24\\.000", "23\\.976", "23\\.98", "24\\.00" };
 
   private ParserUtils() {
     // private constructor for utility classes

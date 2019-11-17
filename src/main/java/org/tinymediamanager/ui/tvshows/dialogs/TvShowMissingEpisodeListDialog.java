@@ -44,7 +44,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class TvShowMissingEpisodeListDialog extends TmmDialog {
 
-  private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowMissingEpisodeListDialog.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowMissingEpisodeListDialog.class);
 
   private JButton                     btnClose;
   private JProgressBar                pbListEpisodes;

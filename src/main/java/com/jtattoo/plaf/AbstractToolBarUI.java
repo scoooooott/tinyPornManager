@@ -48,9 +48,9 @@ import javax.swing.plaf.basic.BasicToolBarUI;
 
 public abstract class AbstractToolBarUI extends BasicToolBarUI {
 
-  private final static String      IS_ROLLOVER            = "JToolBar.isRollover";
-  private final static Insets      BUTTON_MARGIN          = new Insets(1, 1, 1, 1);
-  private final static Border      INNER_BORDER           = BorderFactory.createEmptyBorder(2, 2, 2, 2);
+  private static final String      IS_ROLLOVER            = "JToolBar.isRollover";
+  private static final Insets      BUTTON_MARGIN          = new Insets(1, 1, 1, 1);
+  private static final Border      INNER_BORDER           = BorderFactory.createEmptyBorder(2, 2, 2, 2);
   private boolean                  rolloverEnabled        = true;
   private MyPropertyChangeListener propertyChangeListener = null;
   private MyContainerListener      containerListener      = null;

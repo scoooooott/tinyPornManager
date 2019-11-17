@@ -41,7 +41,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  */
 public abstract class MediaEntityActorImageFetcherTask implements Runnable {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityActorImageFetcherTask.class);
+  private static final Logger LOGGER  = LoggerFactory.getLogger(MediaEntityActorImageFetcherTask.class);
 
   protected MediaEntity       mediaEntity;
   protected Set<Person>       persons;

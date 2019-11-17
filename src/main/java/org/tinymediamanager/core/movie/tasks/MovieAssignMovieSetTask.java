@@ -50,7 +50,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieAssignMovieSetTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieAssignMovieSetTask.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieAssignMovieSetTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<Movie>                 moviesToScrape;

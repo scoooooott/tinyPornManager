@@ -33,10 +33,10 @@ import org.tinymediamanager.core.AbstractModelObject;
  * @param <E>
  */
 public abstract class TmmTreeDataProvider<E extends TmmTreeNode> extends AbstractModelObject {
-  public final static String               NODE_INSERTED          = "nodeInserted";
-  public final static String               NODE_CHANGED           = "nodeChanged";
-  public final static String               NODE_REMOVED           = "nodeRemoved";
-  public final static String               NODE_STRUCTURE_CHANGED = "nodeStructureChanged";
+  public static final String               NODE_INSERTED          = "nodeInserted";
+  public static final String               NODE_CHANGED           = "nodeChanged";
+  public static final String               NODE_REMOVED           = "nodeRemoved";
+  public static final String               NODE_STRUCTURE_CHANGED = "nodeStructureChanged";
 
   protected Set<ITmmTreeFilter<E>>         treeFilters;
   protected Comparator<E>                  treeComparator         = null;
