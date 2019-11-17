@@ -16,7 +16,18 @@
 
 package org.tinymediamanager.core.tvshow;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * a collection of various helpers for the TV show module
@@ -24,6 +35,12 @@ import org.tinymediamanager.core.MediaCertification;
  * @author Manuel Laggner
  */
 public class TvShowHelpers {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShow.class);
+
+  private TvShowHelpers() {
+    // hide constructor for utility classes
+  }
+
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
@@ -98,5 +115,61 @@ public class TvShowHelpers {
       cert = MediaCertification.findCertification(name);
     }
     return cert;
+  }
+
+  /**
+   * try to detect the TV show folder by comparing the paths of the media files
+   * 
+   * @param tvShow
+   *          the TV show to analyze
+   * @param season
+   *          the season for what we would like to have the season folder
+   * @return the path to the season folder relative to the TV show folder or the default season folder name from the renamer settings
+   */
+  public static String detectSeasonFolder(TvShow tvShow, int season) {
+    List<String> subPaths = new ArrayList<>();
+
+    Path tvShowPath = tvShow.getPathNIO();
+    List<TvShowEpisode> episodes = tvShow.getEpisodesForSeason(season);
+
+    try {
+      // compare all episodes for the given season
+      for (TvShowEpisode episode : episodes) {
+        Path videoFilePath = episode.getMainVideoFile().getFileAsPath().getParent();
+
+        // split up the relative path into its path junks
+        Path relativePath = tvShowPath.relativize(videoFilePath);
+        int subfolders = relativePath.getNameCount();
+
+        for (int i = 1; i <= subfolders; i++) {
+          subPaths.add(relativePath.subpath(0, i).toString());
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("could not extract season folder: {}", e.getMessage());
+    }
+
+    if (subPaths.isEmpty()) {
+      return "";
+    }
+
+    // group them
+    Map<String, Long> subPathCounts = subPaths.stream().collect(Collectors.groupingBy(s -> s, Collectors.counting()));
+
+    // take the highest count
+    Map.Entry<String, Long> entry = subPathCounts.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get();
+
+    // if there are at least 80% of all episodes having this subfolder, take it
+    if (entry.getValue() >= 0.8 * episodes.size()) {
+      return entry.getKey();
+    }
+
+    // just fake an episode here, since the real foldername can only be generated out of the episode
+    // create a dummy episode to inject the season number
+    TvShowEpisode episode = new TvShowEpisode();
+    episode.setSeason(season);
+
+    return TvShowRenamer.getSeasonFoldername(tvShow, episode);
   }
 }

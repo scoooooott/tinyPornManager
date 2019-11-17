@@ -58,6 +58,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -547,6 +548,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     return episodes;
+  }
+
+  /**
+   * get all episodes for the given season
+   * 
+   * @param season
+   *          the season to get all episodes for
+   * @return a {@link List} of all episodes
+   */
+  public List<TvShowEpisode> getEpisodesForSeason(int season) {
+    return episodes.stream().filter(episode -> episode.getSeason() == season).collect(Collectors.toList());
   }
 
   /**
