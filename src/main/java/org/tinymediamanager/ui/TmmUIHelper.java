@@ -58,6 +58,11 @@ public class TmmUIHelper {
     try {
       PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
 
+      // check if the initialPath is accessible
+      if (!Files.exists(Paths.get(initialPath))) {
+        initialPath = System.getProperty("user.home");
+      }
+
       try {
         int result = NativeFileDialog.NFD_PickFolder(initialPath, outPath);
         if (result == NativeFileDialog.NFD_OKAY) {
@@ -130,6 +135,11 @@ public class TmmUIHelper {
     try {
       PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
 
+      // check if the initialPath is accessible
+      if (!Files.exists(Paths.get(initialPath))) {
+        initialPath = System.getProperty("user.home");
+      }
+
       try {
         String filterList = null;
         if (filter != null) {
@@ -163,6 +173,11 @@ public class TmmUIHelper {
     // try to open with NFD
     try {
       PointerBuffer outPath = MemoryUtil.memAllocPointer(1);
+
+      // check if the initialPath is accessible
+      if (!Files.exists(Paths.get(initialPath))) {
+        initialPath = System.getProperty("user.home");
+      }
 
       try {
         String filterList = null;
