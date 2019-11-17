@@ -1013,7 +1013,7 @@ public class ImageChooserDialog extends TmmDialog {
 
           // get the artwork
           List<MediaArtwork> artwork = artworkProvider.getArtwork(options);
-          if (artwork == null) {
+          if (artwork == null || artwork.isEmpty()) {
             continue;
           }
 
@@ -1021,6 +1021,9 @@ public class ImageChooserDialog extends TmmDialog {
           for (MediaArtwork art : artwork) {
             if (isCancelled()) {
               return null;
+            }
+            if (art.getPreviewUrl().isEmpty()) {
+              continue;
             }
 
             try {
