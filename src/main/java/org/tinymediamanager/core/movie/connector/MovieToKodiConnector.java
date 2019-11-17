@@ -121,10 +121,15 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
   @Override
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(prepareTrailerForKodi(mediaTrailer));
-        break;
+
+    // only add a trailer if there is no physical trailer due to a bug in kodi
+    // https://forum.kodi.tv/showthread.php?tid=348759&pid=2900477#pid2900477
+    if (movie.getMediaFiles(MediaFileType.TRAILER).isEmpty()) {
+      for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+        if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+          trailer.setTextContent(prepareTrailerForKodi(mediaTrailer));
+          break;
+        }
       }
     }
     root.appendChild(trailer);
