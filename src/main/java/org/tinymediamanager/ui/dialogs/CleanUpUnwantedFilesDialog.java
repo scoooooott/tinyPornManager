@@ -64,17 +64,17 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
   private static final Logger                                 LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
 
   private EventList<CleanUpUnwantedFilesDialog.FileContainer> results;
-  private TmmTable table;
-  private JButton btnClean;
-  private JProgressBar progressBar;
-  private JLabel lblProgressAction;
+  private TmmTable                                            table;
+  private JButton                                             btnClean;
+  private JProgressBar                                        progressBar;
+  private JLabel                                              lblProgressAction;
 
   public CleanUpUnwantedFilesDialog(List<MediaEntity> selectedEntities) {
     super(BUNDLE.getString("cleanupfiles"), "cleanupEntities");
 
     results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<>()));
-    DefaultEventTableModel<CleanUpUnwantedFilesDialog.FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results),
-            new CleanUpTableFormat());
+    DefaultEventTableModel<CleanUpUnwantedFilesDialog.FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(
+        GlazedListsSwing.swingThreadProxyList(results), new CleanUpTableFormat());
 
     {
       table = new TmmTable(cleanUpTableModel);
@@ -153,8 +153,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
   private static class FileContainer {
     MediaEntity entity;
-    Path file;
-    long filesize;
+    Path        file;
+    long        filesize;
 
     String getFilesizeInKilobytes() {
       DecimalFormat df = new DecimalFormat("#0.00");
@@ -172,7 +172,7 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
   private class TvShowCleanUpWorker extends SwingWorker<Void, Void> {
 
-    private List<MediaEntity> selectedEntities;
+    private List<MediaEntity>                            selectedEntities;
     public Set<CleanUpUnwantedFilesDialog.FileContainer> files;
 
     private TvShowCleanUpWorker(List<MediaEntity> entities) {
@@ -203,7 +203,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
           try {
             BasicFileAttributes attrs = Files.readAttributes(fileContainer.file, BasicFileAttributes.class);
             fileContainer.filesize = attrs.size();
-          } catch (Exception ignored) {
+          }
+          catch (Exception ignored) {
           }
 
           results.add(fileContainer);
@@ -237,7 +238,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
         fileList.add(selectedFile);
         LOGGER.info("Deleting File " + selectedFile.file.toString());
         Utils.deleteFileWithBackup(selectedFile.file, selectedFile.entity.getDataSource());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         e.printStackTrace();
       }
     }

@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,14 +36,6 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 /**
  * This represents the "smart" url of the Kodi metadata.
  *
@@ -43,10 +44,10 @@ import java.util.zip.ZipInputStream;
 class KodiUrl {
   private static final Logger LOGGER = LoggerFactory.getLogger(KodiUrl.class);
 
-  private String urlString;
-  private Url url;
-  private String functionName;
-  private KodiScraper scraper;
+  private String              urlString;
+  private Url                 url;
+  private String              functionName;
+  private KodiScraper         scraper;
 
   public KodiUrl(Element url) {
     updateFromElement(url);
@@ -73,10 +74,12 @@ class KodiUrl {
         Document d = parser.parse(new ByteArrayInputStream(url.getBytes()));
         Element e = (Element) d.getElementsByTagName("url").item(0);
         updateFromElement(e);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw new RuntimeException("Invalid xml url: " + url, e);
       }
-    } else {
+    }
+    else {
       this.urlString = url.trim();
     }
     LOGGER.trace("KodiUrl using Url from String: " + urlString);
@@ -119,11 +122,12 @@ class KodiUrl {
       // we have a function to process
       // TODO: Set spoof and post attributes...
       KodiUrl xurl = new KodiUrl(urlString);
-      String results = processor.executeFunction(getFunctionName(), new String[]{"", xurl.getTextContent()});
+      String results = processor.executeFunction(getFunctionName(), new String[] { "", xurl.getTextContent() });
       if (results == null)
         results = "";
       return new ByteArrayInputStream(results.getBytes());
-    } else {
+    }
+    else {
       // TODO: Check for posting, caching, etc
       Url u = getUrl();
 
@@ -131,8 +135,8 @@ class KodiUrl {
         LOGGER.debug("Converting ZipFile to Text content for url: {}", urlString);
         // turn the zip contents into a text file
         try (InputStream is = u.getInputStream();
-             ZipInputStream zis = new ZipInputStream(is);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ZipInputStream zis = new ZipInputStream(is);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
           ZipEntry ze = null;
           int MAX_LEN = 2048;
           byte buf[] = new byte[MAX_LEN];
@@ -148,7 +152,8 @@ class KodiUrl {
           LOGGER.debug("Returing Text Context as inputstream...");
           return new ByteArrayInputStream(baos.toByteArray());
         }
-      } else {
+      }
+      else {
         return u.getInputStream();
       }
     }

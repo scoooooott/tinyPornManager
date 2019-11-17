@@ -16,11 +16,11 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BaseSplitPaneUI;
-
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
+
+import com.jtattoo.plaf.BaseSplitPaneUI;
 
 /**
  * The class TmmSplitPaneUI

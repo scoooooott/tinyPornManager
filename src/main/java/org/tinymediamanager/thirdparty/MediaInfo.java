@@ -645,7 +645,8 @@ public class MediaInfo implements Closeable {
     try (MediaInfo mi = new MediaInfo()) {
       if (mi.open(file)) {
         return mi.snapshot();
-      } else {
+      }
+      else {
         throw new IOException("Failed to open file: " + file);
       }
     }

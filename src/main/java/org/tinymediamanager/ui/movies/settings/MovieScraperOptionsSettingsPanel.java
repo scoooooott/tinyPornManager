@@ -109,7 +109,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
         panelOptions.add(chckbxScraperFallback, "cell 1 2 2 1");
 
         chckbxCapitalizeWords = new JCheckBox((BUNDLE.getString("Settings.scraper.capitalizeWords")));
-        panelOptions.add(chckbxCapitalizeWords,"cell 1 3 2 1");
+        panelOptions.add(chckbxCapitalizeWords, "cell 1 3 2 1");
       }
     }
     {
@@ -185,7 +185,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
     BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("capitalWordsInTitles");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_3 = BeanProperty.create("selected");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-            settingsBeanProperty_2, chckbxCapitalizeWords, jCheckBoxBeanProperty_3);
+        settingsBeanProperty_2, chckbxCapitalizeWords, jCheckBoxBeanProperty_3);
     autoBinding_2.bind();
   }
 }

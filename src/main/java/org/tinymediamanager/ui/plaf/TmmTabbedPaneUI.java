@@ -38,10 +38,10 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
-  protected static int BORDER_RADIUS = 15;
+  protected static int BORDER_RADIUS         = 15;
   protected static int DEFAULT_BOTTOM_INSETS = 10 + BORDER_RADIUS;
 
-  private boolean roundEdge = true;
+  private boolean      roundEdge             = true;
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmTabbedPaneUI();
@@ -90,7 +90,8 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     if (Boolean.FALSE.equals(this.tabPane.getClientProperty("bottomBorder"))) {
       if (roundEdge) {
         contentBorderInsets.bottom = 10;
-      } else {
+      }
+      else {
         contentBorderInsets.bottom = 0;
       }
     }
@@ -131,15 +132,16 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
 
     if (isSelected) {
       g.setColor(AbstractLookAndFeel.getTheme().getTabSelectionBackgroundColor());
-    } else {
+    }
+    else {
       g.setColor(tabAreaBackground);
     }
 
     g.fillRect(x, y, w, h);
 
     if (isSelected) {
-      int[] xPoints = {x + (w / 2 + 10), x + (w / 2 - 10), x + (w / 2)};
-      int[] yPoints = {y + h, y + h, y + h + 10};
+      int[] xPoints = { x + (w / 2 + 10), x + (w / 2 - 10), x + (w / 2) };
+      int[] yPoints = { y + h, y + h, y + h + 10 };
       g.fillPolygon(xPoints, yPoints, xPoints.length);
     }
     g2D.setRenderingHints(savedRenderingHints);
@@ -159,14 +161,15 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
 
     if (roundEdge) {
       g2D.fillRoundRect(xt, yt, wt, ht, BORDER_RADIUS, BORDER_RADIUS);
-    } else {
+    }
+    else {
       g2D.fillRect(xt, yt, wt, ht);
     }
   }
 
   @Override
   protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect,
-                                     boolean isSelected) {
+      boolean isSelected) {
   }
 
   @Override
@@ -175,7 +178,7 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
 
   @Override
   protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect,
-                           boolean isSelected) {
+      boolean isSelected) {
     Graphics2D g2D = (Graphics2D) g;
     Object savedRenderingHint = null;
     if (AbstractLookAndFeel.getTheme().isTextAntiAliasingOn()) {
@@ -190,11 +193,13 @@ public class TmmTabbedPaneUI extends BaseTabbedPaneUI {
     if (tabPane.isEnabled() && tabPane.isEnabledAt(tabIndex)) {
       if (isSelected) {
         g.setColor(AbstractLookAndFeel.getTheme().getTabSelectionForegroundColor());
-      } else {
+      }
+      else {
         g.setColor(AbstractLookAndFeel.getTheme().getTabForegroundColor());
       }
       JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
-    } else { // tab disabled
+    }
+    else { // tab disabled
       g.setColor(tabPane.getBackgroundAt(tabIndex).brighter());
       JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
       g.setColor(tabPane.getBackgroundAt(tabIndex).darker());

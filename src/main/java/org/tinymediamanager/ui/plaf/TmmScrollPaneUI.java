@@ -15,8 +15,9 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseScrollPaneUI;
+import java.awt.Component;
+import java.awt.ComponentOrientation;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -35,9 +36,9 @@ import javax.swing.plaf.UIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Insets;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseScrollPaneUI;
 
 public class TmmScrollPaneUI extends BaseScrollPaneUI {
 
@@ -107,7 +108,7 @@ public class TmmScrollPaneUI extends BaseScrollPaneUI {
 
   private static class HeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 7963585655106103416L;
-    private static Border defaultBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, AbstractLookAndFeel.getGridColor());
+    private static Border     defaultBorder    = BorderFactory.createMatteBorder(0, 0, 1, 0, AbstractLookAndFeel.getGridColor());
 
     public HeaderRenderer() {
       setHorizontalAlignment(SwingConstants.CENTER);
@@ -136,7 +137,8 @@ public class TmmScrollPaneUI extends BaseScrollPaneUI {
         setForeground(h.getForeground());
         setBackground(h.getBackground());
         setFont(h.getFont());
-      } else {
+      }
+      else {
         /* Use sensible values instead of random leftover values from the last call */
         setEnabled(true);
         setComponentOrientation(ComponentOrientation.UNKNOWN);
@@ -154,7 +156,7 @@ public class TmmScrollPaneUI extends BaseScrollPaneUI {
 
   private static class BorderTableCellRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = -6545791732880295743L;
-    private Border border;
+    private Border            border;
 
     /**
      * create the CellRenderer with the default inset (2 px left)
@@ -177,7 +179,8 @@ public class TmmScrollPaneUI extends BaseScrollPaneUI {
       if (isSelected) {
         setBackground(table.getSelectionBackground());
         setForeground(table.getSelectionForeground());
-      } else {
+      }
+      else {
         setBackground(table.getBackground());
 
       }
@@ -189,7 +192,8 @@ public class TmmScrollPaneUI extends BaseScrollPaneUI {
 
       if (value != null) {
         setValue(value.toString());
-      } else {
+      }
+      else {
         setValue("");
       }
 

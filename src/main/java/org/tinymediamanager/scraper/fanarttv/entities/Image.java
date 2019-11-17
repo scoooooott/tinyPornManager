@@ -19,11 +19,11 @@ package org.tinymediamanager.scraper.fanarttv.entities;
  * The entity Image. Holds all data for one image
  */
 public class Image {
-  public String id = "";
-  public String url = "";
-  public String lang = "";
-  public int likes = 0;
-  public String season = ""; // string because there are entries for _all_ seasons
-  public int disc = 0;
+  public String id        = "";
+  public String url       = "";
+  public String lang      = "";
+  public int    likes     = 0;
+  public String season    = ""; // string because there are entries for _all_ seasons
+  public int    disc      = 0;
   public String disc_type = "";
 }

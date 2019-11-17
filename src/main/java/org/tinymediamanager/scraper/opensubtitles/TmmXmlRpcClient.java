@@ -15,6 +15,19 @@
  */
 package org.tinymediamanager.scraper.opensubtitles;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import de.timroes.axmlrpc.Call;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
@@ -26,17 +39,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is the tinyMediaManager implementation of the XMLRPCClient to use our http client
@@ -48,9 +50,9 @@ public class TmmXmlRpcClient {
 
   private Map<String, Object> callCache = new HashMap<>();
 
-  private URL url;
-  private String userAgent;
-  private ResponseParser responseParser;
+  private URL                 url;
+  private String              userAgent;
+  private ResponseParser      responseParser;
 
   public TmmXmlRpcClient(URL url, String userAgent) {
     this.url = url;
@@ -69,10 +71,13 @@ public class TmmXmlRpcClient {
    * This method will block until the server returned a result (or an error occurred). Read the README file delivered with the source code of this
    * library for more information.
    *
-   * @param method A method name to call.
-   * @param params An array of parameters for the method.
+   * @param method
+   *          A method name to call.
+   * @param params
+   *          An array of parameters for the method.
    * @return The result of the server.
-   * @throws TmmXmlRpcException Will be thrown if an error occurred during the call.
+   * @throws TmmXmlRpcException
+   *           Will be thrown if an error occurred during the call.
    */
   public Object call(String method, Object... params) throws TmmXmlRpcException {
     return new Caller().call(method, params);
@@ -82,10 +87,10 @@ public class TmmXmlRpcClient {
    * The Caller class is used to make asynchronous calls to the server. For synchronous calls the Thread function of this class isn't used.
    */
   private class Caller {
-    private static final String HTTP_POST = "POST";
+    private static final String HTTP_POST  = "POST";
     private static final String USER_AGENT = "User-Agent";
 
-    private final MediaType XML = MediaType.parse("text/xml");
+    private final MediaType     XML        = MediaType.parse("text/xml");
 
     /**
      * Create a new Caller for synchronous use. If the caller has been created with this constructor you cannot use the start method to start it as a
@@ -100,10 +105,13 @@ public class TmmXmlRpcClient {
      * This method will block until the server returned a result (or an error occurred). Read the README file delivered with the source code of this
      * library for more information.
      *
-     * @param methodName A method name to call.
-     * @param params     An array of parameters for the method.
+     * @param methodName
+     *          A method name to call.
+     * @param params
+     *          An array of parameters for the method.
      * @return The result of the server.
-     * @throws TmmXmlRpcException Will be thrown if an error occurred during the call.
+     * @throws TmmXmlRpcException
+     *           Will be thrown if an error occurred during the call.
      */
     public Object call(String methodName, Object[] params) throws TmmXmlRpcException {
       try {
@@ -133,7 +141,8 @@ public class TmmXmlRpcClient {
         callCache.put(callXml, cachedResponse);
 
         return cachedResponse;
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         throw new TmmXmlRpcException(ex, url.toString());
       }
     }
@@ -141,20 +150,23 @@ public class TmmXmlRpcClient {
 
   private class ResponseParser {
 
-    private static final String FAULT_CODE = "faultCode";
-    private static final String FAULT_STRING = "faultString";
+    private static final String FAULT_CODE      = "faultCode";
+    private static final String FAULT_STRING    = "faultString";
     private static final String METHOD_RESPONSE = "methodResponse";
-    private static final String PARAMS = "params";
-    private static final String PARAM = "param";
-    private static final String FAULT = "fault";
+    private static final String PARAMS          = "params";
+    private static final String PARAM           = "param";
+    private static final String FAULT           = "fault";
 
     /**
      * The given InputStream must contain the xml response from an xmlrpc server. This method extract the content of it as an object.
      *
-     * @param response The InputStream of the server response.
+     * @param response
+     *          The InputStream of the server response.
      * @return The returned object.
-     * @throws XMLRPCException       Will be thrown whenever something fails.
-     * @throws XMLRPCServerException Will be thrown, if the server returns an error.
+     * @throws XMLRPCException
+     *           Will be thrown whenever something fails.
+     * @throws XMLRPCServerException
+     *           Will be thrown, if the server returns an error.
      */
     public Object parse(InputStream response) throws XMLRPCException {
 
@@ -180,7 +192,8 @@ public class TmmXmlRpcClient {
           }
 
           return getReturnValueFromElement(e);
-        } else if (e.getNodeName().equals(FAULT)) {
+        }
+        else if (e.getNodeName().equals(FAULT)) {
           @SuppressWarnings("unchecked")
           Map<String, Object> o = (Map<String, Object>) getReturnValueFromElement(e);
 
@@ -188,10 +201,12 @@ public class TmmXmlRpcClient {
         }
 
         throw new XMLRPCException("The methodResponse tag must contain a fault or params tag.");
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         if (ex instanceof XMLRPCServerException) {
           throw (XMLRPCServerException) ex;
-        } else {
+        }
+        else {
           throw new XMLRPCException(ex.getMessage());
         }
       }
@@ -200,9 +215,11 @@ public class TmmXmlRpcClient {
     /**
      * This method takes an element (must be a param or fault element) and returns the deserialized object of this param tag.
      *
-     * @param element An param element.
+     * @param element
+     *          An param element.
      * @return The deserialized object within the given param element.
-     * @throws XMLRPCException Will be thrown when the structure of the document doesn't match the XML-RPC specification.
+     * @throws XMLRPCException
+     *           Will be thrown when the structure of the document doesn't match the XML-RPC specification.
      */
     private Object getReturnValueFromElement(Element element) throws XMLRPCException {
       element = XMLUtil.getOnlyChildElement(element.getChildNodes());

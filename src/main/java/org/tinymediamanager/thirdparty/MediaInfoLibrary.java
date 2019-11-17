@@ -38,9 +38,9 @@ interface MediaInfoLibrary extends Library {
 
   MediaInfoLibrary INSTANCE = Native.load("mediainfo", MediaInfoLibrary.class,
       singletonMap(OPTION_FUNCTION_MAPPER, (FunctionMapper) (lib, method) -> {
-                                  // MediaInfo_New(), MediaInfo_Open() ...
-                                  return "MediaInfo_" + method.getName();
-                                }));
+        // MediaInfo_New(), MediaInfo_Open() ...
+        return "MediaInfo_" + method.getName();
+      }));
 
   /**
    * Create a new handle.

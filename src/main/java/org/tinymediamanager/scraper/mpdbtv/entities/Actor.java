@@ -23,22 +23,22 @@ public class Actor {
   public Integer id;
 
   @SerializedName("name")
-  public String name;
+  public String  name;
 
   @SerializedName("departement_id")
 
   public Integer departementId;
   @SerializedName("departement")
 
-  public String departement;
+  public String  departement;
   @SerializedName("role")
 
-  public String role;
+  public String  role;
   @SerializedName("language_id")
 
-  public String languageId;
+  public String  languageId;
   @SerializedName("thumb")
 
-  public String thumb;
+  public String  thumb;
 
 }

@@ -57,7 +57,7 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TmmBorders extends BaseBorders {
-  protected static Border titledBorder = null;
+  protected static Border titledBorder   = null;
   protected static Border treeNodeBorder = null;
 
   public static void initDefaults() {
@@ -165,10 +165,10 @@ public class TmmBorders extends BaseBorders {
   // Implementation of border classes
   // ------------------------------------------------------------------------------------
   public static class TextFieldBorder extends AbstractBorder implements UIResource {
-    private static final long serialVersionUID = -1476629322366320255L;
-    private static final Insets insets = new Insets(4, 6, 5, 7);
+    private static final long   serialVersionUID = -1476629322366320255L;
+    private static final Insets insets           = new Insets(4, 6, 5, 7);
 
-    private static int focusWidth = 2;
+    private static int          focusWidth       = 2;
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -177,7 +177,7 @@ public class TmmBorders extends BaseBorders {
       if (parent != null && !(parent.getParent() instanceof JScrollPane)) {
         RoundRectangle2D round = new RoundRectangle2D.Float(x + focusWidth, y + focusWidth, width - 2 * focusWidth, height - 2 * focusWidth, r, r);
         RoundRectangle2D shadow = new RoundRectangle2D.Float(x + focusWidth + 1, y + focusWidth + 1, width - 2 * focusWidth, height - 2 * focusWidth,
-                r, r);
+            r, r);
         GraphicsConfiguration gc = ((Graphics2D) g).getDeviceConfiguration();
         BufferedImage img = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
         Graphics2D g2 = img.createGraphics();
@@ -192,7 +192,8 @@ public class TmmBorders extends BaseBorders {
         }
         if (parent.isOpaque()) {
           g2.setColor(parent.getBackground());
-        } else if (parent.getParent() != null) {
+        }
+        else if (parent.getParent() != null) {
           // dirty but was not able to solve it via transparency
           g2.setColor(parent.getParent().getBackground());
         }
@@ -250,11 +251,11 @@ public class TmmBorders extends BaseBorders {
   } // class TextFieldBorder
 
   public static class ScrollPaneBorder extends AbstractBorder implements UIResource {
-    private static final long serialVersionUID = -7118022577788519656L;
-    private static final Color fieldBorderColor = new Color(127, 157, 185);
-    private static final Insets insets = new Insets(0, 0, 0, 0);
-    private static final Insets tableInsets = new Insets(0, 0, 0, 0);
-    private boolean tableBorder = false;
+    private static final long   serialVersionUID = -7118022577788519656L;
+    private static final Color  fieldBorderColor = new Color(127, 157, 185);
+    private static final Insets insets           = new Insets(0, 0, 0, 0);
+    private static final Insets tableInsets      = new Insets(0, 0, 0, 0);
+    private boolean             tableBorder      = false;
 
     public ScrollPaneBorder(boolean tableBorder) {
       this.tableBorder = tableBorder;
@@ -267,7 +268,8 @@ public class TmmBorders extends BaseBorders {
         g.drawRect(x, y, w - 1, h - 1);
         g.setColor(ColorHelper.brighter(AbstractLookAndFeel.getTheme().getBackgroundColor(), 50));
         g.drawRect(x + 1, y + 1, w - 3, h - 3);
-      } else {
+      }
+      else {
         Container parent = c.getParent();
         if (parent != null) {
           int r = 16;
@@ -294,7 +296,8 @@ public class TmmBorders extends BaseBorders {
     public Insets getBorderInsets(Component c) {
       if (tableBorder) {
         return new Insets(tableInsets.top, tableInsets.left, tableInsets.bottom, tableInsets.right);
-      } else {
+      }
+      else {
         return new Insets(insets.top, insets.left, insets.bottom, insets.right);
       }
     }
@@ -330,8 +333,8 @@ public class TmmBorders extends BaseBorders {
   } // class InternalFrameBorder
 
   public static class TableHeaderBorder extends AbstractBorder implements UIResource {
-    private static final long serialVersionUID = -2182436739429673033L;
-    private static final Insets insets = new Insets(0, 1, 1, 1);
+    private static final long   serialVersionUID = -2182436739429673033L;
+    private static final Insets insets           = new Insets(0, 1, 1, 1);
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
@@ -360,7 +363,7 @@ public class TmmBorders extends BaseBorders {
 
   public static class PopupMenuBorder extends AbstractBorder implements UIResource {
     private static final long serialVersionUID = -2851747427345778378L;
-    protected static Insets insets;
+    protected static Insets   insets;
 
     public PopupMenuBorder() {
       insets = new Insets(1, 1, 1, 1);
@@ -397,7 +400,8 @@ public class TmmBorders extends BaseBorders {
         g.drawLine(x, y + h - 1, x + w, y + h - 1);
         // right
         g.drawLine(x + w - 1, y + 1, x + w - 1, y + h - 1);
-      } else {
+      }
+      else {
         g.drawRect(x, y, w - 1, h - 1);
       }
 
@@ -485,7 +489,8 @@ public class TmmBorders extends BaseBorders {
           g.setColor(Color.black);
           g.fillRect(x + 1, y + 1, w - 2, h - 2);
           g2D.setComposite(composite);
-        } else if (model.isRollover()) {
+        }
+        else if (model.isRollover()) {
           Color frameColor = AbstractLookAndFeel.getToolbarBackgroundColor();
           Color frameHiColor = ColorHelper.darker(frameColor, 5);
           Color frameLoColor = ColorHelper.darker(frameColor, 30);
@@ -501,7 +506,8 @@ public class TmmBorders extends BaseBorders {
           g.setColor(Color.white);
           g.fillRect(x + 2, y + 2, w - 4, h - 4);
           g2D.setComposite(composite);
-        } else if (model.isSelected()) {
+        }
+        else if (model.isSelected()) {
           Color frameColor = AbstractLookAndFeel.getToolbarBackgroundColor();
           Color frameHiColor = Color.white;
           Color frameLoColor = ColorHelper.darker(frameColor, 30);
@@ -529,8 +535,8 @@ public class TmmBorders extends BaseBorders {
 
   public static class BottomBorderBorder extends AbstractBorder implements UIResource {
     private static final long serialVersionUID = -1431631265848685069L;
-    private final Color color1 = AbstractLookAndFeel.getTheme().getGridColors()[0];
-    private final Color color2 = AbstractLookAndFeel.getTheme().getGridColors()[1];
+    private final Color       color1           = AbstractLookAndFeel.getTheme().getGridColors()[0];
+    private final Color       color2           = AbstractLookAndFeel.getTheme().getGridColors()[1];
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

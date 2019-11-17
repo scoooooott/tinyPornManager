@@ -67,9 +67,9 @@ public class TvShowSubtitleSearchAndDownloadTask extends TmmThreadPool {
     initThreadPool(3, "searchAndDownloadSubtitles");
     start();
 
-      for (TvShowEpisode episode : episodes) {
-          submitTask(new Worker(episode));
-      }
+    for (TvShowEpisode episode : episodes) {
+      submitTask(new Worker(episode));
+    }
 
     waitForCompletionOrCancel();
 

@@ -16,11 +16,12 @@
 
 package org.tinymediamanager.ui.plaf;
 
+import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
-import java.awt.event.ActionEvent;
 
 /**
  * the class {@link UndoAction} is used for undoing any edit in a text field
@@ -28,10 +29,10 @@ import java.awt.event.ActionEvent;
  * @author Manuel Laggner
  */
 class UndoAction extends AbstractAction {
-  static final String UNDO = "undo";
+  static final String          UNDO = "undo";
 
   private final JTextComponent component;
-  private final UndoManager undoManager;
+  private final UndoManager    undoManager;
 
   UndoAction(JTextComponent component, UndoManager undoManager) {
     super();
@@ -46,7 +47,8 @@ class UndoAction extends AbstractAction {
     if (component.isEditable()) {
       try {
         undoManager.undo();
-      } catch (Exception ingored) {
+      }
+      catch (Exception ingored) {
         // no need to do anything here
       }
     }

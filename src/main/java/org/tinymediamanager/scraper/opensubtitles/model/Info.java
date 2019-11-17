@@ -15,18 +15,18 @@
  */
 package org.tinymediamanager.scraper.opensubtitles.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.util.ArrayList;
 import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * @author Myron Boyle
  */
 public class Info {
-  private double seconds;
-  private String status;
+  private double               seconds;
+  private String               status;
   private ArrayList<MovieInfo> movieInfo = new ArrayList<>();
 
   public Info(Map<String, Object> response) throws Exception {
@@ -59,16 +59,16 @@ public class Info {
   }
 
   public static class MovieInfo {
-    public String id = "";
-    public String movieKind = "";
-    public String movieTitle = "";
+    public String id               = "";
+    public String movieKind        = "";
+    public String movieTitle       = "";
     public String movieReleaseName = "";
-    public String subFormat = "";
-    public String subDownloadLink = "";
-    public Float subRating = 0f;
-    public String zipDownloadLink = "";
-    public String season = "";
-    public String episode = "";
+    public String subFormat        = "";
+    public String subDownloadLink  = "";
+    public Float  subRating        = 0f;
+    public String zipDownloadLink  = "";
+    public String season           = "";
+    public String episode          = "";
 
     @SuppressWarnings("unchecked")
     public MovieInfo(Object data) throws Exception {

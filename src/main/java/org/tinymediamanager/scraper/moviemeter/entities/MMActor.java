@@ -16,6 +16,6 @@
 package org.tinymediamanager.scraper.moviemeter.entities;
 
 public class MMActor {
-  public String name = "";
+  public String  name  = "";
   public boolean voice = false;
 }

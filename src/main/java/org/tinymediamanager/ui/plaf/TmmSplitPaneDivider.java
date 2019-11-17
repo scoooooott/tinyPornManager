@@ -16,17 +16,18 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseSplitPaneDivider;
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.Icon;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseSplitPaneDivider;
 
 /**
  * The class TmmSplitPaneDivider
@@ -71,13 +72,15 @@ public class TmmSplitPaneDivider extends BaseSplitPaneDivider {
               horBumps.paintIcon(this, g, x, y);
               y = centerY + 40;
               horBumps.paintIcon(this, g, x, y);
-            } else {
+            }
+            else {
               int x = (width - horBumps.getIconWidth()) / 2 + dx;
               int y = (height - horBumps.getIconHeight()) / 2;
               horBumps.paintIcon(this, g, x, y);
             }
           }
-        } else {
+        }
+        else {
           // JTattooUtilities.fillHorGradient(g, colors, 0, 0, width, height);
           Icon verBumps = laf.getIconFactory().getSplitterVerBumpIcon();
           if ((verBumps != null) && (height > verBumps.getIconHeight())) {
@@ -90,7 +93,8 @@ public class TmmSplitPaneDivider extends BaseSplitPaneDivider {
               verBumps.paintIcon(this, g, x, y);
               x = centerX + 40;
               verBumps.paintIcon(this, g, x, y);
-            } else {
+            }
+            else {
               int x = (width - verBumps.getIconWidth()) / 2;
               int y = (height - verBumps.getIconHeight()) / 2 + dy;
               verBumps.paintIcon(this, g, x, y);

@@ -23,9 +23,9 @@ public class Genre {
   public Integer id;
 
   @SerializedName("mediatype")
-  public String mediatype;
+  public String  mediatype;
 
   @SerializedName("name")
-  public String name;
+  public String  name;
 
 }

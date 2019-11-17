@@ -15,49 +15,49 @@
  */
 package org.tinymediamanager.scraper.mpdbtv.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 public class Banners {
 
   @SerializedName("id")
-  public Integer id;
+  public Integer         id;
 
   @SerializedName("user_id")
-  public Integer userId;
+  public Integer         userId;
 
   @SerializedName("filename")
-  public String filename;
+  public String          filename;
 
   @SerializedName("width")
-  public Integer width;
+  public Integer         width;
 
   @SerializedName("height")
-  public Integer height;
+  public Integer         height;
 
   @SerializedName("image_type")
-  public Integer imageType;
+  public Integer         imageType;
 
   @SerializedName("languages")
   public List<Languages> languages = null;
 
   @SerializedName("rating")
-  public double rating;
+  public double          rating;
 
   @SerializedName("votes")
-  public Integer votes;
+  public Integer         votes;
 
   @SerializedName("type")
-  public String type;
+  public String          type;
 
   @SerializedName("original")
-  public String original;
+  public String          original;
 
   @SerializedName("preview")
-  public String preview;
+  public String          preview;
 
   @SerializedName("thumbnail")
-  public String thumbnail;
+  public String          thumbnail;
 
 }

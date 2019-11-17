@@ -19,7 +19,7 @@ package org.tinymediamanager.scraper.opensubtitles;
 import de.timroes.axmlrpc.XMLRPCException;
 
 public class TmmXmlRpcException extends XMLRPCException {
-  final int statusCode;
+  final int    statusCode;
   final String url;
 
   public TmmXmlRpcException(int statusCode, String url) {

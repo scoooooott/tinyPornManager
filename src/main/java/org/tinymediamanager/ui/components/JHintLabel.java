@@ -35,8 +35,8 @@ public class JHintLabel extends JLabel {
 
   private Icon              hintIcon         = null;
   private MouseAdapter      tooltipAdatapter = new MouseAdapter() {
-                                               final int   defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-                                               final int   dismissDelayMinutes   = (int) TimeUnit.MINUTES.toMillis(10);              // 10 minutes
+                                               final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+                                               final int dismissDelayMinutes   = (int) TimeUnit.MINUTES.toMillis(10);              // 10 minutes
 
                                                @Override
                                                public void mouseEntered(MouseEvent me) {

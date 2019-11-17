@@ -138,7 +138,7 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
 
   class MediaScraperComboBoxRenderer extends JLabel implements ListCellRenderer<MediaScraper> {
     protected final ListCellRenderer defaultRenderer;
-    private static final long               serialVersionUID = -4726883292397768525L;
+    private static final long        serialVersionUID = -4726883292397768525L;
 
     public MediaScraperComboBoxRenderer() {
       setOpaque(true);

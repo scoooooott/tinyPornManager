@@ -15,11 +15,11 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractTheme;
-
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
+
+import com.jtattoo.plaf.AbstractTheme;
 
 /**
  * The class TmmTheme is the base class for our theme
@@ -27,19 +27,20 @@ import java.io.InputStream;
  * @author Manuel Laggner
  */
 abstract public class TmmTheme extends AbstractTheme {
-  public static final String FONT = "Dialog";
+  public static final String FONT         = "Dialog";
 
-  public static final Font FONT_AWESOME = loadFontAwesome();
+  public static final Font   FONT_AWESOME = loadFontAwesome();
 
   static {
     try (InputStream fsRegular = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
-         InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
+        InputStream fsMono = TmmTheme.class.getResource("DejaVuSansMono.ttf").openStream()) {
       Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fsRegular);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuRegular);
 
       Font dejavuMono = Font.createFont(Font.TRUETYPE_FONT, fsMono);
       GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuMono);
-    } catch (Exception ignored) {
+    }
+    catch (Exception ignored) {
       // nothing to be done here
     }
   }
@@ -48,7 +49,8 @@ abstract public class TmmTheme extends AbstractTheme {
     // force font awesome to be loaded from the laf and not the system
     try (InputStream fsAwesome = TmmTheme.class.getResource("fontawesome-pro-regular-400.ttf").openStream()) {
       return Font.createFont(Font.TRUETYPE_FONT, fsAwesome);
-    } catch (Exception ignored) {
+    }
+    catch (Exception ignored) {
       // nothing to be done here
     }
     return null;

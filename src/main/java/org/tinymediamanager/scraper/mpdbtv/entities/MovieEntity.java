@@ -15,114 +15,112 @@
  */
 package org.tinymediamanager.scraper.mpdbtv.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 public class MovieEntity {
 
-
   @SerializedName("id")
-  public Integer id;
+  public Integer           id;
 
   @SerializedName("original_title")
-  public String originalTitle;
+  public String            originalTitle;
 
   @SerializedName("runtime")
-  public Integer runtime;
+  public Integer           runtime;
 
   @SerializedName("budget")
-  public Integer budget;
+  public Integer           budget;
 
   @SerializedName("saga_id")
-  public Integer sagaId;
+  public Integer           sagaId;
 
   @SerializedName("saga_order")
-  public Integer sagaOrder;
+  public Integer           sagaOrder;
 
   @SerializedName("views")
-  public Integer views;
+  public Integer           views;
 
   @SerializedName("created_at")
-  public String createdAt;
+  public String            createdAt;
 
   @SerializedName("updated")
-  public String updated;
+  public String            updated;
 
   @SerializedName("rating")
-  public Double rating;
+  public Double            rating;
 
   @SerializedName("rating_votes")
-  public Integer ratingVotes;
+  public Integer           ratingVotes;
 
   @SerializedName("created_by")
-  public Integer createdBy;
+  public Integer           createdBy;
 
   @SerializedName("status")
-  public String status;
+  public String            status;
 
   @SerializedName("pendingMod")
-  public Integer pendingMod;
+  public Integer           pendingMod;
 
   @SerializedName("id_allocine")
-  public String idAllocine;
+  public String            idAllocine;
 
   @SerializedName("id_imdb")
-  public String idImdb;
+  public String            idImdb;
 
   @SerializedName("id_tmdb")
-  public String idTmdb;
+  public String            idTmdb;
 
   @SerializedName("title")
-  public String title;
+  public String            title;
 
   @SerializedName("tagline")
-  public String tagline;
+  public String            tagline;
 
   @SerializedName("plot")
-  public String plot;
+  public String            plot;
 
   @SerializedName("translations")
   public List<Translation> translations = null;
 
   @SerializedName("firstRelease")
-  public Integer firstRelease;
+  public Integer           firstRelease;
 
   @SerializedName("releases")
-  public List<Release> releases = null;
-
+  public List<Release>     releases     = null;
 
   @SerializedName("genres")
-  public List<Genre> genres = null;
+  public List<Genre>       genres       = null;
 
   @SerializedName("studios")
-  public List<Studio> studios = null;
+  public List<Studio>      studios      = null;
 
   @SerializedName("directors")
-  public List<Director> directors = null;
+  public List<Director>    directors    = null;
 
   @SerializedName("producers")
-  public List<Producer> producers = null;
+  public List<Producer>    producers    = null;
 
   @SerializedName("actors")
-  public List<Actor> actors = null;
+  public List<Actor>       actors       = null;
 
   @SerializedName("posters")
-  public List<Poster> posters = null;
+  public List<Poster>      posters      = null;
 
   @SerializedName("fanarts")
-  public List<Fanart> fanarts = null;
+  public List<Fanart>      fanarts      = null;
 
   @SerializedName("discarts")
-  public List<DiscArt> discarts = null;
+  public List<DiscArt>     discarts     = null;
 
   @SerializedName("hdlogos")
-  public List<HDLogo> hdlogos = null;
+  public List<HDLogo>      hdlogos      = null;
 
   @SerializedName("hdcleararts")
-  public List<HDClearArt> hdcleararts = null;
+  public List<HDClearArt>  hdcleararts  = null;
 
   @SerializedName("trailers")
-  public List<Trailer> trailers = null;
+  public List<Trailer>     trailers     = null;
 
 }

@@ -123,84 +123,84 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowEditorDialog extends TmmDialog {
-  private static final long                 serialVersionUID    = 3270218410302989845L;
-  private static final Insets               BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
-  private static final String               ORIGINAL_IMAGE_SIZE = "originalImageSize";
+  private static final long                       serialVersionUID    = 3270218410302989845L;
+  private static final Insets                     BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final String                     ORIGINAL_IMAGE_SIZE = "originalImageSize";
 
-  private TvShow                            tvShowToEdit;
-  private TvShowList                        tvShowList          = TvShowList.getInstance();
-  private EventList<Person>                 actors;
-  private List<MediaGenres>                 genres              = ObservableCollections.observableList(new ArrayList<>());
-  private EventList<MediaId>                ids;
+  private TvShow                                  tvShowToEdit;
+  private TvShowList                              tvShowList          = TvShowList.getInstance();
+  private EventList<Person>                       actors;
+  private List<MediaGenres>                       genres              = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<MediaId>                      ids;
   private EventList<MediaRatingTable.MediaRating> mediaRatings;
-  private List<String>                      tags                = ObservableCollections.observableList(new ArrayList<>());
-  private EventList<EpisodeEditorContainer> episodes;
-  private List<String>                      extrafanarts        = null;
+  private List<String>                            tags                = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<EpisodeEditorContainer>       episodes;
+  private List<String>                            extrafanarts        = null;
   private MediaRating                             userMediaRating;
-  private boolean                           continueQueue       = true;
-  private boolean                           navigateBack        = false;
-  private int                               queueIndex;
-  private int                               queueSize;
+  private boolean                                 continueQueue       = true;
+  private boolean                                 navigateBack        = false;
+  private int                                     queueIndex;
+  private int                                     queueSize;
 
   /**
    * UI elements
    */
-  private JTextField                        tfTitle;
-  private YearSpinner                       spYear;
-  private JTextArea                         taPlot;
-  private TmmTable                          tableActors;
-  private ImageLabel                        lblPoster;
-  private ImageLabel                        lblFanart;
-  private ImageLabel                        lblBanner;
-  private JSpinner                          spRuntime;
-  private JTextField                        tfStudio;
-  private JList<MediaGenres>                listGenres;
-  private AutocompleteComboBox<MediaGenres> cbGenres;
-  private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
-  private JSpinner                          spRating;
+  private JTextField                              tfTitle;
+  private YearSpinner                             spYear;
+  private JTextArea                               taPlot;
+  private TmmTable                                tableActors;
+  private ImageLabel                              lblPoster;
+  private ImageLabel                              lblFanart;
+  private ImageLabel                              lblBanner;
+  private JSpinner                                spRuntime;
+  private JTextField                              tfStudio;
+  private JList<MediaGenres>                      listGenres;
+  private AutocompleteComboBox<MediaGenres>       cbGenres;
+  private AutoCompleteSupport<MediaGenres>        cbGenresAutoCompleteSupport;
+  private JSpinner                                spRating;
   private JComboBox<MediaCertification>           cbCertification;
-  private JComboBox<MediaAiredStatus>       cbStatus;
+  private JComboBox<MediaAiredStatus>             cbStatus;
 
-  private AutocompleteComboBox<String>      cbTags;
-  private AutoCompleteSupport<String>       cbTagsAutoCompleteSupport;
-  private JList<String>                     listTags;
-  private JSpinner                          spDateAdded;
-  private DatePicker                        dpPremiered;
-  private TmmTable                          tableEpisodes;
-  private JTextField                        tfSorttitle;
-  private JTextField                        tfNote;
+  private AutocompleteComboBox<String>            cbTags;
+  private AutoCompleteSupport<String>             cbTagsAutoCompleteSupport;
+  private JList<String>                           listTags;
+  private JSpinner                                spDateAdded;
+  private DatePicker                              dpPremiered;
+  private TmmTable                                tableEpisodes;
+  private JTextField                              tfSorttitle;
+  private JTextField                              tfNote;
 
-  private JTextField                        tfPoster;
-  private JTextField                        tfFanart;
-  private JTextField                        tfLogo;
-  private JTextField                        tfClearLogo;
-  private JTextField                        tfBanner;
-  private JTextField                        tfClearArt;
-  private JTextField                        tfThumb;
+  private JTextField                              tfPoster;
+  private JTextField                              tfFanart;
+  private JTextField                              tfLogo;
+  private JTextField                              tfClearLogo;
+  private JTextField                              tfBanner;
+  private JTextField                              tfClearArt;
+  private JTextField                              tfThumb;
 
-  private ImageLabel                        lblLogo;
-  private ImageLabel                        lblClearlogo;
-  private ImageLabel                        lblClearart;
-  private ImageLabel                        lblThumb;
-  private ImageLabel                        lblCharacterart;
-  private ImageLabel                        lblKeyart;
+  private ImageLabel                              lblLogo;
+  private ImageLabel                              lblClearlogo;
+  private ImageLabel                              lblClearart;
+  private ImageLabel                              lblThumb;
+  private ImageLabel                              lblCharacterart;
+  private ImageLabel                              lblKeyart;
 
-  private TmmTable                          tableIds;
-  private TmmTable                          tableRatings;
-  private JTextField                        tfOriginalTitle;
-  private JTextField                        tfCountry;
-  private JTextField                        tfCharacterart;
-  private JTextField                        tfKeyart;
+  private TmmTable                                tableIds;
+  private TmmTable                                tableRatings;
+  private JTextField                              tfOriginalTitle;
+  private JTextField                              tfCountry;
+  private JTextField                              tfCharacterart;
+  private JTextField                              tfKeyart;
 
-  private LinkLabel                         lblBannerSize       = new LinkLabel();
-  private LinkLabel                         lblPosterSize       = new LinkLabel();
-  private LinkLabel                         lblFanartSize       = new LinkLabel();
-  private LinkLabel                         lblLogoSize         = new LinkLabel();
-  private LinkLabel                         lblClearlogoSize    = new LinkLabel();
-  private LinkLabel                         lblClearartSize     = new LinkLabel();
-  private LinkLabel                         lblThumbSize        = new LinkLabel();
-  private LinkLabel                         lblCharacterartSize = new LinkLabel();
-  private LinkLabel                         lblKeyartSize       = new LinkLabel();
+  private LinkLabel                               lblBannerSize       = new LinkLabel();
+  private LinkLabel                               lblPosterSize       = new LinkLabel();
+  private LinkLabel                               lblFanartSize       = new LinkLabel();
+  private LinkLabel                               lblLogoSize         = new LinkLabel();
+  private LinkLabel                               lblClearlogoSize    = new LinkLabel();
+  private LinkLabel                               lblClearartSize     = new LinkLabel();
+  private LinkLabel                               lblThumbSize        = new LinkLabel();
+  private LinkLabel                               lblCharacterartSize = new LinkLabel();
+  private LinkLabel                               lblKeyartSize       = new LinkLabel();
 
   /**
    * Instantiates a new tv show editor dialog.

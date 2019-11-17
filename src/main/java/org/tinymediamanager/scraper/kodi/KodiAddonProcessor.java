@@ -15,14 +15,14 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.UrlUtil;
-
-import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class emulates the Kodi addon processing
@@ -30,15 +30,15 @@ import java.util.regex.Pattern;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiAddonProcessor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiAddonProcessor.class);
+  private static final Logger  LOGGER                       = LoggerFactory.getLogger(KodiAddonProcessor.class);
 
-  public static final String FUNCTION_SETTINGS = "GetSettings";
-  public static final String FUNCTION_NFO_URL = "NfoUrl";
-  public static final String FUNCTION_CREATE_SEARCH_URL = "CreateSearchUrl";
-  public static final String FUNCTION_GET_SEARCH_RESULTS = "GetSearchResults";
-  public static final String FUNCTION_GET_DETAILS = "GetDetails";
-  private static final String FUNCTION_GET_EPISODE_LIST = "GetEpisodeList";
-  private static final String FUNCTION_GET_EPISODE_DETAILS = "GetEpisodeDetails";
+  public static final String   FUNCTION_SETTINGS            = "GetSettings";
+  public static final String   FUNCTION_NFO_URL             = "NfoUrl";
+  public static final String   FUNCTION_CREATE_SEARCH_URL   = "CreateSearchUrl";
+  public static final String   FUNCTION_GET_SEARCH_RESULTS  = "GetSearchResults";
+  public static final String   FUNCTION_GET_DETAILS         = "GetDetails";
+  private static final String  FUNCTION_GET_EPISODE_LIST    = "GetEpisodeList";
+  private static final String  FUNCTION_GET_EPISODE_DETAILS = "GetEpisodeDetails";
 
   private KodiScraperProcessor scraperProcessor;
 
@@ -59,11 +59,12 @@ class KodiAddonProcessor {
   public KodiUrl getNfoUrl(String nfoContents) throws Exception {
     String url = null;
     if (scraperProcessor.containsFunction(FUNCTION_NFO_URL)) {
-      url = scraperProcessor.executeFunction(FUNCTION_NFO_URL, new String[]{"", nfoContents});
+      url = scraperProcessor.executeFunction(FUNCTION_NFO_URL, new String[] { "", nfoContents });
     }
     if (!StringUtils.isEmpty(url)) {
       return new KodiUrl(url);
-    } else {
+    }
+    else {
       return null;
     }
   }
@@ -83,10 +84,11 @@ class KodiAddonProcessor {
     if (date == null)
       date = "";
     String url = scraperProcessor.executeFunction(FUNCTION_CREATE_SEARCH_URL,
-            new String[]{"", UrlUtil.encode(title), URLEncoder.encode(date, "UTF-8")});
+        new String[] { "", UrlUtil.encode(title), URLEncoder.encode(date, "UTF-8") });
     if (!StringUtils.isEmpty(url)) {
       return new KodiUrl(url);
-    } else {
+    }
+    else {
       return null;
     }
   }
@@ -108,7 +110,7 @@ class KodiAddonProcessor {
     // as per Kodi code
     // https://github.com/xbmc/xbmc/blob/master/xbmc/addons/Scraper.cpp
     // $$1 is content, $$2 is the url
-    return scraperProcessor.executeFunction(FUNCTION_GET_SEARCH_RESULTS, new String[]{"", contents, url.toExternalForm()});
+    return scraperProcessor.executeFunction(FUNCTION_GET_SEARCH_RESULTS, new String[] { "", contents, url.toExternalForm() });
   }
 
   /**
@@ -146,7 +148,7 @@ class KodiAddonProcessor {
     }
 
     LOGGER.debug("getDetails() called with id: " + movieId + " and url: " + url.toExternalForm());
-    return scraperProcessor.executeFunction(FUNCTION_GET_DETAILS, new String[]{"", contents, movieId, url.toExternalForm()});
+    return scraperProcessor.executeFunction(FUNCTION_GET_DETAILS, new String[] { "", contents, movieId, url.toExternalForm() });
   }
 
   private String parseIdFromUrl(String url) {
@@ -159,7 +161,8 @@ class KodiAddonProcessor {
         movieId = m.group(1);
         LOGGER.debug("Setting IMDB ID: " + movieId);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     if (StringUtils.isEmpty(movieId)) {
@@ -170,7 +173,8 @@ class KodiAddonProcessor {
           movieId = m.group(1);
           LOGGER.debug("Setting TMDB ID: " + movieId);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
     }
 
@@ -182,7 +186,8 @@ class KodiAddonProcessor {
           movieId = m.group(2);
           LOGGER.debug("Setting TVDB ID: " + movieId);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
     }
 
@@ -191,11 +196,11 @@ class KodiAddonProcessor {
 
   public String getEpisodeList(KodiUrl url) throws Exception {
     String contents = url.getTextContent();
-    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_LIST, new String[]{"", contents, url.toExternalForm()});
+    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_LIST, new String[] { "", contents, url.toExternalForm() });
   }
 
   public String getEpisodeDetails(KodiUrl url, String id) throws Exception {
     String contents = url.getTextContent();
-    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_DETAILS, new String[]{"", contents, id});
+    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_DETAILS, new String[] { "", contents, id });
   }
 }

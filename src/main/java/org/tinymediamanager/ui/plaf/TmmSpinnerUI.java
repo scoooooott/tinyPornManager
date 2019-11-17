@@ -16,20 +16,6 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseSpinnerUI;
-import com.jtattoo.plaf.JTattooUtilities;
-import com.jtattoo.plaf.NoFocusButton;
-import org.tinymediamanager.ui.plaf.light.TmmLightBorderFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JSpinner;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -39,19 +25,36 @@ import java.awt.LayoutManager;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JSpinner;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.ComponentUI;
+
+import org.tinymediamanager.ui.plaf.light.TmmLightBorderFactory;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseSpinnerUI;
+import com.jtattoo.plaf.JTattooUtilities;
+import com.jtattoo.plaf.NoFocusButton;
+
 public class TmmSpinnerUI extends BaseSpinnerUI {
   /**
    * Used by the default LayoutManager class - SpinnerLayout for missing (null) editor/nextButton/previousButton children.
    */
-  private static final Dimension zeroSize = new Dimension(0, 0);
+  private static final Dimension zeroSize        = new Dimension(0, 0);
 
-  private MyLayoutManager myLayoutManager = null;
-  private FocusListener focusListener = null;
+  private MyLayoutManager        myLayoutManager = null;
+  private FocusListener          focusListener   = null;
 
   /**
    * Returns a new instance of TmmSpinnerUI. SpinnerListUI delegates are allocated one per JSpinner.
    *
-   * @param c the JSpinner (not used)
+   * @param c
+   *          the JSpinner (not used)
    * @return a new BasicSpinnerUI object
    * @see ComponentUI#createUI
    */
@@ -129,7 +132,8 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
     if (JTattooUtilities.isLeftToRight(spinner)) {
       Border border = BorderFactory.createEmptyBorder(0, 1, 1, 0);
       button.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createEmptyBorder(0, 0, 1, 1);
       button.setBorder(border);
     }
@@ -143,7 +147,8 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
     if (JTattooUtilities.isLeftToRight(spinner)) {
       Border border = BorderFactory.createEmptyBorder(0, 1, 0, 0);
       button.setBorder(border);
-    } else {
+    }
+    else {
       Border border = BorderFactory.createEmptyBorder(0, 0, 0, 1);
       button.setBorder(border);
     }
@@ -155,9 +160,9 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
   // inner classes
   // -----------------------------------------------------------------------------------------
   public static class SpinButton extends NoFocusButton {
-    private static final long serialVersionUID = -8393323134878803979L;
-    private static final Dimension minSize = new Dimension(14, 12);
-    private int direction = SwingConstants.NORTH;
+    private static final long      serialVersionUID = -8393323134878803979L;
+    private static final Dimension minSize          = new Dimension(14, 12);
+    private int                    direction        = SwingConstants.NORTH;
 
     public SpinButton(int aDirection) {
       super();
@@ -188,7 +193,8 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
         for (int i = 0; i < h; i++) {
           g.drawLine(x + (h - i) - 1, y + i, x + w - (h - i) + 1, y + i);
         }
-      } else {
+      }
+      else {
         for (int i = 0; i < h; i++) {
           g.drawLine(x + i, y + i, x + w - i, y + i);
         }
@@ -202,17 +208,19 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
   // ----------------------------------------------------------------------------------------------
   private static class MyLayoutManager implements LayoutManager {
 
-    private Component nextButton = null;
+    private Component nextButton     = null;
     private Component previousButton = null;
-    private Component editor = null;
+    private Component editor         = null;
 
     @Override
     public void addLayoutComponent(String name, Component c) {
       if ("Next".equals(name)) {
         nextButton = c;
-      } else if ("Previous".equals(name)) {
+      }
+      else if ("Previous".equals(name)) {
         previousButton = c;
-      } else if ("Editor".equals(name)) {
+      }
+      else if ("Editor".equals(name)) {
         editor = c;
       }
     }
@@ -221,9 +229,11 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
     public void removeLayoutComponent(Component c) {
       if (c == nextButton) {
         nextButton = null;
-      } else if (c == previousButton) {
+      }
+      else if (c == previousButton) {
         previousButton = null;
-      } else if (c == editor) {
+      }
+      else if (c == editor) {
         editor = null;
       }
     }
@@ -287,7 +297,8 @@ public class TmmSpinnerUI extends BaseSpinnerUI {
         editorX = insets.left;
         editorWidth = width - insets.left - buttonsWidth - buttonInsets.right;
         buttonsX = width - buttonsWidth - buttonInsets.right;
-      } else {
+      }
+      else {
         buttonsX = buttonInsets.left;
         editorX = buttonsX + buttonsWidth;
         editorWidth = width - buttonInsets.left - buttonsWidth - insets.right;

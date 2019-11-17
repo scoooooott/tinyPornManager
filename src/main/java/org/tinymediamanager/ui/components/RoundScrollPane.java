@@ -19,9 +19,9 @@ import java.awt.Component;
 
 import javax.swing.JScrollPane;
 
-public class RoundScrollPane extends JScrollPane{
+public class RoundScrollPane extends JScrollPane {
 
-  public RoundScrollPane(Component view, int vsbPolicy, int hsbPolicy){
+  public RoundScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
     super(view, vsbPolicy, hsbPolicy);
     putClientProperty("roundScrollPane", "true");
     updateUI();
@@ -32,7 +32,7 @@ public class RoundScrollPane extends JScrollPane{
   }
 
   @Override
-  public void setViewportView(Component view){
+  public void setViewportView(Component view) {
     super.setViewportView(view);
     updateUI();
   }

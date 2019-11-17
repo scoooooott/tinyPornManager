@@ -23,13 +23,12 @@ public class Trailer {
   public Integer id;
 
   @SerializedName("url")
-  public String url;
+  public String  url;
 
   @SerializedName("type")
-  public String type;
+  public String  type;
 
   @SerializedName("quality")
-  public String quality;
-
+  public String  quality;
 
 }

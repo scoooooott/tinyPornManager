@@ -15,13 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseSliderUI;
-import com.jtattoo.plaf.JTattooUtilities;
-
-import javax.swing.JComponent;
-import javax.swing.JSlider;
-import javax.swing.plaf.ComponentUI;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -29,9 +22,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import javax.swing.JComponent;
+import javax.swing.JSlider;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseSliderUI;
+import com.jtattoo.plaf.JTattooUtilities;
+
 public class TmmSliderUI extends BaseSliderUI {
   protected static int TRACK_WIDTH = 7;
-  protected static int THUMB_SIZE = TRACK_WIDTH * 2 + 1;
+  protected static int THUMB_SIZE  = TRACK_WIDTH * 2 + 1;
 
   public TmmSliderUI(JSlider slider) {
     super(slider);
@@ -67,11 +68,13 @@ public class TmmSliderUI extends BaseSliderUI {
       trackTop = trackBottom - (getTrackWidth() - 1);
       trackLeft = -TRACK_WIDTH / 2;
       trackRight = trackRect.width - 1 + TRACK_WIDTH / 2;
-    } else {
+    }
+    else {
       if (leftToRight) {
         trackLeft = (trackRect.width - overhang) - getTrackWidth();
         trackRight = (trackRect.width - overhang) - 1;
-      } else {
+      }
+      else {
         trackLeft = overhang;
         trackRight = overhang + getTrackWidth() - 1;
       }

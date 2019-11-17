@@ -26,7 +26,7 @@ import org.tinymediamanager.scraper.util.RingBuffer;
  * @author Manuel Laggner
  */
 public class OmdbConnectionCounter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(OmdbConnectionCounter.class);
+  private static final Logger           LOGGER             = LoggerFactory.getLogger(OmdbConnectionCounter.class);
   private static final RingBuffer<Long> CONNECTION_COUNTER = new RingBuffer<>(10);
 
   public static void trackConnections() {
@@ -37,7 +37,8 @@ public class OmdbConnectionCounter {
         LOGGER.debug("connection limit reached, throttling " + CONNECTION_COUNTER);
         try {
           Thread.sleep(15000 - (currentTime - oldestConnection));
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           LOGGER.warn(e.getMessage());
         }
       }

@@ -1,6 +1,7 @@
 package org.tinymediamanager.scraper.kyradb.services;
 
 import org.tinymediamanager.scraper.kyradb.entities.KyraEntity;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

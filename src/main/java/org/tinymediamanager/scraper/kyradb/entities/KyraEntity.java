@@ -1,58 +1,59 @@
 package org.tinymediamanager.scraper.kyradb.entities;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.annotations.SerializedName;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.SerializedName;
+
 public class KyraEntity {
 
   @SerializedName("base_url_backgrounds")
-  private String baseBackground;
+  private String              baseBackground;
   @SerializedName("base_url_posters")
-  private String basePosters;
+  private String              basePosters;
   @SerializedName("base_url_character_art")
-  private String baseCharacter;
+  private String              baseCharacter;
   @SerializedName("base_url_actor_art")
-  private String baseActor;
+  private String              baseActor;
   @SerializedName("base_url_logos")
-  private String baseLogos;
+  private String              baseLogos;
 
   @SerializedName("backgrounds")
-  private List<Image> backgrounds = null;
+  private List<Image>         backgrounds          = null;
   @SerializedName("number_of_backgrounds")
-  private int backgroundsCount = 0;
+  private int                 backgroundsCount     = 0;
   @SerializedName("posters")
-  private List<Image> posters = null;
+  private List<Image>         posters              = null;
   @SerializedName("number_of_posters")
-  private int postersCount = 0;
+  private int                 postersCount         = 0;
   @SerializedName("character_art")
-  private List<Image> characters = null;
+  private List<Image>         characters           = null;
   @SerializedName("number_of_character_art")
-  private int charactersCount = 0;
+  private int                 charactersCount      = 0;
   @SerializedName("actor_art")
-  private List<Image> actors = null;
+  private List<Image>         actors               = null;
   @SerializedName("number_of_actor_art")
-  private int actorsCount = 0;
+  private int                 actorsCount          = 0;
   @SerializedName("logos")
-  private List<Image> logos = null;
+  private List<Image>         logos                = null;
   @SerializedName("number_of_logos")
-  private int logosCount = 0;
+  private int                 logosCount           = 0;
 
   @SerializedName("error")
-  int error = 0;
+  int                         error                = 0;
   @SerializedName("message")
-  String message;
+  String                      message;
   @SerializedName("timezone")
-  String timezone;
+  String                      timezone;
   @SerializedName("timezone_str")
-  String timezoneString;
+  String                      timezoneString;
   @JsonIgnore
   private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 

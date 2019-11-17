@@ -26,10 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 public class ProxySettings {
   public static final ProxySettings INSTANCE = new ProxySettings();
 
-  private String host     = "";
-  private int    port     = 0;
-  private String username = "";
-  private String password = "";
+  private String                    host     = "";
+  private int                       port     = 0;
+  private String                    username = "";
+  private String                    password = "";
 
   /**
    * Set the actual proxy settings

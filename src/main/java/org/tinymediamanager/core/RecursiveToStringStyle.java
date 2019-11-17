@@ -29,7 +29,6 @@ public class RecursiveToStringStyle extends ToStringStyle {
   // http://stackoverflow.com/a/16934373/603516
   private ThreadLocal<MutableInteger> depth = ThreadLocal.withInitial(() -> new MutableInteger(0));
 
-
   public RecursiveToStringStyle(int maxDepth) {
     this.maxDepth = maxDepth;
     tabs = StringUtils.repeat("\t", maxDepth);

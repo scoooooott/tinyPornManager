@@ -16,9 +16,9 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractIconFactory;
-
 import javax.swing.Icon;
+
+import com.jtattoo.plaf.AbstractIconFactory;
 
 public abstract class TmmIconFactory implements AbstractIconFactory {
   @Override

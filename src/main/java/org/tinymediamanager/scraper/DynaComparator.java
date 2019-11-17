@@ -45,7 +45,10 @@ public class DynaComparator implements Comparator, Serializable {
   private static final int    GREATER          = 1;
 
   private enum CompareMode {
-    EQUAL, LESS_THAN, GREATER_THAN, DEFAULT
+    EQUAL,
+    LESS_THAN,
+    GREATER_THAN,
+    DEFAULT
   }
 
   // generic comparator attributes

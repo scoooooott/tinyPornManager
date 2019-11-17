@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -26,9 +28,8 @@ import javax.swing.plaf.ViewportUI;
 import javax.swing.plaf.basic.BasicViewportUI;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.util.ArrayList;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
 
 public class TmmViewportUI extends BasicViewportUI {
   // Shared UI object

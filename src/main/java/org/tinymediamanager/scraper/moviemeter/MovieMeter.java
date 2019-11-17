@@ -15,6 +15,14 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.tinymediamanager.scraper.moviemeter.services.FilmService;
+import org.tinymediamanager.scraper.moviemeter.services.SearchService;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -23,29 +31,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.bind.DateTypeAdapter;
+
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
-import org.tinymediamanager.scraper.moviemeter.services.FilmService;
-import org.tinymediamanager.scraper.moviemeter.services.SearchService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Date;
-
 class MovieMeter {
   // the base API url
-  public static final String API_URL = "http://www.moviemeter.nl/api/";
+  public static final String API_URL       = "http://www.moviemeter.nl/api/";
   // the api key query parameter; hast to be supplied at all calls
   public static final String PARAM_API_KEY = "api_key";
 
-  private Retrofit restAdapter;
-  private boolean isDebug;
-  private String apiKey;
+  private Retrofit           restAdapter;
+  private boolean            isDebug;
+  private String             apiKey;
 
   public MovieMeter() {
     this.apiKey = "";
@@ -72,7 +74,8 @@ class MovieMeter {
   /**
    * Set the {@link retrofit.RestAdapter} log level.
    *
-   * @param isDebug If true, the log level is set to {@link retrofit.RestAdapter.LogLevel#FULL}. Otherwise {@link retrofit.RestAdapter.LogLevel#NONE}.
+   * @param isDebug
+   *          If true, the log level is set to {@link retrofit.RestAdapter.LogLevel#FULL}. Otherwise {@link retrofit.RestAdapter.LogLevel#NONE}.
    */
   public MovieMeter setIsDebug(boolean isDebug) {
     this.isDebug = isDebug;
@@ -124,7 +127,8 @@ class MovieMeter {
       public Integer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         try {
           return Integer.valueOf(json.getAsInt());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
           return 0;
         }
       }

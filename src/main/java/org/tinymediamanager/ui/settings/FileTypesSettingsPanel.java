@@ -17,8 +17,6 @@ package org.tinymediamanager.ui.settings;
 
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -49,7 +47,6 @@ import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 import net.miginfocom.swing.MigLayout;
-import org.tinymediamanager.ui.dialogs.MessageDialog;
 
 class FileTypesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 9136097757447080369L;
@@ -127,9 +124,10 @@ class FileTypesSettingsPanel extends JPanel {
       if (StringUtils.isNotEmpty(tfCleanupFiletype.getText())) {
         try {
           Pattern.compile(tfCleanupFiletype.getText());
-        } catch ( PatternSyntaxException ex ) {
+        }
+        catch (PatternSyntaxException ex) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("message.regex.error")); //$NON-NLS-1$
-        return;
+          return;
         }
         Globals.settings.addCleanupFileType(tfCleanupFiletype.getText());
         tfCleanupFiletype.setText("");
@@ -256,7 +254,7 @@ class FileTypesSettingsPanel extends JPanel {
           }
           catch (Exception e1) {
             MessageManager.instance
-                    .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+                .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
           }
         });
         panelCleanupFiletypes.add(btnHelp, "cell 1 2");
@@ -284,7 +282,7 @@ class FileTypesSettingsPanel extends JPanel {
     //
     BeanProperty<Settings, List<String>> settingsBeanProperty_12 = BeanProperty.create("cleanupFileType");
     JListBinding<String, Settings, JList> jListBinding_4 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-            settingsBeanProperty_12, listCleanupFiletypes);
+        settingsBeanProperty_12, listCleanupFiletypes);
     jListBinding_4.bind();
   }
 }

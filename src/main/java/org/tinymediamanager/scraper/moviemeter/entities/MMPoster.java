@@ -16,8 +16,8 @@
 package org.tinymediamanager.scraper.moviemeter.entities;
 
 public class MMPoster {
-  public String thumb = "";
-  public String small = "";
+  public String thumb   = "";
+  public String small   = "";
   public String regular = "";
-  public String large = "";
+  public String large   = "";
 }

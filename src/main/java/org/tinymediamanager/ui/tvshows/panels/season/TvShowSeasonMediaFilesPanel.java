@@ -81,7 +81,7 @@ public class TvShowSeasonMediaFilesPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[grow]"));
     {
-      panelMediaFiles = new MediaFilesPanel(mediaFileEventList){
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
         @Override
         public MediaEntity getMediaEntity() {
           return null;

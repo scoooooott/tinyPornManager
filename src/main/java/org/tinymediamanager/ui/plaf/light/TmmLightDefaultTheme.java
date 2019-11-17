@@ -118,10 +118,10 @@ public class TmmLightDefaultTheme extends TmmTheme {
     super.setUpColorArrs();
 
     // needed
-    THUMB_COLORS = new Color[]{new Color(131, 131, 131)};
-    TRACK_COLORS = new Color[]{new Color(255, 255, 255)};
+    THUMB_COLORS = new Color[] { new Color(131, 131, 131) };
+    TRACK_COLORS = new Color[] { new Color(255, 255, 255) };
     SLIDER_COLORS = THUMB_COLORS;
-    GRID_COLORS = new Color[]{new Color(206, 206, 206), new Color(248, 248, 248)};
+    GRID_COLORS = new Color[] { new Color(206, 206, 206), new Color(248, 248, 248) };
   }
 
   @Override

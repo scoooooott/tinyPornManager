@@ -29,7 +29,7 @@ public class SearchEntity {
   public String title;
 
   @SerializedName("year")
-  public int year;
+  public int    year;
 
   @SerializedName("id_allocine")
   public String id_allocine;
@@ -42,6 +42,5 @@ public class SearchEntity {
 
   @SerializedName("posterUrl")
   public String posterUrl;
-
 
 }

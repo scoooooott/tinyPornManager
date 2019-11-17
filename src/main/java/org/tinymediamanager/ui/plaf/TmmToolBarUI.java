@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractToolBarUI;
+import java.awt.Graphics;
 
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.plaf.ComponentUI;
-import java.awt.Graphics;
+
+import com.jtattoo.plaf.AbstractToolBarUI;
 
 public class TmmToolBarUI extends AbstractToolBarUI {
   public static ComponentUI createUI(JComponent c) {

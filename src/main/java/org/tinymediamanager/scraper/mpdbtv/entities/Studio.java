@@ -23,6 +23,6 @@ public class Studio {
   public Integer id;
 
   @SerializedName("name")
-  public String name;
+  public String  name;
 
 }

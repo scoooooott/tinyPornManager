@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.scraper.moviemeter.services;
 
+import java.util.List;
+
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-
-import java.util.List;
 
 public interface SearchService {
   @GET("film/")

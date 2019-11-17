@@ -20,11 +20,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 class Expression {
-  private String expression;
-  private String noClean;
-  private boolean clear = true;
-  private boolean repeat = false;
-  private String noCleanArray[] = null;
+  private String  expression;
+  private String  noClean;
+  private boolean clear          = true;
+  private boolean repeat         = false;
+  private String  noCleanArray[] = null;
 
   public Expression() {
   }

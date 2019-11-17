@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.scraper.fanarttv.services.MovieService;
+import org.tinymediamanager.scraper.fanarttv.services.TvShowService;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -22,34 +31,27 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.scraper.fanarttv.services.MovieService;
-import org.tinymediamanager.scraper.fanarttv.services.TvShowService;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Date;
 
 /**
  * The class FanartTv is the abstraction of the Fanart.tv API
  */
 public class FanartTv {
   // the base API url
-  public static final String API_URL = "http://webservice.fanart.tv/v3/";
+  public static final String API_URL          = "http://webservice.fanart.tv/v3/";
   // the api key query parameter; hast to be supplied at all calls
-  public static final String PARAM_API_KEY = "api-key";
+  public static final String PARAM_API_KEY    = "api-key";
   public static final String PARAM_CLIENT_KEY = "client-key";
 
-  private Retrofit restAdapter;
-  private boolean isDebug;
-  private String apiKey;
-  private String clientKey;
+  private Retrofit           restAdapter;
+  private boolean            isDebug;
+  private String             apiKey;
+  private String             clientKey;
 
   /**
    * Creates a new instance of the API
@@ -62,7 +64,8 @@ public class FanartTv {
   /**
    * set an API key
    *
-   * @param apiKey the API key to be set
+   * @param apiKey
+   *          the API key to be set
    */
   public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
@@ -80,7 +83,8 @@ public class FanartTv {
   /**
    * set the fanart.tv client key
    *
-   * @param clientKey the client key
+   * @param clientKey
+   *          the client key
    */
   public void setClientKey(String clientKey) {
     this.clientKey = clientKey;
@@ -98,7 +102,8 @@ public class FanartTv {
   /**
    * Set the {@link retrofit.RestAdapter} log level.
    *
-   * @param isDebug If true, the log level is set to {@link retrofit.RestAdapter.LogLevel#FULL}. Otherwise {@link retrofit.RestAdapter.LogLevel#NONE}.
+   * @param isDebug
+   *          If true, the log level is set to {@link retrofit.RestAdapter.LogLevel#FULL}. Otherwise {@link retrofit.RestAdapter.LogLevel#NONE}.
    */
   public FanartTv setIsDebug(boolean isDebug) {
     this.isDebug = isDebug;
@@ -155,7 +160,8 @@ public class FanartTv {
       public Integer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         try {
           return Integer.valueOf(json.getAsInt());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
           return 0;
         }
       }

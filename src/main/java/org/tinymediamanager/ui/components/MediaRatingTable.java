@@ -38,13 +38,13 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
  * @author Manuel Laggner
  */
 public class MediaRatingTable extends TmmTable {
-  private static final long           serialVersionUID = 8010732881277204728L;
+  private static final long                                           serialVersionUID = 8010732881277204728L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                                 BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Map<String, org.tinymediamanager.core.entities.MediaRating> ratingMap;
   private EventList<MediaRating>                                      mediaRatingList;
-  private boolean                     editable;
+  private boolean                                                     editable;
 
   /**
    * this constructor is used to display the ratings

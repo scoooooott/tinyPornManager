@@ -1,7 +1,7 @@
 package org.tinymediamanager.ui.images;
 
-import static java.awt.MultipleGradientPaint.ColorSpaceType.*;
-import static java.awt.MultipleGradientPaint.CycleMethod.*;
+import static java.awt.MultipleGradientPaint.ColorSpaceType.SRGB;
+import static java.awt.MultipleGradientPaint.CycleMethod.NO_CYCLE;
 
 import java.awt.Color;
 import java.awt.Component;

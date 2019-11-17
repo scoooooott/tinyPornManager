@@ -55,7 +55,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
 public class MediaScraperConfigurationPanel extends JPanel {
   private static final long           serialVersionUID = -4120483383064864579L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MediaScraperConfigurationPanel.class);
 
   private IMediaProvider              mediaProvider;

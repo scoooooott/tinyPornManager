@@ -195,8 +195,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       createRenamerExample();
     });
 
-
-
     lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
 
     // examples

@@ -24,16 +24,16 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class MediaDetails {
 
-  private String videoId;
-  private String title;
-  private int lengthSeconds;
-  private String channelId;
+  private String  videoId;
+  private String  title;
+  private int     lengthSeconds;
+  private String  channelId;
   private boolean isOwnerViewing;
-  private String shortDescription;
+  private String  shortDescription;
   private Boolean isCrawlable;
-  private double averageRating;
-  private String author;
-  private int viewCount;
+  private double  averageRating;
+  private String  author;
+  private int     viewCount;
 
   public MediaDetails(String videoId) {
 

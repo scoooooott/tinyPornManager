@@ -59,7 +59,7 @@ import retrofit2.Response;
 class TraktMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TraktMovieMetadataProvider.class);
 
-  private final TraktV2 api;
+  private final TraktV2       api;
 
   TraktMovieMetadataProvider(TraktV2 api) {
     this.api = api;
@@ -90,7 +90,8 @@ class TraktMovieMetadataProvider {
         throw new HttpException(response.code(), response.message());
       }
       searchResults = response.body();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("Problem scraping for {} - {}", searchString, e.getMessage());
       throw new ScrapeException(e);
     }
@@ -144,7 +145,8 @@ class TraktMovieMetadataProvider {
           translations = api.movies().translation(id, lang).execute().body();
         }
         credits = api.movies().people(id).execute().body();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("failed to get meta data: {}", e.getMessage());
         throw new ScrapeException(e);
       }
@@ -161,7 +163,8 @@ class TraktMovieMetadataProvider {
       md.setTitle(StringUtils.isBlank(trans.title) ? movie.title : trans.title);
       md.setTagline(StringUtils.isBlank(trans.tagline) ? movie.tagline : trans.tagline);
       md.setPlot(StringUtils.isBlank(trans.overview) ? movie.overview : trans.overview);
-    } else {
+    }
+    else {
       md.setTitle(movie.title);
       md.setTagline(movie.tagline);
       md.setPlot(movie.overview);

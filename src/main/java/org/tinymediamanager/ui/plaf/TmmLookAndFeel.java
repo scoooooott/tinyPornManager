@@ -43,12 +43,12 @@ import com.jtattoo.plaf.BaseSliderUI;
 
 public abstract class TmmLookAndFeel extends AbstractLookAndFeel {
 
-  protected static final List<String> themesList = new ArrayList<>();
-  protected static final Map<String, Properties> themesMap = new HashMap<>();
-  protected static final Properties defaultProps = new Properties();
-  protected static final Properties smallFontProps = new Properties();
-  protected static final Properties largeFontProps = new Properties();
-  protected static final Properties giantFontProps = new Properties();
+  protected static final List<String>            themesList     = new ArrayList<>();
+  protected static final Map<String, Properties> themesMap      = new HashMap<>();
+  protected static final Properties              defaultProps   = new Properties();
+  protected static final Properties              smallFontProps = new Properties();
+  protected static final Properties              largeFontProps = new Properties();
+  protected static final Properties              giantFontProps = new Properties();
 
   static {
     smallFontProps.setProperty("controlTextFont", TmmTheme.FONT + " 10");

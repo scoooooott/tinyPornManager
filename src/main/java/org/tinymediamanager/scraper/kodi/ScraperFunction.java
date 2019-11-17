@@ -15,11 +15,11 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * This class represents scraper functions
@@ -27,11 +27,11 @@ import java.util.List;
  * @author Manuel Laggner, Myron Boyle
  */
 class ScraperFunction implements RegExpContainer, Cloneable {
-  private boolean clearBuffers = true;
-  private int dest = 0;
-  private boolean appendBuffer = false;
-  private String name;
-  private List<RegExp> regexps = new ArrayList<>();
+  private boolean      clearBuffers = true;
+  private int          dest         = 0;
+  private boolean      appendBuffer = false;
+  private String       name;
+  private List<RegExp> regexps      = new ArrayList<>();
 
   public ScraperFunction() {
   }

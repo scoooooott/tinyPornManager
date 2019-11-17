@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BasePasswordFieldUI;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+
+import com.jtattoo.plaf.BasePasswordFieldUI;
 
 public class TmmPasswordFieldUI extends BasePasswordFieldUI {
   private FocusListener focusListener = null;

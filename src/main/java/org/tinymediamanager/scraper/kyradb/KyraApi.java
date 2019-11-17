@@ -15,6 +15,14 @@
  */
 package org.tinymediamanager.scraper.kyradb;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.tinymediamanager.scraper.kyradb.services.CastService;
+import org.tinymediamanager.scraper.kyradb.services.MovieService;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -22,31 +30,25 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.tinymediamanager.scraper.kyradb.services.CastService;
-import org.tinymediamanager.scraper.kyradb.services.MovieService;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Date;
 
 /**
  * https://www.kyradb.com/api
  */
 public class KyraApi {
-  private static final String BASE_URL = "https://www.kyradb.com/api10/";
+  private static final String BASE_URL       = "https://www.kyradb.com/api10/";
   // the api key query parameter; hast to be supplied at all calls
-  public static final String PARAM_API_KEY = "Apikey";
-  public static final String PARAM_USER_KEY = "Userkey";
+  public static final String  PARAM_API_KEY  = "Apikey";
+  public static final String  PARAM_USER_KEY = "Userkey";
 
-  private Retrofit restAdapter;
-  private String apiKey;
-  private String userKey;
+  private Retrofit            restAdapter;
+  private String              apiKey;
+  private String              userKey;
 
   /**
    * Creates a new instance of the API
@@ -116,7 +118,8 @@ public class KyraApi {
       public Integer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         try {
           return Integer.valueOf(json.getAsInt());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
           return 0;
         }
       }

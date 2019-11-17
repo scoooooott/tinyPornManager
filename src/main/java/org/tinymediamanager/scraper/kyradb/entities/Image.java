@@ -1,27 +1,28 @@
 package org.tinymediamanager.scraper.kyradb.entities;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Image {
 
   @JsonProperty("date_added")
-  private String dateAdded;                                           // yyyy-MM-dd HH:mm:ss
+  private String              dateAdded;                                           // yyyy-MM-dd HH:mm:ss
   @JsonProperty("name")
-  private String name;
+  private String              name;
   @JsonProperty("resolution")
-  private String resolution;
+  private String              resolution;
   @JsonProperty("width")
-  private int width;
+  private int                 width;
   @JsonProperty("height")
-  private int height;
+  private int                 height;
   @JsonIgnore
   private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 

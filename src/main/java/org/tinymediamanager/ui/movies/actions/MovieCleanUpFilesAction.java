@@ -1,5 +1,12 @@
 package org.tinymediamanager.ui.movies.actions;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
+
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -7,12 +14,6 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.dialogs.CleanUpUnwantedFilesDialog;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-
-import javax.swing.JOptionPane;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 public class MovieCleanUpFilesAction extends TmmAction {
 

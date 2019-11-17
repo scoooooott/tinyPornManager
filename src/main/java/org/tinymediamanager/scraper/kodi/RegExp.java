@@ -15,12 +15,12 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class represents a Kodi addon regexp
@@ -28,12 +28,12 @@ import java.util.List;
  * @author Manuel Laggner, Myron Boyle
  */
 class RegExp implements RegExpContainer, Cloneable {
-  private String input, output;
-  private int dest;
-  private String conditional;
-  private boolean appendBuffer = false;
-  private List<RegExp> children = new ArrayList<>();
-  private Expression expression;
+  private String       input, output;
+  private int          dest;
+  private String       conditional;
+  private boolean      appendBuffer = false;
+  private List<RegExp> children     = new ArrayList<>();
+  private Expression   expression;
 
   public RegExp() {
   }

@@ -15,9 +15,9 @@
  */
 package org.tinymediamanager.scraper.mpdbtv.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 public class Items {
 

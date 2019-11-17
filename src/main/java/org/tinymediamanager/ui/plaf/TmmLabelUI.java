@@ -16,7 +16,8 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BaseLabelUI;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -24,8 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.ComponentUI;
-import java.awt.FontMetrics;
-import java.awt.Rectangle;
+
+import com.jtattoo.plaf.BaseLabelUI;
 
 public class TmmLabelUI extends BaseLabelUI {
 
@@ -43,8 +44,8 @@ public class TmmLabelUI extends BaseLabelUI {
    */
   protected String layoutCL(JLabel label, FontMetrics fontMetrics, String text, Icon icon, Rectangle viewR, Rectangle iconR, Rectangle textR) {
     String stringFromSwingUtilities = SwingUtilities.layoutCompoundLabel(label, fontMetrics, text, icon, label.getVerticalAlignment(),
-            label.getHorizontalAlignment(), label.getVerticalTextPosition(), label.getHorizontalTextPosition(), viewR, iconR, textR,
-            label.getIconTextGap());
+        label.getHorizontalAlignment(), label.getVerticalTextPosition(), label.getHorizontalTextPosition(), viewR, iconR, textR,
+        label.getIconTextGap());
 
     int clipPosition = getClipPosition(label);
 
@@ -64,9 +65,11 @@ public class TmmLabelUI extends BaseLabelUI {
     if (prop != null && prop instanceof Integer) {
       if ((Integer) prop == SwingConstants.LEFT) {
         return SwingConstants.LEFT;
-      } else if ((Integer) prop == SwingConstants.RIGHT) {
+      }
+      else if ((Integer) prop == SwingConstants.RIGHT) {
         return SwingConstants.RIGHT;
-      } else if ((Integer) prop == SwingConstants.CENTER) {
+      }
+      else if ((Integer) prop == SwingConstants.CENTER) {
         return SwingConstants.CENTER;
       }
     }
@@ -94,7 +97,8 @@ public class TmmLabelUI extends BaseLabelUI {
           return substring;
         }
       }
-    } else if (clipPosition == SwingConstants.CENTER) {
+    }
+    else if (clipPosition == SwingConstants.CENTER) {
       int i = stringFromSwingUtilities.length() / 2;
       if (i < 0) {
         return stringFromSwingUtilities;

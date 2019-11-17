@@ -15,13 +15,13 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class emulates the Kodi addon processing
@@ -29,13 +29,13 @@ import java.util.regex.Pattern;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiScraperProcessor {
-  public static final String FUNCTION_SETTINGS = "GetSettings";
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiScraperProcessor.class);
-  private static final int PATTERN_OPTIONS = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
-  private boolean truncateLogging = true;
-  private KodiScraper scraper = null;
-  private String buffers[] = new String[21];
-  private final UnicodeUnescaper uu = new UnicodeUnescaper();
+  public static final String     FUNCTION_SETTINGS = "GetSettings";
+  private static final Logger    LOGGER            = LoggerFactory.getLogger(KodiScraperProcessor.class);
+  private static final int       PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
+  private boolean                truncateLogging   = true;
+  private KodiScraper            scraper           = null;
+  private String                 buffers[]         = new String[21];
+  private final UnicodeUnescaper uu                = new UnicodeUnescaper();
 
   public KodiScraperProcessor(KodiScraper scraper) {
     if (scraper == null)
@@ -55,7 +55,8 @@ class KodiScraperProcessor {
         this.buffers[i] = buffers[i];
       }
       // this.buffers = buffers;
-    } else {
+    }
+    else {
       clearBuffers();
     }
   }
@@ -75,7 +76,8 @@ class KodiScraperProcessor {
 
       LOGGER.info("** END Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
       return getBuffer(func.getDest());
-    } else {
+    }
+    else {
       LOGGER.warn("** Could not locate Function: " + function + " in the scraper " + scraper.getProviderInfo().getId());
       return "";
     }
@@ -86,7 +88,7 @@ class KodiScraperProcessor {
     for (RegExp r : regExps) {
       i++;
       LOGGER.trace(String.format("Executing Regex " + i + "/" + regExps.length + ": %s; Dest: %s; Input: %s; Output: %s", r.getExpression(),
-              r.getDest(), r.getInput(), r.getOutput()));
+          r.getDest(), r.getInput(), r.getOutput()));
       executeRegexp(r);
     }
   }
@@ -125,14 +127,14 @@ class KodiScraperProcessor {
 
     if (exp == null) {
       LOGGER.warn("Main Expression was empty.  Returning processed output buffer using input as replacement array.");
-      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[]{"", in}), r.isAppendBuffer());
+      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[] { "", in }), r.isAppendBuffer());
       return;
     }
 
     String expr = exp.getExpression();
     if (expr == null || expr.trim().length() == 0) {
       LOGGER.warn("Expression was empty.  Returning processed output buffer using input as replacement array.");
-      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[]{"", in}), r.isAppendBuffer());
+      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), new String[] { "", in }), r.isAppendBuffer());
       return;
     }
 
@@ -143,7 +145,8 @@ class KodiScraperProcessor {
     Pattern p = null;
     try {
       p = Pattern.compile(expr, PATTERN_OPTIONS);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.trace("Could not compile regex: " + e.getMessage() + " - trying quoted instead");
       p = Pattern.compile(Pattern.quote(expr), PATTERN_OPTIONS);
     }
@@ -158,7 +161,8 @@ class KodiScraperProcessor {
           setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), true); // repeat always append!
         }
       }
-    } else {
+    }
+    else {
       LOGGER.trace(String.format("No Match! Expression: %s; Text: %s;", expr, logBuffer(in)));
       if (exp.isClear()) {
         LOGGER.trace("Clearing Destination Buffer: " + r.getDest());
@@ -186,7 +190,8 @@ class KodiScraperProcessor {
       if (noCleanArray != null && noCleanArray[i] != null) {
         // don't clean
         g[i] = groups.group(i);
-      } else {
+      }
+      else {
         g[i] = cleanHtml(groups.group(i));
       }
     }
@@ -310,7 +315,8 @@ class KodiScraperProcessor {
         sb.append(getBuffer(Integer.parseInt(m.group(1))));
       }
       return sb.toString();
-    } else {
+    }
+    else {
       LOGGER.trace("getBuffer(): Using raw input: " + logBuffer(buffer));
     }
     return buffer;
@@ -337,9 +343,10 @@ class KodiScraperProcessor {
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
         // call the set buffer again with this result
-        text = proc.executeFunction(url.getFunctionName(), new String[]{"", url.getTextContent()});
+        text = proc.executeFunction(url.getFunctionName(), new String[] { "", url.getTextContent() });
         // append = true; // always append sub functions! // NOO, not needed!
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
         text = "\n<error>" + text + "\n<msg>" + e.getMessage() + "</msg></error>\n";
       }
@@ -359,9 +366,10 @@ class KodiScraperProcessor {
         KodiScraperProcessor proc = newSubProcessor(func.isClearBuffers());
 
         // call the set buffer again with this result (why wrap function tag name???) FIXME: remove <details>????
-        text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[]{"", m.group(2)}) + "</" + m.group(1) + ">";
+        text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</" + m.group(1) + ">";
         // append = true; // always append sub functions! // NOO, not needed!
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
         text = "\n<error>" + text + "\n<msg>" + e.getMessage() + "</msg></error>\n";
       }

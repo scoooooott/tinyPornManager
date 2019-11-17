@@ -29,7 +29,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MediaProviderConfigObject {
   public enum ConfigType {
-    TEXT, BOOL, SELECT, SELECT_INDEX
+    TEXT,
+    BOOL,
+    SELECT,
+    SELECT_INDEX
   }
 
   private static final Logger LOGGER          = LoggerFactory.getLogger(MediaProviderConfigObject.class);

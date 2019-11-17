@@ -57,14 +57,14 @@ public class MovieRenameTask extends TmmThreadPool {
       initThreadPool(1, "rename");
       start();
       // rename movies
-        for (Movie aMoviesToRename : moviesToRename) {
-            if (cancel) {
-                break;
-            }
-
-            Movie movie = aMoviesToRename;
-            submitTask(new RenameMovieTask(movie));
+      for (Movie aMoviesToRename : moviesToRename) {
+        if (cancel) {
+          break;
         }
+
+        Movie movie = aMoviesToRename;
+        submitTask(new RenameMovieTask(movie));
+      }
       waitForCompletionOrCancel();
       LOGGER.info("Done renaming movies)");
     }

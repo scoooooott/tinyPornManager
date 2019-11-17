@@ -16,9 +16,9 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractBorderFactory;
-
 import javax.swing.border.Border;
+
+import com.jtattoo.plaf.AbstractBorderFactory;
 
 public abstract class TmmBorderFactory implements AbstractBorderFactory {
 

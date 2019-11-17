@@ -118,7 +118,7 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
 
     // second: parse all children too
     for (Enumeration<? extends javax.swing.tree.TreeNode> e = node.children(); e.hasMoreElements();) {
-      if (accept( (E) e.nextElement())) {
+      if (accept((E) e.nextElement())) {
         return true;
       }
     }

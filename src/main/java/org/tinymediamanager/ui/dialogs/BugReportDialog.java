@@ -128,5 +128,4 @@ public class BugReportDialog extends TmmDialog {
     addDefaultButton(btnClose);
   }
 
-
 }

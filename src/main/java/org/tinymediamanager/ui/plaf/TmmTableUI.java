@@ -15,15 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
-import com.jtattoo.plaf.BaseTableUI;
-
-import javax.swing.BorderFactory;
-import javax.swing.CellRendererPane;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.border.AbstractBorder;
-import javax.swing.plaf.ComponentUI;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,6 +24,16 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.CellRendererPane;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import javax.swing.border.AbstractBorder;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.BaseTableUI;
 
 /**
  * Class TmmTableUI
@@ -62,7 +63,7 @@ public class TmmTableUI extends BaseTableUI {
     return new CellRendererPane() {
       private static final long serialVersionUID = 7146435127995900923L;
 
-      @SuppressWarnings({"unchecked", "rawtypes"})
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public void paintComponent(Graphics graphics, Component component, Container container, int x, int y, int w, int h, boolean shouldValidate) {
         // figure out what row we're rendering a cell for.
@@ -78,7 +79,8 @@ public class TmmTableUI extends BaseTableUI {
         if (prop != null && prop instanceof List<?>) {
           try {
             colsNotToDraw.addAll((List) prop);
-          } catch (Exception ignored) {
+          }
+          catch (Exception ignored) {
           }
         }
 
@@ -89,7 +91,7 @@ public class TmmTableUI extends BaseTableUI {
 
           if (isSelected && !colsNotToDraw.contains(columnAtPoint)) {
             jcomponent.setBorder(BorderFactory.createCompoundBorder(new RightSideBorder(AbstractLookAndFeel.getTheme().getSelectedGridColor()),
-                    jcomponent.getBorder()));
+                jcomponent.getBorder()));
           }
         }
 
@@ -101,7 +103,7 @@ public class TmmTableUI extends BaseTableUI {
   private static class RightSideBorder extends AbstractBorder {
 
     private final Color color;
-    private final int thickness = 1;
+    private final int   thickness = 1;
 
     public RightSideBorder(Color color) {
       this.color = color;

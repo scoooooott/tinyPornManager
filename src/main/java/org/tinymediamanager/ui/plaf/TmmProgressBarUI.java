@@ -82,10 +82,12 @@ public class TmmProgressBarUI extends BaseProgressBarUI {
       g2D.setColor(progressBar.getForeground());
       if (JTattooUtilities.isLeftToRight(progressBar)) {
         g2D.fillRoundRect(b.left, y, amountFull, PROGRESS_BAR_WIDTH, PROGRESS_BAR_WIDTH, PROGRESS_BAR_WIDTH);
-      } else {
+      }
+      else {
         g2D.fillRoundRect(progressBar.getWidth() - amountFull - b.right, y, b.right, PROGRESS_BAR_WIDTH, PROGRESS_BAR_WIDTH, PROGRESS_BAR_WIDTH);
       }
-    } else { // VERTICAL
+    }
+    else { // VERTICAL
       // calculate the origin for the progress bar
       int x = b.left + (w - PROGRESS_BAR_WIDTH) / 2;
 
@@ -145,7 +147,8 @@ public class TmmProgressBarUI extends BaseProgressBarUI {
           g2D.fill(bar);
         }
       }
-    } else { // VERTICAL
+    }
+    else { // VERTICAL
       // calculate the origin for the progress bar
       int x = b.left + (w - PROGRESS_BAR_WIDTH) / 2;
 

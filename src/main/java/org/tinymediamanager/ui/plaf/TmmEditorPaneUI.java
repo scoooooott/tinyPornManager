@@ -16,13 +16,15 @@
 
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BaseEditorPaneUI;
-import org.tinymediamanager.ui.plaf.light.TmmLightBorderFactory;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+
+import org.tinymediamanager.ui.plaf.light.TmmLightBorderFactory;
+
+import com.jtattoo.plaf.BaseEditorPaneUI;
 
 public class TmmEditorPaneUI extends BaseEditorPaneUI {
   private FocusListener focusListener = null;

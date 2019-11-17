@@ -15,19 +15,20 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
+import java.util.Properties;
+
+import org.tinymediamanager.ui.plaf.TmmBorders;
+import org.tinymediamanager.ui.plaf.TmmLookAndFeel;
+
 import com.jtattoo.plaf.AbstractBorderFactory;
 import com.jtattoo.plaf.AbstractIconFactory;
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.AbstractTheme;
-import org.tinymediamanager.ui.plaf.TmmBorders;
-import org.tinymediamanager.ui.plaf.TmmLookAndFeel;
-
-import java.util.Properties;
 
 public class TmmLightLookAndFeel extends TmmLookAndFeel {
-  private static final long serialVersionUID = 7771660244511173072L;
+  private static final long           serialVersionUID = 7771660244511173072L;
 
-  private static TmmLightDefaultTheme myTheme = null;
+  private static TmmLightDefaultTheme myTheme          = null;
 
   public static void setTheme(String name) {
     setTheme(themesMap.get(name));

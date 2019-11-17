@@ -154,47 +154,45 @@ public class TvShowBulkEditorDialog extends TmmDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-    //change Country
+    // change Country
     JLabel lblCountry = new TmmLabel(BUNDLE.getString("metatag.country"));
-    panelContent.add(lblCountry,"cell 1 3, alignx right");
+    panelContent.add(lblCountry, "cell 1 3, alignx right");
     tfCountry = new JTextField();
     panelContent.add(tfCountry, "cell 2 3, growx, wmin 0");
 
     JButton btnChgCountry = new JButton("");
-    panelContent.add(btnChgCountry,"flowx, cell 3 3");
+    panelContent.add(btnChgCountry, "flowx, cell 3 3");
     btnChgCountry.setIcon(IconManager.APPLY_INV);
-    btnChgCountry.setMargin(new Insets(2,2,2,2));
+    btnChgCountry.setMargin(new Insets(2, 2, 2, 2));
 
     btnChgCountry.addActionListener(e -> {
       tvShowsChanged = true;
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      for ( TvShow tvShow: tvShowsToEdit ) {
-         tvShow.setCountry(tfCountry.getText());
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.setCountry(tfCountry.getText());
       }
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
-
-    //change Studio
+    // change Studio
     JLabel lblStudio = new TmmLabel(BUNDLE.getString("metatag.studio"));
-    panelContent.add(lblStudio,"cell 1 4, alignx right");
+    panelContent.add(lblStudio, "cell 1 4, alignx right");
     tfStudio = new JTextField();
-    panelContent.add(tfStudio,"cell 2 4, growx, wmin 0");
+    panelContent.add(tfStudio, "cell 2 4, growx, wmin 0");
 
     JButton btnChgStudio = new JButton("");
-    panelContent.add(btnChgStudio,"flowx, cell 3 4");
+    panelContent.add(btnChgStudio, "flowx, cell 3 4");
     btnChgStudio.setIcon(IconManager.APPLY_INV);
-    btnChgStudio.setMargin(new Insets(2,2,2,2));
+    btnChgStudio.setMargin(new Insets(2, 2, 2, 2));
 
     btnChgStudio.addActionListener(e -> {
       tvShowsChanged = true;
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      for ( TvShow tvShow : tvShowsToEdit) {
+      for (TvShow tvShow : tvShowsToEdit) {
         tvShow.setProductionCompany(tfStudio.getText());
       }
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
-
 
     JLabel lblEpisodeT = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     panelContent.add(lblEpisodeT, "cell 0 5 2 1");

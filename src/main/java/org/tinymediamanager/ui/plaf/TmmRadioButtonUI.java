@@ -15,13 +15,14 @@
  */
 package org.tinymediamanager.ui.plaf;
 
-import com.jtattoo.plaf.BaseRadioButtonUI;
-
-import javax.swing.JComponent;
-import javax.swing.plaf.ComponentUI;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+
+import javax.swing.JComponent;
+import javax.swing.plaf.ComponentUI;
+
+import com.jtattoo.plaf.BaseRadioButtonUI;
 
 public class TmmRadioButtonUI extends BaseRadioButtonUI {
   private static TmmRadioButtonUI radioButtonUI = null;

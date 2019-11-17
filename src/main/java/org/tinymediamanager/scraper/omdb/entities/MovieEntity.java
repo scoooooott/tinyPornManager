@@ -16,54 +16,54 @@
 
 package org.tinymediamanager.scraper.omdb.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 public class MovieEntity {
 
   @SerializedName("Title")
-  public String title;
+  public String            title;
   @SerializedName("Year")
-  public String year;
+  public String            year;
   @SerializedName("Rated")
-  public String rated;
+  public String            rated;
   @SerializedName("Released")
-  public String released;
+  public String            released;
   @SerializedName("Runtime")
-  public String runtime;
+  public String            runtime;
   @SerializedName("Genre")
-  public String genre;
+  public String            genre;
   @SerializedName("Director")
-  public String director;
+  public String            director;
   @SerializedName("Writer")
-  public String writer;
+  public String            writer;
   @SerializedName("Actors")
-  public String actors;
+  public String            actors;
   @SerializedName("Plot")
-  public String plot;
+  public String            plot;
   @SerializedName("Language")
-  public String language;
+  public String            language;
   @SerializedName("Country")
-  public String country;
+  public String            country;
   @SerializedName("Awards")
-  public String awards;
+  public String            awards;
   @SerializedName("Poster")
-  public String poster;
+  public String            poster;
   @SerializedName("Metascore")
-  public String metascore;
+  public String            metascore;
   @SerializedName("imdbRating")
-  public String imdbRating;
+  public String            imdbRating;
   @SerializedName("imdbVotes")
-  public String imdbVotes;
+  public String            imdbVotes;
   @SerializedName("imdbID")
-  public String imdbID;
+  public String            imdbID;
   @SerializedName("Type")
-  public String type;
+  public String            type;
   @SerializedName("totalSeasons")
-  public String totalSeasons;
+  public String            totalSeasons;
   @SerializedName("Response")
-  public String response;
+  public String            response;
   @SerializedName("Ratings")
   public List<MovieRating> ratings;
 }

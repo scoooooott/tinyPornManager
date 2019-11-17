@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.slf4j.Logger;
@@ -24,14 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * This class parses the Kodi scraper and extracts the functions
@@ -55,7 +56,8 @@ class KodiScraperParser {
     try {
       InputStream stream = new ByteArrayInputStream(xmlFile.getBytes(StandardCharsets.UTF_8));
       xml = parser.parse(stream);
-    } catch (SAXException e) {
+    }
+    catch (SAXException e) {
       LOGGER.warn("Error parsing " + scraperFile + " - trying fallback");
       // eg FilmAffinity.com scraper
       // replace all known entities with their unicode notation
@@ -117,7 +119,8 @@ class KodiScraperParser {
         regexp.setConditional(expEl.getAttribute("conditional"));
         container.addRegExp(regexp);
         processRegexps(regexp, (Element) nn);
-      } else if ("expression".equals(nn.getNodeName())) {
+      }
+      else if ("expression".equals(nn.getNodeName())) {
         Element expEl = (Element) nn;
         try {
           RegExp regexp = (RegExp) container; // cannot cast - exception see below
@@ -127,7 +130,8 @@ class KodiScraperParser {
           exp.setRepeat(parseBoolean(expEl.getAttribute("repeat"), false));
           exp.setClear(parseBoolean(expEl.getAttribute("clear"), false));
           regexp.setExpression(exp);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.warn("unparseable expression! " + container);
           // happens here (kino.de) - the last empty expression.
           // maybe no RegExp around?
@@ -140,7 +144,8 @@ class KodiScraperParser {
           // <expression noclean="1"/> <------------------
           // </GetTrailer>
         }
-      } else {
+      }
+      else {
         // skip nodest that we don't know about
         // System.out.println("Skipping Node: " + nn);
       }
@@ -202,7 +207,8 @@ class KodiScraperParser {
                 }
               }
             }
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOGGER.error("problem parsing scraper function", e);
           }
         }

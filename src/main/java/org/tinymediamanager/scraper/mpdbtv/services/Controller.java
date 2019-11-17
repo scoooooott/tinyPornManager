@@ -15,32 +15,33 @@
  */
 package org.tinymediamanager.scraper.mpdbtv.services;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.internal.bind.DateTypeAdapter;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.mpdbtv.entities.MovieEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.SearchEntity;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.internal.bind.DateTypeAdapter;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class Controller {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Controller.class);
-  private Retrofit retrofit;
-
+  private Retrofit            retrofit;
 
   public Controller() {
     this(false);
@@ -71,7 +72,8 @@ public class Controller {
     builder.registerTypeAdapter(Integer.class, (JsonDeserializer<Integer>) (json, typeOfT, context) -> {
       try {
         return json.getAsInt();
-      } catch (NumberFormatException e) {
+      }
+      catch (NumberFormatException e) {
         return 0;
       }
     });
@@ -79,14 +81,14 @@ public class Controller {
     return builder;
   }
 
-  public List<SearchEntity> getSearchInformation(String apikey, String username, String subscriptionkey, String searchstring,
-                                                 Locale language, boolean saga, String format) throws IOException {
+  public List<SearchEntity> getSearchInformation(String apikey, String username, String subscriptionkey, String searchstring, Locale language,
+      boolean saga, String format) throws IOException {
 
     return getService().movieSearch(apikey, username, subscriptionkey, searchstring, language, saga, format).execute().body();
   }
 
-  public MovieEntity getScrapeInformation(String apikey, String username, String subscriptionkey,
-                                          int id, Locale language, String typeId, String format) throws IOException {
+  public MovieEntity getScrapeInformation(String apikey, String username, String subscriptionkey, int id, Locale language, String typeId,
+      String format) throws IOException {
 
     return getService().movieScrapebyID(apikey, username, subscriptionkey, id, language, typeId, format).execute().body();
   }
@@ -97,8 +99,7 @@ public class Controller {
 
   private Retrofit buildRetrofitInstance(OkHttpClient client) {
     return new Retrofit.Builder().client(client).baseUrl("http://mpdb.tv/api/v1/")
-            .addConverterFactory(GsonConverterFactory.create(getGsonBuilder().create())).build();
+        .addConverterFactory(GsonConverterFactory.create(getGsonBuilder().create())).build();
   }
-
 
 }

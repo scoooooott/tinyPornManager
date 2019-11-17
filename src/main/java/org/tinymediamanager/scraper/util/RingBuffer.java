@@ -223,7 +223,13 @@ public class RingBuffer<T> {
     private int                 expectedModCount;
 
     private enum Mode {
-      EMPTY, MODE1, MODE2LEFT, MODE2RIGHT, START, END, INVALID
+      EMPTY,
+      MODE1,
+      MODE2LEFT,
+      MODE2RIGHT,
+      START,
+      END,
+      INVALID
     }
 
     /**
