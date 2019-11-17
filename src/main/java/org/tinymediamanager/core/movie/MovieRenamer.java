@@ -45,7 +45,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -514,7 +513,7 @@ public class MovieRenamer {
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N {} - {}", mf.getType(), mf.getFileAsPath());
-      ArrayList<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
+      List<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
       for (MediaFile newMF : newMFs) {
         posterRenamed = true;
         fanartRenamed = true;
@@ -537,7 +536,7 @@ public class MovieRenamer {
     }
 
     if (nfo.getFiledate() > 0) { // one valid found? copy our NFO to all variants
-      ArrayList<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
+      List<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
       if (!newNFOs.isEmpty()) {
         // ok, at least one has been set up
         for (MediaFile newNFO : newNFOs) {
@@ -581,7 +580,7 @@ public class MovieRenamer {
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 {} - {}", other.getType(), other.getFileAsPath());
 
-      ArrayList<MediaFile> newMFs = generateFilename(movie, other, newVideoBasename); // 1:N
+      List<MediaFile> newMFs = generateFilename(movie, other, newVideoBasename); // 1:N
       newMFs.removeAll(Collections.singleton(null)); // remove all NULL ones!
       for (MediaFile newMF : newMFs) {
         boolean ok = copyFile(other.getFileAsPath(), newMF.getFileAsPath());
@@ -681,22 +680,6 @@ public class MovieRenamer {
       }
     }
 
-    // ######################################################################
-    // ## build up image cache
-    // ######################################################################
-    if (Settings.getInstance().isImageCache()) {
-      for (MediaFile gfx : movie.getMediaFiles()) {
-        if (gfx.isGraphic()) {
-          try {
-            ImageCache.cacheImage(gfx);
-          }
-          catch (Exception e) {
-            LOGGER.debug("could not create a cached image: {}", e.getMessage());
-          }
-        }
-      }
-    }
-
     if (downloadMissingArtworks) {
       LOGGER.debug("Yay - movie upgrade :) download missing artworks");
       MovieArtworkHelper.downloadMissingArtwork(movie);
@@ -714,7 +697,7 @@ public class MovieRenamer {
    *          the basename of the renamed videoFileName (saved earlier)
    * @return list of renamed filename
    */
-  public static ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
+  public static List<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
     // return list of all generated MFs
     ArrayList<MediaFile> newFiles = new ArrayList<>();
     boolean newDestIsMultiMovieDir = movie.isMultiMovieDir();

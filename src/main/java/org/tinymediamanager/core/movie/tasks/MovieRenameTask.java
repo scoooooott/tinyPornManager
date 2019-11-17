@@ -15,17 +15,23 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tasks.ImageCacheTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -56,16 +62,31 @@ public class MovieRenameTask extends TmmThreadPool {
     try {
       initThreadPool(1, "rename");
       start();
+
+      List<MediaFile> imageFiles = new ArrayList<>();
+
       // rename movies
       for (Movie aMoviesToRename : moviesToRename) {
         if (cancel) {
           break;
         }
 
-        Movie movie = aMoviesToRename;
-        submitTask(new RenameMovieTask(movie));
+        submitTask(new RenameMovieTask(aMoviesToRename));
+
+        // remember all image files
+        imageFiles.addAll(aMoviesToRename.getMediaFiles().stream().filter(MediaFile::isGraphic).collect(Collectors.toList()));
       }
       waitForCompletionOrCancel();
+      if (cancel) {
+        return;
+      }
+
+      // re-build the image cache afterwards in an own thread
+      if (Settings.getInstance().isImageCache() && !imageFiles.isEmpty()) {
+        ImageCacheTask task = new ImageCacheTask(imageFiles);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+
       LOGGER.info("Done renaming movies)");
     }
     catch (Exception e) {
@@ -80,11 +101,11 @@ public class MovieRenameTask extends TmmThreadPool {
    * @author Myron Boyle
    * @version 1.0
    */
-  private class RenameMovieTask implements Callable<Object> {
+  private static class RenameMovieTask implements Callable<Object> {
 
     private Movie movie = null;
 
-    public RenameMovieTask(Movie movie) {
+    private RenameMovieTask(Movie movie) {
       this.movie = movie;
     }
 
