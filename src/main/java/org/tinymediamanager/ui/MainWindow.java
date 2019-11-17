@@ -151,10 +151,10 @@ public class MainWindow extends JFrame {
               }
               else {
                 // do the update without changelog popup
-
-                int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
-                    JOptionPane.YES_NO_OPTION);
-                if (answer == JOptionPane.OK_OPTION) {
+                Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+                int answer = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+                if (answer == JOptionPane.YES_OPTION) {
                   LOGGER.info("Updating...");
 
                   // spawn getdown and exit TMM
@@ -292,8 +292,9 @@ public class MainWindow extends JFrame {
     int confirm = JOptionPane.YES_OPTION;
     // if there are some threads running, display exit confirmation
     if (TmmTaskManager.getInstance().poolRunning()) {
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); // $NON-NLS-1$
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); // $NON-NLS-1$
     }
     if (confirm == JOptionPane.YES_OPTION) {
       LOGGER.info("bye bye");

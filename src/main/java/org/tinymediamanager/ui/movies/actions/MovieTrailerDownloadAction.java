@@ -15,6 +15,13 @@
  */
 package org.tinymediamanager.ui.movies.actions;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -25,12 +32,6 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-
-import javax.swing.JOptionPane;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * The class MovieTrailerDownloadAction is used to trigger trailer download for selected movies
@@ -70,8 +71,9 @@ public class MovieTrailerDownloadAction extends TmmAction {
     // if there is any existing trailer found, show a message dialog
     boolean overwriteTrailer = false;
     if (existingTrailer) {
-      int answer = JOptionPane.showConfirmDialog(MainWindow.getFrame(), BUNDLE.getString("movie.overwritetrailer"),
-          BUNDLE.getString("movie.downloadtrailer"), JOptionPane.OK_CANCEL_OPTION);
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+      int answer = JOptionPane.showOptionDialog(MainWindow.getFrame(), BUNDLE.getString("movie.overwritetrailer"),
+          BUNDLE.getString("movie.downloadtrailer"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
       if (answer == JOptionPane.YES_OPTION) {
         overwriteTrailer = true;
       }

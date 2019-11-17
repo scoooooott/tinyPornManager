@@ -76,9 +76,7 @@ public class TvShowSelectedScrapeAction extends TmmAction {
     if (dialog.shouldStartScrape()) {
       // scrape
       TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options, tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
-      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+      TmmTaskManager.getInstance().addMainTask(scrapeTask);
     }
   }
 }

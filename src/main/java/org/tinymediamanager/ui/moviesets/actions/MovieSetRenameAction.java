@@ -68,8 +68,6 @@ public class MovieSetRenameAction extends TmmAction {
 
     // rename
     TmmThreadPool renameTask = new MovieRenameTask(new ArrayList<>(selectedMovies));
-    if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(renameTask);
   }
 }

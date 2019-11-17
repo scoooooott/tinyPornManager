@@ -526,9 +526,10 @@ public class MovieBulkEditorDialog extends TmmDialog {
   }
 
   private boolean isDeleteConfirmed(String attribute) {
-    int dialogResult = JOptionPane.showConfirmDialog(null, MessageFormat.format(BUNDLE.getString("message.bulkedit.delete"), attribute),
-        BUNDLE.getString("message.bulkedit.warning"), JOptionPane.YES_NO_OPTION);
-    if (dialogResult == 0) {
+    Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+    int dialogResult = JOptionPane.showOptionDialog(null, MessageFormat.format(BUNDLE.getString("message.bulkedit.delete"), attribute),
+        BUNDLE.getString("message.bulkedit.warning"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+    if (dialogResult == JOptionPane.YES_OPTION) {
       return true;
     }
     else {

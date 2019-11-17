@@ -96,8 +96,9 @@ public class MovieSettingsPanel extends JPanel {
 
     // logic initializations
     btnClearTraktData.addActionListener(e -> {
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.clearmovies.hint"),
-          BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+          BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); //$NON-NLS-1$
       if (confirm == JOptionPane.YES_OPTION) {
         TmmTask task = new ClearTraktTvTask(true, false);
         TmmTaskManager.getInstance().addUnnamedTask(task);

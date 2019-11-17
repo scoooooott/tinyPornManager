@@ -171,15 +171,16 @@ public class MovieExporterDialog extends TmmDialog {
 
           try {
             if (!Utils.isFolderEmpty(exportPath)) {
-              int decision = JOptionPane.showConfirmDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
-                  JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
+              Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+              int decision = JOptionPane.showOptionDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);// $NON-NLS-1$
               if (decision == JOptionPane.NO_OPTION) {
                 return;
               }
             }
           }
           catch (IOException e) {
-            LOGGER.warn("could not open folder: " + e.getMessage());
+            LOGGER.warn("could not open folder: {}", e.getMessage());
             return;
           }
 

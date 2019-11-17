@@ -52,9 +52,10 @@ public class ClearDatabaseAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent arg0) {
     // display warning popup
-    int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.cleardatabase.hint"),
-        BUNDLE.getString("tmm.cleardatabase"), JOptionPane.YES_NO_OPTION);
-    if (answer != JOptionPane.OK_OPTION) {
+    Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+    int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.cleardatabase.hint"),
+        BUNDLE.getString("tmm.cleardatabase"), JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, null);
+    if (answer != JOptionPane.YES_OPTION) {
       return;
     }
 

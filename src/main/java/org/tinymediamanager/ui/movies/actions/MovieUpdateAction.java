@@ -56,8 +56,6 @@ public class MovieUpdateAction extends TmmAction {
     }
 
     TmmThreadPool task = new MovieUpdateDatasourceTask(selectedMovies);
-    if (TmmTaskManager.getInstance().addMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(task);
   }
 }

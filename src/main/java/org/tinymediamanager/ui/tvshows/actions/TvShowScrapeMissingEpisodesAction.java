@@ -62,8 +62,6 @@ public class TvShowScrapeMissingEpisodesAction extends TmmAction {
     options.loadDefaults();
 
     TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options, new ArrayList<>(), new ArrayList<>());
-    if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(scrapeTask);
   }
 }

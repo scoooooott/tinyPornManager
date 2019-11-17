@@ -72,9 +72,7 @@ public class MovieSelectedScrapeMetadataAction extends TmmAction {
     if (dialog.shouldStartScrape()) {
       // scrape
       TmmThreadPool scrapeTask = new MovieScrapeTask(selectedMovies, false, options, config);
-      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
+      TmmTaskManager.getInstance().addMainTask(scrapeTask);
     }
   }
 }

@@ -211,16 +211,14 @@ public class TmmTaskManager implements TmmTaskListener {
    * 
    * @param newTask
    *          the task to be added
-   * @return true if there is alreday a main task running
+   * @return true if there is already a main task running
    */
-  public boolean addMainTask(TmmThreadPool newTask) {
-    boolean result = false;
+  public void addMainTask(TmmThreadPool newTask) {
     newTask.setState(TaskState.QUEUED);
     newTask.addListener(this);
     // immediately inform this listener
     processTaskEvent(newTask);
     mainTaskExecutor.execute(newTask);
-    return result;
   }
 
   private ThreadPoolExecutor createMainTaskQueue() {

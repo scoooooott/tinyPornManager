@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
@@ -49,8 +48,6 @@ public class MovieUpdateDatasourceAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     TmmThreadPool task = new MovieUpdateDatasourceTask();
-    if (TmmTaskManager.getInstance().addMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(task);
   }
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -196,12 +195,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
 
         // rename
         TmmThreadPool renameTask = new MovieRenameTask(selectedMovies1);
-        if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-        }
-        else {
-          results.removeAll(selectedResults);
-        }
+        TmmTaskManager.getInstance().addMainTask(renameTask);
+        results.removeAll(selectedResults);
       });
       addButton(btnRename);
 

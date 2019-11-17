@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.movie.MovieList;
@@ -69,10 +68,7 @@ public class MovieUnscrapedScrapeAction extends TmmAction {
       if (dialog.shouldStartScrape()) {
         // scrape
         TmmThreadPool scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options, config);
-        if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-          // inform that only one task at a time can be executed
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-        }
+        TmmTaskManager.getInstance().addMainTask(scrapeTask);
       }
     }
   }

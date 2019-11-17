@@ -108,7 +108,7 @@ class MovieSourcePanel extends JPanel {
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
-          if (decision == 0) {
+          if (decision == JOptionPane.YES_OPTION) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             MovieModuleManager.SETTINGS.removeMovieDataSources(path);
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
