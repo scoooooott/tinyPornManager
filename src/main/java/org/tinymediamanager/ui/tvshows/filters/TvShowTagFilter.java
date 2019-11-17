@@ -70,7 +70,7 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
 
     // search tags of the show
     for (String tag : tags) {
-      boolean containsTags = tags.contains(tag);
+      boolean containsTags = tvShow.getTags().contains(tag);
       if (!invert && containsTags) {
         return true;
       }

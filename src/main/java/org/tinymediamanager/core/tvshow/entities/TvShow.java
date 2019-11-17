@@ -1189,10 +1189,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    for (String tag : tags) {
-      if (tag.equals(newTag)) {
-        return;
-      }
+    if (tags.contains(newTag)) {
+      return;
     }
 
     tags.add(newTag);

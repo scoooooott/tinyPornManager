@@ -102,11 +102,11 @@ public class TvShowList extends AbstractModelObject {
     // the tag listener: its used to always have a full list of all tags used in tmm
     propertyChangeListener = evt -> {
       // listen to changes of tags
-      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShow) {
+      if (Constants.TAG.equals(evt.getPropertyName()) && evt.getSource() instanceof TvShow) {
         TvShow tvShow = (TvShow) evt.getSource();
         updateTvShowTags(tvShow);
       }
-      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+      if (Constants.TAG.equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
         TvShowEpisode episode = (TvShowEpisode) evt.getSource();
         updateEpisodeTags(episode);
       }
@@ -608,7 +608,7 @@ public class TvShowList extends AbstractModelObject {
       tvShowTagsObservable.add(newTag);
     }
 
-    firePropertyChange("tag", null, tvShowTagsObservable);
+    firePropertyChange(Constants.TAG, null, tvShowTagsObservable);
   }
 
   public List<String> getTagsInTvShows() {
@@ -643,7 +643,7 @@ public class TvShowList extends AbstractModelObject {
       episodeTagsObservable.add(newTag);
     }
 
-    firePropertyChange("tag", null, episodeTagsObservable);
+    firePropertyChange(Constants.TAG, null, episodeTagsObservable);
   }
 
   public List<String> getTagsInEpisodes() {
