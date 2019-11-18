@@ -95,8 +95,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final List<String>   skipFolders    = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
       "AUDIO_TS", "JAR", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ");
 
-  // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipRegex      = "^[.][\\w@]+.*";
+  // skip folders starting with a SINGLE "." or "._" (exception for movie ".45")
+  private static final String         skipRegex      = "^[.@](?!45)[\\w@]+.*";
   private static Pattern              video3DPattern = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
   private List<String>                dataSources;
@@ -601,6 +601,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         catch (Exception ignored) {
         }
       }
+    }
+    if (movie.getTitle().isEmpty()) {
+      // .45 for ex
+      movie.setTitle(videoName);
     }
 
     // set the 3D flag/edition from the file/folder name ONLY at first import
