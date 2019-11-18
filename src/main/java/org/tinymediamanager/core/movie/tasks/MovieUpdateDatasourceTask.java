@@ -487,8 +487,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         if (movie == null) {
           movie = new Movie();
         }
-        VSMeta vsmeta = new VSMeta();
-        vsmeta.parseFile(mf.getFileAsPath());
+        VSMeta vsmeta = new VSMeta(mf.getFileAsPath());
+        vsmeta.parseFile();
+
+        if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+          // we want some poster scraped, so we also can extract them
+          List<MediaFile> generated = vsmeta.generateMediaFile(movie);
+          movie.addToMediaFiles(generated);
+        }
+
+        // extract and attach images
         movie.merge(vsmeta.getMovie());
       }
     }

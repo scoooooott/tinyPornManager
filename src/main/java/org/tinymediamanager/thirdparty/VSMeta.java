@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -29,12 +30,15 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
@@ -62,8 +66,10 @@ public class VSMeta {
   private static final byte             TAG_META_JSON             = 0x4A;                                 // movie & episode
   private static final byte             TAG_CLASSIFICATION        = 0x5A;
   private static final byte             TAG_RATING                = 0x60;
-  private static final int              TAG_MOVIE_POSTER_DATA     = 0x8a;
-  private static final int              TAG_MOVIE_POSTER_MD5      = 0x92;
+  private static final int              TAG_POSTER_DATA           = 0x8a;
+  private static final int              TAG_POSTER_MD5            = 0x92;
+  private static final int              TAG_BACKDROP_DATA         = 0xaa;
+  // private static final int TAG_BACKDROP_MD5 = 0x??;
 
   private static final byte             TAG_GROUP1                = 0x52;
   private static final byte             TAG1_CAST                 = 0x0A;
@@ -74,13 +80,14 @@ public class VSMeta {
   private static final int              TAG_GROUP2                = 0x9a;
   private static final byte             TAG2_SEASON               = 0x08;
   private static final byte             TAG2_EPISODE              = 0x10;
-  private static final byte             TAG2_TV_SHOW_YEAR         = 0x18;
   private static final byte             TAG2_RELEASE_DATE_TV_SHOW = 0x22;
   private static final byte             TAG2_LOCKED               = 0x28;
+
+  private static final byte             TAG2_TVSHOW_YEAR          = 0x18;
   private static final byte             TAG2_TVSHOW_SUMMARY       = 0x32;
-  private static final byte             TAG2_POSTER_DATA          = 0x3A;
-  private static final byte             TAG2_POSTER_MD5           = 0x42;
-  private static final byte             TAG2_TVSHOW_META_JSON     = 0x4A;                                 // tv show
+  private static final byte             TAG2_TVSHOW_POSTER_DATA   = 0x3A;
+  private static final byte             TAG2_TVSHOW_POSTER_MD5    = 0x42;
+  private static final byte             TAG2_TVSHOW_META_JSON     = 0x4A;
 
   private static final byte             TAG2_GROUP3               = 0x52;
   private static final byte             TAG3_BACKDROP_DATA        = 0x0a;
@@ -94,6 +101,8 @@ public class VSMeta {
   private Info                          info                      = new Info();
   private HashMap<String, Object>       ids                       = new HashMap<>(0);
 
+  private Path                          vsMetaFile                = null;
+  private String                        basename                  = "";
   private MovieSet                      movieSet                  = null;
   private float                         rating                    = 0.0f;
   private List<MediaArtwork>            artworks                  = new ArrayList<>(0);
@@ -130,23 +139,89 @@ public class VSMeta {
   }
 
   static class ImageInfo {
-    public byte[] tvshowPoster   = null;
-    public byte[] episodeImage   = null;
-    public byte[] tvshowBackdrop = null;
+    public byte[] poster    = null; // movie/episode
+    public byte[] showImage = null; // show
+    public byte[] backdrop  = null;
   }
 
   static SyncStream openSync(byte[] data) {
     return new MemorySyncStream(data);
   }
 
+  public VSMeta(Path file) {
+    this.vsMetaFile = file;
+    this.basename = FilenameUtils.getBaseName(FilenameUtils.getBaseName(file.getFileName().toString())); // remove .ext.vsmeta
+  }
+
+  private void writeImage(Path file, byte[] bytes) {
+    try {
+      LOGGER.debug("SYNO: write image to filesystem: {}", file);
+      Files.write(file, bytes);
+    }
+    catch (IOException e) {
+      LOGGER.warn("Could not write image {}", file, e);
+    }
+  }
+
+  /**
+   * Extracts the images out of the .vsmeta, and returns MFs you want to add
+   * 
+   * @param entity
+   * @return
+   */
+  public List<MediaFile> generateMediaFile(MediaEntity entity) {
+    List<MediaFile> mfs = new ArrayList<MediaFile>();
+
+    if (info.images.poster != null) {
+      MediaFile mf = null;
+      if (entity instanceof Movie) {
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-poster.jpg"), MediaFileType.POSTER);
+      }
+      else if (entity instanceof TvShowEpisode) {
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-thumb.jpg"), MediaFileType.THUMB);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.poster);
+        mfs.add(mf);
+      }
+    }
+
+    if (info.images.backdrop != null) {
+      MediaFile mf = null;
+      if (entity instanceof Movie) { // || entity instanceof TvShowEpisode) { // no episode fanart - treat it as show fanart!!
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-fanart.jpg"), MediaFileType.FANART);
+      }
+      if (entity instanceof TvShow) {
+        mf = new MediaFile(entity.getPathNIO().resolve("fanart.jpg"), MediaFileType.FANART);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.backdrop);
+        mfs.add(mf);
+      }
+    }
+
+    if (info.images.showImage != null) {
+      MediaFile mf = null;
+      if (entity instanceof TvShow) {
+        mf = new MediaFile(entity.getPathNIO().resolve("poster.jpg"), MediaFileType.POSTER);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.showImage);
+        mfs.add(mf);
+      }
+    }
+
+    return mfs;
+  }
+
   /**
    * tries to parse a .VSMETA file
    * 
-   * @param file
+   * @param vsMetaFile
    */
-  public void parseFile(Path file) {
+  public void parseFile() {
     try {
-      data = new MemorySyncStream(Files.readAllBytes(file));
+      data = new MemorySyncStream(Files.readAllBytes(vsMetaFile));
 
       int magic = data.readU8();
       int version = data.readU8();
@@ -208,10 +283,14 @@ public class VSMeta {
               info.rating = ((double) it) / 10;
             }
             break;
-          case TAG_MOVIE_POSTER_DATA:
-            info.images.tvshowPoster = fromBase64IgnoreSpaces(data.readStringVL());
+          case TAG_POSTER_DATA:
+            info.images.poster = fromBase64IgnoreSpaces(data.readStringVL());
             break;
-          case TAG_MOVIE_POSTER_MD5:
+          case TAG_BACKDROP_DATA:
+            // TODO: avatar (v1) fails, check with actual movie
+            info.images.backdrop = fromBase64IgnoreSpaces(data.readStringVL());
+            break;
+          case TAG_POSTER_MD5:
             // assert (hex(md5(info.imagedata.episodeImage)).equals(data.readStringVL()));
             data.readStringVL();
             break;
@@ -230,7 +309,7 @@ public class VSMeta {
       }
     }
     catch (Exception e) {
-      LOGGER.warn("SYNO: Error parsing file", e);
+      LOGGER.warn("SYNO: Error parsing file ({})", vsMetaFile, e);
     }
   }
 
@@ -268,7 +347,7 @@ public class VSMeta {
         case TAG2_EPISODE:
           info.episode = s.readU_VL_Int();
           break;
-        case TAG2_TV_SHOW_YEAR:
+        case TAG2_TVSHOW_YEAR:
           info.tvshowYear = s.readU_VL_Int();
           break;
         case TAG2_RELEASE_DATE_TV_SHOW:
@@ -285,10 +364,11 @@ public class VSMeta {
         case TAG2_TVSHOW_SUMMARY:
           info.tvshowSummary = s.readStringVL();
           break;
-        case TAG2_POSTER_DATA:
-          info.images.tvshowPoster = fromBase64IgnoreSpaces(s.readStringVL());
+        case TAG2_TVSHOW_POSTER_DATA:
+          info.images.showImage = fromBase64IgnoreSpaces(s.readStringVL());
+          // writeImage("-tvshow.jpg", info.images.showImage); // TODO: nah, we do not keep TvShow posters on episode basis
           break;
-        case TAG2_POSTER_MD5:
+        case TAG2_TVSHOW_POSTER_MD5:
           String md5 = s.readStringVL();
           // if (!md5.equalsIgnoreCase(StrgUtils.bytesToHex(md5(info.images.tvshowPoster)))) {
           // LOGGER.warn("embedded MD5 does not match embedded image...?");
@@ -316,7 +396,7 @@ public class VSMeta {
       int kind = s.readU_VL_Int();
       switch (kind) {
         case TAG3_BACKDROP_DATA:
-          info.images.tvshowBackdrop = fromBase64IgnoreSpaces(s.readStringVL());
+          info.images.backdrop = fromBase64IgnoreSpaces(s.readStringVL());
           break;
         case TAG3_BACKDROP_MD5:
           String md5 = s.readStringVL();
@@ -334,7 +414,14 @@ public class VSMeta {
   }
 
   private byte[] fromBase64IgnoreSpaces(String str) {
-    return Base64.getDecoder().decode(str.replaceAll("\\s+", ""));
+    byte[] ret = null;
+    try {
+      ret = Base64.getDecoder().decode(str.replaceAll("\\s+", ""));
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not decode image: {}", e.getMessage());
+    }
+    return ret;
   }
 
   private void parseJSON() {
@@ -708,7 +795,12 @@ public class VSMeta {
 
     public String readStringVL(Charset charset) {
       String str = new java.lang.String(readBytesVL(), charset);
-      LOGGER.trace("SYNO str: {}", StringUtils.left(str, 1000)); // cut-off pictures
+      if (str.length() > 1000) {
+        LOGGER.trace("SYNO str: {}... (truncated)", StringUtils.left(str, 1000)); // cut-off pictures
+      }
+      else {
+        LOGGER.trace("SYNO str: {}", str);
+      }
       return str;
     }
   }

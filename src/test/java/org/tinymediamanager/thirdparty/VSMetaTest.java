@@ -14,9 +14,19 @@ public class VSMetaTest extends BasicTest {
   public void checkEmpty() {
     setTraceLogging();
     Path file = Paths.get("src/test/resources/syno_vsmeta/empty.vsmeta");
-    VSMeta vsmeta = new VSMeta();
-    vsmeta.parseFile(file);
+    VSMeta vsmeta = new VSMeta(file);
+    vsmeta.parseFile();
     assertEqual("1", vsmeta.getMovie().getTitle());
+    assertEqual("", vsmeta.getTvShowEpisode().getTitle());
+  }
+
+  @Test
+  public void check101() {
+    setTraceLogging();
+    Path file = Paths.get("src/test/resources/syno_vsmeta/101 Dalmatiner.avi.vsmeta");
+    VSMeta vsmeta = new VSMeta(file);
+    vsmeta.parseFile();
+    assertEqual("101 Dalmatiner", vsmeta.getMovie().getTitle());
     assertEqual("", vsmeta.getTvShowEpisode().getTitle());
   }
 
@@ -24,8 +34,8 @@ public class VSMetaTest extends BasicTest {
   public void checkAvatar() {
     setTraceLogging();
     Path file = Paths.get("src/test/resources/syno_vsmeta/Avatar.mkv.vsmeta");
-    VSMeta vsmeta = new VSMeta();
-    vsmeta.parseFile(file);
+    VSMeta vsmeta = new VSMeta(file);
+    vsmeta.parseFile();
     Movie m = vsmeta.getMovie();
     assertEqual("Avatar - Aufbruch nach Pandora", m.getTitle());
   }
@@ -33,10 +43,10 @@ public class VSMetaTest extends BasicTest {
   @Test
   public void checkBieneMaia() {
     setTraceLogging();
-    VSMeta vsmeta = new VSMeta();
 
     Path file = Paths.get("src/test/resources/syno_vsmeta/Die Biene Maja - S01E01 - Maja wird geboren.avi.vsmeta");
-    vsmeta.parseFile(file);
+    VSMeta vsmeta = new VSMeta(file);
+    vsmeta.parseFile();
     TvShowEpisode ep = vsmeta.getTvShowEpisode();
     assertEqual("Maja wird geboren", ep.getTitle());
     assertEqual(1, ep.getSeason());
@@ -45,7 +55,8 @@ public class VSMetaTest extends BasicTest {
     System.out.println(ep);
 
     file = Paths.get("src/test/resources/syno_vsmeta/Die Biene Maja - S01E02 - Maja lernt Fliegen.avi.vsmeta");
-    vsmeta.parseFile(file);
+    vsmeta = new VSMeta(file);
+    vsmeta.parseFile();
     ep = vsmeta.getTvShowEpisode();
     assertEqual(1, ep.getSeason());
     assertEqual(2, ep.getEpisode());

@@ -656,9 +656,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           MediaFile meta = getMediaFile(epFiles, MediaFileType.VSMETA);
           TvShowEpisode vsMetaEP = null;
           if (meta != null) {
-            VSMeta vsmeta = new VSMeta();
-            vsmeta.parseFile(meta.getFileAsPath());
+            VSMeta vsmeta = new VSMeta(meta.getFileAsPath());
+            vsmeta.parseFile();
             vsMetaEP = vsmeta.getTvShowEpisode();
+
+            if (!TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+              // we want some poster scraped, so we also can extract them
+              List<MediaFile> generated = vsmeta.generateMediaFile(vsMetaEP);
+              epFiles.addAll(generated);
+
+              List<MediaFile> generatedShow = vsmeta.generateMediaFile(tvShow);
+              tvShow.addToMediaFiles(generatedShow);
+            }
           }
 
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
