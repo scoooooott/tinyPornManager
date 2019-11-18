@@ -175,8 +175,12 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     }
 
     // pre-set configs
-    cbTvShowScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig());
-    cbEpisodeScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig());
+    if (cbTvShowScraperConfig != null) {
+      cbTvShowScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig());
+    }
+    if (cbEpisodeScraperConfig != null) {
+      cbEpisodeScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig());
+    }
   }
 
   /**

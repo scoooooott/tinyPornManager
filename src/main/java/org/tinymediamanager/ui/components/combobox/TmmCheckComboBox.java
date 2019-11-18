@@ -191,7 +191,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
    *          the items to be set as selected
    */
   public void setSelectedItems(Collection<E> items) {
-    if (items == null) {
+    if (items == null || items.isEmpty()) {
       return;
     }
 
