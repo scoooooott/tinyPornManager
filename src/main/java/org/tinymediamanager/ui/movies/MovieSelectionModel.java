@@ -31,7 +31,6 @@ import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
-import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
  * The Class MovieSelectionModel.
@@ -47,7 +46,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   private Movie                             selectedMovie;
   private DefaultEventSelectionModel<Movie> selectionModel;
   private MovieMatcherEditor                matcherEditor;
-  private TableComparatorChooser<Movie>     tableComparatorChooser;
   private SortedList<Movie>                 sortedList;
   private PropertyChangeListener            propertyChangeListener;
 
@@ -197,25 +195,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public void setSelectedMovies(List<Movie> selectedMovies) {
     this.selectedMovies = selectedMovies;
-  }
-
-  /**
-   * Gets the table comparator chooser.
-   * 
-   * @return the table comparator chooser
-   */
-  public TableComparatorChooser<Movie> getTableComparatorChooser() {
-    return tableComparatorChooser;
-  }
-
-  /**
-   * Sets the table comparator chooser.
-   * 
-   * @param tableComparatorChooser
-   *          the new table comparator chooser
-   */
-  public void setTableComparatorChooser(TableComparatorChooser<Movie> tableComparatorChooser) {
-    this.tableComparatorChooser = tableComparatorChooser;
   }
 
   /**

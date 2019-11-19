@@ -101,7 +101,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     setOpaque(false);
 
     movieList = MovieList.getInstance();
-    SortedList<Movie> sortedMovies = new SortedList<Movie>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
+    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()),
         new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
@@ -120,8 +120,8 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     // build the table
     movieTable = new TmmTable(movieTableModel);
 
-    // install and save the comparator on the Table
-    selectionModel.setTableComparatorChooser(TableComparatorChooser.install(movieTable, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
+    // install on the Table
+    TableComparatorChooser.install(movieTable, sortedMovies, TableComparatorChooser.MULTIPLE_COLUMN_KEYBOARD).appendComparator(0, 0, false);
 
     // restore hidden columns
     movieTable.readHiddenColumns(MovieModuleManager.SETTINGS.getMovieTableHiddenColumns());
