@@ -512,6 +512,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
         score -= diff;
       }
+      else if (options.getSearchYear() != 0 && result.getYear() == 0) {
+        LOGGER.debug("search result does not include any year - downgrading score by 0.01");
+        score -= 0.01;
+      }
       result.setScore(score);
       resultMap.put(show.id, result);
     }

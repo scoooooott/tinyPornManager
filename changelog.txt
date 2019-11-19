@@ -22,6 +22,7 @@ x respect TV show bad words in the TV show update data source logic #692
 x do not rewrite NFO file, if nothing has changed #698 
 x IMDb: parse release date from releaseinfo page too #697
 x fixed TV show tag filter
+x downgrade TVDB search result score when not receiving any year to compare
 
 
 Version 3.0.5
