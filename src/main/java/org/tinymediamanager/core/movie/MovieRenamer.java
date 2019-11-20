@@ -1320,7 +1320,8 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    return ((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
+    pattern = pattern.toLowerCase(Locale.ROOT);
+    return ((pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titlesortable}"))
         && pattern.contains("${year}")) || pattern.contains("${imdb}");
   }
 
@@ -1332,9 +1333,8 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
-
-    return pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}");
+    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename().toLowerCase(Locale.ROOT);
+    return pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titletortable}");
   }
 
   /**
