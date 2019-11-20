@@ -1334,7 +1334,7 @@ public class MovieRenamer {
    */
   public static boolean isFilePatternValid() {
     String pattern = MovieModuleManager.SETTINGS.getRenamerFilename().toLowerCase(Locale.ROOT);
-    return pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titletortable}");
+    return pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titlesortable}");
   }
 
   /**
