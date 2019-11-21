@@ -4,6 +4,7 @@ Version 3.1
   DUE TO THE MASSIVE REWORK YOU MAY NEED TO REVIEW YOUR SCRAPER SETTINGS
 + support for named seasons
 + support for rendering animated gifs
++ updated libmediainfo to 19.09
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox
 + write the movie set/collection id as tmdbCollectionId for emby
