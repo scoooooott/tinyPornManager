@@ -137,7 +137,6 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addUserrating();
         addVotes();
         addSet();
-        addOutline();
         addPlot();
         addTagline();
         addRuntime();
@@ -329,16 +328,6 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Element set = document.createElement("set");
     set.setTextContent(movie.getMovieSetTitle());
     root.appendChild(set);
-  }
-
-  /**
-   * add the outline in the form <outline>xxx</outline>
-   */
-  protected void addOutline() {
-    Element outline = document.createElement("outline");
-    // use the plot right now since we do not have a dedicated outline field in tmm
-    outline.setTextContent(movie.getPlot());
-    root.appendChild(outline);
   }
 
   /**

@@ -53,11 +53,34 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
 
   @Override
   protected void addOwnTags() {
+    addOutline();
     addEpbookmark();
     addTop250();
     addLastplayed();
     addStatusAndCode();
     addFileinfo();
+  }
+
+  protected void addOutline() {
+    Element outline = document.createElement("outline");
+    // use the first sentence of the plot right now since we do not have a dedicated outline field in tmm
+    StringBuilder text = new StringBuilder();
+    String[] sentences = movie.getPlot().split("\\.");
+
+    for (String sentence : sentences) {
+      if (text.length() > 0) {
+        // there's already a text in it, append a dot
+        text.append(".");
+      }
+
+      text.append(sentence);
+      if (text.length() >= 20) {
+        break;
+      }
+    }
+
+    outline.setTextContent(text.toString());
+    root.appendChild(outline);
   }
 
   @Override

@@ -26,6 +26,10 @@ x do not rewrite NFO file, if nothing has changed #698
 x IMDb: parse release date from releaseinfo page too #697
 x fixed TV show tag filter
 x downgrade TVDB search result score when not receiving any year to compare
+x changed writing of the outline in the NFO: #630 #683
+  Kodi / XBMC < v16: the outline is being generated out of the plot (first sentence)
+  Kodi > v16: the outline is only passed from a previous NFO if existing
+  other NFOs: the outline is not being written any more
 
 
 Version 3.0.5
