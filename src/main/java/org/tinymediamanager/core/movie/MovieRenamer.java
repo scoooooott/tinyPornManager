@@ -1367,6 +1367,14 @@ public class MovieRenamer {
           err += "  " + matcher.group(); // "first" is missing
         }
       }
+      else if (fulltoken.startsWith("movie.")) {
+        // ex: ${movie.year}
+        token = fulltoken.substring(6);
+        // String mapped = getTokenValue(movie, token)
+        // TODO: check via JMTE, if this is a valid token?
+        // currently ignore
+        continue;
+      }
       else {
         token = fulltoken;
       }
