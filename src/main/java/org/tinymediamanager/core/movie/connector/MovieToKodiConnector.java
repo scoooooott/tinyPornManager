@@ -56,24 +56,11 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
 
   @Override
   protected void addOwnTags() {
-    addOutline();
     addEpbookmark();
     addTop250();
     addLastplayed();
     addStatusAndCode();
     addFileinfo();
-  }
-
-  /**
-   * add the outline in the form <outline>xxx</outline>
-   */
-  protected void addOutline() {
-    Element outline = document.createElement("outline");
-    if (parser != null && StringUtils.isNotBlank(parser.outline)) {
-      // only pass pre-existing outlines since we do not have the outline
-      outline.setTextContent(parser.outline);
-    }
-    root.appendChild(outline);
   }
 
   /**

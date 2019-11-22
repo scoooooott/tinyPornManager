@@ -138,6 +138,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addVotes();
         addSet();
         addPlot();
+        addOutline();
         addTagline();
         addRuntime();
         addThumb();
@@ -337,6 +338,48 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Element plot = document.createElement("plot");
     plot.setTextContent(movie.getPlot());
     root.appendChild(plot);
+  }
+
+  /**
+   * add the outline in the form <outline>xxx</outline>
+   */
+  protected void addOutline() {
+    String outlineText = "";
+    if (MovieModuleManager.SETTINGS.isCreateOutline()) {
+      // lets create the outline since we do not have any outline field
+      if (MovieModuleManager.SETTINGS.isOutlineFirstSentence()) {
+        // use the first sentence of the plot (at least 20 chars)
+        StringBuilder text = new StringBuilder();
+        String[] sentences = movie.getPlot().split("\\.");
+
+        for (String sentence : sentences) {
+          if (text.length() > 0) {
+            // there's already a text in it, append a dot
+            text.append(".");
+          }
+
+          text.append(sentence);
+          if (text.length() >= 20) {
+            break;
+          }
+        }
+        outlineText = text.toString();
+      }
+      else {
+        // use the whole plot
+        outlineText = movie.getPlot();
+      }
+    }
+    else if (parser != null && StringUtils.isNotBlank(parser.outline)) {
+      // only pass pre-existing outlines since we do not have the outline
+      outlineText = parser.outline;
+    }
+
+    if (StringUtils.isNotBlank(outlineText)) {
+      Element outline = document.createElement("outline");
+      outline.setTextContent(outlineText);
+      root.appendChild(outline);
+    }
   }
 
   /**

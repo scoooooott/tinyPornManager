@@ -125,6 +125,8 @@ public class MovieSettings extends AbstractSettings {
   private CertificationStyle               certificationStyle                  = CertificationStyle.LARGE;
   private boolean                          writeCleanNfo                       = false;
   private MediaLanguages                   nfoLanguage                         = MediaLanguages.en;
+  private boolean                          createOutline                       = true;
+  private boolean                          outlineFirstSentence                = false;
 
   // renamer
   private boolean                          renameAfterScrape                   = false;
@@ -1216,6 +1218,26 @@ public class MovieSettings extends AbstractSettings {
     MediaLanguages oldValue = nfoLanguage;
     this.nfoLanguage = newValue;
     firePropertyChange("nfoLanguage", oldValue, newValue);
+  }
+
+  public boolean isCreateOutline() {
+    return createOutline;
+  }
+
+  public void setCreateOutline(boolean newValue) {
+    boolean oldValue = this.createOutline;
+    this.createOutline = newValue;
+    firePropertyChange("createOutline", oldValue, newValue);
+  }
+
+  public boolean isOutlineFirstSentence() {
+    return outlineFirstSentence;
+  }
+
+  public void setOutlineFirstSentence(boolean newValue) {
+    boolean oldValue = this.outlineFirstSentence;
+    this.outlineFirstSentence = newValue;
+    firePropertyChange("outlineFirstSentence", oldValue, newValue);
   }
 
   public boolean getCapitalWordsInTitles() {
