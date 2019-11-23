@@ -888,7 +888,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
         }
 
-        LOGGER.debug("| parsing " + mf.getType().name() + " " + mf.getFileAsPath());
+        LOGGER.debug("| parsing {} {}", mf.getType().name(), mf.getFileAsPath());
         switch (mf.getType()) {
           case VIDEO:
             movie.addToMediaFiles(mf);
@@ -921,7 +921,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case FANART:
             if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrafanart")) {
               // there shouldn't be any files here
-              LOGGER.warn("problem: detected media file type FANART in extrafanart folder: " + mf.getPath());
+              LOGGER.warn("problem: detected media file type FANART in extrafanart folder: {}", mf.getPath());
               continue;
             }
             movie.addToMediaFiles(mf);
@@ -930,7 +930,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case THUMB:
             if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrathumbs")) { //
               // there shouldn't be any files here
-              LOGGER.warn("| problem: detected media file type THUMB in extrathumbs folder: " + mf.getPath());
+              LOGGER.warn("| problem: detected media file type THUMB in extrathumbs folder: {}", mf.getPath());
               continue;
             }
             movie.addToMediaFiles(mf);
@@ -964,7 +964,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case SEASON_THUMB:
           case VIDEO_EXTRA:
           default:
-            LOGGER.debug("| NOT adding unknown media file type: " + mf.getFileAsPath());
+            LOGGER.debug("| NOT adding unknown media file type: {}", mf.getFileAsPath());
             // movie.addToMediaFiles(mf); // DO NOT ADD UNKNOWN
             break;
         } // end switch type
@@ -972,7 +972,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         // debug
         if (mf.getType() != MediaFileType.GRAPHIC && mf.getType() != MediaFileType.UNKNOWN && mf.getType() != MediaFileType.NFO
             && !movie.getMediaFiles().contains(mf)) {
-          LOGGER.error("| Movie not added mf: " + mf.getFileAsPath());
+          LOGGER.error("| Movie not added mf: {}", mf.getFileAsPath());
         }
 
       } // end new MF found
@@ -1006,12 +1006,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
         if (!Files.exists(movieDir)) {
-          LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
+          LOGGER.debug("movie directory '{}' not found, removing from DB...", movieDir);
           moviesToRemove.add(movie);
         }
         else {
           // can be; MMD and/or dir=DS root
-          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
+          LOGGER.warn("dir {} not in hashset, but on hdd!", movieDir);
         }
       }
 
@@ -1023,17 +1023,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
-              LOGGER.debug("removing orphaned file from DB: " + mf.getFileAsPath());
+              LOGGER.debug("removing orphaned file from DB: {}", mf.getFileAsPath());
               movie.removeFromMediaFiles(mf);
             }
             else {
               // hmm...this should not happen
-              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+              LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
             }
           }
         }
         if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
-          LOGGER.debug("Movie (" + movie.getTitle() + ") without VIDEO files detected, removing from DB...");
+          LOGGER.debug("Movie ({}) without VIDEO files detected, removing from DB...", movie.getTitle());
           moviesToRemove.add(movie);
         }
         else {
@@ -1041,7 +1041,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       else {
-        LOGGER.info("Movie (" + movie.getTitle() + ") is new - no need for cleanup");
+        LOGGER.info("Movie ({}) is new - no need for cleanup", movie.getTitle());
       }
     }
     movieList.removeMovies(moviesToRemove);
@@ -1067,12 +1067,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
         if (!Files.exists(movieDir)) {
-          LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
+          LOGGER.debug("movie directory '{}' not found, removing from DB...", movieDir);
           moviesToRemove.add(movie);
         }
         else {
           // can be; MMD and/or dir=DS root
-          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
+          LOGGER.warn("dir {} not in hashset, but on hdd!", movieDir);
         }
       }
 
@@ -1084,17 +1084,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
-              LOGGER.debug("removing orphaned file from DB: " + mf.getFileAsPath());
+              LOGGER.debug("removing orphaned file from DB: {}", mf.getFileAsPath());
               movie.removeFromMediaFiles(mf);
             }
             else {
               // hmm...this should not happen
-              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+              LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
             }
           }
         }
         if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
-          LOGGER.debug("Movie (" + movie.getTitle() + ") without VIDEO files detected, removing from DB...");
+          LOGGER.debug("Movie ({}) without VIDEO files detected, removing from DB...", movie.getTitle());
           moviesToRemove.add(movie);
         }
         else {
@@ -1102,7 +1102,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       else {
-        LOGGER.info("Movie (" + movie.getTitle() + ") is new - no need for cleanup");
+        LOGGER.info("Movie ({}) is new - no need for cleanup", movie.getTitle());
       }
     }
     movieList.removeMovies(moviesToRemove);

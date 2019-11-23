@@ -63,25 +63,6 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
-  /**
-   * Instantiates ONE new media file information fetcher task for ALL files<br>
-   * better to submit one file after another.. for status bar et all
-   * 
-   * @param mediaFiles
-   *          the media files
-   * @param mediaEntity
-   *          the media entity
-   * @param forceUpdate
-   *          force an update
-   */
-  @Deprecated
-  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity, boolean forceUpdate) {
-    this.mediaFiles = mediaFiles;
-    this.mediaEntity = mediaEntity;
-    this.forceUpdate = forceUpdate;
-    this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
-  }
-
   @Override
   public String call() {
     // try/catch block in the root of the thread to log crashes

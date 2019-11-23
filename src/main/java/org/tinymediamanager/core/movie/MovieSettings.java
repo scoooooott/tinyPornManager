@@ -176,6 +176,7 @@ public class MovieSettings extends AbstractSettings {
   // subtitle scraper
   private MediaLanguages                   subtitleScraperLanguage             = MediaLanguages.en;
   private LanguageStyle                    subtitleLanguageStyle               = LanguageStyle.ISO3T;
+  private boolean                          subtitleWithoutLanguageTag          = false;
 
   // misc
   private boolean                          runtimeFromMediaInfo                = false;
@@ -1188,6 +1189,16 @@ public class MovieSettings extends AbstractSettings {
     LanguageStyle oldValue = this.subtitleLanguageStyle;
     this.subtitleLanguageStyle = newValue;
     firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
+  }
+
+  public boolean isSubtitleWithoutLanguageTag() {
+    return subtitleWithoutLanguageTag;
+  }
+
+  public void setSubtitleWithoutLanguageTag(boolean newValue) {
+    boolean oldValue = this.subtitleWithoutLanguageTag;
+    this.subtitleWithoutLanguageTag = newValue;
+    firePropertyChange("subtitleWithoutLanguageTag", oldValue, newValue);
   }
 
   public List<MovieScraperMetadataConfig> getScraperMetadataConfig() {

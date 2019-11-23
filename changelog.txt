@@ -14,6 +14,7 @@ Version 3.1
 + try to detect the season folder name by analyzing the episode filenames #699
 + added the new note field to the bulk editors
 + enabled sorting by multiple columns in the movie table
++ enabled writing of subtitles without language code #621
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678

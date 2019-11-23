@@ -548,6 +548,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     Set<MediaFileSubtitle> cleansub = new LinkedHashSet<>(subtitles);
 
     for (MediaFileSubtitle sub : cleansub) {
+      // just in case we couldn't detect the language name
+      if (StringUtils.isBlank(sub.getLanguage())) {
+        continue;
+      }
       if (sb.length() > 0) {
         sb.append(", ");
       }

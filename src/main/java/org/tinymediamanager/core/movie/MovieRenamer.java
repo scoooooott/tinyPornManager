@@ -179,14 +179,15 @@ public class MovieRenamer {
   private static void renameSubtitles(Movie m) {
     // build language lists
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
+    List<MediaFile> subtitleFiles = m.getMediaFiles(MediaFileType.SUBTITLE);
 
-    for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile sub : subtitleFiles) {
       String originalLang = "";
       String lang = "";
       String forced = "";
       List<MediaFileSubtitle> mfsl = sub.getSubtitles();
 
-      if (mfsl != null && mfsl.size() > 0) {
+      if (mfsl != null && !mfsl.isEmpty()) {
         // use internal values
         MediaFileSubtitle mfs = mfsl.get(0);
         originalLang = mfs.getLanguage();
@@ -219,9 +220,15 @@ public class MovieRenamer {
         }
       }
 
-      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
-      if (StringUtils.isBlank(lang)) {
-        lang = originalLang;
+      // check if there is only one subtitle file and the user wants to write this w/o the language tag
+      if (!MovieModuleManager.SETTINGS.isSubtitleWithoutLanguageTag() || subtitleFiles.size() > 1) {
+        lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
+        if (StringUtils.isBlank(lang)) {
+          lang = originalLang;
+        }
+      }
+      else {
+        lang = "";
       }
 
       // rebuild new filename
@@ -822,20 +829,24 @@ public class MovieRenamer {
 
       case SUBTITLE:
         List<MediaFileSubtitle> mfsl = mf.getSubtitles();
+        List<MediaFile> subtitleFiles = movie.getMediaFiles(MediaFileType.SUBTITLE);
 
-        newFilename += getStackingString(mf);
-        if (mfsl != null && mfsl.size() > 0) {
-          // internal values
-          MediaFileSubtitle mfs = mfsl.get(0);
-          if (!mfs.getLanguage().isEmpty()) {
-            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
-            if (StringUtils.isBlank(lang)) {
-              lang = mfs.getLanguage();
+        // check if there is only one subtitle file and the user wants to write this w/o the language tag
+        if (!MovieModuleManager.SETTINGS.isSubtitleWithoutLanguageTag() || subtitleFiles.size() > 1) {
+          newFilename += getStackingString(mf);
+          if (mfsl != null && !mfsl.isEmpty()) {
+            // internal values
+            MediaFileSubtitle mfs = mfsl.get(0);
+            if (!mfs.getLanguage().isEmpty()) {
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
+              if (StringUtils.isBlank(lang)) {
+                lang = mfs.getLanguage();
+              }
+              newFilename += "." + lang;
             }
-            newFilename += "." + lang;
-          }
-          if (mfs.isForced()) {
-            newFilename += ".forced";
+            if (mfs.isForced()) {
+              newFilename += ".forced";
+            }
           }
         }
         newFilename += "." + mf.getExtension();
