@@ -85,7 +85,11 @@ import com.floreysoft.jmte.token.Token;
 public class MovieRenamer {
   private static final Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
   private static final List<String>       KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
-  private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
+
+  // to not use posix here
+  private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");
+  private static final Pattern            TITLE_PATTERN               = Pattern.compile("\\$\\{.*?title.*?\\}", Pattern.CASE_INSENSITIVE);
+  private static final Pattern            YEAR_ID_PATTERN             = Pattern.compile("\\$\\{.*?(year|imdb|tmdb).*?\\}", Pattern.CASE_INSENSITIVE);
 
   public static final Map<String, String> TOKEN_MAP                   = createTokenMap();
 
@@ -1331,9 +1335,7 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    pattern = pattern.toLowerCase(Locale.ROOT);
-    return ((pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titlesortable}"))
-        && pattern.contains("${year}")) || pattern.contains("${imdb}");
+    return TITLE_PATTERN.matcher(pattern).find() && YEAR_ID_PATTERN.matcher(pattern).find();
   }
 
   /**
@@ -1344,8 +1346,18 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename().toLowerCase(Locale.ROOT);
-    return pattern.contains("${title}") || pattern.contains("${originaltitle}") || pattern.contains("${titlesortable}");
+    return isFilePatternValid(MovieModuleManager.SETTINGS.getRenamerFilename());
+  }
+
+  /**
+   * Check if the FILE rename pattern is valid<br>
+   * What means, pattern has at least title set (${title}|${originalTitle}|${titleSortable})<br>
+   * "empty" is considered as invalid - so not renaming files
+   *
+   * @return true/false
+   */
+  public static boolean isFilePatternValid(String pattern) {
+    return TITLE_PATTERN.matcher(pattern).find();
   }
 
   /**
