@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -35,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.MediaEntityExporter;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -72,7 +72,7 @@ public class MovieExporter extends MediaEntityExporter {
    */
   @Override
   public <T extends MediaEntity> void export(List<T> moviesToExport, Path exportDir) throws Exception {
-    LOGGER.info("preparing movie export; using " + properties.getProperty("name"));
+    LOGGER.info("preparing movie export; using {}", properties.getProperty("name"));
 
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
@@ -80,16 +80,11 @@ public class MovieExporter extends MediaEntityExporter {
     engine.registerNamedRenderer(new NamedUpperCaseRenderer());
     engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
     engine.registerNamedRenderer(new MovieFilenameRenderer());
-    engine.registerNamedRenderer(new ArtworkCopyRenderer(exportDir));
+    engine.registerNamedRenderer(new MovieArtworkCopyRenderer(exportDir));
 
     // prepare export destination
     if (!Files.exists(exportDir)) {
-      try {
-        Files.createDirectories(exportDir);
-      }
-      catch (Exception e) {
-        throw new Exception("error creating export directory");
-      }
+      Files.createDirectories(exportDir);
     }
 
     // prepare listfile
@@ -104,7 +99,7 @@ public class MovieExporter extends MediaEntityExporter {
       listExportFile = exportDir.resolve("movielist.csv");
     }
     if (listExportFile == null) {
-      throw new Exception("error creating movie list file");
+      throw new FileNotFoundException("error creating movie list file");
     }
 
     // create list
@@ -117,15 +112,11 @@ public class MovieExporter extends MediaEntityExporter {
     String output = engine.transform(listTemplate, root);
 
     Utils.writeStringToFile(listExportFile, output);
-    LOGGER.info("movie list generated: " + listExportFile);
+    LOGGER.info("movie list generated: {}", listExportFile);
 
     // create details for
     if (StringUtils.isNotBlank(detailTemplate)) {
       Path detailsDir = exportDir.resolve("movies");
-      // nah - to dangerous if you choose some root folder!
-      // if (Files.isDirectory(detailsDir)) {
-      // Utils.deleteDirectoryRecursive(detailsDir);
-      // }
       try {
         Files.createDirectory(detailsDir);
       }
@@ -133,14 +124,13 @@ public class MovieExporter extends MediaEntityExporter {
         LOGGER.debug("Folder already exists...");
       }
 
-      for (MediaEntity me : moviesToExport) {
+      for (T me : moviesToExport) {
         Movie movie = (Movie) me;
-        LOGGER.debug("processing movie " + movie.getTitle());
+        LOGGER.debug("processing movie {}", movie.getTitle());
         // get preferred movie name like set up in movie renamer
         String detailFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.SETTINGS.getRenamerFilename(), movie);
         if (StringUtils.isBlank(detailFilename)) {
           detailFilename = movie.getVideoBasenameWithoutStacking();
-          // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
         }
         Path detailsExportFile = detailsDir.resolve(detailFilename + "." + fileExtension);
 
@@ -152,7 +142,7 @@ public class MovieExporter extends MediaEntityExporter {
 
       }
 
-      LOGGER.info("movie detail pages generated: " + exportDir);
+      LOGGER.info("movie detail pages generated: {}", exportDir);
     }
 
     // copy all non .jtme/template.conf files to destination dir
@@ -279,21 +269,10 @@ public class MovieExporter extends MediaEntityExporter {
    *
    * @author Manuel Laggner
    */
-  private static class ArtworkCopyRenderer implements NamedRenderer {
-    private Path pathToExport;
+  private static class MovieArtworkCopyRenderer extends ArtworkCopyRenderer {
 
-    public ArtworkCopyRenderer(Path pathToExport) {
-      this.pathToExport = pathToExport;
-    }
-
-    @Override
-    public RenderFormatInfo getFormatInfo() {
-      return null;
-    }
-
-    @Override
-    public String getName() {
-      return "copyArtwork";
+    public MovieArtworkCopyRenderer(Path pathToExport) {
+      super(pathToExport);
     }
 
     @Override
@@ -364,76 +343,6 @@ public class MovieExporter extends MediaEntityExporter {
         return filename;
       }
       return ""; // pass an emtpy string to prevent obj.toString() gets triggered by jmte
-    }
-
-    /**
-     * parse the parameters out of the parameters string
-     *
-     * @param parameters
-     *          the parameters as string
-     * @return a map containing all parameters
-     */
-    private Map<String, Object> parseParameters(String parameters) {
-      Map<String, Object> parameterMap = new HashMap<>();
-
-      // defaults
-      parameterMap.put("thumb", Boolean.FALSE);
-      parameterMap.put("destination", "images");
-
-      String[] details = parameters.split(",");
-      for (String detail : details) {
-        String key = "";
-        String value = "";
-        try {
-          String[] d = detail.split("=");
-          key = d[0].trim();
-          value = d[1].trim();
-        }
-        catch (Exception ignored) {
-        }
-
-        if (StringUtils.isAnyBlank(key, value)) {
-          continue;
-        }
-
-        switch (key.toLowerCase(Locale.ROOT)) {
-          case "type":
-            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
-            if (type != null) {
-              parameterMap.put(key, type);
-            }
-            break;
-
-          case "destination":
-            parameterMap.put(key, value);
-            break;
-
-          case "thumb":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
-
-          case "width":
-            try {
-              parameterMap.put(key, Integer.parseInt(value));
-            }
-            catch (Exception ignored) {
-            }
-            break;
-
-          case "escape":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
-
-          case "default":
-            parameterMap.put(key, value);
-            break;
-
-          default:
-            break;
-        }
-      }
-
-      return parameterMap;
     }
   }
 }

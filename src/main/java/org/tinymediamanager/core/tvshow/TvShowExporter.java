@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -73,7 +74,7 @@ public class TvShowExporter extends MediaEntityExporter {
    */
   @Override
   public <T extends MediaEntity> void export(List<T> tvShowsToExport, Path exportDir) throws Exception {
-    LOGGER.info("preparing tv show export; using " + properties.getProperty("name"));
+    LOGGER.info("preparing tv show export; using {}", properties.getProperty("name"));
 
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
@@ -81,16 +82,11 @@ public class TvShowExporter extends MediaEntityExporter {
     engine.registerNamedRenderer(new NamedUpperCaseRenderer());
     engine.registerNamedRenderer(new NamedFirstCharacterRenderer());
     engine.registerNamedRenderer(new TvShowFilenameRenderer());
-    engine.registerNamedRenderer(new ArtworkCopyRenderer(exportDir));
+    engine.registerNamedRenderer(new TvShowArtworkCopyRenderer(exportDir));
 
     // prepare export destination
     if (!Files.exists(exportDir)) {
-      try {
-        Files.createDirectories(exportDir);
-      }
-      catch (Exception e) {
-        throw new Exception("error creating export directory");
-      }
+      Files.createDirectories(exportDir);
     }
 
     // prepare listfile
@@ -105,7 +101,7 @@ public class TvShowExporter extends MediaEntityExporter {
       listExportFile = exportDir.resolve("tvshows.csv");
     }
     if (listExportFile == null) {
-      throw new Exception("error creating tv show list file");
+      throw new FileNotFoundException("error creating tv show list file");
     }
 
     // load episode template
@@ -123,17 +119,13 @@ public class TvShowExporter extends MediaEntityExporter {
     root.put("tvShows", new ArrayList<>(tvShowsToExport));
     String output = engine.transform(listTemplate, root);
     Utils.writeStringToFile(listExportFile, output);
-    LOGGER.info("TvShow list generated: " + listExportFile);
+    LOGGER.info("TvShow list generated: {}", listExportFile);
 
     if (StringUtils.isNotBlank(detailTemplate)) {
-      for (MediaEntity me : tvShowsToExport) {
+      for (T me : tvShowsToExport) {
         TvShow show = (TvShow) me;
         // create a TV show dir
         Path showDir = exportDir.resolve(getFilename(show));
-        // nah - to dangerous if you choose some root folder!
-        // if (Files.isDirectory(showDir)) {
-        // Utils.deleteDirectoryRecursive(showDir);
-        // }
         try {
           Files.createDirectory(showDir);
         }
@@ -286,21 +278,10 @@ public class TvShowExporter extends MediaEntityExporter {
    * 
    * @author Manuel Laggner
    */
-  private static class ArtworkCopyRenderer implements NamedRenderer {
-    private Path pathToExport;
+  private static class TvShowArtworkCopyRenderer extends ArtworkCopyRenderer {
 
-    public ArtworkCopyRenderer(Path pathToExport) {
-      this.pathToExport = pathToExport;
-    }
-
-    @Override
-    public RenderFormatInfo getFormatInfo() {
-      return null;
-    }
-
-    @Override
-    public String getName() {
-      return "copyArtwork";
+    public TvShowArtworkCopyRenderer(Path pathToExport) {
+      super(pathToExport);
     }
 
     @Override
@@ -375,76 +356,6 @@ public class TvShowExporter extends MediaEntityExporter {
         return filename;
       }
       return ""; // pass an emtpy string to prevent obj.toString() gets triggered by jmte
-    }
-
-    /**
-     * parse the parameters out of the parameters string
-     * 
-     * @param parameters
-     *          the parameters as string
-     * @return a map containing all parameters
-     */
-    private Map<String, Object> parseParameters(String parameters) {
-      Map<String, Object> parameterMap = new HashMap<>();
-
-      // defaults
-      parameterMap.put("thumb", Boolean.FALSE);
-      parameterMap.put("destination", "images");
-
-      String[] details = parameters.split(",");
-      for (String detail : details) {
-        String key = "";
-        String value = "";
-        try {
-          String[] d = detail.split("=");
-          key = d[0].trim();
-          value = d[1].trim();
-        }
-        catch (Exception ignored) {
-        }
-
-        if (StringUtils.isAnyBlank(key, value)) {
-          continue;
-        }
-
-        switch (key.toLowerCase(Locale.ROOT)) {
-          case "type":
-            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
-            if (type != null) {
-              parameterMap.put(key, type);
-            }
-            break;
-
-          case "destination":
-            parameterMap.put(key, value);
-            break;
-
-          case "thumb":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
-
-          case "width":
-            try {
-              parameterMap.put(key, Integer.parseInt(value));
-            }
-            catch (Exception ignored) {
-            }
-            break;
-
-          case "escape":
-            parameterMap.put(key, Boolean.parseBoolean(value));
-            break;
-
-          case "default":
-            parameterMap.put(key, value);
-            break;
-
-          default:
-            break;
-        }
-      }
-
-      return parameterMap;
     }
   }
 }

@@ -29,6 +29,7 @@ x fixed TV show tag filter
 x downgrade TVDB search result score when not receiving any year to compare
 x changed writing of the outline in the NFO. It is now configurable how the outline should be written #630 #683
 x enhanced movie renamer pattern validation #709 #705
+x moved export logic into thread to do not block the UI while exporting
 
 
 Version 3.0.5
