@@ -490,21 +490,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       catch (Exception ignored) {
         // ignore
       }
-
-      // for how the api responds only a banner - we would like to have a poster here
-      // just try to fetch the poster url
-      try {
-        Response<SeriesImageQueryResultResponse> httpResponse = tvdb.series().imagesQuery(show.id, "poster", null, null, null).execute();
-        if (httpResponse.isSuccessful()) {
-          SeriesImageQueryResultResponse response = httpResponse.body();
-          if (response != null && !response.data.isEmpty()) {
-            result.setPosterUrl(artworkUrl + response.data.get(0).fileName);
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("could not get poster for search result: {}", e.getMessage());
-      }
+      result.setPosterUrl(artworkUrl + show.poster);
 
       float score = MetadataUtil.calculateScore(searchString, show.seriesName);
       if (yearDiffers(options.getSearchYear(), result.getYear())) {
