@@ -50,6 +50,7 @@ public abstract class MediaEntityExporter {
   protected String              listTemplate       = "";
   protected String              detailTemplate     = "";
   protected Path                templateDir;
+  protected boolean             cancel             = false;
 
   public enum TemplateType {
     MOVIE,
@@ -110,7 +111,14 @@ public abstract class MediaEntityExporter {
     }
   }
 
-  abstract public <T extends MediaEntity> void export(List<T> entitiesToExport, Path pathToExport) throws Exception;
+  public abstract <T extends MediaEntity> void export(List<T> entitiesToExport, Path pathToExport) throws Exception;
+
+  /**
+   * cancel the export
+   */
+  public void cancel() {
+    this.cancel = true;
+  }
 
   /**
    * Find templates for the given type.

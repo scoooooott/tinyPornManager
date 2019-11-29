@@ -74,6 +74,10 @@ public class MovieExporter extends MediaEntityExporter {
   public <T extends MediaEntity> void export(List<T> moviesToExport, Path exportDir) throws Exception {
     LOGGER.info("preparing movie export; using {}", properties.getProperty("name"));
 
+    if (cancel) {
+      return;
+    }
+
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new NamedNumberRenderer());
@@ -125,6 +129,10 @@ public class MovieExporter extends MediaEntityExporter {
       }
 
       for (T me : moviesToExport) {
+        if (cancel) {
+          return;
+        }
+
         Movie movie = (Movie) me;
         LOGGER.debug("processing movie {}", movie.getTitle());
         // get preferred movie name like set up in movie renamer
@@ -143,6 +151,10 @@ public class MovieExporter extends MediaEntityExporter {
       }
 
       LOGGER.info("movie detail pages generated: {}", exportDir);
+    }
+
+    if (cancel) {
+      return;
     }
 
     // copy all non .jtme/template.conf files to destination dir

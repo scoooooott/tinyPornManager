@@ -76,6 +76,10 @@ public class TvShowExporter extends MediaEntityExporter {
   public <T extends MediaEntity> void export(List<T> tvShowsToExport, Path exportDir) throws Exception {
     LOGGER.info("preparing tv show export; using {}", properties.getProperty("name"));
 
+    if (cancel) {
+      return;
+    }
+
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new NamedNumberRenderer());
@@ -123,6 +127,10 @@ public class TvShowExporter extends MediaEntityExporter {
 
     if (StringUtils.isNotBlank(detailTemplate)) {
       for (T me : tvShowsToExport) {
+        if (cancel) {
+          return;
+        }
+
         TvShow show = (TvShow) me;
         // create a TV show dir
         Path showDir = exportDir.resolve(getFilename(show));
@@ -142,6 +150,10 @@ public class TvShowExporter extends MediaEntityExporter {
 
         if (StringUtils.isNotBlank(episodeTemplate)) {
           for (TvShowEpisode episode : show.getEpisodes()) {
+            if (cancel) {
+              return;
+            }
+
             List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
             if (!mfs.isEmpty()) {
               Path seasonDir = showDir.resolve(TvShowRenamer.getSeasonFoldername("", episode.getTvShow(), episode));
@@ -159,6 +171,10 @@ public class TvShowExporter extends MediaEntityExporter {
           }
         }
       }
+    }
+
+    if (cancel) {
+      return;
     }
 
     // copy all non .jtme/template.conf files to destination dir

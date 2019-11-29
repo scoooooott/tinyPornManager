@@ -134,6 +134,9 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
         btnNotifications.repaint();
       }
     });
+
+    // pre-load the dialog (to fetch all events)
+    TaskListDialog.getInstance();
   }
 
   private void initComponents() {
