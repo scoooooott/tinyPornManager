@@ -887,6 +887,7 @@ public abstract class ImdbParser {
             Element column = row.getElementsByClass("release_date").first();
             if (column != null) {
               releaseDate = parseDate(column.text());
+              break;
             }
           }
         }
@@ -904,6 +905,7 @@ public abstract class ImdbParser {
             Element column = row.getElementsByClass("release-date-item__date").first();
             if (column != null) {
               releaseDate = parseDate(column.text());
+              break;
             }
           }
           else {
