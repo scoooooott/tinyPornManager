@@ -23,6 +23,7 @@ import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -298,8 +299,28 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
       }
       result.setPosterUrl(entity.poster);
 
+      // calcuate the result score
+      float score = MetadataUtil.calculateScore(query.getSearchQuery(), result.getTitle());
+
+      float yearPenalty = MetadataUtil.calculateYearPenalty(query.getSearchYear(), result.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
+      }
+
+      if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
+        // no poster?
+        LOGGER.debug("no poster - downgrading score by 0.01");
+        score -= 0.01f;
+      }
+
+      result.setScore(score);
+
       mediaResult.add(result);
     }
+
+    Collections.sort(mediaResult);
+    Collections.reverse(mediaResult);
 
     return mediaResult;
   }

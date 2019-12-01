@@ -60,6 +60,39 @@ public class MetadataUtil {
   }
 
   /**
+   * calculate a penalty for the score if the year from the search differs with the year of the result
+   * 
+   * @param searchYear
+   *          the year from the search request
+   * @param resultYear
+   *          the year from the search result
+   * @return the penalty 0...0.11 (0 for no year difference or no search year; 0.11 for the maximum difference of >100 years)
+   */
+  public static float calculateYearPenalty(int searchYear, int resultYear) {
+    if (searchYear == 0) {
+      // no search year given - no need to calculate a penalty
+      return 0;
+    }
+
+    if (resultYear == 0) {
+      // no year in the result (due to incomplete data at the data provider?) - return a maximum of 0.11
+      return 0.11f;
+    }
+
+    // calculate the year difference and adopt it to a max of 0.2 (the maximum difference of 100 years = 0.11)
+    int diff = Math.abs(searchYear - resultYear);
+    if (diff == 0) {
+      return 0;
+    }
+
+    if (diff > 100) {
+      return 0.11f;
+    }
+
+    return 0.01f + (diff / 1000.0f);
+  }
+
+  /**
    * Parses the running time.
    * 
    * @param in

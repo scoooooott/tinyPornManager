@@ -575,13 +575,13 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerPro
           // compare score based on names
           float score = MetadataUtil.calculateScore(searchQuery, sr.getTitle());
 
-          if (yearDiffers(myear, sr.getYear())) {
-            float diff = (float) Math.abs(myear - sr.getYear()) / 100;
-            LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
-            score -= diff;
+          float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), sr.getYear());
+          if (yearPenalty > 0) {
+            LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+            score -= yearPenalty;
           }
-          sr.setScore(score);
 
+          sr.setScore(score);
         }
         resultList.add(sr);
       }

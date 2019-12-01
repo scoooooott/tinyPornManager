@@ -849,10 +849,10 @@ class TmdbTvShowMetadataProvider {
       float score = Math.max(MetadataUtil.calculateScore(query.getSearchQuery(), result.getTitle()),
           MetadataUtil.calculateScore(query.getSearchQuery(), result.getOriginalTitle()));
 
-      if (query.getSearchYear() > 0 && yearDiffers(query.getSearchYear(), result.getYear())) {
-        float diff = (float) Math.abs(query.getSearchYear() - result.getYear()) / 100;
-        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
-        score -= diff;
+      float yearPenalty = MetadataUtil.calculateYearPenalty(query.getSearchYear(), result.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
       }
 
       if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {

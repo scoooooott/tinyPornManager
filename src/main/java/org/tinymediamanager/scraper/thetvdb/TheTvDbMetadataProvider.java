@@ -493,14 +493,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       result.setPosterUrl(artworkUrl + show.poster);
 
       float score = MetadataUtil.calculateScore(searchString, show.seriesName);
-      if (yearDiffers(options.getSearchYear(), result.getYear())) {
-        float diff = (float) Math.abs(options.getSearchYear() - result.getYear()) / 100;
-        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
-        score -= diff;
-      }
-      else if (options.getSearchYear() != 0 && result.getYear() == 0) {
-        LOGGER.debug("search result does not include any year - downgrading score by 0.01");
-        score -= 0.01;
+
+      float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), result.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
       }
       result.setScore(score);
       resultMap.put(show.id, result);

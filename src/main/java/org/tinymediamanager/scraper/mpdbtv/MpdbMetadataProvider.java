@@ -22,6 +22,7 @@ import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,7 @@ import org.tinymediamanager.scraper.mpdbtv.entities.Studio;
 import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
  * The Class MpdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -135,8 +137,28 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       result.setUrl(entity.url);
       result.setPosterUrl(entity.posterUrl);
 
+      // calcuate the result score
+      float score = MetadataUtil.calculateScore(options.getSearchQuery(), result.getTitle());
+
+      float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), result.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
+      }
+
+      if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
+        // no poster?
+        LOGGER.debug("no poster - downgrading score by 0.01");
+        score -= 0.01f;
+      }
+
+      result.setScore(score);
+
       mediaResult.add(result);
     }
+
+    Collections.sort(mediaResult);
+    Collections.reverse(mediaResult);
 
     return mediaResult;
   }

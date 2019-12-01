@@ -223,7 +223,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
     // lazy loading of the api
     initAPI();
 
-    LOGGER.debug("search(): ", options);
+    LOGGER.debug("search(): {}", options);
     List<MediaSearchResult> resultList = new ArrayList<>();
     String imdb = options.getImdbId();
     String searchString = options.getSearchQuery();
@@ -297,11 +297,12 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
       // compare score based on names
       float score = MetadataUtil.calculateScore(searchString, film.title);
 
-      if (yearDiffers(myear, sr.getYear())) {
-        float diff = (float) Math.abs(myear - sr.getYear()) / 100;
-        LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
-        score -= diff;
+      float yearPenalty = MetadataUtil.calculateYearPenalty(myear, sr.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
       }
+
       sr.setScore(score);
 
       resultList.add(sr);
@@ -310,13 +311,6 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
     Collections.reverse(resultList);
 
     return resultList;
-  }
-
-  /**
-   * Is i1 != i2 (when >0)
-   */
-  private boolean yearDiffers(int i1, int i2) {
-    return i1 > 0 && i2 > 0 && i1 != i2;
   }
 
   /*

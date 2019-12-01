@@ -240,10 +240,10 @@ class TmdbMovieMetadataProvider {
         float score = Math.max(MetadataUtil.calculateScore(searchString, result.getTitle()),
             MetadataUtil.calculateScore(searchString, result.getOriginalTitle()));
 
-        if (year != null && yearDiffers(year, result.getYear())) {
-          float diff = (float) Math.abs(year - result.getYear()) / 100;
-          LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
-          score -= diff;
+        float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), result.getYear());
+        if (yearPenalty > 0) {
+          LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+          score -= yearPenalty;
         }
 
         if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
@@ -634,12 +634,5 @@ class TmdbMovieMetadataProvider {
     }
 
     return md;
-  }
-
-  /**
-   * Is i1 != i2 (when >0)
-   */
-  private boolean yearDiffers(int i1, int i2) {
-    return i1 > 0 && i2 > 0 && i1 != i2;
   }
 }

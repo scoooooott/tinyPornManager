@@ -369,21 +369,23 @@ public abstract class ImdbParser {
           getLogger().debug("no poster - downgrading score by 0.01");
           score = score - 0.01f;
         }
-        if (yearDiffers(myear, year)) {
-          float diff = (float) Math.abs(year - myear) / 100;
-          getLogger().debug("parsed year does not match search result year - downgrading score by {}", diff);
-          score -= diff;
+        float yearPenalty = MetadataUtil.calculateYearPenalty(year, sr.getYear());
+        if (yearPenalty > 0) {
+          getLogger().debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+          score -= yearPenalty;
         }
+
         sr.setScore(score);
       }
 
       result.add(sr);
 
-      // only get 40 results
-      if (result.size() >= 40) {
+      // only get 80 results
+      if (result.size() >= 80) {
         break;
       }
     }
+
     Collections.sort(result);
     Collections.reverse(result);
 

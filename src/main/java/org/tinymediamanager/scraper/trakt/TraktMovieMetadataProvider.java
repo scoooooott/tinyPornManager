@@ -103,7 +103,16 @@ class TraktMovieMetadataProvider {
 
     for (SearchResult result : searchResults) {
       MediaSearchResult m = TraktUtils.morphTraktResultToTmmResult(options, result);
-      m.setScore(MetadataUtil.calculateScore(searchString, m.getTitle()));
+
+      float score = MetadataUtil.calculateScore(searchString, m.getTitle());
+      float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), m.getYear());
+      if (yearPenalty > 0) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+        score -= yearPenalty;
+      }
+
+      m.setScore(score);
+
       results.add(m);
     }
 
