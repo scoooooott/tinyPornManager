@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.trakttv;
+package org.tinymediamanager.thirdparty.trakttv;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.tinymediamanager.scraper.traktv;
+package org.tinymediamanager.thirdparty.traktv;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.trakttv.TraktTv;
+import org.tinymediamanager.thirdparty.trakttv.TraktTv;
 
 public class ITTraktTvTest {
 

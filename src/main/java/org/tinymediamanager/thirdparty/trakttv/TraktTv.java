@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.trakttv;
+package org.tinymediamanager.thirdparty.trakttv;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.ApiKey;
 
@@ -72,16 +72,14 @@ import retrofit2.Response;
  */
 
 public class TraktTv {
-  private static final String      CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
-
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(TraktTv.class);
-  private static final TraktV2     TRAKT        = createTraktApi();
-  private static TraktTv           instance;
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
-      "Scraper for Trakt.tv; yes, we can scrape here too :)");
+  private static final String  CLIENT_ID = ApiKey
+      .decryptApikey("Xd0t1yRY+HaxMl3bqILuxIaokXxekrFNj0QszCUsG6aNSbrhOhC2h5PcxDhV7wUXmBdOt9cYlMGNJjLZvKcS3xTRx3zYH7EYb7Mv5hCsMQU=");
+  private static final Logger  LOGGER    = LoggerFactory.getLogger(TraktTv.class);
+  private static final TraktV2 TRAKT     = createTraktApi();
+  private static TraktTv       instance;
 
   private static TraktV2 createTraktApi() {
-    TraktV2 api = new TraktV2(CLIENT_ID,
+    return new TraktV2(CLIENT_ID,
         ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
         "urn:ietf:wg:oauth:2.0:oob") {
       // tell the trakt api to use our OkHttp client
@@ -93,8 +91,6 @@ public class TraktTv {
         return builder.build();
       }
     };
-
-    return api;
   }
 
   public static synchronized TraktTv getInstance() {
@@ -104,24 +100,21 @@ public class TraktTv {
     return instance;
   }
 
-  public TraktTv() {
+  private TraktTv() {
   }
 
-  public static Map<String, String> authenticateViaPin(String pin) throws Exception {
+  public static Map<String, String> authenticateViaPin(String pin) throws IOException {
     Map<String, String> result = new HashMap<>();
-
-    // OAuthAccessTokenResponse response = TraktV2.getAccessToken(CLIENT_ID,
-    // ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
-    // "urn:ietf:wg:oauth:2.0:oob", pin);
-
     Response<AccessToken> response = TRAKT.exchangeCodeForAccessToken(pin);
 
-    // get tokens
-    String accessToken = response.body().access_token;
-    String refreshToken = response.body().refresh_token;
-    if (StringUtils.isNoneBlank(accessToken, refreshToken)) {
-      result.put("accessToken", accessToken);
-      result.put("refreshToken", refreshToken);
+    if (response.isSuccessful() && response.body() != null) {
+      // get tokens
+      String accessToken = response.body().access_token;
+      String refreshToken = response.body().refresh_token;
+      if (StringUtils.isNoneBlank(accessToken, refreshToken)) {
+        result.put("accessToken", accessToken);
+        result.put("refreshToken", refreshToken);
+      }
     }
 
     return result;
@@ -130,21 +123,20 @@ public class TraktTv {
   /**
    * get a new accessToken with the refreshToken
    */
-  public static void refreshAccessToken() throws Exception {
+  public static void refreshAccessToken() throws IOException {
     if (StringUtils.isBlank(Globals.settings.getTraktRefreshToken())) {
-      throw new Exception("not trakt.tv refresh token found");
+      throw new IOException("not trakt.tv refresh token found");
     }
 
-    // OAuthAccessTokenResponse response = TraktV2.refreshAccessToken(CLIENT_ID,
-    // ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
-    // "urn:ietf:wg:oauth:2.0:oob", Globals.settings.getTraktRefreshToken());
     Response<AccessToken> response = TRAKT.refreshToken(Globals.settings.getTraktRefreshToken())
         .refreshAccessToken(Globals.settings.getTraktRefreshToken());
 
-    if (StringUtils.isNoneBlank(response.body().access_token, response.body().refresh_token)) {
-      Globals.settings.setTraktAccessToken(response.body().access_token);
-      Globals.settings.setTraktRefreshToken(response.body().refresh_token);
-      TRAKT.accessToken(Globals.settings.getTraktAccessToken());
+    if (response.isSuccessful() && response.body() != null) {
+      if (StringUtils.isNoneBlank(response.body().access_token, response.body().refresh_token)) {
+        Globals.settings.setTraktAccessToken(response.body().access_token);
+        Globals.settings.setTraktRefreshToken(response.body().refresh_token);
+        TRAKT.accessToken(Globals.settings.getTraktAccessToken());
+      }
     }
   }
 
@@ -185,7 +177,7 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get diff of TMM <-> Trakt collection
     // *****************************************************************************
-    LOGGER.info("got up to " + tmmMovies.size() + " movies for Trakt.tv collection sync");
+    LOGGER.info("got up to {} movies for Trakt.tv collection sync", tmmMovies.size());
 
     // get ALL Trakt movies in collection
     List<BaseMovie> traktMovies;
@@ -199,17 +191,17 @@ public class TraktTv {
         response = TRAKT.sync().collectionMovies(null).execute();
       }
       if (!response.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + response.message());
+        LOGGER.error("failed syncing trakt: {}", response.message());
         return;
       }
       traktMovies = response.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
 
-    LOGGER.info("You have " + traktMovies.size() + " movies in your Trakt.tv collection");
+    LOGGER.info("You have {} movies in your Trakt.tv collection", traktMovies.size());
 
     // loop over all movies on trakt
     for (BaseMovie traktMovie : traktMovies) {
@@ -225,14 +217,12 @@ public class TraktTv {
 
           if (traktMovie.collected_at != null) {
             Date collectedAt = DateTimeUtils.toDate(traktMovie.collected_at.toInstant());
-            {
-              if (!collectedAt.equals(tmmMovie.getDateAdded()))
-                // always set from trakt, if not matched (Trakt = master)
-                LOGGER.trace(
-                    "Marking movie '" + tmmMovie.getTitle() + "' as collected on " + collectedAt + " (was " + tmmMovie.getDateAddedAsString() + ")");
-              tmmMovie.setDateAdded(collectedAt);
-              dirty = true;
-            }
+            if (!collectedAt.equals(tmmMovie.getDateAdded()))
+              // always set from trakt, if not matched (Trakt = master)
+              LOGGER.trace("Marking movie '{}' as collected on {} (was {})", tmmMovie.getTitle(), collectedAt, tmmMovie.getDateAddedAsString());
+            tmmMovie.setDateAdded(collectedAt);
+            dirty = true;
+
           }
 
           if (dirty) {
@@ -246,7 +236,7 @@ public class TraktTv {
       }
     }
 
-    if (tmmMovies.size() == 0) {
+    if (tmmMovies.isEmpty()) {
       LOGGER.info("Already up-to-date - no need to add anything :)");
       return;
     }
@@ -254,12 +244,12 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add remaining TMM movies to Trakt collection
     // *****************************************************************************
-    LOGGER.debug("prepare " + tmmMovies.size() + " movies for Trakt.tv collection sync");
+    LOGGER.debug("prepare {} movies for Trakt.tv collection sync", tmmMovies.size());
 
     List<SyncMovie> movies = new ArrayList<>();
     int nosync = 0;
     for (Movie tmmMovie : tmmMovies) {
-      if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
+      if (tmmMovie.getIdAsInt(Constants.TRAKT) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
           || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, false));
       }
@@ -269,27 +259,27 @@ public class TraktTv {
       }
     }
     if (nosync > 0) {
-      LOGGER.debug("skipping " + nosync + " movies, because they have not been scraped yet!");
+      LOGGER.debug("skipping {} movies, because they have not been scraped yet!", nosync);
     }
 
-    if (movies.size() == 0) {
+    if (movies.isEmpty()) {
       LOGGER.info("no new movies for Trakt collection sync found.");
       return;
     }
 
     try {
-      LOGGER.info("Adding " + movies.size() + " movies to Trakt.tv collection");
+      LOGGER.info("Adding {} movies to Trakt.tv collection", movies.size());
       SyncItems items = new SyncItems().movies(movies);
       Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
       if (!response.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + response.message());
+        LOGGER.error("failed syncing trakt: {}", response.message());
         return;
       }
       LOGGER.info("Trakt add-to-library status:");
       printStatus(response.body());
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
     }
   }
 
@@ -323,7 +313,7 @@ public class TraktTv {
         traktCollectionResponse = TRAKT.sync().collectionMovies(null).execute();
       }
       if (!traktCollectionResponse.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
+        LOGGER.error("failed syncing trakt: {}", traktCollectionResponse.message());
         return;
       }
       traktCollection = traktCollectionResponse.body();
@@ -336,18 +326,18 @@ public class TraktTv {
         traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
+        LOGGER.error("failed syncing trakt: {}", traktWatchedResponse.message());
         return;
       }
       traktWatched = traktWatchedResponse.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
 
-    LOGGER.info("You have " + traktCollection.size() + " movies in your Trakt.tv collection");
-    LOGGER.info("You have " + traktWatched.size() + " movies watched");
+    LOGGER.info("You have {} movies in your Trakt.tv collection", traktCollection.size());
+    LOGGER.info("You have {} movies watched", traktWatched.size());
 
     // *****************************************************************************
     // 2) remove every movie from the COLLECTION state
@@ -361,13 +351,13 @@ public class TraktTv {
         SyncItems items = new SyncItems().movies(movieToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.info("removed " + movieToRemove.size() + " movies from your trakt.tv collection");
+        LOGGER.info("removed {} movies from your trakt.tv collection", movieToRemove.size());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
         return;
       }
     }
@@ -384,13 +374,13 @@ public class TraktTv {
         SyncItems items = new SyncItems().movies(movieToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.info("removed " + movieToRemove.size() + " movies from your trakt.tv watched");
+        LOGGER.info("removed {} movies from your trakt.tv watched", movieToRemove.size());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
       }
     }
 
@@ -423,16 +413,16 @@ public class TraktTv {
         traktWatchedResponse = TRAKT.sync().watchedMovies(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
+        LOGGER.error("failed syncing trakt: {}", traktWatchedResponse.message());
         return;
       }
       traktMovies = traktWatchedResponse.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
-    LOGGER.info("You have " + traktMovies.size() + " movies marked as 'watched' in your Trakt.tv collection");
+    LOGGER.info("You have {} movies marked as 'watched' in your Trakt.tv collection", traktMovies.size());
 
     // loop over all watched movies on trakt
     for (BaseMovie traktWatched : traktMovies) {
@@ -446,7 +436,7 @@ public class TraktTv {
 
           if (!tmmMovie.isWatched()) {
             // save Trakt watched status
-            LOGGER.info("Marking movie '" + tmmMovie.getTitle() + "' as watched");
+            LOGGER.info("Marking movie '{}' as watched", tmmMovie.getTitle());
             tmmMovie.setWatched(true);
             dirty = true;
           }
@@ -454,7 +444,7 @@ public class TraktTv {
             Date lastWatchedAt = DateTimeUtils.toDate(traktWatched.last_watched_at.toInstant());
             if (!lastWatchedAt.equals(tmmMovie.getLastWatched())) {
               // always set from trakt, if not matched (Trakt = master)
-              LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmMovie.getLastWatched() + ")");
+              LOGGER.trace("Marking movie '{}' as watched on {} (was {})", tmmMovie.getTitle(), lastWatchedAt, tmmMovie.getLastWatched());
               tmmMovie.setLastWatched(lastWatchedAt);
               // dirty = true; // we do not write date to NFO. But just mark for syncing back...
             }
@@ -478,7 +468,7 @@ public class TraktTv {
         tmmWatchedMovies.add(movie);
       }
     }
-    LOGGER.info("You have now " + tmmWatchedMovies.size() + " movies marked as 'watched' in your TMM database");
+    LOGGER.info("You have now {} movies marked as 'watched' in your TMM database", tmmWatchedMovies.size());
 
     // ...and subtract the already watched from Trakt
     for (int i = tmmWatchedMovies.size() - 1; i >= 0; i--) {
@@ -491,16 +481,16 @@ public class TraktTv {
       }
     }
 
-    if (tmmWatchedMovies.size() == 0) {
+    if (tmmWatchedMovies.isEmpty()) {
       LOGGER.info("no new watched movies for Trakt sync found.");
       return;
     }
 
-    LOGGER.debug("prepare " + tmmWatchedMovies.size() + " movies for Trakt.tv sync");
+    LOGGER.debug("prepare {} movies for Trakt.tv sync", tmmWatchedMovies.size());
     List<SyncMovie> movies = new ArrayList<>();
     int nosync = 0;
     for (Movie tmmMovie : tmmWatchedMovies) {
-      if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
+      if (tmmMovie.getIdAsInt(Constants.TRAKT) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
           || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, true));
       }
@@ -510,27 +500,27 @@ public class TraktTv {
       }
     }
     if (nosync > 0) {
-      LOGGER.debug("skipping " + nosync + " movies, because they have not been scraped yet!");
+      LOGGER.debug("skipping {} movies, because they have not been scraped yet!", nosync);
     }
 
-    if (movies.size() == 0) {
+    if (movies.isEmpty()) {
       LOGGER.info("no new watched movies for Trakt sync found.");
       return;
     }
 
     try {
-      LOGGER.info("Marking " + movies.size() + " movies as 'watched' to Trakt.tv collection");
+      LOGGER.info("Marking {} movies as 'watched' to Trakt.tv collection", movies.size());
       SyncItems items = new SyncItems().movies(movies);
       Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
       if (!response.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + response.message());
+        LOGGER.error("failed syncing trakt: {}", response.message());
         return;
       }
       LOGGER.info("Trakt mark-as-watched status:");
       printStatus(response.body());
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
     }
   }
 
@@ -580,16 +570,16 @@ public class TraktTv {
         response = TRAKT.sync().collectionShows(null).execute();
       }
       if (!response.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + response.message());
+        LOGGER.error("failed syncing trakt: {}", response.message());
         return;
       }
       traktShows = response.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
-    LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
+    LOGGER.info("You have {} TvShows in your Trakt.tv collection", traktShows.size());
 
     // remember which episodes are already in trakt
     Set<TvShowEpisode> episodesInTrakt = new HashSet<>();
@@ -607,8 +597,7 @@ public class TraktTv {
             Date collectedAt = DateTimeUtils.toDate(traktShow.last_collected_at.toInstant());
             if (!collectedAt.equals(tmmShow.getDateAdded())) {
               // always set from trakt, if not matched (Trakt = master)
-              LOGGER.trace(
-                  "Marking TvShow '" + tmmShow.getTitle() + "' as collected on " + collectedAt + " (was " + tmmShow.getDateAddedAsString() + ")");
+              LOGGER.trace("Marking TvShow '{}' as collected on {} (was {})", tmmShow.getTitle(), collectedAt, tmmShow.getDateAddedAsString());
               tmmShow.setDateAdded(collectedAt);
               dirty = true;
             }
@@ -650,7 +639,7 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add all our shows to Trakt collection (we have the physical file)
     // *****************************************************************************
-    LOGGER.info("Adding " + tvShows.size() + " TvShows to Trakt.tv collection");
+    LOGGER.info("Adding {} TvShows to Trakt.tv collection", tvShows.size());
     // send show per show; sending all together may result too often in a timeout
     for (TvShow tvShow : tvShows) {
       SyncShow show = toSyncShow(tvShow, false, episodesInTrakt);
@@ -662,14 +651,14 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(show);
         Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.debug("Trakt add-to-library status: " + tvShow.getTitle());
+        LOGGER.debug("Trakt add-to-library status: {}", tvShow.getTitle());
         printStatus(response.body());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
         return;
       }
     }
@@ -705,17 +694,17 @@ public class TraktTv {
         response = TRAKT.sync().watchedShows(null).execute();
       }
       if (!response.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + response.message());
+        LOGGER.error("failed syncing trakt: {}", response.message());
         return;
       }
       traktShows = response.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
 
-    LOGGER.info("You have " + traktShows.size() + " TvShows marked as watched on Trakt.tv");
+    LOGGER.info("You have {} TvShows marked as watched on Trakt.tv", traktShows.size());
     for (BaseShow traktShow : traktShows) {
       for (TvShow tmmShow : tvShows) {
         if (matches(tmmShow, traktShow.show.ids)) {
@@ -729,7 +718,7 @@ public class TraktTv {
             Date lastWatchedAt = DateTimeUtils.toDate(traktShow.last_watched_at.toInstant());
             if (!lastWatchedAt.equals(tmmShow.getLastWatched())) {
               // always set from trakt, if not matched (Trakt = master)
-              LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + lastWatchedAt + " (was " + tmmShow.getLastWatched() + ")");
+              LOGGER.trace("Marking TvShow '{}' as watched on {} (was {})", tmmShow.getTitle(), lastWatchedAt, tmmShow.getLastWatched());
               tmmShow.setLastWatched(lastWatchedAt);
               // dirty = true; // we do not write date to NFO. But just mark for syncing back...
             }
@@ -770,7 +759,7 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add all our shows to Trakt watched
     // *****************************************************************************
-    LOGGER.info("Adding up to " + tvShows.size() + " TvShows as watched on Trakt.tv");
+    LOGGER.info("Adding up to {} TvShows as watched on Trakt.tv", tvShows.size());
     // send show per show; sending all together may result too often in a timeout
     for (TvShow show : tvShows) {
       // get items to sync
@@ -783,14 +772,14 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(sync);
         Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.debug("Trakt add-to-library status: " + show.getTitle());
+        LOGGER.debug("Trakt add-to-library status: {}", show.getTitle());
         printStatus(response.body());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
         return;
       }
     }
@@ -822,7 +811,7 @@ public class TraktTv {
         traktCollectionResponse = TRAKT.sync().collectionShows(null).execute();
       }
       if (!traktCollectionResponse.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
+        LOGGER.error("failed syncing trakt: {}", traktCollectionResponse.message());
         return;
       }
       traktCollection = traktCollectionResponse.body();
@@ -835,17 +824,17 @@ public class TraktTv {
         traktWatchedResponse = TRAKT.sync().watchedShows(null).execute();
       }
       if (!traktWatchedResponse.isSuccessful()) {
-        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
+        LOGGER.error("failed syncing trakt: {}", traktWatchedResponse.message());
         return;
       }
       traktWatched = traktWatchedResponse.body();
     }
     catch (Exception e) {
-      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      LOGGER.error("failed syncing trakt: {}", e.getMessage());
       return;
     }
-    LOGGER.info("You have " + traktCollection.size() + " shows in your Trakt.tv collection");
-    LOGGER.info("You have " + traktWatched.size() + " shows watched");
+    LOGGER.info("You have {} shows in your Trakt.tv collection", traktCollection.size());
+    LOGGER.info("You have {} shows watched", traktWatched.size());
 
     // *****************************************************************************
     // 2) remove every shows from the COLLECTION state
@@ -859,13 +848,13 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(showToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv collection");
+        LOGGER.debug("removed {} shows from your trakt.tv collection", showToRemove.size());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
         return;
       }
     }
@@ -882,13 +871,13 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(showToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
         if (!response.isSuccessful()) {
-          LOGGER.error("failed syncing trakt: " + response.message());
+          LOGGER.error("failed syncing trakt: {}", response.message());
           return;
         }
-        LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv watched");
+        LOGGER.debug("removed {} shows from your trakt.tv watched", showToRemove.size());
       }
       catch (Exception e) {
-        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        LOGGER.error("failed syncing trakt: {}", e.getMessage());
       }
     }
   }
@@ -912,8 +901,8 @@ public class TraktTv {
       tmmShow.setId(Constants.TMDB, ids.tmdb);
       dirty = true;
     }
-    if (tmmShow.getIdAsInt(providerInfo.getId()) == 0 && ids.trakt != null && ids.trakt != 0) {
-      tmmShow.setId(providerInfo.getId(), ids.trakt);
+    if (tmmShow.getIdAsInt(Constants.TRAKT) == 0 && ids.trakt != null && ids.trakt != 0) {
+      tmmShow.setId(Constants.TRAKT, ids.trakt);
       dirty = true;
     }
     if (tmmShow.getIdAsInt(Constants.TVDB) == 0 && ids.tvdb != null && ids.tvdb != 0) {
@@ -939,15 +928,15 @@ public class TraktTv {
       tmmMovie.setId(Constants.TMDB, ids.tmdb);
       dirty = true;
     }
-    if (tmmMovie.getIdAsInt(providerInfo.getId()) == 0 && ids.trakt != null && ids.trakt != 0) {
-      tmmMovie.setId(providerInfo.getId(), ids.trakt);
+    if (tmmMovie.getIdAsInt(Constants.TRAKT) == 0 && ids.trakt != null && ids.trakt != 0) {
+      tmmMovie.setId(Constants.TRAKT, ids.trakt);
       dirty = true;
     }
     return dirty;
   }
 
   private boolean matches(TvShow tmmShow, ShowIds ids) {
-    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(providerInfo.getId())) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(Constants.TRAKT)) {
       return true;
     }
     if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmShow.getIdAsString(Constants.IMDB))) {
@@ -967,7 +956,7 @@ public class TraktTv {
   }
 
   private boolean matches(Movie tmmMovie, MovieIds ids) {
-    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(providerInfo.getId())) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(Constants.TRAKT)) {
       return true;
     }
     if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmMovie.getIdAsString(Constants.IMDB))) {
@@ -992,8 +981,8 @@ public class TraktTv {
       ids.tmdb = tmmMovie.getIdAsInt(Constants.TMDB);
       hasId = true;
     }
-    if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0) {
-      ids.trakt = tmmMovie.getIdAsInt(providerInfo.getId());
+    if (tmmMovie.getIdAsInt(Constants.TRAKT) != 0) {
+      ids.trakt = tmmMovie.getIdAsInt(Constants.TRAKT);
       hasId = true;
     }
 
@@ -1040,8 +1029,8 @@ public class TraktTv {
       ids.tvdb = tmmShow.getIdAsInt(Constants.TVDB);
       hasId = true;
     }
-    if (tmmShow.getIdAsInt(providerInfo.getId()) != 0) {
-      ids.trakt = tmmShow.getIdAsInt(providerInfo.getId());
+    if (tmmShow.getIdAsInt(Constants.TRAKT) != 0) {
+      ids.trakt = tmmShow.getIdAsInt(Constants.TRAKT);
       hasId = true;
     }
     // not used atm
@@ -1060,7 +1049,7 @@ public class TraktTv {
       boolean foundEP = false;
       ArrayList<SyncEpisode> se = new ArrayList<>();
       for (TvShowEpisode tmmEp : tmmSeason.getEpisodes()) {
-        // we have to decide what we send; trakt behaves differenty when sending data to
+        // we have to decide what we send; trakt behaves differently when sending data to
         // sync collection and sync history.
         if (watched) {
           // sync history
@@ -1120,19 +1109,19 @@ public class TraktTv {
     if (resp != null) {
       String info = getStatusString(resp.added);
       if (!info.isEmpty()) {
-        LOGGER.debug("Added       : " + info);
+        LOGGER.debug("Added       : {}", info);
       }
       info = getStatusString(resp.existing);
       if (!info.isEmpty()) {
-        LOGGER.debug("Existing    : " + info);
+        LOGGER.debug("Existing    : {}", info);
       }
       info = getStatusString(resp.deleted);
       if (!info.isEmpty()) {
-        LOGGER.debug("Deleted     : " + info);
+        LOGGER.debug("Deleted     : {}", info);
       }
       info = getStatusString(resp.not_found);
       if (!info.isEmpty()) {
-        LOGGER.debug("Errors      : " + info);
+        LOGGER.debug("Errors      : {}", info);
       }
     }
   }
@@ -1144,16 +1133,16 @@ public class TraktTv {
     StringBuilder sb = new StringBuilder(50);
 
     if (ss.movies != null && ss.movies > 0) {
-      sb.append(ss.movies + " Movies ");
+      sb.append(ss.movies).append(" Movies ");
     }
     if (ss.shows != null && ss.shows > 0) {
-      sb.append(ss.shows + " Shows ");
+      sb.append(ss.shows).append(" Shows ");
     }
     if (ss.seasons != null && ss.seasons > 0) {
-      sb.append(ss.seasons + " Seasons ");
+      sb.append(ss.seasons).append(" Seasons ");
     }
     if (ss.episodes != null && ss.episodes > 0) {
-      sb.append(ss.episodes + " Episodes");
+      sb.append(ss.episodes).append(" Episodes");
     }
 
     return sb.toString();
@@ -1167,16 +1156,16 @@ public class TraktTv {
 
     // TODO: iterate over error array and display which did not work
     if (ss.movies != null && ss.movies.size() > 0) {
-      sb.append(ss.movies.size() + " Movies ");
+      sb.append(ss.movies.size()).append(" Movies ");
     }
     if (ss.shows != null && ss.shows.size() > 0) {
-      sb.append(ss.shows.size() + " Shows ");
+      sb.append(ss.shows.size()).append(" Shows ");
     }
     if (ss.seasons != null && ss.seasons.size() > 0) {
-      sb.append(ss.seasons.size() + " Seasons ");
+      sb.append(ss.seasons.size()).append(" Seasons ");
     }
     if (ss.episodes != null && ss.episodes.size() > 0) {
-      sb.append(ss.episodes.size() + " Episodes");
+      sb.append(ss.episodes.size()).append(" Episodes");
     }
 
     return sb.toString();
