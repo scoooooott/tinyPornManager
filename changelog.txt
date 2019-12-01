@@ -31,6 +31,7 @@ x changed writing of the outline in the NFO. It is now configurable how the outl
 x enhanced movie renamer pattern validation #709 #705
 x moved export logic into thread to do not block the UI while exporting
 x IMDB: use the first found release date
+x TMDB: show all search results (not only the first 20)
 
 
 Version 3.0.5

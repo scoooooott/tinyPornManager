@@ -171,14 +171,25 @@ class TmdbTvShowMetadataProvider {
       // 3. try with search string and year
       if (resultList.isEmpty()) {
         try {
-          Response<TvShowResultsPage> httpResponse = api.searchService().tv(searchString, 1, language, year, "phrase").execute();
-          if (!httpResponse.isSuccessful()) {
-            throw new HttpException(httpResponse.code(), httpResponse.message());
-          }
-          for (BaseTvShow show : ListUtils.nullSafe(httpResponse.body().results)) {
-            verifyTvShowLanguageTitle(options.getLanguage().toLocale(), show);
-            resultList.add(morphTvShowToSearchResult(show, options));
-          }
+          int page = 1;
+          int maxPage = 1;
+
+          // get all result pages
+          do {
+            Response<TvShowResultsPage> httpResponse = api.searchService().tv(searchString, page, language, year, "phrase").execute();
+            if (!httpResponse.isSuccessful() || httpResponse.body() == null) {
+              throw new HttpException(httpResponse.code(), httpResponse.message());
+            }
+
+            for (BaseTvShow show : ListUtils.nullSafe(httpResponse.body().results)) {
+              verifyTvShowLanguageTitle(options.getLanguage().toLocale(), show);
+              resultList.add(morphTvShowToSearchResult(show, options));
+            }
+
+            maxPage = httpResponse.body().total_pages;
+            page++;
+          } while (page <= maxPage);
+
           LOGGER.debug("found {} results with search string", resultList.size());
         }
         catch (Exception e) {

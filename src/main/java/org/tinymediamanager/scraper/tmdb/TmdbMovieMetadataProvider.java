@@ -172,14 +172,24 @@ class TmdbMovieMetadataProvider {
       // 3. try with search string and year
       if (resultList.isEmpty()) {
         try {
-          Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute();
-          if (!httpResponse.isSuccessful()) {
-            throw new HttpException(httpResponse.code(), httpResponse.message());
-          }
-          for (BaseMovie movie : httpResponse.body().results) {
-            verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
-            resultList.add(morphMovieToSearchResult(movie));
-          }
+          int page = 1;
+          int maxPage = 1;
+
+          // get all result pages
+          do {
+            Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, page, language, adult, year, year, "phrase").execute();
+            if (!httpResponse.isSuccessful() || httpResponse.body() == null) {
+              throw new HttpException(httpResponse.code(), httpResponse.message());
+            }
+            for (BaseMovie movie : ListUtils.nullSafe(httpResponse.body().results)) {
+              verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+              resultList.add(morphMovieToSearchResult(movie));
+            }
+
+            maxPage = httpResponse.body().total_pages;
+            page++;
+          } while (page <= maxPage);
+
           LOGGER.debug("found {} results with search string", resultList.size());
         }
         catch (Exception e) {
