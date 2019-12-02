@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -123,20 +125,20 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     LOGGER.debug("search(): {}", options);
 
-    List<MediaSearchResult> resultList = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
 
     IMovieMetadataProvider mp = compatibleScrapers.get(providerInfo.getConfig().getValue(SEARCH));
     if (mp == null) {
-      return resultList;
+      return results;
     }
 
     try {
       for (MediaSearchResult result : mp.search(options)) {
         result.setProviderId(providerInfo.getId());
-        resultList.add(result);
+        results.add(result);
       }
     }
     catch (ScrapeException e) {
@@ -144,7 +146,7 @@ public class UniversalMovieMetadataProvider implements IMovieMetadataProvider {
       throw e;
     }
 
-    return resultList;
+    return results;
   }
 
   @Override

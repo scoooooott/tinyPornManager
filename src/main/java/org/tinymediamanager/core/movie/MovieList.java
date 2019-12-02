@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -504,14 +505,16 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
-   * @param movie
-   *          the movie
+   * @param year
+   *          the year of the movie (if available, otherwise <= 0)
+   * @param ids
+   *          a map of all available ids of the movie or null if no id based search is requested
    * @param metadataScraper
    *          the media scraper
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper metadataScraper) {
-    return searchMovie(searchTerm, movie, metadataScraper, movieSettings.getScraperLanguage());
+  public List<MediaSearchResult> searchMovie(String searchTerm, int year, Map<String, Object> ids, MediaScraper metadataScraper) {
+    return searchMovie(searchTerm, year, ids, metadataScraper, movieSettings.getScraperLanguage());
   }
 
   /**
@@ -519,16 +522,19 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
-   * @param movie
-   *          the movie
+   * @param year
+   *          the year of the movie (if available, otherwise <= 0)
+   * @param ids
+   *          a map of all available ids of the movie or null if no id based search is requested
    * @param mediaScraper
    *          the media scraper
-   * @param langu
+   * @param language
    *          the language to search with
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper mediaScraper, MediaLanguages langu) {
-    List<MediaSearchResult> sr = new ArrayList<>();
+  public List<MediaSearchResult> searchMovie(String searchTerm, int year, Map<String, Object> ids, MediaScraper mediaScraper,
+      MediaLanguages language) {
+    Set<MediaSearchResult> sr = new TreeSet<>();
     try {
       IMovieMetadataProvider provider;
       if (mediaScraper == null) {
@@ -541,13 +547,11 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
-      options.setLanguage(langu);
+      options.setLanguage(language);
       options.setMetadataScraper(mediaScraper);
 
-      if (movie != null) {
-        options.setIds(movie.getIds());
-        options.setSearchQuery(movie.getTitle());
-        options.setSearchYear(movie.getYear());
+      if (ids != null) {
+        options.setIds(ids);
       }
 
       if (!searchTerm.isEmpty()) {
@@ -557,11 +561,15 @@ public class MovieList extends AbstractModelObject {
         options.setSearchQuery(searchTerm);
       }
 
+      if (year > 0) {
+        options.setSearchYear(year);
+      }
+
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: {}", provider.getProviderInfo().getId());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
-      sr = provider.search(options);
+      sr.addAll(provider.search(options));
       // if result is empty, try all scrapers
       if (sr.isEmpty() && movieSettings.isScraperFallback()) {
         for (MediaScraper ms : getAvailableMediaScrapers()) {
@@ -576,12 +584,12 @@ public class MovieList extends AbstractModelObject {
                 + provider.getProviderInfo().getVersion());
             LOGGER.info(options.toString());
             LOGGER.info("=====================================================");
-            sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
+            sr.addAll(((IMovieMetadataProvider) ms.getMediaProvider()).search(options));
           }
           catch (ScrapeException e) {
             LOGGER.error("searchMovieFallback", e);
             MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+                .pushMessage(new Message(MessageLevel.ERROR, this, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
           }
 
           if (!sr.isEmpty()) {
@@ -593,10 +601,10 @@ public class MovieList extends AbstractModelObject {
     catch (ScrapeException e) {
       LOGGER.error("searchMovie", e);
       MessageManager.instance
-          .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+          .pushMessage(new Message(MessageLevel.ERROR, this, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
     }
 
-    return sr;
+    return new ArrayList<>(sr);
   }
 
   public List<MediaScraper> getAvailableMediaScrapers() {

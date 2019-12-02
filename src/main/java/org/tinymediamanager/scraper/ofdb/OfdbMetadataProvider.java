@@ -19,9 +19,10 @@ import java.io.InterruptedIOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,9 +107,9 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerPro
     // case b)
     if (options.getSearchResult() == null && StringUtils.isNotBlank(options.getIdAsString(MediaMetadata.IMDB))) {
       try {
-        List<MediaSearchResult> results = search(options);
-        if (results != null && !results.isEmpty()) {
-          options.setSearchResult(results.get(0));
+        SortedSet<MediaSearchResult> results = search(options);
+        if (!results.isEmpty()) {
+          options.setSearchResult(results.first());
           detailUrl = options.getSearchResult().getUrl();
         }
       }
@@ -463,15 +464,14 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerPro
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     LOGGER.debug("search(): {}", options);
 
-    List<MediaSearchResult> resultList = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
+
     String searchQuery = options.getSearchQuery();
     String imdb = "";
     Elements filme = null;
-    int myear = options.getSearchYear();
-
     Exception savedException = null;
     /*
      * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
@@ -528,7 +528,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerPro
 
     if (filme == null || filme.isEmpty()) {
       LOGGER.debug("nothing found :(");
-      return resultList;
+      return results;
     }
 
     // <a href="film/22523,Die-Bourne-Identität"
@@ -567,32 +567,22 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerPro
         }
         foundResultUrls.add(sr.getUrl());
 
-        if (imdb.equals(sr.getIMDBId())) {
+        if (StringUtils.isNotBlank(sr.getIMDBId()) && imdb.equals(sr.getIMDBId())) {
           // perfect match
           sr.setScore(1);
         }
         else {
           // compare score based on names
-          float score = MetadataUtil.calculateScore(searchQuery, sr.getTitle());
-
-          float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), sr.getYear());
-          if (yearPenalty > 0) {
-            LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
-            score -= yearPenalty;
-          }
-
-          sr.setScore(score);
+          sr.calculateScore(options);
         }
-        resultList.add(sr);
+        results.add(sr);
       }
       catch (Exception e) {
         LOGGER.warn("error parsing movie result: {}", e.getMessage());
       }
     }
-    Collections.sort(resultList);
-    Collections.reverse(resultList);
 
-    return resultList;
+    return results;
   }
 
   @Override

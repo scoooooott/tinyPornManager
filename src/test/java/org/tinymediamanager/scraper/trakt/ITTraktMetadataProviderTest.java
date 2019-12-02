@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -59,7 +60,7 @@ public class ITTraktMetadataProviderTest {
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Harry Potter and the Philosopher's Stone");
       options.setLanguage(MediaLanguages.en);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
 
       // did we get a result?
       assertThat(results).isNotNull().isNotEmpty();

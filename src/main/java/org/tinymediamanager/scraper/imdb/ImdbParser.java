@@ -32,10 +32,11 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,15 +87,15 @@ public abstract class ImdbParser {
     this.type = type;
   }
 
-  abstract protected Pattern getUnwantedSearchResultPattern();
+  protected abstract Pattern getUnwantedSearchResultPattern();
 
-  abstract protected Logger getLogger();
+  protected abstract Logger getLogger();
 
-  abstract protected MediaMetadata getMetadata(MediaSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException;
+  protected abstract MediaMetadata getMetadata(MediaSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException;
 
-  abstract protected String getSearchCategory();
+  protected abstract String getSearchCategory();
 
-  abstract protected CountryCode getCountry();
+  protected abstract CountryCode getCountry();
 
   /**
    * scrape tmdb for movies too?
@@ -123,9 +124,9 @@ public abstract class ImdbParser {
     return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo");
   }
 
-  protected List<MediaSearchResult> search(MediaSearchAndScrapeOptions options) throws ScrapeException {
+  protected SortedSet<MediaSearchResult> search(MediaSearchAndScrapeOptions options) throws ScrapeException {
     getLogger().debug("search(): {}", options);
-    List<MediaSearchResult> result = new ArrayList<>();
+    SortedSet<MediaSearchResult> result = new TreeSet<>();
 
     /*
      * IMDb matches seem to come in several "flavours".
@@ -155,7 +156,6 @@ public abstract class ImdbParser {
 
     // parse out language and country from the scraper query
     String language = options.getLanguage().getLanguage();
-    int myear = options.getSearchYear();
     String country = getCountry().getAlpha2(); // for passing the country to the scrape
 
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
@@ -290,7 +290,7 @@ public abstract class ImdbParser {
         // is there a localized name? (aka)
         String localizedName = "";
         Elements italics = element.getElementsByTag("i");
-        if (italics.size() > 0) {
+        if (!italics.isEmpty()) {
           localizedName = italics.text().replace("\"", "");
         }
 
@@ -326,6 +326,7 @@ public abstract class ImdbParser {
                   break;
                 }
                 catch (Exception ignored) {
+                  // nothing to do here
                 }
               }
             }
@@ -363,19 +364,8 @@ public abstract class ImdbParser {
         sr.setScore(1);
       }
       else {
-        // compare score based on names
-        float score = MetadataUtil.calculateScore(searchTerm, movieName);
-        if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
-          getLogger().debug("no poster - downgrading score by 0.01");
-          score = score - 0.01f;
-        }
-        float yearPenalty = MetadataUtil.calculateYearPenalty(year, sr.getYear());
-        if (yearPenalty > 0) {
-          getLogger().debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
-          score -= yearPenalty;
-        }
-
-        sr.setScore(score);
+        // calculate the score by comparing the search result with the search options
+        sr.calculateScore(options);
       }
 
       result.add(sr);
@@ -386,8 +376,6 @@ public abstract class ImdbParser {
       }
     }
 
-    Collections.sort(result);
-    Collections.reverse(result);
 
     return result;
   }
@@ -406,11 +394,9 @@ public abstract class ImdbParser {
 
     // first: take the preferred language from settings,
     // but validate whether it is legal or not
-    if (StringUtils.isNotBlank(language) && StringUtils.isNotBlank(country)) {
-      if (LocaleUtils.isAvailableLocale(new Locale(language, country))) {
-        String combined = language + "-" + country;
-        languageString.add(combined.toLowerCase(Locale.ROOT));
-      }
+    if (StringUtils.isNotBlank(language) && StringUtils.isNotBlank(country) && LocaleUtils.isAvailableLocale(new Locale(language, country))) {
+      String combined = language + "-" + country;
+      languageString.add(combined.toLowerCase(Locale.ROOT));
     }
 
     // also build langu & default country
@@ -505,6 +491,7 @@ public abstract class ImdbParser {
               break;
             }
             catch (Exception ignored) {
+              // nothing to do here
             }
           }
         }
@@ -516,14 +503,13 @@ public abstract class ImdbParser {
     if (poster != null) {
       String posterUrl = poster.attr("content");
 
-      int fileStart = posterUrl.lastIndexOf("/");
+      int fileStart = posterUrl.lastIndexOf('/');
       if (fileStart > 0) {
-        int parameterStart = posterUrl.indexOf("_", fileStart);
+        int parameterStart = posterUrl.indexOf('_', fileStart);
         if (parameterStart > 0) {
-          int startOfExtension = posterUrl.lastIndexOf(".");
+          int startOfExtension = posterUrl.lastIndexOf('.');
           if (startOfExtension > parameterStart) {
             posterUrl = posterUrl.substring(0, parameterStart) + posterUrl.substring(startOfExtension);
-
           }
         }
       }
@@ -591,13 +577,11 @@ public abstract class ImdbParser {
 
       String elementText = element.ownText();
 
-      if (elementText.equals("Taglines")) {
-        if (!isUseTmdbForMovies()) {
-          Element taglineElement = element.nextElementSibling();
-          if (taglineElement != null) {
-            String tagline = cleanString(taglineElement.ownText().replace("»", ""));
-            md.setTagline(tagline);
-          }
+      if (elementText.equals("Taglines") && !isUseTmdbForMovies()) {
+        Element taglineElement = element.nextElementSibling();
+        if (taglineElement != null) {
+          String tagline = cleanString(taglineElement.ownText().replace("»", ""));
+          md.setTagline(tagline);
         }
       }
 
@@ -993,13 +977,6 @@ public abstract class ImdbParser {
     return cm;
   }
 
-  /**
-   * Is i1 != i2 (when >0)
-   */
-  private boolean yearDiffers(int i1, int i2) {
-    return i1 > 0 && i2 > 0 && i1 != i2;
-  }
-
   protected Date parseDate(String dateAsSting) {
     try {
       return sdf1.parse(dateAsSting);
@@ -1032,7 +1009,7 @@ public abstract class ImdbParser {
    * local helper classes
    ****************************************************************************/
   protected class ImdbWorker implements Callable<Document> {
-    private String  url;
+    private String  pageUrl;
     private String  language;
     private String  country;
     private boolean useCachedUrl;
@@ -1042,7 +1019,7 @@ public abstract class ImdbParser {
     }
 
     ImdbWorker(String url, String language, String country, boolean useCachedUrl) {
-      this.url = url;
+      this.pageUrl = url;
       this.language = language;
       this.country = country;
       this.useCachedUrl = useCachedUrl;
@@ -1056,15 +1033,15 @@ public abstract class ImdbParser {
 
       try {
         if (useCachedUrl) {
-          url = new InMemoryCachedUrl(this.url);
+          url = new InMemoryCachedUrl(this.pageUrl);
         }
         else {
-          url = new Url(this.url);
+          url = new Url(this.pageUrl);
         }
         url.addHeader("Accept-Language", getAcceptLanguage(language, country));
       }
       catch (Exception e) {
-        getLogger().debug("tried to fetch imdb page {} - {}", this.url, e);
+        getLogger().debug("tried to fetch imdb page {} - {}", this.pageUrl, e);
         throw new ScrapeException(e);
       }
 
@@ -1076,7 +1053,7 @@ public abstract class ImdbParser {
         Thread.currentThread().interrupt();
       }
       catch (Exception e) {
-        getLogger().debug("tried to fetch imdb page {} - {}", this.url, e);
+        getLogger().debug("tried to fetch imdb page {} - {}", this.pageUrl, e);
         throw e;
       }
 

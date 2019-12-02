@@ -29,12 +29,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -383,12 +384,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   @Override
-  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
     // lazy initialization of the api
     initAPI();
 
     LOGGER.debug("search() {}", options);
-    List<MediaSearchResult> results = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
 
     // detect the string to search
     String searchString = "";
@@ -492,23 +493,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
       result.setPosterUrl(artworkUrl + show.poster);
 
-      float score = MetadataUtil.calculateScore(searchString, show.seriesName);
-
-      float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), result.getYear());
-      if (yearPenalty > 0) {
-        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
-        score -= yearPenalty;
-      }
-      result.setScore(score);
+      // calculate score
+      result.calculateScore(options);
       resultMap.put(show.id, result);
     }
 
     // and convert all entries from the map to a list
     results.addAll(resultMap.values());
-
-    // sort
-    Collections.sort(results);
-    Collections.reverse(results);
 
     return results;
   }

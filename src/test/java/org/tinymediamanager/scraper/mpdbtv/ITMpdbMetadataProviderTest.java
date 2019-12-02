@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.mpdbtv;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class ITMpdbMetadataProviderTest {
     MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
     options.setSearchQuery("Batman");
     options.setLanguage(MediaLanguages.en);
-    List<MediaSearchResult> result = mp.search(options);
+    List<MediaSearchResult> result = new ArrayList<>(mp.search(options));
 
     assertThat(result).isNotNull();
     assertThat(result.size()).isGreaterThan(40);

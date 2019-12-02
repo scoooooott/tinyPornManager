@@ -16,8 +16,9 @@
 package org.tinymediamanager.scraper.moviemeter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -219,19 +220,20 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     // lazy loading of the api
     initAPI();
 
     LOGGER.debug("search(): {}", options);
-    List<MediaSearchResult> resultList = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
+
     String imdb = options.getImdbId();
     String searchString = options.getSearchQuery();
     int myear = options.getSearchYear();
 
     if (StringUtils.isBlank(searchString) && !MetadataUtil.isValidImdbId(imdb)) {
       LOGGER.debug("cannot search without a search string");
-      return resultList;
+      return results;
     }
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
@@ -284,7 +286,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
       sr.setUrl(fd.url);
       sr.setYear(fd.year);
       sr.setScore(1);
-      resultList.add(sr);
+      results.add(sr);
     }
     for (MMFilm film : moviesFound) {
       MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), options.getMediaType());
@@ -295,22 +297,11 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
       sr.setYear(film.year);
 
       // compare score based on names
-      float score = MetadataUtil.calculateScore(searchString, film.title);
-
-      float yearPenalty = MetadataUtil.calculateYearPenalty(myear, sr.getYear());
-      if (yearPenalty > 0) {
-        LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
-        score -= yearPenalty;
-      }
-
-      sr.setScore(score);
-
-      resultList.add(sr);
+      sr.calculateScore(options);
+      results.add(sr);
     }
-    Collections.sort(resultList);
-    Collections.reverse(resultList);
 
-    return resultList;
+    return results;
   }
 
   /*

@@ -112,6 +112,8 @@ public class TraktUtils {
       }
     }
 
+    msr.calculateScore(options);
+
     return msr;
   }
 

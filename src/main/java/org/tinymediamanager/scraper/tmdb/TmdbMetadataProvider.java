@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.tmdb;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -153,7 +154,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     LOGGER.debug("search(): {}", options);
     // lazy initialization of the api
     initAPI();
@@ -161,7 +162,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   }
 
   @Override
-  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
     LOGGER.debug("search(): {}", options);
     // lazy initialization of the api
     initAPI();

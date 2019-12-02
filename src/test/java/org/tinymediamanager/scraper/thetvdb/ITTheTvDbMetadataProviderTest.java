@@ -9,6 +9,7 @@ import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -68,7 +69,7 @@ public class ITTheTvDbMetadataProviderTest {
       // options.setCountry(CountryCode.valueOf(language.toUpperCase(Locale.ROOT)));
       // options.setYear(year);
 
-      List<MediaSearchResult> results = metadataProvider.search(options);
+      List<MediaSearchResult> results = new ArrayList<>(metadataProvider.search(options));
       if (results.isEmpty()) {
         Assert.fail("Result empty!");
       }

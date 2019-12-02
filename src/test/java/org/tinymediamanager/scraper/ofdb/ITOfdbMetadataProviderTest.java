@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -50,7 +51,7 @@ public class ITOfdbMetadataProviderTest {
         options = new MovieSearchAndScrapeOptions();
         options.setSearchQuery("Die Piefke Saga");
         options.setLanguage(MediaLanguages.de);
-        results = mp.search(options);
+        results = new ArrayList<>(mp.search(options));
         // did we get a result?
         assertNotNull("Result", results);
         assertEquals("Die Piefke-Saga", results.get(0).getTitle());
@@ -70,7 +71,7 @@ public class ITOfdbMetadataProviderTest {
         options = new MovieSearchAndScrapeOptions();
         options.setSearchQuery("Slevin");
         options.setLanguage(MediaLanguages.de);
-        results = mp.search(options);
+        results = new ArrayList<>(mp.search(options));
         // did we get a result?
         assertNotNull("Result", results);
 

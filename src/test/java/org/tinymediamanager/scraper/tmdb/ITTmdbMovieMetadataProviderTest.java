@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -128,7 +129,7 @@ public class ITTmdbMovieMetadataProviderTest {
     options.setSearchQuery("The Front Line");
     options.setLanguage(MediaLanguages.el);
 
-    List<MediaSearchResult> results = mp.search(options);
+    List<MediaSearchResult> results = new ArrayList<>(mp.search(options));
     // did we get a result?
     assertNotNull("Result", results);
 
@@ -148,7 +149,7 @@ public class ITTmdbMovieMetadataProviderTest {
     options.setSearchQuery("Harry Potter");
     options.setLanguage(MediaLanguages.en);
 
-    List<MediaSearchResult> results = mp.search(options);
+    List<MediaSearchResult> results = new ArrayList<>(mp.search(options));
     // did we get a result?
     assertNotNull("Result", results);
 
@@ -164,7 +165,7 @@ public class ITTmdbMovieMetadataProviderTest {
     options.setSearchQuery("Harry Potter");
     options.setLanguage(MediaLanguages.de);
 
-    List<MediaSearchResult> results = mp.search(options);
+    List<MediaSearchResult> results = new ArrayList<>(mp.search(options));
     // did we get a result?
     assertNotNull("Result", results);
 

@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.imdb;
 
 import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -83,7 +84,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     return (new ImdbMovieParser()).search(options);
   }
 
@@ -103,7 +104,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   @Override
-  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
     return (new ImdbTvShowParser()).search(options);
   }
 

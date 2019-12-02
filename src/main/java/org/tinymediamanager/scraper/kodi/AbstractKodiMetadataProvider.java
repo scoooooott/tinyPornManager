@@ -19,10 +19,9 @@ import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +46,6 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
-import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,11 +91,11 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     return scraper.getId();
   }
 
-  protected List<MediaSearchResult> _search(MediaSearchAndScrapeOptions options) throws ScrapeException {
+  protected SortedSet<MediaSearchResult> _search(MediaSearchAndScrapeOptions options) throws ScrapeException {
     // always reset/instantiate on search
     processor = new KodiAddonProcessor(scraper);
 
-    List<MediaSearchResult> l = new ArrayList<>();
+    SortedSet<MediaSearchResult> l = new TreeSet<>();
     String arg = options.getSearchQuery();
 
     // cannot search without any title/query
@@ -155,30 +153,18 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
             sr.setYear(Integer.parseInt(y));
           }
           catch (Exception ignored) {
+            // no need to log here
           }
-          float score = MetadataUtil.calculateScore(arg, t);
-          // if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
-          // getLogger().debug("no poster - downgrading score by 0.01");
-          // score = score - 0.01f;
-          // }
-          if (yearDiffers(sr.getYear(), year)) {
-            float diff = (float) Math.abs(year - sr.getYear()) / 100;
-            LOGGER.debug("parsed year does not match search result year - downgrading score by {}", diff);
-            score -= diff;
-          }
-          sr.setScore(score);
 
-          if (!l.contains(sr)) {
-            l.add(sr);
-          }
+          // calculate score
+          sr.calculateScore(options);
+
+          l.add(sr);
         }
         catch (Exception e) {
           LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
         }
       }
-
-      Collections.sort(l);
-      Collections.reverse(l);
 
       return l;
     }

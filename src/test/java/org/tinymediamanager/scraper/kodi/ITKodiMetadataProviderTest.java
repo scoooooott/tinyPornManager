@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -75,7 +76,7 @@ public class ITKodiMetadataProviderTest {
       searchOptions.setSearchQuery("21 Jump Street");
       searchOptions.setSearchYear(1987);
       searchOptions.setLanguage(MediaLanguages.de);
-      List<MediaSearchResult> results = show.search(searchOptions);
+      List<MediaSearchResult> results = new ArrayList<>(show.search(searchOptions));
       for (MediaSearchResult mediaSearchResult : results) {
         System.out.println(mediaSearchResult);
       }
@@ -128,7 +129,7 @@ public class ITKodiMetadataProviderTest {
       searchOptions.setSearchQuery("Harry Potter and the Philosopher's Stone");
       searchOptions.setSearchYear(2001);
       searchOptions.setLanguage(MediaLanguages.en);
-      List<MediaSearchResult> results = tmdb.search(searchOptions);
+      List<MediaSearchResult> results = new ArrayList<>(tmdb.search(searchOptions));
 
       assertThat(results).isNotNull();
       assertThat(results.size()).isGreaterThan(0);

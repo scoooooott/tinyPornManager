@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -503,12 +505,16 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
+   * @param year
+   *          the year of the movie (if available, otherwise <= 0)
+   * @param ids
+   *          a map of all available ids of the movie or null if no id based search is requested
    * @param mediaScraper
    *          the media scraper
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, TvShow show, MediaScraper mediaScraper) {
-    return searchTvShow(searchTerm, show, mediaScraper, TvShowModuleManager.SETTINGS.getScraperLanguage());
+  public List<MediaSearchResult> searchTvShow(String searchTerm, int year, Map<String, Object> ids, MediaScraper mediaScraper) {
+    return searchTvShow(searchTerm, year, ids, mediaScraper, TvShowModuleManager.SETTINGS.getScraperLanguage());
   }
 
   /**
@@ -516,14 +522,19 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
+   * @param year
+   *          the year of the movie (if available, otherwise <= 0)
+   * @param ids
+   *          a map of all available ids of the movie or null if no id based search is requested
    * @param mediaScraper
    *          the media scraper
    * @param language
    *          the language to search with
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, TvShow show, MediaScraper mediaScraper, MediaLanguages language) {
-    List<MediaSearchResult> searchResult = new ArrayList<>();
+  public List<MediaSearchResult> searchTvShow(String searchTerm, int year, Map<String, Object> ids, MediaScraper mediaScraper,
+      MediaLanguages language) {
+    Set<MediaSearchResult> results = new TreeSet<>();
     try {
       ITvShowMetadataProvider provider;
 
@@ -538,21 +549,26 @@ public class TvShowList extends AbstractModelObject {
       options.setSearchQuery(searchTerm);
       options.setLanguage(language);
 
-      if (show != null) {
-        options.setIds(show.getIds());
-        options.setSearchQuery(show.getTitle());
-        if (show.getYear() > 0) {
-          options.setSearchYear(show.getYear());
+      if (ids != null) {
+        options.setIds(ids);
+      }
+
+      if (!searchTerm.isEmpty()) {
+        if (Utils.isValidImdbId(searchTerm)) {
+          options.setImdbId(searchTerm);
         }
+        options.setSearchQuery(searchTerm);
       }
-      if (Utils.isValidImdbId(searchTerm)) {
-        options.setImdbId(searchTerm);
+
+      if (year > 0) {
+        options.setSearchYear(year);
       }
+
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: {}", provider.getProviderInfo().getId());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
-      searchResult = provider.search(options);
+      results.addAll(provider.search(options));
 
       // if result is empty, try all scrapers
       // FIXME only needed if we have more "true" scrapers
@@ -576,7 +592,7 @@ public class TvShowList extends AbstractModelObject {
           .pushMessage(new Message(MessageLevel.ERROR, this, "message.tvshow.searcherror", new String[] { ":", e.getLocalizedMessage() }));
     }
 
-    return searchResult;
+    return new ArrayList<>(results);
   }
 
   private void updateTvShowTags(TvShow tvShow) {

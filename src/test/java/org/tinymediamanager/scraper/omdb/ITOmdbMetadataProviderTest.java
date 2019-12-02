@@ -7,6 +7,7 @@ import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class ITOmdbMetadataProviderTest {
       // Matrix
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("The Matrix");
-      List<MediaSearchResult> resultList = mp.search(options);
+      List<MediaSearchResult> resultList = new ArrayList<>(mp.search(options));
       assertNotNull(resultList);
       assertThat(resultList.size()).isGreaterThan(0);
       assertThat(resultList.get(0).getTitle()).isEqualTo("The Matrix");
@@ -65,7 +66,7 @@ public class ITOmdbMetadataProviderTest {
 
       // Men in Black
       options.setSearchQuery("Men in Black");
-      resultList = mp.search(options);
+      resultList = new ArrayList<>(mp.search(options));
       assertNotNull(resultList);
       assertThat(resultList.size()).isGreaterThan(0);
       assertThat(resultList.get(0).getTitle()).isEqualTo("Men in Black");

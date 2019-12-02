@@ -224,7 +224,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
       {
         // also attach the actionlistener to the textfield to trigger the search on enter in the textfield
-        ActionListener searchAction = arg0 -> searchMovie(textFieldSearchString.getText(), null);
+        ActionListener searchAction = arg0 -> searchMovie(textFieldSearchString.getText(), false);
 
         textFieldSearchString = new JTextField();
         textFieldSearchString.addActionListener(searchAction);
@@ -241,7 +241,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
         cbLanguage = new JComboBox(MediaLanguages.valuesSorted());
         cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
-        cbLanguage.addActionListener(e -> searchMovie(textFieldSearchString.getText(), null));
+        cbLanguage.addActionListener(e -> searchMovie(textFieldSearchString.getText(), false));
         panelSearchField.add(cbLanguage, "cell 1 1");
       }
     }
@@ -443,7 +443,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
       textFieldSearchString.setText(movieToScrape.getTitle());
       lblPath.setText(movieToScrape.getPathNIO().resolve(movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()).toString());
-      searchMovie(textFieldSearchString.getText(), movieToScrape);
+      // initial search with IDs
+      searchMovie(textFieldSearchString.getText(), true);
     }
   }
 
@@ -650,11 +651,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     }
   }
 
-  private void searchMovie(String searchTerm, Movie movie) {
+  private void searchMovie(String searchTerm, boolean withIds) {
     if (activeSearchTask != null && !activeSearchTask.isDone()) {
       activeSearchTask.cancel();
     }
-    activeSearchTask = new SearchTask(searchTerm, movie);
+    activeSearchTask = new SearchTask(searchTerm, movieToScrape, withIds);
     activeSearchTask.execute();
   }
 
@@ -702,28 +703,30 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
       mediaScraper = (MediaScraper) cbScraper.getSelectedItem();
-      searchMovie(textFieldSearchString.getText(), movieToScrape);
+      searchMovie(textFieldSearchString.getText(), false);
     }
   }
 
   private class SearchTask extends SwingWorker<Void, Void> {
     private String                  searchTerm;
     private Movie                   movie;
+    private boolean                 withIds;
     private MediaLanguages          language;
 
     private List<MediaSearchResult> searchResult;
     boolean                         cancel = false;
 
-    private SearchTask(String searchTerm, Movie movie) {
+    private SearchTask(String searchTerm, Movie movie, boolean withIds) {
       this.searchTerm = searchTerm;
       this.movie = movie;
+      this.withIds = withIds;
       this.language = (MediaLanguages) cbLanguage.getSelectedItem();
     }
 
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      searchResult = movieList.searchMovie(searchTerm, movie, mediaScraper, language);
+      searchResult = movieList.searchMovie(searchTerm, movie.getYear(), withIds ? movie.getIds() : null, mediaScraper, language);
       return null;
     }
 

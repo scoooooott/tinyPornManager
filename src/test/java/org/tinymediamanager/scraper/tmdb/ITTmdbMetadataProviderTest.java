@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class ITTmdbMetadataProviderTest {
       options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Harry Potter");
       options.setLanguage(MediaLanguages.en);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
       // did we get a result?
       assertNotNull("Result", results);
 
@@ -61,7 +62,7 @@ public class ITTmdbMetadataProviderTest {
       options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Slevin");
       options.setLanguage(MediaLanguages.en);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
       // did we get a result?
       assertNotNull("Result", results);
 
@@ -86,7 +87,7 @@ public class ITTmdbMetadataProviderTest {
       options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Slevin");
       options.setLanguage(MediaLanguages.de);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
       // did we get a result?
       assertNotNull("Result", results);
 
@@ -112,7 +113,7 @@ public class ITTmdbMetadataProviderTest {
       options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Recrutas da Pesada"); // O Pelotão Chanfrado
       options.setLanguage(MediaLanguages.pt_BR);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
       // did we get a result?
       assertNotNull("Result", results);
 
@@ -333,7 +334,7 @@ public class ITTmdbMetadataProviderTest {
       options = new TvShowSearchAndScrapeOptions();
       options.setSearchQuery("Psych");
       options.setLanguage(MediaLanguages.en);
-      results = metadataProvider.search(options);
+      results = new ArrayList<>(metadataProvider.search(options));
 
       assertNotNull(results);
       assertEquals(20, results.size());
@@ -353,7 +354,7 @@ public class ITTmdbMetadataProviderTest {
       options = new TvShowSearchAndScrapeOptions();
       options.setSearchQuery("Die Simpsons");
       options.setLanguage(MediaLanguages.de);
-      results = metadataProvider.search(options);
+      results = new ArrayList<>(metadataProvider.search(options));
 
       assertNotNull(results);
       assertEquals(1, results.size());

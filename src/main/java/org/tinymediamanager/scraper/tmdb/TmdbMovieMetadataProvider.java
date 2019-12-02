@@ -21,12 +21,11 @@ import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -94,10 +93,10 @@ class TmdbMovieMetadataProvider {
    * @throws ScrapeException
    *           any exception which can be thrown while searching
    */
-  List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     Exception savedException = null;
 
-    List<MediaSearchResult> resultList = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
 
     // detect the string to search
     String searchString = "";
@@ -116,10 +115,6 @@ class TmdbMovieMetadataProvider {
 
     int tmdbId = options.getTmdbId();
 
-    Integer year = null;
-    if (options.getSearchYear() > 1800) {
-      year = options.getSearchYear();
-    }
 
     boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
 
@@ -139,9 +134,9 @@ class TmdbMovieMetadataProvider {
           }
           Movie movie = httpResponse.body();
           verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
-          MediaSearchResult result = morphMovieToSearchResult(movie);
-          resultList.add(result);
-          LOGGER.debug("found {} results with TMDB id", resultList.size());
+          MediaSearchResult result = morphMovieToSearchResult(movie, options);
+          results.add(result);
+          LOGGER.debug("found {} results with TMDB id", results.size());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
@@ -150,7 +145,7 @@ class TmdbMovieMetadataProvider {
       }
 
       // 2. try with IMDBid
-      if (resultList.isEmpty() && StringUtils.isNotEmpty(imdbId)) {
+      if (results.isEmpty() && StringUtils.isNotEmpty(imdbId)) {
         LOGGER.debug("found IMDB ID {} - getting direct", imdbId);
         try {
           Response<FindResults> httpResponse = api.findService().find(imdbId, ExternalSource.IMDB_ID, language).execute();
@@ -159,9 +154,9 @@ class TmdbMovieMetadataProvider {
           }
           for (BaseMovie movie : httpResponse.body().movie_results) { // should be only one
             verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
-            resultList.add(morphMovieToSearchResult(movie));
+            results.add(morphMovieToSearchResult(movie, options));
           }
-          LOGGER.debug("found {} results with IMDB id", resultList.size());
+          LOGGER.debug("found {} results with IMDB id", results.size());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
@@ -170,27 +165,27 @@ class TmdbMovieMetadataProvider {
       }
 
       // 3. try with search string and year
-      if (resultList.isEmpty()) {
+      if (results.isEmpty()) {
         try {
           int page = 1;
           int maxPage = 1;
 
           // get all result pages
           do {
-            Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, page, language, adult, year, year, "phrase").execute();
+            Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, page, language, adult, null, null, "phrase").execute();
             if (!httpResponse.isSuccessful() || httpResponse.body() == null) {
               throw new HttpException(httpResponse.code(), httpResponse.message());
             }
             for (BaseMovie movie : ListUtils.nullSafe(httpResponse.body().results)) {
               verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
-              resultList.add(morphMovieToSearchResult(movie));
+              results.add(morphMovieToSearchResult(movie, options));
             }
 
             maxPage = httpResponse.body().total_pages;
             page++;
           } while (page <= maxPage);
 
-          LOGGER.debug("found {} results with search string", resultList.size());
+          LOGGER.debug("found {} results with search string", results.size());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
@@ -199,7 +194,7 @@ class TmdbMovieMetadataProvider {
       }
 
       // 4. if the last token in search string seems to be a year, try without :)
-      if (resultList.isEmpty()) {
+      if (results.isEmpty()) {
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
         try {
           // /search/movie
@@ -207,10 +202,10 @@ class TmdbMovieMetadataProvider {
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
               verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
-              resultList.add(morphMovieToSearchResult(movie));
+              results.add(morphMovieToSearchResult(movie, options));
             }
           }
-          LOGGER.debug("found {} results with search string without year", resultList.size());
+          LOGGER.debug("found {} results with search string without year", results.size());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data from tmdb: {}", e.getMessage());
@@ -220,46 +215,11 @@ class TmdbMovieMetadataProvider {
     }
 
     // if we have not found anything and there is a saved Exception, throw it to indicate a problem
-    if (resultList.isEmpty() && savedException != null) {
+    if (results.isEmpty() && savedException != null) {
       throw new ScrapeException(savedException);
     }
 
-    if (resultList.isEmpty()) {
-      return resultList;
-    }
-
-    // final tasks for the search results
-    for (MediaSearchResult result : resultList) {
-      // calculate score for all found movies
-      if ((StringUtils.isNotBlank(imdbId) && imdbId.equals(result.getIMDBId())) || String.valueOf(tmdbId).equals(result.getId())) {
-        LOGGER.debug("perfect match by ID - set score to 1");
-        result.setScore(1);
-      }
-      else {
-        // since we're dealing with translated content, also check original title!!
-        float score = Math.max(MetadataUtil.calculateScore(searchString, result.getTitle()),
-            MetadataUtil.calculateScore(searchString, result.getOriginalTitle()));
-
-        float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), result.getYear());
-        if (yearPenalty > 0) {
-          LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
-          score -= yearPenalty;
-        }
-
-        if (result.getPosterUrl() == null || result.getPosterUrl().isEmpty()) {
-          // no poster?
-          LOGGER.debug("no poster - downgrading score by 0.01");
-          score -= 0.01f;
-        }
-
-        result.setScore(score);
-      }
-    }
-
-    Collections.sort(resultList);
-    Collections.reverse(resultList);
-
-    return resultList;
+    return results;
   }
 
   /**
@@ -465,7 +425,7 @@ class TmdbMovieMetadataProvider {
     return md;
   }
 
-  private MediaSearchResult morphMovieToSearchResult(BaseMovie movie) {
+  private MediaSearchResult morphMovieToSearchResult(BaseMovie movie, MovieSearchAndScrapeOptions query) {
     MediaSearchResult searchResult = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
     searchResult.setId(Integer.toString(movie.id));
     searchResult.setTitle(movie.title);
@@ -482,6 +442,17 @@ class TmdbMovieMetadataProvider {
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(movie.release_date);
       searchResult.setYear(calendar.get(Calendar.YEAR));
+    }
+
+    // calculate score
+    if ((StringUtils.isNotBlank(query.getImdbId()) && query.getImdbId().equals(searchResult.getIMDBId()))
+        || String.valueOf(query.getTmdbId()).equals(searchResult.getId())) {
+      LOGGER.debug("perfect match by ID - set score to 1");
+      searchResult.setScore(1);
+    }
+    else {
+      // calculate the score by comparing the search result with the search options
+      searchResult.calculateScore(query);
     }
 
     return searchResult;

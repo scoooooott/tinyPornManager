@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
   }
 
   @Override
-  public List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
     return _search(options);
   }
 

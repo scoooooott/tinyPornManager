@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.scraper.interfaces;
 
-import java.util.List;
+import java.util.SortedSet;
 
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -37,11 +37,11 @@ public interface IMovieMetadataProvider extends IMediaProvider {
    *
    * @param options
    *          the options
-   * @return the list
+   * @return a {@link java.util.SortedSet} of all search result (ordered descending)
    * @throws ScrapeException
    *           any exception which can be thrown while scraping
    */
-  List<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException;
+  SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException;
 
   /**
    * Gets the meta data.

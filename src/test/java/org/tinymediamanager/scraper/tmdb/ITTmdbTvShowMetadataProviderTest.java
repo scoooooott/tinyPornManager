@@ -3,6 +3,7 @@ package org.tinymediamanager.scraper.tmdb;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class ITTmdbTvShowMetadataProviderTest {
     options.setSearchQuery("Game Of Thrones");
     options.setLanguage(MediaLanguages.en);
 
-    List<MediaSearchResult> searchResults = mp.search(options);
+    List<MediaSearchResult> searchResults = new ArrayList<>(mp.search(options));
 
     assertThat(searchResults).isNotNull();
     assertThat(searchResults.get(0).getTitle()).isEqualTo("Game of Thrones");
@@ -77,7 +78,7 @@ public class ITTmdbTvShowMetadataProviderTest {
     options.setSearchQuery("2057");
     options.setLanguage(MediaLanguages.el);
 
-    List<MediaSearchResult> searchResults = mp.search(options);
+    List<MediaSearchResult> searchResults = new ArrayList<>(mp.search(options));
 
     assertThat(searchResults).isNotNull();
     assertThat(searchResults.get(0).getTitle()).isEqualTo("2057:  Ο κόσμος σε 50 χρόνια");
@@ -95,7 +96,7 @@ public class ITTmdbTvShowMetadataProviderTest {
     options.setSearchQuery("Band of Brothers");
     options.setLanguage(MediaLanguages.ar); // AR not available!
 
-    List<MediaSearchResult> searchResults = mp.search(options);
+    List<MediaSearchResult> searchResults = new ArrayList<>(mp.search(options));
 
     assertThat(searchResults).isNotNull();
     assertThat(searchResults.size()).isGreaterThanOrEqualTo(1);

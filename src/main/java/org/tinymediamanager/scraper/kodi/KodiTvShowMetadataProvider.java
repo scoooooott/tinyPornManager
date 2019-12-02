@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,8 +56,8 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   }
 
   @Override
-  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
-    List<MediaSearchResult> results = _search(options);
+  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
+    SortedSet<MediaSearchResult> results = _search(options);
     if (results.isEmpty() && options.getSearchYear() > 0) {
       // nothing found, try w/o year
       LOGGER.info("Search found nothing, try again without year...");

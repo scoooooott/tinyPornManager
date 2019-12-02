@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class ITMoviemeterMetadataProviderTest {
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Avatar");
 
-      List<MediaSearchResult> results = rt.search(options);
+      List<MediaSearchResult> results = new ArrayList<>(rt.search(options));
       assertThat(results.size()).isGreaterThanOrEqualTo(3);
       for (MediaSearchResult result : results) {
         assertThat(result.getTitle()).isNotNull().isNotEmpty();

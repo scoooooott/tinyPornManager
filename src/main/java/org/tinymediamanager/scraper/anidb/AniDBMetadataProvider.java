@@ -21,13 +21,14 @@ import java.io.InterruptedIOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -392,7 +393,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   @Override
-  public List<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) {
+  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) {
     LOGGER.debug("search(): {}", options);
 
     synchronized (AniDBMetadataProvider.class) {
@@ -402,7 +403,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       }
     }
 
-    List<MediaSearchResult> results = new ArrayList<>();
+    SortedSet<MediaSearchResult> results = new TreeSet<>();
 
     // detect the string to search
     String searchString = "";
@@ -425,17 +426,13 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
             MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.TV_SHOW);
             result.setId(String.valueOf(show.aniDbId));
             result.setTitle(show.title);
-            results.add(result);
             result.setScore(score);
+            results.add(result);
             foundIds.add(show.aniDbId);
           }
         }
       }
     }
-
-    // sort
-    Collections.sort(results);
-    Collections.reverse(results);
 
     return results;
   }

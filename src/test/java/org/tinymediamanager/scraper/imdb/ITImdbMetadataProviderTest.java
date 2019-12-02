@@ -49,7 +49,7 @@ public class ITImdbMetadataProviderTest {
       options.setSearchQuery("9");
       options.setSearchYear(2016);
       options.setLanguage(MediaLanguages.en);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
 
       // did we get a result?
       assertNotNull("Result", results);
@@ -64,7 +64,8 @@ public class ITImdbMetadataProviderTest {
       // check second result (9 - 2009 - tt0472033)
       result = results.get(1);
       checkSearchResult("9", 2009, "tt0472033", result);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -77,7 +78,7 @@ public class ITImdbMetadataProviderTest {
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Inglorious Basterds");
       options.setLanguage(MediaLanguages.en);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
 
       // did we get a result?
       assertNotNull("Result", results);
@@ -93,7 +94,8 @@ public class ITImdbMetadataProviderTest {
       result = results.get(1);
       checkSearchResult("The Real Inglorious Bastards", 2012, "tt3320110", result);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -106,7 +108,7 @@ public class ITImdbMetadataProviderTest {
       MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
       options.setSearchQuery("Asterix der Gallier");
       options.setLanguage(MediaLanguages.de);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
 
       // did we get a result?
       assertNotNull("Result", results);
@@ -117,7 +119,8 @@ public class ITImdbMetadataProviderTest {
       // check first result (Asterix der Gallier - 1967 - tt0061369)
       MediaSearchResult result = results.get(0);
       checkSearchResult("Asterix der Gallier", 1967, "tt0061369", result);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -136,7 +139,7 @@ public class ITImdbMetadataProviderTest {
       TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
       options.setSearchQuery("Psych");
       options.setLanguage(MediaLanguages.de);
-      results = mp.search(options);
+      results = new ArrayList<>(mp.search(options));
 
       // did we get a result?
       assertNotNull("Result", results);
@@ -148,7 +151,8 @@ public class ITImdbMetadataProviderTest {
       MediaSearchResult result = results.get(0);
       checkSearchResult("Psych", 2006, "tt0491738", result);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -177,7 +181,8 @@ public class ITImdbMetadataProviderTest {
       // result count
       assertEquals("Episodes count", 121, episodes.size());
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -204,7 +209,8 @@ public class ITImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       assertEquals("Psych", md.getTitle());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -225,7 +231,8 @@ public class ITImdbMetadataProviderTest {
 
       assertEquals("Firefly: Der Aufbruch der Serenity", md.getTitle());
       assertEquals("Firefly", md.getOriginalTitle());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -257,7 +264,8 @@ public class ITImdbMetadataProviderTest {
       assertEquals("Psych", md.getTitle());
       assertThat(md.getIds().size()).isGreaterThan(1);
       assertThat(md.getPlot()).startsWith("Shawn Spencer ist selbsternannter Detektiv");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -302,7 +310,8 @@ public class ITImdbMetadataProviderTest {
       assertThat(mediaRating.getRating()).isGreaterThan(0);
       assertThat(mediaRating.getVotes()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(10);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -330,7 +339,8 @@ public class ITImdbMetadataProviderTest {
       assertThat(mediaRating.getRating()).isGreaterThan(0);
       assertThat(mediaRating.getVotes()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(10);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -378,7 +388,8 @@ public class ITImdbMetadataProviderTest {
       assertThat(mediaRating.getRating()).isGreaterThan(0);
       assertThat(mediaRating.getVotes()).isGreaterThan(0);
       assertThat(mediaRating.getMaxValue()).isEqualTo(10);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -416,8 +427,7 @@ public class ITImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("9", 2009, "9", 7.0, 63365, "When our world ended their mission began", 79, "Shane Acker", "Pamela Pettler, Shane Acker",
-          "PG-13", "09-09-2009",
-              md);
+          "PG-13", "09-09-2009", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
@@ -433,8 +443,8 @@ public class ITImdbMetadataProviderTest {
 
       // check plot
       checkPlot(
-              "In a world destroyed in a war between man and machine, a hand-stitched doll with the number 9 written on its back comes to life. The world he has awakened in is frightening, but he quickly learns that he is not alone and that there are others like him, also with a single digit written on their back. The first one he encounters is 2 who tells him something of what happened to the world. 2 is also thrilled with the disk 9 is carrying, one with three unique symbols on the front. 9 soon learns that the disk and some of the other dolls who are prepared to die for the good of humankind may be the last hope for man's salvation.",
-              md);
+          "In a world destroyed in a war between man and machine, a hand-stitched doll with the number 9 written on its back comes to life. The world he has awakened in is frightening, but he quickly learns that he is not alone and that there are others like him, also with a single digit written on their back. The first one he encounters is 2 who tells him something of what happened to the world. 2 is also thrilled with the disk 9 is carrying, one with three unique symbols on the front. 9 soon learns that the disk and some of the other dolls who are prepared to die for the good of humankind may be the last hope for man's salvation.",
+          md);
 
       // check cast
       List<Person> castMembers = new ArrayList<>();
@@ -458,13 +468,14 @@ public class ITImdbMetadataProviderTest {
 
       // check production company
       checkProductionCompany(
-              Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
-              md);
+          Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
+          md);
 
       // check localized values
       assertThat(md.getCountries()).containsOnly("US");
       assertThat(md.getSpokenLanguages()).containsOnly("en");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -487,7 +498,7 @@ public class ITImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("12 Monkeys", 1995, "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
-              "Chris Marker, David Webb Peoples, Janet Peoples", "16", "01-02-1996", md);
+          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "01-02-1996", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -502,8 +513,8 @@ public class ITImdbMetadataProviderTest {
 
       // check plot
       checkPlot(
-              "An unknown and lethal virus has wiped out five billion people in 1996. Only 1% of the population has survived by the year 2035, and is forced to live underground. A convict (James Cole) reluctantly volunteers to be sent back in time to 1996 to gather information about the origin of the epidemic (who he's told was spread by a mysterious \"Army of the Twelve Monkeys\") and locate the virus before it mutates so that scientists can study it. Unfortunately Cole is mistakenly sent to 1990, six years earlier than expected, and is arrested and locked up in a mental institution, where he meets Dr. Kathryn Railly, a psychiatrist, and Jeffrey Goines, the insane son of a famous scientist and virus expert.",
-              md);
+          "An unknown and lethal virus has wiped out five billion people in 1996. Only 1% of the population has survived by the year 2035, and is forced to live underground. A convict (James Cole) reluctantly volunteers to be sent back in time to 1996 to gather information about the origin of the epidemic (who he's told was spread by a mysterious \"Army of the Twelve Monkeys\") and locate the virus before it mutates so that scientists can study it. Unfortunately Cole is mistakenly sent to 1990, six years earlier than expected, and is arrested and locked up in a mental institution, where he meets Dr. Kathryn Railly, a psychiatrist, and Jeffrey Goines, the insane son of a famous scientist and virus expert.",
+          md);
 
       // check cast
       List<Person> castMembers = new ArrayList<>();
@@ -531,7 +542,8 @@ public class ITImdbMetadataProviderTest {
       // check localized values
       assertThat(md.getCountries()).containsOnly("Vereinigte Staaten von Amerika");
       assertThat(md.getSpokenLanguages()).containsOnly("Englisch", "Französisch");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -553,7 +565,7 @@ public class ITImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Brave", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman, Steve Purcell",
-              "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
+          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
@@ -570,8 +582,8 @@ public class ITImdbMetadataProviderTest {
 
       // check plot
       checkPlot(
-              "Set in Scotland in a rugged and mythical time, \"Brave\" features Merida, an aspiring archer and impetuous daughter of royalty. Merida makes a reckless choice that unleashes unintended peril and forces her to spring into action to set things right.",
-              md);
+          "Set in Scotland in a rugged and mythical time, \"Brave\" features Merida, an aspiring archer and impetuous daughter of royalty. Merida makes a reckless choice that unleashes unintended peril and forces her to spring into action to set things right.",
+          md);
 
       // check cast
       List<Person> castMembers = new ArrayList<>();
@@ -594,7 +606,8 @@ public class ITImdbMetadataProviderTest {
       // check production company
       checkProductionCompany(Arrays.asList("Walt Disney Pictures", "Pixar Animation Studios"), md);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -616,8 +629,9 @@ public class ITImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93,
-              "Mark Andrews, Brenda Chapman, Steve Purcell", "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
-    } catch (Exception e) {
+          "Mark Andrews, Brenda Chapman, Steve Purcell", "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
@@ -639,7 +653,7 @@ public class ITImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Winnebago Man", 2009, "Winnebago Man", 7.2, 3890, "", 85, "Ben Steinbauer",
-              "Malcolm Pullinger, Ben Steinbauer, Louisa Hall, Joel Heller, Berndt Mader, Natasha Rosow", "", "14-03-2009", md);
+          "Malcolm Pullinger, Ben Steinbauer, Louisa Hall, Joel Heller, Berndt Mader, Natasha Rosow", "", "14-03-2009", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
@@ -655,8 +669,8 @@ public class ITImdbMetadataProviderTest {
 
       // check plot
       checkPlot(
-              "Jack Rebney is the most famous man you've never heard of - after cursing his way through a Winnebago sales video, Rebney's outrageously funny outtakes became an underground sensation and made him an internet superstar. Filmmaker Ben Steinbauer journeys to the top of a mountain to find the recluse who unwittingly became the \"Winnebago Man.\"",
-              md);
+          "Jack Rebney is the most famous man you've never heard of - after cursing his way through a Winnebago sales video, Rebney's outrageously funny outtakes became an underground sensation and made him an internet superstar. Filmmaker Ben Steinbauer journeys to the top of a mountain to find the recluse who unwittingly became the \"Winnebago Man.\"",
+          md);
 
       // check cast
       List<Person> castMembers = new ArrayList<>();
@@ -677,14 +691,15 @@ public class ITImdbMetadataProviderTest {
       // check production company
       checkProductionCompany(Arrays.asList("Bear Media, The", "Field Guide Media"), md);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
   }
 
   private void checkMovieDetails(String title, int year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
-                                 String director, String writer, String certification, String releaseDate, MediaMetadata md) {
+      String director, String writer, String certification, String releaseDate, MediaMetadata md) {
     // title
     assertEquals("title ", title, md.getTitle());
     // year

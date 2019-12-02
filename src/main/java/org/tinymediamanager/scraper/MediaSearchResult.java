@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -33,6 +35,8 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @since 1.0
  */
 public class MediaSearchResult implements Comparable<MediaSearchResult> {
+  private static final Logger LOGGER   = LoggerFactory.getLogger(MediaSearchResult.class);
+
   private String              providerId;
   private String              url;
   private String              title;
@@ -413,6 +417,33 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   /**
+   * calculate the search score by comparing the available result with the search options
+   * 
+   * @param options
+   *          the search options which have been used for searching
+   */
+  public void calculateScore(MediaSearchAndScrapeOptions options) {
+
+    // compare score based on names (translated and original title)
+    float calculatedScore = Math.max(MetadataUtil.calculateScore(options.getSearchQuery(), title),
+        MetadataUtil.calculateScore(options.getSearchQuery(), originalTitle));
+
+    float yearPenalty = MetadataUtil.calculateYearPenalty(options.getSearchYear(), year);
+    if (yearPenalty > 0) {
+      LOGGER.debug("parsed year does not match search result year - downgrading score by {}", yearPenalty);
+      calculatedScore -= yearPenalty;
+    }
+
+    if (StringUtils.isBlank(posterUrl)) {
+      // no poster?
+      LOGGER.debug("no poster - downgrading score by 0.01");
+      calculatedScore -= 0.01f;
+    }
+
+    setScore(calculatedScore);
+  }
+
+  /**
    * Set the poster url
    * 
    * @param posterUrl
@@ -425,14 +456,14 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   @Override
   public int compareTo(MediaSearchResult arg0) {
     if (getScore() < arg0.getScore()) {
-      return -1;
+      return 1;
     }
     else if (getScore() == arg0.getScore()) {
       // same score - rank on year
       return Integer.compare(getYear(), arg0.getYear());
     }
     else {
-      return 1;
+      return -1;
     }
   }
 
