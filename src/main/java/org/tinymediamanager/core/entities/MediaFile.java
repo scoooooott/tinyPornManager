@@ -890,7 +890,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *          the aspect ratio to be forced
    */
   public void setAspectRatio(float newValue) {
-    if (newValue == getAspectRatioCalculated()) {
+    if (newValue == this.aspectRatio) {
       return;
     }
 
@@ -908,24 +908,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public float getAspectRatio() {
     // check whether the aspect ratio has been overridden
     if (aspectRatio > 0) {
-      return aspectRatio;
+      return getCommonAspectRatio(aspectRatio);
     }
 
-    // no -> calculate it
-    return getAspectRatioCalculated();
+    if (this.videoWidth == 0 || this.videoHeight == 0) {
+      return 0f;
+    }
+
+    float ar = (float) this.videoWidth / (float) this.videoHeight;
+    return getCommonAspectRatio(ar);
   }
 
   /**
-   * get the calculated aspect ratio
+   * get the "common" (nearest) aspect ratio
    *
-   * @return the calculated aspect ratio
+   * @return the common aspect ratio
    */
-  public float getAspectRatioCalculated() {
+  private float getCommonAspectRatio(Float ar) {
     float ret = 0f;
-    if (this.videoWidth == 0 || this.videoHeight == 0) {
-      return ret;
-    }
-    float ar = (float) this.videoWidth / (float) this.videoHeight;
 
     // https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L538
     // Given that we're never going to be able to handle every single possibility in

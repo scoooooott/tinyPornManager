@@ -858,6 +858,27 @@ public class MediaFileHelper {
    * @return a map with all libmediainfo data
    */
   private static synchronized Map<MediaInfo.StreamKind, List<Map<String, String>>> getMediaInfoSnapshot(MediaFile mediaFile) {
+    // check if we have a snapshot xml
+    String xmlFilename = FilenameUtils.getBaseName(mediaFile.getFilename()) + "-mediainfo.xml";
+    Path xmlFile = Paths.get(mediaFile.getPath(), xmlFilename);
+    if (Files.exists(xmlFile)) {
+      try {
+        LOGGER.info("Try to parse {}", xmlFile);
+        MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
+        // XML has now ALL the files, as mediainfo would have read it.
+
+        // inject the duration into the main file
+        Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = xml.getMainFile().snapshot;
+        injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration",
+            String.valueOf((Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles())) * 1000)); // in ms
+
+        return miSnapshot;
+      }
+      catch (Exception e) {
+        LOGGER.warn("Unable to parse " + xmlFile, e);
+      }
+    }
+
     // for ISO files we need another logic to extract mediainformation
     if (mediaFile.isISO()) {
       return getMediaInfoSnapshotFromISO(mediaFile);
@@ -889,26 +910,6 @@ public class MediaFileHelper {
    * @return a map with all libmediainfo data
    */
   private static synchronized Map<MediaInfo.StreamKind, List<Map<String, String>>> getMediaInfoSnapshotFromISO(MediaFile mediaFile) {
-    // check if we have a snapshot xml
-    Path xmlFile = Paths.get(mediaFile.getPath(), mediaFile.getFilename().replaceAll("(?i)\\.iso$", "-mediainfo.xml"));
-    if (Files.exists(xmlFile)) {
-      try {
-        LOGGER.info("ISO: try to parse {}", xmlFile);
-        MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
-        // XML has now ALL the files, as mediainfo would have read it.
-
-        // inject the duration into the main file
-        Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = xml.getMainFile().snapshot;
-        injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration",
-            String.valueOf((Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles())) * 1000)); // in ms
-
-        return miSnapshot;
-      }
-      catch (Exception e) {
-        LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
-      }
-    }
-
     // try to load and parse the ISO file itself
     int bufferSize = 64 * 1024;
 
@@ -1520,6 +1521,16 @@ public class MediaFileHelper {
       mediaFile.setContainerFormat(mediaFile.getExtension());
     }
 
+    String ar = getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "DisplayAspectRatio", "Display_aspect_ratio", "DisplayAspectRatio/String",
+        "DisplayAspectRatio_Origin");
+    try {
+      float arf = Float.parseFloat(ar);
+      mediaFile.setAspectRatio(arf);
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not parse AspectRatio {}", ar);
+    }
+
     String mvc = getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "MultiView_Count");
     String video3DFormat = "";
     if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
@@ -1534,7 +1545,7 @@ public class MediaFileHelper {
       }
       if (!StringUtils.isEmpty(mvl) && mvl.contains("side")) {
         video3DFormat = MediaFileHelper.VIDEO_3D_HSBS;// assume HalfSBS as default
-        if (mediaFile.getAspectRatioCalculated() > 3) {
+        if (mediaFile.getAspectRatio() > 3) {
           video3DFormat = MediaFileHelper.VIDEO_3D_SBS;// FullSBS eg 3840x1080
         }
       }
