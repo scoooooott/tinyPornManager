@@ -15,16 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-
+import net.miginfocom.swing.MigLayout;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -40,7 +31,14 @@ import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class TvShowScrapeMetadataDialog.
@@ -55,8 +53,9 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
   /** UI components */
   private JComboBox                                                              cbLanguage;
   private MediaScraperComboBox                                                   cbMetadataScraper;
-  private MediaScraperCheckComboBox                                              cbArtworkScraper;
-  private ScraperMetadataConfigCheckComboBox<TvShowScraperMetadataConfig>        cbTvShowScraperConfig;
+  private MediaScraperCheckComboBox cbArtworkScraper;
+  private MediaScraperCheckComboBox cbTrailerScraper;
+  private ScraperMetadataConfigCheckComboBox<TvShowScraperMetadataConfig> cbTvShowScraperConfig;
   private ScraperMetadataConfigCheckComboBox<TvShowEpisodeScraperMetadataConfig> cbEpisodeScraperConfig;
 
   /**
@@ -67,7 +66,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
    * @wbp.parser.constructor
    */
   public TvShowScrapeMetadataDialog(String title) {
-    this(title, true, true, true, true);
+    this(title, true, true, true, true, true);
   }
 
   /**
@@ -84,7 +83,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
    * @param episodeMetadata
    *          show the episode metadata config block?
    */
-  public TvShowScrapeMetadataDialog(String title, boolean metadata, boolean artwork, boolean tvShowMetadata, boolean episodeMetadata) {
+  public TvShowScrapeMetadataDialog(String title, boolean metadata, boolean artwork, boolean tvShowMetadata, boolean episodeMetadata, boolean trailer) {
     super(title, "tvShowUpdateMetadata");
 
     JPanel panelContent = new JPanel();
@@ -112,13 +111,20 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
       cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
       panelContent.add(cbArtworkScraper, "cell 1 2,growx");
     }
+    if (trailer) {
+      JLabel lblTrailerScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"));
+      panelContent.add(lblTrailerScraper, "cell 0 3,alignx right");
+
+      cbTrailerScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableTrailerScrapers());
+      panelContent.add(cbTrailerScraper, "cell 1 3,growx");
+    }
     {
       JSeparator separator = new JSeparator();
-      panelContent.add(separator, "cell 0 3 2 1,growx");
+      panelContent.add(separator, "cell 0 4 2 1,growx");
     }
     if (tvShowMetadata || episodeMetadata) {
       JPanel panelScraperConfig = new JPanel();
-      panelContent.add(panelScraperConfig, "cell 0 4 2 1,grow");
+      panelContent.add(panelScraperConfig, "cell 0 5 2 1,grow");
       panelScraperConfig.setLayout(new MigLayout("", "[][300lp:500lp,grow]", "[][][]"));
       {
         JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape"));
@@ -199,6 +205,9 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
     // artwork scrapers
     tvShowSearchAndScrapeConfig.setArtworkScraper(cbArtworkScraper.getSelectedItems());
+
+    // trailer scrapers
+    tvShowSearchAndScrapeConfig.setTrailerScraper(cbTrailerScraper.getSelectedItems());
 
     return tvShowSearchAndScrapeConfig;
   }

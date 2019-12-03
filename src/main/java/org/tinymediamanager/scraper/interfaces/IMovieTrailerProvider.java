@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.interfaces;
 
 /**
- * ENUM for all scrapers
+ * The Interface {@link IMovieTrailerProvider}. All Movie Trailer providers must implement this interface
  *
- * @author Myron Boyle
+ * @author Wolfgang Janes
+ * @since 3.0
  */
-public enum ScraperType {
-  MOVIE,
-  TV_SHOW,
-  MOVIE_SET,
-  MOVIE_ARTWORK,
-  TV_SHOW_ARTWORK,
-  MOVIE_TRAILER,
-  TVSHOW_TRAILER,
-  SUBTITLE, // TMM Types (representing an interfaces)
-  ALBUM,
-  ARTIST,
-  MUSICVIDEO,
-  LIBRARY // XBMC ones (currently w/o TMM interfaces)
+public interface IMovieTrailerProvider extends ITrailerProvider {
 }

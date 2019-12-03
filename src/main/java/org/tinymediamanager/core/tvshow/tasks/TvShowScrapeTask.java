@@ -15,23 +15,22 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.ResourceBundle;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -42,6 +41,7 @@ import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -50,17 +50,23 @@ import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+
 /**
  * The class TvShowScrapeTask. This starts scraping of TV shows
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShowScrapeTask extends TmmThreadPool {
-  private static final Logger                            LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
-  private static final ResourceBundle                    BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final List<TvShow>                             tvShowsToScrape;
   private final boolean                                  doSearch;
@@ -121,6 +127,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
       try {
         // set up scrapers
         MediaScraper mediaMetadataScraper = scrapeOptions.getMetadataScraper();
+        List<MediaScraper> trailerScrapers = scrapeOptions.getTrailerScrapers();
 
         // scrape tv show
 
@@ -229,8 +236,17 @@ public class TvShowScrapeTask extends TmmThreadPool {
               tvShow.setArtwork(getArtwork(tvShow, md), tvShowScraperMetadataConfig);
             }
 
-          }
-          catch (ScrapeException e) {
+            // scrape trailer if wanted
+            if (tvShowScraperMetadataConfig.contains(TvShowScraperMetadataConfig.TRAILER)) {
+              tvShow.setTrailers(getTrailers(tvShow, md, trailerScrapers));
+              tvShow.saveToDb();
+              tvShow.writeNFO();
+
+              // start automatic movie trailer download
+              TvShowHelpers.startAutomaticTrailerDownload(tvShow);
+            }
+
+          } catch (ScrapeException e) {
             LOGGER.error("getTvShowMetadata", e);
             MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.metadatatvshowfailed",
                 new String[] { ":", e.getLocalizedMessage() }));
@@ -280,14 +296,55 @@ public class TvShowScrapeTask extends TmmThreadPool {
         catch (ScrapeException e) {
           LOGGER.error("getArtwork", e);
           MessageManager.instance.pushMessage(
-              new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
-        }
-        catch (MissingIdException ignored) {
+                  new Message(Message.MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed", new String[]{":", e.getLocalizedMessage()}));
+        } catch (MissingIdException ignored) {
           LOGGER.debug("no id avaiable for scraper {}", artworkScraper.getId());
         }
       }
       return artwork;
     }
+
+    private List<MediaTrailer> getTrailers(TvShow tvShow, MediaMetadata metadata, List<MediaScraper> trailerScrapers) {
+      List<MediaTrailer> trailers = new ArrayList<>();
+
+      // add local trailers!
+      for (MediaFile mf : tvShow.getMediaFiles(MediaFileType.TRAILER)) {
+        LOGGER.debug("adding local trailer {}", mf.getFilename());
+        MediaTrailer mt = new MediaTrailer();
+        mt.setName(mf.getFilename());
+        mt.setProvider("downloaded");
+        mt.setQuality(mf.getVideoFormat());
+        mt.setInNfo(false);
+        mt.setUrl(mf.getFile().toUri().toString());
+        trailers.add(mt);
+      }
+
+      TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.TV_SHOW);
+
+      options.setDataFromOtherOptions(scrapeOptions);
+      options.setMetadata(metadata);
+
+      for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
+        options.setId(entry.getKey(), entry.getValue().toString());
+      }
+
+      // scrape trailers
+      for (MediaScraper trailerScraper : trailerScrapers) {
+        try {
+          ITvShowTrailerProvider trailerProvider = (ITvShowTrailerProvider) trailerScraper.getMediaProvider();
+          trailers.addAll(trailerProvider.getTrailers(options));
+        } catch (ScrapeException e) {
+          LOGGER.error("getTrailers", e);
+          MessageManager.instance.pushMessage(
+                  new Message(MessageLevel.ERROR, tvShow, "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
+        } catch (MissingIdException e) {
+          LOGGER.debug("no usable ID found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());
+        }
+      }
+
+      return trailers;
+    }
+
   }
 
   @Override

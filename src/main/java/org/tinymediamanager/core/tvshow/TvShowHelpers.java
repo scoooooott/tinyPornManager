@@ -16,18 +16,26 @@
 
 package org.tinymediamanager.core.tvshow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.tasks.TrailerDownloadTask;
+import org.tinymediamanager.core.tasks.YoutubeDownloadTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowTrailerNaming;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaCertification;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * a collection of various helpers for the TV show module
@@ -53,7 +61,6 @@ public class TvShowHelpers {
   // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
   // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
-
   public static MediaCertification parseCertificationStringForTvShowSetupCountry(String name) {
     MediaCertification cert = MediaCertification.UNKNOWN;
     name = name.trim();
@@ -69,8 +76,7 @@ public class TvShowHelpers {
           if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
-        }
-        else {
+        } else {
           cert = MediaCertification.getCertification(TvShowModuleManager.SETTINGS.getCertificationCountry(), c);
           if (cert != MediaCertification.UNKNOWN) {
             return cert;
@@ -87,16 +93,14 @@ public class TvShowHelpers {
           if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
-        }
-        else {
+        } else {
           cert = MediaCertification.findCertification(c);
           if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
       }
-    }
-    else {
+    } else {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
@@ -104,8 +108,7 @@ public class TvShowHelpers {
         if (cert == MediaCertification.UNKNOWN) {
           cert = MediaCertification.findCertification(cs[1].trim());
         }
-      }
-      else {
+      } else {
         // no country? try to find only by name
         cert = MediaCertification.getCertification(TvShowModuleManager.SETTINGS.getCertificationCountry(), name.trim());
       }
@@ -119,7 +122,7 @@ public class TvShowHelpers {
 
   /**
    * try to detect the TV show folder by comparing the paths of the media files
-   * 
+   *
    * @param tvShow
    *          the TV show to analyze
    * @param season
@@ -145,8 +148,7 @@ public class TvShowHelpers {
           subPaths.add(relativePath.subpath(0, i).toString());
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.debug("could not extract season folder: {}", e.getMessage());
     }
 
@@ -171,5 +173,62 @@ public class TvShowHelpers {
     episode.setSeason(season);
 
     return TvShowRenamer.getSeasonFoldername(tvShow, episode);
+  }
+
+  /**
+   * start the automatic trailer download for the given movie
+   *
+   * @param tvShow the TV show to start the trailer download for
+   */
+  public static void startAutomaticTrailerDownload(TvShow tvShow) {
+    // start movie trailer download?
+    if (TvShowModuleManager.SETTINGS.isUseTrailerPreference() && TvShowModuleManager.SETTINGS.isAutomaticTrailerDownload()
+            && tvShow.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !tvShow.getTrailer().isEmpty()) {
+      downloadBestTrailer(tvShow);
+    }
+  }
+
+  /**
+   * download the best trailer for the given TV show
+   *
+   * @param tvShow the TV show to download the trailer for
+   */
+  public static void downloadBestTrailer(TvShow tvShow) {
+    MediaTrailer trailer = tvShow.getTrailer().get(0);
+    downloadTrailer(tvShow, trailer);
+  }
+
+  /**
+   * download the given trailer for the given TV show
+   *
+   * @param tvshow  the TV show to download the trailer for
+   * @param trailer the trailer to download
+   */
+  public static void downloadTrailer(TvShow tvshow, MediaTrailer trailer) {
+    // get the right file name
+    List<TvShowTrailerNaming> trailernames = TvShowModuleManager.SETTINGS.getTrailerFilenames();
+
+    // hmm.. at the moment we can only download ONE trailer, so both patterns won't work
+    // just take the first one (or the default if there is no entry whyever)
+    String filename;
+    if (!trailernames.isEmpty()) {
+      filename = tvshow.getTrailerFilename(trailernames.get(0));
+    } else {
+      filename = tvshow.getTrailerFilename(TvShowTrailerNaming.TVSHOW_TRAILER);
+    }
+
+    try {
+      if (tvshow.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
+        YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, tvshow, filename);
+        TmmTaskManager.getInstance().addDownloadTask(task);
+      } else {
+        TrailerDownloadTask task = new TrailerDownloadTask(trailer, tvshow, filename);
+        TmmTaskManager.getInstance().addDownloadTask(task);
+      }
+    } catch (Exception e) {
+      LOGGER.error("could not start trailer download: {}", e.getMessage());
+      MessageManager.instance.pushMessage(
+              new Message(Message.MessageLevel.ERROR, tvshow, "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
+    }
   }
 }

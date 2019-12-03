@@ -15,42 +15,13 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
-import java.text.Collator;
-import java.text.Normalizer;
-import java.text.RuleBasedCollator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,13 +63,40 @@ import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.renderer.BorderTableCellRenderer;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.TableComparatorChooser;
-import net.miginfocom.swing.MigLayout;
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.text.Collator;
+import java.text.Normalizer;
+import java.text.RuleBasedCollator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The Class TvShowChooserDialog.
@@ -115,8 +113,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private SortedList<TvShowChooserModel>                                         searchResultEventList = null;
   private TvShowChooserModel                                                     selectedResult        = null;
   private MediaScraper                                                           mediaScraper;
-  private List<MediaScraper>                                                     artworkScrapers;
-  private boolean                                                                continueQueue         = true;
+  private List<MediaScraper> artworkScrapers;
+  private List<MediaScraper> trailerScrapers;
+  private boolean continueQueue = true;
   private boolean                                                                navigateBack          = false;
 
   private SearchTask                                                             activeSearchTask;
@@ -151,6 +150,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
+    trailerScrapers = tvShowList.getDefaultTrailerScrapers();
 
     // tableSearchResults format for the search result
     searchResultEventList = new SortedList<>(
@@ -503,6 +503,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             }
           }
 
+          // get trailers?
+          if (tvShowScraperMetadataConfig.contains(TvShowScraperMetadataConfig.TRAILER)) {
+            model.startTrailerScrapeTask(tvShowToScrape);
+          }
+
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
           if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
@@ -696,7 +701,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             if (mpFromResult == null) {
               mpFromResult = tvShowList.getMediaScraperById(result.getProviderId());
             }
-            searchResultEventList.add(new TvShowChooserModel(mpFromResult, artworkScrapers, result, language));
+            searchResultEventList.add(new TvShowChooserModel(mpFromResult, artworkScrapers, trailerScrapers, result, language));
           }
         }
 

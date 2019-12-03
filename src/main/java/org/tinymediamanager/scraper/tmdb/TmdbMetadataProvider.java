@@ -15,10 +15,15 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedSet;
-
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.TmdbInterceptor;
+import com.uwetrottmann.tmdb2.entities.Configuration;
+import com.uwetrottmann.tmdb2.entities.FindResults;
+import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.entities.Translations;
+import com.uwetrottmann.tmdb2.entities.Translations.Translation;
+import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,21 +49,15 @@ import org.tinymediamanager.scraper.interfaces.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieTmdbMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.TmdbInterceptor;
-import com.uwetrottmann.tmdb2.entities.Configuration;
-import com.uwetrottmann.tmdb2.entities.FindResults;
-import com.uwetrottmann.tmdb2.entities.Genre;
-import com.uwetrottmann.tmdb2.entities.Translations;
-import com.uwetrottmann.tmdb2.entities.Translations.Translation;
-import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
-
-import okhttp3.OkHttpClient;
+import java.util.List;
+import java.util.Locale;
+import java.util.SortedSet;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -66,17 +65,17 @@ import okhttp3.OkHttpClient;
  * @author Manuel Laggner
  */
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
-    ITvShowArtworkProvider, ITrailerProvider, IMovieTmdbMetadataProvider, IMovieImdbMetadataProvider {
-  public static final String    ID           = "tmdb";
+        ITvShowArtworkProvider, IMovieTrailerProvider, ITvShowTrailerProvider, IMovieTmdbMetadataProvider, IMovieImdbMetadataProvider {
+  public static final String ID = "tmdb";
 
-  private static final Logger   LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
-  private static final String   TMM_API_KEY  = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMetadataProvider.class);
+  private static final String TMM_API_KEY = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
 
   // Use primary translations, not just our internal MediaLanguages (we need the country!)
   // https://api.themoviedb.org/3/configuration/primary_translations?api_key=XXXX
   // And keep on duplicate languages the main country on first position!
-  private static final String[] PT           = new String[] { "ar-AE", "ar-SA", "be-BY", "bg-BG", "bn-BD", "ca-ES", "ch-GU", "cs-CZ", "da-DK",
-      "de-DE", "el-GR", "en-US", "en-AU", "en-CA", "en-GB", "eo-EO", "es-ES", "es-MX", "eu-ES", "fr-FR", "fa-IR", "fi-FI", "fr-CA", "gl-ES", "he-IL",
+  private static final String[] PT = new String[]{"ar-AE", "ar-SA", "be-BY", "bg-BG", "bn-BD", "ca-ES", "ch-GU", "cs-CZ", "da-DK",
+          "de-DE", "el-GR", "en-US", "en-AU", "en-CA", "en-GB", "eo-EO", "es-ES", "es-MX", "eu-ES", "fr-FR", "fa-IR", "fi-FI", "fr-CA", "gl-ES", "he-IL",
       "hi-IN", "hu-HU", "id-ID", "it-IT", "ja-JP", "ka-GE", "kn-IN", "ko-KR", "lt-LT", "ml-IN", "nb-NO", "nl-NL", "no-NO", "pl-PL", "pt-BR", "pt-PT",
       "ro-RO", "ru-RU", "si-LK", "sk-SK", "sl-SI", "sr-RS", "sv-SE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-HK",
       "zh-TW" };

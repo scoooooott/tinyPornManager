@@ -16,19 +16,21 @@
 
 package org.tinymediamanager.core.movie;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Locale;
-
 import org.junit.Test;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
-import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.core.tasks.TrailerDownloadTask;
+import org.tinymediamanager.core.tasks.YoutubeDownloadTask;
+import org.tinymediamanager.scraper.util.youtube.model.Extension;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Locale;
+
+import static org.junit.Assert.fail;
 
 public class ITMediaTrailerDownloadTest {
 
@@ -46,7 +48,9 @@ public class ITMediaTrailerDownloadTest {
       t.setUrl("http://movietrailers.apple.com/movies/disney/coco/coco-trailer-3_h480p.mov");
       m.addTrailer(t);
 
-      MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(t, m);
+      String filename = m.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+
+      TrailerDownloadTask task = new TrailerDownloadTask(t, m, filename);
       Thread thread = new Thread(task);
       thread.start();
       while (thread.isAlive()) {
@@ -80,7 +84,8 @@ public class ITMediaTrailerDownloadTest {
       t.setUrl("https://www.youtube.com/watch?v=zNCz4mQzfEI");
       m.addTrailer(t);
 
-      YoutubeDownloadTask task = new YoutubeDownloadTask(t, m);
+      YoutubeDownloadTask task = new YoutubeDownloadTask(t, m,
+              m.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER) + "." + Extension.MP4.getText());
       Thread thread = new Thread(task);
       thread.start();
       while (thread.isAlive()) {

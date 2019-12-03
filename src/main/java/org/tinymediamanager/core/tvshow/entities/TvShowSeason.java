@@ -15,17 +15,12 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
-import static org.tinymediamanager.core.Constants.BANNER;
-import static org.tinymediamanager.core.Constants.BANNER_URL;
-import static org.tinymediamanager.core.Constants.FIRST_AIRED;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.POSTER;
-import static org.tinymediamanager.core.Constants.POSTER_URL;
-import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
-import static org.tinymediamanager.core.Constants.SEASON;
-import static org.tinymediamanager.core.Constants.THUMB;
-import static org.tinymediamanager.core.Constants.THUMB_URL;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -37,12 +32,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.BANNER_URL;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.POSTER_URL;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.THUMB_URL;
 
 /**
  * The Class TvShowSeason.
@@ -386,4 +386,5 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
     return Integer.compare(getSeason(), o.getSeason());
   }
+
 }

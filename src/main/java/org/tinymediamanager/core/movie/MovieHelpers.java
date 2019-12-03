@@ -22,10 +22,15 @@ import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
-import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.core.tasks.TrailerDownloadTask;
+import org.tinymediamanager.core.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * a collection of various helpers for the movie module
@@ -35,11 +40,14 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 public class MovieHelpers {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieHelpers.class);
 
+  private MovieHelpers() {
+    // private constructors for helper classes
+  }
+
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
-   * @param name
-   *          certification string like "USA:R / UK:15 / Sweden:15"
+   * @param name certification string like "USA:R / UK:15 / Sweden:15"
    * @return the localized certification if found, else *ANY* language cert found
    */
   // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
@@ -116,26 +124,59 @@ public class MovieHelpers {
   public static void startAutomaticTrailerDownload(Movie movie) {
     // start movie trailer download?
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
-        && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
-      selectTrailerProvider(movie, LOGGER);
+            && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
+      downloadBestTrailer(movie);
     }
   }
 
-  public static void selectTrailerProvider(Movie movie, Logger logger) {
+  /**
+   * download the best trailer for the given movie
+   *
+   * @param movie the movie to download the trailer for
+   */
+  public static void downloadBestTrailer(Movie movie) {
+    MediaTrailer trailer = movie.getTrailer().get(0);
+    downloadTrailer(movie, trailer);
+  }
+
+  /**
+   * download the given trailer for the given movie
+   *
+   * @param movie   the movie to download the trailer for
+   * @param trailer the trailer to download
+   */
+  public static void downloadTrailer(Movie movie, MediaTrailer trailer) {
+    // get the right file name
+    List<MovieTrailerNaming> trailernames = new ArrayList<>();
+    if (movie.isMultiMovieDir()) {
+      // in a MMD we can only use this naming
+      trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+    } else {
+      trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
+    }
+
+    // hmm.. at the moment we can only download ONE trailer, so both patterns won't work
+    // just take the first one (or the default if there is no entry whyever)
+    String filename;
+    if (!trailernames.isEmpty()) {
+      filename = movie.getTrailerFilename(trailernames.get(0));
+    } else {
+      filename = movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+    }
+
     try {
       if (movie.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
-        YoutubeDownloadTask task = new YoutubeDownloadTask(movie.getTrailer().get(0), movie);
+        YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, movie, filename);
         TmmTaskManager.getInstance().addDownloadTask(task);
-      }
-      else {
-        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
+      } else {
+        TrailerDownloadTask task = new TrailerDownloadTask(trailer, movie, filename);
         TmmTaskManager.getInstance().addDownloadTask(task);
       }
     }
     catch (Exception e) {
-      logger.error("could not start trailer download: {}", e.getMessage());
-      MessageManager.instance.pushMessage(
-          new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+      LOGGER.error("could not start trailer download: {}", e.getMessage());
+      MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
     }
   }
 

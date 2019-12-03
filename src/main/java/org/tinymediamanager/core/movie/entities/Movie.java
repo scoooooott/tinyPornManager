@@ -15,6 +15,86 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.text.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.IMediaInformation;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmDateFormat;
+import org.tinymediamanager.core.TrailerQuality;
+import org.tinymediamanager.core.TrailerSources;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.movie.MovieArtworkHelper;
+import org.tinymediamanager.core.movie.MovieEdition;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaFileComparator;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieRenamer;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.connector.IMovieConnector;
+import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpLegacyConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMovingPicturesConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMpMyVideoConnector;
+import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
+import org.tinymediamanager.core.tasks.ImageCacheTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.exceptions.MissingIdException;
+import org.tinymediamanager.scraper.exceptions.NothingFoundException;
+import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
+
+import javax.xml.bind.annotation.XmlTransient;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+
 import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.COUNTRY;
@@ -46,88 +126,6 @@ import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
 import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITERS;
 import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
-
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.text.WordUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.IMediaInformation;
-import org.tinymediamanager.core.MediaCertification;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.MediaSource;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.ScraperMetadataConfig;
-import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.TmmDateFormat;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaGenres;
-import org.tinymediamanager.core.entities.MediaRating;
-import org.tinymediamanager.core.entities.MediaTrailer;
-import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.movie.MovieArtworkHelper;
-import org.tinymediamanager.core.movie.MovieEdition;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaFileComparator;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieRenamer;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
-import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
-import org.tinymediamanager.core.movie.MovieTrailerQuality;
-import org.tinymediamanager.core.movie.MovieTrailerSources;
-import org.tinymediamanager.core.movie.connector.IMovieConnector;
-import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMpLegacyConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMpMovingPicturesConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMpMyVideoConnector;
-import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
-import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
-import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
-import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcherTask;
-import org.tinymediamanager.core.tasks.ImageCacheTask;
-import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.exceptions.MissingIdException;
-import org.tinymediamanager.scraper.exceptions.NothingFoundException;
-import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.util.ListUtils;
-import org.tinymediamanager.scraper.util.StrgUtils;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The main class for movies.
@@ -912,8 +910,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // set preferred trailer
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference()) {
-      MovieTrailerQuality desiredQuality = MovieModuleManager.SETTINGS.getTrailerQuality();
-      MovieTrailerSources desiredSource = MovieModuleManager.SETTINGS.getTrailerSource();
+      TrailerQuality desiredQuality = MovieModuleManager.SETTINGS.getTrailerQuality();
+      TrailerSources desiredSource = MovieModuleManager.SETTINGS.getTrailerSource();
 
       // search for quality and provider
       for (MediaTrailer trailer : trailers) {
@@ -940,7 +938,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
         List<MediaTrailer> sortedTrailers = new ArrayList<>(trailers);
         sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
         for (MediaTrailer trailer : sortedTrailers) {
-          if (desiredQuality.ordinal() >= MovieTrailerQuality.getMovieTrailerQuality(trailer.getQuality()).ordinal()) {
+          if (desiredQuality.ordinal() >= TrailerQuality.getTrailerQuality(trailer.getQuality()).ordinal()) {
             trailer.setInNfo(Boolean.TRUE);
             preferredTrailer = trailer;
             break;
@@ -1126,7 +1124,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   /**
    * all supported TRAILER names. (without path!)
-   * 
+   *
    * @param trailer
    *          trailer naming enum
    * @return the associated trailer filename

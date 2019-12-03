@@ -15,15 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.KeyStroke;
-
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
@@ -38,14 +29,22 @@ import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
 
+import javax.swing.KeyStroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 /**
  * The class TvShowScrapeNewItemsAction. Scrape all new items
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShowScrapeNewItemsAction extends TmmAction {
-  private static final long           serialVersionUID = -3365542777082781952L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long serialVersionUID = -3365542777082781952L;
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public TvShowScrapeNewItemsAction() {
     putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
@@ -99,7 +98,7 @@ public class TvShowScrapeNewItemsAction extends TmmAction {
 
     // scrape new episodes
     if (!newEpisodes.isEmpty()) {
-      TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshowepisode.scrape"), true, true, false, true); //$NON-NLS-1$
+      TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshowepisode.scrape"), true, true, false, true, true); //$NON-NLS-1$
       dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
 

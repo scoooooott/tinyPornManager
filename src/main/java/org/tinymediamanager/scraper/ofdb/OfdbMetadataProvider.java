@@ -15,17 +15,6 @@
  */
 package org.tinymediamanager.scraper.ofdb;
 
-import java.io.InterruptedIOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.nodes.Document;
@@ -46,27 +35,38 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
+
+import java.io.InterruptedIOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
  *
  * @author Myron Boyle (myron0815@gmx.net)
  */
-public class OfdbMetadataProvider implements IMovieMetadataProvider, ITrailerProvider {
-  public static final String       ID           = "ofdb";
+public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrailerProvider {
+  public static final String ID = "ofdb";
 
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(OfdbMetadataProvider.class);
-  private static final String      BASE_URL     = "http://www.ofdb.de";
+  private static final Logger LOGGER = LoggerFactory.getLogger(OfdbMetadataProvider.class);
+  private static final String BASE_URL = "http://www.ofdb.de";
 
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
   private static MediaProviderInfo createMediaProviderInfo() {
     return new MediaProviderInfo(ID, "Online Filmdatenbank (OFDb.de)",
-        "<html><h3>Online Filmdatenbank (OFDb)</h3><br />A german movie database driven by the community.<br /><br />Available languages: DE</html>",
+            "<html><h3>Online Filmdatenbank (OFDb)</h3><br />A german movie database driven by the community.<br /><br />Available languages: DE</html>",
         OfdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/ofdb_de.png"));
   }
 

@@ -1,22 +1,22 @@
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ITHDTrailersNetTrailerProviderTest {
 
   @Test
   public void testScrapeTrailer() {
-    ITrailerProvider mp;
+    IMovieTrailerProvider mp;
     try {
       mp = new HDTrailersNetTrailerProvider();
 

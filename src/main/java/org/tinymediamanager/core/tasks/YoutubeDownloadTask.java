@@ -13,7 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie.tasks;
+package org.tinymediamanager.core.tasks;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.scraper.http.StreamingUrl;
+import org.tinymediamanager.scraper.util.youtube.YoutubeHelper;
+import org.tinymediamanager.scraper.util.youtube.model.Extension;
+import org.tinymediamanager.scraper.util.youtube.model.YoutubeMedia;
+import org.tinymediamanager.scraper.util.youtube.model.formats.AudioFormat;
+import org.tinymediamanager.scraper.util.youtube.model.formats.Format;
+import org.tinymediamanager.scraper.util.youtube.model.formats.VideoFormat;
+import org.tinymediamanager.scraper.util.youtube.model.quality.VideoQuality;
+import org.tinymediamanager.scraper.util.youtube.muxer.TmmMuxer;
+import org.tinymediamanager.ui.UTF8Control;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
@@ -27,28 +48,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaTrailer;
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
-import org.tinymediamanager.core.threading.TmmTask;
-import org.tinymediamanager.scraper.http.StreamingUrl;
-import org.tinymediamanager.scraper.util.youtube.YoutubeHelper;
-import org.tinymediamanager.scraper.util.youtube.model.Extension;
-import org.tinymediamanager.scraper.util.youtube.model.YoutubeMedia;
-import org.tinymediamanager.scraper.util.youtube.model.formats.AudioFormat;
-import org.tinymediamanager.scraper.util.youtube.model.formats.Format;
-import org.tinymediamanager.scraper.util.youtube.model.formats.VideoFormat;
-import org.tinymediamanager.scraper.util.youtube.model.quality.VideoQuality;
-import org.tinymediamanager.scraper.util.youtube.muxer.TmmMuxer;
-import org.tinymediamanager.ui.UTF8Control;
-
 /**
  * A task for downloading trailers from youtube
  *
@@ -56,13 +55,14 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class YoutubeDownloadTask extends TmmTask {
 
-  private static final Logger         LOGGER                      = LoggerFactory.getLogger(YoutubeDownloadTask.class);
-  private static final char[]         ILLEGAL_FILENAME_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"',
+  private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeDownloadTask.class);
+  private static final char[] ILLEGAL_FILENAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"',
       ':' };
   private static final ResourceBundle BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control());                      //$NON-NLS-1$
-  private MediaTrailer                mediaTrailer;
-  private Movie                       movie;
-  private YoutubeMedia                mediaDetails;
+  private MediaTrailer mediaTrailer;
+  private MediaEntity mediaEntity;
+  private YoutubeMedia mediaDetails;
+  private String trailerFilename;
 
   /* helpers for calculating the download speed */
   private long                        timestamp1                  = System.nanoTime();
@@ -71,20 +71,18 @@ public class YoutubeDownloadTask extends TmmTask {
   private long                        bytesDonePrevious           = 0;
   private double                      speed                       = 0;
 
-  public YoutubeDownloadTask(MediaTrailer mediaTrailer, Movie movie) {
+  public YoutubeDownloadTask(MediaTrailer mediaTrailer, MediaEntity mediaEntity, String filename) {
     super(BUNDLE.getString("task.download") + " " + mediaTrailer.getName(), 100, TaskType.BACKGROUND_TASK);
     this.mediaTrailer = mediaTrailer;
-    this.movie = movie;
+    this.mediaEntity = mediaEntity;
+    this.trailerFilename = filename;
 
     setTaskDescription(mediaTrailer.getName());
   }
 
   @Override
   protected void doInBackground() {
-
     try {
-      String trailerFilename = movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER) + "." + Extension.MP4.getText();
-
       mediaDetails = new YoutubeMedia(YoutubeHelper.extractId(mediaTrailer.getUrl()));
       mediaDetails.parseVideo();
 
@@ -92,9 +90,9 @@ public class YoutubeDownloadTask extends TmmTask {
       AudioFormat audioFormat = mediaDetails.findBestAudio(Extension.MP4);
 
       if (videoFormat == null || audioFormat == null) {
-        MessageManager.instance.pushMessage(
-            new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.unsupported", new String[] { movie.getTitle() }));
-        LOGGER.error("Could not download movieTrailer for {}", movie.getTitle());
+        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.unsupported",
+                new String[]{mediaEntity.getTitle()}));
+        LOGGER.error("Could not download movieTrailer for {}", mediaEntity.getTitle());
         return;
       }
 
@@ -131,7 +129,7 @@ public class YoutubeDownloadTask extends TmmTask {
         // Mux the audio and video
         LOGGER.debug("Muxing...");
         TmmMuxer muxer = new TmmMuxer(audioFile, videoFile);
-        Path trailer = movie.getPathNIO().resolve(trailerFilename);
+        Path trailer = mediaEntity.getPathNIO().resolve(trailerFilename + ".mp4");
         muxer.mergeAudioVideo(trailer);
         LOGGER.debug("Muxing finished");
 
@@ -139,9 +137,9 @@ public class YoutubeDownloadTask extends TmmTask {
 
         // Add Media File Information
         mf.gatherMediaInformation();
-        movie.removeFromMediaFiles(mf); // remove old (possibly same) file
-        movie.addToMediaFiles(mf); // add file, but maybe with other MI values
-        movie.saveToDb();
+        mediaEntity.removeFromMediaFiles(mf); // remove old (possibly same) file
+        mediaEntity.addToMediaFiles(mf); // add file, but maybe with other MI values
+        mediaEntity.saveToDb();
 
       }
 
@@ -151,9 +149,9 @@ public class YoutubeDownloadTask extends TmmTask {
 
     }
     catch (Exception e) {
-      MessageManager.instance.pushMessage(
-          new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.downloadfailed", new String[] { movie.getTitle() }));
-      LOGGER.error("download of movieTrailer {} failed", mediaTrailer.getUrl());
+      MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "Youtube trailer downloader", "message.trailer.downloadfailed",
+              new String[]{mediaEntity.getTitle()}));
+      LOGGER.error("download of Trailer {} failed", mediaTrailer.getUrl());
     }
   }
 

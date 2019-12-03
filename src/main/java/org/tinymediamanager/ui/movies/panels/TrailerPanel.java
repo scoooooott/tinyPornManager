@@ -15,6 +15,42 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.movie.MovieHelpers;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tvshow.TvShowHelpers;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.scraper.util.UrlUtil;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
+
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionListener;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -25,71 +61,86 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionListener;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.entities.MediaTrailer;
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
-import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
-import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.util.UrlUtil;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.movies.MovieSelectionModel;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
-
 /**
  * The Class MovieTrailerPanel.
- * 
+ *
  * @author Manuel Laggner
  */
-public class MovieTrailerPanel extends JPanel {
-  private static final long                    serialVersionUID  = 2506465845096043845L;
+public class TrailerPanel extends JPanel {
+  private static final long serialVersionUID = 2506465845096043845L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle          BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger                  LOGGER            = LoggerFactory.getLogger(MovieTrailerPanel.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(TrailerPanel.class);
 
-  private MovieSelectionModel                  movieSelectionModel;
-  private TmmTable                             table;
-  private EventList<MediaTrailer>              trailerEventList  = null;
+  private MovieSelectionModel movieSelectionModel;
+  private TvShowSelectionModel tvShowSelectionModel;
+  private TmmTable table;
+  private EventList<MediaTrailer> trailerEventList = null;
   private DefaultEventTableModel<MediaTrailer> trailerTableModel = null;
+  private String trailerFileName;
+  private MediaEntity mediaEntity;
 
   /**
    * Instantiates a new movie details panel.
-   * 
+   *
    * @param model
    *          the model
    */
-  public MovieTrailerPanel(MovieSelectionModel model) {
+  public TrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
+    createLayout();
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a trailer
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+              || (source.getClass() == Movie.class && "trailer".equals(property))) {
+        trailerEventList.clear();
+        trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
+        try {
+          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
+        } catch (Exception ignored) {
+        }
+      }
+    };
+
+    movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
+  }
+
+  public TrailerPanel(TvShowSelectionModel model) {
+    this.tvShowSelectionModel = model;
+
+    createLayout();
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a trailer
+      if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
+              || (source.getClass() == TvShow.class && "trailer".equals(property))) {
+        trailerEventList.clear();
+        trailerEventList.addAll(tvShowSelectionModel.getSelectedTvShow().getTrailer());
+        try {
+          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
+        } catch (Exception ignored) {
+        }
+      }
+    };
+
+    tvShowSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
+  }
+
+  private void createLayout() {
     trailerEventList = GlazedListsSwing.swingThreadProxyList(
-        new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaTrailer.class)));
+            new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaTrailer.class)));
     trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     setLayout(new MigLayout("", "[400lp,grow]", "[250lp,grow]"));
     table = new TmmTable(trailerTableModel);
@@ -104,26 +155,6 @@ public class MovieTrailerPanel extends JPanel {
     LinkListener linkListener = new LinkListener();
     table.addMouseListener(linkListener);
     table.addMouseMotionListener(linkListener);
-
-    // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
-      String property = propertyChangeEvent.getPropertyName();
-      Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a trailer
-      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-          || (source.getClass() == Movie.class && "trailer".equals(property))) {
-        trailerEventList.clear();
-        trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
-        try {
-          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
-        }
-        catch (Exception ignored) {
-        }
-      }
-    };
-
-    movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
-
   }
 
   private class TrailerTableFormat implements AdvancedTableFormat<MediaTrailer> {
@@ -242,21 +273,11 @@ public class MovieTrailerPanel extends JPanel {
         MediaTrailer trailer = trailerEventList.get(row);
 
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
-          Movie movie = movieSelectionModel.getSelectedMovie();
-          try {
-            if (trailer.getProvider().equalsIgnoreCase("youtube")) {
-              YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, movie);
-              TmmTaskManager.getInstance().addDownloadTask(task);
-            }
-            else {
-              MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
-              TmmTaskManager.getInstance().addDownloadTask(task);
-            }
+          if (movieSelectionModel != null) {
+            MovieHelpers.downloadTrailer(movieSelectionModel.getSelectedMovie(), trailer);
           }
-          catch (Exception ex) {
-            LOGGER.error("could not start trailer download: {}", ex.getMessage());
-            MessageManager.instance.pushMessage(
-                new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", ex.getLocalizedMessage() }));
+          if (tvShowSelectionModel != null) {
+            TvShowHelpers.downloadTrailer(tvShowSelectionModel.getSelectedTvShow(), trailer);
           }
         }
       }

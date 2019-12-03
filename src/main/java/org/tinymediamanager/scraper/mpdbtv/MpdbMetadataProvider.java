@@ -15,18 +15,6 @@
  */
 package org.tinymediamanager.scraper.mpdbtv;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -61,15 +49,27 @@ import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
 /**
  * The Class MpdbMetadataProvider. A meta data provider for the site ofdb.de
  *
  * @author Wolfgang Janes
  */
 public class MpdbMetadataProvider implements IMovieMetadataProvider {
-  public static final String             ID           = "mpdbtv";
+  public static final String ID = "mpdbtv";
 
-  private static final Logger            LOGGER       = LoggerFactory.getLogger(MpdbMetadataProvider.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MpdbMetadataProvider.class);
   private static final MediaProviderInfo providerInfo = createMediaProviderInfo();
   private static final String            API_KEY      = ApiKey.decryptApikey("DdSGUTZn24ml7rZRBihKb9ea3svKUDnU3GZdhgf+XMrfE8IdLinpy6eAPLrmkZWu");
   private static final String            FORMAT       = "json";

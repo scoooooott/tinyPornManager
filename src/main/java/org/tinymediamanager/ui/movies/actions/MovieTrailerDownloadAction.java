@@ -15,13 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.actions;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -33,15 +26,21 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 /**
  * The class MovieTrailerDownloadAction is used to trigger trailer download for selected movies
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieTrailerDownloadAction extends TmmAction {
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieTrailerDownloadAction.class);
-  private static final long           serialVersionUID = -8668265401054434251L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieTrailerDownloadAction.class);
+  private static final long serialVersionUID = -8668265401054434251L;
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   public MovieTrailerDownloadAction() {
     putValue(NAME, BUNDLE.getString("movie.downloadtrailer")); //$NON-NLS-1$
@@ -87,7 +86,7 @@ public class MovieTrailerDownloadAction extends TmmAction {
       if (movie.getTrailer().isEmpty()) {
         continue;
       }
-      MovieHelpers.selectTrailerProvider(movie, LOGGER);
+      MovieHelpers.downloadBestTrailer(movie);
     }
   }
 }

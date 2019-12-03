@@ -15,29 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
-import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
-import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
-
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JLayer;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -54,7 +32,27 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import net.miginfocom.swing.MigLayout;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JLayer;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
+import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
 
 /**
  * The Class TvShowSeasonEditor.
@@ -119,6 +117,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
       tfBanner.setText(tvShowSeason.getArtworkUrl(SEASON_BANNER));
 
     }
+
   }
 
   private void initComponents() {
@@ -326,7 +325,9 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
         tvShowSeasonToEdit.removeArtworkUrl(SEASON_THUMB);
       }
 
+      tvShowSeasonToEdit.getTvShow().writeNFO();
       tvShowSeasonToEdit.getTvShow().saveToDb();
+
       setVisible(false);
     }
   }

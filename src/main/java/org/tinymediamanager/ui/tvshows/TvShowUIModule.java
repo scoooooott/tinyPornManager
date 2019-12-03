@@ -15,16 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.CardLayout;
-
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
+import net.miginfocom.swing.MigLayout;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -33,6 +24,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.PopupMenuScroller;
+import org.tinymediamanager.ui.movies.panels.TrailerPanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
@@ -82,7 +74,14 @@ import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsNode;
 
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import java.awt.CardLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
   private static final String       ID       = "tvShows";
@@ -133,6 +132,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     tvShowDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowCastPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowMediaInformationPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.artwork"), new TvShowArtworkPanel(tvShowSelectionModel)); //$NON-NLS-1$
+    tvShowDetailPanel.add(BUNDLE.getString("metatag.trailer"), new TrailerPanel(tvShowSelectionModel));
     dataPanel.add(tvShowDetailPanel, "tvShow");
 
     // panel for seasons

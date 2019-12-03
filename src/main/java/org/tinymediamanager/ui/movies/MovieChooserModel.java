@@ -15,14 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,19 +47,27 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
 /**
  * The Class MovieChooserModel.
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
-  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
-  public static final MovieChooserModel emptyResult      = new MovieChooserModel();
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieChooserModel.class);
+  public static final MovieChooserModel emptyResult = new MovieChooserModel();
 
   private final Movie                   movieToScrape;
   private MediaScraper                  metadataProvider = null;
@@ -395,25 +395,19 @@ public class MovieChooserModel extends AbstractModelObject {
 
       TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.MOVIE);
       options.setMetadata(metadata);
-      options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
-      try {
-        options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
-      }
-      catch (Exception e) {
-        options.setTmdbId(0);
-      }
+      options.setIds(metadata.getIds());
       options.setLanguage(language);
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {
         try {
-          ITrailerProvider trailerProvider = (ITrailerProvider) trailerScraper.getMediaProvider();
+          IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
           trailer.addAll(trailerProvider.getTrailers(options));
         }
         catch (ScrapeException e) {
           LOGGER.error("getTrailers {}", e.getMessage());
           MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+                  new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
         }
         catch (MissingIdException ignored) {
           LOGGER.debug("no id found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());

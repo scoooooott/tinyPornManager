@@ -1,25 +1,9 @@
-/*
- * Copyright 2012 - 2019 Manuel Laggner
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.tinymediamanager.ui.movies.settings;
+package org.tinymediamanager.ui.tvshows.settings;
 
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -29,10 +13,10 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.core.TrailerQuality;
 import org.tinymediamanager.core.TrailerSources;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowTrailerNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -72,20 +56,12 @@ import java.util.ResourceBundle;
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 import static org.tinymediamanager.ui.TmmFontHelper.L2;
 
-/**
- * The Class MovieTrailerSettingsPanel. To maintain trailer related settings
- *
- * @author Manuel Laggner
- */
-class MovieTrailerSettingsPanel extends JPanel {
-  private static final long serialVersionUID = -1607146878528487625L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+public class TvShowTrailerSettingsPanel extends JPanel {
+
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings settings = MovieModuleManager.SETTINGS;
-  private List<TrailerScraper> scrapers = ObservableCollections.observableList(new ArrayList<>());
+  private TvShowSettings settings = TvShowModuleManager.SETTINGS;
+  private List<TvShowTrailerSettingsPanel.TrailerScraper> scrapers = ObservableCollections.observableList(new ArrayList<>());
   private TmmTable tableTrailerScraper;
   private JTextPane tpScraperDescription;
   private JComboBox<TrailerSources> cbTrailerSource;
@@ -94,12 +70,10 @@ class MovieTrailerSettingsPanel extends JPanel {
   private JCheckBox chckbxAutomaticTrailerDownload;
   private JPanel panelScraperOptions;
   private JCheckBox cbTrailerFilename1;
-  private JCheckBox cbTrailerFilename2;
 
   private ItemListener checkBoxListener;
-  private JLabel lblAutomaticTrailerDownloadHint;
 
-  MovieTrailerSettingsPanel() {
+  TvShowTrailerSettingsPanel() {
     checkBoxListener = e -> checkChanges();
 
     // UI init
@@ -117,8 +91,8 @@ class MovieTrailerSettingsPanel extends JPanel {
     List<String> enabledTrailerProviders = settings.getTrailerScrapers();
     int selectedIndex = -1;
     int counter = 0;
-    for (MediaScraper scraper : MovieList.getInstance().getAvailableTrailerScrapers()) {
-      TrailerScraper trailerScraper = new TrailerScraper(scraper);
+    for (MediaScraper scraper : TvShowList.getInstance().getAvailableTrailerScrapers()) {
+      TvShowTrailerSettingsPanel.TrailerScraper trailerScraper = new TvShowTrailerSettingsPanel.TrailerScraper(scraper);
       if (enabledTrailerProviders.contains(trailerScraper.getScraperId())) {
         trailerScraper.active = true;
         if (selectedIndex < 0) {
@@ -139,12 +113,11 @@ class MovieTrailerSettingsPanel extends JPanel {
       // click on the checkbox
       if (arg0.getColumn() == 0) {
         int row = arg0.getFirstRow();
-        TrailerScraper changedScraper = scrapers.get(row);
+        TvShowTrailerSettingsPanel.TrailerScraper changedScraper = scrapers.get(row);
         if (changedScraper.active) {
-          settings.addMovieTrailerScraper(changedScraper.getScraperId());
-        }
-        else {
-          settings.removeMovieTrailerScraper(changedScraper.getScraperId());
+          settings.addTvShowTrailerScraper(changedScraper.getScraperId());
+        } else {
+          settings.removeTvShowTrailerScraper(changedScraper.getScraperId());
         }
       }
     });
@@ -167,12 +140,12 @@ class MovieTrailerSettingsPanel extends JPanel {
       Font font = UIManager.getFont("Label.font");
       Color color = UIManager.getColor("Label.foreground");
       String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
-          + color.getGreen() + "," + color.getBlue() + "); }";
+              + color.getGreen() + "," + color.getBlue() + "); }";
       tpScraperDescription.setEditorKit(new HTMLEditorKit());
       ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
     }
 
-    // select default movie scraper
+    // select default scraper
     if (selectedIndex < 0) {
       selectedIndex = 0;
     }
@@ -181,24 +154,20 @@ class MovieTrailerSettingsPanel extends JPanel {
     }
 
     buildCheckBoxes();
+
   }
 
   private void buildCheckBoxes() {
     cbTrailerFilename1.removeItemListener(checkBoxListener);
-    cbTrailerFilename2.removeItemListener(checkBoxListener);
-    clearSelection(cbTrailerFilename1, cbTrailerFilename2);
+    clearSelection(cbTrailerFilename1);
 
     // trailer filenames
-    List<MovieTrailerNaming> movieTrailerFilenames = settings.getTrailerFilenames();
-    if (movieTrailerFilenames.contains(MovieTrailerNaming.FILENAME_TRAILER)) {
+    List<TvShowTrailerNaming> trailerFilenames = settings.getTrailerFilenames();
+    if (trailerFilenames.contains(TvShowTrailerNaming.TVSHOW_TRAILER)) {
       cbTrailerFilename1.setSelected(true);
-    }
-    if (movieTrailerFilenames.contains(MovieTrailerNaming.MOVIE_TRAILER)) {
-      cbTrailerFilename2.setSelected(true);
     }
 
     cbTrailerFilename1.addItemListener(checkBoxListener);
-    cbTrailerFilename2.addItemListener(checkBoxListener);
   }
 
   private void clearSelection(JCheckBox... checkBoxes) {
@@ -207,17 +176,11 @@ class MovieTrailerSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * check changes of checkboxes
-   */
   private void checkChanges() {
     // set trailer filenames
     settings.clearTrailerFilenames();
     if (cbTrailerFilename1.isSelected()) {
-      settings.addTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
-    }
-    if (cbTrailerFilename2.isSelected()) {
-      settings.addTrailerFilename(MovieTrailerNaming.MOVIE_TRAILER);
+      settings.addTrailerFilename(TvShowTrailerNaming.TVSHOW_TRAILER);
     }
   }
 
@@ -277,9 +240,9 @@ class MovieTrailerSettingsPanel extends JPanel {
         panelOptions.add(cbTrailerQuality, "cell 2 2");
 
         chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
-        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 2 3");
+        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 1 3 2 1");
 
-        lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
         panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
         TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
 
@@ -290,13 +253,55 @@ class MovieTrailerSettingsPanel extends JPanel {
         JLabel lblTrailerFileNaming = new JLabel(BUNDLE.getString("Settings.trailerFileNaming")); //$NON-NLS-1$
         panelTrailerFilenames.add(lblTrailerFileNaming, "cell 0 0");
 
-        cbTrailerFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-trailer.ext"); //$NON-NLS-1$
+        cbTrailerFilename1 = new JCheckBox("tvshow-trailer.ext"); //$NON-NLS-1$
         panelTrailerFilenames.add(cbTrailerFilename1, "cell 1 0");
-
-        cbTrailerFilename2 = new JCheckBox("movie-trailer.ext"); //$NON-NLS-1$
-        panelTrailerFilenames.add(cbTrailerFilename2, "cell 1 1");
       }
     }
+  }
+
+  protected void initDataBindings() {
+    JTableBinding<TvShowTrailerSettingsPanel.TrailerScraper, List<TvShowTrailerSettingsPanel.TrailerScraper>, JTable> jTableBinding = SwingBindings
+            .createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, scrapers, tableTrailerScraper);
+    //
+    BeanProperty<TvShowTrailerSettingsPanel.TrailerScraper, Boolean> trailerScraperBeanProperty = BeanProperty.create("active");
+    jTableBinding.addColumnBinding(trailerScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
+    //
+    BeanProperty<TvShowTrailerSettingsPanel.TrailerScraper, Icon> trailerScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
+    jTableBinding.addColumnBinding(trailerScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
+    //
+    BeanProperty<TvShowTrailerSettingsPanel.TrailerScraper, String> trailerScraperBeanProperty_2 = BeanProperty.create("scraperName");
+    jTableBinding.addColumnBinding(trailerScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
+    //
+    jTableBinding.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, tableTrailerScraper,
+            jTableBeanProperty, tpScraperDescription, jTextPaneBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<TvShowSettings, TrailerSources> tvShowSettingsBeanProperty = BeanProperty.create("trailerSource");
+    BeanProperty<JComboBox<TrailerSources>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<TvShowSettings, TrailerSources, JComboBox<TrailerSources>, Object> autoBinding_1 = Bindings
+            .createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, settings, tvShowSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSettings, TrailerQuality> tvShowSettingsBeanProperty_1 = BeanProperty.create("trailerQuality");
+    BeanProperty<JComboBox<TrailerQuality>, Object> jComboBoxBeanProperty_1 = BeanProperty.create("selectedItem");
+    AutoBinding<TvShowSettings, TrailerQuality, JComboBox<TrailerQuality>, Object> autoBinding_2 = Bindings
+            .createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, settings, tvShowSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty_1);
+    autoBinding_2.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_2 = BeanProperty.create("useTrailerPreference");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE,
+            settings, tvShowSettingsBeanProperty_2, checkBox, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_3 = BeanProperty.create("automaticTrailerDownload");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE,
+            settings, tvShowSettingsBeanProperty_3, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 
   /*****************************************************************************************************
@@ -304,15 +309,14 @@ class MovieTrailerSettingsPanel extends JPanel {
    ****************************************************************************************************/
   public class TrailerScraper extends AbstractModelObject {
     private MediaScraper scraper;
-    private Icon         scraperLogo;
-    private boolean      active;
+    private Icon scraperLogo;
+    private boolean active;
 
     public TrailerScraper(MediaScraper scraper) {
       this.scraper = scraper;
       if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
         scraperLogo = new ImageIcon();
-      }
-      else {
+      } else {
         scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
       }
     }
@@ -326,10 +330,9 @@ class MovieTrailerSettingsPanel extends JPanel {
         int width = original.getIconWidth() / original.getIconHeight() * height;
 
         BufferedImage scaledImage = Scalr.resize(ImageUtils.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
-            height, Scalr.OP_ANTIALIAS);
+                height, Scalr.OP_ANTIALIAS);
         return new ImageIcon(scaledImage);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         return new ImageIcon();
       }
     }
@@ -347,8 +350,7 @@ class MovieTrailerSettingsPanel extends JPanel {
       String description = null;
       try {
         description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
-      }
-      catch (Exception ignored) {
+      } catch (Exception ignored) {
       }
 
       if (StringUtils.isBlank(description)) {
@@ -376,60 +378,5 @@ class MovieTrailerSettingsPanel extends JPanel {
     public IMediaProvider getMediaProvider() {
       return scraper.getMediaProvider();
     }
-  }
-
-  protected void initDataBindings() {
-    JTableBinding<TrailerScraper, List<TrailerScraper>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, scrapers,
-        tableTrailerScraper);
-    //
-    BeanProperty<TrailerScraper, Boolean> trailerScraperBeanProperty = BeanProperty.create("active");
-    jTableBinding.addColumnBinding(trailerScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
-    //
-    BeanProperty<TrailerScraper, Icon> trailerScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
-    jTableBinding.addColumnBinding(trailerScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
-    //
-    BeanProperty<TrailerScraper, String> trailerScraperBeanProperty_2 = BeanProperty.create("scraperName");
-    jTableBinding.addColumnBinding(trailerScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
-    //
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableTrailerScraper,
-            jTableBeanProperty, tpScraperDescription, jTextPaneBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<MovieSettings, TrailerSources> movieSettingsBeanProperty = BeanProperty.create("trailerSource");
-    BeanProperty<JComboBox<TrailerSources>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, TrailerSources, JComboBox<TrailerSources>, Object> autoBinding_1 = Bindings
-            .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<MovieSettings, TrailerQuality> movieSettingsBeanProperty_1 = BeanProperty.create("trailerQuality");
-    BeanProperty<JComboBox<TrailerQuality>, Object> jComboBoxBeanProperty_1 = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, TrailerQuality, JComboBox<TrailerQuality>, Object> autoBinding_2 = Bindings
-            .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty_1);
-    autoBinding_2.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_2 = BeanProperty.create("useTrailerPreference");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-            movieSettingsBeanProperty_2, checkBox, jCheckBoxBeanProperty);
-    autoBinding_3.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_3 = BeanProperty.create("automaticTrailerDownload");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty_3, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty);
-    autoBinding_4.bind();
-    //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox,
-        jCheckBoxBeanProperty, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty_1);
-    autoBinding_5.bind();
-    //
-    BeanProperty<JLabel, Boolean> jLabelBeanProperty = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JLabel, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox, jCheckBoxBeanProperty,
-        lblAutomaticTrailerDownloadHint, jLabelBeanProperty);
-    autoBinding_6.bind();
   }
 }

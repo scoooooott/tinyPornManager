@@ -15,11 +15,6 @@
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import java.io.InterruptedIOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,22 +28,27 @@ import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.exceptions.HttpException;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.UrlUtil;
+
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The Class HDTrailersNet. A trailer provider for the site hd-trailers.net
  *
  * @author Myron Boyle
  */
-public class HDTrailersNetTrailerProvider implements ITrailerProvider {
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNetTrailerProvider.class);
+public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
+  private static final Logger LOGGER = LoggerFactory.getLogger(HDTrailersNetTrailerProvider.class);
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
   private static MediaProviderInfo createMediaProviderInfo() {
     return new MediaProviderInfo("hd-trailers", "hd-trailers.net",
-        "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
-        HDTrailersNetTrailerProvider.class.getResource("/org/tinymediamanager/scraper/hd-trailers_net.png"));
+            "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
+            HDTrailersNetTrailerProvider.class.getResource("/org/tinymediamanager/scraper/hd-trailers_net.png"));
   }
 
   @Override

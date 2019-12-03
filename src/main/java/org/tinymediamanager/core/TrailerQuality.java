@@ -13,30 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
- * The enum MovieTrailerQuality
- * 
+ * The enum TrailerQuality
+ *
  * @author Manuel Laggner
  */
-public enum MovieTrailerQuality {
+public enum TrailerQuality {
 
   //@formatter:off
-  SD("SD", Arrays.asList("SD", "480p", "360p", "225p", "180p", "135p", "90p")), 
-  HD_720("720p", Arrays.asList("HD", "720p", "720")), 
-  HD_1080("1080p", Arrays.asList("HD", "1080p", "1080"));  
+  SD("SD", Arrays.asList("SD", "480p", "360p", "225p", "180p", "135p", "90p")),
+  HD_720("720p", Arrays.asList("HD", "720p", "720")),
+  HD_1080("1080p", Arrays.asList("HD", "1080p", "1080"));
   // @formatter:on
 
-  private String       displayText;
+  private String displayText;
   private List<String> possibleQualities;
 
-  MovieTrailerQuality(String text, List<String> qualities) {
+  TrailerQuality(String text, List<String> qualities) {
     this.displayText = text;
     this.possibleQualities = qualities;
   }
@@ -54,14 +54,14 @@ public enum MovieTrailerQuality {
   }
 
   /**
-   * parse out the matching MovieTrailerQuality for the given string
-   * 
+   * parse out the matching TrailerQuality for the given string
+   *
    * @param quality
    *          the given string
    * @return the found quality or SD as fallback
    */
-  public static MovieTrailerQuality getMovieTrailerQuality(String quality) {
-    for (MovieTrailerQuality q : MovieTrailerQuality.values()) {
+  public static TrailerQuality getTrailerQuality(String quality) {
+    for (TrailerQuality q : TrailerQuality.values()) {
       if (q.containsQuality(quality)) {
         return q;
       }

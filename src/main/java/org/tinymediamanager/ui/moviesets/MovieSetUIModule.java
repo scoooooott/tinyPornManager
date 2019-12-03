@@ -15,15 +15,6 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
-import java.awt.CardLayout;
-
-import javax.swing.Icon;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -36,7 +27,7 @@ import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
 import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
-import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
+import org.tinymediamanager.ui.movies.panels.TrailerPanel;
 import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
@@ -50,15 +41,23 @@ import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
-public class MovieSetUIModule extends AbstractTmmUIModule {
-  private static final String          ID       = "movieSets";
+import javax.swing.Icon;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import java.awt.CardLayout;
 
-  private static MovieSetUIModule      instance = null;
+public class MovieSetUIModule extends AbstractTmmUIModule {
+  private static final String ID = "movieSets";
+
+  private static MovieSetUIModule instance = null;
 
   private final MovieSetSelectionModel selectionModel;
-  private final MovieSelectionModel    movieSelectionModel;
+  private final MovieSelectionModel movieSelectionModel;
 
-  private final MovieSetTreePanel      treePanel;
+  private final MovieSetTreePanel treePanel;
   private final JPanel                 dataPanel;
   private final MovieSetFilterDialog   movieSetFilterDialog;
 
@@ -110,7 +109,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     movieDetailPanel.addTab("Cast", new MovieCastPanel(movieSelectionModel));
     movieDetailPanel.addTab("Media files", new MovieMediaInformationPanel(movieSelectionModel));
     movieDetailPanel.addTab("Artwork", new MovieArtworkPanel(movieSelectionModel));
-    movieDetailPanel.addTab("Trailer", new MovieTrailerPanel(movieSelectionModel));
+    movieDetailPanel.addTab("Trailer", new TrailerPanel(movieSelectionModel));
     dataPanel.add(movieDetailPanel, "movie");
 
     movieSetFilterDialog = new MovieSetFilterDialog(treePanel.getTreeTable());

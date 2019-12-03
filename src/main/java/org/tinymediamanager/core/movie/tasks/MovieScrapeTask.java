@@ -15,13 +15,6 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.SwingUtilities;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -52,19 +45,25 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
 
+import javax.swing.SwingUtilities;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 /**
  * The Class MovieScrapeTask.
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieScrapeTask extends TmmThreadPool {
-  private static final Logger              LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
-  private static final ResourceBundle      BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<Movie>                      moviesToScrape;
   private boolean                          doSearch;
@@ -324,13 +323,13 @@ public class MovieScrapeTask extends TmmThreadPool {
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {
         try {
-          ITrailerProvider trailerProvider = (ITrailerProvider) trailerScraper.getMediaProvider();
+          IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
           trailers.addAll(trailerProvider.getTrailers(options));
         }
         catch (ScrapeException e) {
           LOGGER.error("getTrailers", e);
           MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+                  new Message(MessageLevel.ERROR, movie, "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
         }
         catch (MissingIdException e) {
           LOGGER.debug("no usable ID found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());

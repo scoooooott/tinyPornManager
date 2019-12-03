@@ -15,16 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -34,6 +26,8 @@ import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
+import org.tinymediamanager.core.TrailerQuality;
+import org.tinymediamanager.core.TrailerSources;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
@@ -55,8 +49,15 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
 
 /**
  * The Class MovieSettings.
@@ -160,28 +161,28 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          imageExtraFanart                    = false;
   private int                              imageExtraFanartCount               = 5;
   private boolean                          enableMovieSetArtworkMovieFolder    = true;
-  private boolean                          enableMovieSetArtworkFolder         = false;
-  private String                           movieSetArtworkFolder               = "MoviesetArtwork";
-  private boolean                          scrapeBestImage                     = true;
-  private MediaLanguages                   imageScraperLanguage                = MediaLanguages.en;
-  private boolean                          imageLanguagePriority               = true;
-  private boolean                          writeActorImages                    = false;
+  private boolean enableMovieSetArtworkFolder = false;
+  private String movieSetArtworkFolder = "MoviesetArtwork";
+  private boolean scrapeBestImage = true;
+  private MediaLanguages imageScraperLanguage = MediaLanguages.en;
+  private boolean imageLanguagePriority = true;
+  private boolean writeActorImages = false;
 
   // trailer scraper
-  private boolean                          useTrailerPreference                = true;
-  private boolean                          automaticTrailerDownload            = false;
-  private MovieTrailerQuality              trailerQuality                      = MovieTrailerQuality.HD_720;
-  private MovieTrailerSources              trailerSource                       = MovieTrailerSources.YOUTUBE;
+  private boolean useTrailerPreference = true;
+  private boolean automaticTrailerDownload = false;
+  private TrailerQuality trailerQuality = TrailerQuality.HD_720;
+  private TrailerSources trailerSource = TrailerSources.YOUTUBE;
 
   // subtitle scraper
-  private MediaLanguages                   subtitleScraperLanguage             = MediaLanguages.en;
-  private LanguageStyle                    subtitleLanguageStyle               = LanguageStyle.ISO3T;
-  private boolean                          subtitleWithoutLanguageTag          = false;
+  private MediaLanguages subtitleScraperLanguage = MediaLanguages.en;
+  private LanguageStyle subtitleLanguageStyle = LanguageStyle.ISO3T;
+  private boolean subtitleWithoutLanguageTag = false;
 
   // misc
-  private boolean                          runtimeFromMediaInfo                = false;
-  private boolean                          includeExternalAudioStreams         = false;
-  private boolean                          syncTrakt                           = false;
+  private boolean runtimeFromMediaInfo = false;
+  private boolean includeExternalAudioStreams = false;
+  private boolean syncTrakt = false;
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
 
@@ -1101,22 +1102,22 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("automaticTrailerDownload", oldValue, newValue);
   }
 
-  public MovieTrailerQuality getTrailerQuality() {
+  public TrailerQuality getTrailerQuality() {
     return trailerQuality;
   }
 
-  public void setTrailerQuality(MovieTrailerQuality newValue) {
-    MovieTrailerQuality oldValue = this.trailerQuality;
+  public void setTrailerQuality(TrailerQuality newValue) {
+    TrailerQuality oldValue = this.trailerQuality;
     this.trailerQuality = newValue;
     firePropertyChange("trailerQuality", oldValue, newValue);
   }
 
-  public MovieTrailerSources getTrailerSource() {
+  public TrailerSources getTrailerSource() {
     return trailerSource;
   }
 
-  public void setTrailerSource(MovieTrailerSources newValue) {
-    MovieTrailerSources oldValue = this.trailerSource;
+  public void setTrailerSource(TrailerSources newValue) {
+    TrailerSources oldValue = this.trailerSource;
     this.trailerSource = newValue;
     firePropertyChange("trailerSource", oldValue, newValue);
   }

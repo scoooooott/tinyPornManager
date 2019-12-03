@@ -15,29 +15,11 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.AUDIO_CODEC;
-import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
-import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.TV_SHOWS;
-import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
-import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
-
-import java.beans.PropertyChangeListener;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.slf4j.Logger;
@@ -52,7 +34,6 @@ import org.tinymediamanager.core.ObservableCopyOnWriteArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -62,12 +43,28 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import java.beans.PropertyChangeListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.AUDIO_CODEC;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
+import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
 
 /**
  * The Class TvShowList.
@@ -138,7 +135,7 @@ public class TvShowList extends AbstractModelObject {
 
   /**
    * Gets the tv shows.
-   * 
+   *
    * @return the tv shows
    */
   public List<TvShow> getTvShows() {
@@ -146,8 +143,39 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
+   * get all specified trailer scrapers.
+   *
+   * @param providerIds the scrapers
+   * @return the trailer providers
+   */
+  public List<MediaScraper> getTrailerScrapers(List<String> providerIds) {
+    List<MediaScraper> trailerScrapers = new ArrayList<>();
+
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
+      }
+      MediaScraper trailerScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.TVSHOW_TRAILER);
+      if (trailerScraper != null) {
+        trailerScrapers.add(trailerScraper);
+      }
+    }
+
+    return trailerScrapers;
+  }
+
+  /**
+   * all available trailer scrapers.
+   *
+   * @return the trailer scrapers
+   */
+  public List<MediaScraper> getAvailableTrailerScrapers() {
+    return MediaScraper.getMediaScrapers(ScraperType.TVSHOW_TRAILER);
+  }
+
+  /**
    * Gets the unscraped TvShows
-   * 
+   *
    * @return the unscraped TvShows
    */
   public List<TvShow> getUnscrapedTvShows() {
@@ -879,7 +907,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
-   * check if there are movies without (at least) one VIDEO mf
+   * check if there are episodes without (at least) one VIDEO mf
    */
   private void checkAndCleanupMediaFiles() {
     boolean problemsDetected = false;
@@ -928,7 +956,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(MovieModuleManager.SETTINGS.getSubtitleScrapers());
+    return getSubtitleScrapers(TvShowModuleManager.SETTINGS.getSubtitleScrapers());
   }
 
   /**
@@ -937,8 +965,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified trailer scrapers
    */
   public List<MediaScraper> getDefaultTrailerScrapers() {
-    // TODO
-    return new ArrayList<>();
+    return getTrailerScrapers(TvShowModuleManager.SETTINGS.getTrailerScrapers());
   }
 
   /**

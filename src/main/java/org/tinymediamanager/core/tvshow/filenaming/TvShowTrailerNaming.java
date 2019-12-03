@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+
+package org.tinymediamanager.core.tvshow.filenaming;
+
+import org.tinymediamanager.core.IFileNaming;
 
 /**
- * ENUM for all scrapers
+ * the class {@link TvShowTrailerNaming} is used to provide TV show related trailer filenames
  *
- * @author Myron Boyle
+ * @author Manuel Laggner
  */
-public enum ScraperType {
-  MOVIE,
-  TV_SHOW,
-  MOVIE_SET,
-  MOVIE_ARTWORK,
-  TV_SHOW_ARTWORK,
-  MOVIE_TRAILER,
-  TVSHOW_TRAILER,
-  SUBTITLE, // TMM Types (representing an interfaces)
-  ALBUM,
-  ARTIST,
-  MUSICVIDEO,
-  LIBRARY // XBMC ones (currently w/o TMM interfaces)
+public enum TvShowTrailerNaming implements IFileNaming {
+  /**
+   * tvshow-trailer.*
+   */
+  TVSHOW_TRAILER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "tvshow-trailer." + extension;
+    }
+  }
 }

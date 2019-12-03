@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * The enum MovieTrailerSources
- * 
+ *
  * @author Manuel Laggner
  */
-public enum MovieTrailerSources {
+public enum TrailerSources {
 
   //@formatter:off
   YOUTUBE("Youtube", Collections.singletonList("youtube")),
@@ -33,10 +33,10 @@ public enum MovieTrailerSources {
   AOL("Aol", Collections.singletonList("aol")),
   HDTRAILERS("HD Trailers", Collections.singletonList("hdtrailers"));  // @formatter:on
 
-  private String       displayText;
+  private String displayText;
   private List<String> possibleSources;
 
-  MovieTrailerSources(String text, List<String> sources) {
+  TrailerSources(String text, List<String> sources) {
     this.displayText = text;
     this.possibleSources = sources;
   }
