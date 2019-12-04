@@ -232,6 +232,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("${mediaSource}"));
     exampleEventList.add(new MovieRenamerExample("${3Dformat}"));
     exampleEventList.add(new MovieRenamerExample("${hdr}"));
+    exampleEventList.add(new MovieRenamerExample("${filesize}"));
     exampleEventList.add(new MovieRenamerExample("${edition}"));
     exampleEventList.add(new MovieRenamerExample("${parent}"));
     exampleEventList.add(new MovieRenamerExample("${note}"));

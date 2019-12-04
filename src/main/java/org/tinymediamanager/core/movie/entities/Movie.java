@@ -15,10 +15,57 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.DIRECTORS;
+import static org.tinymediamanager.core.Constants.DIRECTORS_AS_STRING;
+import static org.tinymediamanager.core.Constants.EDITION;
+import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
+import static org.tinymediamanager.core.Constants.TOP250;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITERS;
+import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -77,55 +124,10 @@ import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.COUNTRY;
-import static org.tinymediamanager.core.Constants.DIRECTORS;
-import static org.tinymediamanager.core.Constants.DIRECTORS_AS_STRING;
-import static org.tinymediamanager.core.Constants.EDITION;
-import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
-import static org.tinymediamanager.core.Constants.GENRE;
-import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
-import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
-import static org.tinymediamanager.core.Constants.IMDB;
-import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
-import static org.tinymediamanager.core.Constants.MOVIESET;
-import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
-import static org.tinymediamanager.core.Constants.PRODUCERS;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
-import static org.tinymediamanager.core.Constants.RUNTIME;
-import static org.tinymediamanager.core.Constants.SORT_TITLE;
-import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
-import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
-import static org.tinymediamanager.core.Constants.TMDB;
-import static org.tinymediamanager.core.Constants.TOP250;
-import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
-import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITERS;
-import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The main class for movies.
@@ -2256,6 +2258,15 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @Override
   public MediaSource getMediaInfoSource() {
     return getMediaSource();
+  }
+
+  @Override
+  public long getVideoFilesize() {
+    long filesize = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      filesize += mf.getFilesize();
+    }
+    return filesize;
   }
 
   public String getVideo3DFormat() {

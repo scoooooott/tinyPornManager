@@ -50,6 +50,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFilesizeRenderer;
 import org.tinymediamanager.core.jmte.NamedLowerCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedTitleCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
@@ -138,6 +139,7 @@ public class MovieRenamer {
     tokenMap.put("audioLanguagesAsString", "movie.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "movie.video3DFormat");
     tokenMap.put("hdr", "movie.videoHDRFormat");
+    tokenMap.put("filesize", "movie.videoFilesize;filesize");
 
     tokenMap.put("mediaSource", "movie.mediaSource");
     tokenMap.put("edition", "movie.edition");
@@ -1139,6 +1141,7 @@ public class MovieRenamer {
       engine.registerNamedRenderer(new NamedTitleCaseRenderer());
       engine.registerNamedRenderer(new MovieNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.registerNamedRenderer(new NamedFilesizeRenderer());
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
@@ -1254,8 +1257,8 @@ public class MovieRenamer {
     }
 
     // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
-    newDestination = newDestination.replaceAll(": ", " - "); // nicer
-    newDestination = newDestination.replaceAll(":", "-"); // nicer
+    newDestination = newDestination.replace(": ", " - "); // nicer
+    newDestination = newDestination.replace(":", "-"); // nicer
 
     return newDestination.trim();
   }
@@ -1280,7 +1283,7 @@ public class MovieRenamer {
         return true;
       }
       else {
-        LOGGER.error("Could not move MF '" + oldFilename + "' to '" + newFilename + "'");
+        LOGGER.error("Could not move MF '{}' to '{}'", oldFilename, newFilename);
         return false; // rename failed
       }
     }
@@ -1421,11 +1424,11 @@ public class MovieRenamer {
     String result = source;
 
     if ("-".equals(MovieModuleManager.SETTINGS.getRenamerColonReplacement())) {
-      result = result.replaceAll(": ", " - "); // nicer
-      result = result.replaceAll(":", "-"); // nicer
+      result = result.replace(": ", " - "); // nicer
+      result = result.replace(":", "-"); // nicer
     }
     else {
-      result = result.replaceAll(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
+      result = result.replace(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
     }
 
     return result.replaceAll("([\":<>|?*])", "");

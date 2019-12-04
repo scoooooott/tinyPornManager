@@ -1510,6 +1510,15 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return StringUtils.isNotBlank(video3DFormat);
   }
 
+  @Override
+  public long getVideoFilesize() {
+    long filesize = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      filesize += mf.getFilesize();
+    }
+    return filesize;
+  }
+
   public boolean isDummy() {
     return dummy || !hasMediaFiles();
   }

@@ -41,6 +41,13 @@ public interface IMediaInformation {
   MediaFile getMainVideoFile();
 
   /**
+   * get the accumulated file size of all video files
+   * 
+   * @return the accumulated file size of all video files
+   */
+  long getVideoFilesize();
+
+  /**
    * gets the video format (e.g. 720p).
    * 
    * @return the video format

@@ -55,6 +55,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFilesizeRenderer;
 import org.tinymediamanager.core.jmte.NamedLowerCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.NamedTitleCaseRenderer;
@@ -146,6 +147,7 @@ public class TvShowRenamer {
     tokenMap.put("audioLanguagesAsString", "episode.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "episode.video3DFormat");
     tokenMap.put("hdr", "episode.videoHDRFormat");
+    tokenMap.put("filesize", "episode.videoFilesize;filesize");
 
     tokenMap.put("mediaSource", "episode.mediaSource");
     tokenMap.put("note", "episode.note");
@@ -1114,6 +1116,7 @@ public class TvShowRenamer {
       engine.registerNamedRenderer(new NamedTitleCaseRenderer());
       engine.registerNamedRenderer(new TvShowNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.registerNamedRenderer(new NamedFilesizeRenderer());
       engine.setModelAdaptor(new TvShowRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       if (episode != null) {

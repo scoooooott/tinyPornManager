@@ -15,10 +15,52 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.ADDED_SEASON;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.SEASON_COUNT;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.STATUS;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.TVDB;
+
+import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -63,51 +105,10 @@ import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MapUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-import java.awt.Dimension;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
-import static org.tinymediamanager.core.Constants.ADDED_SEASON;
-import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.COUNTRY;
-import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
-import static org.tinymediamanager.core.Constants.FIRST_AIRED;
-import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
-import static org.tinymediamanager.core.Constants.GENRE;
-import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
-import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
-import static org.tinymediamanager.core.Constants.IMDB;
-import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
-import static org.tinymediamanager.core.Constants.RUNTIME;
-import static org.tinymediamanager.core.Constants.SEASON;
-import static org.tinymediamanager.core.Constants.SEASON_COUNT;
-import static org.tinymediamanager.core.Constants.SORT_TITLE;
-import static org.tinymediamanager.core.Constants.STATUS;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
-import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.TRAKT;
-import static org.tinymediamanager.core.Constants.TVDB;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShow.
@@ -115,56 +116,56 @@ import static org.tinymediamanager.core.Constants.TVDB;
  * @author Manuel Laggner
  */
 public class TvShow extends MediaEntity implements IMediaInformation {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShow.class);
-  private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
+  private static final Logger                   LOGGER                     = LoggerFactory.getLogger(TvShow.class);
+  private static final Comparator<MediaFile>    MEDIA_FILE_COMPARATOR      = new TvShowMediaFileComparator();
 
-  private static final Pattern SEASON_NUMBER = Pattern.compile("(?i)season([0-9]{1,4}).*");
-  private static final Pattern SEASON_FOLDER_NUMBER = Pattern.compile("(?i).*([0-9]{1,4}).*");
+  private static final Pattern                  SEASON_NUMBER              = Pattern.compile("(?i)season([0-9]{1,4}).*");
+  private static final Pattern                  SEASON_FOLDER_NUMBER       = Pattern.compile("(?i).*([0-9]{1,4}).*");
 
   @JsonProperty
-  private int runtime = 0;
+  private int                                   runtime                    = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date firstAired = null;
+  private Date                                  firstAired                 = null;
   @JsonProperty
-  private MediaAiredStatus status = MediaAiredStatus.UNKNOWN;
+  private MediaAiredStatus                      status                     = MediaAiredStatus.UNKNOWN;
   @JsonProperty
-  private String sortTitle = "";
+  private String                                sortTitle                  = "";
   @JsonProperty
-  private MediaCertification certification = MediaCertification.UNKNOWN;
+  private MediaCertification                    certification              = MediaCertification.UNKNOWN;
   @JsonProperty
-  private String country = "";
+  private String                                country                    = "";
 
   @JsonProperty
-  private List<MediaGenres> genres = new CopyOnWriteArrayList<>();
+  private List<MediaGenres>                     genres                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String> tags = new CopyOnWriteArrayList<>();
+  private List<String>                          tags                       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private Map<Integer, String> seasonTitleMap = new HashMap<>(0);
+  private Map<Integer, String>                  seasonTitleMap             = new HashMap<>(0);
   @JsonProperty
-  private Map<Integer, String> seasonPosterUrlMap = new HashMap<>(0);
+  private Map<Integer, String>                  seasonPosterUrlMap         = new HashMap<>(0);
   @JsonProperty
-  private Map<Integer, String> seasonBannerUrlMap = new HashMap<>(0);
+  private Map<Integer, String>                  seasonBannerUrlMap         = new HashMap<>(0);
   @JsonProperty
-  private Map<Integer, String> seasonThumbUrlMap = new HashMap<>(0);
+  private Map<Integer, String>                  seasonThumbUrlMap          = new HashMap<>(0);
   @JsonProperty
-  private List<Person> actors = new CopyOnWriteArrayList<>();
+  private List<Person>                          actors                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<TvShowEpisode> dummyEpisodes = new CopyOnWriteArrayList<>();
+  private List<TvShowEpisode>                   dummyEpisodes              = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String> extraFanartUrls = new CopyOnWriteArrayList<>();
+  private List<String>                          extraFanartUrls            = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MediaTrailer> trailer = new CopyOnWriteArrayList<>();
+  private List<MediaTrailer>                    trailer                    = new CopyOnWriteArrayList<>();
 
-  private List<TvShowEpisode> episodes = new CopyOnWriteArrayList<>();
-  private Map<Integer, MediaFile> seasonPosters = new HashMap<>(0);
-  private Map<Integer, MediaFile> seasonBanners = new HashMap<>(0);
-  private Map<Integer, MediaFile> seasonThumbs = new HashMap<>(0);
-  private List<TvShowSeason> seasons = new CopyOnWriteArrayList<>();
-  private String titleSortable = "";
-  private Date lastWatched = null;
+  private List<TvShowEpisode>                   episodes                   = new CopyOnWriteArrayList<>();
+  private Map<Integer, MediaFile>               seasonPosters              = new HashMap<>(0);
+  private Map<Integer, MediaFile>               seasonBanners              = new HashMap<>(0);
+  private Map<Integer, MediaFile>               seasonThumbs               = new HashMap<>(0);
+  private List<TvShowSeason>                    seasons                    = new CopyOnWriteArrayList<>();
+  private String                                titleSortable              = "";
+  private Date                                  lastWatched                = null;
 
-  private PropertyChangeListener propertyChangeListener;
+  private PropertyChangeListener                propertyChangeListener;
 
   private static final Comparator<MediaTrailer> TRAILER_QUALITY_COMPARATOR = new MediaTrailer.QualityComparator();
 
@@ -1481,7 +1482,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * Adds the trailer.
    *
-   * @param obj the obj
+   * @param obj
+   *          the obj
    */
   public void addTrailer(MediaTrailer obj) {
 
@@ -1570,7 +1572,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * all supported TRAILER names. (without path, without extension!)
    *
-   * @param trailer trailer naming enum
+   * @param trailer
+   *          trailer naming enum
    * @return the associated trailer filename
    */
   public String getTrailerFilename(TvShowTrailerNaming trailer) {
@@ -2153,5 +2156,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public MediaSource getMediaInfoSource() {
     return MediaSource.UNKNOWN;
+  }
+
+  @Override
+  public long getVideoFilesize() {
+    long filesize = 0;
+    for (TvShowEpisode episode : episodes) {
+      for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+        filesize += mf.getFilesize();
+      }
+    }
+    return filesize;
   }
 }
