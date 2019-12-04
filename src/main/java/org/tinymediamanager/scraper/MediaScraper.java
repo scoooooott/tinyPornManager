@@ -15,6 +15,11 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
@@ -28,11 +33,6 @@ import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.ui.UTF8Control;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Class representing a MediaScraper; (type, info, description...)<br>
@@ -158,6 +158,7 @@ public class MediaScraper {
         break;
       case TVSHOW_TRAILER:
         plugins.addAll(MediaProviders.getProvidersForInterface(ITvShowTrailerProvider.class));
+        break;
       case SUBTITLE:
         plugins.addAll(MediaProviders.getProvidersForInterface(ISubtitleProvider.class));
         break;
