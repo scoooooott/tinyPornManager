@@ -17,7 +17,6 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;
@@ -56,10 +55,7 @@ public class SubtitleUtils {
     long size = file.length();
     long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
 
-    FileChannel fileChannel = null;
-    try {
-      fileChannel = new FileInputStream(file).getChannel();
-
+    try (FileInputStream is = new FileInputStream(file); FileChannel fileChannel = is.getChannel()) {
       ByteBuffer head = fileChannel.map(MapMode.READ_ONLY, 0, chunkSizeForFile);
       ByteBuffer tail = fileChannel.map(MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile);
 
@@ -78,53 +74,7 @@ public class SubtitleUtils {
     catch (Exception e) {
       LOGGER.error("Error computing SubDB hash", e);
     }
-    finally {
-      try {
-        if (fileChannel != null) {
-          fileChannel.close();
-        }
-      }
-      catch (IOException e) {
-        LOGGER.error("Error closing file stream", e);
-      }
-    }
-    return "";
-  }
 
-  /**
-   * Returns OpenSubtitle hash or empty string if error
-   * 
-   * @param file
-   *          the file to compute the hash
-   * @return hash
-   */
-  @SuppressWarnings("resource")
-  @Deprecated
-  public static String computeOpenSubtitlesHash(File file) {
-    long size = file.length();
-    long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
-
-    FileChannel fileChannel = null;
-    try {
-      fileChannel = new FileInputStream(file).getChannel();
-      long head = computeOpenSubtitlesHashForChunk(fileChannel.map(MapMode.READ_ONLY, 0, chunkSizeForFile));
-      long tail = computeOpenSubtitlesHashForChunk(fileChannel.map(MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
-
-      return String.format("%016x", size + head + tail);
-    }
-    catch (Exception e) {
-      LOGGER.error("Error computing OpenSubtitles hash", e);
-    }
-    finally {
-      try {
-        if (fileChannel != null) {
-          fileChannel.close();
-        }
-      }
-      catch (IOException e) {
-        LOGGER.error("Error closing file stream", e);
-      }
-    }
     return "";
   }
 

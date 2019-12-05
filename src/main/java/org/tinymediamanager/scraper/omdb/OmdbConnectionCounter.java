@@ -29,18 +29,20 @@ public class OmdbConnectionCounter {
   private static final Logger           LOGGER             = LoggerFactory.getLogger(OmdbConnectionCounter.class);
   private static final RingBuffer<Long> CONNECTION_COUNTER = new RingBuffer<>(10);
 
-  public static void trackConnections() {
-    Long currentTime = System.currentTimeMillis();
+  private OmdbConnectionCounter() {
+    // hide constructor for utility classes
+  }
+
+  public static synchronized void trackConnections() throws InterruptedException {
+    long currentTime = System.currentTimeMillis();
     if (CONNECTION_COUNTER.count() == CONNECTION_COUNTER.maxSize()) {
-      Long oldestConnection = CONNECTION_COUNTER.getTailItem();
+      long oldestConnection = CONNECTION_COUNTER.getTailItem();
       if (oldestConnection > (currentTime - 15000)) {
-        LOGGER.debug("connection limit reached, throttling " + CONNECTION_COUNTER);
-        try {
-          Thread.sleep(15000 - (currentTime - oldestConnection));
-        }
-        catch (InterruptedException e) {
-          LOGGER.warn(e.getMessage());
-        }
+        LOGGER.debug("connection limit reached, throttling {}", CONNECTION_COUNTER);
+        do {
+          OmdbConnectionCounter.class.wait(15000 - (currentTime - oldestConnection));
+          currentTime = System.currentTimeMillis();
+        } while (oldestConnection > (currentTime - 15000));
       }
     }
 

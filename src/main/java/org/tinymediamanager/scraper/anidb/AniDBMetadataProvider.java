@@ -62,6 +62,7 @@ import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.interfaces.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.omdb.OmdbConnectionCounter;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -125,9 +126,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       throw new ScrapeException(e);
     }
 
-    trackConnections();
-    try (InputStream is = cachedUrl.getInputStream()) {
-      doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+    try {
+      trackConnections();
+      try (InputStream is = cachedUrl.getInputStream()) {
+        doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+      }
     }
     catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
@@ -469,9 +472,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       throw new ScrapeException(e);
     }
 
-    trackConnections();
-    try (InputStream is = url.getInputStream()) {
-      doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+    try {
+      trackConnections();
+      try (InputStream is = url.getInputStream()) {
+        doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
+      }
     }
     catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
@@ -569,19 +574,16 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   /*
    * Track connections and throttle if needed.
    */
-  private static synchronized void trackConnections() {
-    Long currentTime = System.currentTimeMillis();
+  private static synchronized void trackConnections() throws InterruptedException {
+    long currentTime = System.currentTimeMillis();
     if (connectionCounter.count() == connectionCounter.maxSize()) {
-      Long oldestConnection = connectionCounter.getTailItem();
+      long oldestConnection = connectionCounter.getTailItem();
       if (oldestConnection > (currentTime - 2000)) {
         LOGGER.debug("connection limit reached, throttling...");
-        try {
-          Thread.sleep(2000 - (currentTime - oldestConnection));
-        }
-        catch (InterruptedException e) {
-          LOGGER.debug("waiting interrupted");
-          Thread.currentThread().interrupt();
-        }
+        do {
+          OmdbConnectionCounter.class.wait(2000 - (currentTime - oldestConnection));
+          currentTime = System.currentTimeMillis();
+        } while (oldestConnection > (currentTime - 2000));
       }
     }
 

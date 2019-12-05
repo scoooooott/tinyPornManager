@@ -18,7 +18,6 @@ package org.tinymediamanager.scraper.opensubtitles;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -352,11 +351,7 @@ public class OpensubtitlesMetadataProvider implements ISubtitleProvider {
     long size = file.length();
     long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
 
-    FileInputStream is = null;
-    FileChannel fileChannel = null;
-    try {
-      is = new FileInputStream(file);
-      fileChannel = is.getChannel();
+    try (FileInputStream is = new FileInputStream(file); FileChannel fileChannel = is.getChannel()) {
       long head = computeOpenSubtitlesHashForChunk(fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, chunkSizeForFile));
       long tail = computeOpenSubtitlesHashForChunk(
           fileChannel.map(FileChannel.MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
@@ -365,19 +360,6 @@ public class OpensubtitlesMetadataProvider implements ISubtitleProvider {
     }
     catch (Exception e) {
       LOGGER.error("Error computing OpenSubtitles hash", e);
-    }
-    finally {
-      try {
-        if (fileChannel != null) {
-          fileChannel.close();
-        }
-        if (is != null) {
-          is.close();
-        }
-      }
-      catch (IOException e) {
-        LOGGER.error("Error closing file stream", e);
-      }
     }
     return "";
   }

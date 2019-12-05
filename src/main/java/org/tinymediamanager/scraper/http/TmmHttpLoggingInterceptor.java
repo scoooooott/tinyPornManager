@@ -124,6 +124,8 @@ public class TmmHttpLoggingInterceptor implements Interceptor {
     }
     long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 
+    Buffer buffer = null;
+
     try {
       ResponseBody responseBody = response.body();
       long contentLength = responseBody.contentLength();
@@ -142,7 +144,7 @@ public class TmmHttpLoggingInterceptor implements Interceptor {
       else if (isTextResponse(response)) {
         BufferedSource source = responseBody.source();
         source.request(Long.MAX_VALUE); // Buffer the entire body.
-        Buffer buffer = source.buffer();
+        buffer = source.buffer();
 
         Long gzippedLength = null;
         if ("gzip".equalsIgnoreCase(headersResponse.get("Content-Encoding"))) {
@@ -194,6 +196,11 @@ public class TmmHttpLoggingInterceptor implements Interceptor {
     }
     catch (Exception e) {
       LOGGER.error("Problem in HTTP logging detected: {}", e.getMessage());
+    }
+    finally {
+      if (buffer != null) {
+        buffer.close();
+      }
     }
 
     return response;

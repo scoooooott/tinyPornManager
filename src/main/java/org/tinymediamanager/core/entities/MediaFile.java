@@ -925,7 +925,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the common aspect ratio
    */
   private float getCommonAspectRatio(Float ar) {
-    float ret = 0f;
+    float ret;
 
     // https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L538
     // Given that we're never going to be able to handle every single possibility in
