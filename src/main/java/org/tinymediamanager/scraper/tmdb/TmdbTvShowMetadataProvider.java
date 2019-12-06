@@ -459,14 +459,16 @@ class TmdbTvShowMetadataProvider {
     String language = options.getLanguage().toLocale().toLanguageTag();
     // get the data from tmdb
     TvEpisode episode = null;
+    TvSeason fullSeason = null;
     synchronized (api) {
       // get episode via season listing -> improves caching performance
       try {
-        Response<TvSeason> httpResponse = api.tvSeasonsService().season(tmdbId, seasonNr, language).execute();
+        Response<TvSeason> httpResponse = api.tvSeasonsService()
+            .season(tmdbId, seasonNr, language, new AppendToResponse(AppendToResponseItem.CREDITS)).execute();
         if (!httpResponse.isSuccessful()) {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
-        TvSeason fullSeason = httpResponse.body();
+        fullSeason = httpResponse.body();
         for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
           if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
             episode = ep;
@@ -499,7 +501,7 @@ class TmdbTvShowMetadataProvider {
       }
     }
 
-    if (episode == null) {
+    if (episode == null || fullSeason == null) {
       throw new NothingFoundException();
     }
 
@@ -536,6 +538,57 @@ class TmdbTvShowMetadataProvider {
 
     md.setReleaseDate(episode.air_date);
 
+    if (fullSeason.credits != null) {
+      // season cast
+      for (CastMember castMember : ListUtils.nullSafe(fullSeason.credits.cast)) {
+        Person cm = new Person(ACTOR);
+        cm.setId(providerInfo.getId(), castMember.id);
+        cm.setName(castMember.name);
+        cm.setRole(castMember.character);
+        if (castMember.id != null) {
+          cm.setProfileUrl("https://www.themoviedb.org/person/" + castMember.id);
+        }
+
+        if (StringUtils.isNotBlank(castMember.profile_path)) {
+          cm.setThumbUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + castMember.profile_path);
+        }
+
+        md.addCastMember(cm);
+      }
+
+      // season crew
+      for (CrewMember crewMember : ListUtils.nullSafe(fullSeason.credits.crew)) {
+        Person cm = new Person();
+        if ("Director".equals(crewMember.job)) {
+          cm.setType(DIRECTOR);
+          cm.setRole(crewMember.department);
+        }
+        else if ("Writing".equals(crewMember.department)) {
+          cm.setType(WRITER);
+          cm.setRole(crewMember.department);
+        }
+        else if ("Production".equals(crewMember.department)) {
+          cm.setType(PRODUCER);
+          cm.setRole(crewMember.job);
+        }
+        else {
+          continue;
+        }
+        cm.setId(providerInfo.getId(), crewMember.id);
+        cm.setName(crewMember.name);
+
+        if (StringUtils.isNotBlank(crewMember.profile_path)) {
+          cm.setThumbUrl(TmdbMetadataProvider.configuration.images.base_url + "h632" + crewMember.profile_path);
+        }
+        if (crewMember.id != null) {
+          cm.setProfileUrl("https://www.themoviedb.org/person/" + crewMember.id);
+        }
+
+        md.addCastMember(cm);
+      }
+    }
+
+    // episode guests
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
       Person cm = new Person(ACTOR);
       cm.setId(providerInfo.getId(), castMember.id);
