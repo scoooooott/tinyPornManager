@@ -1,6 +1,8 @@
 package org.tinymediamanager.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
@@ -128,8 +130,32 @@ public class ParserUtilsTest extends BasicTest {
 
   }
 
+  @Test
+  public void TestNameingDetectionWithBadWords() {
+
+    ArrayList<String> badwords = new ArrayList<>();
+    badwords.add("tvs");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-dl-ituneshd-xvid-101.avi", badwords));
+    badwords.add("top\\d{3}");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-top100-dl-ituneshd-xvid-101.avi", badwords));
+    badwords.clear();
+    badwords.add("tvs");
+    badwords.add("top\\d+");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-top5-dl-ituneshd-xvid-101.avi", badwords));
+
+  }
+
   private String detectTY(String filename) {
     String[] s = ParserUtils.detectCleanTitleAndYear(filename, Collections.emptyList());
+    String ret = s[0];
+    if (!s[1].isEmpty()) {
+      ret = ret + " | " + s[1];
+    }
+    return ret;
+  }
+
+  private String detectTYWithBadWords(String filename, List<String> badwords) {
+    String[] s = ParserUtils.detectCleanTitleAndYear(filename, badwords);
     String ret = s[0];
     if (!s[1].isEmpty()) {
       ret = ret + " | " + s[1];

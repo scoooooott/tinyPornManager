@@ -1,5 +1,6 @@
 Version 3.1
 =======================
++ added regexp support in badwords
 + added trailer support for TV shows
 + completely reworked scraper configuration: you now have a better control what scraper fetches/updates
   DUE TO THE MASSIVE REWORK YOU MAY NEED TO REVIEW YOUR SCRAPER SETTINGS

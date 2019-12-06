@@ -22,6 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -123,6 +125,13 @@ class MovieDatasourceSettingsPanel extends JPanel {
 
     btnAddBadWord.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfAddBadword.getText())) {
+        try {
+          Pattern.compile(tfAddBadword.getText());
+        }
+        catch (PatternSyntaxException ex) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("message.regex.error")); //$NON-NLS-1$
+          return;
+        }
         MovieModuleManager.SETTINGS.addBadWord(tfAddBadword.getText());
         tfAddBadword.setText("");
       }
@@ -188,7 +197,7 @@ class MovieDatasourceSettingsPanel extends JPanel {
     }
 
     {
-      JPanel panelBadWords = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[][100lp,grow][]"));
+      JPanel panelBadWords = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp][][grow]", "[][100lp,grow][]"));
 
       JLabel lblBadWordsT = new TmmLabel(BUNDLE.getString("Settings.movie.badwords"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelBadWords, lblBadWordsT, true);

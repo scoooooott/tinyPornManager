@@ -171,9 +171,16 @@ public class ParserUtils {
     // rebuild string, respecting bad words
     StringBuilder name = new StringBuilder();
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
+      boolean badwordFound = false;
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!badWords.contains(s[i].toLowerCase(Locale.ROOT))) {
+        for (String badword : badWords) {
+          if (s[i].toLowerCase(Locale.ROOT).matches(badword)) {
+            badwordFound = true;
+            break;
+          }
+        }
+        if (!badwordFound) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
           switch (word.toUpperCase(Locale.ROOT)) {
