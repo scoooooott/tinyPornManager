@@ -151,11 +151,6 @@
 			<version>5.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>hu.kazocsaba</groupId>
-			<artifactId>image-viewer</artifactId>
-			<version>1.2.3</version>
-		</dependency>
-		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout-swing</artifactId>
 			<version>5.2</version>
