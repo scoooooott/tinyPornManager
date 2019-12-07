@@ -220,9 +220,15 @@ public class TmmUIHelper {
       }
     }
     else if (SystemUtils.IS_OS_WINDOWS) {
-      // use explorer directly - ship around access exceptions and the unresolved network bug
-      // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
-      exec(new String[] { "explorer", abs });
+      // try to open directly
+      try {
+        Desktop.getDesktop().open(file.toFile());
+      }
+      catch (Exception e) {
+        // use explorer directly - ship around access exceptions and the unresolved network bug
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
+        exec(new String[] { "explorer", abs });
+      }
     }
     else if (SystemUtils.IS_OS_LINUX) {
       // try all different starters
@@ -232,6 +238,7 @@ public class TmmUIHelper {
         started = true;
       }
       catch (IOException ignored) {
+        // nothing to do here
       }
 
       if (!started) {
@@ -240,6 +247,7 @@ public class TmmUIHelper {
           started = true;
         }
         catch (IOException ignored) {
+          // nothing to do here
         }
       }
 
@@ -249,6 +257,7 @@ public class TmmUIHelper {
           started = true;
         }
         catch (IOException ignored) {
+          // nothing to do here
         }
       }
 
