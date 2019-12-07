@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -50,10 +51,15 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSetScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
@@ -62,7 +68,9 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
+import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.TmmSplitPane;
+import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
@@ -76,23 +84,25 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
-  private static final long          serialVersionUID = -1023959850452480592L;
-  private static final Logger        LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
+  private static final long                                                 serialVersionUID = -1023959850452480592L;
+  private static final Logger                                               LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
-  private MovieSet                   movieSetToScrape;
-  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<>());
-  private boolean                    continueQueue    = true;
+  private MovieSet                                                          movieSetToScrape;
+  private List<MovieSetChooserModel>                                        movieSetsFound   = ObservableCollections
+      .observableList(new ArrayList<>());
+  private boolean                                                           continueQueue    = true;
 
-  private JLabel                     lblProgressAction;
-  private JProgressBar               progressBar;
-  private JTextField                 tfMovieSetName;
-  private JTable                     tableMovieSets;
-  private JLabel                     lblMovieSetName;
-  private ImageLabel                 lblMovieSetPoster;
-  private JTable                     tableMovies;
-  private JCheckBox                  cbAssignMovies;
-  private JButton                    btnOk;
-  private JTextPane                  tpPlot;
+  private JLabel                                                            lblProgressAction;
+  private JProgressBar                                                      progressBar;
+  private JTextField                                                        tfMovieSetName;
+  private JTable                                                            tableMovieSets;
+  private JLabel                                                            lblMovieSetName;
+  private ImageLabel                                                        lblMovieSetPoster;
+  private JTable                                                            tableMovies;
+  private JCheckBox                                                         cbAssignMovies;
+  private JButton                                                           btnOk;
+  private JTextPane                                                         tpPlot;
+  private ScraperMetadataConfigCheckComboBox<MovieSetScraperMetadataConfig> cbScraperConfig;
 
   /**
    * Instantiates a new movie set chooser panel.
@@ -125,7 +135,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[500,grow]"));
+      panelContent.setLayout(new MigLayout("", "[950lp,grow]", "[500,grow][][][]"));
 
       JSplitPane splitPane = new TmmSplitPane();
       splitPane.setResizeWeight(0.5);
@@ -206,6 +216,17 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           panelSearchDetail.add(cbAssignMovies, "cell 0 3 2 1,growx,aligny top");
         }
       }
+      {
+        JSeparator separator = new JSeparator();
+        panelContent.add(separator, "cell 0 1,growx");
+      }
+      {
+        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
+        panelContent.add(lblScrapeFollowingItems, "cell 0 2");
+
+        cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieSetScraperMetadataConfig.values());
+        panelContent.add(cbScraperConfig, "cell 0 3,growx, wmin 0");
+      }
     }
 
     {
@@ -251,10 +272,11 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     tableMovies.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tableMovies.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+    cbScraperConfig.setSelectedItems(MovieSetScraperMetadataConfig.values());
+
     tableMovieSets.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
     tfMovieSetName.setText(movieSet.getTitle());
     searchMovie();
-
   }
 
   private void searchMovie() {
@@ -341,12 +363,17 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       if (row >= 0) {
         MovieSetChooserModel model = movieSetsFound.get(row);
         if (model != MovieSetChooserModel.emptyResult) {
-          movieSetToScrape.setTitle(model.getName());
-          movieSetToScrape.setPlot(model.getOverview());
-          // movieSetToScrape.setArtworkUrl(model.getPosterUrl(), MediaFileType.POSTER);
-          // movieSetToScrape.setArtworkUrl(model.getFanartUrl(), MediaFileType.FANART);
-          movieSetToScrape.setTmdbId(model.getTmdbId());
-          movieSetToScrape.saveToDb();
+          // when scraping was not successful, abort saving
+          if (!model.isScraped()) {
+            MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "message.scrape.threadcrashed"));
+            return;
+          }
+
+          MediaMetadata md = model.getMetadata();
+
+          // set scraped metadata
+          List<MovieSetScraperMetadataConfig> scraperConfig = cbScraperConfig.getSelectedItems();
+          movieSetToScrape.setMetadata(md, scraperConfig);
 
           // assign movies
           if (cbAssignMovies.isSelected()) {
@@ -374,11 +401,12 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
             // and finally save assignments
             movieSetToScrape.saveToDb();
           }
+
           // get images?
-          // if (MovieModuleManager.SETTINGS.getScraperMetadataConfig().isArtwork()) {
-          // get artwork asynchronous
-          // model.startArtworkScrapeTask(movieSetToScrape, MovieModuleManager.SETTINGS.getScraperMetadataConfig());
-          // }
+          if (ScraperMetadataConfig.containsAnyArtwork(scraperConfig)) {
+            // get artwork asynchronous
+            model.startArtworkScrapeTask(movieSetToScrape, scraperConfig);
+          }
         }
         setVisible(false);
       }

@@ -30,8 +30,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.MovieSetScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -272,15 +272,15 @@ public class MovieSetChooserModel extends AbstractModelObject {
     return movies;
   }
 
-  public void startArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+  public void startArtworkScrapeTask(MovieSet movieSet, List<MovieSetScraperMetadataConfig> config) {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(movieSet, config));
   }
 
   private class ArtworkScrapeTask extends TmmTask {
     private MovieSet                   movieSetToScrape;
-    private MovieScraperMetadataConfig config;
+    private List<MovieSetScraperMetadataConfig> config;
 
-    public ArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+    public ArtworkScrapeTask(MovieSet movieSet, List<MovieSetScraperMetadataConfig> config) {
       super(BUNDLE.getString("message.scrape.artwork") + " " + movieSet.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieSetToScrape = movieSet;
       this.config = config;
@@ -334,6 +334,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
       movieSetToScrape.setArtwork(artwork, config);
     }
+  }
+
+  public MediaMetadata getMetadata() {
+    return metadata;
   }
 
   public static class MovieInSet extends AbstractModelObject implements Comparable<MovieInSet> {

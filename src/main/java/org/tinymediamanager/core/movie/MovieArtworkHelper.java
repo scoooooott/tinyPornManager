@@ -766,6 +766,8 @@ public class MovieArtworkHelper {
    *          the movie to set the artwork for
    * @param artwork
    *          a list of all artworks to be set
+   * @param config
+   *          the config which artwork to set
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork, List<MovieScraperMetadataConfig> config) {
     if (!ScraperMetadataConfig.containsAnyArtwork(config)) {

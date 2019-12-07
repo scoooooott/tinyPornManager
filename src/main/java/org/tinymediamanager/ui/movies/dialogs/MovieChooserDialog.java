@@ -313,7 +313,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx");
 
-      cbScraperConfig = new ScraperMetadataConfigCheckComboBox<>(MovieScraperMetadataConfig.values());
+      cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
       contentPanel.add(cbScraperConfig, "cell 0 5,grow, wmin 0");
     }
 

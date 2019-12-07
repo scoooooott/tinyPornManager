@@ -64,8 +64,6 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -135,7 +133,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Movie extends MediaEntity implements IMediaInformation {
-  @XmlTransient
   private static final Logger                   LOGGER                     = LoggerFactory.getLogger(Movie.class);
   private static final Comparator<MediaFile>    MEDIA_FILE_COMPARATOR      = new MovieMediaFileComparator();
   private static final Comparator<MediaTrailer> TRAILER_QUALITY_COMPARATOR = new MediaTrailer.QualityComparator();
