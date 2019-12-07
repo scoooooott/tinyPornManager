@@ -1057,6 +1057,11 @@ public class MediaFileHelper {
    */
   private static String getMediaInfo(Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot, MediaInfo.StreamKind streamKind,
       int streamNumber, String... keys) {
+    // prevent NPE
+    if (miSnapshot == null) {
+      return "";
+    }
+
     for (String key : keys) {
       List<Map<String, String>> stream = miSnapshot.get(streamKind);
       if (stream != null) {
@@ -1091,7 +1096,10 @@ public class MediaFileHelper {
    */
   public static String getMediaInfoContains(Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot, MediaInfo.StreamKind streamKind,
       int streamNumber, String search, String... keys) {
-
+    // prevent NPE
+    if (miSnapshot == null) {
+      return "";
+    }
     for (String key : keys) {
       List<Map<String, String>> stream = miSnapshot.get(streamKind);
       if (stream != null) {

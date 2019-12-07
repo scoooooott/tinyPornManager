@@ -33,7 +33,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
 
 import org.imgscalr.Scalr;
@@ -204,6 +203,10 @@ public class ImageCache {
         retries--;
       } while (retries > 0);
 
+      if (originalImage == null) {
+        throw new IOException("could not open original image to scale; probably due to memory limits");
+      }
+
       // calculate width based on MF type
       int desiredWidth = originalImage.getWidth(); // initialize with fallback
       // decide the scale-side depending on the aspect ratio
@@ -246,7 +249,9 @@ public class ImageCache {
         retries--;
       } while (retries > 0);
 
-      originalImage = null;
+      if (scaledImage == null) {
+        throw new IOException("could not scale image; probably due to memory limits");
+      }
 
       ImageWriter imgWrtr = null;
       ImageWriteParam imgWrtrPrm = null;
@@ -268,7 +273,7 @@ public class ImageCache {
         xformOp.filter(scaledImage, rgb);
         imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
         imgWrtrPrm = imgWrtr.getDefaultWriteParam();
-        imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+        imgWrtrPrm.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         imgWrtrPrm.setCompressionQuality(0.80f);
 
         scaledImage = rgb;
@@ -281,10 +286,9 @@ public class ImageCache {
       imgWrtr.dispose();
       output.flush();
       output.close();
-      scaledImage = null;
 
       if (!Files.exists(cachedFile)) {
-        throw new Exception("unable to cache file: " + originalFile);
+        throw new IOException("unable to cache file: " + originalFile);
       }
     }
 

@@ -194,7 +194,9 @@ public class Utils {
    *          the object to dump
    */
   public static void dumpObject(Object o) {
-    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5))); // NOSONAR
+    RecursiveToStringStyle style = new RecursiveToStringStyle(5);
+    System.out.println(ReflectionToStringBuilder.toString(o, style)); // NOSONAR
+    style.cleanup();
   }
 
   /**

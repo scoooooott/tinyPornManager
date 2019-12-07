@@ -240,7 +240,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     catch (Exception e) {
       LOGGER.debug("failed to get artwork: {}", e.getMessage());
       // if the thread has been interrupted, to no rethrow that exception
-      if (e instanceof InterruptedException || e instanceof InterruptedException) {
+      if (e instanceof InterruptedException || e instanceof InterruptedIOException) {
         return returnArtwork;
       }
 

@@ -137,4 +137,8 @@ public class RecursiveToStringStyle extends ToStringStyle {
       --value;
     }
   }
+
+  public void cleanup() {
+    depth.remove();
+  }
 }
