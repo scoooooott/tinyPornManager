@@ -15,6 +15,23 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+
+import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.BANNER_URL;
@@ -27,23 +44,6 @@ import static org.tinymediamanager.core.Constants.SEASON;
 import static org.tinymediamanager.core.Constants.THUMB;
 import static org.tinymediamanager.core.Constants.THUMB_URL;
 
-import java.awt.Dimension;
-import java.beans.PropertyChangeListener;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-
 /**
  * The Class TvShowSeason.
  * 
@@ -51,6 +51,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  */
 public class TvShowSeason extends AbstractModelObject implements Comparable<TvShowSeason> {
   private int                    season      = -1;
+  private String                 title       = "";
   private TvShow                 tvShow;
   private List<TvShowEpisode>    episodes    = new CopyOnWriteArrayList<>();
   private Date                   lastWatched = null;
@@ -84,6 +85,19 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
 
   public int getSeason() {
     return season;
+  }
+
+  public void setTitle(String newValue) {
+    String oldValue = this.title;
+    this.title = newValue;
+    firePropertyChange("title", oldValue, newValue);
+
+    // store the title inside the TV show itself
+    getTvShow().addSeasonTitle(season, newValue);
+  }
+
+  public String getTitle() {
+    return this.title;
   }
 
   public TvShow getTvShow() {
@@ -372,4 +386,5 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
     return Integer.compare(getSeason(), o.getSeason());
   }
+
 }

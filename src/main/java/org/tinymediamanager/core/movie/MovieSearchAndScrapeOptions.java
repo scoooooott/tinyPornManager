@@ -15,34 +15,35 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The Class MovieSearchAndScrapeOptions.
+ * The class MovieSearchAndScrapeOptions is used to hold scrape and search related data for movies
  * 
  * @author Manuel Laggner
  */
-public class MovieSearchAndScrapeOptions {
-  private MovieScraperMetadataConfig scraperMetadataConfig;
-  private MediaScraper               metadataScraper;
-
-  private List<MediaScraper>         artworkScrapers = new ArrayList<>();
-  private List<MediaScraper>         trailerScrapers = new ArrayList<>();
+public class MovieSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
+  public MovieSearchAndScrapeOptions() {
+    super(MediaType.MOVIE);
+  }
 
   /**
-   * Instantiates a new movie search and scrape config.
+   * copy constructor
+   * 
+   * @param original
+   *          the original to copy
    */
-  public MovieSearchAndScrapeOptions() {
+  public MovieSearchAndScrapeOptions(MovieSearchAndScrapeOptions original) {
+    super(original);
   }
 
   /**
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
+    language = MovieModuleManager.SETTINGS.getScraperLanguage();
+
     // metadata
     metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 
@@ -51,81 +52,8 @@ public class MovieSearchAndScrapeOptions {
 
     // trailer
     trailerScrapers.addAll(MovieList.getInstance().getDefaultTrailerScrapers());
-  }
 
-  /**
-   * Gets the scraper metadata config.
-   * 
-   * @return the scraper metadata config
-   */
-  public MovieScraperMetadataConfig getScraperMetadataConfig() {
-    return scraperMetadataConfig;
-  }
-
-  /**
-   * Gets the metadata scraper.
-   * 
-   * @return the metadata scraper
-   */
-  public MediaScraper getMetadataScraper() {
-    return metadataScraper;
-  }
-
-  /**
-   * Gets the artwork scrapers.
-   * 
-   * @return the artwork scrapers
-   */
-  public List<MediaScraper> getArtworkScrapers() {
-    return artworkScrapers;
-  }
-
-  /**
-   * Gets the trailer scrapers.
-   * 
-   * @return the trailer scrapers
-   */
-  public List<MediaScraper> getTrailerScrapers() {
-    return trailerScrapers;
-  }
-
-  /**
-   * Sets the scraper metadata config.
-   * 
-   * @param scraperMetadataConfig
-   *          the new scraper metadata config
-   */
-  public void setScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
-    this.scraperMetadataConfig = scraperMetadataConfig;
-  }
-
-  /**
-   * Sets the metadata scraper.
-   * 
-   * @param metadataScraper
-   *          the new metadata scraper
-   */
-  public void setMetadataScraper(MediaScraper metadataScraper) {
-    this.metadataScraper = metadataScraper;
-  }
-
-  /**
-   * Adds the artwork scraper.
-   * 
-   * @param artworkScraper
-   *          the artwork scraper
-   */
-  public void addArtworkScraper(MediaScraper artworkScraper) {
-    this.artworkScrapers.add(artworkScraper);
-  }
-
-  /**
-   * Adds the trailer scraper.
-   * 
-   * @param trailerScraper
-   *          the trailer scraper
-   */
-  public void addTrailerScraper(MediaScraper trailerScraper) {
-    this.trailerScrapers.add(trailerScraper);
+    // subtitle
+    subtitleScrapers.addAll(MovieList.getInstance().getDefaultSubtitleScrapers());
   }
 }

@@ -68,23 +68,24 @@ public class MovieRenameAction extends TmmAction {
       JCheckBox checkBox = new JCheckBox(BUNDLE.getString("tmm.donotshowagain")); //$NON-NLS-1$
       TmmFontHelper.changeFont(checkBox, L1);
       checkBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       Object[] params = { BUNDLE.getString("movie.rename.desc"), checkBox }; //$NON-NLS-1$
-      int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("movie.rename"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("movie.rename"), JOptionPane.YES_NO_OPTION, //$NON-NLS-1$
+          JOptionPane.QUESTION_MESSAGE, null, options, null);
 
       // the user don't want to show this dialog again
       if (checkBox.isSelected()) {
         TmmProperties.getInstance().putProperty("movie.hiderenamehint", String.valueOf(checkBox.isSelected())); //$NON-NLS-1$ )
       }
 
-      if (answer != JOptionPane.OK_OPTION) {
+      if (answer != JOptionPane.YES_OPTION) {
         return;
       }
     }
 
     // rename
     TmmThreadPool renameTask = new MovieRenameTask(selectedMovies);
-    if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(renameTask);
   }
 }

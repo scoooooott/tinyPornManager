@@ -15,29 +15,30 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-
+import net.miginfocom.swing.MigLayout;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.tvshows.panels.TvShowScraperMetadataPanel;
 
-import net.miginfocom.swing.MigLayout;
-
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class TvShowScrapeMetadataDialog.
@@ -45,63 +46,105 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowScrapeMetadataDialog extends TmmDialog {
-  private static final long            serialVersionUID            = 6120530120703772160L;
+  private static final long                                                      serialVersionUID = 6120530120703772160L;
 
-  private TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();
-  private boolean                      startScrape                 = true;
+  private boolean                                                                startScrape      = false;
 
   /** UI components */
-  private MediaScraperComboBox         cbMetadataScraper;
-  private MediaScraperCheckComboBox    cbArtworkScraper;
+  private JComboBox                                                              cbLanguage;
+  private MediaScraperComboBox                                                   cbMetadataScraper;
+  private MediaScraperCheckComboBox cbArtworkScraper;
+  private MediaScraperCheckComboBox cbTrailerScraper;
+  private ScraperMetadataConfigCheckComboBox<TvShowScraperMetadataConfig> cbTvShowScraperConfig;
+  private ScraperMetadataConfigCheckComboBox<TvShowEpisodeScraperMetadataConfig> cbEpisodeScraperConfig;
 
+  /**
+   * create the dialog with all fields available
+   *
+   * @param title
+   *          the title to display
+   * @wbp.parser.constructor
+   */
   public TvShowScrapeMetadataDialog(String title) {
-    super(title, "updateMetadata");
+    this(title, true, true, true, true, true);
+  }
 
-    // copy the values
-    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
+  /**
+   * create the scraper dialog with displaying just set fields
+   * 
+   * @param title
+   *          the title to display
+   * @param metadata
+   *          show the metadata scraper block?
+   * @param artwork
+   *          show the artwork scraper block?
+   * @param tvShowMetadata
+   *          show the TV show metadata config block?
+   * @param episodeMetadata
+   *          show the episode metadata config block?
+   */
+  public TvShowScrapeMetadataDialog(String title, boolean metadata, boolean artwork, boolean tvShowMetadata, boolean episodeMetadata, boolean trailer) {
+    super(title, "tvShowUpdateMetadata");
 
-    TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
-    scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setPlot(settings.isPlot());
-    scraperMetadataConfig.setAired(settings.isAired());
-    scraperMetadataConfig.setRating(settings.isRating());
-    scraperMetadataConfig.setRuntime(settings.isRuntime());
-    scraperMetadataConfig.setYear(settings.isYear());
-    scraperMetadataConfig.setCertification(settings.isCertification());
-    scraperMetadataConfig.setCast(settings.isCast());
-    scraperMetadataConfig.setGenres(settings.isGenres());
-    scraperMetadataConfig.setArtwork(settings.isArtwork());
-    scraperMetadataConfig.setEpisodes(settings.isEpisodes());
-    scraperMetadataConfig.setStatus(settings.isStatus());
-    scraperMetadataConfig.setEpisodeList(TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes());
+    JPanel panelContent = new JPanel();
+    getContentPane().add(panelContent, BorderLayout.CENTER);
+    panelContent.setLayout(new MigLayout("hidemode 3", "[][600lp:800lp,grow]", "[][][][shrink 0][200lp:n, grow]"));
 
-    tvShowSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
+    JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language"));
+    panelContent.add(lblLanguageT, "cell 0 0,alignx trailing");
 
-    {
-      JPanel panelContent = new JPanel();
-      getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][][20lp:n][][][]"));
+    cbLanguage = new JComboBox(MediaLanguages.valuesSorted());
+    cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getScraperLanguage());
+    panelContent.add(cbLanguage, "cell 1 0,growx");
 
+    if (metadata) {
       JLabel lblMetadataScraperT = new TmmLabel(BUNDLE.getString("scraper.metadata"));
-      panelContent.add(lblMetadataScraperT, "cell 0 0,alignx right");
+      panelContent.add(lblMetadataScraperT, "cell 0 1,alignx trailing");
 
       cbMetadataScraper = new MediaScraperComboBox(TvShowList.getInstance().getAvailableMediaScrapers());
-      panelContent.add(cbMetadataScraper, "cell 1 0,growx");
-
+      panelContent.add(cbMetadataScraper, "cell 1 1,growx");
+    }
+    if (artwork) {
       JLabel lblArtworkScraper = new TmmLabel(BUNDLE.getString("scraper.artwork"));
-      panelContent.add(lblArtworkScraper, "cell 0 1,alignx right");
+      panelContent.add(lblArtworkScraper, "cell 0 2,alignx trailing");
 
       cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
-      panelContent.add(cbArtworkScraper, "cell 1 1,growx");
+      panelContent.add(cbArtworkScraper, "cell 1 2,growx");
+    }
+    if (trailer) {
+      JLabel lblTrailerScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"));
+      panelContent.add(lblTrailerScraper, "cell 0 3,alignx right");
 
+      cbTrailerScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableTrailerScrapers());
+      panelContent.add(cbTrailerScraper, "cell 1 3,growx");
+    }
+    {
       JSeparator separator = new JSeparator();
-      panelContent.add(separator, "cell 0 3 2 1,growx");
+      panelContent.add(separator, "cell 0 4 2 1,growx");
+    }
+    if (tvShowMetadata || episodeMetadata) {
+      JPanel panelScraperConfig = new JPanel();
+      panelContent.add(panelScraperConfig, "cell 0 5 2 1,grow");
+      panelScraperConfig.setLayout(new MigLayout("", "[][300lp:500lp,grow]", "[][][]"));
+      {
+        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape"));
+        panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0 2 1");
+      }
+      if (tvShowMetadata) {
+        JLabel lblTvShowsT = new TmmLabel(BUNDLE.getString("metatag.tvshows"));
+        panelScraperConfig.add(lblTvShowsT, "cell 0 1,alignx trailing");
 
-      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
-      panelContent.add(lblScrapeFollowingItems, "cell 0 4 2 1,growx");
+        cbTvShowScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowScraperMetadataConfig.values());
+        panelScraperConfig.add(cbTvShowScraperConfig, "cell 1 1,grow, wmin 0");
+      }
+      if (episodeMetadata) {
 
-      JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(this.tvShowSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelContent.add(panelScraperMetadataSetting, "cell 0 5 2 1,grow");
+        JLabel lblEpisodesT = new TmmLabel(BUNDLE.getString("metatag.episodes"));
+        panelScraperConfig.add(lblEpisodesT, "cell 0 2,alignx trailing");
+
+        cbEpisodeScraperConfig = new ScraperMetadataConfigCheckComboBox(TvShowEpisodeScraperMetadataConfig.values());
+        panelScraperConfig.add(cbEpisodeScraperConfig, "cell 1 2,grow, wmin 0");
+      }
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
@@ -136,6 +179,14 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     if (!selectedArtworkScrapers.isEmpty()) {
       cbArtworkScraper.setSelectedItems(selectedArtworkScrapers);
     }
+
+    // pre-set configs
+    if (cbTvShowScraperConfig != null) {
+      cbTvShowScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig());
+    }
+    if (cbEpisodeScraperConfig != null) {
+      cbEpisodeScraperConfig.setSelectedItems(TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig());
+    }
   }
 
   /**
@@ -143,16 +194,60 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
    * 
    * @return the tv show search and scrape config
    */
-  public TvShowSearchAndScrapeOptions getTvShowSearchAndScrapeConfig() {
+  public TvShowSearchAndScrapeOptions getTvShowSearchAndScrapeOptions() {
+    TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();
+
+    // language
+    tvShowSearchAndScrapeConfig.setLanguage((MediaLanguages) cbLanguage.getSelectedItem());
+
     // metadata provider
     tvShowSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork scrapers
-    for (MediaScraper scraper : cbArtworkScraper.getSelectedItems()) {
-      tvShowSearchAndScrapeConfig.addArtworkScraper(scraper);
-    }
+    tvShowSearchAndScrapeConfig.setArtworkScraper(cbArtworkScraper.getSelectedItems());
+
+    // trailer scrapers
+    tvShowSearchAndScrapeConfig.setTrailerScraper(cbTrailerScraper.getSelectedItems());
 
     return tvShowSearchAndScrapeConfig;
+  }
+
+  /**
+   * Pass the episode search and scrape config to the caller.
+   *
+   * @return the episode search and scrape config
+   */
+  public TvShowEpisodeSearchAndScrapeOptions getTvShowEpisodeSearchAndScrapeOptions() {
+    TvShowEpisodeSearchAndScrapeOptions episodeSearchAndScrapeOptions = new TvShowEpisodeSearchAndScrapeOptions();
+
+    // language
+    episodeSearchAndScrapeOptions.setLanguage((MediaLanguages) cbLanguage.getSelectedItem());
+
+    // metadata provider
+    episodeSearchAndScrapeOptions.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
+
+    // artwork scrapers
+    episodeSearchAndScrapeOptions.setArtworkScraper(cbArtworkScraper.getSelectedItems());
+
+    return episodeSearchAndScrapeOptions;
+  }
+
+  /**
+   * pass the tv show meta data config to the caller
+   * 
+   * @return a list of meta data config
+   */
+  public List<TvShowScraperMetadataConfig> getTvShowScraperMetadataConfig() {
+    return cbTvShowScraperConfig.getSelectedItems();
+  }
+
+  /**
+   * pass the episode meta data config to the caller
+   * 
+   * @return a list of meta data config
+   */
+  public List<TvShowEpisodeScraperMetadataConfig> getTvShowEpisodeScraperMetadataConfig() {
+    return cbEpisodeScraperConfig.getSelectedItems();
   }
 
   /**

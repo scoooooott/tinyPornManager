@@ -39,21 +39,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -137,8 +137,8 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addUserrating();
         addVotes();
         addSet();
-        addOutline();
         addPlot();
+        addOutline();
         addTagline();
         addRuntime();
         addThumb();
@@ -147,6 +147,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addCertification();
         addId();
         addTmdbid();
+        addTmdbCollectionId();
         addIds();
         addCountry();
         addPremiered();
@@ -177,9 +178,28 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         getTransformer().transform(new DOMSource(document), new StreamResult(out));
         String xml = out.toString().replaceAll("(?<!\r)\n", "\r\n"); // windows conform line endings
 
-        // write to file
         Path f = movie.getPathNIO().resolve(nfoFilename);
-        Utils.writeStringToFile(f, xml);
+
+        // compare old vs new
+        boolean changed = true;
+        try {
+          String xmlOld = Utils.readFileToString(f).replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", ""); // replace xml comments
+          String xmlNew = xml.replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", "");
+          if (xmlOld.equals(xmlNew)) {
+            changed = false;
+          }
+        }
+        catch (Exception e) {
+          // ignore
+        }
+
+        // write to file
+        if (changed) {
+          Utils.writeStringToFile(f, xml);
+        }
+        else {
+          getLogger().debug("NFO did not change - do not write it!");
+        }
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
@@ -241,30 +261,30 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     Float rating10;
 
     // the default rating
-    Map<String, Rating> ratings = movie.getRatings();
-    Rating mainRating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
+    Map<String, MediaRating> ratings = movie.getRatings();
+    MediaRating mainMediaRating = ratings.get(MovieModuleManager.SETTINGS.getPreferredRating());
 
     // is there any rating which is not the user rating?
-    if (mainRating == null) {
-      for (Rating r : ratings.values()) {
+    if (mainMediaRating == null) {
+      for (MediaRating r : ratings.values()) {
         // skip user ratings here
-        if (Rating.USER.equals(r.getId())) {
+        if (MediaRating.USER.equals(r.getId())) {
           continue;
         }
-        mainRating = r;
+        mainMediaRating = r;
       }
     }
 
     // just create one to not pass null
-    if (mainRating == null) {
-      mainRating = new Rating();
+    if (mainMediaRating == null) {
+      mainMediaRating = new MediaRating();
     }
 
-    if (mainRating.getMaxValue() > 0) {
-      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    if (mainMediaRating.getMaxValue() > 0) {
+      rating10 = mainMediaRating.getRating() * 10 / mainMediaRating.getMaxValue();
     }
     else {
-      rating10 = mainRating.getRating();
+      rating10 = mainMediaRating.getRating();
     }
 
     Element rating = document.createElement("rating");
@@ -279,13 +299,13 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
 
-    Rating rating = movie.getRating(Rating.USER);
+    MediaRating mediaRating = movie.getRating(MediaRating.USER);
 
-    if (rating.getMaxValue() > 0) {
-      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    if (mediaRating.getMaxValue() > 0) {
+      rating10 = mediaRating.getRating() * 10 / mediaRating.getMaxValue();
     }
     else {
-      rating10 = rating.getRating();
+      rating10 = mediaRating.getRating();
     }
 
     Element UserRating = document.createElement("userrating");
@@ -312,22 +332,54 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   }
 
   /**
-   * add the outline in the form <outline>xxx</outline>
-   */
-  protected void addOutline() {
-    Element outline = document.createElement("outline");
-    // use the plot right now since we do not have a dedicated outline field in tmm
-    outline.setTextContent(movie.getPlot());
-    root.appendChild(outline);
-  }
-
-  /**
    * add the plot in the form <plot>xxx</plot>
    */
   protected void addPlot() {
     Element plot = document.createElement("plot");
     plot.setTextContent(movie.getPlot());
     root.appendChild(plot);
+  }
+
+  /**
+   * add the outline in the form <outline>xxx</outline>
+   */
+  protected void addOutline() {
+    String outlineText = "";
+    if (MovieModuleManager.SETTINGS.isCreateOutline()) {
+      // lets create the outline since we do not have any outline field
+      if (MovieModuleManager.SETTINGS.isOutlineFirstSentence()) {
+        // use the first sentence of the plot (at least 20 chars)
+        StringBuilder text = new StringBuilder();
+        String[] sentences = movie.getPlot().split("\\.");
+
+        for (String sentence : sentences) {
+          if (text.length() > 0) {
+            // there's already a text in it, append a dot
+            text.append(".");
+          }
+
+          text.append(sentence);
+          if (text.length() >= 20) {
+            break;
+          }
+        }
+        outlineText = text.toString();
+      }
+      else {
+        // use the whole plot
+        outlineText = movie.getPlot();
+      }
+    }
+    else if (parser != null && StringUtils.isNotBlank(parser.outline)) {
+      // only pass pre-existing outlines since we do not have the outline
+      outlineText = parser.outline;
+    }
+
+    if (StringUtils.isNotBlank(outlineText)) {
+      Element outline = document.createElement("outline");
+      outline.setTextContent(outlineText);
+      root.appendChild(outline);
+    }
   }
 
   /**
@@ -375,7 +427,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     if (movie.getCertification() != null) {
       if (movie.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        mpaa.setTextContent(Certification.getMPAAString(movie.getCertification()));
+        mpaa.setTextContent(MediaCertification.getMPAAString(movie.getCertification()));
       }
       else {
         mpaa.setTextContent(CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle()));
@@ -417,16 +469,35 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   }
 
   /**
+   * add the tmdb collection (movie set) id in <tmdbCollectionId>xxx</tmdbCollectionId>
+   */
+  protected void addTmdbCollectionId() {
+    Element tmdbCollectionId = document.createElement("tmdbCollectionId");
+    try {
+      int id = movie.getIdAsInt(MediaMetadata.TMDB_SET);
+      if (id > 0) {
+        tmdbCollectionId.setTextContent(Integer.toString(id));
+      }
+    }
+    catch (Exception e) {
+      getLogger().trace("could not store tmdb collection id: {}", e.getMessage());
+    }
+    root.appendChild(tmdbCollectionId);
+  }
+
+  /**
    * add our own id store in the new kodi form<br />
-   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   * <uniqueid type="{scraper}" default="true/false">{id}</uniqueid>
    *
-   * only imdb has default = true
+   * imdb should have default="true", but if no imdb ID is available, we must ensure that at least one entry has default="true"
    */
   protected void addIds() {
+    String defaultScraper = detectDefaultScraper();
+
     for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.IMDB.equals(entry.getKey()) || movie.getIds().size() == 1) {
+      if (defaultScraper.equals(entry.getKey())) {
         uniqueid.setAttribute("default", "true");
       }
       else {
@@ -614,9 +685,9 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(movieTrailer.getUrl());
+    for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(mediaTrailer.getUrl());
         break;
       }
     }
@@ -708,4 +779,23 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     return transformer;
   }
 
+  /**
+   * try to detect the default scraper by the given ids
+   *
+   * @return the scraper where the default should be set
+   */
+  private String detectDefaultScraper() {
+    // IMDB first
+    if (movie.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
+    }
+
+    // TMDB second
+    if (movie.getIds().containsKey(MediaMetadata.TMDB)) {
+      return MediaMetadata.TMDB;
+    }
+
+    // the first found as fallback
+    return movie.getIds().keySet().stream().findFirst().orElse("");
+  }
 }

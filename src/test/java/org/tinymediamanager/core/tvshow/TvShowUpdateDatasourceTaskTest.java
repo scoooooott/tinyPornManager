@@ -21,7 +21,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private static final String FOLDER                   = getSettingsFolder();
-  private static final int    NUMBER_OF_EXPECTED_SHOWS = 13;
+  private static final int    NUMBER_OF_EXPECTED_SHOWS = 14;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {

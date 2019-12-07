@@ -34,19 +34,19 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author Manuel Laggner
  */
 public class MovieEdition extends DynaEnum<MovieEdition> {
-  private final static Comparator<MovieEdition> COMPARATOR         = new MovieEditionComparator();
+  private static final Comparator<MovieEdition> COMPARATOR         = new MovieEditionComparator();
 
-  public final static MovieEdition              NONE               = new MovieEdition("NONE", 0, "", "");
-  public final static MovieEdition              DIRECTORS_CUT      = new MovieEdition("DIRECTORS_CUT", 1, "Director's Cut",
+  public static final MovieEdition              NONE               = new MovieEdition("NONE", 0, "", "");
+  public static final MovieEdition              DIRECTORS_CUT      = new MovieEdition("DIRECTORS_CUT", 1, "Director's Cut",
       ".Director.?s.(Cut|Edition|Version)");
-  public final static MovieEdition              EXTENDED_EDITION   = new MovieEdition("EXTENDED_EDITION", 2, "Extended Edition",
+  public static final MovieEdition              EXTENDED_EDITION   = new MovieEdition("EXTENDED_EDITION", 2, "Extended Edition",
       ".Extended.(Cut|Edition|Version)?");
-  public final static MovieEdition              THEATRICAL_EDITION = new MovieEdition("THEATRICAL_EDITION", 3, "Theatrical Edition",
+  public static final MovieEdition              THEATRICAL_EDITION = new MovieEdition("THEATRICAL_EDITION", 3, "Theatrical Edition",
       ".Theatrical.(Cut|Edition|Version)?");
-  public final static MovieEdition              UNRATED            = new MovieEdition("UNRATED", 4, "Unrated", ".Unrated.(Cut|Edition|Version)?");
-  public final static MovieEdition              UNCUT              = new MovieEdition("UNCUT", 5, "Uncut", ".Uncut.(Cut|Edition|Version)?");
-  public final static MovieEdition              IMAX               = new MovieEdition("IMAX", 6, "IMAX", "^(IMAX|.*?.IMAX).(Cut|Edition|Version)?");
-  public final static MovieEdition              SPECIAL_EDITION    = new MovieEdition("SPECIAL_EDITION", 7, "Special Edition",
+  public static final MovieEdition              UNRATED            = new MovieEdition("UNRATED", 4, "Unrated", ".Unrated.(Cut|Edition|Version)?");
+  public static final MovieEdition              UNCUT              = new MovieEdition("UNCUT", 5, "Uncut", ".Uncut.(Cut|Edition|Version)?");
+  public static final MovieEdition              IMAX               = new MovieEdition("IMAX", 6, "IMAX", "^(IMAX|.*?.IMAX).(Cut|Edition|Version)?");
+  public static final MovieEdition              SPECIAL_EDITION    = new MovieEdition("SPECIAL_EDITION", 7, "Special Edition",
       ".(Special|Remastered|Collectors|Ultimate|Final).(Cut|Edition|Version)");
 
   private String                                title;

@@ -55,17 +55,16 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -294,8 +293,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()),
-                  ImageType.CLEARLOGO,
-                  movieList.getDefaultArtworkScrapers(), lblClearlogo, null, null, MediaType.MOVIE);
+                  ImageType.CLEARLOGO, movieList.getDefaultArtworkScrapers(), lblClearlogo, null, null, MediaType.MOVIE);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
@@ -340,8 +338,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()),
-                  ImageType.CLEARART,
-                  movieList.getDefaultArtworkScrapers(), lblClearart, null, null, MediaType.MOVIE);
+                  ImageType.CLEARART, movieList.getDefaultArtworkScrapers(), lblClearart, null, null, MediaType.MOVIE);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
@@ -590,37 +587,31 @@ public class MovieSetEditorDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       // search for a tmdbId
       try {
-        List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
-        if (sets != null && sets.size() > 0) {
-          MediaScraper first = sets.get(0); // just get first
-          IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
+        MediaScraper scraper = MediaScraper.getMediaScraperById(MediaMetadata.TMDB, ScraperType.MOVIE);
+        IMovieMetadataProvider mp = (IMovieMetadataProvider) scraper.getMediaProvider();
 
-          for (Movie movie : moviesInSet) {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-            if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
-              options.setTmdbId(movie.getTmdbId());
-              options.setImdbId(movie.getImdbId());
-              options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
-              options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
-              try {
-                MediaMetadata md = mp.getMetadata(options);
-                if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
-                  tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));
-                  break;
-                }
+        for (Movie movie : moviesInSet) {
+          if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
+            MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+            options.setTmdbId(movie.getTmdbId());
+            options.setImdbId(movie.getImdbId());
+            options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage());
+
+            try {
+              MediaMetadata md = mp.getMetadata(options);
+              if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
+                tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));
+                break;
               }
-              catch (ScrapeException ex) {
-                LOGGER.error("getMetadata", ex);
-                MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser",
-                    "message.scrape.metadatamoviesetfailed", new String[] { ":", ex.getLocalizedMessage() }));
-              }
-              catch (MissingIdException ex) {
-                LOGGER.warn("missing id for scrape");
-                MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "scraper.error.missingid"));
-              }
-              catch (UnsupportedMediaTypeException ignored) {
-                LOGGER.warn("unsupported media type: " + mp.getProviderInfo().getId());
-              }
+            }
+            catch (ScrapeException ex) {
+              LOGGER.error("getMetadata", ex);
+              MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "message.scrape.metadatamoviesetfailed",
+                  new String[] { ":", ex.getLocalizedMessage() }));
+            }
+            catch (MissingIdException ex) {
+              LOGGER.warn("missing id for scrape");
+              MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "scraper.error.missingid"));
             }
           }
         }

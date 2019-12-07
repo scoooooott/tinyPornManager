@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
 import org.tinymediamanager.core.threading.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.ui.UTF8Control;
@@ -38,7 +39,7 @@ import org.tinymediamanager.ui.UTF8Control;
 public class TmmTaskManager implements TmmTaskListener {
   public final AtomicLong                GLOB_THRD_CNT    = new AtomicLong(1);
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static TmmTaskManager    instance         = new TmmTaskManager();
+  private static final TmmTaskManager    instance         = new TmmTaskManager();
   private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<>();
   private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<>();
 
@@ -57,13 +58,21 @@ public class TmmTaskManager implements TmmTaskListener {
 
   // fake task handles to manage queues
   private TmmTaskHandle                  imageQueueHandle;
-  // private TmmTaskHandle unnamedQueueHandle;
 
   // scheduled threads
   private final ScheduledExecutorService scheduler        = Executors.newScheduledThreadPool(1);
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
+
+    Settings.getInstance().addPropertyChangeListener("maximumDownloadThreads", e -> {
+      // only need to set this if there is already an executor. otherwise the executor will be created with the right amount
+      if (downloadExecutor != null) {
+        downloadExecutor.setCorePoolSize(Settings.getInstance().getMaximumDownloadThreads());
+        downloadExecutor.setMaximumPoolSize(Settings.getInstance().getMaximumDownloadThreads());
+        downloadExecutor.prestartAllCoreThreads(); // force new threads to be started if we've increased the thread count
+      }
+    });
   }
 
   public static TmmTaskManager getInstance() {
@@ -152,8 +161,10 @@ public class TmmTaskManager implements TmmTaskListener {
     if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
       unnamedTaskExecutor = createUnnamedTaskExecutor();
     }
-    task.addListener(this);
     task.setState(TaskState.QUEUED);
+    task.addListener(this);
+    // immediately inform this listener
+    processTaskEvent(task);
     unnamedTaskExecutor.execute(task);
   }
 
@@ -165,11 +176,15 @@ public class TmmTaskManager implements TmmTaskListener {
    */
   public void addDownloadTask(TmmTask task) {
     if (downloadExecutor == null) {
-      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new TmmThreadFactory("download-task"));
+      downloadExecutor = new ThreadPoolExecutor(Settings.getInstance().getMaximumDownloadThreads(),
+          Settings.getInstance().getMaximumDownloadThreads(), 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
+          new TmmThreadFactory("download-task"));
       downloadExecutor.allowCoreThreadTimeOut(true);
     }
-    task.addListener(this);
     task.setState(TaskState.QUEUED);
+    task.addListener(this);
+    // immediately inform this listener
+    processTaskEvent(task);
     downloadExecutor.execute(task);
   }
 
@@ -196,14 +211,14 @@ public class TmmTaskManager implements TmmTaskListener {
    * 
    * @param newTask
    *          the task to be added
-   * @return true if there is alreday a main task running
+   * @return true if there is already a main task running
    */
-  public boolean addMainTask(TmmThreadPool newTask) {
-    boolean result = false;
-    newTask.addListener(this);
+  public void addMainTask(TmmThreadPool newTask) {
     newTask.setState(TaskState.QUEUED);
+    newTask.addListener(this);
+    // immediately inform this listener
+    processTaskEvent(newTask);
     mainTaskExecutor.execute(newTask);
-    return result;
   }
 
   private ThreadPoolExecutor createMainTaskQueue() {

@@ -44,20 +44,20 @@ import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -144,6 +144,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addTagline();
         addRuntime();
         addPoster();
+        addSeasonName();
         addSeasonPoster();
         addSeasonBanner();
         addSeasonThumb();
@@ -176,9 +177,28 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         getTransformer().transform(new DOMSource(document), new StreamResult(out));
         String xml = out.toString().replaceAll("(?<!\r)\n", "\r\n"); // windows conform line endings
 
-        // write to file
         Path f = tvShow.getPathNIO().resolve(nfoFilename);
-        Utils.writeStringToFile(f, xml);
+
+        // compare old vs new
+        boolean changed = true;
+        try {
+          String xmlOld = Utils.readFileToString(f).replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", ""); // replace xml comments
+          String xmlNew = xml.replaceAll("\\<\\!\\-\\-.*\\-\\-\\>", "");
+          if (xmlOld.equals(xmlNew)) {
+            changed = false;
+          }
+        }
+        catch (Exception e) {
+          // ignore
+        }
+
+        // write to file
+        if (changed) {
+          Utils.writeStringToFile(f, xml);
+        }
+        else {
+          getLogger().debug("NFO did not change - do not write it!");
+        }
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
@@ -249,30 +269,30 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     Float rating10;
 
     // the default rating
-    Map<String, Rating> ratings = tvShow.getRatings();
-    Rating mainRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    Map<String, MediaRating> ratings = tvShow.getRatings();
+    MediaRating mainMediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
 
     // is there any rating which is not the user rating?
-    if (mainRating == null) {
-      for (Rating r : ratings.values()) {
+    if (mainMediaRating == null) {
+      for (MediaRating r : ratings.values()) {
         // skip user ratings here
-        if (Rating.USER.equals(r.getId())) {
+        if (MediaRating.USER.equals(r.getId())) {
           continue;
         }
-        mainRating = r;
+        mainMediaRating = r;
       }
     }
 
     // just create one to not pass null
-    if (mainRating == null) {
-      mainRating = new Rating();
+    if (mainMediaRating == null) {
+      mainMediaRating = new MediaRating();
     }
 
-    if (mainRating.getMaxValue() > 0) {
-      rating10 = mainRating.getRating() * 10 / mainRating.getMaxValue();
+    if (mainMediaRating.getMaxValue() > 0) {
+      rating10 = mainMediaRating.getRating() * 10 / mainMediaRating.getMaxValue();
     }
     else {
-      rating10 = mainRating.getRating();
+      rating10 = mainMediaRating.getRating();
     }
 
     Element rating = document.createElement("rating");
@@ -287,13 +307,13 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     // get main rating and calculate the rating value to a base of 10
     Float rating10;
 
-    Rating rating = tvShow.getRating(Rating.USER);
+    MediaRating mediaRating = tvShow.getRating(MediaRating.USER);
 
-    if (rating.getMaxValue() > 0) {
-      rating10 = rating.getRating() * 10 / rating.getMaxValue();
+    if (mediaRating.getMaxValue() > 0) {
+      rating10 = mediaRating.getRating() * 10 / mediaRating.getMaxValue();
     }
     else {
-      rating10 = rating.getRating();
+      rating10 = mediaRating.getRating();
     }
 
     Element UserRating = document.createElement("userrating");
@@ -359,6 +379,21 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       thumb.setAttribute("aspect", "poster");
       thumb.setTextContent(posterUrl);
       root.appendChild(thumb);
+    }
+  }
+
+  /**
+   * add the season names in multiple <namedseason number="ss">xxx</namedseason> tags
+   */
+  protected void addSeasonName() {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonTitles().entrySet()) {
+      Element namedseason = document.createElement("namedseason");
+      String title = entry.getValue();
+      if (StringUtils.isNotBlank(title)) {
+        namedseason.setAttribute("number", entry.getKey().toString());
+        namedseason.setTextContent(title);
+        root.appendChild(namedseason);
+      }
     }
   }
 
@@ -438,7 +473,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     if (tvShow.getCertification() != null) {
       if (tvShow.getCertification().getCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        mpaa.setTextContent(Certification.getMPAAString(tvShow.getCertification()));
+        mpaa.setTextContent(MediaCertification.getMPAAString(tvShow.getCertification()));
       }
       else {
         mpaa.setTextContent(CertificationStyle.formatCertification(tvShow.getCertification(), TvShowModuleManager.SETTINGS.getCertificationStyle()));
@@ -526,15 +561,17 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
 
   /**
    * add our own id store in the new kodi form<br />
-   * <uniqueid type="{scraper}" default="false">{id}</uniqueid>
+   * <uniqueid type="{scraper}" default="true/false">{id}</uniqueid>
    *
-   * only imdb has default = true
+   * imdb should have default="true", but if no imdb ID is available, we must ensure that at least one entry has default="true"
    */
   protected void addIds() {
+    String defaultScraper = detectDefaultScraper();
+
     for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
       Element uniqueid = document.createElement("uniqueid");
       uniqueid.setAttribute("type", entry.getKey());
-      if (MediaMetadata.TVDB.equals(entry.getKey()) || tvShow.getIds().size() == 1) {
+      if (defaultScraper.equals(entry.getKey())) {
         uniqueid.setAttribute("default", "true");
       }
       else {
@@ -727,5 +764,30 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
     return transformer;
+  }
+
+  /**
+   * try to detect the default scraper by the given ids
+   * 
+   * @return the scraper where the default should be set
+   */
+  private String detectDefaultScraper() {
+    // IMDB first
+    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
+    }
+
+    // TVDB second
+    if (tvShow.getIds().containsKey(MediaMetadata.TVDB)) {
+      return MediaMetadata.TVDB;
+    }
+
+    // TMDB third
+    if (tvShow.getIds().containsKey(MediaMetadata.TMDB)) {
+      return MediaMetadata.TMDB;
+    }
+
+    // the first found as fallback
+    return tvShow.getIds().keySet().stream().findFirst().orElse("");
   }
 }

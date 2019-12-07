@@ -43,11 +43,14 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ExportTemplate;
+import org.tinymediamanager.core.MediaEntityExporter;
 import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tasks.ExportTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -171,22 +174,23 @@ public class MovieExporterDialog extends TmmDialog {
 
           try {
             if (!Utils.isFolderEmpty(exportPath)) {
-              int decision = JOptionPane.showConfirmDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
-                  JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
+              Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+              int decision = JOptionPane.showOptionDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);// $NON-NLS-1$
               if (decision == JOptionPane.NO_OPTION) {
                 return;
               }
             }
           }
           catch (IOException e) {
-            LOGGER.warn("could not open folder: " + e.getMessage());
+            LOGGER.warn("could not open folder: {}", e.getMessage());
             return;
           }
 
           try {
-            MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
-            exporter.export(movies, exportPath);
             TmmProperties.getInstance().putProperty(DIALOG_ID + ".template", selectedTemplate.getName()); //$NON-NLS-1$
+            MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
+            TmmTaskManager.getInstance().addMainTask(new ExportTask(BUNDLE.getString("movie.export"), exporter, movies, exportPath));
           }
           catch (Exception e) {
             LOGGER.error("Error exporting movies: ", e);
@@ -198,7 +202,7 @@ public class MovieExporterDialog extends TmmDialog {
     }
 
     movies = moviesToExport;
-    templatesFound = MovieExporter.findTemplates(TemplateType.MOVIE);
+    templatesFound = MediaEntityExporter.findTemplates(TemplateType.MOVIE);
     bindingGroup = initDataBindings();
 
     // set the last used template as default

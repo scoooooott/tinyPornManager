@@ -58,6 +58,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -117,12 +118,12 @@ public class MediaFileEditorPanel extends JPanel {
     // predefined 3D Formats
     Vector<String> threeDFormats = new Vector<>();
     threeDFormats.add("");
-    threeDFormats.add(MediaFile.VIDEO_3D);
-    threeDFormats.add(MediaFile.VIDEO_3D_SBS);
-    threeDFormats.add(MediaFile.VIDEO_3D_HSBS);
-    threeDFormats.add(MediaFile.VIDEO_3D_TAB);
-    threeDFormats.add(MediaFile.VIDEO_3D_HTAB);
-    threeDFormats.add(MediaFile.VIDEO_3D_MVC);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D_SBS);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D_HSBS);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D_TAB);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D_HTAB);
+    threeDFormats.add(MediaFileHelper.VIDEO_3D_MVC);
 
     setLayout(new MigLayout("", "[300lp:450lp,grow]", "[200lp:450lp,grow]"));
     {

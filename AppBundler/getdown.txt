@@ -20,9 +20,6 @@ ui.hide_decorations = true
 code = tmm.jar
 %CODELIBS%
 
-# plugins
-%PLUGINS%
-
 resource = progress.jpg
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
@@ -50,6 +47,18 @@ resource = [windows-amd64] native/windows-x64/MediaInfo.dll
 resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
+
+# nativefiledialogs native libs
+resource = [windows-x86] native/windows-x86/lwjgl.dll
+resource = [windows-x86] native/windows-x86/lwjgl_nfd.dll
+resource = [windows-amd64] native/windows-x64/lwjgl.dll
+resource = [windows-amd64] native/windows-x64/lwjgl_nfd.dll
+resource = [mac os x] native/mac/liblwjgl.dylib
+resource = [mac os x] native/mac/liblwjgl_nfd.dylib
+resource = [linux-x86] native/linux-x86/liblwjgl.so
+resource = [linux-x86] native/linux-x86/liblwjgl_nfd.so
+resource = [linux-amd64] native/linux-x64/liblwjgl.so
+resource = [linux-amd64] native/linux-x64/liblwjgl_nfd.so
 
 # templates
 uresource = templates/templates.jar

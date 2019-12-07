@@ -59,6 +59,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
@@ -69,7 +70,7 @@ import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
@@ -78,7 +79,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaArtworkProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -935,16 +936,15 @@ public class ImageChooserDialog extends TmmDialog {
       for (MediaScraper scraper : artworkScrapers) {
         try {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
-          MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
+
+          ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
-            options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
-            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+            options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
             options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
-            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage().toLocale());
-            options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+            options.setLanguage(TvShowModuleManager.SETTINGS.getScraperLanguage());
           }
           else {
             continue;
@@ -1013,7 +1013,7 @@ public class ImageChooserDialog extends TmmDialog {
 
           // get the artwork
           List<MediaArtwork> artwork = artworkProvider.getArtwork(options);
-          if (artwork == null) {
+          if (artwork == null || artwork.isEmpty()) {
             continue;
           }
 
@@ -1022,23 +1022,24 @@ public class ImageChooserDialog extends TmmDialog {
             if (isCancelled()) {
               return null;
             }
-
-            try {
-              Callable<DownloadChunk> callable = () -> {
-                Url url = new Url(art.getPreviewUrl());
-                BufferedImage bufferedImage = ImageUtils.createImage(url.getBytesWithRetry(5));
-
-                DownloadChunk chunk = new DownloadChunk();
-                chunk.artwork = art;
-                chunk.image = bufferedImage;
-                return chunk;
-              };
-              service.submit(callable);
-            }
-            catch (Exception e) {
-              LOGGER.error("DownloadTask displaying: {}", e.getMessage());
+            if (art.getPreviewUrl().isEmpty()) {
+              continue;
             }
 
+            Callable<DownloadChunk> callable = () -> {
+              Url url = new Url(art.getPreviewUrl());
+              DownloadChunk chunk = new DownloadChunk();
+              chunk.artwork = art;
+              try {
+                chunk.image = ImageUtils.createImage(url.getBytesWithRetry(5));
+              }
+              catch (Exception e) {
+                // ignore, return empty chunk
+              }
+              return chunk;
+            };
+
+            service.submit(callable);
           }
         }
 
@@ -1066,8 +1067,11 @@ public class ImageChooserDialog extends TmmDialog {
       while (!pool.isTerminated()) {
         try {
           final Future<DownloadChunk> future = service.take();
-          publish(future.get());
-          imagesFound = true;
+          DownloadChunk dc = future.get();
+          if (dc.image != null) {
+            publish(dc);
+            imagesFound = true;
+          }
         }
         catch (InterruptedException e) { // NOSONAR
           return null;
@@ -1118,7 +1122,8 @@ public class ImageChooserDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
-      Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path, //$NON-NLS-1$
+          new FileNameExtensionFilter("Image files", ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tbn"));
       if (file != null && Utils.isRegularFile(file)) {
         String fileName = file.toAbsolutePath().toString();
         imageLabel.clearImage();

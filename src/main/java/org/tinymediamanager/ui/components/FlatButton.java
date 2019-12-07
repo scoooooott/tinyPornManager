@@ -20,7 +20,6 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultButtonModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -53,7 +52,6 @@ public class FlatButton extends JButton {
     setOpaque(false);
     setContentAreaFilled(false);
     putClientProperty("flatButton", Boolean.TRUE);
-    setBorder(BorderFactory.createEmptyBorder());
     super.init(text, icon);
 
     addMouseListener(new MouseAdapter() {

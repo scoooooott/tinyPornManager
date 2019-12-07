@@ -15,95 +15,47 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The Class TvShowSearchAndScrapeOptions.
+ * The class TvShowSearchAndScrapeOptions is used to hold scrape and search related data for TV shows
  * 
  * @author Manuel Laggner
  */
-public class TvShowSearchAndScrapeOptions {
-  private TvShowScraperMetadataConfig scraperMetadataConfig;
-  private MediaScraper                metadataScraper;
-  private List<MediaScraper>          artworkScrapers = new ArrayList<>();
+public class TvShowSearchAndScrapeOptions extends MediaSearchAndScrapeOptions {
+
+  public TvShowSearchAndScrapeOptions() {
+    super(MediaType.TV_SHOW);
+  }
 
   /**
-   * Instantiates a new movie search and scrape config.
+   * copy constructor
+   * 
+   * @param original
+   *          the original to copy
    */
-  public TvShowSearchAndScrapeOptions() {
+  public TvShowSearchAndScrapeOptions(TvShowSearchAndScrapeOptions original) {
+    super(original);
   }
 
   /**
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
-    scraperMetadataConfig.setEpisodeList(TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes());
+    // language
+    language = TvShowModuleManager.SETTINGS.getScraperLanguage();
 
     // metadata
     metadataScraper = TvShowList.getInstance().getDefaultMediaScraper();
 
     // artwork
     artworkScrapers.addAll(TvShowList.getInstance().getDefaultArtworkScrapers());
-  }
 
-  /**
-   * Gets the scraper metadata config.
-   * 
-   * @return the scraper metadata config
-   */
-  public TvShowScraperMetadataConfig getScraperMetadataConfig() {
-    return scraperMetadataConfig;
-  }
+    // trailer
+    trailerScrapers.addAll(TvShowList.getInstance().getDefaultTrailerScrapers());
 
-  /**
-   * Gets the metadata scraper.
-   * 
-   * @return the metadata scraper
-   */
-  public MediaScraper getMetadataScraper() {
-    return metadataScraper;
-  }
-
-  /**
-   * Gets the artwork scrapers.
-   * 
-   * @return the artwork scrapers
-   */
-  public List<MediaScraper> getArtworkScrapers() {
-    return artworkScrapers;
-  }
-
-  /**
-   * Sets the scraper metadata config.
-   * 
-   * @param scraperMetadataConfig
-   *          the new scraper metadata config
-   */
-  public void setScraperMetadataConfig(TvShowScraperMetadataConfig scraperMetadataConfig) {
-    this.scraperMetadataConfig = scraperMetadataConfig;
-  }
-
-  /**
-   * Sets the metadata scraper.
-   * 
-   * @param metadataScraper
-   *          the new metadata scraper
-   */
-  public void setMetadataScraper(MediaScraper metadataScraper) {
-    this.metadataScraper = metadataScraper;
-  }
-
-  /**
-   * Adds the artwork scraper.
-   * 
-   * @param artworkScraper
-   *          the artwork scraper
-   */
-  public void addArtworkScraper(MediaScraper artworkScraper) {
-    this.artworkScrapers.add(artworkScraper);
+    // subtitle
+    subtitleScrapers.addAll(TvShowList.getInstance().getDefaultSubtitleScrapers());
   }
 }

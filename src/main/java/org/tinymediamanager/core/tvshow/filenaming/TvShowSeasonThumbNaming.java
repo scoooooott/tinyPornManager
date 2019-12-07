@@ -20,10 +20,9 @@ import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.ITvShowSeasonFileNaming;
+import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * The Enum TvShowSeasonThumbNaming.
@@ -51,12 +50,7 @@ public enum TvShowSeasonThumbNaming implements ITvShowSeasonFileNaming {
   SEASON_FOLDER {
     @Override
     public String getFilename(TvShow tvShow, int season, String extension) {
-      // just fake an episode here, since the real foldername can only be generated out of the episode
-      // create a dummy episode to inject the season number
-      TvShowEpisode episode = new TvShowEpisode();
-      episode.setSeason(season);
-
-      String seasonFoldername = TvShowRenamer.getSeasonFoldername(tvShow, episode);
+      String seasonFoldername = TvShowHelpers.detectSeasonFolder(tvShow, season);
 
       // check whether the season folder name exists or not; do not create it just for the artwork!
       if (StringUtils.isBlank(seasonFoldername)) {

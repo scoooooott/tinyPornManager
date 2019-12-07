@@ -86,7 +86,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders   = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ", "EXTRAS", "EXTRA", "EXTRATHUMBS");
+      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ", "EXTRAS", "EXTRA", "EXTRATHUMB");
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipRegex     = "^[.][\\w@]+.*";
@@ -402,12 +402,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       for (MediaFile mf : mediaFiles) {
         if (!filesFound.contains(mf.getFileAsPath())) {
           if (!mf.exists()) {
-            LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
+            LOGGER.debug("removing orphaned file: {}", mf.getFileAsPath());
             tvShow.removeFromMediaFiles(mf);
             dirty = true;
           }
           else {
-            LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+            LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
           }
         }
       }
@@ -417,12 +417,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
-              LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
+              LOGGER.debug("removing orphaned file: {}", mf.getFileAsPath());
               episode.removeFromMediaFiles(mf);
               dirty = true;
             }
             else {
-              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+              LOGGER.warn("file {} not in hashset, but on hdd!", mf.getFileAsPath());
             }
           }
         }
@@ -567,7 +567,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         if (StringUtils.isBlank(tvShow.getTitle()) || tvShow.getYear() <= 0) {
           // we have a tv show object, but without title or year; try to parse that our of the folder/filename
-          String[] ty = ParserUtils.detectCleanMovienameAndYear(showDir.getFileName().toString());
+          String[] ty = ParserUtils.detectCleanTitleAndYear(showDir.getFileName().toString(), TvShowModuleManager.SETTINGS.getBadWord());
           if (StringUtils.isBlank(tvShow.getTitle()) && StringUtils.isNotBlank(ty[0])) {
             tvShow.setTitle(ty[0]);
           }
@@ -656,9 +656,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           MediaFile meta = getMediaFile(epFiles, MediaFileType.VSMETA);
           TvShowEpisode vsMetaEP = null;
           if (meta != null) {
-            VSMeta vsmeta = new VSMeta();
-            vsmeta.parseFile(meta.getFileAsPath());
+            VSMeta vsmeta = new VSMeta(meta.getFileAsPath());
+            vsmeta.parseFile();
             vsMetaEP = vsmeta.getTvShowEpisode();
+
+            if (!TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+              // we want some poster scraped, so we also can extract them
+              List<MediaFile> generated = vsmeta.generateMediaFile(vsMetaEP);
+              epFiles.addAll(generated);
+
+              List<MediaFile> generatedShow = vsmeta.generateMediaFile(tvShow);
+              tvShow.addToMediaFiles(generatedShow);
+            }
           }
 
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
@@ -677,7 +686,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               for (TvShowEpisode episode : episodesInNfo) {
                 episode.setPath(mf.getPath());
                 episode.setTvShow(tvShow);
-                episode.setDateAddedFromMediaFile(mf);
+
                 if (episode.getMediaSource() == MediaSource.UNKNOWN) {
                   episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
                 }
@@ -746,7 +755,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setPath(mf.getPath());
               episode.setTvShow(tvShow);
               episode.addToMediaFiles(epFiles); // all found EP MFs
-              episode.setDateAddedFromMediaFile(mf);
+
               if (episode.getMediaSource() == MediaSource.UNKNOWN) {
                 episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
               }
@@ -804,7 +813,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date); // maybe found
             episode.addToMediaFiles(epFiles); // all found EP MFs
-            episode.setDateAddedFromMediaFile(mf);
+
             if (episode.getMediaSource() == MediaSource.UNKNOWN) {
               episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
             }
@@ -886,7 +895,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           tvShow.setSeasonArtwork(season, mf);
         }
         catch (Exception e) {
-          LOGGER.warn("could not parse season number: {} MF:", e.getMessage(), mf.getFileAsPath().toAbsolutePath());
+          LOGGER.warn("could not parse season number: {} MF: {}", e.getMessage(), mf.getFileAsPath().toAbsolutePath());
         }
       }
 

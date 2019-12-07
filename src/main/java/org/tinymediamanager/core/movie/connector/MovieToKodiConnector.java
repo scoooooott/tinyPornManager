@@ -25,14 +25,15 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.w3c.dom.Element;
 
@@ -120,16 +121,21 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
   @Override
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(prepareTrailerForKodi(movieTrailer));
-        break;
+
+    // only add a trailer if there is no physical trailer due to a bug in kodi
+    // https://forum.kodi.tv/showthread.php?tid=348759&pid=2900477#pid2900477
+    if (movie.getMediaFiles(MediaFileType.TRAILER).isEmpty()) {
+      for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+        if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+          trailer.setTextContent(prepareTrailerForKodi(mediaTrailer));
+          break;
+        }
       }
     }
     root.appendChild(trailer);
   }
 
-  private String prepareTrailerForKodi(MovieTrailer trailer) {
+  private String prepareTrailerForKodi(MediaTrailer trailer) {
     // youtube trailer are stored in a special notation: plugin://plugin.video.youtube/?action=play_video&videoid=<ID>
     // parse out the ID from the url and store it in the right notation
     Pattern pattern = Pattern.compile("https{0,1}://.*youtube..*/watch\\?v=(.*)$");
@@ -162,9 +168,9 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
   protected void addRating() {
     Element ratings = document.createElement("ratings");
 
-    for (Rating r : movie.getRatings().values()) {
+    for (MediaRating r : movie.getRatings().values()) {
       // skip user ratings here
-      if (Rating.USER.equals(r.getId())) {
+      if (MediaRating.USER.equals(r.getId())) {
         continue;
       }
 
@@ -179,8 +185,8 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
       }
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
-      Rating mainRating = movie.getRating();
-      rating.setAttribute("default", r == mainRating ? "true" : "false");
+      MediaRating mainMediaRating = movie.getRating();
+      rating.setAttribute("default", r == mainMediaRating ? "true" : "false");
 
       Element value = document.createElement("value");
       value.setTextContent(Float.toString(r.getRating()));
@@ -293,13 +299,13 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
         switch (vid.getVideo3DFormat()) {
-          case MediaFile.VIDEO_3D_SBS:
-          case MediaFile.VIDEO_3D_HSBS:
+          case MediaFileHelper.VIDEO_3D_SBS:
+          case MediaFileHelper.VIDEO_3D_HSBS:
             stereomode.setTextContent("left_right");
             break;
 
-          case MediaFile.VIDEO_3D_TAB:
-          case MediaFile.VIDEO_3D_HTAB:
+          case MediaFileHelper.VIDEO_3D_TAB:
+          case MediaFileHelper.VIDEO_3D_HTAB:
             stereomode.setTextContent("top_bottom");
             break;
 

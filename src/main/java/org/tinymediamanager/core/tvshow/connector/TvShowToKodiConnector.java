@@ -18,7 +18,7 @@ package org.tinymediamanager.core.tvshow.connector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.w3c.dom.Element;
 
@@ -48,9 +48,9 @@ public class TvShowToKodiConnector extends TvShowGenericXmlConnector {
   protected void addRating() {
     Element ratings = document.createElement("ratings");
 
-    for (Rating r : tvShow.getRatings().values()) {
+    for (MediaRating r : tvShow.getRatings().values()) {
       // skip user ratings here
-      if (Rating.USER.equals(r.getId())) {
+      if (MediaRating.USER.equals(r.getId())) {
         continue;
       }
 
@@ -58,8 +58,8 @@ public class TvShowToKodiConnector extends TvShowGenericXmlConnector {
       rating.setAttribute("name", r.getId());
       rating.setAttribute("max", String.valueOf(r.getMaxValue()));
 
-      Rating mainRating = tvShow.getRating();
-      rating.setAttribute("default", r == mainRating ? "true" : "false");
+      MediaRating mainMediaRating = tvShow.getRating();
+      rating.setAttribute("default", r == mainMediaRating ? "true" : "false");
 
       Element value = document.createElement("value");
       value.setTextContent(Float.toString(r.getRating()));

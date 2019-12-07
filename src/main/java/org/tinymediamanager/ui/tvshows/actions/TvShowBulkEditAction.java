@@ -18,14 +18,17 @@ package org.tinymediamanager.ui.tvshows.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
@@ -54,15 +57,20 @@ public class TvShowBulkEditAction extends TmmAction {
   protected void processAction(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
     List<TvShow> selectedTvShows = new ArrayList<>();
-    List<TvShowEpisode> selectedEpisodes = new ArrayList<>();
+    Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 
     for (Object obj : selectedObjects) {
-      // display tv show editor
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
         selectedTvShows.add(tvShow);
+        selectedEpisodes.addAll(tvShow.getEpisodes());
       }
-      // display tv episode editor
+
+      if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        selectedEpisodes.addAll(season.getEpisodes());
+      }
+
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
         selectedEpisodes.add(tvShowEpisode);
@@ -74,7 +82,7 @@ public class TvShowBulkEditAction extends TmmAction {
       return;
     }
 
-    TvShowBulkEditorDialog dialog = new TvShowBulkEditorDialog(selectedTvShows, selectedEpisodes);
+    TvShowBulkEditorDialog dialog = new TvShowBulkEditorDialog(selectedTvShows, new ArrayList<>(selectedEpisodes));
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.setVisible(true);
   }

@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.ui.tvshows;
 
+import java.util.Locale;
+
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.ScraperInTable;
 
@@ -58,6 +60,6 @@ public class TvShowScraper extends ScraperInTable implements Comparable<TvShowSc
       return -1;
     }
 
-    return scraper.getName().compareTo(o.scraper.getName());
+    return scraper.getName().toLowerCase(Locale.ROOT).compareTo(o.scraper.getName().toLowerCase(Locale.ROOT));
   }
 }

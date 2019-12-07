@@ -69,7 +69,7 @@ abstract class AbstractCheckComboBoxTvShowUIFilter<E> extends AbstractTvShowUIFi
    */
   protected void setValues(List<E> values) {
     // remove the listener to not firing unnecessary events
-    checkComboBox.removeActionListener(actionListener);
+    checkComboBox.removeActionListener(filterComponentActionListener);
 
     List<E> selectedItems = checkComboBox.getSelectedItems();
 
@@ -80,7 +80,7 @@ abstract class AbstractCheckComboBoxTvShowUIFilter<E> extends AbstractTvShowUIFi
     }
 
     // re-add the itemlistener
-    checkComboBox.addActionListener(actionListener);
+    checkComboBox.addActionListener(filterComponentActionListener);
   }
 
   /**

@@ -115,7 +115,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private JCheckBox                      chckbxMoviesetSingleMovie;
 
   private TmmTable                       tableExamples;
-  private ReadOnlyTextArea               taMMDWarning;
+  private ReadOnlyTextArea               taWarning;
   private JComboBox                      cbColonReplacement;
 
   public MovieRenamerSettingsPanel() {
@@ -195,8 +195,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       createRenamerExample();
     });
 
-
-
     lblExample.putClientProperty("clipPosition", SwingConstants.LEFT);
 
     // examples
@@ -234,6 +232,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("${mediaSource}"));
     exampleEventList.add(new MovieRenamerExample("${3Dformat}"));
     exampleEventList.add(new MovieRenamerExample("${hdr}"));
+    exampleEventList.add(new MovieRenamerExample("${filesize}"));
     exampleEventList.add(new MovieRenamerExample("${edition}"));
     exampleEventList.add(new MovieRenamerExample("${parent}"));
     exampleEventList.add(new MovieRenamerExample("${note}"));
@@ -319,9 +318,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         panelPatterns.add(btnHelp, "cell 1 4 3 1");
       }
       {
-        taMMDWarning = new ReadOnlyTextArea(BUNDLE.getString("Settings.renamer.folder.warning"));
-        taMMDWarning.setForeground(Color.red);
-        panelPatterns.add(taMMDWarning, "cell 3 5,growx,wmin 0");
+        taWarning = new ReadOnlyTextArea();
+        taWarning.setForeground(Color.red);
+        panelPatterns.add(taWarning, "cell 3 5,growx,wmin 0");
       }
     }
     {
@@ -412,12 +411,25 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private void createRenamerExample() {
     Movie movie = null;
 
+    String warning = "";
     // empty is valid (although not unique)
     if (!tfMoviePath.getText().isEmpty() && !MovieRenamer.isFolderPatternUnique(tfMoviePath.getText())) {
-      taMMDWarning.setVisible(true);
+      warning = BUNDLE.getString("Settings.renamer.folder.warning");
+    }
+    String okFolder = MovieRenamer.isPatternValid(tfMoviePath.getText());
+    if (!okFolder.isEmpty()) {
+      warning = BUNDLE.getString("Settings.movie.renamer.folder.patterninvalid") + "  " + okFolder;
+    }
+    String okFile = MovieRenamer.isPatternValid(tfMovieFilename.getText());
+    if (!okFile.isEmpty()) {
+      warning = BUNDLE.getString("Settings.movie.renamer.file.patterninvalid") + "  " + okFile;
+    }
+    if (!warning.isEmpty()) {
+      taWarning.setVisible(true);
+      taWarning.setText(warning);
     }
     else {
-      taMMDWarning.setVisible(false);
+      taWarning.setVisible(false);
     }
 
     if (cbMovieForPreview.getSelectedItem() instanceof MoviePreviewContainer) {

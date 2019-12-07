@@ -28,16 +28,19 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.MediaSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -46,14 +49,19 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieMissingArtworkDownloadTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+  private static final Logger                    LOGGER = LoggerFactory.getLogger(MovieMissingArtworkDownloadTask.class);
+  private static final ResourceBundle            BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
 
-  private List<Movie>                 moviesToScrape;
+  private final List<Movie>                      moviesToScrape;
+  private final MovieSearchAndScrapeOptions      scrapeOptions;
+  private final List<MovieScraperMetadataConfig> metadataConfig;
 
-  public MovieMissingArtworkDownloadTask(List<Movie> moviesToScrape) {
+  public MovieMissingArtworkDownloadTask(List<Movie> moviesToScrape, MovieSearchAndScrapeOptions scrapeOptions,
+      List<MovieScraperMetadataConfig> metadataConfig) {
     super(BUNDLE.getString("task.missingartwork"));
     this.moviesToScrape = moviesToScrape;
+    this.scrapeOptions = scrapeOptions;
+    this.metadataConfig = metadataConfig;
   }
 
   @Override
@@ -63,8 +71,8 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
     start();
 
     for (Movie movie : moviesToScrape) {
-      if (MovieArtworkHelper.hasMissingArtwork(movie)) {
-        submitTask(new Worker(movie));
+      if (MovieArtworkHelper.hasMissingArtwork(movie, metadataConfig)) {
+        submitTask(new Worker(movie, scrapeOptions));
       }
     }
     waitForCompletionOrCancel();
@@ -80,27 +88,28 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
   /****************************************************************************************
    * Helper classes
    ****************************************************************************************/
-  private class Worker implements Runnable {
-    private MovieList movieList;
-    private Movie     movie;
+  private static class Worker implements Runnable {
+    private Movie                       movie;
+    private MediaSearchAndScrapeOptions scrapeOptions;
 
-    public Worker(Movie movie) {
+    private Worker(Movie movie, MediaSearchAndScrapeOptions scrapeOptions) {
       this.movie = movie;
+      this.scrapeOptions = scrapeOptions;
     }
 
     @Override
     public void run() {
       try {
-        movieList = MovieList.getInstance();
+        MovieList movieList = MovieList.getInstance();
         // set up scrapers
         List<MediaArtwork> artwork = new ArrayList<>();
-        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+        ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.MOVIE);
+        options.setDataFromOtherOptions(scrapeOptions);
         options.setArtworkType(MediaArtworkType.ALL);
         for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());
         }
-        options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
-        options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+        options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
         options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
         options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
@@ -115,7 +124,8 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.subtitlefailed", new String[] { ":", e.getLocalizedMessage() }));
           }
-          catch (MissingIdException ignored) {
+          catch (MissingIdException e) {
+            LOGGER.debug("missing ID for scraper {}", artworkProvider.getProviderInfo().getId());
           }
         }
 

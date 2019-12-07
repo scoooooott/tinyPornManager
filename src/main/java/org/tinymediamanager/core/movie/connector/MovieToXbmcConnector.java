@@ -24,13 +24,14 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.w3c.dom.Element;
 
 /**
@@ -62,16 +63,16 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
   @Override
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(prepareTrailerForXbmc(movieTrailer));
+    for (MediaTrailer mediaTrailer : new ArrayList<>(movie.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(prepareTrailerForXbmc(mediaTrailer));
         break;
       }
     }
     root.appendChild(trailer);
   }
 
-  private String prepareTrailerForXbmc(MovieTrailer trailer) {
+  private String prepareTrailerForXbmc(MediaTrailer trailer) {
     // youtube trailer are stored in a special notation: plugin://plugin.video.youtube/?action=play_video&videoid=<ID>
     // parse out the ID from the url and store it in the right notation
     Pattern pattern = Pattern.compile("https{0,1}://.*youtube..*/watch\\?v=(.*)$");
@@ -192,10 +193,10 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
-        if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
+        if (vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_SBS) || vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_HSBS)) {
           stereomode.setTextContent("left_right");
         }
-        else if (vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || vid.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
+        else if (vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_TAB) || vid.getVideo3DFormat().equals(MediaFileHelper.VIDEO_3D_HTAB)) {
           stereomode.setTextContent("top_bottom"); // maybe?
         }
         video.appendChild(stereomode);

@@ -206,8 +206,8 @@ String                		year
 boolean               		duplicate
 boolean               		scraped
 boolean               		watched
-float                 		rating.rating
-int                   		rating.votes
+float                 		mediaRating.mediaRating
+int                   		mediaRating.votes
 
 TvShowSeason:
 int                   		season
@@ -225,8 +225,8 @@ String                		director
 String                		writer 
 boolean               		disc   
 boolean               		watched 
-float                 		rating.rating
-int                   		rating.votes
+float                 		mediaRating.mediaRating
+int                   		mediaRating.votes
      
 TvShowActor:
 String                		character

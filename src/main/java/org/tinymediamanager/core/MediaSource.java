@@ -33,34 +33,34 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author Manuel Laggner
  */
 public class MediaSource extends DynaEnum<MediaSource> {
-  private final static Comparator<MediaSource> COMPARATOR  = new MediaSourceComparator();
+  private static final Comparator<MediaSource> COMPARATOR  = new MediaSourceComparator();
 
   // the well known and XBMC/Kodi compatible sources
   // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
-  public final static MediaSource              UHD_BLURAY  = new MediaSource("UHD_BLURAY", 0, "UHD Blu-ray",
+  public static final MediaSource              UHD_BLURAY  = new MediaSource("UHD_BLURAY", 0, "UHD Blu-ray",
       "(uhd|ultrahd)[ .\\-]?(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
-  public final static MediaSource              BLURAY      = new MediaSource("BLURAY", 2, "Blu-ray",
+  public static final MediaSource              BLURAY      = new MediaSource("BLURAY", 2, "Blu-ray",
       "(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)");
-  public final static MediaSource              DVD         = new MediaSource("DVD", 4, "DVD", "(dvd|video_ts|dvdrip|dvdr)");
-  public final static MediaSource              HDDVD       = new MediaSource("HDDVD", 6, "HDDVD", "(hddvd|hddvdrip)");
-  public final static MediaSource              TV          = new MediaSource("TV", 8, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
-  public final static MediaSource              VHS         = new MediaSource("VHS", 10, "VHS", "(vhs)");
-  public final static MediaSource              LASERDISC   = new MediaSource("LASERDISC", 12, "LaserDisc", "(laserdisc|ldrip)");
-  public final static MediaSource              D_VHS       = new MediaSource("D_VHS", 14, "D-VHS");
+  public static final MediaSource              DVD         = new MediaSource("DVD", 4, "DVD", "(dvd|video_ts|dvdrip|dvdr)");
+  public static final MediaSource              HDDVD       = new MediaSource("HDDVD", 6, "HDDVD", "(hddvd|hddvdrip)");
+  public static final MediaSource              TV          = new MediaSource("TV", 8, "TV", "(hdtv|pdtv|dsr|dtb|dtt|dttv|dtv|hdtvrip|tvrip|dvbrip)");
+  public static final MediaSource              VHS         = new MediaSource("VHS", 10, "VHS", "(vhs)");
+  public static final MediaSource              LASERDISC   = new MediaSource("LASERDISC", 12, "LaserDisc", "(laserdisc|ldrip)");
+  public static final MediaSource              D_VHS       = new MediaSource("D_VHS", 14, "D-VHS");
 
   // other sources
-  public final static MediaSource              HDRIP       = new MediaSource("HDRIP", 5, "HDRip", "(hdrip)");
-  public final static MediaSource              CAM         = new MediaSource("CAM", 6, "Cam", "(cam)");
-  public final static MediaSource              TS          = new MediaSource("TS", 7, "Telesync", "(ts|telesync|hdts|ht\\-ts)");
-  public final static MediaSource              TC          = new MediaSource("TC", 8, "Telecine", "(tc|telecine|hdtc|ht\\-tc)");
-  public final static MediaSource              DVDSCR      = new MediaSource("DVDSCR", 9, "DVD Screener", "(dvdscr)");
-  public final static MediaSource              R5          = new MediaSource("R5", 10, "R5", "(r5)");
-  public final static MediaSource              WEBRIP      = new MediaSource("WEBRIP", 11, "Webrip", "(webrip)");
-  public final static MediaSource              WEB_DL      = new MediaSource("WEB_DL", 12, "Web-DL", "(web-dl|webdl)");
-  public final static MediaSource              STREAM      = new MediaSource("STREAM", 13, "Stream");
+  public static final MediaSource              HDRIP       = new MediaSource("HDRIP", 5, "HDRip", "(hdrip)");
+  public static final MediaSource              CAM         = new MediaSource("CAM", 6, "Cam", "(cam)");
+  public static final MediaSource              TS          = new MediaSource("TS", 7, "Telesync", "(ts|telesync|hdts|ht\\-ts)");
+  public static final MediaSource              TC          = new MediaSource("TC", 8, "Telecine", "(tc|telecine|hdtc|ht\\-tc)");
+  public static final MediaSource              DVDSCR      = new MediaSource("DVDSCR", 9, "DVD Screener", "(dvdscr)");
+  public static final MediaSource              R5          = new MediaSource("R5", 10, "R5", "(r5)");
+  public static final MediaSource              WEBRIP      = new MediaSource("WEBRIP", 11, "Webrip", "(webrip)");
+  public static final MediaSource              WEB_DL      = new MediaSource("WEB_DL", 12, "Web-DL", "(web-dl|webdl)");
+  public static final MediaSource              STREAM      = new MediaSource("STREAM", 13, "Stream");
 
   // and our fallback
-  public final static MediaSource              UNKNOWN     = new MediaSource("UNKNOWN", 14, "");
+  public static final MediaSource              UNKNOWN     = new MediaSource("UNKNOWN", 14, "");
 
   private static final String                  START_TOKEN = "[ _\\,\\.\\(\\)\\[\\]\\-]";
   private static final String                  END_TOKEN   = "([ _\\,\\.\\(\\)\\[\\]\\-]|$)";

@@ -36,7 +36,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
+import org.tinymediamanager.thirdparty.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
@@ -101,8 +101,9 @@ class TvShowSettingsPanel extends JPanel {
 
     // logic initializations
     btnClearTraktTvShows.addActionListener(e -> {
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.cleartvshows.hint"),
-          BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+          BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); //$NON-NLS-1$
       if (confirm == JOptionPane.YES_OPTION) {
         TmmTask task = new ClearTraktTvTask(false, true);
         TmmTaskManager.getInstance().addUnnamedTask(task);
@@ -341,7 +342,7 @@ class TvShowSettingsPanel extends JPanel {
           panelCheckImages.setLayout(new MigLayout("hidemode 1, insets 0", "[][][][]", ""));
           panelMisc.add(panelCheckImages, "cell 2 2");
 
-          JLabel lblTvShowCheckImages = new JLabel(BUNDLE.getString("metatag.tvshow"));//$NON-NLS-1$
+          JLabel lblTvShowCheckImages = new TmmLabel(BUNDLE.getString("metatag.tvshow"));//$NON-NLS-1$
           panelCheckImages.add(lblTvShowCheckImages, "cell 0 0");
 
           chckbxTvShowCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
@@ -365,7 +366,7 @@ class TvShowSettingsPanel extends JPanel {
           chckbxTvShowCheckClearlogo = new JCheckBox(BUNDLE.getString("mediafiletype.clearlogo"));
           panelCheckImages.add(chckbxTvShowCheckClearlogo, "cell 7 0");
 
-          JLabel lblTvShowSeasonCheckImages = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+          JLabel lblTvShowSeasonCheckImages = new TmmLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
           panelCheckImages.add(lblTvShowSeasonCheckImages, "cell 0 1");
 
           chckbxTvShowSeasonCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
@@ -377,7 +378,7 @@ class TvShowSettingsPanel extends JPanel {
           chckbxTvShowSeasonCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
           panelCheckImages.add(chckbxTvShowSeasonCheckThumb, "cell 3 1");
 
-          JLabel lblTvShowEpisodeCheckImages = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+          JLabel lblTvShowEpisodeCheckImages = new TmmLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
           panelCheckImages.add(lblTvShowEpisodeCheckImages, "cell 0 2");
 
           chckbxTvShowEpisodeCheckThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$

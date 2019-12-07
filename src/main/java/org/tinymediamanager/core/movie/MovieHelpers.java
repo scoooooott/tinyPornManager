@@ -18,14 +18,19 @@ package org.tinymediamanager.core.movie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
-import org.tinymediamanager.core.movie.tasks.YoutubeDownloadTask;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.core.tasks.TrailerDownloadTask;
+import org.tinymediamanager.core.tasks.YoutubeDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.entities.Certification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * a collection of various helpers for the movie module
@@ -35,11 +40,14 @@ import org.tinymediamanager.scraper.entities.Certification;
 public class MovieHelpers {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieHelpers.class);
 
+  private MovieHelpers() {
+    // private constructors for helper classes
+  }
+
   /**
    * Parses a given certification string for the localized country setup in setting.
    *
-   * @param name
-   *          certification string like "USA:R / UK:15 / Sweden:15"
+   * @param name certification string like "USA:R / UK:15 / Sweden:15"
    * @return the localized certification if found, else *ANY* language cert found
    */
   // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
@@ -47,8 +55,8 @@ public class MovieHelpers {
   // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
   // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
-  public static Certification parseCertificationStringForMovieSetupCountry(String name) {
-    Certification cert = Certification.UNKNOWN;
+  public static MediaCertification parseCertificationStringForMovieSetupCountry(String name) {
+    MediaCertification cert = MediaCertification.UNKNOWN;
     name = name.trim();
     if (name.contains("/")) {
       // multiple countries
@@ -58,14 +66,14 @@ public class MovieHelpers {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1]);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1]);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
         else {
-          cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), c);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
@@ -76,14 +84,14 @@ public class MovieHelpers {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = Certification.findCertification(cs[1]);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.findCertification(cs[1]);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
         else {
-          cert = Certification.findCertification(c);
-          if (cert != Certification.UNKNOWN) {
+          cert = MediaCertification.findCertification(c);
+          if (cert != MediaCertification.UNKNOWN) {
             return cert;
           }
         }
@@ -93,16 +101,16 @@ public class MovieHelpers {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
-        cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
+        cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), cs[1].trim());
       }
       else {
         // no country? try to find only by name
-        cert = Certification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
+        cert = MediaCertification.getCertification(MovieModuleManager.SETTINGS.getCertificationCountry(), name.trim());
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate
-    if (cert == Certification.UNKNOWN) {
-      cert = Certification.findCertification(name);
+    if (cert == MediaCertification.UNKNOWN) {
+      cert = MediaCertification.findCertification(name);
     }
     return cert;
   }
@@ -116,28 +124,60 @@ public class MovieHelpers {
   public static void startAutomaticTrailerDownload(Movie movie) {
     // start movie trailer download?
     if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
-        && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
-      selectTrailerProvider(movie, LOGGER);
+            && movie.getMediaFiles(MediaFileType.TRAILER).isEmpty() && !movie.getTrailer().isEmpty()) {
+      downloadBestTrailer(movie);
     }
   }
 
-  public static void selectTrailerProvider(Movie movie, Logger logger) {
+  /**
+   * download the best trailer for the given movie
+   *
+   * @param movie the movie to download the trailer for
+   */
+  public static void downloadBestTrailer(Movie movie) {
+    MediaTrailer trailer = movie.getTrailer().get(0);
+    downloadTrailer(movie, trailer);
+  }
+
+  /**
+   * download the given trailer for the given movie
+   *
+   * @param movie   the movie to download the trailer for
+   * @param trailer the trailer to download
+   */
+  public static void downloadTrailer(Movie movie, MediaTrailer trailer) {
+    // get the right file name
+    List<MovieTrailerNaming> trailernames = new ArrayList<>();
+    if (movie.isMultiMovieDir()) {
+      // in a MMD we can only use this naming
+      trailernames.add(MovieTrailerNaming.FILENAME_TRAILER);
+    } else {
+      trailernames = MovieModuleManager.SETTINGS.getTrailerFilenames();
+    }
+
+    // hmm.. at the moment we can only download ONE trailer, so both patterns won't work
+    // just take the first one (or the default if there is no entry whyever)
+    String filename;
+    if (!trailernames.isEmpty()) {
+      filename = movie.getTrailerFilename(trailernames.get(0));
+    } else {
+      filename = movie.getTrailerFilename(MovieTrailerNaming.FILENAME_TRAILER);
+    }
+
     try {
       if (movie.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
-        YoutubeDownloadTask task = new YoutubeDownloadTask(movie.getTrailer().get(0), movie);
+        YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, movie, filename);
         TmmTaskManager.getInstance().addDownloadTask(task);
-      }
-      else {
-        MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(movie.getTrailer().get(0), movie);
+      } else {
+        TrailerDownloadTask task = new TrailerDownloadTask(trailer, movie, filename);
         TmmTaskManager.getInstance().addDownloadTask(task);
       }
     }
     catch (Exception e) {
-      logger.error("could not start trailer download: " + e.getMessage());
-      MessageManager.instance.pushMessage(
-          new Message(Message.MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed", new String[] { ":", e.getLocalizedMessage() }));
+      LOGGER.error("could not start trailer download: {}", e.getMessage());
+      MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
     }
   }
-
 
 }

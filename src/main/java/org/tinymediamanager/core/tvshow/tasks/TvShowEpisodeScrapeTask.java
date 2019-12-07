@@ -29,22 +29,18 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -53,48 +49,27 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask extends TmmTask {
-  private static final ResourceBundle       BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger               LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+  private static final ResourceBundle                    BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger                            LOGGER = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
-  private final List<TvShowEpisode>         episodes;
-  private final MediaScraper                mediaScraper;
-  private final TvShowScraperMetadataConfig config;
-
-  private boolean                           scrapeThumb;
-  private MediaLanguages                    language = TvShowModuleManager.SETTINGS.getScraperLanguage();
+  private final List<TvShowEpisode>                      episodes;
+  private final TvShowEpisodeSearchAndScrapeOptions      scrapeOptions;
+  private final List<TvShowEpisodeScraperMetadataConfig> config;
 
   /**
    * Instantiates a new tv show episode scrape task.
    * 
    * @param episodes
    *          the episodes to scrape
-   * @param mediaScraper
-   *          the media scraper to use
+   * @param options
+   *          the scraper options to use
    */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, TvShowScraperMetadataConfig config) {
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, TvShowEpisodeSearchAndScrapeOptions options,
+      List<TvShowEpisodeScraperMetadataConfig> config) {
     super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
     this.episodes = episodes;
-    this.mediaScraper = mediaScraper;
+    this.scrapeOptions = options;
     this.config = config;
-    this.scrapeThumb = true;
-  }
-
-  /**
-   * Instantiates a new tv show episode scrape task.
-   * 
-   * @param episodes
-   *          the episodes
-   * @param mediaScraper
-   *          the media scraper to use
-   * @param scrapeThumb
-   *          should we also scrape thumbs?
-   */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, TvShowScraperMetadataConfig config, boolean scrapeThumb) {
-    super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
-    this.episodes = episodes;
-    this.mediaScraper = mediaScraper;
-    this.config = config;
-    this.scrapeThumb = scrapeThumb;
   }
 
   @Override
@@ -102,14 +77,13 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
     for (TvShowEpisode episode : episodes) {
       // only scrape if at least one ID is available
       if (episode.getTvShow().getIds().size() == 0) {
-        LOGGER.info("we cannot scrape (no ID): " + episode.getTvShow().getTitle() + " - " + episode.getTitle());
+        LOGGER.info("we cannot scrape (no ID): {} - {}", episode.getTvShow().getTitle(), episode.getTitle());
         continue;
       }
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(language.toLocale());
-      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      TvShowEpisodeSearchAndScrapeOptions options = new TvShowEpisodeSearchAndScrapeOptions(scrapeOptions);
 
+      MediaScraper mediaScraper = scrapeOptions.getMetadataScraper();
       MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());
       md.setReleaseDate(episode.getFirstAired());
       options.setMetadata(md);
@@ -126,17 +100,10 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
         options.setId(MediaMetadata.SEASON_NR, String.valueOf(episode.getAiredSeason()));
         options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode.getAiredEpisode()));
       }
-      if (scrapeThumb) {
-        options.setArtworkType(MediaArtworkType.THUMB);
-      }
-      else {
-        options.setArtworkType(null);
-      }
 
       try {
         LOGGER.info("=====================================================");
-        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId() + ", "
-            + mediaScraper.getMediaProvider().getProviderInfo().getVersion());
+        LOGGER.info("Scrape metadata with scraper: {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
         LOGGER.info(options.toString());
         LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
@@ -153,7 +120,8 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
         LOGGER.warn("missing id for scrape");
         MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, episode, "scraper.error.missingid"));
       }
-      catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
+      catch (NothingFoundException ignored) {
+        LOGGER.debug("nothing found");
       }
     }
 
@@ -165,13 +133,5 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
       TmmTask task = new SyncTraktTvTask(null, new ArrayList<>(tvShows));
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
-  }
-
-  public MediaLanguages getLanguage() {
-    return language;
-  }
-
-  public void setLanguage(MediaLanguages language) {
-    this.language = language;
   }
 }

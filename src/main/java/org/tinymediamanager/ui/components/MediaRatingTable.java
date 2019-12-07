@@ -23,7 +23,6 @@ import javax.swing.table.TableColumn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.ui.NumberCellEditor;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -39,13 +38,13 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
  * @author Manuel Laggner
  */
 public class MediaRatingTable extends TmmTable {
-  private static final long           serialVersionUID = 8010732881277204728L;
+  private static final long                                           serialVersionUID = 8010732881277204728L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                                 BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Map<String, Rating>         ratingMap;
-  private EventList<MediaRating>      ratingList;
-  private boolean                     editable;
+  private Map<String, org.tinymediamanager.core.entities.MediaRating> ratingMap;
+  private EventList<MediaRating>                                      mediaRatingList;
+  private boolean                                                     editable;
 
   /**
    * this constructor is used to display the ratings
@@ -53,11 +52,11 @@ public class MediaRatingTable extends TmmTable {
    * @param ratings
    *          a map containing the ratings
    */
-  public MediaRatingTable(Map<String, Rating> ratings) {
+  public MediaRatingTable(Map<String, org.tinymediamanager.core.entities.MediaRating> ratings) {
     this.ratingMap = ratings;
     this.editable = false;
-    this.ratingList = convertRatingMapToEventList(ratingMap, true);
-    setModel(new DefaultEventTableModel<>(ratingList, new MediaRatingTableFormat(editable)));
+    this.mediaRatingList = convertRatingMapToEventList(ratingMap, true);
+    setModel(new DefaultEventTableModel<>(mediaRatingList, new MediaRatingTableFormat(editable)));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
   }
@@ -65,14 +64,14 @@ public class MediaRatingTable extends TmmTable {
   /**
    * this constructor is used to edit the ratings
    *
-   * @param ratings
+   * @param mediaRatings
    *          an eventlist containing the ratings
    */
-  public MediaRatingTable(EventList<MediaRating> ratings) {
+  public MediaRatingTable(EventList<MediaRating> mediaRatings) {
     this.ratingMap = null;
     this.editable = true;
-    this.ratingList = ratings;
-    setModel(new DefaultEventTableModel<>(ratingList, new MediaRatingTableFormat(editable)));
+    this.mediaRatingList = mediaRatings;
+    setModel(new DefaultEventTableModel<>(mediaRatingList, new MediaRatingTableFormat(editable)));
     // setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
@@ -89,19 +88,20 @@ public class MediaRatingTable extends TmmTable {
     column.setCellEditor(new NumberCellEditor(10, 0));
   }
 
-  public static EventList<MediaRating> convertRatingMapToEventList(Map<String, Rating> idMap, boolean withUserRating) {
+  public static EventList<MediaRating> convertRatingMapToEventList(Map<String, org.tinymediamanager.core.entities.MediaRating> idMap,
+      boolean withUserRating) {
     EventList<MediaRating> idList = new BasicEventList<>();
-    for (Entry<String, Rating> entry : idMap.entrySet()) {
-      if (Rating.USER.equals(entry.getKey()) && !withUserRating) {
+    for (Entry<String, org.tinymediamanager.core.entities.MediaRating> entry : idMap.entrySet()) {
+      if (org.tinymediamanager.core.entities.MediaRating.USER.equals(entry.getKey()) && !withUserRating) {
         continue;
       }
 
       MediaRating id = new MediaRating(entry.getKey());
-      Rating rating = entry.getValue();
+      org.tinymediamanager.core.entities.MediaRating mediaRating = entry.getValue();
 
-      id.value = rating.getRating();
-      id.votes = rating.getVotes();
-      id.maxValue = rating.getMaxValue();
+      id.value = mediaRating.getRating();
+      id.votes = mediaRating.getVotes();
+      id.maxValue = mediaRating.getMaxValue();
 
       idList.add(id);
     }

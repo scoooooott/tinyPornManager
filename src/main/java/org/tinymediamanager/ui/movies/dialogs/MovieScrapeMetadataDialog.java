@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -30,12 +31,13 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.movies.panels.MovieScraperMetadataPanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -45,13 +47,14 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
-  private static final long           serialVersionUID           = 3826984454317979241L;
+  private static final long                                              serialVersionUID = 3826984454317979241L;
 
-  private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
-  private MediaScraperComboBox        cbMetadataScraper;
-  private MediaScraperCheckComboBox   cbArtworkScraper;
-  private MediaScraperCheckComboBox   cbTrailerScraper;
-  private boolean                     startScrape                = false;
+  private JComboBox<MediaLanguages>                                      cbLanguage;
+  private MediaScraperComboBox                                           cbMetadataScraper;
+  private MediaScraperCheckComboBox                                      cbArtworkScraper;
+  private MediaScraperCheckComboBox                                      cbTrailerScraper;
+  private boolean                                                        startScrape      = false;
+  private ScraperMetadataConfigCheckComboBox<MovieScraperMetadataConfig> cbScraperConfig;
 
   /**
    * Instantiates a new movie scrape metadata.
@@ -81,61 +84,50 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       }
     }
 
-    // copy the values
-    MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
-
-    MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
-    scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
-    scraperMetadataConfig.setTagline(settings.isTagline());
-    scraperMetadataConfig.setPlot(settings.isPlot());
-    scraperMetadataConfig.setRating(settings.isRating());
-    scraperMetadataConfig.setRuntime(settings.isRuntime());
-    scraperMetadataConfig.setYear(settings.isYear());
-    scraperMetadataConfig.setCertification(settings.isCertification());
-    scraperMetadataConfig.setCast(settings.isCast());
-    scraperMetadataConfig.setCountry(settings.isCountry());
-    scraperMetadataConfig.setStudio(settings.isStudio());
-    scraperMetadataConfig.setGenres(settings.isGenres());
-    scraperMetadataConfig.setArtwork(settings.isArtwork());
-    scraperMetadataConfig.setTrailer(settings.isTrailer());
-    scraperMetadataConfig.setCollection(settings.isCollection());
-    scraperMetadataConfig.setTags(settings.isTags());
-
-    movieSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
-
     {
       JPanel panelCenter = new JPanel();
       getContentPane().add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new MigLayout("", "[][300lp,grow]", "[][][][20lp:n][shrink 0][][]"));
+      panelCenter.setLayout(new MigLayout("", "[][600lp:800lp,grow]", "[][][][][shrink 0][150lp:n, grow]"));
+
+      JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language"));
+      panelCenter.add(lblLanguageT, "cell 0 0,alignx trailing");
+
+      cbLanguage = new JComboBox(MediaLanguages.valuesSorted());
+      cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
+      panelCenter.add(cbLanguage, "cell 1 0,growx");
 
       JLabel lblMetadataScraperT = new TmmLabel(BUNDLE.getString("scraper.metadata"));
-      panelCenter.add(lblMetadataScraperT, "cell 0 0,alignx right");
+      panelCenter.add(lblMetadataScraperT, "cell 0 1,alignx right");
 
       cbMetadataScraper = new MediaScraperComboBox(MovieList.getInstance().getAvailableMediaScrapers());
-      panelCenter.add(cbMetadataScraper, "cell 1 0,growx");
+      panelCenter.add(cbMetadataScraper, "cell 1 1,growx");
       cbMetadataScraper.setSelectedItem(defaultScraper);
 
       JLabel lblArtworkScraper = new TmmLabel(BUNDLE.getString("scraper.artwork"));
-      panelCenter.add(lblArtworkScraper, "cell 0 1,alignx right");
+      panelCenter.add(lblArtworkScraper, "cell 0 2,alignx right");
 
       cbArtworkScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableArtworkScrapers());
-      panelCenter.add(cbArtworkScraper, "cell 1 1,growx");
+      panelCenter.add(cbArtworkScraper, "cell 1 2,growx");
 
       JLabel lblTrailerScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"));
-      panelCenter.add(lblTrailerScraper, "cell 0 2,alignx right");
+      panelCenter.add(lblTrailerScraper, "cell 0 3,alignx right");
 
       cbTrailerScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableTrailerScrapers());
-      panelCenter.add(cbTrailerScraper, "cell 1 2,growx");
+      panelCenter.add(cbTrailerScraper, "cell 1 3,growx");
 
       JSeparator separator = new JSeparator();
       panelCenter.add(separator, "cell 0 4 2 1,growx");
 
-      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
-      panelCenter.add(lblScrapeFollowingItems, "cell 0 5 2 1,growx");
+      JPanel panelScraperConfig = new JPanel();
+      panelCenter.add(panelScraperConfig, "cell 0 5 2 1,grow");
+      panelScraperConfig.setLayout(new MigLayout("", "[300lp:500lp,grow]", "[][]"));
+      {
+        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
+        panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0");
 
-      JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelCenter.add(panelScraperMetadataSetting, "cell 0 6 2 1,grow");
+        cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
+        panelScraperConfig.add(cbScraperConfig, "cell 0 1 ,wmin 0,grow");
+      }
     }
     {
       JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
@@ -163,6 +155,9 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     if (!selectedTrailerScrapers.isEmpty()) {
       cbTrailerScraper.setSelectedItems(selectedTrailerScrapers);
     }
+
+    // pre-set config
+    cbScraperConfig.setSelectedItems(MovieModuleManager.SETTINGS.getScraperMetadataConfig());
   }
 
   /**
@@ -170,21 +165,31 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
    * 
    * @return the movie search and scrape config
    */
-  public MovieSearchAndScrapeOptions getMovieSearchAndScrapeConfig() {
+  public MovieSearchAndScrapeOptions getMovieSearchAndScrapeOptions() {
+    MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
+
+    // language
+    movieSearchAndScrapeConfig.setLanguage((MediaLanguages) cbLanguage.getSelectedItem());
+
     // metadata provider
     movieSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork scrapers
-    for (MediaScraper scraper : cbArtworkScraper.getSelectedItems()) {
-      movieSearchAndScrapeConfig.addArtworkScraper(scraper);
-    }
+    movieSearchAndScrapeConfig.setArtworkScraper(cbArtworkScraper.getSelectedItems());
 
     // tailer scraper
-    for (MediaScraper scraper : cbTrailerScraper.getSelectedItems()) {
-      movieSearchAndScrapeConfig.addTrailerScraper(scraper);
-    }
+    movieSearchAndScrapeConfig.setTrailerScraper(cbTrailerScraper.getSelectedItems());
 
     return movieSearchAndScrapeConfig;
+  }
+
+  /**
+   * Pass the movie meta data config to the caller
+   * 
+   * @return the movie meta data config
+   */
+  public List<MovieScraperMetadataConfig> getMovieScraperMetadataConfig() {
+    return cbScraperConfig.getSelectedItems();
   }
 
   /**

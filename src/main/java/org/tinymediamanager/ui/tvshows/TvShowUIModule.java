@@ -24,6 +24,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.AbstractTmmUIModule;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.PopupMenuScroller;
+import org.tinymediamanager.ui.movies.panels.TrailerPanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShowAction;
@@ -47,7 +48,6 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
-import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesWoArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
@@ -84,7 +84,7 @@ import javax.swing.event.PopupMenuListener;
 import java.awt.CardLayout;
 
 public class TvShowUIModule extends AbstractTmmUIModule {
-  private final static String       ID       = "tvShows";
+  private static final String       ID       = "tvShows";
 
   private static TvShowUIModule     instance = null;
 
@@ -132,6 +132,7 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     tvShowDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowCastPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowMediaInformationPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.artwork"), new TvShowArtworkPanel(tvShowSelectionModel)); //$NON-NLS-1$
+    tvShowDetailPanel.add(BUNDLE.getString("metatag.trailer"), new TrailerPanel(tvShowSelectionModel));
     dataPanel.add(tvShowDetailPanel, "tvShow");
 
     // panel for seasons
@@ -236,7 +237,6 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
     popupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
-    popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
     popupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
     popupMenu.add(createAndRegisterAction(TvShowMissingEpisodeListAction.class));
@@ -321,7 +321,6 @@ public class TvShowUIModule extends AbstractTmmUIModule {
     searchPopupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
-    searchPopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
     searchPopupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
 

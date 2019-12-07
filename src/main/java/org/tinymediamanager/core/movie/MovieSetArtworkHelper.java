@@ -36,7 +36,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -171,24 +173,46 @@ public class MovieSetArtworkHelper {
    *          the movie set to set the artwork for
    * @param artwork
    *          a list of all artworks to be set
+   * @param config
+   *          the config which artwork to set
    */
-  public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
+  public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork, List<MovieSetScraperMetadataConfig> config) {
+    if (!ScraperMetadataConfig.containsAnyArtwork(config)) {
+      return;
+    }
+
     // sort artwork once again (langu/rating)
     artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage()));
 
     // poster
-    setBestPoster(movieSet, artwork);
+    if (config.contains(MovieSetScraperMetadataConfig.POSTER)) {
+      setBestPoster(movieSet, artwork);
+    }
 
     // fanart
-    setBestFanart(movieSet, artwork);
+    if (config.contains(MovieSetScraperMetadataConfig.FANART)) {
+      setBestFanart(movieSet, artwork);
+    }
 
     // works now for single & multimovie
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.LOGO);
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARLOGO);
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARART);
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.BANNER);
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.THUMB);
-    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.DISC);
+    if (config.contains(MovieSetScraperMetadataConfig.LOGO)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.LOGO);
+    }
+    if (config.contains(MovieSetScraperMetadataConfig.CLEARLOGO)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARLOGO);
+    }
+    if (config.contains(MovieSetScraperMetadataConfig.CLEARART)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARART);
+    }
+    if (config.contains(MovieSetScraperMetadataConfig.BANNER)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.BANNER);
+    }
+    if (config.contains(MovieSetScraperMetadataConfig.THUMB)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.THUMB);
+    }
+    if (config.contains(MovieSetScraperMetadataConfig.DISCART)) {
+      setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.DISC);
+    }
 
     // update DB
     movieSet.saveToDb();
@@ -388,7 +412,7 @@ public class MovieSetArtworkHelper {
   public static void cleanMovieSetArtworkInMovieFolder(Movie movie) {
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(movie.getPathNIO())) {
       for (Path entry : stream) {
-        Matcher matcher = MediaFile.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
+        Matcher matcher = MediaFileHelper.MOVIESET_ARTWORK_PATTERN.matcher(entry.getFileName().toString());
         if (matcher.find()) {
           Utils.deleteFileSafely(entry);
         }

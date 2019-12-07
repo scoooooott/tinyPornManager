@@ -38,20 +38,24 @@ public class JHintCheckBox extends JCheckBox {
 
   private Icon              hintIcon;
   private Insets            dummyInsets;
-  private MouseAdapter      tooltipAdatapter = new MouseAdapter() {
-                                               final int   defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-                                               final int   dismissDelayMinutes   = (int) TimeUnit.MINUTES.toMillis(10);              // 10 minutes
+  private MouseAdapter      tooltipAdatapter = createMouseAdapter();
 
-                                               @Override
-                                               public void mouseEntered(MouseEvent me) {
-                                                 ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
-                                               }
+  private MouseAdapter createMouseAdapter() {
+    return new MouseAdapter() {
+      final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+      final int dismissDelayMinutes   = (int) TimeUnit.MINUTES.toMillis(10);              // 10 minutes
 
-                                               @Override
-                                               public void mouseExited(MouseEvent me) {
-                                                 ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
-                                               }
-                                             };
+      @Override
+      public void mouseEntered(MouseEvent me) {
+        ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
+      }
+
+      @Override
+      public void mouseExited(MouseEvent me) {
+        ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+      }
+    };
+  }
 
   public JHintCheckBox() {
     super();
@@ -92,14 +96,13 @@ public class JHintCheckBox extends JCheckBox {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-
     int textX = 2;
 
     if (this.hintIcon != null) {
       int iconWidth = hintIcon.getIconWidth();
       int x = getWidth() - dummyInsets.right - iconWidth - 2;
       textX = dummyInsets.right + iconWidth + 4;
-      int y = 2;
+      int y = 4;
       hintIcon.paintIcon(this, g, x, y);
     }
 

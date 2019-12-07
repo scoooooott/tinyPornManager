@@ -18,12 +18,15 @@ package org.tinymediamanager.scraper.util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
 /**
  * The class MediaIdUtil is a helper class for managing ids
@@ -31,7 +34,11 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
  * @author Manuel Laggner
  */
 public class MediaIdUtil {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaIdUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaIdUtil.class);
+
+  private MediaIdUtil() {
+    // empty constructor for utility classes
+  }
 
   /**
    * get the imdb id from thetvdb by a given tvdb id
@@ -48,13 +55,13 @@ public class MediaIdUtil {
     String imdbId = "";
     try {
       MediaScraper scraper = MediaScraper.getMediaScraperById(MediaMetadata.TVDB, ScraperType.TV_SHOW);
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
       options.setId(MediaMetadata.TVDB, tvdbId);
       MediaMetadata md = ((ITvShowMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
       imdbId = (String) md.getId(MediaMetadata.IMDB);
     }
     catch (Exception e) {
-      LOGGER.error("could not get imdb id from tvdb id: " + e.getMessage());
+      LOGGER.error("could not get imdb id from tvdb id: {}", e.getMessage());
     }
 
     if (StringUtils.isBlank(imdbId)) {
@@ -62,5 +69,37 @@ public class MediaIdUtil {
     }
 
     return imdbId;
+  }
+
+  /**
+   * gets the imdb id via tmdb id
+   *
+   * @param tmdbId
+   *          the tmdb id
+   * @return the imdb id or an empty String
+   */
+  public static String getImdbIdViaTmdbId(int tmdbId) {
+    if (tmdbId == 0) {
+      return "";
+    }
+
+    try {
+      // call the tmdb metadata provider
+      IMediaProvider tmdb = MediaProviders.getProviderById(MediaMetadata.TMDB);
+      if (tmdb == null) {
+        return "";
+      }
+
+      // we just need to "scrape" this movie
+      MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+      options.setId(MediaMetadata.TMDB, Integer.toString(tmdbId));
+      MediaMetadata md = ((IMovieMetadataProvider) tmdb).getMetadata(options);
+      return md.getId(MediaMetadata.IMDB).toString();
+    }
+    catch (Exception ingored) {
+      // nothing to be done here
+    }
+
+    return "";
   }
 }

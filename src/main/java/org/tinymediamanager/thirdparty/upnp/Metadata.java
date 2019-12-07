@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class Metadata {
 

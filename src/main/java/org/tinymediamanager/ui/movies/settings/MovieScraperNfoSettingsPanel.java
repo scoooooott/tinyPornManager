@@ -32,14 +32,16 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
 
@@ -62,6 +64,8 @@ class MovieScraperNfoSettingsPanel extends JPanel {
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
   private JComboBox<MediaLanguages>            cbNfoLanguage;
+  private JHintCheckBox                        chckbxCreateOutline;
+  private JCheckBox                            chckbxOutlineFirstSentence;
 
   private ItemListener                         checkBoxListener;
   private ItemListener                         comboBoxListener;
@@ -199,6 +203,14 @@ class MovieScraperNfoSettingsPanel extends JPanel {
 
         cbCertificationStyle = new JComboBox();
         panelNfo.add(cbCertificationStyle, "cell 1 7");
+
+        chckbxCreateOutline = new JHintCheckBox(BUNDLE.getString("Settings.createoutline"));
+        chckbxCreateOutline.setToolTipText(BUNDLE.getString("Settings.createoutline.hint"));
+        chckbxCreateOutline.setHintIcon(IconManager.HINT);
+        panelNfo.add(chckbxCreateOutline, "cell 1 8 2 1");
+
+        chckbxOutlineFirstSentence = new JCheckBox(BUNDLE.getString("Settings.outlinefirstsentence"));
+        panelNfo.add(chckbxOutlineFirstSentence, "cell 2 9");
       }
     }
   }
@@ -231,7 +243,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     @Override
     public String toString() {
       String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ROOT));
-      return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
+      return bundleTag.replace("{}", CertificationStyle.formatCertification(MediaCertification.DE_FSK16, style));
     }
   }
 
@@ -253,5 +265,21 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, MediaLanguages, JComboBox, Object> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_1, cbNfoLanguage, jComboBoxBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_2 = BeanProperty.create("createOutline");
+    BeanProperty<JHintCheckBox, Boolean> jHintCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<MovieSettings, Boolean, JHintCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_2, chckbxCreateOutline, jHintCheckBoxBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_3 = BeanProperty.create("outlineFirstSentence");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_3, chckbxOutlineFirstSentence, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JHintCheckBox, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, chckbxCreateOutline,
+        jHintCheckBoxBeanProperty, chckbxOutlineFirstSentence, jCheckBoxBeanProperty_1);
+    autoBinding_4.bind();
   }
 }

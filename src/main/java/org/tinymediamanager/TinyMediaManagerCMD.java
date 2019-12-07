@@ -37,6 +37,7 @@ import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
@@ -46,9 +47,12 @@ import org.tinymediamanager.core.tasks.UpdaterTask;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowComparator;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -63,7 +67,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * 
  * @author Manuel Laggner
  */
-public class TinyMediaManagerCMD {
+class TinyMediaManagerCMD {
   private static final Logger     LOGGER          = LoggerFactory.getLogger(TinyMediaManagerCMD.class);
   private static boolean          updateMovies    = false;
   private static boolean          updateTv        = false;
@@ -81,6 +85,10 @@ public class TinyMediaManagerCMD {
 
   private static Path             exportTemplate  = null;
   private static Path             exportDir       = null;
+
+  private TinyMediaManagerCMD() {
+    // hide the public constructor for utility classes
+  }
 
   /**
    * parse command line params
@@ -134,24 +142,7 @@ public class TinyMediaManagerCMD {
       else if (cmd.equalsIgnoreCase("-rename") || cmd.equalsIgnoreCase("-renameNew")) { // "new" deprecated
         rename = true;
       }
-      // else if (cmd.equalsIgnoreCase("-config")) {
-      // i++;
-      // if (i == args.length) { // config is last parameter
-      // System.out.println("ERROR: config not specified!");
-      // printSyntax();
-      // System.exit(0);
-      // }
-      // String file = args[i];
-      // if (Files.exists(Paths.get("data", file))) { // only check in default data path?
-      // // load custom settings
-      // Settings.getInstance("data", file);
-      // }
-      // else {
-      // System.out.println("ERROR: config file not found! " + file);
-      // printSyntax();
-      // System.exit(0);
-      // }
-      // }
+
       // ************
       // ** EXPORT **
       // ************
@@ -209,21 +200,20 @@ public class TinyMediaManagerCMD {
         "    UPDATE: Will scan your folders, and adds all found items to database\n" +
         "            Keeps an internal list of 'new' items (for this run only!)\n" +
         "\n" +
-        "    -updateMovies        update all movie datasources\n" +
-        "    -updateMoviesX       replace X with 1-9 - just updates a single movie datasource; ordering like GUI\n" +
-        "    -updateTv            update all TvShow\n" +
-        "    -updateTvX           replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI\n" +
-        "    -update              update all (short for '-updateMovies -updateTv')\n" +
+        "    -updateMovies         update all movie datasources\n" +
+        "    -updateMoviesX        replace X with 1-9 - just updates a single movie datasource; ordering like GUI\n" +
+        "    -updateTv             update all TvShow\n" +
+        "    -updateTvX            replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI\n" +
+        "    -update               update all (short for '-updateMovies -updateTv')\n" +
         "\n" +
         "    SCRAPE: auto-scrapes (force best match) your specified items:\n" +
-        "    -scrapeNew           only NEW FOUND movies/TvShows/episodes from former update\n" +
-        "    -scrapeUnscraped     all movies/TvShows/episodes, which have not yet been scraped\n" +
-        "    -scrapeAll           ALL movies/TvShows/episodes, whether they have already been scraped or not\n" +
+        "    -scrapeNew            only NEW FOUND movies/TvShows/episodes from former update\n" +
+        "    -scrapeUnscraped      all movies/TvShows/episodes, which have not yet been scraped\n" +
+        "    -scrapeAll            ALL movies/TvShows/episodes, whether they have already been scraped or not\n" +
         "\n" +
-        "    -rename              rename & cleanup all the movies/TvShows/episodes from former scrape command\n" +
-        "    -config file.xml     specify an alternative configuration xml file\n" +
+        "    -rename               rename & cleanup all the movies/TvShows/episodes from former scrape command\n" +
         "    -export template dir  exports your complete movie/tv library with specified template to dir\n" +
-        "    -checkFiles          does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
+        "    -checkFiles           does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
         "\n" +
         "\n" +
         "EXAMPLES:\n" +
@@ -313,23 +303,24 @@ public class TinyMediaManagerCMD {
         if (scrapeUnscraped) {
           LOGGER.info("Commandline - scraping all unscraped movies...");
           List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
-          if (unscrapedMovies.size() > 0) {
+          if (!unscrapedMovies.isEmpty()) {
             scrape.addAll(unscrapedMovies);
           }
         }
         moviesToScrape.addAll(new ArrayList<>(scrape));
       }
 
-      if (moviesToScrape.size() > 0) {
+      if (!moviesToScrape.isEmpty()) {
         MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+        List<MovieScraperMetadataConfig> config = MovieModuleManager.SETTINGS.getScraperMetadataConfig();
         options.loadDefaults();
         if (dryRun) {
           for (Movie movie : moviesToScrape) {
-            LOGGER.info("DRYRUN: would have scraped " + movie.getTitle());
+            LOGGER.info("DRYRUN: would have scraped {}", movie.getTitle());
           }
         }
         else {
-          task = new MovieScrapeTask(moviesToScrape, true, options);
+          task = new MovieScrapeTask(moviesToScrape, true, options, config);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
@@ -343,10 +334,10 @@ public class TinyMediaManagerCMD {
       // *****************
       if (rename) {
         LOGGER.info("Commandline - rename & cleanup movies...");
-        if (moviesToScrape.size() > 0) {
+        if (!moviesToScrape.isEmpty()) {
           if (dryRun) {
             for (Movie movie : moviesToScrape) {
-              LOGGER.info("DRYRUN: would have renamed " + movie.getTitle());
+              LOGGER.info("DRYRUN: would have renamed {}", movie.getTitle());
             }
           }
           else {
@@ -365,7 +356,7 @@ public class TinyMediaManagerCMD {
             // ok, our template has been found under movies
             LOGGER.info("Commandline - exporting movies...");
             if (dryRun) {
-              LOGGER.info("DRYRUN: would have exported ALL movies to " + exportDir.toAbsolutePath());
+              LOGGER.info("DRYRUN: would have exported ALL movies to {}", exportDir.toAbsolutePath());
             }
             else {
               MovieExporter ex = new MovieExporter(Paths.get(t.getPath()));
@@ -405,8 +396,8 @@ public class TinyMediaManagerCMD {
             }
           }
         }
-        LOGGER.info("Commandline - found " + TvShowList.getInstance().getNewTvShows().size() + " TvShow(s) containing "
-            + TvShowList.getInstance().getNewEpisodes().size() + " new episode(s)");
+        LOGGER.info("Commandline - found {} TvShow(s) containing {} new episode(s)", TvShowList.getInstance().getNewTvShows().size(),
+            TvShowList.getInstance().getNewEpisodes().size());
       }
 
       // *****************
@@ -429,11 +420,11 @@ public class TinyMediaManagerCMD {
           List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
           List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
           LOGGER.info("Commandline - scraping new TvShows...");
-          if (newTv.size() > 0) {
+          if (!newTv.isEmpty()) {
             scrapeShow.addAll(newTv);
           }
           LOGGER.info("Commandline - scraping new episodes...");
-          if (newEp.size() > 0) {
+          if (!newEp.isEmpty()) {
             scrapeEpisode.addAll(newEp);
           }
         }
@@ -442,11 +433,11 @@ public class TinyMediaManagerCMD {
           LOGGER.info("Commandline - scraping unscraped TvShows...");
           List<TvShow> unscrapedShows = TvShowList.getInstance().getUnscrapedTvShows();
           List<TvShowEpisode> unscrapedEpisodes = TvShowList.getInstance().getUnscrapedEpisodes();
-          if (unscrapedShows.size() > 0) {
+          if (!unscrapedShows.isEmpty()) {
             scrapeShow.addAll(unscrapedShows);
           }
           LOGGER.info("Commandline - scraping unscraped episodes...");
-          if (unscrapedEpisodes.size() > 0) {
+          if (!unscrapedEpisodes.isEmpty()) {
             scrapeEpisode.addAll(unscrapedEpisodes);
           }
         }
@@ -467,15 +458,18 @@ public class TinyMediaManagerCMD {
       // do the scrape
       // *****************
       TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
+      List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = TvShowModuleManager.SETTINGS.getEpisodeScraperMetadataConfig();
+
       options.loadDefaults();
-      if (showToScrape.size() > 0) {
+      if (!showToScrape.isEmpty()) {
         if (dryRun) {
           for (TvShow show : showToScrape) {
-            LOGGER.info("DRYRUN: would have scraped show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
+            LOGGER.info("DRYRUN: would have scraped show {} with {} episodes", show.getTitle(), show.getEpisodeCount());
           }
         }
         else {
-          task = new TvShowScrapeTask(showToScrape, true, options);
+          task = new TvShowScrapeTask(showToScrape, true, options, tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
@@ -483,14 +477,17 @@ public class TinyMediaManagerCMD {
           }
         }
       }
-      if (episodeToScrape.size() > 0) {
+      if (!episodeToScrape.isEmpty()) {
         if (dryRun) {
           for (TvShowEpisode ep : episodeToScrape) {
-            LOGGER.info("DRYRUN: would have scraped episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+            LOGGER.info("DRYRUN: would have scraped episode {} S:{} E:{}", ep.getTvShow().getTitle(), ep.getSeason(), ep.getEpisode());
           }
         }
         else {
-          task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper(), options.getScraperMetadataConfig());
+          TvShowEpisodeSearchAndScrapeOptions options1 = new TvShowEpisodeSearchAndScrapeOptions();
+          options1.setDataFromOtherOptions(options);
+
+          task = new TvShowEpisodeScrapeTask(episodeToScrape, options1, episodeScraperMetadataConfig);
           task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
@@ -504,10 +501,10 @@ public class TinyMediaManagerCMD {
       // *****************
       if (rename) {
         LOGGER.info("Commandline - rename & cleanup new shows...");
-        if (showToScrape.size() > 0) {
+        if (!showToScrape.isEmpty()) {
           if (dryRun) {
             for (TvShow show : showToScrape) {
-              LOGGER.info("DRYRUN: would have renamed show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
+              LOGGER.info("DRYRUN: would have renamed show {} with {} episodes", show.getTitle(), show.getEpisodeCount());
             }
           }
           else {
@@ -520,10 +517,10 @@ public class TinyMediaManagerCMD {
           }
         }
         LOGGER.info("Commandline - rename & cleanup new episodes...");
-        if (episodeToScrape.size() > 0) {
+        if (!episodeToScrape.isEmpty()) {
           if (dryRun) {
             for (TvShowEpisode ep : episodeToScrape) {
-              LOGGER.info("DRYRUN: would have renamed episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+              LOGGER.info("DRYRUN: would have renamed episode {} S:{} E:{}", ep.getTvShow().getTitle(), ep.getSeason(), ep.getEpisode());
             }
           }
           else {
@@ -541,7 +538,7 @@ public class TinyMediaManagerCMD {
             // ok, our template has been found under movies
             LOGGER.info("Commandline - exporting tv shows...");
             if (dryRun) {
-              LOGGER.info("DRYRUN: would have exported ALL TV shows to " + exportDir.toAbsolutePath());
+              LOGGER.info("DRYRUN: would have exported ALL TV shows to {}", exportDir.toAbsolutePath());
             }
             else {
               TvShowExporter ex = new TvShowExporter(Paths.get(t.getPath()));
@@ -563,7 +560,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : m.getMediaFiles()) {
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+              LOGGER.warn("MediaFile not found! {}", mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -573,7 +570,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : s.getMediaFiles()) { // show MFs
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+              LOGGER.warn("MediaFile not found! {}", mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -581,7 +578,7 @@ public class TinyMediaManagerCMD {
             for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
               if (!mf.exists()) {
                 System.out.println();
-                LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+                LOGGER.warn("MediaFile not found! {}", mf.getFileAsPath());
                 allOk = false;
               }
             }

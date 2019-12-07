@@ -20,56 +20,51 @@ public class MediaInfoUtils {
   public static void loadMediaInfo() {
     try {
       String miv = "";
+      String nativepath = "native/";
 
-      // dropped linux shipment
-      if (!Platform.isLinux()) {
-        String nativepath = "native/";
+      // windows
+      if (Platform.isWindows()) {
+        nativepath += "windows";
+      }
+      // linux
+      else if (Platform.isLinux()) {
+        nativepath += "linux";
+      }
+      // osx
+      else if (Platform.isMac()) {
+        nativepath += "mac";
+      }
 
-        // windows
-        if (Platform.isWindows()) {
-          nativepath += "windows";
-        }
-        // linux
-        else if (Platform.isLinux()) {
-          nativepath += "linux";
-        }
-        // osx
-        else if (Platform.isMac()) {
-          nativepath += "mac";
-        }
-
-        // mac uses the same lib for 32 and 64 bit
-        if (!Platform.isMac()) {
-          // https://en.wikipedia.org/wiki/X86-64
-          if (Platform.is64Bit()) {
-            nativepath += "-x64";
-          }
-          else {
-            nativepath += "-x86";
-          }
-        }
-
-        // need that, since we cannot try and reload/unload a Class
-        // MI does not load over UNC, so copy to temp
-        if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
-          LOGGER.debug("We're on a network UNC path!");
-          Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"), "tmm");
-          Path nativeDir = tmpDir.resolve(nativepath).toAbsolutePath();
-          Utils.copyDirectoryRecursive(Paths.get(nativepath), nativeDir);
-
-          System.setProperty("jna.library.path", nativeDir.toString());
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.toString());
-          miv = MediaInfo.version(); // load class
+      // mac uses the same lib for 32 and 64 bit
+      if (!Platform.isMac()) {
+        // https://en.wikipedia.org/wiki/X86-64
+        if (Platform.is64Bit()) {
+          nativepath += "-x64";
         }
         else {
-          System.setProperty("jna.library.path", nativepath);
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
-          miv = MediaInfo.version(); // load class
+          nativepath += "-x86";
         }
       }
-      else {
-        miv = MediaInfo.version(); // load class
+
+      // need that, since we cannot try and reload/unload a Class
+      // MI does not load over UNC, so copy to temp
+      if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
+        LOGGER.debug("We're on a network UNC path!");
+        Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"), "tmm");
+        Path nativeDir = tmpDir.resolve(nativepath).toAbsolutePath();
+        Utils.copyDirectoryRecursive(Paths.get(nativepath), nativeDir);
+
+        System.setProperty("jna.library.path", nativeDir.toString()); // MI
+        System.setProperty("org.lwjgl.librarypath", nativeDir.toString()); // nfd
+        LOGGER.debug("Loading native libs from: {}", nativeDir.toString());
       }
+      else {
+        System.setProperty("jna.library.path", nativepath); // MI
+        System.setProperty("org.lwjgl.librarypath", nativepath); // nfd
+        LOGGER.debug("Loading native libs from: {}", nativepath);
+      }
+
+      miv = MediaInfo.version(); // load class
 
       if (!StringUtils.isEmpty(miv)) {
         LOGGER.info("Using " + miv);
@@ -82,11 +77,7 @@ public class MediaInfoUtils {
       }
 
     }
-    catch (
-
-    IOException e)
-
-    {
+    catch (IOException e) {
       LOGGER.error("Could not load mediainfo", e);
     }
   }

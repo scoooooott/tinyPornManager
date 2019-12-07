@@ -44,17 +44,18 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -80,7 +81,7 @@ public class MovieNfoParser {
   public String               outline             = "";
   public String               tagline             = "";
   public int                  runtime             = 0;
-  public Certification        certification       = Certification.UNKNOWN;
+  public MediaCertification   certification       = MediaCertification.UNKNOWN;
   public Date                 releaseDate         = null;
   public boolean              watched             = false;
   public int                  playcount           = 0;
@@ -289,7 +290,7 @@ public class MovieNfoParser {
     Element element = getSingleElement(root, "rating");
     if (element != null) {
       Rating r = new Rating();
-      r.id = org.tinymediamanager.core.entities.Rating.NFO;
+      r.id = MediaRating.NFO;
       try {
         r.rating = Float.parseFloat(element.ownText());
       }
@@ -314,7 +315,7 @@ public class MovieNfoParser {
     if (element != null) {
       try {
         Rating r = new Rating();
-        r.id = org.tinymediamanager.core.entities.Rating.USER;
+        r.id = MediaRating.USER;
         r.rating = Float.parseFloat(element.ownText());
         if (r.rating > 0) {
           ratings.put(r.id, r);
@@ -637,6 +638,8 @@ public class MovieNfoParser {
     supportedElements.add("imdb");
     supportedElements.add("tmdbid");
     supportedElements.add("ids");
+    supportedElements.add("tmdbcollectionid"); // add the lowercase variant to supported elements, since we have an LC contains check
+    supportedElements.add("tmdbCollectionId"); // but write the camelCase
     supportedElements.add("uniqueid");
 
     // id tag & check against imdb pattern (otherwise we cannot say for which provider this id is)
@@ -722,6 +725,17 @@ public class MovieNfoParser {
             ids.put(entry.tagName(), entry.ownText());
           }
         }
+      }
+    }
+
+    // the tmdb collection id
+    element = getSingleElement(root, "tmdbCollectionId");
+    if (element != null) {
+      try {
+        ids.put(MediaMetadata.TMDB_SET, MetadataUtil.parseInt(element.ownText()));
+      }
+      catch (NumberFormatException ignored) {
+        // just ignore
       }
     }
 
@@ -1458,7 +1472,7 @@ public class MovieNfoParser {
 
     for (Map.Entry<String, Rating> entry : ratings.entrySet()) {
       Rating r = entry.getValue();
-      movie.setRating(new org.tinymediamanager.core.entities.Rating(r.id, r.rating, r.votes, r.maxValue));
+      movie.setRating(new MediaRating(r.id, r.rating, r.votes, r.maxValue));
     }
 
     // year is initially -1, only take parsed values which are higher than -1
@@ -1571,7 +1585,7 @@ public class MovieNfoParser {
     if (StringUtils.isNotEmpty(trailer)) {
       if (!trailer.startsWith("file")) {
         // only add new MT when not a local file
-        MovieTrailer trailer = new MovieTrailer();
+        MediaTrailer trailer = new MediaTrailer();
         trailer.setName("fromNFO");
         trailer.setProvider("from NFO");
         trailer.setQuality("unknown");

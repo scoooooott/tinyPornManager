@@ -3,18 +3,20 @@ package org.tinymediamanager.thirdparty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaFileHelper;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 
 public class MediaInfoTest extends BasicTest {
 
@@ -95,19 +97,19 @@ public class MediaInfoTest extends BasicTest {
   public void testVideofiles() {
     MediaFile mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FSBS.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_SBS);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_SBS);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HSBS.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HSBS);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_HSBS);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-FTAB.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_TAB);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_TAB);
 
     mf = new MediaFile(Paths.get("src/test/resources/samples/3D-HTAB.mkv"));
     mf.gatherMediaInformation();
-    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFile.VIDEO_3D_HTAB);
+    assertThat(mf.getVideo3DFormat()).isEqualTo(MediaFileHelper.VIDEO_3D_HTAB);
   }
 
   @Test
@@ -312,37 +314,37 @@ public class MediaInfoTest extends BasicTest {
     }
   }
 
-  @Test
-  public void displayVersion() {
-    System.out.println(MediaInfo.staticOption("Info_Version"));
-  }
-
-  /**
-   * displays all known parameters you could fetch
-   */
-  @Test
-  public void displayInfoParameters() {
-    System.out.println(MediaInfo.staticOption("Info_Parameters"));
-  }
-
-  @Test
-  public void displayInfoCapacities() {
-    System.out.println(MediaInfo.staticOption("Info_Capacities"));
-  }
-
-  @Test
-  public void displayInfoOutputFormats() {
-    // since version 17.10
-    System.out.println(MediaInfo.staticOption("Info_OutputFormats"));
-  }
-
-  /**
-   * displays all supported codecs
-   */
-  @Test
-  public void displayInfoCodecs() {
-    System.out.println(MediaInfo.staticOption("Info_Codecs"));
-  }
+  // @Test
+  // public void displayVersion() {
+  // System.out.println(MediaInfo.staticOption("Info_Version"));
+  // }
+  //
+  // /**
+  // * displays all known parameters you could fetch
+  // */
+  // @Test
+  // public void displayInfoParameters() {
+  // System.out.println(MediaInfo.staticOption("Info_Parameters"));
+  // }
+  //
+  // @Test
+  // public void displayInfoCapacities() {
+  // System.out.println(MediaInfo.staticOption("Info_Capacities"));
+  // }
+  //
+  // @Test
+  // public void displayInfoOutputFormats() {
+  // // since version 17.10
+  // System.out.println(MediaInfo.staticOption("Info_OutputFormats"));
+  // }
+  //
+  // /**
+  // * displays all supported codecs
+  // */
+  // @Test
+  // public void displayInfoCodecs() {
+  // System.out.println(MediaInfo.staticOption("Info_Codecs"));
+  // }
 
   @Test
   public void mediaFile() {
@@ -368,6 +370,7 @@ public class MediaInfoTest extends BasicTest {
     System.out.println("FPS: " + mf.getFrameRate());
     System.out.println("var: " + mf.getAspectRatio());
     System.out.println("ws?: " + mf.isWidescreen());
+    System.out.println("hdr?: " + mf.getHdrFormat());
 
     System.out.println("----------------------");
     System.out.println("acodec: " + mf.getAudioCodec());
@@ -433,38 +436,113 @@ public class MediaInfoTest extends BasicTest {
   }
 
   @Test
-  public void listDirectForAll() {
-    MediaInfo mi = new MediaInfo();
+  public void testSubtitleLanguageDetection() throws Exception {
+    compareSubtitle("en.srt", "eng");
+    compareSubtitle("eng_sdh.srt", "eng");
+    compareSubtitle("moviename.en.srt", "eng");
+    compareSubtitle("moviename.en.forced.srt", "eng");
+    compareSubtitle("moviename.eng.srt", "eng");
+    compareSubtitle("moviename.german.srt", "deu");
+    compareSubtitle("moviename.Deutsch.srt", "deu");
+    compareSubtitle("moviename.eng_hi.srt", "hin"); // yeah not eng since the string ends with a valid language code :/
+    compareSubtitle("moviename.eng_sdh.srt", "eng");
+    compareSubtitle("movie.name.year.GERMAN.dTV.XViD.srt", "deu");
+    compareSubtitle("movietitle.year.NLPS.XviD.DTS.3CD-WAF.German.waf.com.cn.hk.srt", "deu");
+  }
 
-    DirectoryStream<Path> stream = null;
-    try {
-      stream = Files.newDirectoryStream(Paths.get("src/test/resources/samples"));
-      for (Path path : stream) {
-        if (mi.open(path)) {
+  /**
+   * Try to parse the language out of the filename. This happens (like in Kodi) to chop the filename into different chunks and search in the chunks
+   * for possible language tags.<br />
+   * To make this work flawless we need to chop out the "main" filename part (movie/episode video filename) and look into the rest. For this we need
+   * to pass the basename of the main video file to this method too.<br />
+   * This is only usable for audio and subtitle files
+   *
+   * @param mediaFile
+   *          the {@link MediaFile} to work with
+   * @param commonPart
+   *          the common part of the filename which is shared with the video file
+   */
+  private static void gatherLanguageInformation(MediaFile mediaFile, String commonPart) {
+    // FIXME: if finished, this should move to MediaFileHelper
+    if (mediaFile.getType() != MediaFileType.SUBTITLE && mediaFile.getType() != MediaFileType.AUDIO) {
+      return;
+    }
 
-          // https://github.com/MediaArea/MediaInfoLib/blob/master/Source/Resource/Text/Stream/Audio.csv
-          // Format;;;N YTY;;;Format used;;
-          // Format/String;;;Y NT;;;Format used + additional features
-          // Format/Info;;;Y NT;;;Info about the format;;
-          // Format_Commercial;;;N YT;;;Commercial name used by vendor for theses setings or Format field if there is no difference;;
-          // Format_Profile;;;Y YTY;;;Profile of the Format (old XML: 'Profile@Level' format; MIXML: 'Profile' only)
-          // Format_AdditionalFeatures;;;N YTY;;;Format features needed for fully supporting the content
+    String filename = mediaFile.getFilename();
+    String path = mediaFile.getPath();
 
-          String ret = path + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/String") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/Info") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Commercial") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Profile") + "\n";
-          ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_AdditionalFeatures") + "\n";
+    String shortname = mediaFile.getBasename().toLowerCase(Locale.ROOT);
 
-          System.out.println(ret);
-          mi.close();
-        }
+    shortname = shortname.replace(commonPart, "");
+    shortname = shortname.replaceAll("\\p{Punct}*forced", "");
+
+    // split the shortname into chunks and search from the end to the beginning for the language
+    String[] chunks = shortname.split("[ \\._\\-]");
+
+    String language = "";
+    for (int i = chunks.length - 1; i >= 0; i--) {
+      language = LanguageUtils.parseLanguageFromString(chunks[i]);
+      if (StringUtils.isNotBlank(language)) {
+        break;
       }
     }
-    catch (Exception e) {
-      // TODO: handle exception
+
+    if (mediaFile.getType() == MediaFileType.SUBTITLE) {
+      MediaFileSubtitle sub = mediaFile.getSubtitles().get(0);
+      if (StringUtils.isBlank(sub.getLanguage())) {
+        sub.setLanguage(language);
+      }
+    }
+    else if (mediaFile.getType() == MediaFileType.AUDIO) {
+      MediaFileAudioStream audio = mediaFile.getAudioStreams().get(0);
+      if (StringUtils.isBlank(audio.getLanguage())) {
+        audio.setLanguage(language);
+      }
     }
   }
+
+  private void compareSubtitle(String filename, String expectedLanguage) throws Exception {
+    MediaFile mf = new MediaFile(Paths.get("target/test-classes/subtitles/" + filename));
+    mf.gatherMediaInformation();
+    gatherLanguageInformation(mf, "moviename");
+    assertThat(mf.getType()).isEqualTo(MediaFileType.SUBTITLE);
+    assertThat(mf.getSubtitles()).isNotEmpty();
+    assertThat(mf.getSubtitles().get(0).getLanguage()).isEqualTo(expectedLanguage);
+  }
+
+  // @Test
+  // public void listDirectForAll() {
+  // MediaInfo mi = new MediaInfo();
+  //
+  // DirectoryStream<Path> stream = null;
+  // try {
+  // stream = Files.newDirectoryStream(Paths.get("src/test/resources/samples"));
+  // for (Path path : stream) {
+  // if (mi.open(path)) {
+  //
+  // // https://github.com/MediaArea/MediaInfoLib/blob/master/Source/Resource/Text/Stream/Audio.csv
+  // // Format;;;N YTY;;;Format used;;
+  // // Format/String;;;Y NT;;;Format used + additional features
+  // // Format/Info;;;Y NT;;;Info about the format;;
+  // // Format_Commercial;;;N YT;;;Commercial name used by vendor for theses setings or Format field if there is no difference;;
+  // // Format_Profile;;;Y YTY;;;Profile of the Format (old XML: 'Profile@Level' format; MIXML: 'Profile' only)
+  // // Format_AdditionalFeatures;;;N YTY;;;Format features needed for fully supporting the content
+  //
+  // String ret = path + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/String") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format/Info") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Commercial") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_Profile") + "\n";
+  // ret += mi.get(MediaInfo.StreamKind.Audio, 0, "Format_AdditionalFeatures") + "\n";
+  //
+  // System.out.println(ret);
+  // mi.close();
+  // }
+  // }
+  // }
+  // catch (Exception e) {
+  // // TODO: handle exception
+  // }
+  // }
 }

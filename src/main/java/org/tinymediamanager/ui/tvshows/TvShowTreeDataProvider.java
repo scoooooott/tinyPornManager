@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -344,6 +345,9 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShow(TvShow tvShow) {
+    // remove the propertychangelistener from this tv show
+    tvShow.removePropertyChangeListener(tvShowPropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(tvShow);
     if (cachedNode == null) {
       return;
@@ -353,12 +357,9 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     for (TvShowSeason season : tvShow.getSeasons()) {
       removeNodeFromCache(season);
     }
-    for (TvShowEpisode epsiode : tvShow.getEpisodesForDisplay()) {
-      removeNodeFromCache(epsiode);
+    for (TvShowEpisode episode : tvShow.getEpisodesForDisplay()) {
+      removeNodeFromCache(episode);
     }
-
-    // remove the propertychangelistener from this tv show
-    tvShow.removePropertyChangeListener(tvShowPropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
   }
@@ -395,13 +396,13 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShowEpisode(TvShowEpisode episode) {
+    // remove the propertychangelistener from this episode
+    episode.removePropertyChangeListener(episodePropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(episode);
     if (cachedNode == null) {
       return;
     }
-
-    // remove the propertychangelistener from this episode
-    episode.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
 
@@ -414,13 +415,13 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   }
 
   private void removeTvShowSeason(TvShowSeason season) {
+    // remove the propertychangelistener from this episode
+    season.removePropertyChangeListener(episodePropertyChangeListener);
+
     TmmTreeNode cachedNode = removeNodeFromCache(season);
     if (cachedNode == null) {
       return;
     }
-
-    // remove the propertychangelistener from this episode
-    season.removePropertyChangeListener(episodePropertyChangeListener);
 
     firePropertyChange(NODE_REMOVED, null, cachedNode);
   }
@@ -459,7 +460,18 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
   }
 
-  class TvShowTreeNode extends TmmTreeNode {
+  abstract static class AbstractTvShowTreeNode extends TmmTreeNode {
+
+    AbstractTvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+      super(userObject, dataProvider);
+    }
+
+    abstract String getTitle();
+
+    abstract String getOriginalTitle();
+  }
+
+  static class TvShowTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -1316609340104597133L;
 
     /**
@@ -468,7 +480,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      * @param userObject
      *          the user object
      */
-    public TvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+    TvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
       super(userObject, dataProvider);
     }
 
@@ -488,9 +500,29 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // fallback: call super
       return super.toString();
     }
+
+    @Override
+    public String getTitle() {
+      if (getUserObject() instanceof TvShow) {
+        TvShow tvShow = (TvShow) getUserObject();
+        return tvShow.getTitle();
+      }
+
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      if (getUserObject() instanceof TvShow) {
+        TvShow tvShow = (TvShow) getUserObject();
+        return tvShow.getOriginalTitle();
+      }
+
+      return toString();
+    }
   }
 
-  class TvShowSeasonTreeNode extends TmmTreeNode {
+  public static class TvShowSeasonTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -5734830011018805194L;
 
     /**
@@ -511,23 +543,38 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       // return movieSet name
       if (getUserObject() instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) getUserObject();
-        if (season.getSeason() == -1) {
-          return BUNDLE.getString("tvshow.uncategorized");
+        if (StringUtils.isNotBlank(season.getTitle())) {
+          return season.getTitle();
         }
+        else {
+          if (season.getSeason() == -1) {
+            return BUNDLE.getString("tvshow.uncategorized");
+          }
 
-        if (season.getSeason() == 0) {
-          return BUNDLE.getString("metatag.specials");
+          if (season.getSeason() == 0) {
+            return BUNDLE.getString("metatag.specials");
+          }
+
+          return BUNDLE.getString("metatag.season") + " " + season.getSeason();
         }
-
-        return BUNDLE.getString("metatag.season") + " " + season.getSeason();
       }
 
       // fallback: call super
       return super.toString();
     }
+
+    @Override
+    public String getTitle() {
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      return toString();
+    }
   }
 
-  class TvShowEpisodeTreeNode extends TmmTreeNode {
+  public static class TvShowEpisodeTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -7108614568808831980L;
 
     /**
@@ -560,6 +607,26 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
 
       // fallback: call super
       return super.toString();
+    }
+
+    @Override
+    public String getTitle() {
+      if (getUserObject() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) getUserObject();
+        return episode.getTitle();
+      }
+
+      return toString();
+    }
+
+    @Override
+    public String getOriginalTitle() {
+      if (getUserObject() instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) getUserObject();
+        return episode.getOriginalTitle();
+      }
+
+      return toString();
     }
   }
 }

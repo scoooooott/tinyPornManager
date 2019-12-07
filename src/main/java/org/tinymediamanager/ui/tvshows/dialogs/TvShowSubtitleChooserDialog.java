@@ -52,13 +52,13 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowSubtitleDownloadTask;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -314,10 +314,11 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + episodeToScrape.getTitle()); //$NON-NLS-1$
       for (MediaScraper scraper : scrapers) {
         try {
-          IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-          SubtitleSearchOptions options = new SubtitleSearchOptions(file);
+          ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+          SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.TV_SHOW);
+          options.setFile(file);
           options.setImdbId(imdbId);
-          options.setLanguage(language.toLocale());
+          options.setLanguage(language);
           options.setSeason(season);
           options.setEpisode(episode);
           searchResults.addAll(subtitleProvider.search(options));
@@ -326,7 +327,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
           LOGGER.error("getSubtitles", e);
           MessageDialog.showExceptionWindow(e);
         }
-        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
+        catch (MissingIdException ignored) {
+          LOGGER.debug("no id found for scraper {}", scraper.getId());
         }
       }
 

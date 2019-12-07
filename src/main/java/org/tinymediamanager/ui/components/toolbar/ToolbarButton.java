@@ -75,8 +75,7 @@ class ToolbarButton extends JButton {
       public void mouseClicked(MouseEvent arg0) {
         if (ToolbarButton.this.popupMenu != null) {
           ToolbarButton.this.popupMenu.show(ToolbarButton.this,
-              ToolbarButton.this.getWidth() - (int) ToolbarButton.this.popupMenu.getPreferredSize().getWidth(),
-              ToolbarButton.this.getHeight());
+              ToolbarButton.this.getWidth() - (int) ToolbarButton.this.popupMenu.getPreferredSize().getWidth(), ToolbarButton.this.getHeight());
         }
       }
     });

@@ -23,9 +23,9 @@ import java.util.List;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -33,7 +33,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
  * 
  * @author Manuel Laggner
  */
-public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter<Certification> {
+public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter<MediaCertification> {
   private MovieList movieList = MovieList.getInstance();
 
   public MovieCertificationFilter() {
@@ -50,7 +50,7 @@ public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter
 
   @Override
   public boolean accept(Movie movie) {
-    List<Certification> selectedItems = checkComboBox.getSelectedItems();
+    List<MediaCertification> selectedItems = checkComboBox.getSelectedItems();
     return selectedItems.contains(movie.getCertification());
   }
 
@@ -60,19 +60,19 @@ public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter
   }
 
   private void buildAndInstallCertificationArray() {
-    List<Certification> certifications = new ArrayList<>(movieList.getCertificationsInMovies());
+    List<MediaCertification> certifications = new ArrayList<>(movieList.getCertificationsInMovies());
     Collections.sort(certifications);
 
     setValues(certifications);
   }
 
   @Override
-  protected String parseTypeToString(Certification type) throws Exception {
+  protected String parseTypeToString(MediaCertification type) throws Exception {
     return type.name();
   }
 
   @Override
-  protected Certification parseStringToType(String string) throws Exception {
-    return Certification.valueOf(string);
+  protected MediaCertification parseStringToType(String string) throws Exception {
+    return MediaCertification.valueOf(string);
   }
 }

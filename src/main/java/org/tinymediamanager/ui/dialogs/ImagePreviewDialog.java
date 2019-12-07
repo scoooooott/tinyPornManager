@@ -15,27 +15,20 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageUtils;
-import org.tinymediamanager.scraper.http.Url;
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.components.ImageLabel;
 
-import hu.kazocsaba.imageviewer.ImageViewer;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class ImagePreviewDialog. To display a preview of the image in the image chooser
@@ -43,45 +36,46 @@ import hu.kazocsaba.imageviewer.ImageViewer;
  * @author Manuel Laggner
  */
 public class ImagePreviewDialog extends TmmDialog {
-  private static final long                serialVersionUID = -7479476493187235867L;
-  private static final Logger              LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
+  private static final long serialVersionUID = -7479476493187235867L;
 
-  private String                           imageUrl;
-  private Path                             imagePath;
-  private SwingWorker<BufferedImage, Void> worker;
-  private ImageViewer                      imgViewer        = new ImageViewer();
+  private String            imageUrl;
+  private String            imagePath;
 
-  private JLabel                           lblLoadingInfo;
+  private ImageLabel        image;
 
   public ImagePreviewDialog(String urlToImage) {
-    super("", "imagePreview");
+    super(BUNDLE.getString("image.show"), "imagePreview");
+    init();
+
     this.imageUrl = urlToImage;
-
-    lblLoadingInfo = new JLabel(BUNDLE.getString("image.download")); //$NON-NLS-1$
-    lblLoadingInfo.setBorder(new EmptyBorder(10, 10, 10, 10));
-    TmmFontHelper.changeFont(lblLoadingInfo, 1.5f);
-    getContentPane().add(lblLoadingInfo, BorderLayout.CENTER);
-
-    setBottomPanel(new JPanel());
-
-    worker = new ImageFetcher();
-    worker.execute();
   }
 
   public ImagePreviewDialog(Path pathToImage) {
     super("", "imagePreview");
-    this.imagePath = pathToImage;
+    init();
 
-    lblLoadingInfo = new JLabel(BUNDLE.getString("image.download")); //$NON-NLS-1$
-    lblLoadingInfo.setBorder(new EmptyBorder(10, 10, 10, 10));
-    TmmFontHelper.changeFont(lblLoadingInfo, 1.5f);
-    getContentPane().add(lblLoadingInfo, BorderLayout.CENTER);
+    this.imagePath = pathToImage.toString();
+  }
 
-    setBottomPanel(new JPanel());
+  private void init() {
+    {
+      JPanel imagePanel = new JPanel();
+      imagePanel.setLayout(new MigLayout("", "[75lp,grow]", "[75lp,grow]"));
+      getContentPane().add(imagePanel);
 
-    worker = new ImageFetcherPath();
-    worker.execute();
+      image = new ImageLabel(true);
+      image.setPreferCache(false);
+      image.setIsLightbox(true);
+      image.setPosition(ImageLabel.Position.CENTER);
+      image.setCacheUrl(true);
 
+      imagePanel.add(image, "cell 0 0,grow");
+    }
+    {
+      JButton closeButton = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      closeButton.addActionListener(e -> setVisible(false));
+      addDefaultButton(closeButton);
+    }
   }
 
   @Override
@@ -93,92 +87,23 @@ public class ImagePreviewDialog extends TmmDialog {
       int height = gd.getDisplayMode().getHeight();
       setMaximumSize(new Dimension(width, height));
 
+      // run later to avoid strange loading artefacts
+      SwingUtilities.invokeLater(() -> {
+        if (StringUtils.isNotBlank(imagePath)) {
+          image.setImagePath(imagePath);
+        }
+        else if (StringUtils.isNotBlank(imageUrl)) {
+          image.setImageUrl(imageUrl);
+        }
+      });
+
       pack();
       setLocationRelativeTo(MainWindow.getActiveInstance());
       super.setVisible(true);
     }
     else {
-      if (worker != null && !worker.isDone()) {
-        worker.cancel(true);
-      }
       super.setVisible(false);
       dispose();
     }
   }
-
-  /***************************************************************************
-   * helper classes
-   **************************************************************************/
-  protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
-    @Override
-    protected BufferedImage doInBackground() {
-      try {
-        Url url = new Url(imageUrl);
-        return ImageUtils.createImage(url.getBytesWithRetry(5));
-      }
-      catch (Exception e) {
-        LOGGER.warn("fetch image: " + e.getMessage());
-        return null;
-      }
-    }
-
-    @Override
-    protected void done() {
-      try {
-        BufferedImage image = get();
-        if (image == null) {
-          lblLoadingInfo.setText(BUNDLE.getString("image.download.failed")); //$NON-NLS-1$
-          pack();
-          return;
-        }
-        imgViewer.setImage(image);
-        JComponent comp = imgViewer.getComponent();
-
-        getContentPane().removeAll();
-        getContentPane().add(comp, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(MainWindow.getActiveInstance());
-      }
-      catch (Exception e) {
-        LOGGER.warn("fetch image: " + e.getMessage());
-      }
-    }
-  }
-
-  protected class ImageFetcherPath extends SwingWorker<BufferedImage, Void> {
-    @Override
-    protected BufferedImage doInBackground() {
-      try {
-        return ImageUtils.createImage(imagePath);
-      }
-      catch (Exception e) {
-        LOGGER.warn("fetch image: " + e.getMessage());
-        return null;
-      }
-    }
-
-    @Override
-    protected void done() {
-      try {
-        BufferedImage image = get();
-        if (image == null) {
-          lblLoadingInfo.setText(BUNDLE.getString("image.download.failed")); //$NON-NLS-1$
-          pack();
-          return;
-        }
-        imgViewer.setImage(image);
-        JComponent comp = imgViewer.getComponent();
-
-        getContentPane().removeAll();
-        getContentPane().add(comp, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(MainWindow.getActiveInstance());
-      }
-      catch (Exception e) {
-        LOGGER.warn("fetch image: " + e.getMessage());
-      }
-    }
-
-  }
 }
-

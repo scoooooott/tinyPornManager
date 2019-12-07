@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
@@ -28,11 +29,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
@@ -46,12 +49,14 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.plaf.TmmTheme;
 import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
 
+import com.madgag.gif.fmsware.GifDecoder;
+
 /**
  * The Class ImageLabel.
  * 
  * @author Manuel Laggner
  */
-public class ImageLabel extends JLabel {
+public class ImageLabel extends JComponent {
   public enum Position {
     TOP_LEFT,
     TOP_RIGHT,
@@ -60,68 +65,84 @@ public class ImageLabel extends JLabel {
     CENTER
   }
 
-  private static final long                  serialVersionUID       = -2524445544386464158L;
-  private static final char                  ICON_ID                = '\uF03E';
-  private static final Color                 EMPTY_BACKGROUND_COLOR = new Color(141, 165, 179);
-  private static final Dimension             EMPTY_SIZE             = new Dimension(0, 0);
+  private static final long         serialVersionUID       = -2524445544386464158L;
+  private static final char         ICON_ID                = '\uF03E';
+  private static final Color        EMPTY_BACKGROUND_COLOR = new Color(141, 165, 179);
+  private static final Dimension    EMPTY_SIZE             = new Dimension(0, 0);
 
-  protected byte[]                           originalImageBytes;
-  protected Dimension                        originalImageSize      = EMPTY_SIZE;
-  protected BufferedImage                    scaledImage;
+  protected byte[]                  originalImageBytes;
+  protected Dimension               originalImageSize      = EMPTY_SIZE;
+  protected Image                   scaledImage;
+  protected ImageIcon               animatedGif;
 
-  protected String                           imageUrl;
-  protected String                           imagePath;
+  protected String                  imageUrl;
+  protected String                  imagePath;
 
-  protected Position                         position               = Position.TOP_LEFT;
-  protected boolean                          drawBorder;
-  protected boolean                          drawFullWidth;
-  protected boolean                          enabledLightbox        = false;
-  protected boolean                          preferCache            = true;
-  protected boolean                          isLightBox             = false;
-  protected float                            desiredAspectRatio     = 0f;
-  protected boolean                          drawShadow             = false;
-  protected boolean                          cacheUrl               = false;
+  protected Position                position               = Position.TOP_LEFT;
+  protected boolean                 drawBorder;
+  protected boolean                 drawFullWidth;
+  protected boolean                 drawShadow;
 
-  protected SwingWorker<BufferedImage, Void> worker                 = null;
-  protected MouseListener                    lightboxListener       = null;
+  protected boolean                 enabledLightbox        = false;
+  protected boolean                 preferCache            = true;
+  protected boolean                 isLightBox             = false;
+  protected float                   desiredAspectRatio     = 0f;
+  protected boolean                 cacheUrl               = false;
+
+  protected ShadowRenderer          shadowRenderer;
+  protected SwingWorker<Void, Void> worker                 = null;
+  protected MouseListener           lightboxListener       = null;
 
   public ImageLabel() {
-    super("");
-    this.drawBorder = true;
-    this.drawFullWidth = false;
+    this(true, false);
   }
 
   public ImageLabel(boolean drawBorder) {
-    super("");
-    this.drawBorder = drawBorder;
-    this.drawFullWidth = false;
+    this(drawBorder, false);
   }
 
   public ImageLabel(boolean drawBorder, boolean drawFullWidth) {
-    super("");
-    this.drawBorder = drawBorder;
-    this.drawFullWidth = drawFullWidth;
+    this(drawBorder, drawFullWidth, false);
   }
 
   public ImageLabel(boolean drawBorder, boolean drawFullWidth, boolean drawShadow) {
-    super("");
+    super();
     this.drawBorder = drawBorder;
     this.drawFullWidth = drawFullWidth;
     this.drawShadow = drawShadow;
+    if (drawShadow) {
+      this.shadowRenderer = new ShadowRenderer(8, 0.3f, Color.BLACK);
+    }
   }
 
   public void setOriginalImage(byte[] originalImageBytes) {
-    try {
-      this.originalImageBytes = originalImageBytes;
-      BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
-      this.originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
-      this.scaledImage = Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, this.getSize().width, this.getSize().height,
-          Scalr.OP_ANTIALIAS);
-    }
-    catch (Exception e) {
-      clearImageData();
-    }
+    setImageBytes(originalImageBytes);
+    recreateScaledImageIfNeeded(0, 0, this.getSize().width, this.getSize().height);
     repaint();
+  }
+
+  protected void setImageBytes(byte[] bytes) {
+    originalImageBytes = bytes;
+  }
+
+  protected void createScaledImage(byte[] originalImageBytes, int width, int height) throws Exception {
+    // check if this file is a gif
+    GifDecoder decoder = new GifDecoder();
+    int status = decoder.read(new ByteArrayInputStream(originalImageBytes));
+    if (status == GifDecoder.STATUS_OK && decoder.getFrameCount() > 1) {
+      // this is an animated gif
+      animatedGif = new ImageIcon(originalImageBytes);
+      originalImageSize = new Dimension(decoder.getFrameSize().width, decoder.getFrameSize().height);
+      scaledImage = animatedGif.getImage();
+      // setIcon(animatedGif);
+    }
+    else {
+      // this is just a normal pic
+      BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
+      originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+      scaledImage = Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      animatedGif = null;
+    }
   }
 
   public String getImagePath() {
@@ -164,6 +185,7 @@ public class ImageLabel extends JLabel {
   }
 
   protected void clearImageData() {
+    animatedGif = null;
     scaledImage = null;
     originalImageBytes = null;
     originalImageSize = EMPTY_SIZE;
@@ -237,17 +259,37 @@ public class ImageLabel extends JLabel {
     return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / desiredAspectRatio) + 1);
   }
 
+  /**
+   * This is overridden to return false if the current image is not equal to the passed in Image <code>img</code>.
+   *
+   * @see java.awt.image.ImageObserver
+   * @see java.awt.Component#imageUpdate(java.awt.Image, int, int, int, int, int)
+   */
+  @Override
+  public boolean imageUpdate(Image img, int infoflags, int x, int y, int w, int h) {
+    if (!isShowing() || scaledImage != img) {
+      return false;
+    }
+
+    return super.imageUpdate(img, infoflags, x, y, w, h);
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
     if (scaledImage != null) {
+      Graphics2D g2d = (Graphics2D) g;
+      g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
       int scaledImageWidth = scaledImage.getWidth(null);
       int scaledImageHeight = scaledImage.getHeight(null);
 
       // calculate new height/width
-      int newWidth = 0;
-      int newHeight = 0;
+      int newWidth;
+      int newHeight;
 
       int offsetX = 0;
       int offsetY = 0;
@@ -287,16 +329,14 @@ public class ImageLabel extends JLabel {
         newHeight = size.y;
 
         // when the image size differs too much - reload and rescale the original image
-        recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, this.getWidth() - 8, this.getHeight() - 8);
+        recreateScaledImageIfNeeded(scaledImageWidth, scaledImageHeight, newWidth - 8, newHeight - 8);
 
         // did the image reset to null?
-        if (scaledImage != null) {
+        if (scaledImage instanceof BufferedImage) {
           // draw shadow
-          ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
-          BufferedImage shadowImage = shadow.createShadow(scaledImage);
+          BufferedImage shadowImage = shadowRenderer.createShadow((BufferedImage) scaledImage);
           // draw shadow
           g.drawImage(shadowImage, 8, 8, newWidth - 8, newHeight - 8, this);
-
         }
 
         // draw image
@@ -350,7 +390,7 @@ public class ImageLabel extends JLabel {
 
       // calculate the optimal font size; the pt is about 0.75 * the needed px
       // we draw that icon at max 50% of the available space
-      float fontSize = (float) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
+      float fontSize = (float) (Math.min(newWidth, newHeight) * 0.5 / 0.75);
 
       // draw the _no image found_ icon
       Font font = TmmTheme.FONT_AWESOME.deriveFont(fontSize);
@@ -372,8 +412,7 @@ public class ImageLabel extends JLabel {
       g2.dispose();
 
       if (drawShadow) {
-        ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
-        BufferedImage shadowImage = shadow.createShadow(tmp);
+        BufferedImage shadowImage = shadowRenderer.createShadow(tmp);
 
         // draw shadow
         g.drawImage(shadowImage, 8, 8, newWidth, newHeight, this);
@@ -389,10 +428,13 @@ public class ImageLabel extends JLabel {
   }
 
   private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
-    if (originalWidth < 20 || originalHeight < 20 || newWidth != originalWidth || newHeight != originalHeight) {
+    if (animatedGif != null) {
+      scaledImage = animatedGif.getImage();
+    }
+    else if (originalWidth < 20 || originalHeight < 20 || (newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f)
+        || (newHeight * 0.8f > originalHeight) || (originalHeight > newHeight * 1.2f)) {
       try {
-        scaledImage = Scalr.resize(ImageUtils.createImage(originalImageBytes), Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight,
-            Scalr.OP_ANTIALIAS);
+        createScaledImage(originalImageBytes, newWidth, newHeight);
       }
       catch (Exception e) {
         scaledImage = null;
@@ -441,7 +483,7 @@ public class ImageLabel extends JLabel {
   /*
    * inner class for downloading online images
    */
-  protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
+  protected class ImageFetcher extends SwingWorker<Void, Void> {
     private Dimension newSize;
 
     public ImageFetcher(Dimension newSize) {
@@ -449,7 +491,7 @@ public class ImageLabel extends JLabel {
     }
 
     @Override
-    protected BufferedImage doInBackground() {
+    protected Void doInBackground() {
       try {
         Url url;
         if (cacheUrl) {
@@ -458,16 +500,17 @@ public class ImageLabel extends JLabel {
         else {
           url = new Url(imageUrl);
         }
-        originalImageBytes = url.getBytesWithRetry(5);
-        BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
-        originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
-        return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);
+        byte[] bytes = url.getBytesWithRetry(5);
+        clearImageData();
+        setImageBytes(bytes);
+        recreateScaledImageIfNeeded(0, 0, newSize.width, newSize.height);
       }
       catch (Exception e) {
         imageUrl = "";
         clearImageData();
-        return null;
       }
+
+      return null;
     }
 
     @Override
@@ -476,16 +519,10 @@ public class ImageLabel extends JLabel {
         return;
       }
 
-      try {
-        // get fetched image
-        scaledImage = get();
-        // fire events
-        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
-        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
-      }
-      catch (Exception e) {
-        scaledImage = null;
-      }
+      // fire events
+      ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+      ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+
       revalidate();
       repaint();
     }
@@ -494,7 +531,7 @@ public class ImageLabel extends JLabel {
   /*
    * inner class for loading local images
    */
-  protected class ImageLoader extends SwingWorker<BufferedImage, Void> {
+  protected class ImageLoader extends SwingWorker<Void, Void> {
     private String    imagePath;
     private Dimension newSize;
 
@@ -504,7 +541,7 @@ public class ImageLabel extends JLabel {
     }
 
     @Override
-    protected BufferedImage doInBackground() {
+    protected Void doInBackground() {
       Path file = null;
 
       // we prefer reading it from the cache
@@ -525,21 +562,19 @@ public class ImageLabel extends JLabel {
 
       if (file != null && Files.exists(file)) {
         try {
-          originalImageBytes = Files.readAllBytes(file);
-          BufferedImage originalImage = ImageUtils.createImage(originalImageBytes);
-          originalImageSize = new Dimension(originalImage.getWidth(), originalImage.getHeight());
-          return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height, Scalr.OP_ANTIALIAS);
+          byte[] bytes = Files.readAllBytes(file);
+          clearImageData();
+          setImageBytes(bytes);
+          recreateScaledImageIfNeeded(0, 0, newSize.width, newSize.height);
         }
         catch (Exception e) {
           // okay, we got an exception here - set the image path to empty to avoid an endless try-to-reload
           ImageLabel.this.imagePath = "";
           clearImageData();
-          return null;
         }
       }
-      else {
-        return null;
-      }
+
+      return null;
     }
 
     @Override
@@ -548,16 +583,10 @@ public class ImageLabel extends JLabel {
         return;
       }
 
-      try {
-        // get fetched image
-        scaledImage = get();
-        // fire events
-        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
-        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
-      }
-      catch (Exception e) {
-        scaledImage = null;
-      }
+      // fire events
+      ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+      ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+
       revalidate();
       repaint();
     }

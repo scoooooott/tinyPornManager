@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
-
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -49,8 +47,6 @@ public class MovieUpdateSingleDatasourceAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     TmmThreadPool task = new MovieUpdateDatasourceTask(datasource);
-    if (TmmTaskManager.getInstance().addMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(task);
   }
 }

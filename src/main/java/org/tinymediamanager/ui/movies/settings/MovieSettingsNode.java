@@ -27,12 +27,12 @@ import org.tinymediamanager.ui.settings.TmmSettingsNode;
  * @author Manuel Laggner
  */
 public class MovieSettingsNode extends TmmSettingsNode {
-  private final static ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieSettingsNode() {
     super(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.datasourceandnfo"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
 
     TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel()); //$NON-NLS-1$
     scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new MovieScraperOptionsSettingsPanel()));//$NON-NLS-1$

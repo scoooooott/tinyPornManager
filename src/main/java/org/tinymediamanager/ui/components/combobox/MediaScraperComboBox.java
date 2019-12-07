@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -73,40 +72,11 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   @Override
-  public Dimension getPreferredSize() {
-    return getUI().getPreferredSize(this);
-  }
-
-  @Override
-  public Dimension getMinimumSize() {
-    return getUI().getPreferredSize(this);
-  }
-
-  @Override
-  public Dimension getMaximumSize() {
-    return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
-  }
-
-  @Override
   public void setSelectedItem(Object anObject) {
     MediaScraper ms = (MediaScraper) anObject;
     if (ms != null && ms.isEnabled()) {
       // only allow to choose scraper when active
       super.setSelectedItem(anObject);
-    }
-  }
-
-  /**
-   * Small hack to get pop up menu size bigger enough to show items even though the combo box size could be smaller
-   */
-  @Override
-  public void doLayout() {
-    try {
-      layingOut = true;
-      super.doLayout();
-    }
-    finally {
-      layingOut = false;
     }
   }
 
@@ -167,8 +137,8 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   class MediaScraperComboBoxRenderer extends JLabel implements ListCellRenderer<MediaScraper> {
-    protected final DefaultListCellRenderer defaultRenderer  = new DefaultListCellRenderer();
-    private static final long               serialVersionUID = -4726883292397768525L;
+    protected final ListCellRenderer defaultRenderer;
+    private static final long        serialVersionUID = -4726883292397768525L;
 
     public MediaScraperComboBoxRenderer() {
       setOpaque(true);
@@ -176,6 +146,10 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       setVerticalAlignment(CENTER);
       setBorder(BorderFactory.createEmptyBorder(4, 5, 4, 5));
       imageCache = new HashMap<>();
+
+      // get the default renderer from a JComboBox
+      JComboBox box = new JComboBox();
+      defaultRenderer = box.getRenderer();
     }
 
     /*

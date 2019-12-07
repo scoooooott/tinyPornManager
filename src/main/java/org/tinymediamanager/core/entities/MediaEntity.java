@@ -42,10 +42,8 @@ import static org.tinymediamanager.core.Constants.TITLE;
 import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,6 +65,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
@@ -109,7 +108,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                     note              = "";
 
   @JsonProperty
-  protected Map<String, Rating>        ratings           = new ConcurrentHashMap<>(0);
+  protected Map<String, MediaRating>   ratings           = new ConcurrentHashMap<>(0);
   @JsonProperty
   private List<MediaFile>              mediaFiles        = new ArrayList<>();
   @JsonProperty
@@ -121,6 +120,13 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public MediaEntity() {
   }
+
+  /**
+   * get the main file for this entity
+   * 
+   * @return the main file
+   */
+  abstract public MediaFile getMainFile();
 
   /**
    * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
@@ -332,12 +338,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
-  public Map<String, Rating> getRatings() {
+  public Map<String, MediaRating> getRatings() {
     return ratings;
   }
 
-  public Rating getRating(String id) {
-    return ratings.getOrDefault(id, new Rating());
+  public MediaRating getRating(String id) {
+    return ratings.getOrDefault(id, new MediaRating());
   }
 
   /**
@@ -345,28 +351,28 @@ public abstract class MediaEntity extends AbstractModelObject {
    * 
    * @return the main (preferred) rating
    */
-  public Rating getRating() {
-    Rating rating = ratings.get(Rating.USER);
+  public MediaRating getRating() {
+    MediaRating mediaRating = ratings.get(MediaRating.USER);
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   public int getYear() {
@@ -407,8 +413,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeRating(String id) {
-    Rating removedRating = ratings.remove(id);
-    if (removedRating != null) {
+    MediaRating removedMediaRating = ratings.remove(id);
+    if (removedMediaRating != null) {
       firePropertyChange(RATING, null, ratings);
     }
   }
@@ -418,24 +424,24 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(RATING, null, ratings);
   }
 
-  public void setRatings(Map<String, Rating> newRatings) {
+  public void setRatings(Map<String, MediaRating> newRatings) {
     // preserve the user rating here
-    Rating userRating = ratings.get(Rating.USER);
+    MediaRating userMediaRating = ratings.get(MediaRating.USER);
 
     ratings.clear();
-    for (Entry<String, Rating> entry : newRatings.entrySet()) {
+    for (Entry<String, MediaRating> entry : newRatings.entrySet()) {
       setRating(entry.getValue());
     }
 
-    if (userRating != null && !newRatings.containsKey(Rating.USER)) {
-      setRating(userRating);
+    if (userMediaRating != null && !newRatings.containsKey(MediaRating.USER)) {
+      setRating(userMediaRating);
     }
   }
 
-  public void setRating(Rating rating) {
-    if (rating != null && StringUtils.isNotBlank(rating.getId())) {
-      ratings.put(rating.getId(), rating);
-      firePropertyChange(RATING, null, rating);
+  public void setRating(MediaRating mediaRating) {
+    if (mediaRating != null && StringUtils.isNotBlank(mediaRating.getId())) {
+      ratings.put(mediaRating.getId(), mediaRating);
+      firePropertyChange(RATING, null, mediaRating);
     }
   }
 
@@ -544,8 +550,41 @@ public abstract class MediaEntity extends AbstractModelObject {
     return dateAdded;
   }
 
+  public Date getDateAddedForUi() {
+    Date date = null;
+
+    switch (Settings.getInstance().getDateField()) {
+      case FILE_CREATION_DATE:
+        MediaFile mainMediaFile = getMainFile();
+        if (mainMediaFile != null) {
+          date = mainMediaFile.getDateCreated();
+        }
+        break;
+
+      case FILE_LAST_MODIFIED_DATE:
+        mainMediaFile = getMainFile();
+        if (mainMediaFile != null) {
+          date = mainMediaFile.getDateLastModified();
+        }
+        break;
+
+      default:
+        date = dateAdded;
+        break;
+
+    }
+
+    // sanity check - must not be null
+    if (date == null) {
+      date = dateAdded;
+    }
+
+    return date;
+  }
+
   public String getDateAddedAsString() {
-    if (dateAdded == null) {
+    Date date = getDateAddedForUi();
+    if (date == null) {
       return "";
     }
 
@@ -557,28 +596,6 @@ public abstract class MediaEntity extends AbstractModelObject {
     this.dateAdded = newValue;
     firePropertyChange(DATE_ADDED, oldValue, newValue);
     firePropertyChange(DATE_ADDED_AS_STRING, oldValue, newValue);
-  }
-
-  public void setDateAddedFromMediaFile(MediaFile mf) {
-    try {
-      BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
-      // sanity check; need something litil bit bigger than 0
-      if (view.creationTime().toMillis() > 100000) {
-        Date creDat = new Date(view.creationTime().toMillis());
-        if (creDat.compareTo(dateAdded) < 0) {
-          setDateAdded(creDat);
-        }
-      }
-      if (view.lastModifiedTime().toMillis() > 100000) {
-        Date modDat = new Date(view.lastModifiedTime().toMillis());
-        if (modDat.compareTo(dateAdded) < 0) {
-          setDateAdded(modDat);
-        }
-      }
-    }
-    catch (Exception ignored) {
-      LOGGER.warn("could not read filedate: {}", ignored);
-    }
   }
 
   public String getProductionCompany() {

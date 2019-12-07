@@ -25,6 +25,9 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -34,6 +37,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
 
 /**
  * the class TvShowDownloadMissingArtworkAction is used to search/download missing artwork
@@ -59,6 +63,14 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
       return;
     }
 
+    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.downloadmissingartwork")); //$NON-NLS-1$
+    dialog.setVisible(true);
+
+    // get options from dialog
+    TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeOptions();
+    List<TvShowScraperMetadataConfig> tvShowScraperMetadataConfig = dialog.getTvShowScraperMetadataConfig();
+    List<TvShowEpisodeScraperMetadataConfig> episodeScraperMetadataConfig = dialog.getTvShowEpisodeScraperMetadataConfig();
+
     // add all episodes which are not part of a selected tv show
     for (Object obj : selectedObjects) {
       if (obj instanceof TvShow) {
@@ -76,7 +88,8 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
     }
 
     if (!selectedTvShows.isEmpty() || !selectedEpisodes.isEmpty()) {
-      TvShowMissingArtworkDownloadTask task = new TvShowMissingArtworkDownloadTask(selectedTvShows, new ArrayList<>(selectedEpisodes));
+      TvShowMissingArtworkDownloadTask task = new TvShowMissingArtworkDownloadTask(selectedTvShows, new ArrayList<>(selectedEpisodes), options,
+          tvShowScraperMetadataConfig, episodeScraperMetadataConfig);
       TmmTaskManager.getInstance().addDownloadTask(task);
     }
   }

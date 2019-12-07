@@ -42,7 +42,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  * @author Manuel Laggner
  */
 public class MovieExtraImageFetcherTask implements Runnable {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcherTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcherTask.class);
 
   private Movie               movie;
   private MediaFileType       type;

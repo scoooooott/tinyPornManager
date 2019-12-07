@@ -102,16 +102,16 @@ public class LoadingSpinner implements Icon {
       // draw shadow
       Color shadowColor = new Color(0, 0, 0, 150);
       g2.setColor(shadowColor);
-        for (Area aShadow : shadow) {
-            g2.fill(aShadow);
-        }
+      for (Area aShadow : shadow) {
+        g2.fill(aShadow);
+      }
 
       // draw spinner
-        for (Area aTicker : ticker) {
-            Color[] colors = calculateColors(1, 255);
-            g2.setPaint(new GradientPaint(width / 2, 0, colors[1], width / 2, height, colors[0]));
-            g2.fill(aTicker);
-        }
+      for (Area aTicker : ticker) {
+        Color[] colors = calculateColors(1, 255);
+        g2.setPaint(new GradientPaint(width / 2, 0, colors[1], width / 2, height, colors[0]));
+        g2.fill(aTicker);
+      }
     }
   }
 
@@ -238,15 +238,15 @@ public class LoadingSpinner implements Icon {
       double fixedIncrement = 2.0 * Math.PI / ((double) barsCount);
       AffineTransform toCircle = AffineTransform.getRotateInstance(fixedIncrement, center.getX(), center.getY());
 
-        for (Area aTicker : ticker) {
-            aTicker.transform(toCircle);
-        }
+      for (Area aTicker : ticker) {
+        aTicker.transform(toCircle);
+      }
 
       // rotate the shadow by one tick
       toCircle = AffineTransform.getRotateInstance(fixedIncrement, center.getX(), center.getY() + 1);
-        for (Area aShadow : shadow) {
-            aShadow.transform(toCircle);
-        }
+      for (Area aShadow : shadow) {
+        aShadow.transform(toCircle);
+      }
 
       parent.repaint();
     }

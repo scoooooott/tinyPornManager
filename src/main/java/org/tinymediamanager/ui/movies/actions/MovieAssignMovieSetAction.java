@@ -58,8 +58,6 @@ public class MovieAssignMovieSetAction extends TmmAction {
     }
 
     TmmThreadPool scrapeTask = new MovieAssignMovieSetTask(selectedMovies);
-    if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(scrapeTask);
   }
 }

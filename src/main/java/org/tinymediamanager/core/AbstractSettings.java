@@ -26,6 +26,8 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.ITmmUIFilter;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -63,8 +66,11 @@ public abstract class AbstractSettings extends AbstractModelObject {
   @JsonIgnore
   protected ObjectWriter        objectWriter;
 
-  public AbstractSettings() {
+  @JsonIgnore
+  protected Map<String, Object> unknownFields;
 
+  public AbstractSettings() {
+    unknownFields = new HashMap<>();
     objectWriter = createObjectWriter();
   }
 
@@ -97,6 +103,28 @@ public abstract class AbstractSettings extends AbstractModelObject {
    */
   public boolean isNewConfig() {
     return newConfig;
+  }
+
+  /**
+   * get any unknown fields from the settings JSON
+   * 
+   * @return a map with all unknown fiels
+   */
+  public Map<String, Object> getUnknownFields() {
+    return unknownFields;
+  }
+
+  /**
+   * the JSON setter for any unknown fields
+   * 
+   * @param name
+   *          the name of the field
+   * @param value
+   *          the value
+   */
+  @JsonAnySetter
+  public void setUnknownField(String name, Object value) {
+    unknownFields.put(name, value);
   }
 
   /**

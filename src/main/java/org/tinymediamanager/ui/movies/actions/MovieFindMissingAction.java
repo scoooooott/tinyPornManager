@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.movies.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
-
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.tasks.MovieFindMissingTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -78,8 +76,6 @@ public class MovieFindMissingAction extends TmmAction {
     else {
       task = new MovieFindMissingTask();
     }
-    if (TmmTaskManager.getInstance().addMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(task);
   }
 }

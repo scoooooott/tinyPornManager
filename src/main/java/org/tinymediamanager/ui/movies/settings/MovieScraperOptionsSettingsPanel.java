@@ -59,7 +59,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private JSlider                     sliderThreshold;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
-  private JCheckBox                   chckbxImageLanguage;
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox<CountryCode>      cbCertificationCountry;
   private JCheckBox                   chckbxScraperFallback;
@@ -110,7 +109,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
         panelOptions.add(chckbxScraperFallback, "cell 1 2 2 1");
 
         chckbxCapitalizeWords = new JCheckBox((BUNDLE.getString("Settings.scraper.capitalizeWords")));
-        panelOptions.add(chckbxCapitalizeWords,"cell 1 3 2 1");
+        panelOptions.add(chckbxCapitalizeWords, "cell 1 3 2 1");
       }
     }
     {
@@ -120,8 +119,8 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDefaults, lblDefaultsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
-        MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
-        panelDefaults.add(movieScraperMetadataPanel, "cell 1 0 2 1,grow");
+        MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel();
+        panelDefaults.add(movieScraperMetadataPanel, "cell 1 0 2 1");
       }
     }
     {
@@ -133,9 +132,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
       {
         chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape"));
         panelImages.add(chckbxAutomaticallyScrapeImages, "cell 1 0 2 1");
-
-        chckbxImageLanguage = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape.language"));
-        panelImages.add(chckbxImageLanguage, "cell 1 1 2 1");
       }
     }
     {
@@ -157,7 +153,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
 
         JTextArea tpScraperThresholdHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
         TmmFontHelper.changeFont(tpScraperThresholdHint, L2);
-        panelAutomaticScrape.add(tpScraperThresholdHint, "cell 1 1 3 1,growx");
+        panelAutomaticScrape.add(tpScraperThresholdHint, "cell 1 1 3 1, growx, wmin 0");
       }
     }
   }
@@ -168,16 +164,6 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
-    //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty, chckbxImageLanguage, jCheckBoxBeanProperty_1);
-    autoBinding_10.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("imageLanguagePriority");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
-    autoBinding_11.bind();
     //
     BeanProperty<MovieSettings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -199,7 +185,7 @@ class MovieScraperOptionsSettingsPanel extends JPanel {
     BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("capitalWordsInTitles");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_3 = BeanProperty.create("selected");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-            settingsBeanProperty_2, chckbxCapitalizeWords, jCheckBoxBeanProperty_3);
+        settingsBeanProperty_2, chckbxCapitalizeWords, jCheckBoxBeanProperty_3);
     autoBinding_2.bind();
   }
 }

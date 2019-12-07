@@ -1,33 +1,47 @@
 package org.tinymediamanager.thirdparty;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import com.google.gson.stream.JsonReader;
 
@@ -39,214 +53,386 @@ import com.google.gson.stream.JsonReader;
  */
 public class VSMeta {
 
-  private static final Logger     LOGGER        = LoggerFactory.getLogger(VSMeta.class);
+  private static final Logger           LOGGER                    = LoggerFactory.getLogger(VSMeta.class);
 
-  private HashMap<String, Object> ids           = new HashMap<>(0);
-  private String                  title1        = "";                                   // show/movie
-  private String                  title2        = "";                                   // season?
-  private String                  title3        = "";                                   // episode/movie tagline
-  private String                  description   = "";
-  private String                  json          = "";
-  private MovieSet                movieSet      = null;
-  private float                   rating        = 0.0f;
-  private String                  year          = "";
-  /** yyyy-mm-dd **/
-  private String                  date          = "";
-  private Certification           certification = Certification.UNKNOWN;
-  private List<MediaArtwork>      artworks      = new ArrayList<>(0);
-  private List<MediaGenres>       genres        = new ArrayList<>(0);
-  private List<MediaCastMember>   cast          = new ArrayList<>(0);
+  // https://gist.github.com/soywiz/2c10feb1231e70aca19a58aca9d6c16a
+  private static final byte             TAG_TITLE1                = 0x12;
+  private static final byte             TAG_TITLE2                = 0x1A;
+  private static final byte             TAG_TITLE3                = 0x22;
+  private static final byte             TAG_YEAR                  = 0x28;
+  private static final byte             TAG_RELEASE_DATE          = 0x32;
+  private static final byte             TAG_LOCKED                = 0x38;
+  private static final byte             TAG_SUMMARY               = 0x42;
+  private static final byte             TAG_META_JSON             = 0x4A;                                 // movie & episode
+  private static final byte             TAG_CLASSIFICATION        = 0x5A;
+  private static final byte             TAG_RATING                = 0x60;
+  private static final int              TAG_POSTER_DATA           = 0x8a;
+  private static final int              TAG_POSTER_MD5            = 0x92;
+  private static final int              TAG_BACKDROP_DATA         = 0xaa;
+  // private static final int TAG_BACKDROP_MD5 = 0x??;
+
+  private static final byte             TAG_GROUP1                = 0x52;
+  private static final byte             TAG1_CAST                 = 0x0A;
+  private static final byte             TAG1_DIRECTOR             = 0x12;
+  private static final byte             TAG1_GENRE                = 0x1A;
+  private static final byte             TAG1_WRITER               = 0x22;
+
+  private static final int              TAG_GROUP2                = 0x9a;
+  private static final byte             TAG2_SEASON               = 0x08;
+  private static final byte             TAG2_EPISODE              = 0x10;
+  private static final byte             TAG2_RELEASE_DATE_TV_SHOW = 0x22;
+  private static final byte             TAG2_LOCKED               = 0x28;
+
+  private static final byte             TAG2_TVSHOW_YEAR          = 0x18;
+  private static final byte             TAG2_TVSHOW_SUMMARY       = 0x32;
+  private static final byte             TAG2_TVSHOW_POSTER_DATA   = 0x3A;
+  private static final byte             TAG2_TVSHOW_POSTER_MD5    = 0x42;
+  private static final byte             TAG2_TVSHOW_META_JSON     = 0x4A;
+
+  private static final byte             TAG2_GROUP3               = 0x52;
+  private static final byte             TAG3_BACKDROP_DATA        = 0x0a;
+  private static final byte             TAG3_BACKDROP_MD5         = 0x12;
+  private static final byte             TAG3_TIMESTAMP            = 0x18;
+
+  private static final SimpleDateFormat FORMAT_DATE               = new SimpleDateFormat("yyyy-MM-dd");
 
   // global array & position
-  private byte[]                  fileArray     = new byte[0];
-  private int                     currentpos;
+  private MemorySyncStream              data;
+  private Info                          info                      = new Info();
+  private HashMap<String, Object>       ids                       = new HashMap<>(0);
+
+  private Path                          vsMetaFile                = null;
+  private String                        basename                  = "";
+  private MovieSet                      movieSet                  = null;
+  private float                         rating                    = 0.0f;
+  private List<MediaArtwork>            artworks                  = new ArrayList<>(0);
+
+  static class Info {
+    public String    title1            = "";             // movie/show title
+    public String    title2            = "";             // movie/show title?
+    public String    title3            = "";             // movie tagline / episode title
+    public int       year              = 0;
+    public Date      releaseDate       = null;
+    public String    summary           = "";
+    public String    classification    = "";
+    public int       season            = 1;
+    public int       episode           = 1;
+    public Double    rating            = null;
+    public ListInfo  list              = new ListInfo();
+    public ImageInfo images            = new ImageInfo();
+    public String    entityJson        = "";             // movie & episode
+    public Date      timestamp         = new Date();
+    public boolean   locked            = true;
+
+    public String    tvShowJson        = "";
+    public Date      tvshowReleaseDate = null;
+    public int       tvshowYear        = 0;
+    public String    tvshowSummary     = "";
+    public boolean   tvshowLocked      = true;
+  }
+
+  static class ListInfo {
+    public Set<String> cast     = new HashSet<>();
+    public Set<String> genre    = new HashSet<>();
+    public Set<String> director = new HashSet<>();
+    public Set<String> writer   = new HashSet<>();
+  }
+
+  static class ImageInfo {
+    public byte[] poster    = null; // movie/episode
+    public byte[] showImage = null; // show
+    public byte[] backdrop  = null;
+  }
+
+  static SyncStream openSync(byte[] data) {
+    return new MemorySyncStream(data);
+  }
+
+  public VSMeta(Path file) {
+    this.vsMetaFile = file;
+    this.basename = FilenameUtils.getBaseName(FilenameUtils.getBaseName(file.getFileName().toString())); // remove .ext.vsmeta
+  }
+
+  private void writeImage(Path file, byte[] bytes) {
+    try {
+      LOGGER.debug("SYNO: write image to filesystem: {}", file);
+      Files.write(file, bytes);
+    }
+    catch (IOException e) {
+      LOGGER.warn("Could not write image {}", file, e);
+    }
+  }
+
+  /**
+   * Extracts the images out of the .vsmeta, and returns MFs you want to add
+   * 
+   * @param entity
+   * @return
+   */
+  public List<MediaFile> generateMediaFile(MediaEntity entity) {
+    List<MediaFile> mfs = new ArrayList<MediaFile>();
+
+    if (info.images.poster != null) {
+      MediaFile mf = null;
+      if (entity instanceof Movie) {
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-poster.jpg"), MediaFileType.POSTER);
+      }
+      else if (entity instanceof TvShowEpisode) {
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-thumb.jpg"), MediaFileType.THUMB);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.poster);
+        mfs.add(mf);
+      }
+    }
+
+    if (info.images.backdrop != null) {
+      MediaFile mf = null;
+      if (entity instanceof Movie) { // || entity instanceof TvShowEpisode) { // no episode fanart - treat it as show fanart!!
+        mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-fanart.jpg"), MediaFileType.FANART);
+      }
+      if (entity instanceof TvShow) {
+        mf = new MediaFile(entity.getPathNIO().resolve("fanart.jpg"), MediaFileType.FANART);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.backdrop);
+        mfs.add(mf);
+      }
+    }
+
+    if (info.images.showImage != null) {
+      MediaFile mf = null;
+      if (entity instanceof TvShow) {
+        mf = new MediaFile(entity.getPathNIO().resolve("poster.jpg"), MediaFileType.POSTER);
+      }
+      if (mf != null && !mf.exists()) {
+        writeImage(mf.getFileAsPath(), info.images.showImage);
+        mfs.add(mf);
+      }
+    }
+
+    return mfs;
+  }
 
   /**
    * tries to parse a .VSMETA file
    * 
-   * @param file
+   * @param vsMetaFile
    */
-  public void parseFile(Path file) {
+  public void parseFile() {
     try {
-      fileArray = Files.readAllBytes(file);
-      if (fileArray.length < 30) {
-        LOGGER.warn("SYNO: Invalid file", file);
-        return;
+      data = new MemorySyncStream(Files.readAllBytes(vsMetaFile));
+
+      int magic = data.readU8();
+      int version = data.readU8();
+      if (magic != 0x08) {
+        throw new Exception("Not a vsmeta archive");
       }
-      LOGGER.debug("SYNO: found valid .vsmeta - try to parse metadata...");
+      if (version != 0x02) {
+        // throw new Exception("Only supported vsmeta version 2");
+      }
+      LOGGER.debug("SYNO: found valid .vsmeta (Version " + version + ") - try to parse metadata...");
 
-      int maxLength = fileArray.length > 5000 ? 5000 : fileArray.length - 1;
-
-      for (currentpos = 0; currentpos < maxLength; currentpos++) {
-        int b = fileArray[currentpos] & 0xff; // unsigned int
-
-        // =================================================
-        // get the values from VSMETA file
-        // =================================================
-        String ret = "";
-        switch (b) {
-          case 0x12: // Show/Movie Title
-          case 0x1A: // Season Title
-          case 0x22: // Episode Title/MoviePlot
-          case 0x32: // first aired / release
-          case 0x42: // desc
-          case 0x4A: // json
-          case 0x5A: // certification
-            ret = parseLengthString();
+      while (!data.eof()) {
+        long pos = data.position();
+        int kind = data.readU_VL_Int();
+        switch (kind) {
+          case TAG_TITLE1:
+            info.title1 = data.readStringVL();
             break;
-
-          case 0x52: // length of cast+genre array
-            ret = parseLengthString();
-            parseCaseGenre(ret.getBytes());
+          case TAG_TITLE2:
+            info.title2 = data.readStringVL();
             break;
-
-          case 0x28: // year
-            currentpos++;
-            int length = getLength(fileArray[currentpos], fileArray[currentpos + 1]);
-            if (length > 127) {
-              currentpos++;
+          case TAG_TITLE3:
+            info.title3 = data.readStringVL();
+            break;
+          case TAG_YEAR:
+            info.year = data.readU_VL_Int();
+            break;
+          case TAG_RELEASE_DATE:
+            try {
+              info.releaseDate = FORMAT_DATE.parse(data.readStringVL());
             }
-            ret = String.valueOf(length);
+            catch (ParseException e) {
+              LOGGER.warn("Could not parse date...");
+            }
             break;
-
-          case 0x60:
-            // TODO: base64 decode images and write to file system
-            // here comes the graphics base64 decoding - step out here
-            currentpos = maxLength + 1; // haa-haa
+          case TAG_LOCKED:
+            info.locked = data.readU_VL_Int() != 0;
             break;
-
-          default:
-            LOGGER.trace("*** skip " + currentpos);
+          case TAG_SUMMARY:
+            info.summary = data.readStringVL();
             break;
+          case TAG_META_JSON:
+            info.entityJson = data.readStringVL();
+            parseJSON(); // movie & episode
+            break;
+          case TAG_GROUP1:
+            byte[] groupSize = data.readBytesVL();
+            parseGroup(openSync(groupSize), info);
+            break;
+          case TAG_CLASSIFICATION:
+            info.classification = data.readStringVL();
+            break;
+          case TAG_RATING:
+            final int it = data.readU_VL_Int();
+            if (it < 0) {
+              info.rating = null;
+            }
+            else {
+              info.rating = ((double) it) / 10;
+            }
+            break;
+          case TAG_POSTER_DATA:
+            info.images.poster = fromBase64IgnoreSpaces(data.readStringVL());
+            break;
+          case TAG_BACKDROP_DATA:
+            // TODO: avatar (v1) fails, check with actual movie
+            info.images.backdrop = fromBase64IgnoreSpaces(data.readStringVL());
+            break;
+          case TAG_POSTER_MD5:
+            // assert (hex(md5(info.imagedata.episodeImage)).equals(data.readStringVL()));
+            data.readStringVL();
+            break;
+          case TAG_GROUP2: {
+            int dataSize = data.readU_VL_Int();
+            long pos2 = data.position();
+            byte[] meta = data.readBytes(dataSize);
+            parseGroup2(openSync(meta), info, (int) pos2);
+            break;
+          }
+          default: {
+            LOGGER.warn("[MAIN] Unexpected kind={} at {} - try skipping", Integer.toHexString(kind), pos);
+            data.readStringVL(); // interpret next value as string.....
+          }
         }
-
-        // =================================================
-        // set the value into correct object
-        // =================================================
-        switch (b) {
-          case 0x12:// show/movie title
-            title1 = ret;
-            break;
-          case 0x1A:// season title
-            title2 = ret;
-            break;
-          case 0x22: // episode title / movie plot
-            title3 = ret;
-            break;
-          case 0x28: // year
-            year = ret;
-            break;
-          case 0x32: // first aired
-            date = ret;
-            break;
-          case 0x42: // desc
-            description = ret;
-            break;
-          case 0x4A: // json
-            json = ret;
-            break;
-          case 0x5A: // certification
-            certification = Certification.findCertification(ret);
-            break;
-
-          default:
-            break;
-        }
-
-      } // end loop
-      fileArray = null;
-
-      // =================================================
-      parseJSON();
-      // =================================================
+      }
     }
     catch (Exception e) {
-      LOGGER.warn("SYNO: Error parsing file", e);
+      LOGGER.warn("SYNO: Error parsing file ({})", vsMetaFile, e);
     }
   }
 
-  /**
-   * parses a length prefixed String, and forwards the counter to the end
-   * 
-   * @return
-   */
-  private String parseLengthString() {
-    String ret = "";
-    int length = 0;
-
-    LOGGER.trace("SYNO: Pos: " + currentpos + " Byt: 0x" + Integer.toHexString(fileArray[currentpos]));
-    currentpos++;
-    length = getLength(fileArray[currentpos], fileArray[currentpos + 1]);
-    LOGGER.trace("SYNO: Len: " + length);
-    currentpos++;
-    if (length > 127) {
-      // if 2 bytes, then skip an additional byte
-      currentpos++;
+  private void parseGroup(SyncStream s, Info info) {
+    while (!s.eof()) {
+      long pos = s.position();
+      int kind = s.readU_VL_Int();
+      switch (kind) {
+        case TAG1_CAST:
+          info.list.cast.add(s.readStringVL());
+          break;
+        case TAG1_DIRECTOR:
+          info.list.director.add(s.readStringVL());
+          break;
+        case TAG1_GENRE:
+          info.list.genre.add(s.readStringVL());
+          break;
+        case TAG1_WRITER:
+          info.list.writer.add(s.readStringVL());
+          break;
+        default:
+          LOGGER.warn("[GROUP1] Unexpected kind={} at {}", kind, pos);
+      }
     }
-    ret = new String(Arrays.copyOfRange(fileArray, currentpos, currentpos + length));
-    if ("null".equals(ret)) {
-      ret = "";
-    }
-    currentpos += length - 1;
-    LOGGER.trace("SYNO: " + ret);
+  }
 
+  private void parseGroup2(SyncStream s, Info info, int start) {
+    while (!s.eof()) {
+      long pos = s.position();
+      int kind = s.readU_VL_Int();
+      switch (kind) {
+        case TAG2_SEASON:
+          info.season = s.readU_VL_Int();
+          break;
+        case TAG2_EPISODE:
+          info.episode = s.readU_VL_Int();
+          break;
+        case TAG2_TVSHOW_YEAR:
+          info.tvshowYear = s.readU_VL_Int();
+          break;
+        case TAG2_RELEASE_DATE_TV_SHOW:
+          try {
+            info.tvshowReleaseDate = FORMAT_DATE.parse(s.readStringVL());
+          }
+          catch (ParseException e) {
+            LOGGER.warn("Could not parse date...");
+          }
+          break;
+        case TAG2_LOCKED:
+          info.tvshowLocked = s.readU_VL_Int() != 0;
+          break;
+        case TAG2_TVSHOW_SUMMARY:
+          info.tvshowSummary = s.readStringVL();
+          break;
+        case TAG2_TVSHOW_POSTER_DATA:
+          info.images.showImage = fromBase64IgnoreSpaces(s.readStringVL());
+          // writeImage("-tvshow.jpg", info.images.showImage); // TODO: nah, we do not keep TvShow posters on episode basis
+          break;
+        case TAG2_TVSHOW_POSTER_MD5:
+          String md5 = s.readStringVL();
+          // if (!md5.equalsIgnoreCase(StrgUtils.bytesToHex(md5(info.images.tvshowPoster)))) {
+          // LOGGER.warn("embedded MD5 does not match embedded image...?");
+          // }
+          break;
+        case TAG2_TVSHOW_META_JSON:
+          info.tvShowJson = s.readStringVL();
+          break;
+        case TAG2_GROUP3: { // GROUP3
+          int dataSize = s.readU_VL_Int();
+          int start2 = (int) s.position();
+          byte[] data = s.readBytes(dataSize);
+          parseGroup3(openSync(data), info, start2 + start);
+          break;
+        }
+        default:
+          LOGGER.warn("[GROUP2] Unexpected kind={} at {}", kind, pos);
+      }
+    }
+  }
+
+  private void parseGroup3(SyncStream s, Info info, int start) {
+    while (!s.eof()) {
+      long pos = s.position();
+      int kind = s.readU_VL_Int();
+      switch (kind) {
+        case TAG3_BACKDROP_DATA:
+          info.images.backdrop = fromBase64IgnoreSpaces(s.readStringVL());
+          break;
+        case TAG3_BACKDROP_MD5:
+          String md5 = s.readStringVL();
+          // if (!md5.equalsIgnoreCase(StrgUtils.bytesToHex(md5(info.images.tvshowBackdrop)))) {
+          // LOGGER.warn("embedded MD5 does not match embedded image...?");
+          // }
+          break;
+        case TAG3_TIMESTAMP:
+          info.timestamp = new Date(s.readU_VL_Long() * 1000L);
+          break;
+        default:
+          LOGGER.warn("[GROUP3] Unexpected kind={} at {}", kind, pos);
+      }
+    }
+  }
+
+  private byte[] fromBase64IgnoreSpaces(String str) {
+    byte[] ret = null;
+    try {
+      ret = Base64.getDecoder().decode(str.replaceAll("\\s+", ""));
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not decode image: {}", e.getMessage());
+    }
     return ret;
   }
 
-  private void parseCaseGenre(byte[] array) {
-    MediaCastMember mcm = null;
-    int length = 0;
-    String ret = "";
-
-    for (int i = 0; i < array.length - 1; i++) {
-      int b = array[i] & 0xff; // unsigned int
-
-      LOGGER.trace("SYNO: Pos: " + currentpos + " Byt: 0x" + Integer.toHexString(fileArray[currentpos]));
-      i++;
-      length = getLength(array[i], array[i + 1]);
-      LOGGER.trace("SYNO: Len: " + length);
-      i++;
-      if (length > 127) {
-        i++;
-      }
-      ret = new String(Arrays.copyOfRange(array, i, i + length));
-      i += length - 1;
-      LOGGER.trace("SYNO: " + ret);
-
-      switch (b) {
-        case 0x0A:
-          mcm = new MediaCastMember(CastType.ACTOR);
-          mcm.setName(ret);
-          cast.add(mcm);
-          break;
-        case 0x12:
-          mcm = new MediaCastMember(CastType.DIRECTOR);
-          mcm.setName(ret);
-          cast.add(mcm);
-          break;
-        case 0x22:
-          mcm = new MediaCastMember(CastType.WRITER);
-          mcm.setName(ret);
-          cast.add(mcm);
-          break;
-
-        case 0x1A: // Genre
-          genres.add(MediaGenres.getGenre(ret));
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
   private void parseJSON() {
-    if (StringUtils.isBlank(json)) {
+    if (StringUtils.isBlank(info.entityJson) || "null".equals(info.entityJson)) {
+      // "null" being written inside vsmeta
       return;
     }
     try {
       // parse JSON
       LOGGER.trace("SYNO: try to parse additional JSON info...");
-      JsonReader reader = new JsonReader(new StringReader(json));
+      JsonReader reader = new JsonReader(new StringReader(info.entityJson));
       reader.beginObject();
       while (reader.hasNext()) {
         String name = reader.nextName();
@@ -286,6 +472,7 @@ public class VSMeta {
                 String value = reader.nextString();
                 LOGGER.trace("SYNO: found rating: " + key + " - " + value);
                 try {
+                  // FIXME: add MediaRatingS
                   float f = Float.parseFloat(value);
                   rating = f;
                 }
@@ -302,6 +489,9 @@ public class VSMeta {
                 String value = reader.nextString();
                 LOGGER.trace("SYNO: found ID: " + key + " = " + value);
                 switch (key) {
+                  case "synovideodb":
+                    ids.put(key, value);
+                    break;
                   case "imdb":
                     ids.put(Constants.IMDB, value);
                     break;
@@ -318,6 +508,7 @@ public class VSMeta {
                     break;
 
                   default:
+                    LOGGER.trace("SYNO: yet unknown key '{}' - please add!", key);
                     break;
                 }
               }
@@ -334,7 +525,7 @@ public class VSMeta {
                   case "themoviedb":
                     try {
                       int t = Integer.parseInt(value);
-                      movieSet = MovieList.getInstance().getMovieSet(title1 + "_col", t);
+                      movieSet = MovieList.getInstance().getMovieSet(info.title1 + "_col", t);
                     }
                     catch (NumberFormatException ignored) {
                     }
@@ -360,30 +551,30 @@ public class VSMeta {
       reader.close();
     }
     catch (IOException e) {
-      LOGGER.warn("Could not parse Synology VSMETA file: ", e);
+      LOGGER.warn("Could not parse Synology VSMETA JSON part!", e);
     }
   }
 
   public Movie getMovie() {
     Movie m = new Movie();
     m.setIds(ids);
-    m.setTitle(title1);
-    m.setTagline(title3);
-    m.setPlot(description);
-    m.setReleaseDate(date);
+    m.setTitle(info.title1);
+    m.setTagline(info.title3);
+    m.setPlot(info.summary);
+    m.setReleaseDate(info.releaseDate);
     try {
-      m.setYear(Integer.parseInt(year));
+      m.setYear(info.year);
     }
     catch (Exception e) {
       m.setYear(0);
     }
 
     if (rating > 0) {
-      Rating r = new Rating(Rating.NFO, rating);
+      MediaRating r = new MediaRating(MediaRating.NFO, rating);
       m.setRating(r);
     }
 
-    m.setCertification(certification);
+    m.setCertification(MediaCertification.findCertification(info.classification));
 
     if (movieSet != null) {
       m.setMovieSet(movieSet);
@@ -392,26 +583,23 @@ public class VSMeta {
     for (MediaArtwork ma : artworks) {
       m.setArtworkUrl(ma.getDefaultUrl(), MediaFileType.getMediaFileType(ma.getType()));
     }
-    for (MediaGenres g : genres) {
-      m.addGenre(g);
+    for (String g : info.list.genre) {
+      m.addGenre(MediaGenres.getGenre(g));
     }
-    for (MediaCastMember mcm : cast) {
-      switch (mcm.getType()) {
-        case ACTOR:
-          m.addActor(new Person(mcm));
-          break;
-
-        case DIRECTOR:
-          m.addDirector(new Person(mcm));
-          break;
-
-        case WRITER:
-          m.addDirector(new Person(mcm));
-          break;
-
-        default:
-          break;
-      }
+    for (String cast : info.list.cast) {
+      Person mcm = new Person(ACTOR);
+      mcm.setName(cast);
+      m.addActor(new Person(mcm));
+    }
+    for (String dir : info.list.director) {
+      Person mcm = new Person(DIRECTOR);
+      mcm.setName(dir);
+      m.addDirector(new Person(mcm));
+    }
+    for (String writ : info.list.writer) {
+      Person mcm = new Person(WRITER);
+      mcm.setName(writ);
+      m.addWriter(new Person(mcm));
     }
 
     return m;
@@ -420,19 +608,21 @@ public class VSMeta {
   public TvShowEpisode getTvShowEpisode() {
     TvShowEpisode ep = new TvShowEpisode();
     ep.setIds(ids);
-    ep.setTitle(title3);
+    ep.setTitle(info.title3);
+    ep.setSeason(info.season);
+    ep.setEpisode(info.episode);
 
-    ep.setPlot(description);
-    ep.setFirstAired(date);
+    ep.setPlot(info.summary);
+    ep.setFirstAired(info.releaseDate);
     try {
-      ep.setYear(Integer.parseInt(year));
+      ep.setYear(info.year);
     }
     catch (Exception e) {
       ep.setYear(0);
     }
 
     if (rating > 0) {
-      Rating r = new Rating(Rating.NFO, rating);
+      MediaRating r = new MediaRating(MediaRating.NFO, rating);
       ep.setRating(r);
     }
     // tv.setCertification(certification);
@@ -440,55 +630,179 @@ public class VSMeta {
     for (MediaArtwork ma : artworks) {
       ep.setArtworkUrl(ma.getDefaultUrl(), MediaFileType.getMediaFileType(ma.getType()));
     }
-    for (MediaCastMember mcm : cast) {
-      switch (mcm.getType()) {
-        case ACTOR:
-          ep.addActor(new Person(mcm));
-          break;
-
-        case DIRECTOR:
-          ep.addDirector(new Person(mcm));
-          break;
-
-        case WRITER:
-          ep.addWriter(new Person(mcm));
-          break;
-
-        default:
-          break;
-      }
+    for (String cast : info.list.cast) {
+      Person mcm = new Person(ACTOR);
+      mcm.setName(cast);
+      ep.addActor(new Person(mcm));
+    }
+    for (String dir : info.list.director) {
+      Person mcm = new Person(DIRECTOR);
+      mcm.setName(dir);
+      ep.addDirector(new Person(mcm));
+    }
+    for (String writ : info.list.writer) {
+      Person mcm = new Person(WRITER);
+      mcm.setName(writ);
+      ep.addWriter(new Person(mcm));
     }
 
     return ep;
   }
 
-  /**
-   * gets the length of 1|2 byte sequence in LittleEndianFormat
-   * 
-   * @param by1
-   *          byte1
-   * @param by2
-   *          byte2 or 0
-   * @return
-   */
-  private int getLength(byte by1, byte by2) {
-    int length = 0;
-    int b1 = by1 & 0xFF;
-    int b2 = by2 & 0xFF;
-    if (b2 > 0 && b2 < 20) { // just to check a valid length a bit
-      // hopefully 2 bytes length
-      length = b1 + (b2 - 1) * 128;
-    }
-    else {
-      // 1 byte length
-      length = b1;
-    }
-    return length;
-  }
-
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  static public class MemorySyncStream extends SyncStream {
+    int    position;
+    int    length;
+    byte[] data;
+
+    public MemorySyncStream(byte[] data) {
+      this(data, 0);
+    }
+
+    public MemorySyncStream(byte[] data, int position) {
+      this.data = data;
+      this.position = position;
+      this.length = data.length;
+    }
+
+    @Override
+    long position() {
+      return position;
+    }
+
+    @Override
+    long length() {
+      return length;
+    }
+
+    @Override
+    public int readU8() {
+      if (eof())
+        return -1;
+      return this.data[position++];
+    }
+
+    @Override
+    public void write8(int value) {
+      if (position >= length) {
+        length++;
+        if (length > data.length) {
+          data = Arrays.copyOf(data, 7 + data.length * 3);
+        }
+      }
+      this.data[position++] = (byte) value;
+    }
+
+    public byte[] toByteArray() {
+      return Arrays.copyOf(this.data, this.length);
+    }
+
+  }
+
+  static public abstract class SyncStream {
+    abstract long position();
+
+    abstract long length();
+
+    boolean eof() {
+      return position() >= length();
+    }
+
+    boolean hasMore() {
+      return !eof();
+    }
+
+    long available() {
+      return length() - position();
+    }
+
+    abstract public int readU8();
+
+    abstract public void write8(int value);
+
+    public void writeBytes(byte[] data) {
+      for (int n = 0; n < data.length; n++)
+        write8(data[n]);
+    }
+
+    public void readExact(byte[] data, int offset, int length) {
+      for (int n = 0; n < length; n++) {
+        int v = readU8();
+        data[offset + n] = (byte) v;
+      }
+    }
+
+    public byte[] readBytes(int count) {
+      byte[] out = new byte[Math.min(count, (int) available())];
+      readExact(out, 0, out.length);
+      return out;
+    }
+
+    public void writeU_VL_Int(int value) {
+      writeU_VL_Long((long) value);
+    }
+
+    public void writeU_VL_Long(long value) {
+      long v = value;
+      do {
+        int data = (int) (v & 0x7F);
+        v = v >>> 7;
+        boolean hasMore = v != 0L;
+        int data2 = (hasMore) ? 0x80 : 0x00;
+        write8(data | data2);
+      } while (hasMore());
+    }
+
+    public int readU_VL_Int() {
+      return (int) readU_VL_Long();
+    }
+
+    public long readU_VL_Long() {
+      long out = 0L;
+      int offset = 0;
+      int v;
+      do {
+        v = readU8();
+        out = out | ((long) (v & 0x7F) << offset);
+        offset += 7;
+      } while ((v & 0x80) != 0);
+      LOGGER.trace("SYNO int: {}", out);
+      return out;
+    }
+
+    public void writeBytesVL(byte[] data) {
+      writeU_VL_Int(data.length);
+      writeBytes(data);
+    }
+
+    public void writeStringVL(String str, Charset charset) {
+      writeBytesVL(str.getBytes(charset));
+    }
+
+    public byte[] readBytesVL() {
+      byte[] bytes = new byte[readU_VL_Int()];
+      readExact(bytes, 0, bytes.length);
+      return bytes;
+    }
+
+    public String readStringVL() {
+      return readStringVL(StandardCharsets.UTF_8);
+    }
+
+    public String readStringVL(Charset charset) {
+      String str = new java.lang.String(readBytesVL(), charset);
+      if (str.length() > 1000) {
+        LOGGER.trace("SYNO str: {}... (truncated)", StringUtils.left(str, 1000)); // cut-off pictures
+      }
+      else {
+        LOGGER.trace("SYNO str: {}", str);
+      }
+      return str;
+    }
   }
 
 }

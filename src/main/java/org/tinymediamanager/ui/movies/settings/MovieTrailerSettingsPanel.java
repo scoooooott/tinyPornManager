@@ -15,19 +15,35 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import static org.tinymediamanager.ui.TmmFontHelper.H3;
-import static org.tinymediamanager.ui.TmmFontHelper.L2;
-
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JTableBinding;
+import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.ImageUtils;
+import org.tinymediamanager.core.TrailerQuality;
+import org.tinymediamanager.core.TrailerSources;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.SettingsPanelFactory;
+import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
@@ -42,37 +58,19 @@ import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringUtils;
-import org.imgscalr.Scalr;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.ImageUtils;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.movie.MovieTrailerQuality;
-import org.tinymediamanager.core.movie.MovieTrailerSources;
-import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
-import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.CollapsiblePanel;
-import org.tinymediamanager.ui.components.SettingsPanelFactory;
-import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
-import org.tinymediamanager.ui.panels.ScrollablePanel;
-
-import net.miginfocom.swing.MigLayout;
+import static org.tinymediamanager.ui.TmmFontHelper.H3;
+import static org.tinymediamanager.ui.TmmFontHelper.L2;
 
 /**
  * The Class MovieTrailerSettingsPanel. To maintain trailer related settings
@@ -80,23 +78,26 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 class MovieTrailerSettingsPanel extends JPanel {
-  private static final long              serialVersionUID = -1607146878528487625L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long serialVersionUID = -1607146878528487625L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
-  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<>());
-  private TmmTable                       tableTrailerScraper;
-  private JTextPane                      tpScraperDescription;
-  private JComboBox<MovieTrailerSources> cbTrailerSource;
-  private JComboBox<MovieTrailerQuality> cbTrailerQuality;
-  private JCheckBox                      checkBox;
-  private JCheckBox                      chckbxAutomaticTrailerDownload;
-  private JPanel                         panelScraperOptions;
-  private JCheckBox                      cbTrailerFilename1;
-  private JCheckBox                      cbTrailerFilename2;
+  private MovieSettings settings = MovieModuleManager.SETTINGS;
+  private List<TrailerScraper> scrapers = ObservableCollections.observableList(new ArrayList<>());
+  private TmmTable tableTrailerScraper;
+  private JTextPane tpScraperDescription;
+  private JComboBox<TrailerSources> cbTrailerSource;
+  private JComboBox<TrailerQuality> cbTrailerQuality;
+  private JCheckBox checkBox;
+  private JCheckBox chckbxAutomaticTrailerDownload;
+  private JPanel panelScraperOptions;
+  private JCheckBox cbTrailerFilename1;
+  private JCheckBox cbTrailerFilename2;
 
-  private ItemListener                   checkBoxListener;
+  private ItemListener checkBoxListener;
+  private JLabel lblAutomaticTrailerDownloadHint;
 
   MovieTrailerSettingsPanel() {
     checkBoxListener = e -> checkChanges();
@@ -265,20 +266,20 @@ class MovieTrailerSettingsPanel extends JPanel {
         panelOptions.add(lblTrailerSource, "cell 2 1");
 
         cbTrailerSource = new JComboBox();
-        cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
+        cbTrailerSource.setModel(new DefaultComboBoxModel<>(TrailerSources.values()));
         panelOptions.add(cbTrailerSource, "cell 2 1");
 
         JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
         panelOptions.add(lblTrailerQuality, "cell 2 2");
 
         cbTrailerQuality = new JComboBox();
-        cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
+        cbTrailerQuality.setModel(new DefaultComboBoxModel<>(TrailerQuality.values()));
         panelOptions.add(cbTrailerQuality, "cell 2 2");
 
         chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
-        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 1 3 2 1");
+        panelOptions.add(chckbxAutomaticTrailerDownload, "cell 2 3");
 
-        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+        lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
         panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
         TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
 
@@ -395,30 +396,40 @@ class MovieTrailerSettingsPanel extends JPanel {
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableTrailerScraper,
-        jTableBeanProperty, tpScraperDescription, jTextPaneBeanProperty);
+            jTableBeanProperty, tpScraperDescription, jTextPaneBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSettings, MovieTrailerSources> movieSettingsBeanProperty = BeanProperty.create("trailerSource");
-    BeanProperty<JComboBox<MovieTrailerSources>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, MovieTrailerSources, JComboBox<MovieTrailerSources>, Object> autoBinding_1 = Bindings
-        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
+    BeanProperty<MovieSettings, TrailerSources> movieSettingsBeanProperty = BeanProperty.create("trailerSource");
+    BeanProperty<JComboBox<TrailerSources>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, TrailerSources, JComboBox<TrailerSources>, Object> autoBinding_1 = Bindings
+            .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<MovieSettings, MovieTrailerQuality> movieSettingsBeanProperty_1 = BeanProperty.create("trailerQuality");
-    BeanProperty<JComboBox<MovieTrailerQuality>, Object> jComboBoxBeanProperty_1 = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, MovieTrailerQuality, JComboBox<MovieTrailerQuality>, Object> autoBinding_2 = Bindings
-        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty_1);
+    BeanProperty<MovieSettings, TrailerQuality> movieSettingsBeanProperty_1 = BeanProperty.create("trailerQuality");
+    BeanProperty<JComboBox<TrailerQuality>, Object> jComboBoxBeanProperty_1 = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, TrailerQuality, JComboBox<TrailerQuality>, Object> autoBinding_2 = Bindings
+            .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty_1);
     autoBinding_2.bind();
     //
     BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_2 = BeanProperty.create("useTrailerPreference");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty_2, checkBox, jCheckBoxBeanProperty);
+            movieSettingsBeanProperty_2, checkBox, jCheckBoxBeanProperty);
     autoBinding_3.bind();
     //
     BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_3 = BeanProperty.create("automaticTrailerDownload");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_3, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox,
+        jCheckBoxBeanProperty, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty_1);
+    autoBinding_5.bind();
+    //
+    BeanProperty<JLabel, Boolean> jLabelBeanProperty = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JLabel, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, checkBox, jCheckBoxBeanProperty,
+        lblAutomaticTrailerDownloadHint, jLabelBeanProperty);
+    autoBinding_6.bind();
   }
 }

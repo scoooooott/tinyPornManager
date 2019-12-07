@@ -158,49 +158,49 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
         case DATE_ADDED:
           sortOrder = compareNullFirst(movie1.getDateAdded(), movie2.getDateAdded());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = movie1.getDateAdded().compareTo(movie2.getDateAdded());
           }
           break;
 
         case WATCHED:
           sortOrder = compareNullFirst(movie1.isWatched(), movie2.isWatched());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = Boolean.compare(movie1.isWatched(), movie2.isWatched());
           }
           break;
 
         case RATING:
           sortOrder = compareNullFirst(movie1.getRating(), movie2.getRating());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = Float.compare(movie1.getRating().getRating(), movie2.getRating().getRating());
           }
           break;
 
         case RUNTIME:
           sortOrder = compareNullFirst(movie1.getRuntime(), movie2.getRuntime());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = Integer.compare(movie1.getRuntime(), movie2.getRuntime());
           }
           break;
 
         case VIDEO_BITRATE:
           sortOrder = compareNullFirst(movie1.getMediaInfoVideoBitrate(), movie2.getMediaInfoVideoBitrate());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = Integer.compare(movie1.getMediaInfoVideoBitrate(), movie2.getMediaInfoVideoBitrate());
           }
           break;
 
         case FRAME_RATE:
           sortOrder = compareNullFirst(movie1.getMediaInfoFrameRate(), movie2.getMediaInfoFrameRate());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = Double.compare(movie1.getMediaInfoFrameRate(), movie2.getMediaInfoFrameRate());
           }
           break;
 
         case RELEASE_DATE:
           sortOrder = compareNullFirst(movie1.getReleaseDate(), movie2.getReleaseDate());
-          if (sortOrder == 0) {
+          if (sortOrder != null && sortOrder == 0) {
             sortOrder = movie1.getReleaseDate().compareTo(movie2.getReleaseDate());
           }
           break;
@@ -209,8 +209,14 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     catch (Exception e) {
       LOGGER.warn(e.getMessage());
     }
+
     if (sortOrder == null) {
       sortOrder = 0;
+    }
+
+    // if the sort order == 0 and the sorting column is not the title, sort on the title too
+    if (sortOrder == 0 && sortColumn != SortColumn.TITLE && sortColumn != SortColumn.SORT_TITLE) {
+      sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(Locale.ROOT), movie2.getTitleSortable().toLowerCase(Locale.ROOT));
     }
 
     // sort ascending or descending

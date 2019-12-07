@@ -24,23 +24,23 @@ import javax.swing.ImageIcon;
 import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.scraper.entities.Certification;
 
 /**
  * The Class CertificationImageConverter.
  * 
  * @author Manuel Laggner
  */
-public class CertificationImageConverter extends Converter<Certification, Icon> {
+public class CertificationImageConverter extends Converter<MediaCertification, Icon> {
   private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
 
   public static final ImageIcon emptyImage = new ImageIcon();
 
   @Override
-  public Icon convertForward(Certification cert) {
+  public Icon convertForward(MediaCertification cert) {
     // we have no certification here
-    if (cert == Certification.UNKNOWN) {
+    if (cert == MediaCertification.UNKNOWN) {
       return null;
     }
     // try to find an image for this genre
@@ -63,7 +63,7 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
   }
 
   @Override
-  public Certification convertReverse(Icon arg0) {
+  public MediaCertification convertReverse(Icon arg0) {
     return null;
   }
 }

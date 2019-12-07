@@ -19,12 +19,7 @@ package org.tinymediamanager.core.movie;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.tinymediamanager.core.movie.MovieRenamer.morphTemplate;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,26 +29,25 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedFirstCharacterRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.DynaEnum;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import com.floreysoft.jmte.Engine;
-
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 public class MovieJmteTests {
 
@@ -166,7 +160,7 @@ public class MovieJmteTests {
     movie.setTitle("Aladdin");
     movie.setOriginalTitle("Disneys Aladdin");
     movie.setSortTitle("Aladdin");
-    movie.setRating(new Rating(Rating.NFO, 7.2f, 5987));
+    movie.setRating(new MediaRating(MediaRating.NFO, 7.2f, 5987));
     movie.setYear(1992);
     movie.setTop250(199);
     movie.setPlot("Princess Jasmine grows tired of being forced to remain in the...");
@@ -179,12 +173,12 @@ public class MovieJmteTests {
     movie.setId("trakt", 655);
     movie.setProductionCompany("Walt Disney");
     movie.setCountry("US/DE");
-    movie.setCertification(Certification.US_G);
+    movie.setCertification(MediaCertification.US_G);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     movie.setReleaseDate(sdf.parse("1992-11-25"));
 
-    MovieTrailer trailer = new MovieTrailer();
+    MediaTrailer trailer = new MediaTrailer();
     trailer.setUrl("https://trailer");
     trailer.setInNfo(true);
     movie.addTrailer(trailer);
@@ -203,7 +197,7 @@ public class MovieJmteTests {
     mf.setVideoWidth(1280);
     mf.setDuration(3600);
     mf.setOverallBitRate(3500);
-    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+    mf.setVideo3DFormat(MediaFileHelper.VIDEO_3D_SBS);
 
     ArrayList<MediaFileAudioStream> audl = new ArrayList<>();
     MediaFileAudioStream audio = new MediaFileAudioStream();
@@ -249,64 +243,64 @@ public class MovieJmteTests {
     return movie;
   }
 
-  @Test
-  public void getProperties() throws Exception {
-    printBeanInfo(Movie.class);
-    printBeanInfo(MovieSet.class);
-    printBeanInfo(Person.class);
-    printBeanInfo(Rating.class);
-    printBeanInfo(MediaFile.class);
-    printBeanInfo(MediaFileAudioStream.class);
-    printBeanInfo(MediaFileSubtitle.class);
-    printBeanInfo(MovieTrailer.class);
-    printBeanInfo(MediaSource.class);
-  }
-
-  private void printBeanInfo(Class clazz) throws Exception {
-    System.out.println("\n\n" + clazz.getName() + "\n");
-
-    // access properties as Map
-    BeanInfo info = Introspector.getBeanInfo(clazz);
-    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-
-    for (PropertyDescriptor descriptor : pds) {
-      if ("class".equals(descriptor.getDisplayName())) {
-        continue;
-      }
-
-      if ("declaringClass".equals(descriptor.getDisplayName())) {
-        continue;
-      }
-
-      if (descriptor.getReadMethod() != null) {
-        final Type type = descriptor.getReadMethod().getGenericReturnType();
-        if (type instanceof ParameterizedTypeImpl) {
-          ParameterizedType pt = (ParameterizedTypeImpl) type;
-
-          String typeAsString;
-          Class rawTypeClass = (Class) pt.getRawType();
-          typeAsString = rawTypeClass.getSimpleName() + "\\<";
-
-          int index = 0;
-          for (Type arg : pt.getActualTypeArguments()) {
-            Class argClass = (Class) arg;
-            typeAsString += getTypeName(argClass);
-
-            index++;
-
-            if (index < pt.getActualTypeArguments().length) {
-              typeAsString += ",";
-            }
-          }
-          typeAsString += "\\>";
-          System.out.println("|" + typeAsString + "|" + descriptor.getDisplayName() + "|");
-        }
-        else {
-          System.out.println("|" + getTypeName(descriptor.getReadMethod().getReturnType()) + "|" + descriptor.getDisplayName() + "|");
-        }
-      }
-    }
-  }
+  // @Test
+  // public void getProperties() throws Exception {
+  // printBeanInfo(Movie.class);
+  // printBeanInfo(MovieSet.class);
+  // printBeanInfo(Person.class);
+  // printBeanInfo(Rating.class);
+  // printBeanInfo(MediaFile.class);
+  // printBeanInfo(MediaFileAudioStream.class);
+  // printBeanInfo(MediaFileSubtitle.class);
+  // printBeanInfo(MovieTrailer.class);
+  // printBeanInfo(MediaSource.class);
+  // }
+  //
+  // private void printBeanInfo(Class clazz) throws Exception {
+  // System.out.println("\n\n" + clazz.getName() + "\n");
+  //
+  // // access properties as Map
+  // BeanInfo info = Introspector.getBeanInfo(clazz);
+  // PropertyDescriptor[] pds = info.getPropertyDescriptors();
+  //
+  // for (PropertyDescriptor descriptor : pds) {
+  // if ("class".equals(descriptor.getDisplayName())) {
+  // continue;
+  // }
+  //
+  // if ("declaringClass".equals(descriptor.getDisplayName())) {
+  // continue;
+  // }
+  //
+  // if (descriptor.getReadMethod() != null) {
+  // final Type type = descriptor.getReadMethod().getGenericReturnType();
+  // if (type instanceof ParameterizedTypeImpl) {
+  // ParameterizedType pt = (ParameterizedTypeImpl) type;
+  //
+  // String typeAsString;
+  // Class rawTypeClass = (Class) pt.getRawType();
+  // typeAsString = rawTypeClass.getSimpleName() + "\\<";
+  //
+  // int index = 0;
+  // for (Type arg : pt.getActualTypeArguments()) {
+  // Class argClass = (Class) arg;
+  // typeAsString += getTypeName(argClass);
+  //
+  // index++;
+  //
+  // if (index < pt.getActualTypeArguments().length) {
+  // typeAsString += ",";
+  // }
+  // }
+  // typeAsString += "\\>";
+  // System.out.println("|" + typeAsString + "|" + descriptor.getDisplayName() + "|");
+  // }
+  // else {
+  // System.out.println("|" + getTypeName(descriptor.getReadMethod().getReturnType()) + "|" + descriptor.getDisplayName() + "|");
+  // }
+  // }
+  // }
+  // }
 
   private String getTypeName(Class clazz) {
     String typeAsString;

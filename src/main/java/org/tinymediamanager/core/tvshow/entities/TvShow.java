@@ -36,6 +36,7 @@ import static org.tinymediamanager.core.Constants.STATUS;
 import static org.tinymediamanager.core.Constants.TAG;
 import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TRAILER;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.TVDB;
 
@@ -54,12 +55,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -68,16 +70,23 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.TmmDateFormat;
+import org.tinymediamanager.core.TrailerQuality;
+import org.tinymediamanager.core.TrailerSources;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -87,15 +96,11 @@ import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowTrailerNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MapUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -107,56 +112,62 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShow.
- * 
+ *
  * @author Manuel Laggner
  */
 public class TvShow extends MediaEntity implements IMediaInformation {
-  private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShow.class);
-  private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
+  private static final Logger                   LOGGER                     = LoggerFactory.getLogger(TvShow.class);
+  private static final Comparator<MediaFile>    MEDIA_FILE_COMPARATOR      = new TvShowMediaFileComparator();
 
-  private static final Pattern               SEASON_NUMBER         = Pattern.compile("(?i)season([0-9]{1,4}).*");
-  private static final Pattern               SEASON_FOLDER_NUMBER  = Pattern.compile("(?i).*([0-9]{1,4}).*");
+  private static final Pattern                  SEASON_NUMBER              = Pattern.compile("(?i)season([0-9]{1,4}).*");
+  private static final Pattern                  SEASON_FOLDER_NUMBER       = Pattern.compile("(?i).*([0-9]{1,4}).*");
 
   @JsonProperty
-  private int                                runtime               = 0;
+  private int                                   runtime                    = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date                               firstAired            = null;
+  private Date                                  firstAired                 = null;
   @JsonProperty
-  private MediaAiredStatus                   status                = MediaAiredStatus.UNKNOWN;
+  private MediaAiredStatus                      status                     = MediaAiredStatus.UNKNOWN;
   @JsonProperty
-  private String                             sortTitle             = "";
+  private String                                sortTitle                  = "";
   @JsonProperty
-  private Certification                      certification         = Certification.UNKNOWN;
+  private MediaCertification                    certification              = MediaCertification.UNKNOWN;
   @JsonProperty
-  private String                             country               = "";
+  private String                                country                    = "";
 
   @JsonProperty
-  private List<MediaGenres>                  genres                = new CopyOnWriteArrayList<>();
+  private List<MediaGenres>                     genres                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                       tags                  = new CopyOnWriteArrayList<>();
+  private List<String>                          tags                       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
+  private Map<Integer, String>                  seasonTitleMap             = new HashMap<>(0);
   @JsonProperty
-  private HashMap<Integer, String>           seasonBannerUrlMap    = new HashMap<>(0);
+  private Map<Integer, String>                  seasonPosterUrlMap         = new HashMap<>(0);
   @JsonProperty
-  private HashMap<Integer, String>           seasonThumbUrlMap     = new HashMap<>(0);
+  private Map<Integer, String>                  seasonBannerUrlMap         = new HashMap<>(0);
   @JsonProperty
-  private List<Person>                       actors                = new CopyOnWriteArrayList<>();
+  private Map<Integer, String>                  seasonThumbUrlMap          = new HashMap<>(0);
   @JsonProperty
-  private List<TvShowEpisode>                dummyEpisodes         = new CopyOnWriteArrayList<>();
+  private List<Person>                          actors                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                       extraFanartUrls       = new CopyOnWriteArrayList<>();
+  private List<TvShowEpisode>                   dummyEpisodes              = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<String>                          extraFanartUrls            = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<MediaTrailer>                    trailer                    = new CopyOnWriteArrayList<>();
 
-  private List<TvShowEpisode>                episodes              = new CopyOnWriteArrayList<>();
-  private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
-  private HashMap<Integer, MediaFile>        seasonBanners         = new HashMap<>(0);
-  private HashMap<Integer, MediaFile>        seasonThumbs          = new HashMap<>(0);
-  private List<TvShowSeason>                 seasons               = new CopyOnWriteArrayList<>();
-  private String                             titleSortable         = "";
-  private Date                               lastWatched           = null;
+  private List<TvShowEpisode>                   episodes                   = new CopyOnWriteArrayList<>();
+  private Map<Integer, MediaFile>               seasonPosters              = new HashMap<>(0);
+  private Map<Integer, MediaFile>               seasonBanners              = new HashMap<>(0);
+  private Map<Integer, MediaFile>               seasonThumbs               = new HashMap<>(0);
+  private List<TvShowSeason>                    seasons                    = new CopyOnWriteArrayList<>();
+  private String                                titleSortable              = "";
+  private Date                                  lastWatched                = null;
 
-  private PropertyChangeListener             propertyChangeListener;
+  private PropertyChangeListener                propertyChangeListener;
+
+  private static final Comparator<MediaTrailer> TRAILER_QUALITY_COMPARATOR = new MediaTrailer.QualityComparator();
 
   /**
    * Instantiates a tv show. To initialize the propertychangesupport after loading
@@ -216,6 +227,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // create season artwork maps
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER, MediaFileType.SEASON_BANNER, MediaFileType.SEASON_THUMB)) {
+      // do not process 0 byte files
+      if (mf.getFilesize() == 0) {
+        continue;
+      }
+
       int season = -1;
       try {
         if (mf.getFilename().startsWith("season-specials")) {
@@ -313,7 +329,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setRuntime(runtime == 0 || force ? other.runtime : runtime);
     setFirstAired(firstAired == null || force ? other.firstAired : firstAired);
     setStatus(status == MediaAiredStatus.UNKNOWN || force ? other.status : status);
-    setCertification(certification == Certification.NOT_RATED || force ? other.certification : certification);
+    setCertification(certification == MediaCertification.NOT_RATED || force ? other.certification : certification);
     setCountry(StringUtils.isEmpty(country) || force ? other.country : country);
 
     // when force is set, clear the lists/maps and add all other values
@@ -323,6 +339,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       actors.clear();
       extraFanartUrls.clear();
 
+      seasonTitleMap.clear();
       seasonPosterUrlMap.clear();
       seasonBannerUrlMap.clear();
       seasonThumbUrlMap.clear();
@@ -333,20 +350,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     setActors(other.actors);
     setExtraFanartUrls(other.extraFanartUrls);
 
+    for (Integer season : other.seasonTitleMap.keySet()) {
+      seasonTitleMap.putIfAbsent(season, other.seasonTitleMap.get(season));
+    }
     for (Integer season : other.seasonPosterUrlMap.keySet()) {
-      if (!seasonPosterUrlMap.containsKey(season)) {
-        seasonPosterUrlMap.put(season, other.seasonPosterUrlMap.get(season));
-      }
+      seasonPosterUrlMap.putIfAbsent(season, other.seasonPosterUrlMap.get(season));
     }
     for (Integer season : other.seasonBannerUrlMap.keySet()) {
-      if (!seasonBannerUrlMap.containsKey(season)) {
-        seasonBannerUrlMap.put(season, other.seasonBannerUrlMap.get(season));
-      }
+      seasonBannerUrlMap.putIfAbsent(season, other.seasonBannerUrlMap.get(season));
     }
     for (Integer season : other.seasonThumbUrlMap.keySet()) {
-      if (!seasonThumbUrlMap.containsKey(season)) {
-        seasonThumbUrlMap.put(season, other.seasonThumbUrlMap.get(season));
-      }
+      seasonThumbUrlMap.putIfAbsent(season, other.seasonThumbUrlMap.get(season));
     }
 
     // get ours, and merge other values
@@ -368,10 +382,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public void setTitle(String newValue) {
-    String oldValue = this.title;
     super.setTitle(newValue);
 
-    oldValue = this.titleSortable;
+    String oldValue = this.titleSortable;
     titleSortable = "";
     firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
   }
@@ -379,7 +392,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * Returns the sortable variant of title<br>
    * eg "The Big Bang Theory" -> "Big Bang Theory, The".
-   * 
+   *
    * @return the title in its sortable format
    */
   public String getTitleSortable() {
@@ -409,43 +422,43 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the main (preferred) rating
    */
   @Override
-  public Rating getRating() {
-    Rating rating = null;
+  public MediaRating getRating() {
+    MediaRating mediaRating = null;
 
     // the user rating
     if (TvShowModuleManager.SETTINGS.getPreferPersonalRating()) {
-      rating = ratings.get(Rating.USER);
+      mediaRating = ratings.get(MediaRating.USER);
     }
 
     // the default rating
-    if (rating == null) {
-      rating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    if (mediaRating == null) {
+      mediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
     }
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   /**
    * Gets the episodes.
-   * 
+   *
    * @return the episodes
    */
   public List<TvShowEpisode> getEpisodes() {
@@ -454,7 +467,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Adds the episode.
-   * 
+   *
    * @param episode
    *          the episode
    */
@@ -548,8 +561,19 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * get all episodes for the given season
+   *
+   * @param season
+   *          the season to get all episodes for
+   * @return a {@link List} of all episodes
+   */
+  public List<TvShowEpisode> getEpisodesForSeason(int season) {
+    return episodes.stream().filter(episode -> episode.getSeason() == season).collect(Collectors.toList());
+  }
+
+  /**
    * Gets the episode count.
-   * 
+   *
    * @return the episode count
    */
   public int getEpisodeCount() {
@@ -558,7 +582,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the dummy episode count
-   * 
+   *
    * @return the dummy episode count
    */
   public int getDummyEpisodeCount() {
@@ -578,7 +602,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Adds the to season.
-   * 
+   *
    * @param episode
    *          the episode
    */
@@ -594,7 +618,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the season for episode.
-   * 
+   *
    * @param episode
    *          the episode
    * @return the season for episode
@@ -614,6 +638,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     if (season == null) {
       int oldValue = seasons.size();
       season = new TvShowSeason(episode.getSeason(), this);
+      String seasonTitle = seasonTitleMap.get(episode.getSeason());
+      if (StringUtils.isNotBlank(seasonTitle)) {
+        season.setTitle(seasonTitle);
+      }
       seasons.add(season);
       firePropertyChange(ADDED_SEASON, null, season);
       firePropertyChange(SEASON_COUNT, oldValue, seasons.size());
@@ -653,11 +681,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public void removeAllEpisodes() {
     int oldValue = episodes.size();
-    if (episodes.size() > 0) {
+    if (!episodes.isEmpty()) {
       for (int i = episodes.size() - 1; i >= 0; i--) {
         TvShowEpisode episode = episodes.get(i);
-        episodes.remove(episode);
-        episode.removePropertyChangeListener(propertyChangeListener);
+        // episode.removePropertyChangeListener(propertyChangeListener);
+        // removeFromSeason(episode);
+        // episodes.remove(episode);
+        removeEpisode(episode);
         TvShowList.getInstance().removeEpisodeFromDb(episode);
       }
     }
@@ -667,16 +697,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Removes the episode.
-   * 
+   *
    * @param episode
    *          the episode
    */
   public void removeEpisode(TvShowEpisode episode) {
     if (episodes.contains(episode)) {
       int oldValue = episodes.size();
-      episodes.remove(episode);
       episode.removePropertyChangeListener(propertyChangeListener);
       removeFromSeason(episode);
+      episodes.remove(episode);
       TvShowList.getInstance().removeEpisodeFromDb(episode);
       saveToDb();
 
@@ -707,17 +737,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Removes an episode from tmm and deletes it from the data source
-   * 
+   *
    * @param episode
    *          the episode to be removed
    */
   public void deleteEpisode(TvShowEpisode episode) {
     if (episodes.contains(episode)) {
       int oldValue = episodes.size();
-      episode.deleteFilesSafely();
-      episodes.remove(episode);
       episode.removePropertyChangeListener(propertyChangeListener);
+      episode.deleteFilesSafely();
       removeFromSeason(episode);
+      episodes.remove(episode);
       TvShowList.getInstance().removeEpisodeFromDb(episode);
       saveToDb();
 
@@ -728,7 +758,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the seasons.
-   * 
+   *
    * @return the seasons
    */
   public List<TvShowSeason> getSeasons() {
@@ -737,7 +767,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the genres.
-   * 
+   *
    * @return the genres
    */
   public List<MediaGenres> getGenres() {
@@ -746,7 +776,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Adds the genre.
-   * 
+   *
    * @param newValue
    *          the new value
    */
@@ -760,7 +790,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the genres.
-   * 
+   *
    * @param newGenres
    *          the new genres
    */
@@ -775,7 +805,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Removes the genre.
-   * 
+   *
    * @param genre
    *          the genre
    */
@@ -789,7 +819,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the genres as string.
-   * 
+   *
    * @return the genres as string
    */
   public String getGenresAsString() {
@@ -805,104 +835,107 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the metadata.
-   * 
+   *
    * @param metadata
    *          the new metadata
    * @param config
    *          the config
    */
-  public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
+  public void setMetadata(MediaMetadata metadata, List<TvShowScraperMetadataConfig> config) {
     // check against null metadata (e.g. aborted request)
     if (metadata == null) {
       LOGGER.error("metadata was null");
       return;
     }
 
-    // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getTitle())) {
-      LOGGER.warn("wanted to save empty metadata for " + getTitle());
+    // check if metadata has at least an id (aka it is not empty)
+    if (metadata.getIds().isEmpty()) {
+      LOGGER.warn("wanted to save empty metadata for {}", getTitle());
       return;
     }
 
     // populate ids
-    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
-      setId(entry.getKey(), entry.getValue().toString());
-    }
+    setIds(metadata.getIds());
 
-    // if option is set capitalize the first letter of each word
-    // in title and original title
-    if (config.isTitle()) {
+    if (config.contains(TvShowScraperMetadataConfig.TITLE)) {
+      // Capitalize first letter of original title if setting is set!
       if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
         setTitle(WordUtils.capitalize(metadata.getTitle()));
-        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
       }
       else {
         setTitle(metadata.getTitle());
+      }
+    }
+
+    if (config.contains(TvShowScraperMetadataConfig.ORIGINAL_TITLE)) {
+      // Capitalize first letter of original title if setting is set!
+      if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
         setOriginalTitle(metadata.getOriginalTitle());
       }
     }
 
-    if (config.isPlot()) {
+    if (config.contains(TvShowScraperMetadataConfig.PLOT)) {
       setPlot(metadata.getPlot());
     }
 
-    if (config.isYear()) {
+    if (config.contains(TvShowScraperMetadataConfig.YEAR)) {
       setYear(metadata.getYear());
     }
 
-    if (config.isRating()) {
-      clearRatings();
+    if (config.contains(TvShowScraperMetadataConfig.RATING)) {
+      Map<String, MediaRating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        setRating(new Rating(mediaRating));
+        newRatings.put(mediaRating.getId(), mediaRating);
       }
+      setRatings(newRatings);
     }
 
-    if (config.isAired()) {
+    if (config.contains(TvShowScraperMetadataConfig.AIRED)) {
       setFirstAired(metadata.getReleaseDate());
     }
 
-    if (config.isStatus()) {
+    if (config.contains(TvShowScraperMetadataConfig.STATUS)) {
       setStatus(metadata.getStatus());
     }
 
-    if (config.isRuntime()) {
+    if (config.contains(TvShowScraperMetadataConfig.RUNTIME)) {
       setRuntime(metadata.getRuntime());
     }
 
-    if (config.isCountry()) {
+    if (config.contains(TvShowScraperMetadataConfig.COUNTRY)) {
       setCountry(StringUtils.join(metadata.getCountries(), ", "));
     }
 
-    if (config.isStudio()) {
+    if (config.contains(TvShowScraperMetadataConfig.STUDIO)) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
     }
 
-    if (config.isCast()) {
-
-      List<Person> actors = new ArrayList<>();
-
-      for (MediaCastMember member : metadata.getCastMembers()) {
-        switch (member.getType()) {
-          case ACTOR:
-            actors.add(new Person(member));
-            break;
-
-          default:
-            break;
-        }
-      }
-      setActors(actors);
-      writeActorImages();
-    }
-
-    if (config.isCertification()) {
-      if (metadata.getCertifications().size() > 0) {
+    if (config.contains(TvShowScraperMetadataConfig.CERTIFICATION)) {
+      if (!metadata.getCertifications().isEmpty()) {
         setCertification(metadata.getCertifications().get(0));
       }
     }
 
-    if (config.isGenres()) {
+    if (config.contains(TvShowScraperMetadataConfig.ACTORS)) {
+      setActors(metadata.getCastMembers(Person.Type.ACTOR));
+      writeActorImages();
+    }
+
+    if (config.contains(TvShowScraperMetadataConfig.GENRES)) {
       setGenres(metadata.getGenres());
+    }
+
+    if (config.contains(TvShowScraperMetadataConfig.SEASON_NAMES)) {
+      // only take _non common_ season names
+      for (Map.Entry<Integer, String> entry : metadata.getSeasonNames().entrySet()) {
+        Matcher matcher = TvShowEpisodeAndSeasonParser.SEASON_PATTERN.matcher(entry.getValue());
+        if (!matcher.find()) {
+          seasonTitleMap.put(entry.getKey(), entry.getValue());
+        }
+      }
     }
 
     // set scraped
@@ -920,21 +953,19 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the artwork.
-   * 
+   *
    * @param artwork
    *          the artwork
    * @param config
    *          the config
    */
-  public void setArtwork(List<MediaArtwork> artwork, TvShowScraperMetadataConfig config) {
-    if (config.isArtwork()) {
-      TvShowArtworkHelper.setArtwork(this, artwork);
-    }
+  public void setArtwork(List<MediaArtwork> artwork, List<TvShowScraperMetadataConfig> config) {
+    TvShowArtworkHelper.setArtwork(this, artwork, config);
   }
 
   /**
    * download the specified type of artwork for this TV show
-   * 
+   *
    * @param type
    *          the chosen artwork type to be downloaded
    */
@@ -944,7 +975,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * download season artwork
-   * 
+   *
    * @param season
    *          the season to download the artwork for
    * @param artworkType
@@ -983,7 +1014,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the checks for nfo file.
-   * 
+   *
    * @return the checks for nfo file
    */
   public Boolean getHasNfoFile() {
@@ -992,8 +1023,26 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * Gets the checks for trailer.
+   *
+   * @return the checks for trailer
+   */
+  public Boolean getHasTrailer() {
+    if (trailer != null && trailer.size() > 0) {
+      return true;
+    }
+
+    // check if there is a mediafile (trailer)
+    if (!getMediaFiles(MediaFileType.TRAILER).isEmpty()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Gets the check mark for images. What to be checked is configurable
-   * 
+   *
    * @return the checks for images
    */
   public Boolean getHasImages() {
@@ -1037,7 +1086,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the imdb id.
-   * 
+   *
    * @return the imdb id
    */
   public String getImdbId() {
@@ -1046,7 +1095,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the imdb id.
-   * 
+   *
    * @param newValue
    *          the new imdb id
    */
@@ -1056,7 +1105,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the tvdb id.
-   * 
+   *
    * @return the tvdb id
    */
   public String getTvdbId() {
@@ -1065,7 +1114,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the tvdb id.
-   * 
+   *
    * @param newValue
    *          the new tvdb id
    */
@@ -1075,7 +1124,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the TraktTV id.
-   * 
+   *
    * @return the TraktTV id
    */
   public int getTraktId() {
@@ -1084,7 +1133,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the TvRage id.
-   * 
+   *
    * @param newValue
    *          the new TraktTV id
    */
@@ -1094,7 +1143,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * first aired date.
-   * 
+   *
    * @return the date
    */
   public Date getFirstAired() {
@@ -1112,7 +1161,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * first aired date as yyyy-mm-dd<br>
    * https://xkcd.com/1179/ :P
-   * 
+   *
    * @return the date or empty string
    */
   public String getFirstAiredFormatted() {
@@ -1124,7 +1173,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the first aired as a string, formatted in the system locale.
-   * 
+   *
    * @return the first aired as string
    */
   public String getFirstAiredAsString() {
@@ -1136,7 +1185,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * convenient method to set the first aired date (parsed from string).
-   * 
+   *
    * @param aired
    *          the new first aired
    */
@@ -1150,7 +1199,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the status.
-   * 
+   *
    * @return the status
    */
   public MediaAiredStatus getStatus() {
@@ -1159,7 +1208,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the status.
-   * 
+   *
    * @param newValue
    *          the new status
    */
@@ -1171,7 +1220,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Adds the to tags.
-   * 
+   *
    * @param newTag
    *          the new tag
    */
@@ -1180,10 +1229,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    for (String tag : tags) {
-      if (tag.equals(newTag)) {
-        return;
-      }
+    if (tags.contains(newTag)) {
+      return;
     }
 
     tags.add(newTag);
@@ -1193,7 +1240,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Removes the from tags.
-   * 
+   *
    * @param removeTag
    *          the remove tag
    */
@@ -1205,7 +1252,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the tags.
-   * 
+   *
    * @param newTags
    *          the new tags
    */
@@ -1220,7 +1267,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the tag as string.
-   * 
+   *
    * @return the tag as string
    */
   public String getTagsAsString() {
@@ -1236,7 +1283,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the tags.
-   * 
+   *
    * @return the tags
    */
   public List<String> getTags() {
@@ -1245,7 +1292,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the runtime.
-   * 
+   *
    * @return the runtime
    */
   public int getRuntime() {
@@ -1254,7 +1301,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the runtime.
-   * 
+   *
    * @param newValue
    *          the new runtime
    */
@@ -1266,7 +1313,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Adds the actor.
-   * 
+   *
    * @param obj
    *          the obj
    */
@@ -1277,7 +1324,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the actors.
-   * 
+   *
    * @return the actors
    */
   public List<Person> getActors() {
@@ -1286,7 +1333,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Removes the actor.
-   * 
+   *
    * @param obj
    *          the obj
    */
@@ -1298,7 +1345,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the actors.
-   * 
+   *
    * @param newActors
    *          the new actors
    */
@@ -1311,28 +1358,28 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the certifications.
-   * 
+   *
    * @return the certifications
    */
   @Override
-  public Certification getCertification() {
+  public MediaCertification getCertification() {
     return certification;
   }
 
   /**
    * Sets the certifications.
-   * 
+   *
    * @param newValue
    *          the new certifications
    */
-  public void setCertification(Certification newValue) {
+  public void setCertification(MediaCertification newValue) {
     this.certification = newValue;
     firePropertyChange(CERTIFICATION, null, newValue);
   }
 
   /**
    * get the country
-   * 
+   *
    * @return the countries in which this TV show has been produced
    */
   public String getCountry() {
@@ -1341,7 +1388,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * set the country
-   * 
+   *
    * @param newValue
    *          the country in which this TV show has been produced
    */
@@ -1355,7 +1402,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
-   * 
+   *
    * @return the String result
    * @see ReflectionToStringBuilder#toString()
    */
@@ -1366,7 +1413,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * get all episodes to scraper (with season or ep number == -1)
-   * 
+   *
    * @return a list of all episodes to scrape
    */
   public List<TvShowEpisode> getEpisodesToScrape() {
@@ -1381,7 +1428,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Checks if all episodes are watched.
-   * 
+   *
    * @return true, if all episodes are watched
    */
   public boolean isWatched() {
@@ -1421,6 +1468,117 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   public void setLastWatched(Date lastWatched) {
     this.lastWatched = lastWatched;
+  }
+
+  /**
+   * Gets the trailers
+   *
+   * @return the trailers
+   */
+  public List<MediaTrailer> getTrailer() {
+    return this.trailer;
+  }
+
+  /**
+   * Adds the trailer.
+   *
+   * @param obj
+   *          the obj
+   */
+  public void addTrailer(MediaTrailer obj) {
+
+    trailer.add(obj);
+    firePropertyChange(TRAILER, null, trailer);
+  }
+
+  /**
+   * Removes the all trailers.
+   */
+  public void removeAllTrailers() {
+    trailer.clear();
+    firePropertyChange(TRAILER, null, trailer);
+  }
+
+  public void setTrailers(List<MediaTrailer> trailers) {
+    MediaTrailer preferredTrailer = null;
+    removeAllTrailers();
+
+    // set preferred trailer
+    if (TvShowModuleManager.SETTINGS.isUseTrailerPreference()) {
+      TrailerQuality desiredQuality = TvShowModuleManager.SETTINGS.getTrailerQuality();
+      TrailerSources desiredSource = TvShowModuleManager.SETTINGS.getTrailerSource();
+
+      // search for quality and provider
+      for (MediaTrailer trailer : trailers) {
+        if (desiredQuality.containsQuality(trailer.getQuality()) && desiredSource.containsSource(trailer.getProvider())) {
+          trailer.setInNfo(Boolean.TRUE);
+          preferredTrailer = trailer;
+          break;
+        }
+      }
+
+      // search for quality
+      if (preferredTrailer == null) {
+        for (MediaTrailer trailer : trailers) {
+          if (desiredQuality.containsQuality(trailer.getQuality())) {
+            trailer.setInNfo(Boolean.TRUE);
+            preferredTrailer = trailer;
+            break;
+          }
+        }
+      }
+
+      // if not yet one has been found; sort by quality descending and take the first one which is lower or equal to the desired quality
+      if (preferredTrailer == null) {
+        List<MediaTrailer> sortedTrailers = new ArrayList<>(trailers);
+        sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
+        for (MediaTrailer trailer : sortedTrailers) {
+          if (desiredQuality.ordinal() >= TrailerQuality.getTrailerQuality(trailer.getQuality()).ordinal()) {
+            trailer.setInNfo(Boolean.TRUE);
+            preferredTrailer = trailer;
+            break;
+          }
+        }
+      }
+    } // end if MovieModuleManager.SETTINGS.isUseTrailerPreference()
+
+    // if not yet one has been found; sort by quality descending and take the first one
+    if (preferredTrailer == null && !trailers.isEmpty()) {
+      List<MediaTrailer> sortedTrailers = new ArrayList<>(trailers);
+      sortedTrailers.sort(TRAILER_QUALITY_COMPARATOR);
+      preferredTrailer = sortedTrailers.get(0);
+      preferredTrailer.setInNfo(Boolean.TRUE);
+    }
+
+    // add trailers
+    if (preferredTrailer != null) {
+      addTrailer(preferredTrailer);
+    }
+    for (MediaTrailer trailer : trailers) {
+      // preferred trailer has already been added
+      if (preferredTrailer != null && preferredTrailer == trailer) {
+        continue;
+      }
+
+      // if still no preferred trailer has been set, then mark the first one
+      if (preferredTrailer == null && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
+        trailer.setInNfo(Boolean.TRUE);
+      }
+
+      addTrailer(trailer);
+    }
+  }
+
+  /**
+   * all supported TRAILER names. (without path, without extension!)
+   *
+   * @param trailer
+   *          trailer naming enum
+   * @return the associated trailer filename
+   */
+  public String getTrailerFilename(TvShowTrailerNaming trailer) {
+    // at the moment there is no VIDEO file for a TV show, so we just need to call the .getFilename() without any basename
+    return FilenameUtils.getBaseName(trailer.getFilename("", "mov"));
   }
 
   /**
@@ -1490,7 +1648,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * get all season artwork urls
-   * 
+   *
    * @param artworkType
    *          the artwork type to get the artwork for
    * @return a map containing all available season artworks for the given type
@@ -1514,7 +1672,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the season artwork.
-   * 
+   *
    * @param season
    *          the season
    * @param artworkType
@@ -1601,7 +1759,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the season artwork.
-   * 
+   *
    * @param season
    *          the season
    * @param artworkType
@@ -1616,7 +1774,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Sets the season artwork.
-   * 
+   *
    * @param season
    *          the season
    * @param mf
@@ -1741,7 +1899,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * Gets the media files of all episodes.<br>
    * (without the TV show MFs like poster/banner/...)
-   * 
+   *
    * @return the media files
    */
   public List<MediaFile> getEpisodesMediaFiles() {
@@ -1758,7 +1916,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * Gets the images to cache.
-   * 
+   *
    * @return the images to cache
    */
   public List<MediaFile> getImagesToCache() {
@@ -1810,7 +1968,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   /**
    * check if one of the tv shows episode is newly added
-   * 
+   *
    * @return true/false
    */
   public boolean hasNewlyAddedEpisodes() {
@@ -1826,7 +1984,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * checks if this TV show has been scraped.<br>
    * On a fresh DB, just reading local files, everything is again "unscraped". <br>
    * detect minimum of filled values as "scraped"
-   * 
+   *
    * @return isScraped
    */
   @Override
@@ -1850,6 +2008,34 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     TvShowActorImageFetcherTask task = new TvShowActorImageFetcherTask(this);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
+  }
+
+  /**
+   * add a season title to the internal season title map
+   *
+   * @param season
+   *          the season to set the title for
+   * @param title
+   *          the title
+   */
+  public void addSeasonTitle(int season, String title) {
+    if (StringUtils.isNotBlank(title)) {
+      seasonTitleMap.put(season, title);
+    }
+    else {
+      seasonTitleMap.remove(season);
+    }
+
+    firePropertyChange("seasonTitle", null, seasonTitleMap);
+  }
+
+  /**
+   * get a map containing all set season titles
+   *
+   * @return a map containing all season titles
+   */
+  public Map<Integer, String> getSeasonTitles() {
+    return seasonTitleMap;
   }
 
   /**
@@ -1880,6 +2066,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public boolean deleteFilesSafely() {
     return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
+  }
+
+  @Override
+  public MediaFile getMainFile() {
+    return getMainVideoFile();
   }
 
   @Override
@@ -1965,5 +2156,16 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public MediaSource getMediaInfoSource() {
     return MediaSource.UNKNOWN;
+  }
+
+  @Override
+  public long getVideoFilesize() {
+    long filesize = 0;
+    for (TvShowEpisode episode : episodes) {
+      for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+        filesize += mf.getFilesize();
+      }
+    }
+    return filesize;
   }
 }

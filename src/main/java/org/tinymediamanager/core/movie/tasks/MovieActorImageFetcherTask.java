@@ -28,7 +28,7 @@ import org.tinymediamanager.core.tasks.MediaEntityActorImageFetcherTask;
  * @author Manuel Laggner
  */
 public class MovieActorImageFetcherTask extends MediaEntityActorImageFetcherTask {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcherTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcherTask.class);
 
   public MovieActorImageFetcherTask(Movie movie) {
     this.mediaEntity = movie;

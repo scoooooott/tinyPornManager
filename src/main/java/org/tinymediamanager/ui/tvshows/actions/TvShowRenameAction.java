@@ -88,23 +88,22 @@ public class TvShowRenameAction extends TmmAction {
       TmmFontHelper.changeFont(checkBox, L1);
       checkBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
       Object[] params = { BUNDLE.getString("tvshow.rename.desc"), checkBox }; //$NON-NLS-1$
-      int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"), //$NON-NLS-1$
-          JOptionPane.YES_NO_OPTION);
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"), //$NON-NLS-1$
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 
       // the user don't want to show this dialog again
       if (checkBox.isSelected()) {
         TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected())); //$NON-NLS-1$ )
       }
 
-      if (answer != JOptionPane.OK_OPTION) {
+      if (answer != JOptionPane.YES_OPTION) {
         return;
       }
     }
 
     // rename
     TmmThreadPool renameTask = new TvShowRenameTask(selectedTvShows, new ArrayList<>(selectedEpisodes), true);
-    if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(renameTask);
   }
 }

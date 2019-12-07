@@ -46,6 +46,8 @@ import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.tasks.ExportTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.IconManager;
@@ -178,13 +180,13 @@ public class TvShowExporterDialog extends TmmDialog {
             }
           }
           catch (IOException e) {
-            LOGGER.warn("could not open folder: " + e.getMessage());
+            LOGGER.warn("could not open folder: {}", e.getMessage());
             return;
           }
 
           try {
             TvShowExporter exporter = new TvShowExporter(Paths.get(selectedTemplate.getPath()));
-            exporter.export(tvShows, exportPath);
+            TmmTaskManager.getInstance().addMainTask(new ExportTask(BUNDLE.getString("tvshow.export"), exporter, tvShows, exportPath));
           }
           catch (Exception e) {
             LOGGER.error("Error exporting tv shows: ", e);

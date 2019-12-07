@@ -22,27 +22,27 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.scraper.interfaces.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Class representing a MediaScraper; (type, info, description...)<br>
  * replacement of MovieScrapers /TvShowScrapers ENUM
- * 
+ *
  * @author Manuel Laggner
  */
 public class MediaScraper {
-  private static final ResourceBundle BUNDLE  = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private String                      id      = "";
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private String id = "";
   private String                      version = "";
   private String                      name    = "";
   private String                      summary = "";
@@ -139,41 +139,42 @@ public class MediaScraper {
     ArrayList<IMediaProvider> plugins = new ArrayList<>();
     switch (type) {
       case MOVIE:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(IMovieMetadataProvider.class));
         break;
       case TV_SHOW:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(ITvShowMetadataProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(ITvShowMetadataProvider.class));
         break;
       case MOVIE_SET:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieSetMetadataProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(IMovieSetMetadataProvider.class));
         break;
       case MOVIE_ARTWORK:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieArtworkProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(IMovieArtworkProvider.class));
         break;
       case TV_SHOW_ARTWORK:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(ITvShowArtworkProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(ITvShowArtworkProvider.class));
         break;
       case MOVIE_TRAILER:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieTrailerProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(IMovieTrailerProvider.class));
+        break;
+      case TVSHOW_TRAILER:
+        plugins.addAll(MediaProviders.getProvidersForInterface(ITvShowTrailerProvider.class));
         break;
       case SUBTITLE:
-        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMediaSubtitleProvider.class));
+        plugins.addAll(MediaProviders.getProvidersForInterface(ISubtitleProvider.class));
         break;
       default:
         break;
     }
 
     for (IMediaProvider p : plugins) {
-      MediaScraper ms = new MediaScraper(type, p);
-      scraper.add(ms);
+      scraper.add(new MediaScraper(type, p));
     }
 
     // Kodi scrapers
-    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getPluginsForInterface(IKodiMetadataProvider.class)) {
+    for (IKodiMetadataProvider kodi : MediaProviders.getProvidersForInterface(IKodiMetadataProvider.class)) {
       try {
         for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
-          MediaScraper ms = new MediaScraper(type, p);
-          scraper.add(ms);
+          scraper.add(new MediaScraper(type, p));
         }
       }
       catch (Exception ignored) {
@@ -188,12 +189,11 @@ public class MediaScraper {
       return null;
     }
 
-    List<MediaScraper> scrapers = getMediaScrapers(type);
-    for (MediaScraper scraper : scrapers) {
-      if (scraper.id.equals(id)) {
-        return scraper;
-      }
+    IMediaProvider mediaProvider = MediaProviders.getProviderById(id);
+    if (mediaProvider != null) {
+      return new MediaScraper(type, mediaProvider);
     }
+
     return null;
   }
 

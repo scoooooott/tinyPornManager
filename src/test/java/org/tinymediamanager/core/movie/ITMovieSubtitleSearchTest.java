@@ -13,12 +13,13 @@ import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.scraper.MediaProviders;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 
 public class ITMovieSubtitleSearchTest {
 
@@ -27,7 +28,7 @@ public class ITMovieSubtitleSearchTest {
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
-    PluginManager.getInstance().loadClasspathPlugins();
+    MediaProviders.loadMediaProviders();
   }
 
   @AfterClass
@@ -46,8 +47,9 @@ public class ITMovieSubtitleSearchTest {
 
       for (Movie movie : MovieList.getInstance().getMovies()) {
         for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
-          SubtitleSearchOptions options = new SubtitleSearchOptions(mediaFile.getFile().toFile());
-          List<SubtitleSearchResult> results = ((IMediaSubtitleProvider) scraper.getMediaProvider()).search(options);
+          SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.MOVIE);
+          options.setFile(mediaFile.getFile().toFile());
+          List<SubtitleSearchResult> results = ((ISubtitleProvider) scraper.getMediaProvider()).search(options);
           if (!results.isEmpty()) {
             System.out.println("Subtitle for hash found: " + results.get(0).getUrl());
           }

@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.settings;
 import static org.tinymediamanager.ui.TmmFontHelper.H3;
 import static org.tinymediamanager.ui.TmmFontHelper.L2;
 
+import java.awt.Dimension;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -79,6 +81,7 @@ class SystemSettingsPanel extends JPanel {
   private JSlider                     sliderMemory;
   private JLabel                      lblMemory;
   private JCheckBox                   chckbxIgnoreSSLProblems;
+  private JSpinner                    spMaximumDownloadThreads;
 
   /**
    * Instantiates a new general settings panel.
@@ -94,7 +97,7 @@ class SystemSettingsPanel extends JPanel {
     // data init
     btnSearchMediaPlayer.addActionListener(arg0 -> {
       String path = TmmProperties.getInstance().getProperty("chooseplayer.path"); //$NON-NLS-1$
-      Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer"), path); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer"), path, null); //$NON-NLS-1$
       if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
         tfMediaPlayer.setText(file.toAbsolutePath().toString());
       }
@@ -206,8 +209,15 @@ class SystemSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
+        JLabel lblParallelDownloadCountT = new JLabel(BUNDLE.getString("Settings.paralleldownload"));
+        panelMisc.add(lblParallelDownloadCountT, "cell 1 0 2 1");
+
+        spMaximumDownloadThreads = new JSpinner();
+        spMaximumDownloadThreads.setMinimumSize(new Dimension(60, 20));
+        panelMisc.add(spMaximumDownloadThreads, "cell 1 0 2 1");
+
         chckbxIgnoreSSLProblems = new JCheckBox(BUNDLE.getString("Settings.ignoressl"));
-        panelMisc.add(chckbxIgnoreSSLProblems, "cell 1 0 2 1");
+        panelMisc.add(chckbxIgnoreSSLProblems, "cell 1 1 2 1");
       }
     }
   }
@@ -339,5 +349,11 @@ class SystemSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, chckbxIgnoreSSLProblems, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_5 = BeanProperty.create("maximumDownloadThreads");
+    BeanProperty<JSpinner, Object> jSpinnerBeanProperty = BeanProperty.create("value");
+    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, spMaximumDownloadThreads, jSpinnerBeanProperty);
+    autoBinding_5.bind();
   }
 }

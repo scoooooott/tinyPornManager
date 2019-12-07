@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.nio.file.Paths;
 
 import org.junit.BeforeClass;
@@ -288,5 +290,88 @@ public class TvShowTest extends BasicTest {
 
   private String cleanTitle(String filename, String showname) {
     return TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(filename, showname);
+  }
+
+  @Test
+  public void testSeasonFolderDetection() {
+    TvShowSettings.getInstance(getSettingsFolder()).setRenamerSeasonFoldername("S${seasonNr}");
+    TvShow tvShow = new TvShow();
+    tvShow.setPath("/media/tvshows/show");
+
+    // Season 1: 80% of the episodes are in the subfolder "Season 01"
+    TvShowEpisode episode = new TvShowEpisode();
+    episode.setSeason(1);
+    episode.setEpisode(1);
+    MediaFile mf = new MediaFile(Paths.get("/media/tvshows/show/Season 01/s01e01.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(1);
+    episode.setEpisode(2);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 01/ep2/s01e02.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(1);
+    episode.setEpisode(3);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 01/ep3/extract/s01e03.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(1);
+    episode.setEpisode(4);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 1/s01e04.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(1);
+    episode.setEpisode(5);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 01/s01e05.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    assertThat(TvShowHelpers.detectSeasonFolder(tvShow, 1)).isEqualTo("Season 01");
+
+    // Season 2: every EP is in another subfolder
+    episode = new TvShowEpisode();
+    episode.setSeason(2);
+    episode.setEpisode(1);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 2/s02e01.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(2);
+    episode.setEpisode(2);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/Season 02/ep2/s02e02.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(2);
+    episode.setEpisode(3);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/S2/ep3/extract/s02e03.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(2);
+    episode.setEpisode(4);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/s02e04.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    episode = new TvShowEpisode();
+    episode.setSeason(2);
+    episode.setEpisode(5);
+    mf = new MediaFile(Paths.get("/media/tvshows/show/s02e05/s02e05.avi"));
+    episode.addToMediaFiles(mf);
+    tvShow.addEpisode(episode);
+
+    assertThat(TvShowHelpers.detectSeasonFolder(tvShow, 2)).isEqualTo("S2");
   }
 }

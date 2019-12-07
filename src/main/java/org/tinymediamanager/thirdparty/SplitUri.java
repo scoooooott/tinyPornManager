@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
@@ -231,7 +232,14 @@ public class SplitUri {
       return true;
     }
 
-    // 3: did not match? return false
+    // 3: file same, and at least the last folder of datasource
+    Path ds = Paths.get(datasource);
+    Path otherds = Paths.get(other.datasource);
+    if (file.equals(other.file) && ds.getFileName().equals(otherds.getFileName())) {
+      return true;
+    }
+
+    // 4: did not match? return false
     return false;
   }
 

@@ -38,7 +38,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class MediaFileInformationFetcherTask implements Callable<Object> {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
   private List<MediaFile>     mediaFiles;
   private MediaEntity         mediaEntity;
@@ -58,25 +58,6 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
   public MediaFileInformationFetcherTask(MediaFile mediaFile, MediaEntity mediaEntity, boolean forceUpdate) {
     this.mediaFiles = new ArrayList<>();
     this.mediaFiles.add(mediaFile);
-    this.mediaEntity = mediaEntity;
-    this.forceUpdate = forceUpdate;
-    this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
-  }
-
-  /**
-   * Instantiates ONE new media file information fetcher task for ALL files<br>
-   * better to submit one file after another.. for status bar et all
-   * 
-   * @param mediaFiles
-   *          the media files
-   * @param mediaEntity
-   *          the media entity
-   * @param forceUpdate
-   *          force an update
-   */
-  @Deprecated
-  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity, boolean forceUpdate) {
-    this.mediaFiles = mediaFiles;
     this.mediaEntity = mediaEntity;
     this.forceUpdate = forceUpdate;
     this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();

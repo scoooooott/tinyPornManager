@@ -52,7 +52,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -66,21 +68,23 @@ import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
-import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.ITvShowEpisodeConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToKodiConnector;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcConnector;
@@ -88,11 +92,8 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowActorImageFetcherTask;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaRating;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -300,8 +301,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     for (Person writer : source.getWriters()) {
       writers.add(new Person(writer));
     }
-    for (Rating rating : source.getRatings().values()) {
-      ratings.put(rating.getId(), new Rating(rating));
+    for (MediaRating mediaRating : source.getRatings().values()) {
+      ratings.put(mediaRating.getId(), new MediaRating(mediaRating));
     }
   }
 
@@ -522,38 +523,38 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the main (preferred) rating
    */
   @Override
-  public Rating getRating() {
-    Rating rating = null;
+  public MediaRating getRating() {
+    MediaRating mediaRating = null;
 
     // the user rating
     if (TvShowModuleManager.SETTINGS.getPreferPersonalRating()) {
-      rating = ratings.get(Rating.USER);
+      mediaRating = ratings.get(MediaRating.USER);
     }
 
     // the default rating
-    if (rating == null) {
-      rating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
+    if (mediaRating == null) {
+      mediaRating = ratings.get(TvShowModuleManager.SETTINGS.getPreferredRating());
     }
 
     // then the default one (either NFO or DEFAULT)
-    if (rating == null) {
-      rating = ratings.get(Rating.NFO);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.NFO);
     }
-    if (rating == null) {
-      rating = ratings.get(Rating.DEFAULT);
+    if (mediaRating == null) {
+      mediaRating = ratings.get(MediaRating.DEFAULT);
     }
 
     // is there any rating?
-    if (rating == null && !ratings.isEmpty()) {
-      rating = ratings.values().iterator().next();
+    if (mediaRating == null && !ratings.isEmpty()) {
+      mediaRating = ratings.values().iterator().next();
     }
 
     // last but not least a non null value
-    if (rating == null) {
-      rating = new Rating();
+    if (mediaRating == null) {
+      mediaRating = new MediaRating();
     }
 
-    return rating;
+    return mediaRating;
   }
 
   /**
@@ -627,7 +628,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param metadata
    *          the new metadata
    */
-  public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
+  public void setMetadata(MediaMetadata metadata, List<TvShowEpisodeScraperMetadataConfig> config) {
     // check against null metadata (e.g. aborted request)
     if (metadata == null) {
       LOGGER.error("metadata was null");
@@ -637,72 +638,75 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     boolean writeNewThumb = false;
 
     // populate ids
-    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
-      setId(entry.getKey(), entry.getValue().toString());
-    }
+    setIds(metadata.getIds());
 
-    setAiredSeason(metadata.getSeasonNumber());
-    setAiredEpisode(metadata.getEpisodeNumber());
-    setDvdSeason(metadata.getDvdSeasonNumber());
-    setDvdEpisode(metadata.getDvdEpisodeNumber());
-    setFirstAired(metadata.getReleaseDate());
-    setDisplaySeason(metadata.getDisplaySeasonNumber());
-    setDisplayEpisode(metadata.getDisplayEpisodeNumber());
-
-    // if option is set capitalize the first letter of each word
-    // in title and original title
-    if (config.isTitle()) {
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.TITLE)) {
+      // Capitalize first letter of original title if setting is set!
       if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
         setTitle(WordUtils.capitalize(metadata.getTitle()));
-        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
       }
       else {
         setTitle(metadata.getTitle());
+      }
+    }
+
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.ORIGINAL_TITLE)) {
+      // Capitalize first letter of original title if setting is set!
+      if (TvShowModuleManager.SETTINGS.getCapitalWordsInTitles()) {
+        setOriginalTitle(WordUtils.capitalize(metadata.getOriginalTitle()));
+      }
+      else {
         setOriginalTitle(metadata.getOriginalTitle());
       }
     }
 
-    if (config.isPlot()) {
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.PLOT)) {
       setPlot(metadata.getPlot());
     }
 
-    if (config.isRating()) {
-      clearRatings();
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.AIRED_SEASON_EPISODE)) {
+      setAiredSeason(metadata.getSeasonNumber());
+      setAiredEpisode(metadata.getEpisodeNumber());
+    }
+
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.DVD_SEASON_EPISODE)) {
+      setDvdSeason(metadata.getDvdSeasonNumber());
+      setDvdEpisode(metadata.getDvdEpisodeNumber());
+    }
+
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.DISPLAY_SEASON_EPISODE)) {
+      setDisplaySeason(metadata.getDisplaySeasonNumber());
+      setDisplayEpisode(metadata.getDisplayEpisodeNumber());
+    }
+
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.AIRED)) {
+      setFirstAired(metadata.getReleaseDate());
+    }
+
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.RATING)) {
+      Map<String, MediaRating> newRatings = new HashMap<>();
       for (MediaRating mediaRating : metadata.getRatings()) {
-        setRating(new Rating(mediaRating));
+        newRatings.put(mediaRating.getId(), mediaRating);
+      }
+      setRatings(newRatings);
+    }
+
+    if (ScraperMetadataConfig.containsAnyCast(config)) {
+      if (config.contains(TvShowEpisodeScraperMetadataConfig.ACTORS)) {
+        setActors(metadata.getCastMembers(Person.Type.ACTOR));
+        writeActorImages();
+      }
+
+      if (config.contains(TvShowEpisodeScraperMetadataConfig.DIRECTORS)) {
+        setDirectors(metadata.getCastMembers(Person.Type.DIRECTOR));
+      }
+
+      if (config.contains(TvShowEpisodeScraperMetadataConfig.WRITERS)) {
+        setWriters(metadata.getCastMembers(Person.Type.WRITER));
       }
     }
 
-    if (config.isCast()) {
-      List<Person> actors = new ArrayList<>();
-      List<Person> directors = new ArrayList<>();
-      List<Person> writers = new ArrayList<>();
-
-      for (MediaCastMember member : metadata.getCastMembers()) {
-        switch (member.getType()) {
-          case ACTOR:
-            actors.add(new Person(member));
-            break;
-
-          case DIRECTOR:
-            directors.add(new Person(member));
-            break;
-
-          case WRITER:
-            writers.add(new Person(member));
-            break;
-
-          default:
-            break;
-        }
-      }
-      setActors(actors);
-      setDirectors(directors);
-      setWriters(writers);
-      writeActorImages();
-    }
-
-    if (config.isArtwork()) {
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.THUMB)) {
       List<MediaArtwork> mas = metadata.getMediaArt(MediaArtworkType.THUMB);
       if (!mas.isEmpty()) {
         setArtworkUrl(mas.get(0).getDefaultUrl(), MediaFileType.THUMB);
@@ -1383,7 +1387,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
-  public Certification getCertification() {
+  public MediaCertification getCertification() {
     return getTvShow().getCertification();
   }
 
@@ -1406,6 +1410,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // cannot happen - movie MUST always have a video file
     return new MediaFile();
+  }
+
+  @Override
+  public MediaFile getMainFile() {
+    return getMainVideoFile();
   }
 
   @Override
@@ -1486,7 +1495,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public String getVideoHDRFormat() {
-    return getMainVideoFile().isHDR() ? "HDR" : "";
+    return getMainVideoFile().getHdrFormat();
   }
 
   @Override
@@ -1499,6 +1508,15 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return StringUtils.isNotBlank(video3DFormat);
+  }
+
+  @Override
+  public long getVideoFilesize() {
+    long filesize = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      filesize += mf.getFilesize();
+    }
+    return filesize;
   }
 
   public boolean isDummy() {

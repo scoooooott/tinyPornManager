@@ -47,7 +47,6 @@ import javax.swing.text.JTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
@@ -66,7 +65,6 @@ import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.panels.StatusBarPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
-import com.jtattoo.plaf.BaseRootPaneUI;
 import com.sun.jna.Platform;
 
 import net.miginfocom.swing.MigLayout;
@@ -79,10 +77,10 @@ import net.miginfocom.swing.MigLayout;
 public class MainWindow extends JFrame {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
   private static final long           serialVersionUID = 1L;
 
-  public final static List<Image>     LOGOS            = createLogos();
+  public static final List<Image>     LOGOS            = createLogos();
   private static MainWindow           instance;
 
   private ToolbarPanel                toolbarPanel;
@@ -153,10 +151,10 @@ public class MainWindow extends JFrame {
               }
               else {
                 // do the update without changelog popup
-
-                int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
-                    JOptionPane.YES_NO_OPTION);
-                if (answer == JOptionPane.OK_OPTION) {
+                Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
+                int answer = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+                if (answer == JOptionPane.YES_OPTION) {
                   LOGGER.info("Updating...");
 
                   // spawn getdown and exit TMM
@@ -192,18 +190,7 @@ public class MainWindow extends JFrame {
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
     toolbarPanel = new ToolbarPanel();
-
-    // Customize the titlebar. This could only be done if one of the JTattoo look and feels is active. So check this first.
-    // if the system window decorations are active we have to put the toolbar into the NORTH area too
-    if (getRootPane().getUI() instanceof BaseRootPaneUI && !Globals.settings.isSystemWindowDecoration()) {
-      BaseRootPaneUI rootPaneUI = (BaseRootPaneUI) getRootPane().getUI();
-      // Here is the magic. Just add the panel to the titlebar
-      rootPaneUI.setTitlePane(getRootPane(), toolbarPanel);
-    }
-    else {
-      // put the toolbar on the top
-      getContentPane().add(toolbarPanel, BorderLayout.NORTH);
-    }
+    getContentPane().add(toolbarPanel, BorderLayout.NORTH);
 
     JPanel rootPanel = new JPanel();
     rootPanel.putClientProperty("class", "rootPanel");
@@ -305,8 +292,9 @@ public class MainWindow extends JFrame {
     int confirm = JOptionPane.YES_OPTION;
     // if there are some threads running, display exit confirmation
     if (TmmTaskManager.getInstance().poolRunning()) {
+      Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); // $NON-NLS-1$
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); // $NON-NLS-1$
     }
     if (confirm == JOptionPane.YES_OPTION) {
       LOGGER.info("bye bye");

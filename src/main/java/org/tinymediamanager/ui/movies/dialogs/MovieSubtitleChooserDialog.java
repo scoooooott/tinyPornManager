@@ -56,20 +56,19 @@ import org.tinymediamanager.core.movie.tasks.MovieSubtitleDownloadTask;
 import org.tinymediamanager.core.tasks.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
 
@@ -164,7 +163,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
       final JLabel lblMovieTitle = new JLabel(movieToScrape.getTitle());
       TmmFontHelper.changeFont(lblMovieTitle, 1.33, Font.BOLD);
-      panelTitle.add(lblMovieTitle, "cell 0 0 5 1,growx");
+      panelTitle.add(lblMovieTitle, "cell 0 0 5 1,growx, wmin 0");
 
       setTopIformationPanel(panelTitle);
     }
@@ -176,7 +175,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       final JLabel lblMediaFileNameT = new TmmLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
       panelContent.add(lblMediaFileNameT, "cell 0 0,alignx right");
 
-      final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
+      final JLabel lblMediaFileName = new JLabel(fileToScrape.getFile().toString());
       panelContent.add(lblMediaFileName, "cell 1 0 4 1,growx");
 
       final JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
@@ -229,7 +228,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       infoPanel.add(progressBar, "cell 0 0");
 
       lblProgressAction = new JLabel("");
-      infoPanel.add(lblProgressAction, "cell 1 0");
+      infoPanel.add(lblProgressAction, "cell 1 0, wmin 0");
 
       setBottomInformationPanel(infoPanel);
     }
@@ -299,6 +298,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     private MediaLanguages             language;
     private List<MediaScraper>         scrapers;
     boolean                            cancel;
+    private String                     message;
 
     public SearchTask(File file, String imdbId, String searchTerm, List<MediaScraper> scrapers) {
       this.file = file;
@@ -315,17 +315,20 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       for (MediaScraper scraper : scrapers) {
         try {
-          IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-          SubtitleSearchOptions options = new SubtitleSearchOptions(file, searchTerm);
+          ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+          SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.MOVIE);
+          options.setFile(file);
+          options.setSearchQuery(searchTerm);
           options.setImdbId(imdbId);
-          options.setLanguage(language.toLocale());
+          options.setLanguage(language);
           searchResults.addAll(subtitleProvider.search(options));
         }
         catch (ScrapeException e) {
           LOGGER.error("getSubtitles", e);
-          MessageDialog.showExceptionWindow(e);
+          message = e.getMessage();
         }
-        catch (MissingIdException | UnsupportedMediaTypeException ignored) {
+        catch (MissingIdException ignored) {
+          LOGGER.debug("missing id for scraper {}", scraper.getId());
         }
       }
 
@@ -359,6 +362,13 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         TableColumnResizer.adjustColumnPreferredWidths(tableSubs, 15);
       }
       stopProgressBar();
+
+      if (!cancel && StringUtils.isNotBlank(message)) {
+        SwingUtilities.invokeLater(() -> {
+          lblProgressAction.setVisible(true);
+          lblProgressAction.setText(message);
+        });
+      }
     }
   }
 

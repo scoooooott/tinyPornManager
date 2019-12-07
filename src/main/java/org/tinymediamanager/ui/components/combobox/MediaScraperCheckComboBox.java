@@ -35,6 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageUtils;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.IconManager;
@@ -45,7 +47,8 @@ import org.tinymediamanager.ui.IconManager;
  * @author Manuel Laggner
  */
 public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
-  private static final long serialVersionUID = 8153649858409237947L;
+  private static final long   serialVersionUID = 8153649858409237947L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(MediaScraperCheckComboBox.class);
 
   public MediaScraperCheckComboBox(final List<MediaScraper> scrapers) {
     super(scrapers);
@@ -64,7 +67,7 @@ public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
     private Map<URI, ImageIcon> imageCache;
     private int                 maxIconWidth = 0;
 
-    public MediaScraperCheckBoxRenderer(final List<TmmCheckComboBoxItem<MediaScraper>> items) {
+    private MediaScraperCheckBoxRenderer(final List<TmmCheckComboBoxItem<MediaScraper>> items) {
       super(items);
       panel.setLayout(new FlowLayout(FlowLayout.LEFT));
       panel.add(checkBox);
@@ -147,7 +150,8 @@ public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
         }
         return logo;
       }
-      catch (Exception ignored) {
+      catch (Exception e) {
+        LOGGER.debug("could not load scraper icon: {}", e.getMessage());
       }
       return null;
     }

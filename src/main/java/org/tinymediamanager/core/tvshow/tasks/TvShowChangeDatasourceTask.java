@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowChangeDatasourceTask extends TmmThreadPool {
-  private final static Logger         LOGGER          = LoggerFactory.getLogger(TvShowChangeDatasourceTask.class);
+  private static final Logger         LOGGER          = LoggerFactory.getLogger(TvShowChangeDatasourceTask.class);
   private static final ResourceBundle BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   private final String                datasource;

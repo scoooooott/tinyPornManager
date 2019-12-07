@@ -19,13 +19,17 @@ import static org.tinymediamanager.core.Constants.NAME;
 import static org.tinymediamanager.core.Constants.ROLE;
 import static org.tinymediamanager.core.Constants.THUMB;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,15 +51,17 @@ public class Person extends AbstractModelObject {
   }
 
   @JsonProperty
-  private Type   type       = Type.OTHER;
+  private Type                type       = Type.OTHER;
   @JsonProperty
-  private String name       = "";
+  private String              name       = "";
   @JsonProperty
-  private String role       = "";
+  private String              role       = "";
   @JsonProperty
-  private String thumbUrl   = "";
+  private String              thumbUrl   = "";
   @JsonProperty
-  private String profileUrl = "";
+  private String              profileUrl = "";
+  @JsonProperty
+  private Map<String, Object> ids        = null;
 
   /**
    * JSON constructor - please do not use
@@ -68,62 +74,23 @@ public class Person extends AbstractModelObject {
   }
 
   public Person(Type type, String name) {
-    this.type = type;
-    this.name = name;
+    this(type);
+    setName(name);
   }
 
   public Person(Type type, String name, String role) {
-    this.type = type;
-    this.name = name;
-    this.role = role;
+    this(type, name);
+    setRole(role);
   }
 
   public Person(Type type, String name, String role, String thumbUrl) {
-    this.type = type;
-    this.name = name;
-    this.role = role;
-    this.thumbUrl = thumbUrl;
+    this(type, name, role);
+    setThumbUrl(thumbUrl);
   }
 
   public Person(Type type, String name, String role, String thumbUrl, String profileUrl) {
-    this.type = type;
-    this.name = name;
-    this.role = role;
-    this.thumbUrl = thumbUrl;
-    this.profileUrl = profileUrl;
-  }
-
-  public Person(MediaCastMember mediaCastMember) {
-    this.name = mediaCastMember.getName();
-    this.thumbUrl = mediaCastMember.getImageUrl();
-    this.profileUrl = mediaCastMember.getProfileUrl();
-
-    switch (mediaCastMember.getType()) {
-      case ACTOR:
-        type = Type.ACTOR;
-        role = mediaCastMember.getCharacter();
-        break;
-
-      case DIRECTOR:
-        type = Type.DIRECTOR;
-        role = mediaCastMember.getPart();
-        break;
-
-      case WRITER:
-        type = Type.WRITER;
-        role = mediaCastMember.getPart();
-        break;
-
-      case PRODUCER:
-        type = Type.PRODUCER;
-        role = mediaCastMember.getPart();
-        break;
-
-      default:
-        type = Type.OTHER;
-        role = mediaCastMember.getPart();
-        break;
-    }
+    this(type, name, role, thumbUrl);
+    setProfileUrl(profileUrl);
   }
 
   /**
@@ -138,6 +105,10 @@ public class Person extends AbstractModelObject {
     this.role = source.role;
     this.thumbUrl = source.thumbUrl;
     this.profileUrl = source.profileUrl;
+
+    if (source.ids != null && !source.ids.isEmpty()) {
+      this.ids = new HashMap<>(source.ids);
+    }
   }
 
   /**
@@ -160,15 +131,66 @@ public class Person extends AbstractModelObject {
   }
 
   /**
+   * set the given ID; if the value is zero/"" or null, the key is removed from the existing keys
+   *
+   * @param key
+   *          the ID-key
+   * @param value
+   *          the ID-value
+   */
+  public void setId(String key, Object value) {
+    if (this.ids == null) {
+      this.ids = new HashMap<>(0);
+    }
+
+    // remove ID, if empty/0/null
+    // if we only skipped it, the existing entry will stay although someone changed it to empty.
+    String v = String.valueOf(value);
+    if ("".equals(v) || "0".equals(v) || "null".equals(v)) {
+      ids.remove(key);
+    }
+    else {
+      ids.put(key, value);
+    }
+  }
+
+  /**
+   * get the given id
+   *
+   * @param key
+   *          the ID-key
+   * @return the id for this key
+   */
+  public Object getId(String key) {
+    if (this.ids == null) {
+      return null;
+    }
+
+    return ids.get(key);
+  }
+
+  /**
+   * get all ID for this object. These are the IDs from the various scraper
+   *
+   * @return a map of all IDs
+   */
+  public Map<String, Object> getIds() {
+    if (this.ids == null) {
+      return Collections.emptyMap();
+    }
+
+    return ids;
+  }
+
+  /**
    * set the name of that person
    * 
    * @param newValue
    *          the new name
    */
   public void setName(String newValue) {
-    // FIXME: check renaming of thumb!!!!
-    String oldValue = name;
-    name = newValue;
+    String oldValue = this.name;
+    this.name = StrgUtils.getNonNullString(newValue);
     firePropertyChange(NAME, oldValue, newValue);
   }
 
@@ -212,8 +234,8 @@ public class Person extends AbstractModelObject {
    *          the role to be set
    */
   public void setRole(String newValue) {
-    String oldValue = role;
-    role = newValue;
+    String oldValue = this.role;
+    this.role = StrgUtils.getNonNullString(newValue);
     firePropertyChange(ROLE, oldValue, newValue);
   }
 
@@ -234,7 +256,7 @@ public class Person extends AbstractModelObject {
    */
   public void setThumbUrl(String newValue) {
     String oldValue = this.thumbUrl;
-    thumbUrl = newValue;
+    thumbUrl = StrgUtils.getNonNullString(newValue);
     firePropertyChange(THUMB, oldValue, newValue);
   }
 
@@ -250,11 +272,13 @@ public class Person extends AbstractModelObject {
   /**
    * set the profile url of that person
    * 
-   * @param profileUrl
+   * @param newValue
    *          the profile url
    */
-  public void setProfileUrl(String profileUrl) {
-    this.profileUrl = profileUrl;
+  public void setProfileUrl(String newValue) {
+    String oldValue = this.profileUrl;
+    this.profileUrl = StrgUtils.getNonNullString(newValue);
+    firePropertyChange("profileUrl", oldValue, newValue);
   }
 
   /**

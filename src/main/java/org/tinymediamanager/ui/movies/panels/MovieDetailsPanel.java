@@ -50,7 +50,7 @@ public class MovieDetailsPanel extends JPanel {
   private static final long           serialVersionUID = 6273970118830324299L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
   private MovieSelectionModel         movieSelectionModel;
   private JLabel                      lblProduction;

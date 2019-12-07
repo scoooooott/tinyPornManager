@@ -280,7 +280,7 @@ public class ImageUtils {
       long timestamp = System.currentTimeMillis();
 
       try {
-        // create a temp file/folder inside the tmm folder
+        // create a temp file/folder inside the temp folder or tmm folder
         Path tempFolder = Paths.get(Utils.getTempFolder());
         if (!Files.exists(tempFolder)) {
           Files.createDirectory(tempFolder);

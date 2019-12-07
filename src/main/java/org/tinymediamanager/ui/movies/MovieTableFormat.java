@@ -27,6 +27,7 @@ import java.util.function.Function;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -34,7 +35,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -71,7 +71,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     Comparator<String> videoFormatComparator = new VideoFormatComparator();
     Comparator<String> fileSizeComparator = new FileSizeComparator();
     Comparator<Integer> integerComparator = new IntegerComparator();
-    Comparator<Certification> certificationComparator = new CertificationComparator();
+    Comparator<MediaCertification> certificationComparator = new CertificationComparator();
 
     FontMetrics fontMetrics = getFontMetrics();
 
@@ -158,7 +158,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * certification (hidden per default)
      */
-    col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, Certification.class);
+    col = new Column(BUNDLE.getString("metatag.certification"), "certification", Movie::getCertification, MediaCertification.class);
     col.setColumnComparator(certificationComparator);
     col.setHeaderIcon(IconManager.CERTIFICATION);
     col.setColumnResizeable(true);
@@ -167,7 +167,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * date added
      */
-    col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
+    col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAddedForUi, Date.class);
     col.setColumnComparator(dateComparator);
     col.setHeaderIcon(IconManager.DATE_ADDED);
     col.setCellRenderer(new DateTableCellRenderer());

@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import static org.tinymediamanager.scraper.entities.MediaType.MOVIE;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,12 +35,12 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -47,7 +49,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieSubtitleSearchAndDownloadTask.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieSubtitleSearchAndDownloadTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
 
   private final List<Movie>           movies;
@@ -66,9 +68,9 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
     initThreadPool(3, "searchAndDownloadSubtitles");
     start();
 
-      for (Movie movie : movies) {
-          submitTask(new Worker(movie));
-      }
+    for (Movie movie : movies) {
+      submitTask(new Worker(movie));
+    }
 
     waitForCompletionOrCancel();
 
@@ -98,10 +100,13 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
           try {
             MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
 
-            IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-            SubtitleSearchOptions options = new SubtitleSearchOptions(mf.getFileAsPath().toFile(), movie.getOriginalTitle());
-            options.setLanguage(language.toLocale());
+            ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+            SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MOVIE);
+            options.setFile(mf.getFileAsPath().toFile());
+            options.setSearchQuery(movie.getOriginalTitle());
+            options.setLanguage(language);
             options.setImdbId(movie.getImdbId());
+
             List<SubtitleSearchResult> searchResults = subtitleProvider.search(options);
             if (searchResults.isEmpty()) {
               continue;

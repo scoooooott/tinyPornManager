@@ -16,31 +16,6 @@
 
 package org.tinymediamanager.ui.dialogs;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.components.table.TmmTable;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,6 +27,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.components.table.TmmTable;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
+
 /**
  * show a dialog with all unwanted files
  *
@@ -59,20 +61,20 @@ import java.util.Set;
  */
 public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
+  private static final Logger                                 LOGGER = LoggerFactory.getLogger(CleanUpUnwantedFilesDialog.class);
 
   private EventList<CleanUpUnwantedFilesDialog.FileContainer> results;
-  private TmmTable table;
-  private JButton btnClean;
-  private JProgressBar progressBar;
-  private JLabel lblProgressAction;
+  private TmmTable                                            table;
+  private JButton                                             btnClean;
+  private JProgressBar                                        progressBar;
+  private JLabel                                              lblProgressAction;
 
   public CleanUpUnwantedFilesDialog(List<MediaEntity> selectedEntities) {
     super(BUNDLE.getString("cleanupfiles"), "cleanupEntities");
 
     results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<>()));
-    DefaultEventTableModel<CleanUpUnwantedFilesDialog.FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results),
-            new CleanUpTableFormat());
+    DefaultEventTableModel<CleanUpUnwantedFilesDialog.FileContainer> cleanUpTableModel = new DefaultEventTableModel<>(
+        GlazedListsSwing.swingThreadProxyList(results), new CleanUpTableFormat());
 
     {
       table = new TmmTable(cleanUpTableModel);
@@ -151,8 +153,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
   private static class FileContainer {
     MediaEntity entity;
-    Path file;
-    long filesize;
+    Path        file;
+    long        filesize;
 
     String getFilesizeInKilobytes() {
       DecimalFormat df = new DecimalFormat("#0.00");
@@ -170,7 +172,7 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
   private class TvShowCleanUpWorker extends SwingWorker<Void, Void> {
 
-    private List<MediaEntity> selectedEntities;
+    private List<MediaEntity>                            selectedEntities;
     public Set<CleanUpUnwantedFilesDialog.FileContainer> files;
 
     private TvShowCleanUpWorker(List<MediaEntity> entities) {
@@ -201,7 +203,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
           try {
             BasicFileAttributes attrs = Files.readAttributes(fileContainer.file, BasicFileAttributes.class);
             fileContainer.filesize = attrs.size();
-          } catch (Exception ignored) {
+          }
+          catch (Exception ignored) {
           }
 
           results.add(fileContainer);
@@ -235,7 +238,8 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
         fileList.add(selectedFile);
         LOGGER.info("Deleting File " + selectedFile.file.toString());
         Utils.deleteFileWithBackup(selectedFile.file, selectedFile.entity.getDataSource());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         e.printStackTrace();
       }
     }

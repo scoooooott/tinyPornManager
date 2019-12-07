@@ -15,18 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.text.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.LaunchUtil;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.scraper.util.StrgUtils;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -79,7 +68,18 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
+import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.text.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.LaunchUtil;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class Utils.
@@ -194,7 +194,9 @@ public class Utils {
    *          the object to dump
    */
   public static void dumpObject(Object o) {
-    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5))); // NOSONAR
+    RecursiveToStringStyle style = new RecursiveToStringStyle(5);
+    System.out.println(ReflectionToStringBuilder.toString(o, style)); // NOSONAR
+    style.cleanup();
   }
 
   /**
@@ -641,7 +643,7 @@ public class Utils {
             rename = true;
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallback): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -742,7 +744,7 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
-            LOGGER.warn("rename problem (fallbacl): {}", e.getMessage()); // NOSONAR
+            LOGGER.warn("rename problem (fallback): {}", e.getMessage()); // NOSONAR
           }
         }
         catch (IOException e) {
@@ -1363,6 +1365,9 @@ public class Utils {
     try {
       // check if file exists
       env.put("create", String.valueOf(!Files.exists(zipFile)));
+      // and use temp files rather than everything in memory
+      env.put("useTempFile", "true");
+
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
@@ -1707,7 +1712,8 @@ public class Utils {
   /**
    * Method to get a list of files with the given regular expression
    *
-   * @param regexList list of regular expression
+   * @param regexList
+   *          list of regular expression
    * @return a list of files
    */
   public static HashSet<Path> getUnknownFilesByRegex(Path folder, List<String> regexList) {
@@ -1716,7 +1722,8 @@ public class Utils {
 
     try {
       Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("could not get unknown files: {}", e.getMessage());
     }
 
@@ -1726,7 +1733,7 @@ public class Utils {
   private static class GetUnknownFilesVisitor extends AbstractFileVisitor {
 
     private HashSet<Path> fileList = new HashSet<>();
-    private List<String> regexList;
+    private List<String>  regexList;
 
     GetUnknownFilesVisitor(List<String> regexList) {
       this.regexList = regexList;

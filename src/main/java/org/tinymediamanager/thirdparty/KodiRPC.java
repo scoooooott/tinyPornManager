@@ -80,7 +80,7 @@ public class KodiRPC {
 
       @Override
       public void connected() {
-        LOGGER.info("Event: Connected");
+        LOGGER.info("Event: Connected to {}", cm.getHostConfig().getAddress());
         MessageManager.instance.pushMessage(new Message(Message.MessageLevel.INFO, "Kodi connected"));
       }
     });

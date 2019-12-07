@@ -32,12 +32,13 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.interfaces.ISubtitleProvider;
 import org.tinymediamanager.scraper.util.MediaIdUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -47,7 +48,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowSubtitleSearchAndDownloadTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowSubtitleSearchAndDownloadTask.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowSubtitleSearchAndDownloadTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
 
   private final List<TvShowEpisode>   episodes;
@@ -66,9 +67,9 @@ public class TvShowSubtitleSearchAndDownloadTask extends TmmThreadPool {
     initThreadPool(3, "searchAndDownloadSubtitles");
     start();
 
-      for (TvShowEpisode episode : episodes) {
-          submitTask(new Worker(episode));
-      }
+    for (TvShowEpisode episode : episodes) {
+      submitTask(new Worker(episode));
+    }
 
     waitForCompletionOrCancel();
 
@@ -98,9 +99,10 @@ public class TvShowSubtitleSearchAndDownloadTask extends TmmThreadPool {
           try {
             MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
 
-            IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-            SubtitleSearchOptions options = new SubtitleSearchOptions(mf.getFileAsPath().toFile());
-            options.setLanguage(language.toLocale());
+            ISubtitleProvider subtitleProvider = (ISubtitleProvider) scraper.getMediaProvider();
+            SubtitleSearchAndScrapeOptions options = new SubtitleSearchAndScrapeOptions(MediaType.TV_EPISODE);
+            options.setFile(mf.getFileAsPath().toFile());
+            options.setLanguage(language);
             options.setSeason(episode.getSeason());
             options.setEpisode(episode.getEpisode());
 

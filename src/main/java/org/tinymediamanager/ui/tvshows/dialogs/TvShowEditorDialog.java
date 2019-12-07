@@ -15,9 +15,90 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.WritableTableFormat;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.JTableBinding;
+import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaAiredStatus;
+import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
+import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.ShadowLayerUI;
+import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.TableSpinnerEditor;
+import org.tinymediamanager.ui.UIConstants;
+import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.components.MediaIdTable;
+import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.MediaRatingTable;
+import org.tinymediamanager.ui.components.PersonTable;
+import org.tinymediamanager.ui.components.TmmLabel;
+import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
+import org.tinymediamanager.ui.components.datepicker.DatePicker;
+import org.tinymediamanager.ui.components.datepicker.YearSpinner;
+import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTableFormat;
+import org.tinymediamanager.ui.components.table.TmmTableModel;
+import org.tinymediamanager.ui.dialogs.IdEditorDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
+import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.renderer.LeftDotTableCellRenderer;
 
+import javax.swing.AbstractAction;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JLayer;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -36,87 +117,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.AbstractAction;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JLayer;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.entities.Rating;
-import org.tinymediamanager.core.threading.TmmTask;
-import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaAiredStatus;
-import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.ShadowLayerUI;
-import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.TableSpinnerEditor;
-import org.tinymediamanager.ui.UIConstants;
-import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.LinkLabel;
-import org.tinymediamanager.ui.components.MainTabbedPane;
-import org.tinymediamanager.ui.components.MediaIdTable;
-import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
-import org.tinymediamanager.ui.components.MediaRatingTable;
-import org.tinymediamanager.ui.components.MediaRatingTable.MediaRating;
-import org.tinymediamanager.ui.components.PersonTable;
-import org.tinymediamanager.ui.components.TmmLabel;
-import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
-import org.tinymediamanager.ui.components.datepicker.DatePicker;
-import org.tinymediamanager.ui.components.datepicker.YearSpinner;
-import org.tinymediamanager.ui.components.table.TmmTable;
-import org.tinymediamanager.ui.components.table.TmmTableFormat;
-import org.tinymediamanager.ui.components.table.TmmTableModel;
-import org.tinymediamanager.ui.dialogs.IdEditorDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
-import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
-import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.renderer.LeftDotTableCellRenderer;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.WritableTableFormat;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
 
 /**
  * The Class TvShowEditor.
@@ -124,88 +126,91 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowEditorDialog extends TmmDialog {
-  private static final long                 serialVersionUID    = 3270218410302989845L;
-  private static final Insets               BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
-  private static final String               ORIGINAL_IMAGE_SIZE = "originalImageSize";
+  private static final long                       serialVersionUID    = 3270218410302989845L;
+  private static final Insets                     BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final String                     ORIGINAL_IMAGE_SIZE = "originalImageSize";
 
-  private TvShow                            tvShowToEdit;
-  private TvShowList                        tvShowList          = TvShowList.getInstance();
-  private EventList<Person>                 actors;
-  private List<MediaGenres>                 genres              = ObservableCollections.observableList(new ArrayList<>());
-  private EventList<MediaId>                ids;
-  private EventList<MediaRating>            ratings;
-  private List<String>                      tags                = ObservableCollections.observableList(new ArrayList<>());
-  private EventList<EpisodeEditorContainer> episodes;
-  private List<String>                      extrafanarts        = null;
-  private Rating                            userRating;
-  private boolean                           continueQueue       = true;
-  private boolean                           navigateBack        = false;
-  private int                               queueIndex;
-  private int                               queueSize;
+  private TvShow                                  tvShowToEdit;
+  private TvShowList                              tvShowList          = TvShowList.getInstance();
+  private EventList<Person>                       actors;
+  private List<MediaGenres>                       genres              = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<MediaId>                      ids;
+  private EventList<MediaRatingTable.MediaRating> mediaRatings;
+  private List<String>                            tags                = ObservableCollections.observableList(new ArrayList<>());
+  private EventList<EpisodeEditorContainer>       episodes;
+  private List<String> extrafanarts = null;
+  private List<MediaTrailer> trailers = ObservableCollections.observableList(new ArrayList<>());
+  private MediaRating userMediaRating;
+  private boolean                                 continueQueue       = true;
+  private boolean                                 navigateBack        = false;
+  private int                                     queueIndex;
+  private int                                     queueSize;
 
   /**
    * UI elements
    */
-  private JTextField                        tfTitle;
-  private YearSpinner                       spYear;
-  private JTextArea                         taPlot;
-  private TmmTable                          tableActors;
-  private ImageLabel                        lblPoster;
-  private ImageLabel                        lblFanart;
-  private ImageLabel                        lblBanner;
-  private JSpinner                          spRuntime;
-  private JTextField                        tfStudio;
-  private JList<MediaGenres>                listGenres;
-  private AutocompleteComboBox<MediaGenres> cbGenres;
-  private AutoCompleteSupport<MediaGenres>  cbGenresAutoCompleteSupport;
-  private JSpinner                          spRating;
-  private JComboBox<Certification>          cbCertification;
-  private JComboBox<MediaAiredStatus>       cbStatus;
+  private JTextField                              tfTitle;
+  private YearSpinner                             spYear;
+  private JTextArea                               taPlot;
+  private TmmTable                                tableActors;
+  private ImageLabel                              lblPoster;
+  private ImageLabel                              lblFanart;
+  private ImageLabel                              lblBanner;
+  private JSpinner                                spRuntime;
+  private JTextField                              tfStudio;
+  private JList<MediaGenres>                      listGenres;
+  private AutocompleteComboBox<MediaGenres>       cbGenres;
+  private AutoCompleteSupport<MediaGenres>        cbGenresAutoCompleteSupport;
+  private JSpinner                                spRating;
+  private JComboBox<MediaCertification>           cbCertification;
+  private JComboBox<MediaAiredStatus>             cbStatus;
 
-  private AutocompleteComboBox<String>      cbTags;
-  private AutoCompleteSupport<String>       cbTagsAutoCompleteSupport;
-  private JList<String>                     listTags;
-  private JSpinner                          spDateAdded;
-  private DatePicker                        dpPremiered;
-  private TmmTable                          tableEpisodes;
-  private JTextField                        tfSorttitle;
-  private JTextField                        tfNote;
+  private AutocompleteComboBox<String>            cbTags;
+  private AutoCompleteSupport<String>             cbTagsAutoCompleteSupport;
+  private JList<String>                           listTags;
+  private JSpinner                                spDateAdded;
+  private DatePicker                              dpPremiered;
+  private TmmTable                                tableEpisodes;
+  private JTextField                              tfSorttitle;
+  private JTextField                              tfNote;
 
-  private JTextField                        tfPoster;
-  private JTextField                        tfFanart;
-  private JTextField                        tfLogo;
-  private JTextField                        tfClearLogo;
-  private JTextField                        tfBanner;
-  private JTextField                        tfClearArt;
-  private JTextField                        tfThumb;
+  private JTextField                              tfPoster;
+  private JTextField                              tfFanart;
+  private JTextField                              tfLogo;
+  private JTextField                              tfClearLogo;
+  private JTextField                              tfBanner;
+  private JTextField                              tfClearArt;
+  private JTextField                              tfThumb;
 
-  private ImageLabel                        lblLogo;
-  private ImageLabel                        lblClearlogo;
-  private ImageLabel                        lblClearart;
-  private ImageLabel                        lblThumb;
-  private ImageLabel                        lblCharacterart;
-  private ImageLabel                        lblKeyart;
+  private ImageLabel                              lblLogo;
+  private ImageLabel                              lblClearlogo;
+  private ImageLabel                              lblClearart;
+  private ImageLabel                              lblThumb;
+  private ImageLabel                              lblCharacterart;
+  private ImageLabel                              lblKeyart;
 
-  private TmmTable                          tableIds;
-  private TmmTable                          tableRatings;
-  private JTextField                        tfOriginalTitle;
-  private JTextField                        tfCountry;
-  private JTextField                        tfCharacterart;
-  private JTextField                        tfKeyart;
+  private TmmTable                                tableIds;
+  private TmmTable                                tableRatings;
+  private JTextField                              tfOriginalTitle;
+  private JTextField                              tfCountry;
+  private JTextField                              tfCharacterart;
+  private JTextField                              tfKeyart;
 
-  private LinkLabel                         lblBannerSize       = new LinkLabel();
-  private LinkLabel                         lblPosterSize       = new LinkLabel();
-  private LinkLabel                         lblFanartSize       = new LinkLabel();
-  private LinkLabel                         lblLogoSize         = new LinkLabel();
-  private LinkLabel                         lblClearlogoSize    = new LinkLabel();
-  private LinkLabel                         lblClearartSize     = new LinkLabel();
-  private LinkLabel                         lblThumbSize        = new LinkLabel();
-  private LinkLabel                         lblCharacterartSize = new LinkLabel();
-  private LinkLabel                         lblKeyartSize       = new LinkLabel();
+  private LinkLabel lblBannerSize = new LinkLabel();
+  private LinkLabel lblPosterSize = new LinkLabel();
+  private LinkLabel lblFanartSize = new LinkLabel();
+  private LinkLabel lblLogoSize = new LinkLabel();
+  private LinkLabel lblClearlogoSize = new LinkLabel();
+  private LinkLabel lblClearartSize = new LinkLabel();
+  private LinkLabel lblThumbSize = new LinkLabel();
+  private LinkLabel lblCharacterartSize = new LinkLabel();
+  private LinkLabel lblKeyartSize = new LinkLabel();
+
+  private TmmTable tableTrailer;
 
   /**
    * Instantiates a new tv show editor dialog.
-   * 
+   *
    * @param tvShow
    *          the tv show
    * @param queueIndex
@@ -221,8 +226,8 @@ public class TvShowEditorDialog extends TmmDialog {
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
     ids = MediaIdTable.convertIdMapToEventList(tvShowToEdit.getIds());
-    ratings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), false);
-    userRating = tvShowToEdit.getRating(Rating.USER);
+    mediaRatings = MediaRatingTable.convertRatingMapToEventList(tvShowToEdit.getRatings(), false);
+    userMediaRating = tvShowToEdit.getRating(MediaRating.USER);
 
     // creation of lists
     actors = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
@@ -264,7 +269,7 @@ public class TvShowEditorDialog extends TmmDialog {
       int year = tvShow.getYear();
       spYear.setValue(year);
       spDateAdded.setValue(tvShow.getDateAdded());
-      spRating.setModel(new SpinnerNumberModel(userRating.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 10.0, 0.1));
 
       for (Person origCast : tvShow.getActors()) {
         actors.add(new Person(origCast));
@@ -276,11 +281,12 @@ public class TvShowEditorDialog extends TmmDialog {
         extrafanarts = new ArrayList<>(tvShowToEdit.getExtraFanartUrls());
       }
 
-      List<Certification> availableCertifications = Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      List<MediaCertification> availableCertifications = MediaCertification
+          .getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       if (!availableCertifications.contains(tvShowToEdit.getCertification())) {
         availableCertifications.add(0, tvShowToEdit.getCertification());
       }
-      for (Certification cert : availableCertifications) {
+      for (MediaCertification cert : availableCertifications) {
         cbCertification.addItem(cert);
       }
       cbCertification.setSelectedItem(tvShowToEdit.getCertification());
@@ -299,6 +305,9 @@ public class TvShowEditorDialog extends TmmDialog {
         container.episode = episode.getEpisode();
         episodes.add(container);
       }
+
+      trailers.addAll(tvShow.getTrailer());
+
     }
 
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
@@ -309,6 +318,34 @@ public class TvShowEditorDialog extends TmmDialog {
     // adjust table columns
     TableColumnResizer.adjustColumnPreferredWidths(tableActors, 6);
     TableColumnResizer.adjustColumnPreferredWidths(tableEpisodes, 6);
+
+    // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
+    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
+
+    // adjust table columns
+    tableTrailer.getColumnModel().getColumn(0).setMaxWidth(55);
+    tableTrailer.adjustColumnPreferredWidths(5);
+
+    // implement listener to simulate button group
+    tableTrailer.getModel().addTableModelListener(arg0 -> {
+      // click on the checkbox
+      if (arg0.getColumn() == 0) {
+        int row = arg0.getFirstRow();
+        MediaTrailer changedTrailer = trailers.get(row);
+        // if flag inNFO was changed, change all other trailers flags
+        if (changedTrailer.getInNfo()) {
+          for (MediaTrailer trailer : trailers) {
+            if (trailer != changedTrailer) {
+              trailer.setInNfo(Boolean.FALSE);
+            }
+          }
+        }
+      }
+    });
   }
 
   private void initComponents() {
@@ -454,7 +491,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JScrollPane scrollPaneRatings = new JScrollPane();
         details1Panel.add(scrollPaneRatings, "cell 1 10 4 1,growx");
 
-        tableRatings = new MediaRatingTable(ratings);
+        tableRatings = new MediaRatingTable(mediaRatings);
         tableRatings.configureScrollPane(scrollPaneRatings);
         scrollPaneRatings.setViewportView(tableRatings);
       }
@@ -871,6 +908,35 @@ public class TvShowEditorDialog extends TmmDialog {
     }
 
     /**********************************************************************************
+     * Trailer Panel
+     **********************************************************************************/
+    {
+      JPanel trailerPanel = new JPanel();
+      tabbedPane.addTab(BUNDLE.getString("Settings.trailer"), null, trailerPanel, null);
+      trailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][]"));
+
+      {
+        JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+        trailerPanel.add(lblTrailer, "flowy,cell 0 10,alignx right,aligny top");
+
+        JButton btnAddTrailer = new JButton(new AddTrailerAction());
+        btnAddTrailer.setMargin(BUTTON_MARGIN);
+        trailerPanel.add(btnAddTrailer, "cell 0 10,alignx right,aligny top");
+
+        JButton btnRemoveTrailer = new JButton(new RemoveTrailerAction());
+        btnRemoveTrailer.setMargin(BUTTON_MARGIN);
+        trailerPanel.add(btnRemoveTrailer, "cell 0 10,alignx right,aligny top");
+
+        JScrollPane scrollPaneTrailer = new JScrollPane();
+        trailerPanel.add(scrollPaneTrailer, "cell 1 10 7 1,grow");
+        tableTrailer = new TmmTable();
+        tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableTrailer.configureScrollPane(scrollPaneTrailer);
+        scrollPaneTrailer.setViewportView(tableTrailer);
+      }
+    }
+
+    /**********************************************************************************
      * button pane
      **********************************************************************************/
     {
@@ -949,8 +1015,8 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       Object certification = cbCertification.getSelectedItem();
-      if (certification instanceof Certification) {
-        tvShowToEdit.setCertification((Certification) certification);
+      if (certification instanceof MediaCertification) {
+        tvShowToEdit.setCertification((MediaCertification) certification);
       }
 
       if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
@@ -1046,16 +1112,16 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setStatus((MediaAiredStatus) cbStatus.getSelectedItem());
 
       // user rating
-      Map<String, Rating> newRatings = new HashMap<>();
+      Map<String, MediaRating> newRatings = new HashMap<>();
 
       if ((double) spRating.getValue() > 0) {
-        newRatings.put(Rating.USER, new Rating(Rating.USER, (double) spRating.getValue(), 1, 10));
+        newRatings.put(MediaRating.USER, new MediaRating(MediaRating.USER, (double) spRating.getValue(), 1, 10));
       }
 
       // other ratings
-      for (MediaRating mediaRating : TvShowEditorDialog.this.ratings) {
+      for (MediaRatingTable.MediaRating mediaRating : TvShowEditorDialog.this.mediaRatings) {
         if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0) {
-          newRatings.put(mediaRating.key, new Rating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
+          newRatings.put(mediaRating.key, new MediaRating(mediaRating.key, mediaRating.value, mediaRating.votes, mediaRating.maxValue));
         }
       }
       tvShowToEdit.setRatings(newRatings);
@@ -1119,11 +1185,15 @@ public class TvShowEditorDialog extends TmmDialog {
           container.tvShowEpisode.writeNFO();
           container.tvShowEpisode.saveToDb();
           tvShowToEdit.addEpisode(container.tvShowEpisode);
-        }
-        else if (shouldStore) {
+        } else if (shouldStore) {
           container.tvShowEpisode.writeNFO();
           container.tvShowEpisode.saveToDb();
         }
+      }
+
+      tvShowToEdit.removeAllTrailers();
+      for (MediaTrailer trailer : trailers) {
+        tvShowToEdit.addTrailer(trailer);
       }
 
       tvShowToEdit.writeNFO();
@@ -1164,7 +1234,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaRating mediaRating = new MediaRating("");
+      MediaRatingTable.MediaRating mediaRating = new MediaRatingTable.MediaRating("");
       // default values
       mediaRating.maxValue = 10;
       mediaRating.votes = 1;
@@ -1173,7 +1243,7 @@ public class TvShowEditorDialog extends TmmDialog {
       dialog.setVisible(true);
 
       if (StringUtils.isNotBlank(mediaRating.key) && mediaRating.value > 0 && mediaRating.maxValue > 0 && mediaRating.votes > 0) {
-        ratings.add(mediaRating);
+        mediaRatings.add(mediaRating);
       }
     }
   }
@@ -1191,7 +1261,7 @@ public class TvShowEditorDialog extends TmmDialog {
       int row = tableRatings.getSelectedRow();
       if (row > -1) {
         row = tableRatings.convertRowIndexToModel(row);
-        ratings.remove(row);
+        mediaRatings.remove(row);
       }
     }
   }
@@ -1374,8 +1444,9 @@ public class TvShowEditorDialog extends TmmDialog {
   }
 
   /**
-   * Shows the dialog and returns whether the work on the queue should be continued.
-   * 
+   * Shows the dialog and returns whether the work on the queue should be
+   * continued.
+   *
    * @return true, if successful
    */
   public boolean showDialog() {
@@ -1747,10 +1818,32 @@ public class TvShowEditorDialog extends TmmDialog {
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     jListBinding_1.bind();
     //
+
+    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trailers,
+            tableTrailer);
+    //
+    BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
+    jTableBinding_2.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
+    //
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
+    jTableBinding_2.addColumnBinding(trailerBeanProperty_1);
+    //
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
+    jTableBinding_2.addColumnBinding(trailerBeanProperty_2);
+    //
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
+    jTableBinding_2.addColumnBinding(trailerBeanProperty_3);
+    //
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
+    jTableBinding_2.addColumnBinding(trailerBeanProperty_4);
+    //
+    jTableBinding_2.bind();
     BindingGroup bindingGroup = new BindingGroup();
     //
     bindingGroup.addBinding(jListBinding);
     bindingGroup.addBinding(jListBinding_1);
+    bindingGroup.addBinding(jTableBinding_2);
+
     return bindingGroup;
   }
 
@@ -1759,9 +1852,46 @@ public class TvShowEditorDialog extends TmmDialog {
     Dimension dimension = tvShowToEdit.getArtworkDimension(type);
     if (dimension.width == 0 && dimension.height == 0) {
       lblSize.setText(imageLabel.getOriginalImageSize().width + "x" + imageLabel.getOriginalImageSize().height);
-    }
-    else {
+    } else {
       lblSize.setText(dimension.width + "x" + dimension.height);
     }
   }
+
+  private class AddTrailerAction extends AbstractAction {
+    private static final long serialVersionUID = -4446154040952056823L;
+
+    public AddTrailerAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.ADD_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MediaTrailer trailer = new MediaTrailer();
+      trailer.setName("unknown");
+      trailer.setProvider("unknown");
+      trailer.setQuality("unknown");
+      trailer.setUrl("http://");
+      trailers.add(0, trailer);
+    }
+  }
+
+  private class RemoveTrailerAction extends AbstractAction {
+    private static final long serialVersionUID = -6956921050689930101L;
+
+    public RemoveTrailerAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.REMOVE_INV);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableTrailer.getSelectedRow();
+      if (row > -1) {
+        row = tableTrailer.convertRowIndexToModel(row);
+        trailers.remove(row);
+      }
+    }
+  }
+
 }

@@ -61,8 +61,6 @@ public class MovieMediaInformationAction extends TmmAction {
 
     // get data of all files within all selected movies
     TmmThreadPool task = new MovieReloadMediaInformationTask(selectedMovies);
-    if (TmmTaskManager.getInstance().addMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmTaskManager.getInstance().addMainTask(task);
   }
 }

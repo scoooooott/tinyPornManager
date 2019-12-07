@@ -16,13 +16,32 @@
 
 package org.tinymediamanager.core.movie.filenaming;
 
-/**
- * The Enum MovieNfoNaming.
- * 
- * @author Myron Boyle
- */
-public enum MovieTrailerNaming {
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
 
-  FILENAME_TRAILER, // filename-trailer.ext
-  MOVIE_TRAILER // movie-trailer.ext
+/**
+ * The Enum {@link MovieTrailerNaming} is used to provide movie related trailer filenames
+ *
+ * @author Manuel Laggner
+ */
+public enum MovieTrailerNaming implements IFileNaming {
+  /**
+   * filename-trailer.*
+   */
+  FILENAME_TRAILER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-trailer." + extension : "";
+    }
+  },
+
+  /**
+   * movie-trailer.*
+   */
+  MOVIE_TRAILER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "movie-trailer." + extension;
+    }
+  }
 }

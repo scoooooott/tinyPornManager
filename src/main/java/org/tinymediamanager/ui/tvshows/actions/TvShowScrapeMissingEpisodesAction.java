@@ -17,6 +17,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -24,7 +25,6 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
@@ -61,13 +61,7 @@ public class TvShowScrapeMissingEpisodesAction extends TmmAction {
     TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
     options.loadDefaults();
 
-    TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig(false);
-    scraperMetadataConfig.setEpisodeList(true);
-    options.setScraperMetadataConfig(scraperMetadataConfig);
-
-    TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
-    if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options, new ArrayList<>(), new ArrayList<>());
+    TmmTaskManager.getInstance().addMainTask(scrapeTask);
   }
 }

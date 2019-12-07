@@ -45,12 +45,14 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFilesizeRenderer;
+import org.tinymediamanager.core.jmte.NamedLowerCaseRenderer;
+import org.tinymediamanager.core.jmte.NamedTitleCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
@@ -82,9 +84,13 @@ import com.floreysoft.jmte.token.Token;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-  private final static Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final Logger             LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
   private static final List<String>       KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
-  private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
+
+  // to not use posix here
+  private static final Pattern            ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");
+  private static final Pattern            TITLE_PATTERN               = Pattern.compile("\\$\\{.*?title.*?\\}", Pattern.CASE_INSENSITIVE);
+  private static final Pattern            YEAR_ID_PATTERN             = Pattern.compile("\\$\\{.*?(year|imdb|tmdb).*?\\}", Pattern.CASE_INSENSITIVE);
 
   public static final Map<String, String> TOKEN_MAP                   = createTokenMap();
 
@@ -133,6 +139,7 @@ public class MovieRenamer {
     tokenMap.put("audioLanguagesAsString", "movie.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "movie.video3DFormat");
     tokenMap.put("hdr", "movie.videoHDRFormat");
+    tokenMap.put("filesize", "movie.videoFilesize;filesize");
 
     tokenMap.put("mediaSource", "movie.mediaSource");
     tokenMap.put("edition", "movie.edition");
@@ -178,14 +185,15 @@ public class MovieRenamer {
   private static void renameSubtitles(Movie m) {
     // build language lists
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
+    List<MediaFile> subtitleFiles = m.getMediaFiles(MediaFileType.SUBTITLE);
 
-    for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile sub : subtitleFiles) {
       String originalLang = "";
       String lang = "";
       String forced = "";
       List<MediaFileSubtitle> mfsl = sub.getSubtitles();
 
-      if (mfsl != null && mfsl.size() > 0) {
+      if (mfsl != null && !mfsl.isEmpty()) {
         // use internal values
         MediaFileSubtitle mfs = mfsl.get(0);
         originalLang = mfs.getLanguage();
@@ -218,9 +226,15 @@ public class MovieRenamer {
         }
       }
 
-      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
-      if (StringUtils.isBlank(lang)) {
-        lang = originalLang;
+      // check if there is only one subtitle file and the user wants to write this w/o the language tag
+      if (!MovieModuleManager.SETTINGS.isSubtitleWithoutLanguageTag() || subtitleFiles.size() > 1) {
+        lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
+        if (StringUtils.isBlank(lang)) {
+          lang = originalLang;
+        }
+      }
+      else {
+        lang = "";
       }
 
       // rebuild new filename
@@ -512,7 +526,7 @@ public class MovieRenamer {
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N {} - {}", mf.getType(), mf.getFileAsPath());
-      ArrayList<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
+      List<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
       for (MediaFile newMF : newMFs) {
         posterRenamed = true;
         fanartRenamed = true;
@@ -535,7 +549,7 @@ public class MovieRenamer {
     }
 
     if (nfo.getFiledate() > 0) { // one valid found? copy our NFO to all variants
-      ArrayList<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
+      List<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
       if (!newNFOs.isEmpty()) {
         // ok, at least one has been set up
         for (MediaFile newNFO : newNFOs) {
@@ -579,7 +593,7 @@ public class MovieRenamer {
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 {} - {}", other.getType(), other.getFileAsPath());
 
-      ArrayList<MediaFile> newMFs = generateFilename(movie, other, newVideoBasename); // 1:N
+      List<MediaFile> newMFs = generateFilename(movie, other, newVideoBasename); // 1:N
       newMFs.removeAll(Collections.singleton(null)); // remove all NULL ones!
       for (MediaFile newMF : newMFs) {
         boolean ok = copyFile(other.getFileAsPath(), newMF.getFileAsPath());
@@ -679,22 +693,6 @@ public class MovieRenamer {
       }
     }
 
-    // ######################################################################
-    // ## build up image cache
-    // ######################################################################
-    if (Settings.getInstance().isImageCache()) {
-      for (MediaFile gfx : movie.getMediaFiles()) {
-        if (gfx.isGraphic()) {
-          try {
-            ImageCache.cacheImage(gfx);
-          }
-          catch (Exception e) {
-            LOGGER.debug("could not create a cached image: {}", e.getMessage());
-          }
-        }
-      }
-    }
-
     if (downloadMissingArtworks) {
       LOGGER.debug("Yay - movie upgrade :) download missing artworks");
       MovieArtworkHelper.downloadMissingArtwork(movie);
@@ -712,7 +710,7 @@ public class MovieRenamer {
    *          the basename of the renamed videoFileName (saved earlier)
    * @return list of renamed filename
    */
-  public static ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
+  public static List<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
     // return list of all generated MFs
     ArrayList<MediaFile> newFiles = new ArrayList<>();
     boolean newDestIsMultiMovieDir = movie.isMultiMovieDir();
@@ -837,20 +835,24 @@ public class MovieRenamer {
 
       case SUBTITLE:
         List<MediaFileSubtitle> mfsl = mf.getSubtitles();
+        List<MediaFile> subtitleFiles = movie.getMediaFiles(MediaFileType.SUBTITLE);
 
-        newFilename += getStackingString(mf);
-        if (mfsl != null && mfsl.size() > 0) {
-          // internal values
-          MediaFileSubtitle mfs = mfsl.get(0);
-          if (!mfs.getLanguage().isEmpty()) {
-            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
-            if (StringUtils.isBlank(lang)) {
-              lang = mfs.getLanguage();
+        // check if there is only one subtitle file and the user wants to write this w/o the language tag
+        if (!MovieModuleManager.SETTINGS.isSubtitleWithoutLanguageTag() || subtitleFiles.size() > 1) {
+          newFilename += getStackingString(mf);
+          if (mfsl != null && !mfsl.isEmpty()) {
+            // internal values
+            MediaFileSubtitle mfs = mfsl.get(0);
+            if (!mfs.getLanguage().isEmpty()) {
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
+              if (StringUtils.isBlank(lang)) {
+                lang = mfs.getLanguage();
+              }
+              newFilename += "." + lang;
             }
-            newFilename += "." + lang;
-          }
-          if (mfs.isForced()) {
-            newFilename += ".forced";
+            if (mfs.isForced()) {
+              newFilename += ".forced";
+            }
           }
         }
         newFilename += "." + mf.getExtension();
@@ -1135,8 +1137,11 @@ public class MovieRenamer {
       engine.registerRenderer(Number.class, new ZeroNumberRenderer());
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new NamedLowerCaseRenderer());
+      engine.registerNamedRenderer(new NamedTitleCaseRenderer());
       engine.registerNamedRenderer(new MovieNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.registerNamedRenderer(new NamedFilesizeRenderer());
       engine.setModelAdaptor(new MovieRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
       root.put("movie", movie);
@@ -1252,8 +1257,8 @@ public class MovieRenamer {
     }
 
     // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
-    newDestination = newDestination.replaceAll(": ", " - "); // nicer
-    newDestination = newDestination.replaceAll(":", "-"); // nicer
+    newDestination = newDestination.replace(": ", " - "); // nicer
+    newDestination = newDestination.replace(":", "-"); // nicer
 
     return newDestination.trim();
   }
@@ -1278,7 +1283,7 @@ public class MovieRenamer {
         return true;
       }
       else {
-        LOGGER.error("Could not move MF '" + oldFilename + "' to '" + newFilename + "'");
+        LOGGER.error("Could not move MF '{}' to '{}'", oldFilename, newFilename);
         return false; // rename failed
       }
     }
@@ -1333,8 +1338,7 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    return ((pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}"))
-        && pattern.contains("${year}")) || pattern.contains("${imdb}");
+    return TITLE_PATTERN.matcher(pattern).find() && YEAR_ID_PATTERN.matcher(pattern).find();
   }
 
   /**
@@ -1345,9 +1349,67 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.SETTINGS.getRenamerFilename();
+    return isFilePatternValid(MovieModuleManager.SETTINGS.getRenamerFilename());
+  }
 
-    return pattern.contains("${title}") || pattern.contains("${originalTitle}") || pattern.contains("${titleSortable}");
+  /**
+   * Check if the FILE rename pattern is valid<br>
+   * What means, pattern has at least title set (${title}|${originalTitle}|${titleSortable})<br>
+   * "empty" is considered as invalid - so not renaming files
+   *
+   * @return true/false
+   */
+  public static boolean isFilePatternValid(String pattern) {
+    return TITLE_PATTERN.matcher(pattern).find();
+  }
+
+  /**
+   * checks supplied renamer pattern against our tokenmap, if everything could be found
+   * 
+   * @param pattern
+   * @return error string, what token(s) are wrong
+   */
+  public static String isPatternValid(String pattern) {
+    String err = "";
+    Pattern p = Pattern.compile("\\$\\{(.*?)\\}");
+    Matcher matcher = p.matcher(pattern);
+    while (matcher.find()) {
+      String fulltoken = matcher.group(1);
+      String token = "";
+      if (fulltoken.contains(",")) {
+        // split additional like ${-,token,replace}
+        String[] split = fulltoken.split(",");
+        token = split[1];
+      }
+      else if (fulltoken.contains("[")) {
+        // strip all after parenthesis
+        token = fulltoken.substring(0, fulltoken.indexOf('['));
+      }
+      else if (fulltoken.contains(";")) {
+        // strip all after semicolon like ${title;first}
+        token = fulltoken.substring(0, fulltoken.indexOf(';'));
+        String first = fulltoken.substring(fulltoken.indexOf(';') + 1);
+        if (!first.equals("first")) {
+          err += "  " + matcher.group(); // "first" is missing
+        }
+      }
+      else if (fulltoken.startsWith("movie.")) {
+        // ex: ${movie.year}
+        token = fulltoken.substring(6);
+        // String mapped = getTokenValue(movie, token)
+        // TODO: check via JMTE, if this is a valid token?
+        // currently ignore
+        continue;
+      }
+      else {
+        token = fulltoken;
+      }
+      String tok = TOKEN_MAP.get(token.trim());
+      if (tok == null) {
+        err += "  " + matcher.group(); // complete token with ${}
+      }
+    }
+    return err;
   }
 
   /**
@@ -1362,11 +1424,11 @@ public class MovieRenamer {
     String result = source;
 
     if ("-".equals(MovieModuleManager.SETTINGS.getRenamerColonReplacement())) {
-      result = result.replaceAll(": ", " - "); // nicer
-      result = result.replaceAll(":", "-"); // nicer
+      result = result.replace(": ", " - "); // nicer
+      result = result.replace(":", "-"); // nicer
     }
     else {
-      result = result.replaceAll(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
+      result = result.replace(":", MovieModuleManager.SETTINGS.getRenamerColonReplacement());
     }
 
     return result.replaceAll("([\":<>|?*])", "");

@@ -15,28 +15,29 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.ResourceBundle;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowHelpers;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -44,24 +45,29 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+
 /**
- * 
  * @author Manuel Laggner
  */
 public class TvShowChooserModel extends AbstractModelObject {
-  private static final ResourceBundle    BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger            LOGGER          = LoggerFactory.getLogger(TvShowChooserModel.class);
-  public static final TvShowChooserModel emptyResult     = new TvShowChooserModel();
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowChooserModel.class);
+  public static final TvShowChooserModel emptyResult = new TvShowChooserModel();
 
   private MediaScraper                   mediaScraper    = null;
-  private List<MediaScraper>             artworkScrapers = null;
-  private MediaLanguages                 language        = null;
+  private List<MediaScraper> artworkScrapers = null;
+  private List<MediaScraper> trailerScrapers = null;
+  private MediaLanguages language = null;
   private MediaSearchResult              result          = null;
   private MediaMetadata                  metadata        = null;
 
@@ -74,19 +80,19 @@ public class TvShowChooserModel extends AbstractModelObject {
   private String                         posterUrl       = "";
   private boolean                        scraped         = false;
 
-  public TvShowChooserModel(MediaScraper mediaScraper, List<MediaScraper> artworkScrapers, MediaSearchResult result, MediaLanguages language) {
+  public TvShowChooserModel(MediaScraper mediaScraper, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers, MediaSearchResult result, MediaLanguages language) {
     this.mediaScraper = mediaScraper;
     this.artworkScrapers = artworkScrapers;
     this.result = result;
     this.language = language;
+    this.trailerScrapers = trailerScrapers;
 
     setTitle(result.getTitle());
     setOriginalTitle(result.getOriginalTitle());
 
     if (result.getYear() != 0) {
       setYear(Integer.toString(result.getYear()));
-    }
-    else {
+    } else {
       setYear("");
     }
     // combined title (title (year))
@@ -162,8 +168,7 @@ public class TvShowChooserModel extends AbstractModelObject {
 
     if (StringUtils.isNotBlank(getYear())) {
       this.combinedName = getTitle() + " (" + getYear() + ")";
-    }
-    else {
+    } else {
       this.combinedName = getTitle();
     }
     firePropertyChange("combinedName", oldValue, this.combinedName);
@@ -171,6 +176,18 @@ public class TvShowChooserModel extends AbstractModelObject {
 
   public String getCombinedName() {
     return combinedName;
+  }
+
+  public MediaScraper getMediaScraper() {
+    return mediaScraper;
+  }
+
+  public List<MediaScraper> getArtworkScrapers() {
+    return artworkScrapers;
+  }
+
+  public void startTrailerScrapeTask(TvShow tvShow) {
+    TmmTaskManager.getInstance().addUnnamedTask(new TrailerScrapeTask(tvShow));
   }
 
   /**
@@ -181,13 +198,14 @@ public class TvShowChooserModel extends AbstractModelObject {
       // poster for preview
       setPosterUrl(result.getPosterUrl());
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
-      options.setResult(result);
-      options.setLanguage(language.toLocale());
-      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      options.setSearchResult(result);
+      options.setLanguage(language);
+      options.setIds(result.getIds());
+
       LOGGER.info("=====================================================");
-      LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
-      LOGGER.info(options.toString());
+      LOGGER.info("Scrape metadata with scraper: {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
+      LOGGER.info("{}", options);
       LOGGER.info("=====================================================");
       metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getPlot());
@@ -198,17 +216,15 @@ public class TvShowChooserModel extends AbstractModelObject {
 
       setScraped(true);
 
-    }
-    catch (ScrapeException e) {
+    } catch (ScrapeException e) {
       LOGGER.error("getMetadata", e);
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "message.scrape.metadatatvshowfailed",
-          new String[] { ":", e.getLocalizedMessage() }));
-    }
-    catch (MissingIdException e) {
+              new String[] { ":", e.getLocalizedMessage() }));
+    } catch (MissingIdException e) {
       LOGGER.warn("missing id for scrape");
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "scraper.error.missingid"));
-    }
-    catch (UnsupportedMediaTypeException | NothingFoundException ignored) {
+    } catch (NothingFoundException ignored) {
+      LOGGER.debug("nothing found");
     }
   }
 
@@ -219,9 +235,9 @@ public class TvShowChooserModel extends AbstractModelObject {
       return episodes;
     }
 
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-    options.setLanguage(language.toLocale());
-    options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+    TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+    options.setLanguage(language);
+
     for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
       options.setId(entry.getKey(), entry.getValue().toString());
     }
@@ -239,17 +255,13 @@ public class TvShowChooserModel extends AbstractModelObject {
         ep.setPlot(me.getPlot());
         episodes.add(ep);
       }
-    }
-    catch (ScrapeException e) {
+    } catch (ScrapeException e) {
       LOGGER.error("getEpisodeList", e);
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "message.scrape.episodelistfailed",
-          new String[] { ":", e.getLocalizedMessage() }));
-    }
-    catch (MissingIdException e) {
+              new String[] { ":", e.getLocalizedMessage() }));
+    } catch (MissingIdException e) {
       LOGGER.warn("missing id for scrape");
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "TvShowChooser", "scraper.error.missingid"));
-    }
-    catch (UnsupportedMediaTypeException ignored) {
     }
     return episodes;
   }
@@ -272,15 +284,15 @@ public class TvShowChooserModel extends AbstractModelObject {
     return language;
   }
 
-  public void startArtworkScrapeTask(TvShow tvShow, TvShowScraperMetadataConfig config) {
+  public void startArtworkScrapeTask(TvShow tvShow, List<TvShowScraperMetadataConfig> config) {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(tvShow, config));
   }
 
   private class ArtworkScrapeTask extends TmmTask {
-    private TvShow                      tvShowToScrape;
-    private TvShowScraperMetadataConfig config;
+    private TvShow                            tvShowToScrape;
+    private List<TvShowScraperMetadataConfig> config;
 
-    public ArtworkScrapeTask(TvShow tvShow, TvShowScraperMetadataConfig config) {
+    public ArtworkScrapeTask(TvShow tvShow, List<TvShowScraperMetadataConfig> config) {
       super(BUNDLE.getString("message.scrape.artwork") + " " + tvShow.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.tvShowToScrape = tvShow;
       this.config = config;
@@ -294,28 +306,30 @@ public class TvShowChooserModel extends AbstractModelObject {
 
       List<MediaArtwork> artwork = new ArrayList<>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+      ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);
+      options.setLanguage(language);
       options.setMetadata(metadata);
+      options.setIds(metadata.getIds());
+      options.setLanguage(TvShowModuleManager.SETTINGS.getImageScraperLanguage());
+      options.setFanartSize(TvShowModuleManager.SETTINGS.getImageFanartSize());
+      options.setPosterSize(TvShowModuleManager.SETTINGS.getImagePosterSize());
+
       for (Entry<String, Object> entry : tvShowToScrape.getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
-
-      options.setLanguage(language.toLocale());
-      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
 
       // scrape providers till one artwork has been found
       for (MediaScraper artworkScraper : artworkScrapers) {
         ITvShowArtworkProvider artworkProvider = (ITvShowArtworkProvider) artworkScraper.getMediaProvider();
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
-        }
-        catch (ScrapeException e) {
+        } catch (ScrapeException e) {
           LOGGER.error("getArtwork", e);
           MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, tvShowToScrape, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
-        }
-        catch (MissingIdException ignored) {
+                  new Message(MessageLevel.ERROR, tvShowToScrape, "message.scrape.tvshowartworkfailed", new String[] { ":", e.getLocalizedMessage() }));
+        } catch (MissingIdException e) {
+          LOGGER.debug("no id found for scraper {}", artworkScraper.getMediaProvider().getProviderInfo().getId());
         }
       }
 
@@ -328,6 +342,62 @@ public class TvShowChooserModel extends AbstractModelObject {
       }
 
       tvShowToScrape.setArtwork(artwork, config);
+    }
+  }
+
+  private class TrailerScrapeTask extends TmmTask {
+    private TvShow tvShowtoScrape;
+
+    public TrailerScrapeTask(TvShow tvShow) {
+      super(BUNDLE.getString("message.scrape.trailer") + " " + tvShow.getTitle(), 0, TaskType.BACKGROUND_TASK);
+      this.tvShowtoScrape = tvShow;
+    }
+
+    @Override
+    protected void doInBackground() {
+      if (!scraped) {
+        return;
+      }
+
+      List<MediaTrailer> trailer = new ArrayList<>();
+
+      TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.TV_SHOW);
+      options.setMetadata(metadata);
+      options.setIds(metadata.getIds());
+      options.setLanguage(language);
+
+      // scrape trailers
+      for (MediaScraper trailerScraper : trailerScrapers) {
+        try {
+          ITvShowTrailerProvider trailerProvider = (ITvShowTrailerProvider) trailerScraper.getMediaProvider();
+          trailer.addAll(trailerProvider.getTrailers(options));
+        } catch (ScrapeException e) {
+          LOGGER.error("getTrailers {}", e.getMessage());
+          MessageManager.instance.pushMessage(
+                  new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.trailerfailed", new String[]{":", e.getLocalizedMessage()}));
+        } catch (MissingIdException ignored) {
+          LOGGER.debug("no id found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());
+        }
+      }
+
+      // add local trailers!
+      for (MediaFile mf : tvShowtoScrape.getMediaFiles(MediaFileType.TRAILER)) {
+        LOGGER.debug("adding local trailer {}", mf.getFilename());
+        MediaTrailer mt = new MediaTrailer();
+        mt.setName(mf.getFilename());
+        mt.setProvider("downloaded");
+        mt.setQuality(mf.getVideoFormat());
+        mt.setInNfo(false);
+        mt.setUrl(mf.getFile().toUri().toString());
+        trailer.add(0, mt); // add as first
+      }
+
+      tvShowtoScrape.setTrailers(trailer);
+      tvShowtoScrape.saveToDb();
+      tvShowtoScrape.writeNFO();
+
+      // start automatic movie trailer download
+      TvShowHelpers.startAutomaticTrailerDownload(tvShowtoScrape);
     }
   }
 }

@@ -15,247 +15,118 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import org.tinymediamanager.core.AbstractModelObject;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * The Class TvShowScraperMetadataConfig.
+ * The enum TvShowScraperMetadataConfig is used to control which TV show fields should be set after scraping.
  * 
  * @author Manuel Laggner
  */
-@JsonAutoDetect
-public class TvShowScraperMetadataConfig extends AbstractModelObject {
+public enum TvShowScraperMetadataConfig implements ScraperMetadataConfig {
+  // meta data
+  TITLE(Type.METADATA),
+  ORIGINAL_TITLE(Type.METADATA, "metatag.originaltitle"),
+  PLOT(Type.METADATA),
+  YEAR(Type.METADATA),
+  AIRED(Type.METADATA, "metatag.aired"),
+  STATUS(Type.METADATA),
+  RATING(Type.METADATA),
+  RUNTIME(Type.METADATA),
+  CERTIFICATION(Type.METADATA),
+  GENRES(Type.METADATA, "metatag.genre"),
+  COUNTRY(Type.METADATA),
+  STUDIO(Type.METADATA, "metatag.studio"),
+  TAGS(Type.METADATA),
+  TRAILER(Type.METADATA),
+  SEASON_NAMES(Type.METADATA, "metatag.seasonname"),
 
-  private boolean title;
-  private boolean plot;
-  private boolean rating;
-  private boolean runtime;
-  private boolean year;
-  private boolean aired;
-  private boolean status;
-  private boolean certification;
-  private boolean cast;
-  private boolean country;
-  private boolean studio;
-  private boolean genres;
-  private boolean artwork;
-  private boolean episodes;
-  private boolean episodeList;
+  // cast
+  ACTORS(Type.CAST),
 
-  /**
-   * default constructor - true for all fields
-   */
-  public TvShowScraperMetadataConfig() {
-    title = true;
-    plot = true;
-    rating = true;
-    runtime = true;
-    year = true;
-    aired = true;
-    status = true;
-    certification = true;
-    country = true;
-    studio = true;
-    cast = true;
-    genres = true;
-    artwork = true;
-    episodes = true;
-    episodeList = false;
+  // artwork
+  POSTER(Type.ARTWORK),
+  FANART(Type.ARTWORK),
+  BANNER(Type.ARTWORK),
+  CLEARART(Type.ARTWORK),
+  THUMB(Type.ARTWORK),
+  LOGO(Type.ARTWORK),
+  CLEARLOGO(Type.ARTWORK),
+  DISCART(Type.ARTWORK, "mediafiletype.disc"),
+  KEYART(Type.ARTWORK),
+  CHARACTERART(Type.ARTWORK),
+  EXTRAFANART(Type.ARTWORK),
+
+  SEASON_POSTER(Type.ARTWORK),
+  SEASON_BANNER(Type.ARTWORK),
+  SEASON_THUMB(Type.ARTWORK);
+
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private Type                        type;
+  private String                      description;
+  private String                      tooltip;
+
+  TvShowScraperMetadataConfig(Type type) {
+    this(type, null, null);
   }
 
-  /**
-   * copy constructor
-   * 
-   * @param original
-   *          the original object to inherit data from
-   */
-  public TvShowScraperMetadataConfig(TvShowScraperMetadataConfig original) {
-    title = original.title;
-    plot = original.plot;
-    rating = original.rating;
-    runtime = original.runtime;
-    year = original.year;
-    aired = original.aired;
-    status = original.status;
-    certification = original.certification;
-    country = original.country;
-    studio = original.studio;
-    cast = original.cast;
-    genres = original.genres;
-    artwork = original.artwork;
-    episodes = original.episodes;
-    episodeList = original.episodeList;
+  TvShowScraperMetadataConfig(Type type, String description) {
+    this(type, description, null);
   }
 
-  /**
-   * custom constructor - set all fields to the given value
-   *
-   * @param value
-   *          the value to set all fields to
-   */
-  public TvShowScraperMetadataConfig(boolean value) {
-    title = value;
-    plot = value;
-    rating = value;
-    runtime = value;
-    year = value;
-    aired = value;
-    status = value;
-    certification = value;
-    cast = value;
-    country = value;
-    studio = value;
-    genres = value;
-    artwork = value;
-    episodes = value;
+  TvShowScraperMetadataConfig(Type type, String description, String tooltip) {
+    this.type = type;
+    this.description = description;
+    this.tooltip = tooltip;
   }
 
-  public boolean isTitle() {
-    return title;
+  @Override
+  public Type getType() {
+    return type;
   }
 
-  public boolean isPlot() {
-    return plot;
+  @Override
+  public String getDescription() {
+    if (StringUtils.isBlank(description)) {
+      try {
+        if (type == Type.ARTWORK) {
+          return BUNDLE.getString("mediafiletype." + name().toLowerCase(Locale.ROOT));
+        }
+        else {
+          return BUNDLE.getString("metatag." + name().toLowerCase(Locale.ROOT));
+        }
+      }
+      catch (Exception ignored) {
+        // just not crash
+      }
+    }
+    else {
+      try {
+        return BUNDLE.getString(description);
+      }
+      catch (Exception ignored) {
+        // just not crash
+      }
+    }
+    return "";
   }
 
-  public boolean isRating() {
-    return rating;
-  }
-
-  public boolean isRuntime() {
-    return runtime;
-  }
-
-  public boolean isYear() {
-    return year;
-  }
-
-  public boolean isCertification() {
-    return certification;
-  }
-
-  public boolean isCast() {
-    return cast;
-  }
-
-  public boolean isCountry() {
-    return country;
-  }
-
-  public boolean isStudio() {
-    return studio;
-  }
-
-  public boolean isGenres() {
-    return genres;
-  }
-
-  public boolean isArtwork() {
-    return artwork;
-  }
-
-  public void setTitle(boolean newValue) {
-    boolean oldValue = this.title;
-    this.title = newValue;
-    firePropertyChange("title", oldValue, newValue);
-  }
-
-  public void setPlot(boolean newValue) {
-    boolean oldValue = this.plot;
-    this.plot = newValue;
-    firePropertyChange("plot", oldValue, newValue);
-  }
-
-  public void setRating(boolean rating) {
-    this.rating = rating;
-  }
-
-  public void setRuntime(boolean newValue) {
-    boolean oldValue = this.runtime;
-    this.runtime = newValue;
-    firePropertyChange("runtime", oldValue, newValue);
-  }
-
-  public void setYear(boolean newValue) {
-    boolean oldValue = this.year;
-    this.year = newValue;
-    firePropertyChange("year", oldValue, newValue);
-  }
-
-  public void setCertification(boolean newValue) {
-    boolean oldValue = this.certification;
-    this.certification = newValue;
-    firePropertyChange("certification", oldValue, newValue);
-  }
-
-  public void setCast(boolean newValue) {
-    boolean oldValue = this.cast;
-    this.cast = newValue;
-    firePropertyChange("cast", oldValue, newValue);
-  }
-
-  public void setCountry(boolean newValue) {
-    boolean oldValue = this.country;
-    this.country = newValue;
-    firePropertyChange("country", oldValue, newValue);
-  }
-
-  public void setStudio(boolean newValue) {
-    boolean oldValue = this.studio;
-    this.studio = newValue;
-    firePropertyChange("studio", oldValue, newValue);
-  }
-
-  public void setGenres(boolean newValue) {
-    boolean oldValue = this.genres;
-    this.genres = newValue;
-    firePropertyChange("genres", oldValue, newValue);
-  }
-
-  public void setArtwork(boolean newValue) {
-    boolean oldValue = this.artwork;
-    this.artwork = newValue;
-    firePropertyChange("artwork", oldValue, newValue);
-  }
-
-  public boolean isEpisodes() {
-    return episodes;
-  }
-
-  public void setEpisodes(boolean newValue) {
-    boolean oldValue = this.episodes;
-    this.episodes = newValue;
-    firePropertyChange("episodes", oldValue, newValue);
-  }
-
-  public boolean isAired() {
-    return aired;
-  }
-
-  public void setAired(boolean newValue) {
-    boolean oldValue = this.aired;
-    this.aired = newValue;
-    firePropertyChange("aired", oldValue, newValue);
-  }
-
-  public boolean isStatus() {
-    return status;
-  }
-
-  public void setStatus(boolean newValue) {
-    boolean oldValue = this.status;
-    this.status = newValue;
-    firePropertyChange("status", oldValue, newValue);
-  }
-
-  public boolean isEpisodeList() {
-    return episodeList;
-  }
-
-  public void setEpisodeList(boolean newValue) {
-    boolean oldValue = this.episodeList;
-    this.episodeList = newValue;
-    firePropertyChange("episodeList", oldValue, newValue);
+  @Override
+  public String getToolTip() {
+    if (StringUtils.isBlank(tooltip)) {
+      return null;
+    }
+    try {
+      return BUNDLE.getString(tooltip);
+    }
+    catch (Exception ignored) {
+      // just not crash
+    }
+    return null;
   }
 }

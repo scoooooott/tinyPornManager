@@ -27,13 +27,13 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.movie.connector.MovieNfoParser;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.entities.Certification;
-import org.tinymediamanager.scraper.entities.MediaGenres;
 
 public class MovieNfoParserTest extends BasicTest {
 
@@ -65,10 +65,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.DEFAULT).id).isEqualTo(Rating.DEFAULT);
-      assertThat(parser.ratings.get(Rating.DEFAULT).rating).isEqualTo(7.4f);
-      assertThat(parser.ratings.get(Rating.DEFAULT).votes).isEqualTo(4990);
-      assertThat(parser.ratings.get(Rating.DEFAULT).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).id).isEqualTo(MediaRating.DEFAULT);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).votes).isEqualTo(4990);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -86,7 +86,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
       assertThat(parser.ids).contains(entry("tmdb", 272));
       assertThat(parser.countries).hasSize(2);
@@ -145,10 +145,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.4f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(4949);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -166,7 +166,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
       assertThat(parser.countries).hasSize(2);
       assertThat(parser.releaseDate).isNull();
@@ -224,10 +224,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.4f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(4949);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -245,7 +245,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
       assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).isNull();
@@ -303,10 +303,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.4f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(4949);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -324,7 +324,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
       assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).isNull();
@@ -382,10 +382,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isNotEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(846);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(846);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -398,7 +398,7 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.runtime).isGreaterThan(0);
       assertThat(parser.posters).isEmpty();
       assertThat(parser.fanarts).isEmpty();
-      assertThat(parser.certification).isEqualTo(Certification.DE_FSK18);
+      assertThat(parser.certification).isEqualTo(MediaCertification.DE_FSK18);
       assertThat(parser.ids).isNotEmpty();
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
       assertThat(parser.countries).hasSize(1);
@@ -454,9 +454,9 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isNotEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(7.2f);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(7.2f);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -469,7 +469,7 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.runtime).isGreaterThan(0);
       assertThat(parser.posters).isEmpty();
       assertThat(parser.fanarts).isEmpty();
-      assertThat(parser.certification).isEqualTo(Certification.GB_12A);
+      assertThat(parser.certification).isEqualTo(MediaCertification.GB_12A);
       assertThat(parser.ids).isNotEmpty();
       assertThat(parser.ids).contains(entry("imdb", "tt1179933"));
       assertThat(parser.countries).isEmpty();
@@ -520,12 +520,12 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isNotEmpty();
 
       assertThat(parser.ratings).hasSize(2);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
-      assertThat(parser.ratings.get(Rating.USER).id).isEqualTo(Rating.USER);
-      assertThat(parser.ratings.get(Rating.USER).rating).isEqualTo(9f);
-      assertThat(parser.ratings.get(Rating.USER).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.USER).id).isEqualTo(MediaRating.USER);
+      assertThat(parser.ratings.get(MediaRating.USER).rating).isEqualTo(9f);
+      assertThat(parser.ratings.get(MediaRating.USER).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -540,7 +540,7 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.posters).isEmpty(); // local artwork does not count
       assertThat(parser.fanarts).isEmpty(); // local artwork does not count
 
-      assertThat(parser.certification).isIn(Certification.DE_FSK12, Certification.GB_12); // name clash between FSK12 and GB12
+      assertThat(parser.certification).isIn(MediaCertification.DE_FSK12, MediaCertification.GB_12); // name clash between FSK12 and GB12
       assertThat(parser.ids).isNotEmpty();
       assertThat(parser.ids).contains(entry("imdb", "tt0183869"));
       assertThat(parser.countries).containsExactly("France");
@@ -590,10 +590,10 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isNotEmpty();
 
       assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(3998);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(3998);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
 
       assertThat(parser.set).isNotNull();
       assertThat(parser.set.name).isNotEmpty();
@@ -612,7 +612,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.certification).isEqualTo(MediaCertification.US_PG13);
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
       assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
@@ -681,14 +681,14 @@ public class MovieNfoParserTest extends BasicTest {
       assertThat(parser.sorttitle).isNotEmpty();
 
       assertThat(parser.ratings).hasSize(4);
-      assertThat(parser.ratings.get(Rating.NFO).id).isEqualTo(Rating.NFO);
-      assertThat(parser.ratings.get(Rating.NFO).rating).isEqualTo(6.5f);
-      assertThat(parser.ratings.get(Rating.NFO).votes).isEqualTo(846);
-      assertThat(parser.ratings.get(Rating.NFO).maxValue).isEqualTo(10);
-      assertThat(parser.ratings.get(Rating.DEFAULT).id).isEqualTo(Rating.DEFAULT);
-      assertThat(parser.ratings.get(Rating.DEFAULT).rating).isEqualTo(5.8f);
-      assertThat(parser.ratings.get(Rating.DEFAULT).votes).isEqualTo(2100);
-      assertThat(parser.ratings.get(Rating.DEFAULT).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.NFO).id).isEqualTo(MediaRating.NFO);
+      assertThat(parser.ratings.get(MediaRating.NFO).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(MediaRating.NFO).votes).isEqualTo(846);
+      assertThat(parser.ratings.get(MediaRating.NFO).maxValue).isEqualTo(10);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).id).isEqualTo(MediaRating.DEFAULT);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).rating).isEqualTo(5.8f);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).votes).isEqualTo(2100);
+      assertThat(parser.ratings.get(MediaRating.DEFAULT).maxValue).isEqualTo(10);
       assertThat(parser.ratings.get("imdb").id).isEqualTo("imdb");
       assertThat(parser.ratings.get("imdb").rating).isEqualTo(8.9f);
       assertThat(parser.ratings.get("imdb").votes).isEqualTo(12345);
@@ -715,7 +715,7 @@ public class MovieNfoParserTest extends BasicTest {
       for (String fanart : parser.fanarts) {
         assertThat(fanart).isNotEmpty();
       }
-      assertThat(parser.certification).isEqualTo(Certification.DE_FSK12);
+      assertThat(parser.certification).isEqualTo(MediaCertification.DE_FSK12);
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
       assertThat(parser.countries).hasSize(1);
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");

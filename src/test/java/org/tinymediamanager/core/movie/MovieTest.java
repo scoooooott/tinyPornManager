@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,17 +57,17 @@ public class MovieTest extends BasicTest {
   @Test
   public void testNamingDetection() {
     String longest = StrgUtils.getLongestString(new String[] { "exq-theequalizer-720p.mkv", "The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE" });
-    String[] video = ParserUtils.detectCleanMovienameAndYear(longest);
+    String[] video = ParserUtils.detectCleanTitleAndYear(longest, Collections.emptyList());
     System.out.println(video[0]);
   }
 
   @Test
   public void detectCleanness() {
-    System.out.println(ParserUtils.getCleanerString("Kill.the.Boss.2.GERMAN.DL.720p.BluRay.x264-WodkaE", "WodkaE-kill.the.boss.2.720p",
-        "Wodkae Kill The Boss 2", "Kill The Boss 2"));
-    System.out.println(ParserUtils.getCleanerString("The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE", "exq-theequalizer-720p", "The Equalizer",
-        "Exq The Equalizer", "Exq TheEqualizer"));
-    System.out.println(ParserUtils.getCleanerString("lebo_b.avi", "lebow.avi", "The Big Lebowski"));
+    System.out.println(ParserUtils.getCleanerString(Collections.emptyList(), "Kill.the.Boss.2.GERMAN.DL.720p.BluRay.x264-WodkaE",
+        "WodkaE-kill.the.boss.2.720p", "Wodkae Kill The Boss 2", "Kill The Boss 2"));
+    System.out.println(ParserUtils.getCleanerString(Collections.emptyList(), "The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE",
+        "exq-theequalizer-720p", "The Equalizer", "Exq The Equalizer", "Exq TheEqualizer"));
+    System.out.println(ParserUtils.getCleanerString(Collections.emptyList(), "lebo_b.avi", "lebow.avi", "The Big Lebowski"));
   }
 
   @Test

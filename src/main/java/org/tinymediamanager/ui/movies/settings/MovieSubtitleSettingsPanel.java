@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -78,6 +79,7 @@ class MovieSubtitleSettingsPanel extends JPanel {
   private JPanel                      panelScraperOptions;
   private JComboBox                   cbScraperLanguage;
   private JComboBox<LanguageStyle>    cbSubtitleLanguageStyle;
+  private JCheckBox                   chckbxSuppressLanguageTag;
 
   MovieSubtitleSettingsPanel() {
     // UI init
@@ -192,14 +194,17 @@ class MovieSubtitleSettingsPanel extends JPanel {
         panelOptions.add(lblScraperLanguage, "cell 1 0 2 1");
 
         cbScraperLanguage = new JComboBox(MediaLanguages.valuesSorted());
-        panelOptions.add(cbScraperLanguage, "cell 1 0");
+        panelOptions.add(cbScraperLanguage, "cell 1 0 2 1");
 
         JLabel lblSubtitleLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
         panelOptions.add(lblSubtitleLanguageStyle, "cell 1 1 2 1");
 
         cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
-        panelOptions.add(cbSubtitleLanguageStyle, "cell 1 1");
+        panelOptions.add(cbSubtitleLanguageStyle, "cell 1 1 2 1");
       }
+
+      chckbxSuppressLanguageTag = new JCheckBox(BUNDLE.getString("Settings.renamer.withoutlanguagetag"));
+      panelOptions.add(chckbxSuppressLanguageTag, "cell 2 2, grow, wmin 0");
     }
   }
 
@@ -234,5 +239,11 @@ class MovieSubtitleSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, LanguageStyle, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieScraperBeanProperty_1, cbSubtitleLanguageStyle, jComboBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty = BeanProperty.create("subtitleWithoutLanguageTag");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty, chckbxSuppressLanguageTag, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
   }
 }

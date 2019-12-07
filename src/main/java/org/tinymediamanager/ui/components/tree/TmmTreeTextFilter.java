@@ -118,7 +118,7 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
 
     // second: parse all children too
     for (Enumeration<? extends javax.swing.tree.TreeNode> e = node.children(); e.hasMoreElements();) {
-      if (accept( (E) e.nextElement())) {
+      if (accept((E) e.nextElement())) {
         return true;
       }
     }
@@ -131,7 +131,7 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
     return false;
   }
 
-  private boolean checkParent(TmmTreeNode node, Pattern pattern) {
+  protected boolean checkParent(TmmTreeNode node, Pattern pattern) {
     if (node == null) {
       return false;
     }

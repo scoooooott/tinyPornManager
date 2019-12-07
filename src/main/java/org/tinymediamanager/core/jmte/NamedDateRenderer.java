@@ -35,7 +35,7 @@ import com.floreysoft.jmte.message.ParseException;
  * @author Manuel Laggner
  */
 public class NamedDateRenderer implements NamedRenderer {
-  private final static Logger LOGGER          = LoggerFactory.getLogger(NamedDateRenderer.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(NamedDateRenderer.class);
   private static final String DEFAULT_PATTERN = "dd.MM.yyyy HH:mm:ss Z";
 
   private Date convert(Object o, DateFormat dateFormat) {

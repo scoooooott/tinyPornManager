@@ -1,6 +1,8 @@
 package org.tinymediamanager.core;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
@@ -128,8 +130,23 @@ public class ParserUtilsTest extends BasicTest {
 
   }
 
+  @Test
+  public void TestNameingDetectionWithBadWords() {
+
+    ArrayList<String> badwords = new ArrayList<>();
+    badwords.add("tvs");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-dl-ituneshd-xvid-101.avi", badwords));
+    badwords.add("top\\d{3}");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-top100-dl-ituneshd-xvid-101.avi", badwords));
+    badwords.clear();
+    badwords.add("tvs");
+    badwords.add("top\\d+");
+    assertEqual("Castle", detectTYWithBadWords("tvs-castle-top5-dl-ituneshd-xvid-101.avi", badwords));
+
+  }
+
   private String detectTY(String filename) {
-    String[] s = ParserUtils.detectCleanMovienameAndYear(filename);
+    String[] s = ParserUtils.detectCleanTitleAndYear(filename, Collections.emptyList());
     String ret = s[0];
     if (!s[1].isEmpty()) {
       ret = ret + " | " + s[1];
@@ -137,26 +154,35 @@ public class ParserUtilsTest extends BasicTest {
     return ret;
   }
 
-  @Test
-  public void getTitle() {
-    File f = new File("src/test/resources/testmovies");
-    File[] fileArray = f.listFiles();
-    for (File file : fileArray) {
-      if (file.isDirectory()) {
-        System.out.println(ParserUtils.detectCleanMoviename(file.getName()));
-      }
+  private String detectTYWithBadWords(String filename, List<String> badwords) {
+    String[] s = ParserUtils.detectCleanTitleAndYear(filename, badwords);
+    String ret = s[0];
+    if (!s[1].isEmpty()) {
+      ret = ret + " | " + s[1];
     }
+    return ret;
   }
 
-  @Test
-  public void testRenamedImdb() {
-    File f = new File("/media/Daten/Test_Filme/this is my [tt0123456] movie (2009)");
-    System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
-  }
-
-  @Test
-  public void testBadword() {
-    File f = new File("/media/Daten/Test_Filme/xxx.avi");
-    System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
-  }
+  // @Test
+  // public void getTitle() {
+  // File f = new File("src/test/resources/testmovies");
+  // File[] fileArray = f.listFiles();
+  // for (File file : fileArray) {
+  // if (file.isDirectory()) {
+  // System.out.println(ParserUtils.detectCleanMoviename(file.getName()));
+  // }
+  // }
+  // }
+  //
+  // @Test
+  // public void testRenamedImdb() {
+  // File f = new File("/media/Daten/Test_Filme/this is my [tt0123456] movie (2009)");
+  // System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
+  // }
+  //
+  // @Test
+  // public void testBadword() {
+  // File f = new File("/media/Daten/Test_Filme/xxx.avi");
+  // System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
+  // }
 }

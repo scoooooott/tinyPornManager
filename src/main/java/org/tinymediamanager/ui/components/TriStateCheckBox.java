@@ -173,7 +173,7 @@ public class TriStateCheckBox extends JCheckBox implements ActionListener {
     /**
      * Identifies the "mixed" bit in the bitmask, which indicates that the button is partial selected.
      */
-    public final static int   MIXED            = 1 << 7;
+    public static final int   MIXED            = 1 << 7;
 
     public TriStateButtonModel() {
     }

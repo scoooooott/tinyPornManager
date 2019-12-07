@@ -30,13 +30,15 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.MovieSetScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
@@ -46,9 +48,11 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.exceptions.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -79,7 +83,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
     try {
       List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
-      if (sets != null && sets.size() > 0) {
+      if (!sets.isEmpty()) {
         scraper = sets.get(0); // just get first
       }
     }
@@ -157,17 +161,15 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
       // try to match via imdbid if nothing has been found
       if (mis.movie == null) {
-        if (StringUtils.isEmpty(mis.imdbId)) {
+        if (!MetadataUtil.isValidImdbId(mis.imdbId)) {
           // get imdbid for this tmdbid
           if (scraper.getMediaProvider() != null) {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+            MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
             options.setTmdbId(mis.tmdbId);
-            options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
-            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
-            options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
-            options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
+            options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage());
             try {
-              MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
+              MediaScraper movieScraper = MediaScraper.getMediaScraperById(TmdbMetadataProvider.ID, ScraperType.MOVIE);
+              MediaMetadata md = ((IMovieMetadataProvider) movieScraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));
             }
             catch (ScrapeException e) {
@@ -175,7 +177,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
               MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, mis.name, "message.scrape.metadatamoviesetfailed",
                   new String[] { ":", e.getLocalizedMessage() }));
             }
-            catch (MissingIdException | UnsupportedMediaTypeException | NothingFoundException ignored) {
+            catch (MissingIdException | NothingFoundException e) {
+              LOGGER.debug("could not scrape: {}", e.getMessage());
             }
           }
         }
@@ -198,10 +201,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
   public void scrapeMetadata() {
     try {
       if (scraper.getMediaProvider() != null) {
-        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+        MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
+        options.setSearchResult(result);
         options.setTmdbId(result.getIdAsInt(result.getProviderId()));
-        options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage().toLocale());
-        options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+        options.setLanguage(MovieModuleManager.SETTINGS.getScraperLanguage());
 
         MediaMetadata info = null;
 
@@ -217,10 +220,6 @@ public class MovieSetChooserModel extends AbstractModelObject {
         catch (MissingIdException e) {
           LOGGER.warn("missing id for scrape");
           MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "MovieSetChooser", "scraper.error.missingid"));
-          return;
-        }
-        catch (UnsupportedMediaTypeException ignored) {
-          LOGGER.warn("unsupported media type: " + scraper.getMediaProvider().getProviderInfo().getId());
           return;
         }
 
@@ -273,15 +272,15 @@ public class MovieSetChooserModel extends AbstractModelObject {
     return movies;
   }
 
-  public void startArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+  public void startArtworkScrapeTask(MovieSet movieSet, List<MovieSetScraperMetadataConfig> config) {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(movieSet, config));
   }
 
   private class ArtworkScrapeTask extends TmmTask {
     private MovieSet                   movieSetToScrape;
-    private MovieScraperMetadataConfig config;
+    private List<MovieSetScraperMetadataConfig> config;
 
-    public ArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+    public ArtworkScrapeTask(MovieSet movieSet, List<MovieSetScraperMetadataConfig> config) {
       super(BUNDLE.getString("message.scrape.artwork") + " " + movieSet.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieSetToScrape = movieSet;
       this.config = config;
@@ -295,7 +294,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
       List<MediaArtwork> artwork = new ArrayList<>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+      ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.MOVIE_SET);
       options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
@@ -305,8 +304,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage().toLocale());
-      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
       options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
@@ -321,7 +319,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
           MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, movieSetToScrape, "message.scrape.movieartworkfailed",
               new String[] { ":", e.getLocalizedMessage() }));
         }
-        catch (MissingIdException ignored) {
+        catch (MissingIdException e) {
+          LOGGER.debug("could not get artwork: {}", e.getMessage());
         }
       }
 
@@ -335,6 +334,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
       movieSetToScrape.setArtwork(artwork, config);
     }
+  }
+
+  public MediaMetadata getMetadata() {
+    return metadata;
   }
 
   public static class MovieInSet extends AbstractModelObject implements Comparable<MovieInSet> {

@@ -55,7 +55,10 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.jmte.NamedArrayRenderer;
 import org.tinymediamanager.core.jmte.NamedDateRenderer;
+import org.tinymediamanager.core.jmte.NamedFilesizeRenderer;
+import org.tinymediamanager.core.jmte.NamedLowerCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
+import org.tinymediamanager.core.jmte.NamedTitleCaseRenderer;
 import org.tinymediamanager.core.jmte.NamedUpperCaseRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.jmte.ZeroNumberRenderer;
@@ -111,6 +114,9 @@ public class TvShowRenamer {
     tokenMap.put("parent", "tvShow.parent");
     tokenMap.put("showNote", "tvShow.note");
 
+    // Season tags
+    tokenMap.put("seasonName", "season.title");
+
     // episode tags
     tokenMap.put("episodeNr", "episode.episode");
     tokenMap.put("episodeNr2", "episode.episode;number(%02d)");
@@ -141,6 +147,7 @@ public class TvShowRenamer {
     tokenMap.put("audioLanguagesAsString", "episode.mediaInfoAudioLanguageList;array");
     tokenMap.put("3Dformat", "episode.video3DFormat");
     tokenMap.put("hdr", "episode.videoHDRFormat");
+    tokenMap.put("filesize", "episode.videoFilesize;filesize");
 
     tokenMap.put("mediaSource", "episode.mediaSource");
     tokenMap.put("note", "episode.note");
@@ -206,8 +213,8 @@ public class TvShowRenamer {
       return;
     }
 
-    LOGGER.debug("TV show year: " + show.getYear());
-    LOGGER.debug("TV show path: " + show.getPathNIO());
+    LOGGER.debug("TV show year: {}", show.getYear());
+    LOGGER.debug("TV show path: {}", show.getPathNIO());
     String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
     String oldPathname = show.getPathNIO().toString();
 
@@ -392,9 +399,8 @@ public class TvShowRenamer {
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
-    // skip renamer, if all templates are empty!
-    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()
-        && SETTINGS.getRenamerTvShowFoldername().isEmpty()) {
+    // skip renamer, if all episode related templates are empty!
+    if (SETTINGS.getRenamerFilename().isEmpty() && SETTINGS.getRenamerSeasonFoldername().isEmpty()) {
       LOGGER.info("NOT renaming TvShow '{}' Episode {} - renaming patterns are empty!", episode.getTvShow().getTitle(), episode.getEpisode());
       return;
     }
@@ -1106,11 +1112,17 @@ public class TvShowRenamer {
       engine.registerNamedRenderer(new NamedDateRenderer());
       engine.registerNamedRenderer(new NamedNumberRenderer());
       engine.registerNamedRenderer(new NamedUpperCaseRenderer());
+      engine.registerNamedRenderer(new NamedLowerCaseRenderer());
+      engine.registerNamedRenderer(new NamedTitleCaseRenderer());
       engine.registerNamedRenderer(new TvShowNamedFirstCharacterRenderer());
       engine.registerNamedRenderer(new NamedArrayRenderer());
+      engine.registerNamedRenderer(new NamedFilesizeRenderer());
       engine.setModelAdaptor(new TvShowRenamerModelAdaptor());
       Map<String, Object> root = new HashMap<>();
-      root.put("episode", episode);
+      if (episode != null) {
+        root.put("episode", episode);
+        root.put("season", episode.getTvShowSeason());
+      }
       root.put("tvShow", show);
       return engine.transform(morphTemplate(token), root);
     }
@@ -1550,6 +1562,47 @@ public class TvShowRenamer {
     }
 
     return result.replaceAll("([\":<>|?*])", "");
+  }
+
+  /**
+   * checks supplied renamer pattern against our tokenmap, if everything could be found
+   * 
+   * @param pattern
+   * @return error string, what token(s) are wrong
+   */
+  public static String isPatternValid(String pattern) {
+    String err = "";
+    Pattern p = Pattern.compile("\\$\\{(.*?)\\}");
+    Matcher matcher = p.matcher(pattern);
+    while (matcher.find()) {
+      String fulltoken = matcher.group(1);
+      String token = "";
+      if (fulltoken.contains(",")) {
+        // split additional like ${-,token,replace}
+        String[] split = fulltoken.split(",");
+        token = split[1];
+      }
+      else if (fulltoken.contains("[")) {
+        // strip all after parenthesis
+        token = fulltoken.substring(0, fulltoken.indexOf('['));
+      }
+      else if (fulltoken.contains(";")) {
+        // strip all after semicolon like ${title;first}
+        token = fulltoken.substring(0, fulltoken.indexOf(';'));
+        String first = fulltoken.substring(fulltoken.indexOf(';') + 1);
+        if (!first.equals("first")) {
+          err += "  " + matcher.group(); // "first" is missing
+        }
+      }
+      else {
+        token = fulltoken;
+      }
+      String tok = TOKEN_MAP.get(token.trim());
+      if (tok == null) {
+        err += "  " + matcher.group(); // complete token with ${}
+      }
+    }
+    return err;
   }
 
   public static class TvShowRenamerModelAdaptor extends TmmModelAdaptor {

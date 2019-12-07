@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "WolDevice")
 public class WolDevice extends AbstractModelObject {
-  private final static String NAME        = "name";
-  private final static String MAC_ADDRESS = "macAddress";
+  private static final String NAME        = "name";
+  private static final String MAC_ADDRESS = "macAddress";
 
   private String              name;
   private String              macAddress;

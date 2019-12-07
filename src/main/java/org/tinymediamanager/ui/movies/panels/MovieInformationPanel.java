@@ -30,7 +30,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.Rating;
+import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -477,9 +477,9 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_7, starRater, starRaterBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<MovieSelectionModel, Rating> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.rating");
+    BeanProperty<MovieSelectionModel, MediaRating> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.rating");
     BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, Rating, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+    AutoBinding<MovieSelectionModel, MediaRating, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_9, lblRating, jLabelBeanProperty_1);
     autoBinding_1.setConverter(new RatingConverter());
     autoBinding_1.bind();
