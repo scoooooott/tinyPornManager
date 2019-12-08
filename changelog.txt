@@ -36,6 +36,7 @@ x moved export logic into thread to do not block the UI while exporting
 x IMDB: use the first found release date
 x TMDB: show all search results (not only the first 20)
 x TMDB: add season cast/crew to the episodes too
+x TMDB: clean search string (move The, ... to the front on search)
 
 
 Version 3.0.5
