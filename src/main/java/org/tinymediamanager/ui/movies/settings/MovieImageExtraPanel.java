@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -65,6 +66,8 @@ class MovieImageExtraPanel extends JPanel {
   private JTextField                  tfMovieSetArtworkFolder;
   private JCheckBox                   chckbxMovieSetArtwork;
   private JButton                     btnSelectFolder;
+  private JCheckBox                   chckxKodiStyle;
+  private JCheckBox                   chckxAutomatorStyle;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -87,9 +90,9 @@ class MovieImageExtraPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[grow]", "[]"));
+    setLayout(new MigLayout("", "[grow]", "[][]"));
     {
-      JPanel panelExtra = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp][grow]", ""));
+      JPanel panelExtra = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp!][grow]", ""));
 
       JLabel lblExtra = new TmmLabel(BUNDLE.getString("Settings.extraartwork"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExtra, lblExtra, true);
@@ -124,22 +127,49 @@ class MovieImageExtraPanel extends JPanel {
 
         cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
         panelExtra.add(cbActorImages, "cell 1 5 2 1");
+      }
+    }
+    {
+      JPanel panelMovieSet = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp!][grow]", "[][][grow]"));
 
+      JLabel lblTitle = new TmmLabel(BUNDLE.getString("Settings.movieset"), H3); //$NON-NLS-1$
+      CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMovieSet, lblTitle, true);
+      add(collapsiblePanel, "cell 0 1,growx, wmin 0");
+      {
         chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie"));
-        panelExtra.add(chckbxMovieSetArtwork, "cell 1 6 2 1");
+        panelMovieSet.add(chckbxMovieSetArtwork, "cell 1 0 2 1");
 
         chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store"));
-        panelExtra.add(chckbxStoreMoviesetArtwork, "cell 1 7 2 1");
+        panelMovieSet.add(chckbxStoreMoviesetArtwork, "cell 1 1 2 1");
 
-        JLabel lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
-        panelExtra.add(lblFoldername, "cell 2 8");
+        {
 
-        tfMovieSetArtworkFolder = new JTextField();
-        panelExtra.add(tfMovieSetArtworkFolder, "cell 2 8");
-        tfMovieSetArtworkFolder.setColumns(40);
+          JPanel panelFolderSettings = new JPanel();
+          panelMovieSet.add(panelFolderSettings, "cell 2 2,grow");
+          panelFolderSettings.setLayout(new MigLayout("insets 0", "[][grow]", "[][][]"));
+          JLabel lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
+          panelFolderSettings.add(lblFoldername, "cell 0 0,alignx right");
 
-        btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
-        panelExtra.add(btnSelectFolder, "cell 2 8");
+          tfMovieSetArtworkFolder = new JTextField();
+          panelFolderSettings.add(tfMovieSetArtworkFolder, "flowx,cell 1 0");
+          tfMovieSetArtworkFolder.setColumns(40);
+
+          JLabel folderStyle = new JLabel(BUNDLE.getString("Settings.movieset.foldername.style"));
+          panelFolderSettings.add(folderStyle, "cell 0 1,alignx right");
+
+          chckxKodiStyle = new JCheckBox(BUNDLE.getString("Settings.movieset.foldername.kodi"));
+          panelFolderSettings.add(chckxKodiStyle, "cell 1 1");
+
+          chckxAutomatorStyle = new JCheckBox(BUNDLE.getString("Settings.movieset.foldername.automator"));
+          panelFolderSettings.add(chckxAutomatorStyle, "cell 1 2");
+
+          ButtonGroup buttonGroup = new ButtonGroup();
+          buttonGroup.add(chckxKodiStyle);
+          buttonGroup.add(chckxAutomatorStyle);
+
+          btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect"));
+          panelFolderSettings.add(btnSelectFolder, "cell 1 0");
+        }
       }
     }
   }
@@ -215,5 +245,15 @@ class MovieImageExtraPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_18, chckbxMovieSetArtwork, jCheckBoxBeanProperty);
     autoBinding_22.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty = BeanProperty.create("movieSetArtworkFolderStyleKodi");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty, chckxKodiStyle, jCheckBoxBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_1 = BeanProperty.create("movieSetArtworkFolderStyleAutomator");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_1, chckxAutomatorStyle, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

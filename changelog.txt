@@ -6,6 +6,7 @@ Version 3.1
   DUE TO THE MASSIVE REWORK YOU MAY NEED TO REVIEW YOUR SCRAPER SETTINGS
 + support for named seasons
 + support for rendering animated gifs
++ support for movie set artwork style of Kodi v19
 + updated libmediainfo to 19.09
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox

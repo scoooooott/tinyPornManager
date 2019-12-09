@@ -208,15 +208,6 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
-   * remove all movie sets
-   */
-  void removeMovieSets() {
-    for (MovieSet movieSet : movieSetList) {
-      removeMovieSet(movieSet);
-    }
-  }
-
-  /**
    * Gets the unscraped movies.
    * 
    * @return the unscraped movies
@@ -291,7 +282,7 @@ public class MovieList extends AbstractModelObject {
         MovieModuleManager.getInstance().removeMovieFromDb(movie);
       }
       catch (Exception e) {
-        LOGGER.error("Error removing movie from DB: " + e.getMessage());
+        LOGGER.error("Error removing movie from DB: {}", e.getMessage());
       }
     }
 
@@ -306,7 +297,7 @@ public class MovieList extends AbstractModelObject {
    *          list of movies to delete
    */
   public void deleteMovies(List<Movie> movies) {
-    if (movies == null || movies.size() == 0) {
+    if (movies == null || movies.isEmpty()) {
       return;
     }
     Set<MovieSet> modifiedMovieSets = new HashSet<>();
@@ -327,7 +318,7 @@ public class MovieList extends AbstractModelObject {
         MovieModuleManager.getInstance().removeMovieFromDb(movie);
       }
       catch (Exception e) {
-        LOGGER.error("Error removing movie from DB: " + e.getMessage());
+        LOGGER.error("Error removing movie from DB: {}", e.getMessage());
       }
     }
 
@@ -361,12 +352,12 @@ public class MovieList extends AbstractModelObject {
         movieList.add(movie);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding movie json string: " + e.getMessage());
+        LOGGER.warn("problem decoding movie json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt movie: {}", json);
         movieMap.remove(uuid);
       }
     }
-    LOGGER.info("found " + movieList.size() + " movies in database");
+    LOGGER.info("found {} movies in database", movieList.size());
   }
 
   void loadMovieSetsFromDatabase(MVMap<UUID, String> movieSetMap, ObjectMapper objectMapper) {
@@ -381,13 +372,13 @@ public class MovieList extends AbstractModelObject {
         movieSetList.add(movieSet);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding movie set json string: " + e.getMessage());
+        LOGGER.warn("problem decoding movie set json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt movie set");
         movieSetMap.remove(uuid);
       }
     }
 
-    LOGGER.info("found " + movieSetList.size() + " movieSets in database");
+    LOGGER.info("found {} movieSets in database", movieSetList.size());
   }
 
   void initDataAfterLoading() {
@@ -412,7 +403,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().persistMovie(movie);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist movie: " + movie.getTitle() + " ; " + e.getMessage());
+      LOGGER.error("failed to persist movie: {} - {}", movie.getTitle(), e.getMessage());
     }
   }
 
@@ -422,7 +413,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().removeMovieFromDb(movie);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove movie: " + movie.getTitle());
+      LOGGER.error("failed to remove movie: {}", movie.getTitle());
     }
   }
 
@@ -432,7 +423,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().persistMovieSet(movieSet);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist movie set: " + movieSet.getTitle());
+      LOGGER.error("failed to persist movie set: {}", movieSet.getTitle());
     }
   }
 
@@ -442,7 +433,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().removeMovieSetFromDb(movieSet);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove movie set: " + movieSet.getTitle());
+      LOGGER.error("failed to remove movie set: {}", movieSet.getTitle());
     }
   }
 
@@ -475,7 +466,7 @@ public class MovieList extends AbstractModelObject {
 
     for (Movie movie : movieList) {
       if (movie.getPathNIO().compareTo(path.toAbsolutePath()) == 0) {
-        LOGGER.debug("Ok, found already existing movie '" + movie.getTitle() + "' in DB (path: " + path + ")");
+        LOGGER.debug("Ok, found already existing movie '{}' in DB (path: {})", movie.getTitle(), path);
         return movie;
       }
     }
@@ -771,8 +762,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie set count
    */
   public int getMovieSetCount() {
-    int size = movieSetList.size();
-    return size;
+    return movieSetList.size();
   }
 
   /**
@@ -1008,7 +998,7 @@ public class MovieList extends AbstractModelObject {
       MovieModuleManager.getInstance().removeMovieSetFromDb(movieSet);
     }
     catch (Exception e) {
-      LOGGER.error("Error removing movie set from DB: " + e.getMessage());
+      LOGGER.error("Error removing movie set from DB: {}", e.getMessage());
     }
 
     firePropertyChange(Constants.REMOVED_MOVIE_SET, null, movieSet);

@@ -59,6 +59,10 @@ public class MovieSetArtworkHelper {
       MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
+  private MovieSetArtworkHelper() {
+    // hide default constructor for utility classes
+  }
+
   /**
    * Update the artwork for a given movie set. This should be triggered after every movie set change like creating, adding movies, removing movies
    * 
@@ -123,11 +127,31 @@ public class MovieSetArtworkHelper {
       return;
     }
 
+    // here we have 2 kinds of file names in the movie set artwork folder:
+    // a) the movie set artwork automator style: <artwork folder>/<movie set name>-<artwork type>.ext
+    // b) Artwork Beef style: <artwork folder>/<movie set name>/<artwork type>.ext
+
+    // a)
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "."
             + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
+        if (Files.exists(artworkFile)) {
+          // add this artwork to the media files
+          MediaFile mediaFile = new MediaFile(artworkFile, type);
+          mediaFile.gatherMediaInformation();
+          movieSet.addToMediaFiles(mediaFile);
+        }
+      }
+    }
+
+    // b)
+    for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
+      for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+        String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+        String artworkFileName = type.name().toLowerCase(Locale.ROOT) + "." + fileType;
+        Path artworkFile = Paths.get(artworkFolder, movieSetName, artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
@@ -592,6 +616,7 @@ public class MovieSetArtworkHelper {
     private MediaFileType   type;
     private boolean         writeToArtworkFolder;
     private String          artworkFolder;
+    private boolean         artworkStyleKodi;
     private boolean         writeToMovieFolder;
     private List<MediaFile> writtenArtworkFiles;
     private List<Movie>     movies;
@@ -616,6 +641,14 @@ public class MovieSetArtworkHelper {
       this.writeToMovieFolder = MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder();
       this.artworkFolder = MovieModuleManager.SETTINGS.getMovieSetArtworkFolder();
       this.writeToArtworkFolder = MovieModuleManager.SETTINGS.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(artworkFolder);
+      if (MovieModuleManager.SETTINGS.isMovieSetArtworkFolderStyleKodi()) {
+        // Kodi/Artwork Beef style
+        this.artworkStyleKodi = true;
+      }
+      else {
+        // Movie Set Srtwork Automator style
+        this.artworkStyleKodi = false;
+      }
     }
 
     /**
@@ -677,24 +710,37 @@ public class MovieSetArtworkHelper {
     }
 
     private void writeImageToArtworkFolder(byte[] bytes, String extension) {
-      Path artworkFolder = Paths.get(this.artworkFolder);
+      String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+      Path artworkFolderPath;
+      if (artworkStyleKodi) {
+        // <artwork folder>/<movie set name>/<type>.ext style
+        artworkFolderPath = Paths.get(artworkFolder, movieSetName);
+      }
+      else {
+        // <artwork folder>/<movie set name>-<type>.ext style
+        artworkFolderPath = Paths.get(artworkFolder);
+      }
 
       // check if folder exists
-      if (!Files.exists(artworkFolder)) {
+      if (!Files.exists(artworkFolderPath)) {
         try {
-          Files.createDirectories(artworkFolder);
+          Files.createDirectories(artworkFolderPath);
         }
         catch (IOException e) {
-          LOGGER.warn("could not create directory: " + artworkFolder, e);
+          LOGGER.warn("could not create directory: " + artworkFolderPath, e);
         }
       }
 
       // write files
       try {
-        String filename = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-";
+        String filename = "";
+        if (!artworkStyleKodi) {
+          // <movie set name>-<type>.ext style
+          filename = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-";
+        }
         filename += type.name().toLowerCase(Locale.ROOT) + "." + extension;
 
-        Path imageFile = artworkFolder.resolve(filename);
+        Path imageFile = artworkFolderPath.resolve(filename);
         writeImage(bytes, imageFile);
 
         MediaFile artwork = new MediaFile(imageFile, type);
