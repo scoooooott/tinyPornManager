@@ -98,6 +98,13 @@ public class ImagePreviewDialog extends TmmDialog {
             popupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
           }
         }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+          if (mouseEvent.isPopupTrigger()) {
+            popupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+          }
+        }
       });
 
       imagePanel.add(image, "cell 0 0,grow");
