@@ -19,6 +19,7 @@ Version 3.1
 + enabled sorting by multiple columns in the movie table
 + enabled writing of subtitles without language code #621
 + added file size to the renamer patterns #691
++ (Movies) added a bulk editor function to write the languages of the audio streams into the spoken language field #714
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678

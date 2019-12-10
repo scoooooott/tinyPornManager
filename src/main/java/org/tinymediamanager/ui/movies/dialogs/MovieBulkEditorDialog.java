@@ -82,7 +82,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new MigLayout("", "[20lp:n][200lp:350lp,grow][][][]", "[][][][][][][][][][][][][]"));
+      panelContent.setLayout(new MigLayout("", "[20lp:n][200lp:350lp,grow][][][]", "[][][][][][][][][][][][][][]"));
 
       {
         JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
@@ -468,7 +468,47 @@ public class MovieBulkEditorDialog extends TmmDialog {
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
-        panelContent.add(btnClearSorttitle, "cell 1 12");
+        panelContent.add(btnClearSorttitle, "cell 1 13");
+      }
+      {
+        JLabel lblSpokenLanguages = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+        panelContent.add(lblSpokenLanguages, "cell 0 12,alignx right");
+
+        JButton btnFirstAudioStream = new JButton(BUNDLE.getString("edit.audio.first"));
+        btnFirstAudioStream.setToolTipText(BUNDLE.getString("edit.audio.first.desc"));
+        btnFirstAudioStream.addActionListener(e -> {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSpokenLanguages(movie.getMediaInfoAudioLanguageList().stream().findFirst().orElse(""));
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        });
+        panelContent.add(btnFirstAudioStream, "flowx,cell 1 12");
+
+        JButton btnBestAudioStream = new JButton(BUNDLE.getString("edit.audio.best"));
+        btnBestAudioStream.setToolTipText(BUNDLE.getString("edit.audio.best.desc"));
+        btnBestAudioStream.addActionListener(e -> {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSpokenLanguages(movie.getMediaInfoAudioLanguage());
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        });
+        panelContent.add(btnBestAudioStream, "cell 1 12");
+
+        JButton btnAllAudioStreams = new JButton(BUNDLE.getString("edit.audio.all"));
+        btnAllAudioStreams.setToolTipText(BUNDLE.getString("edit.audio.all.desc"));
+        btnAllAudioStreams.addActionListener(e -> {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSpokenLanguages(String.join(", ", movie.getMediaInfoAudioLanguageList()));
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        });
+        panelContent.add(btnAllAudioStreams, "cell 1 12");
       }
     }
 
