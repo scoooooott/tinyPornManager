@@ -7,6 +7,7 @@ Version 3.1
 + support for named seasons
 + support for rendering animated gifs
 + support for movie set artwork style of Kodi v19
++ added a movie set artwork cleanup function (to rename/cleanup) the movie set artwork in the right naming scheme) #715 #694 #511
 + updated libmediainfo to 19.09
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox

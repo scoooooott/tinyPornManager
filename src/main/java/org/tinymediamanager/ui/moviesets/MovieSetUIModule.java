@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.awt.CardLayout;
+
+import javax.swing.Icon;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -31,6 +40,7 @@ import org.tinymediamanager.ui.movies.panels.TrailerPanel;
 import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSetAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetCleanupArtworkAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetMissingArtworkAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
@@ -40,14 +50,6 @@ import org.tinymediamanager.ui.moviesets.dialogs.MovieSetFilterDialog;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
-
-import javax.swing.Icon;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import java.awt.CardLayout;
 
 public class MovieSetUIModule extends AbstractTmmUIModule {
   private static final String ID = "movieSets";
@@ -156,6 +158,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieSetRemoveAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetEditAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetSearchAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSetCleanupArtworkAction.class));
     popupMenu.add(createAndRegisterAction(MovieSetMissingArtworkAction.class));
 
     // movie actions
