@@ -870,7 +870,7 @@ public class Utils {
           break; // ok it worked, step out
         }
         try {
-          LOGGER.debug("rename did not work - sleep a while and try again..."); // NOSONAR
+          LOGGER.debug("copy did not work - sleep a while and try again..."); // NOSONAR
           Thread.sleep(1000);
         }
         catch (InterruptedException e) { // NOSONAR
@@ -881,12 +881,12 @@ public class Utils {
       }
 
       if (!rename) {
-        LOGGER.error("Failed to rename file {} to {}", srcFile, destFile);
+        LOGGER.error("Failed to copy file {} to {}", srcFile, destFile);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename")); // NOSONAR
         return false;
       }
       else {
-        LOGGER.info("Successfully moved file from {} to {}", srcFile, destFile);
+        LOGGER.info("Successfully copied file from {} to {}", srcFile, destFile);
         return true;
       }
     }

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -129,5 +130,14 @@ public enum MovieScraperMetadataConfig implements ScraperMetadataConfig {
       // just not crash
     }
     return null;
+  }
+
+  /**
+   * get all artwork types
+   * 
+   * @return an array with all artwork types
+   */
+  public static MovieScraperMetadataConfig[] getArtworkTypes() {
+    return Arrays.stream(values()).filter(ScraperMetadataConfig::isArtwork).toArray(MovieScraperMetadataConfig[]::new);
   }
 }
