@@ -266,8 +266,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       md.setYear(y);
       if (y != 0 && md.getTitle().contains(String.valueOf(y))) {
         LOGGER.debug("Weird TVDB entry - removing date {} from title", y);
-        String t = show.seriesName.replace(String.valueOf(y), "").replaceAll("\\(\\)", "").trim();
-        md.setTitle(t);
+        md.setTitle(clearYearFromTitle(md.getTitle(), y));
       }
     }
     catch (Exception e) {
@@ -486,12 +485,20 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       result.setTitle(show.seriesName);
       result.setOverview(show.overview);
       try {
-        result.setYear(Integer.parseInt(show.firstAired.substring(0, 4)));
+        int year = Integer.parseInt(show.firstAired.substring(0, 4));
+        result.setYear(year);
+        if (year != 0 && result.getTitle().contains(String.valueOf(year))) {
+          LOGGER.debug("Weird TVDB entry - removing date {} from title", year);
+          result.setTitle(clearYearFromTitle(result.getTitle(), year));
+        }
       }
       catch (Exception ignored) {
         // ignore
       }
-      result.setPosterUrl(artworkUrl + show.poster);
+
+      if (StringUtils.isNotBlank(show.poster)) {
+        result.setPosterUrl(artworkUrl + show.poster);
+      }
 
       // calculate score
       result.calculateScore(options);
@@ -949,5 +956,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       return result;
     }
+  }
+
+  /**
+   * try to strip out the year from the title
+   * 
+   * @param title
+   *          the title to strip out the year
+   * @param year
+   *          the year to compare
+   * @return the cleaned title or the original title if there is nothing to clean
+   */
+  private String clearYearFromTitle(String title, int year) {
+    return title.replaceAll("\\(" + year + "\\)$", "").trim();
   }
 }
