@@ -1045,6 +1045,19 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
+  /**
+   * <b>PHYSICALLY</b> deletes all {@link MediaFile}s of the given type
+   *
+   * @param type
+   *          the {@link MediaFileType} for all {@link MediaFile}s to delete
+   */
+  public void deleteMediaFiles(MediaFileType type) {
+    getMediaFiles(type).forEach(mediaFile -> {
+      mediaFile.deleteSafely(getDataSource());
+      removeFromMediaFiles(mediaFile);
+    });
+  }
+
   public void updateMediaFilePath(Path oldPath, Path newPath) {
     readWriteLock.readLock().lock();
     List<MediaFile> mfs = new ArrayList<>(this.mediaFiles);

@@ -15,9 +15,12 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -88,7 +91,9 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UIConstants;
+import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaRatingTable;
 import org.tinymediamanager.ui.components.PersonTable;
@@ -115,23 +120,23 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog {
-  private static final long                       serialVersionUID = 7702248909791283043L;
-  private static final Logger                     LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
-  private static final Insets                     BUTTON_MARGIN    = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final long                       serialVersionUID    = 7702248909791283043L;
+  private static final Logger                     LOGGER              = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
+  private static final Insets                     BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
+  private static final String                     ORIGINAL_IMAGE_SIZE = "originalImageSize";
+  private static final String                     SPACER              = "        ";
+  private static final String                     DIALOG_ID           = "tvShowEpisodeEditor";
 
-  private static final String                     DIALOG_ID        = "tvShowEpisodeEditor";
-
-  private TvShowList                              tvShowList       = TvShowList.getInstance();
+  private TvShowList                              tvShowList          = TvShowList.getInstance();
   private TvShowEpisode                           episodeToEdit;
-  private List<String>                            tags             = ObservableCollections.observableList(new ArrayList<>());
-  private List<MediaFile>                         mediaFiles       = new ArrayList<>();
-  private MediaRating                             userMediaRating;
-  private boolean                                 continueQueue    = true;
-  private boolean                                 navigateBack     = false;
+  private List<String>                            tags                = ObservableCollections.observableList(new ArrayList<>());
+  private List<MediaFile>                         mediaFiles          = new ArrayList<>();
+  private boolean                                 continueQueue       = true;
+  private boolean                                 navigateBack        = false;
   private int                                     queueIndex;
   private int                                     queueSize;
 
-  private EventList<MediaRatingTable.MediaRating> ratings          = new BasicEventList<>();
+  private EventList<MediaRatingTable.MediaRating> ratings;
   private EventList<Person>                       guests;
   private EventList<Person>                       directors;
   private EventList<Person>                       writers;
@@ -164,6 +169,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private JTextField                              tfOriginalTitle;
   private JTextField                              tfThumb;
   private JTextField                              tfNote;
+  private LinkLabel                               lblThumbSize;
 
   /**
    * Instantiates a new TV show episode scrape dialog.
@@ -191,7 +197,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
     this.ratings = MediaRatingTable.convertRatingMapToEventList(episode.getRatings(), false);
-    this.userMediaRating = episodeToEdit.getRating(MediaRating.USER);
+    MediaRating userMediaRating = episodeToEdit.getRating(MediaRating.USER);
 
     initComponents();
     bindingGroup = initDataBindings();
@@ -350,6 +356,16 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         scrollPane.setViewportView(taPlot);
       }
       {
+        detailsPanel.add(new TmmLabel(BUNDLE.getString("mediafiletype.thumb")), "cell 9 0");
+
+        lblThumbSize = new LinkLabel();
+        detailsPanel.add(lblThumbSize, "cell 9 0");
+
+        JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        detailsPanel.add(btnDeleteThumb, "cell 9 0");
+
         lblThumb = new ImageLabel();
         lblThumb.addMouseListener(new MouseAdapter() {
           @Override
@@ -366,7 +382,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
           }
         });
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        detailsPanel.add(lblThumb, "cell 9 0 1 7,grow");
+        detailsPanel.add(lblThumb, "cell 9 1 1 6,grow");
+        lblThumb.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaFileType.THUMB));
       }
       {
         JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
@@ -768,12 +785,19 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDirectors(directors);
       episodeToEdit.setWriters(writers);
 
-      if (StringUtils.isNotEmpty(tfThumb.getText()) && (!tfThumb.getText().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
+      // THUMB
+      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(episodeToEdit.getArtworkFilename(MediaFileType.THUMB))) {
+        // artwork has been explicitly deleted
+        episodeToEdit.deleteMediaFiles(MediaFileType.THUMB);
+      }
+      else if (StringUtils.isNotEmpty(tfThumb.getText()) && (!tfThumb.getText().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
           || StringUtils.isBlank(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)))) {
+        // artwork url and textfield do not match -> redownload
         episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         episodeToEdit.writeThumbImage();
       }
       else if (StringUtils.isBlank(tfThumb.getText())) {
+        // remove the artwork url
         episodeToEdit.removeArtworkUrl(MediaFileType.THUMB);
       }
 
@@ -932,6 +956,24 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
     mediaFilesPanel.unbindBindings();
     dpFirstAired.cleanup();
+  }
+
+  private void setImageSizeAndCreateLink(LinkLabel lblSize, ImageLabel imageLabel, MediaFileType type) {
+    createLinkForImage(lblSize, imageLabel);
+
+    // image has been deleted
+    if (imageLabel.getOriginalImageSize().width == 0 && imageLabel.getOriginalImageSize().height == 0) {
+      lblSize.setText("");
+      return;
+    }
+
+    Dimension dimension = episodeToEdit.getArtworkDimension(type);
+    if (dimension.width == 0 && dimension.height == 0) {
+      lblSize.setText(imageLabel.getOriginalImageSize().width + "x" + imageLabel.getOriginalImageSize().height);
+    }
+    else {
+      lblSize.setText(dimension.width + "x" + dimension.height);
+    }
   }
 
   private class AddRatingAction extends AbstractAction {

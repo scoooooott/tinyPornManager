@@ -189,6 +189,8 @@ public class ImageLabel extends JComponent {
     scaledImage = null;
     originalImageBytes = null;
     originalImageSize = EMPTY_SIZE;
+    firePropertyChange("originalImageSize", null, 0);
+    firePropertyChange("originalImageBytes", null, new byte[] {});
   }
 
   public String getImageUrl() {
