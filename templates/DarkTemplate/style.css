@@ -1,0 +1,166 @@
+body {
+    background: black;
+    color: rgba(255,255,255,.73);
+    font-size: .95em;
+    font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",'Open Sans',sans-serif;
+    margin: 0;
+}
+
+.center {
+    text-align: center;
+}
+
+nav {
+    text-align: center;
+}
+
+nav label {
+    font-size: 1.5em;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: rgba(255,255,255,.9);
+}
+
+.icon {
+    align-self: center;
+}
+
+.icon svg {
+    fill: currentColor;
+    height: 1em;
+    width: 1em;
+    top: .125em;
+    position: relative;
+}
+
+.top-button {
+    display: block;
+    position: absolute;
+    padding: .15em;
+    width: 100%;
+    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,0));
+    font-size: 1.5em;
+}
+
+.movies {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.movies .movie {
+    min-width: 14em;
+    min-height: 18em;
+    margin: 1em;
+    width: 15em;
+    text-align: center;
+}
+
+.poster {
+    border: 1px rgba(255,255,255,.3) solid;
+}
+
+.movie p {
+    margin: 0.1em;
+}
+
+.movie-header .fanart {
+    background-size: cover;
+    height: 33vh;
+    background-position: center 5%;
+    background-repeat: no-repeat;
+}
+
+.movie-header .movie-header-bottom {
+    
+}
+
+.movie-header .poster {
+    margin: 2vw;
+    margin-left: 2vw;
+    margin-top: -15vh;
+    float: left;
+    height: 33vh;
+}
+
+.info .info-line {
+    margin-bottom: .5em;
+}
+
+.item-array {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.item-array .item {
+    margin: 0;
+    margin-right: 1em;
+}
+
+.runtime:after {
+    content: "min";
+}
+
+.rating:before {
+
+}
+
+.key-value:before {
+    font-weight: bold;
+}
+
+.genres:before {
+    content:"Genres: ";
+}
+
+.director:before {
+    content:"Director: ";
+}
+
+section {
+    clear: left;
+    padding: 1em;
+}
+
+.item-array .icon {
+    font-size: 2em;
+    text-align: center;
+}
+
+.icon-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.plot {
+    padding-left: 3vm;
+    max-width: 40em;
+}
+
+@media only screen and (max-width: 600px) {
+
+    .movies .movie {
+        min-width: 10em;
+        min-height: 14em;
+        width: 10em;
+    } 
+  
+    .top-button {
+        font-size: 2.1em;
+    }
+}
