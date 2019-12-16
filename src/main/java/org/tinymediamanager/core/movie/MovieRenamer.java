@@ -678,6 +678,10 @@ public class MovieRenamer {
         if (existingFiles.contains(cl.getFileAsPath())) {
           LOGGER.debug("Deleting {}", cl.getFileAsPath());
           Utils.deleteFileWithBackup(cl.getFileAsPath(), movie.getDataSource());
+          // also cleanup the cache for deleted mfs
+          if (cl.isGraphic()) {
+            ImageCache.invalidateCachedImage(cl);
+          }
         }
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(cl.getFileAsPath().getParent())) {
@@ -1220,8 +1224,7 @@ public class MovieRenamer {
 
     // replace ALL directory separators, if we generate this for filenames!
     if (forFilename) {
-      newDestination = newDestination.replaceAll("\\/", " ");
-      newDestination = newDestination.replaceAll("\\\\", " ");
+      newDestination = replacePathSeparators(newDestination);
     }
 
     // replace multiple spaces with a single one
@@ -1272,7 +1275,7 @@ public class MovieRenamer {
    *          the new filename
    * @return true, when we moved file
    */
-  private static boolean moveFile(Path oldFilename, Path newFilename) {
+  static boolean moveFile(Path oldFilename, Path newFilename) {
     try {
       // create parent if needed
       if (!Files.exists(newFilename.getParent())) {
@@ -1304,7 +1307,7 @@ public class MovieRenamer {
    *          the new filename
    * @return true, when we copied file OR DEST IS EXISTING
    */
-  private static boolean copyFile(Path oldFilename, Path newFilename) {
+  static boolean copyFile(Path oldFilename, Path newFilename) {
     if (!oldFilename.toAbsolutePath().toString().equals(newFilename.toAbsolutePath().toString())) {
       LOGGER.info("copy file {} to {}", oldFilename, newFilename);
       if (oldFilename.equals(newFilename)) {
@@ -1434,6 +1437,18 @@ public class MovieRenamer {
     return result.replaceAll("([\":<>|?*])", "");
   }
 
+  /**
+   * replace all path separators in the given {@link String} with a space
+   * 
+   * @param source
+   *          the the original {@link String}
+   * @return the cleaned {@link String}
+   */
+  public static String replacePathSeparators(String source) {
+    String result = source.replaceAll("\\/", " ");
+    return result.replaceAll("\\\\", " ");
+  }
+
   public static class MovieRenamerModelAdaptor extends TmmModelAdaptor {
     @Override
     public Object getValue(Map<String, Object> model, String expression) {
@@ -1455,8 +1470,7 @@ public class MovieRenamer {
 
         // do not replace path separators on the .parent token
         if (!token.getText().contains("parent")) {
-          value = ((String) value).replaceAll("\\/", " ");
-          value = ((String) value).replaceAll("\\\\", " ");
+          value = replacePathSeparators((String) value);
 
         }
       }

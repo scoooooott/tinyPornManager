@@ -6,6 +6,8 @@ Version 3.1
   DUE TO THE MASSIVE REWORK YOU MAY NEED TO REVIEW YOUR SCRAPER SETTINGS
 + support for named seasons
 + support for rendering animated gifs
++ support for movie set artwork style of Kodi v19
++ added a movie set artwork cleanup function (to rename/cleanup) the movie set artwork in the right naming scheme) #715 #694 #511
 + updated libmediainfo to 19.09
 + changed to nativefiledialog to avoid usage of JavaFX (better compatibility across different systems/Java versions)
 + visually enhanced the CheckComboBox
@@ -18,6 +20,8 @@ Version 3.1
 + enabled sorting by multiple columns in the movie table
 + enabled writing of subtitles without language code #621
 + added file size to the renamer patterns #691
++ (Movies) added a bulk editor function to write the languages of the audio streams into the spoken language field #714
++ added an option to delete artwork from within the editor (movies, TV shows, episodes) #367
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678
@@ -36,6 +40,9 @@ x moved export logic into thread to do not block the UI while exporting
 x IMDB: use the first found release date
 x TMDB: show all search results (not only the first 20)
 x TMDB: add season cast/crew to the episodes too
+x TMDB: clean search string (move The, ... to the front on search)
+x fixed scraping with MovieMeter.nl scraper (API changes on their side)
+x updated the download missing artwork task to do a "light" cleanup of artwork files according to the settings
 
 
 Version 3.0.5

@@ -22,10 +22,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.movie.tasks.MovieSetMissingArtworkDownloadTask;
-import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
@@ -33,15 +31,16 @@ import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
 /**
- * the class {@link MovieSetMissingArtworkAction} is used to scrape missing artwork for movie sets
+ * the class {@link MovieSetCleanupArtworkAction} is used to rename/cleanup artwork for movie sets
  * 
- * @author Wolfgang Janes
+ * @author Manuel Laggner
  */
-public class MovieSetMissingArtworkAction extends TmmAction {
+public class MovieSetCleanupArtworkAction extends TmmAction {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
-  public MovieSetMissingArtworkAction() {
-    putValue(NAME, BUNDLE.getString("movieset.downloadmissingartwork"));
+  public MovieSetCleanupArtworkAction() {
+    putValue(NAME, BUNDLE.getString("movieset.cleanupartwork"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.cleanupartwork.desc"));
     putValue(SMALL_ICON, IconManager.IMAGE);
     putValue(LARGE_ICON_KEY, IconManager.IMAGE);
   }
@@ -55,10 +54,8 @@ public class MovieSetMissingArtworkAction extends TmmAction {
       return;
     }
 
-    MovieSetSearchAndScrapeOptions options = new MovieSetSearchAndScrapeOptions();
-    options.loadDefaults();
-
-    MovieSetMissingArtworkDownloadTask task = new MovieSetMissingArtworkDownloadTask(selectedMovieSets, options);
-    TmmTaskManager.getInstance().addDownloadTask(task);
+    for (MovieSet movieSet : selectedMovieSets) {
+      MovieSetArtworkHelper.cleanupArtwork(movieSet);
+    }
   }
 }

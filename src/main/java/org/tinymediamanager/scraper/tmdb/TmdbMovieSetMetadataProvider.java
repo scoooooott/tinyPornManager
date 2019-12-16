@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -69,8 +70,8 @@ class TmdbMovieSetMetadataProvider {
     List<MediaSearchResult> movieSetsFound = new ArrayList<>();
 
     String searchString = "";
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getSearchQuery())) {
-      searchString = query.getSearchQuery();
+    if (StringUtils.isNotEmpty(query.getSearchQuery())) {
+      searchString = Utils.removeSortableName(query.getSearchQuery());
     }
 
     if (StringUtils.isEmpty(searchString)) {

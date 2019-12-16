@@ -15,24 +15,24 @@
  */
 package org.tinymediamanager.scraper.moviemeter.entities;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MMFilm {
-  public int           id                = 0;
-  public String        url               = "";
-  public int           year              = 0;
-  public String        imdb              = "";
-  public String        title             = "";
-  public String        display_title     = "";
-  public String        alternative_title = "";
-  public String        plot              = "";
-  public int           duration          = 0;
-  public int           votes_count       = 0;
-  public double        average           = 0;
-  public MMPoster      posters           = new MMPoster();
-  public List<String>  countries         = Arrays.asList();
-  public List<String>  genres            = Arrays.asList();
-  public List<MMActor> actors            = Arrays.asList();
-  public List<String>  directors         = Arrays.asList();
+  public int              id                = 0;
+  public String           url               = "";
+  public int              year              = 0;
+  public String           imdb              = "";
+  public String           title             = "";
+  public String           display_title     = "";
+  public String           alternative_title = "";
+  public String           plot              = "";
+  public int              duration          = 0;
+  public int              votes_count       = 0;
+  public double           average           = 0;
+  public MMPoster         posters           = new MMPoster();
+  public List<String>     countries         = Collections.emptyList();
+  public List<String>     genres            = Collections.emptyList();
+  public List<MMActor>    actors            = Collections.emptyList();
+  public List<MMDirector> directors         = Collections.emptyList();
 }

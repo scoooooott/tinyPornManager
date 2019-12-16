@@ -332,7 +332,7 @@ public class MediaFileEditorPanel extends JPanel {
       if (mediaFileRow > -1) {
         mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
         MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-        mf.audioStreams.add(new MediaFileAudioStream());
+        mf.addAudioStream();
       }
     }
   }
@@ -354,7 +354,7 @@ public class MediaFileEditorPanel extends JPanel {
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
 
           for (int row : audioRows) {
-            mf.audioStreams.remove(row);
+            mf.removeAudioStream(row);
           }
         }
       }
@@ -374,7 +374,7 @@ public class MediaFileEditorPanel extends JPanel {
       if (mediaFileRow > -1) {
         mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);
         MediaFileContainer mf = mediaFiles.get(mediaFileRow);
-        mf.subtitles.add(new MediaFileSubtitle());
+        mf.addSubtitle();
       }
     }
   }
@@ -396,7 +396,7 @@ public class MediaFileEditorPanel extends JPanel {
           MediaFileContainer mf = mediaFiles.get(mediaFileRow);
 
           for (int row : subtitleRows) {
-            mf.subtitles.remove(row);
+            mf.removeSubtitle(row);
           }
         }
       }
@@ -425,8 +425,8 @@ public class MediaFileEditorPanel extends JPanel {
 
     private MediaFileContainer(MediaFile mediaFile) {
       this.mediaFile = mediaFile;
-      this.audioStreams = ObservableCollections.observableList(mediaFile.getAudioStreams());
-      this.subtitles = ObservableCollections.observableList(mediaFile.getSubtitles());
+      this.audioStreams = ObservableCollections.observableList(new ArrayList<>(mediaFile.getAudioStreams()));
+      this.subtitles = ObservableCollections.observableList(new ArrayList<>(mediaFile.getSubtitles()));
     }
 
     public MediaFile getMediaFile() {
@@ -439,6 +439,24 @@ public class MediaFileEditorPanel extends JPanel {
 
     public List<MediaFileSubtitle> getSubtitles() {
       return subtitles;
+    }
+
+    public void addAudioStream() {
+      audioStreams.add(new MediaFileAudioStream());
+      mediaFile.setAudioStreams(audioStreams);
+    }
+
+    public void removeAudioStream(int index) {
+      audioStreams.remove(index);
+    }
+
+    public void addSubtitle() {
+      subtitles.add(new MediaFileSubtitle());
+      mediaFile.setSubtitles(subtitles);
+    }
+
+    public void removeSubtitle(int index) {
+      subtitles.remove(index);
     }
   }
 

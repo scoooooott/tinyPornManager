@@ -84,7 +84,6 @@ public class MovieSetMissingArtworkDownloadTask extends TmmThreadPool {
    * Helper classes
    ****************************************************************************************/
   private class Worker implements Runnable {
-    private MovieList movieList;
     private MovieSet  movieSet;
 
     public Worker(MovieSet movieSet) {
@@ -94,7 +93,7 @@ public class MovieSetMissingArtworkDownloadTask extends TmmThreadPool {
     @Override
     public void run() {
       try {
-        movieList = MovieList.getInstance();
+        MovieList movieList = MovieList.getInstance();
         // set up scrapers
         List<MediaArtwork> artwork = new ArrayList<>();
         ArtworkSearchAndScrapeOptions options = new ArtworkSearchAndScrapeOptions(MediaType.MOVIE_SET);
@@ -119,12 +118,13 @@ public class MovieSetMissingArtworkDownloadTask extends TmmThreadPool {
                 new Message(MessageLevel.ERROR, movieSet, "message.scrape.subtitlefailed", new String[] { ":", e.getLocalizedMessage() }));
           }
           catch (MissingIdException ignored) {
+            // no need to log a missing ID here
           }
         }
 
         // now set & download the artwork
         if (!artwork.isEmpty()) {
-          MovieSetArtworkHelper.downloadMissingArtwork(movieSet, artwork);
+          MovieSetArtworkHelper.getMissingArtwork(movieSet, artwork);
         }
       }
       catch (Exception e) {

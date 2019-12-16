@@ -72,47 +72,9 @@ public class MovieArtworkHelper {
       return;
     }
 
-    List<IFileNaming> fileNamings = new ArrayList<>();
-
-    switch (type) {
-      case FANART:
-        fileNamings.addAll(getFanartNamesForMovie(movie));
-        break;
-
-      case POSTER:
-        fileNamings.addAll(getPosterNamesForMovie(movie));
-        break;
-
-      case LOGO:
-        fileNamings.addAll(getLogoNamesForMovie(movie));
-        break;
-
-      case CLEARLOGO:
-        fileNamings.addAll(getClearlogoNamesForMovie(movie));
-        break;
-
-      case BANNER:
-        fileNamings.addAll(getBannerNamesForMovie(movie));
-        break;
-
-      case CLEARART:
-        fileNamings.addAll(getClearartNamesForMovie(movie));
-        break;
-
-      case THUMB:
-        fileNamings.addAll(getThumbNamesForMovie(movie));
-        break;
-
-      case DISC:
-        fileNamings.addAll(getDiscartNamesForMovie(movie));
-        break;
-
-      case KEYART:
-        fileNamings.addAll(getKeyartNamesForMovie(movie));
-        break;
-
-      default:
-        return;
+    List<IFileNaming> fileNamings = getFileNamingsForMediaFileType(movie, type);
+    if (fileNamings.isEmpty()) {
+      return;
     }
 
     int i = 0;
@@ -253,60 +215,62 @@ public class MovieArtworkHelper {
    *          the movie to set the artwork for
    * @param artwork
    *          a list of all artworks to be set
+   * @param metadataConfig
+   *          the config which artwork to download
    */
-  public static void downloadMissingArtwork(Movie movie, List<MediaArtwork> artwork) {
+  public static void downloadMissingArtwork(Movie movie, List<MediaArtwork> artwork, List<MovieScraperMetadataConfig> metadataConfig) {
     // sort artwork once again (langu/rating)
     artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getImageScraperLanguage().getLanguage()));
 
     // poster
-    if (movie.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.POSTER) && movie.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
       setBestPoster(movie, artwork);
     }
 
     // fanart
-    if (movie.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.FANART) && movie.getMediaFiles(MediaFileType.FANART).isEmpty()) {
       setBestFanart(movie, artwork);
     }
 
     // logo
-    if (movie.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.LOGO) && movie.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.LOGO, !MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty());
     }
 
     // clearlogo
-    if (movie.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.CLEARLOGO) && movie.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, !MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty());
     }
 
     // clearart
-    if (movie.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.CLEARART) && movie.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, !MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty());
     }
 
     // banner
-    if (movie.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.BANNER) && movie.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.BANNER, !MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty());
     }
 
     // thumb
-    if (movie.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.THUMB) && movie.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.THUMB, !MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty());
     }
 
     // discart
-    if (movie.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.DISCART) && movie.getMediaFiles(MediaFileType.DISC).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.DISC, !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty());
     }
 
     // keyart
-    if (movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.KEYART) && movie.getMediaFiles(MediaFileType.KEYART).isEmpty()) {
       setBestArtwork(movie, artwork, MediaArtworkType.KEYART, !MovieModuleManager.SETTINGS.getKeyartFilenames().isEmpty());
     }
 
     // extrathumbs
     List<String> extrathumbs = new ArrayList<>();
-    if (movie.getMediaFiles(MediaFileType.EXTRATHUMB).isEmpty() && MovieModuleManager.SETTINGS.isImageExtraThumbs()
-        && MovieModuleManager.SETTINGS.getImageExtraThumbsCount() > 0) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.EXTRATHUMB) && movie.getMediaFiles(MediaFileType.EXTRATHUMB).isEmpty()
+        && MovieModuleManager.SETTINGS.isImageExtraThumbs() && MovieModuleManager.SETTINGS.getImageExtraThumbsCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.SETTINGS.getImageFanartSize().getOrder()) {
@@ -326,7 +290,8 @@ public class MovieArtworkHelper {
 
     // extrafanarts
     List<String> extrafanarts = new ArrayList<>();
-    if (MovieModuleManager.SETTINGS.isImageExtraFanart() && MovieModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
+    if (metadataConfig.contains(MovieScraperMetadataConfig.EXTRAFANART) && MovieModuleManager.SETTINGS.isImageExtraFanart()
+        && MovieModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.SETTINGS.getImageFanartSize().getOrder()) {
@@ -396,6 +361,17 @@ public class MovieArtworkHelper {
     return false;
   }
 
+  /**
+   * get the artwork filename for the given movie, naming scheme and extension
+   * 
+   * @param movie
+   *          the movie
+   * @param fileNaming
+   *          the naming scheme
+   * @param extension
+   *          the extension
+   * @return the full artwork filename
+   */
   public static String getArtworkFilename(Movie movie, IFileNaming fileNaming, String extension) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && !mfs.isEmpty()) {
@@ -1017,5 +993,142 @@ public class MovieArtworkHelper {
         break;
       }
     }
+  }
+
+  /**
+   * cleanup the artwork files for the given movies and config. This is also done in the rename&cleanup function, but if users want to
+   * download/cleanup the missing artwork, they expect us to do this work too (without rename the whole movie)
+   * 
+   * @param movie
+   *          the movie to do the cleanup for
+   * @param metadataConfig
+   *          the config which artwork should be cleaned up
+   */
+  public static void cleanupArtwork(Movie movie, List<MovieScraperMetadataConfig> metadataConfig) {
+    if (!ScraperMetadataConfig.containsAnyArtwork(metadataConfig)) {
+      return;
+    }
+
+    // do the cleanup for every given type; there _should_ be at least one artwork for every given type
+    // if there is no artwork available we cannot do any cleanup here - obviously
+    for (MovieScraperMetadataConfig config : metadataConfig) {
+      // we need to get the artwork type for this config type
+      MediaFileType type = getMediaFileTypeForConfig(config);
+      if (type == null) {
+        continue;
+      }
+
+      // get all available artwork files for the given type
+      List<MediaFile> mediaFiles = movie.getMediaFiles(type);
+      if (mediaFiles.isEmpty()) {
+        // no media files? we cannot do any cleanup without artwork files here
+        continue;
+      }
+
+      // get all expected file namings
+      List<IFileNaming> fileNamings = getFileNamingsForMediaFileType(movie, type);
+
+      // now check if there is a media file for all _needed_ file naming (copy the existing otherwise)
+      // take the first mediafile as template
+      MediaFile baseArtwork = mediaFiles.get(0);
+
+      for (IFileNaming fileNaming : fileNamings) {
+        String filename = getArtworkFilename(movie, fileNaming, baseArtwork.getExtension());
+        if (StringUtils.isNotBlank(filename)) {
+          MediaFile otherArtwork = new MediaFile(movie.getPathNIO().resolve(filename));
+          if (!mediaFiles.contains(otherArtwork)) {
+            // not existing? copy it
+            boolean ok = MovieRenamer.copyFile(baseArtwork.getFileAsPath(), otherArtwork.getFileAsPath());
+            if (ok) {
+              movie.addToMediaFiles(otherArtwork);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * get the corresponding {@link MediaFileType} for the given {@link MovieScraperMetadataConfig}
+   * 
+   * @param config
+   *          the {@link MovieScraperMetadataConfig} to get the {@link MediaFileType} for
+   * @return the {@link MediaFileType} or null (if no valid config has been passed)
+   */
+  private static MediaFileType getMediaFileTypeForConfig(MovieScraperMetadataConfig config) {
+    if (!config.isArtwork()) {
+      return null;
+    }
+
+    // try to get it dynamically (because most enums have the same name)
+    MediaFileType type = null;
+
+    try {
+      type = MediaFileType.valueOf(config.name());
+    }
+    catch (Exception ignored) {
+      // no corresponding enum found
+      if (config == MovieScraperMetadataConfig.DISCART) {
+        type = MediaFileType.DISC;
+      }
+    }
+
+    return type;
+  }
+
+  /**
+   * get all configured {@link IFileNaming}s for the given {@link Movie} and {@link MediaFileType}
+   * 
+   * @param movie
+   *          the movie
+   * @param type
+   *          the file type
+   * @return a list of all configured file namings
+   */
+  private static List<IFileNaming> getFileNamingsForMediaFileType(Movie movie, MediaFileType type) {
+    List<IFileNaming> fileNamings = new ArrayList<>(0);
+
+    switch (type) {
+      case FANART:
+        fileNamings.addAll(getFanartNamesForMovie(movie));
+        break;
+
+      case POSTER:
+        fileNamings.addAll(getPosterNamesForMovie(movie));
+        break;
+
+      case LOGO:
+        fileNamings.addAll(getLogoNamesForMovie(movie));
+        break;
+
+      case CLEARLOGO:
+        fileNamings.addAll(getClearlogoNamesForMovie(movie));
+        break;
+
+      case BANNER:
+        fileNamings.addAll(getBannerNamesForMovie(movie));
+        break;
+
+      case CLEARART:
+        fileNamings.addAll(getClearartNamesForMovie(movie));
+        break;
+
+      case THUMB:
+        fileNamings.addAll(getThumbNamesForMovie(movie));
+        break;
+
+      case DISC:
+        fileNamings.addAll(getDiscartNamesForMovie(movie));
+        break;
+
+      case KEYART:
+        fileNamings.addAll(getKeyartNamesForMovie(movie));
+        break;
+
+      default:
+        break;
+    }
+
+    return fileNamings;
   }
 }

@@ -37,6 +37,7 @@ import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
+import org.tinymediamanager.scraper.moviemeter.entities.MMDirector;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.LanguageUtils;
@@ -211,8 +212,8 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider, IMovi
       md.addCastMember(cm);
     }
 
-    for (String d : fd.directors) {
-      Person cm = new Person(Person.Type.DIRECTOR, d);
+    for (MMDirector d : fd.directors) {
+      Person cm = new Person(Person.Type.DIRECTOR, d.name);
       md.addCastMember(cm);
     }
 

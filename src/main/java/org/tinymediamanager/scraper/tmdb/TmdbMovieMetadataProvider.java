@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.entities.Person;
@@ -101,7 +102,7 @@ class TmdbMovieMetadataProvider {
     // detect the string to search
     String searchString = "";
     if (StringUtils.isNotEmpty(options.getSearchQuery())) {
-      searchString = options.getSearchQuery();
+      searchString = Utils.removeSortableName(options.getSearchQuery());
     }
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
 

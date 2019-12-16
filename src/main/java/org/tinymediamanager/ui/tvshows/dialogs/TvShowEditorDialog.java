@@ -15,15 +15,48 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.WritableTableFormat;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import net.miginfocom.swing.MigLayout;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.swing.AbstractAction;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JLayer;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -57,6 +90,7 @@ import org.tinymediamanager.ui.ShadowLayerUI;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
 import org.tinymediamanager.ui.UIConstants;
+import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -79,46 +113,15 @@ import org.tinymediamanager.ui.dialogs.RatingEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.renderer.LeftDotTableCellRenderer;
 
-import javax.swing.AbstractAction;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JLayer;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.ui.TmmUIHelper.createLinkForImage;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.WritableTableFormat;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEditor.
@@ -129,6 +132,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private static final long                       serialVersionUID    = 3270218410302989845L;
   private static final Insets                     BUTTON_MARGIN       = UIConstants.SMALL_BUTTON_MARGIN;
   private static final String                     ORIGINAL_IMAGE_SIZE = "originalImageSize";
+  private static final String                     SPACER              = "        ";
 
   private TvShow                                  tvShowToEdit;
   private TvShowList                              tvShowList          = TvShowList.getInstance();
@@ -138,9 +142,9 @@ public class TvShowEditorDialog extends TmmDialog {
   private EventList<MediaRatingTable.MediaRating> mediaRatings;
   private List<String>                            tags                = ObservableCollections.observableList(new ArrayList<>());
   private EventList<EpisodeEditorContainer>       episodes;
-  private List<String> extrafanarts = null;
-  private List<MediaTrailer> trailers = ObservableCollections.observableList(new ArrayList<>());
-  private MediaRating userMediaRating;
+  private List<String>                            extrafanarts        = null;
+  private List<MediaTrailer>                      trailers            = ObservableCollections.observableList(new ArrayList<>());
+  private MediaRating                             userMediaRating;
   private boolean                                 continueQueue       = true;
   private boolean                                 navigateBack        = false;
   private int                                     queueIndex;
@@ -196,17 +200,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private JTextField                              tfCharacterart;
   private JTextField                              tfKeyart;
 
-  private LinkLabel lblBannerSize = new LinkLabel();
-  private LinkLabel lblPosterSize = new LinkLabel();
-  private LinkLabel lblFanartSize = new LinkLabel();
-  private LinkLabel lblLogoSize = new LinkLabel();
-  private LinkLabel lblClearlogoSize = new LinkLabel();
-  private LinkLabel lblClearartSize = new LinkLabel();
-  private LinkLabel lblThumbSize = new LinkLabel();
-  private LinkLabel lblCharacterartSize = new LinkLabel();
-  private LinkLabel lblKeyartSize = new LinkLabel();
-
-  private TmmTable tableTrailer;
+  private TmmTable                                tableTrailer;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -393,10 +387,16 @@ public class TvShowEditorDialog extends TmmDialog {
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.poster")), "cell 8 0");
+        LinkLabel lblPosterSize = new LinkLabel();
         details1Panel.add(lblPosterSize, "cell 8 0");
+
+        JButton btnDeletePoster = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeletePoster.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeletePoster.addActionListener(e -> lblPoster.clearImage());
+        details1Panel.add(btnDeletePoster, "cell 8 0");
+
         details1Panel.add(lblPoster, "cell 8 1 1 6, grow");
         lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaFileType.POSTER));
-
       }
       {
         JLabel lblOriginalTitleT = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -509,7 +509,15 @@ public class TvShowEditorDialog extends TmmDialog {
           }
         });
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
+
+        LinkLabel lblFanartSize = new LinkLabel();
         details1Panel.add(lblFanartSize, "cell 8 8");
+
+        JButton btnDeleteFanart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteFanart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteFanart.addActionListener(e -> lblFanart.clearImage());
+        details1Panel.add(btnDeleteFanart, "cell 8 8");
+
         details1Panel.add(lblFanart, "cell 8 9 1 4,grow");
         lblFanart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblFanartSize, lblFanart, MediaFileType.FANART));
       }
@@ -670,7 +678,15 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
 
         artworkPanel.add(lblClearlogoT, "cell 0 0");
+
+        LinkLabel lblClearlogoSize = new LinkLabel();
         artworkPanel.add(lblClearlogoSize, "cell 0 0");
+
+        JButton btnDeleteClearLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteClearLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteClearLogo.addActionListener(e -> lblClearlogo.clearImage());
+        artworkPanel.add(btnDeleteClearLogo, "cell 0 0");
+
         lblClearlogo = new ImageLabel();
         lblClearlogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblClearlogo.addMouseListener(new MouseAdapter() {
@@ -690,7 +706,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
         artworkPanel.add(lblBannerT, "cell 2 0 3 1");
+
+        LinkLabel lblBannerSize = new LinkLabel();
         artworkPanel.add(lblBannerSize, "cell 2 0 3 1");
+
+        JButton btnDeleteBanner = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteBanner.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteBanner.addActionListener(e -> lblBanner.clearImage());
+        artworkPanel.add(btnDeleteBanner, "cell 2 0 3 1");
+
         lblBanner = new ImageLabel();
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblBanner.addMouseListener(new MouseAdapter() {
@@ -710,7 +734,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblClearartT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
         artworkPanel.add(lblClearartT, "cell 2 3");
+
+        LinkLabel lblClearartSize = new LinkLabel();
         artworkPanel.add(lblClearartSize, "cell 2 3");
+
+        JButton btnDeleteClearart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteClearart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteClearart.addActionListener(e -> lblClearart.clearImage());
+        artworkPanel.add(btnDeleteClearart, "cell 2 3");
+
         lblClearart = new ImageLabel();
         lblClearart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblClearart.addMouseListener(new MouseAdapter() {
@@ -730,7 +762,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "cell 0 3");
+
+        LinkLabel lblLogoSize = new LinkLabel();
         artworkPanel.add(lblLogoSize, "cell 0 3");
+
+        JButton btnDeleteLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteLogo.addActionListener(e -> lblLogo.clearImage());
+        artworkPanel.add(btnDeleteLogo, "cell 0 3");
+
         lblLogo = new ImageLabel();
         lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblLogo.addMouseListener(new MouseAdapter() {
@@ -749,7 +789,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
         artworkPanel.add(lblKeyartT, "cell 4 3");
+
+        LinkLabel lblKeyartSize = new LinkLabel();
         artworkPanel.add(lblKeyartSize, "cell 4 3");
+
+        JButton btnDeleteKeyart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteKeyart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteKeyart.addActionListener(e -> lblKeyart.clearImage());
+        artworkPanel.add(btnDeleteKeyart, "cell 4 3");
+
         lblKeyart = new ImageLabel();
         lblKeyart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblKeyart.addMouseListener(new MouseAdapter() {
@@ -768,7 +816,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
         artworkPanel.add(lblThumbT, "cell 0 6");
+
+        LinkLabel lblThumbSize = new LinkLabel();
         artworkPanel.add(lblThumbSize, "cell 0 6");
+
+        JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        artworkPanel.add(btnDeleteThumb, "cell 0 6");
+
         lblThumb = new ImageLabel();
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblThumb.addMouseListener(new MouseAdapter() {
@@ -787,7 +843,15 @@ public class TvShowEditorDialog extends TmmDialog {
       {
         JLabel lblCharacterartT = new TmmLabel(BUNDLE.getString("mediafiletype.characterart")); //$NON-NLS-1$
         artworkPanel.add(lblCharacterartT, "cell 2 6");
+
+        LinkLabel lblCharacterartSize = new LinkLabel();
         artworkPanel.add(lblCharacterartSize, "cell 2 6");
+
+        JButton btnDeleteCharacterart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
+        btnDeleteCharacterart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
+        btnDeleteCharacterart.addActionListener(e -> lblCharacterart.clearImage());
+        artworkPanel.add(btnDeleteCharacterart, "cell 2 6");
+
         lblCharacterart = new ImageLabel();
         lblCharacterart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblCharacterart.addMouseListener(new MouseAdapter() {
@@ -1019,76 +1083,140 @@ public class TvShowEditorDialog extends TmmDialog {
         tvShowToEdit.setCertification((MediaCertification) certification);
       }
 
-      if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+      // POSTER
+      if (StringUtils.isBlank(lblPoster.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.POSTER))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.POSTER);
+      }
+      else if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
         tvShowToEdit.downloadArtwork(MediaFileType.POSTER);
       }
       else if (StringUtils.isEmpty(tfPoster.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.POSTER);
       }
 
-      if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
+      // FANART
+      if (StringUtils.isBlank(lblFanart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.FANART))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.FANART);
+      }
+      else if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
         tvShowToEdit.downloadArtwork(MediaFileType.FANART);
       }
       else if (StringUtils.isEmpty(tfFanart.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.FANART);
       }
 
-      if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+      // BANNER
+      if (StringUtils.isBlank(lblBanner.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.BANNER))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.BANNER);
+      }
+      else if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
         tvShowToEdit.downloadArtwork(MediaFileType.BANNER);
       }
       else if (StringUtils.isEmpty(tfBanner.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.BANNER);
       }
 
-      if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.LOGO))) {
+      // LOGO
+      if (StringUtils.isBlank(lblLogo.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.LOGO))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.LOGO);
+      }
+      else if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.LOGO))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
         tvShowToEdit.downloadArtwork(MediaFileType.LOGO);
       }
       else if (StringUtils.isEmpty(tfLogo.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.LOGO);
       }
 
-      if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+      // CLEARLOGO
+      if (StringUtils.isBlank(lblClearlogo.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARLOGO))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.CLEARLOGO);
+      }
+      else if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
         tvShowToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
       }
       else if (StringUtils.isEmpty(tfClearLogo.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARLOGO);
       }
 
-      if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
+      // CLEARART
+      if (StringUtils.isBlank(lblClearart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARART))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.CLEARART);
+      }
+      else if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
         tvShowToEdit.downloadArtwork(MediaFileType.CLEARART);
       }
       else if (StringUtils.isEmpty(tfClearArt.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARART);
       }
 
-      if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.THUMB))) {
+      // THUMB
+      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.THUMB))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.THUMB);
+      }
+      else if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.THUMB))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
         tvShowToEdit.downloadArtwork(MediaFileType.THUMB);
       }
       else if (StringUtils.isEmpty(tfThumb.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.THUMB);
       }
 
-      if (StringUtils.isNotEmpty(tfCharacterart.getText())
+      // CHARACTERART
+      if (StringUtils.isBlank(lblCharacterart.getImagePath())
+          && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CHARACTERART))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.CHARACTERART);
+      }
+      else if (StringUtils.isNotEmpty(tfCharacterart.getText())
           && !tfCharacterart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CHARACTERART))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfCharacterart.getText(), MediaFileType.CHARACTERART);
         tvShowToEdit.downloadArtwork(MediaFileType.CHARACTERART);
       }
       else if (StringUtils.isEmpty(tfCharacterart.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.CHARACTERART);
       }
 
-      if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.KEYART))) {
+      // KEYART
+      if (StringUtils.isBlank(lblKeyart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.KEYART))) {
+        // artwork has been explicitly deleted
+        tvShowToEdit.deleteMediaFiles(MediaFileType.KEYART);
+      }
+      else if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.KEYART))) {
+        // artwork url and textfield do not match -> redownload
         tvShowToEdit.setArtworkUrl(tfKeyart.getText(), MediaFileType.KEYART);
         tvShowToEdit.downloadArtwork(MediaFileType.KEYART);
       }
       else if (StringUtils.isEmpty(tfKeyart.getText())) {
+        // remove the artwork url
         tvShowToEdit.removeArtworkUrl(MediaFileType.KEYART);
       }
 
@@ -1185,7 +1313,8 @@ public class TvShowEditorDialog extends TmmDialog {
           container.tvShowEpisode.writeNFO();
           container.tvShowEpisode.saveToDb();
           tvShowToEdit.addEpisode(container.tvShowEpisode);
-        } else if (shouldStore) {
+        }
+        else if (shouldStore) {
           container.tvShowEpisode.writeNFO();
           container.tvShowEpisode.saveToDb();
         }
@@ -1444,8 +1573,7 @@ public class TvShowEditorDialog extends TmmDialog {
   }
 
   /**
-   * Shows the dialog and returns whether the work on the queue should be
-   * continued.
+   * Shows the dialog and returns whether the work on the queue should be continued.
    *
    * @return true, if successful
    */
@@ -1819,8 +1947,8 @@ public class TvShowEditorDialog extends TmmDialog {
     jListBinding_1.bind();
     //
 
-    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trailers,
-            tableTrailer);
+    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
+        trailers, tableTrailer);
     //
     BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_2.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
@@ -1849,10 +1977,18 @@ public class TvShowEditorDialog extends TmmDialog {
 
   private void setImageSizeAndCreateLink(LinkLabel lblSize, ImageLabel imageLabel, MediaFileType type) {
     createLinkForImage(lblSize, imageLabel);
+
+    // image has been deleted
+    if (imageLabel.getOriginalImageSize().width == 0 && imageLabel.getOriginalImageSize().height == 0) {
+      lblSize.setText("");
+      return;
+    }
+
     Dimension dimension = tvShowToEdit.getArtworkDimension(type);
     if (dimension.width == 0 && dimension.height == 0) {
       lblSize.setText(imageLabel.getOriginalImageSize().width + "x" + imageLabel.getOriginalImageSize().height);
-    } else {
+    }
+    else {
       lblSize.setText(dimension.width + "x" + dimension.height);
     }
   }

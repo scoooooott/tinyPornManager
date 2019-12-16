@@ -15,8 +15,16 @@
  */
 package org.tinymediamanager.core.movie;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -49,15 +57,8 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * The Class MovieSettings.
@@ -161,28 +162,30 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          imageExtraFanart                    = false;
   private int                              imageExtraFanartCount               = 5;
   private boolean                          enableMovieSetArtworkMovieFolder    = true;
-  private boolean enableMovieSetArtworkFolder = false;
-  private String movieSetArtworkFolder = "MoviesetArtwork";
-  private boolean scrapeBestImage = true;
-  private MediaLanguages imageScraperLanguage = MediaLanguages.en;
-  private boolean imageLanguagePriority = true;
-  private boolean writeActorImages = false;
+  private boolean                          enableMovieSetArtworkFolder         = false;
+  private String                           movieSetArtworkFolder               = "MoviesetArtwork";
+  private boolean                          movieSetArtworkFolderStyleKodi      = true;
+  private boolean                          movieSetArtworkFolderStyleAutomator = false;
+  private boolean                          scrapeBestImage                     = true;
+  private MediaLanguages                   imageScraperLanguage                = MediaLanguages.en;
+  private boolean                          imageLanguagePriority               = true;
+  private boolean                          writeActorImages                    = false;
 
   // trailer scraper
-  private boolean useTrailerPreference = true;
-  private boolean automaticTrailerDownload = false;
-  private TrailerQuality trailerQuality = TrailerQuality.HD_720;
-  private TrailerSources trailerSource = TrailerSources.YOUTUBE;
+  private boolean                          useTrailerPreference                = true;
+  private boolean                          automaticTrailerDownload            = false;
+  private TrailerQuality                   trailerQuality                      = TrailerQuality.HD_720;
+  private TrailerSources                   trailerSource                       = TrailerSources.YOUTUBE;
 
   // subtitle scraper
-  private MediaLanguages subtitleScraperLanguage = MediaLanguages.en;
-  private LanguageStyle subtitleLanguageStyle = LanguageStyle.ISO3T;
-  private boolean subtitleWithoutLanguageTag = false;
+  private MediaLanguages                   subtitleScraperLanguage             = MediaLanguages.en;
+  private LanguageStyle                    subtitleLanguageStyle               = LanguageStyle.ISO3T;
+  private boolean                          subtitleWithoutLanguageTag          = false;
 
   // misc
-  private boolean runtimeFromMediaInfo = false;
-  private boolean includeExternalAudioStreams = false;
-  private boolean syncTrakt = false;
+  private boolean                          runtimeFromMediaInfo                = false;
+  private boolean                          includeExternalAudioStreams         = false;
+  private boolean                          syncTrakt                           = false;
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
 
@@ -352,11 +355,6 @@ public class MovieSettings extends AbstractSettings {
     movieDataSources.remove(path);
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
     firePropertyChange(Constants.DATA_SOURCE, null, movieDataSources);
-
-    // if all datasources has been remove we can safely remove all movie sets too
-    if (movieDataSources.isEmpty()) {
-      movieList.removeMovieSets();
-    }
   }
 
   public List<String> getMovieDataSource() {
@@ -663,6 +661,26 @@ public class MovieSettings extends AbstractSettings {
     String oldValue = this.movieSetArtworkFolder;
     this.movieSetArtworkFolder = newValue;
     firePropertyChange("movieSetArtworkFolder", oldValue, newValue);
+  }
+
+  public boolean isMovieSetArtworkFolderStyleKodi() {
+    return movieSetArtworkFolderStyleKodi;
+  }
+
+  public void setMovieSetArtworkFolderStyleKodi(boolean newValue) {
+    boolean oldValue = this.movieSetArtworkFolderStyleKodi;
+    this.movieSetArtworkFolderStyleKodi = newValue;
+    firePropertyChange("movieSetArtworkFolderStyleKodi", oldValue, newValue);
+  }
+
+  public boolean isMovieSetArtworkFolderStyleAutomator() {
+    return movieSetArtworkFolderStyleAutomator;
+  }
+
+  public void setMovieSetArtworkFolderStyleAutomator(boolean newValue) {
+    boolean oldValue = this.movieSetArtworkFolderStyleAutomator;
+    this.movieSetArtworkFolderStyleAutomator = newValue;
+    firePropertyChange("movieSetArtworkFolderStyleAutomator", oldValue, newValue);
   }
 
   public MovieConnectors getMovieConnector() {

@@ -391,19 +391,17 @@ public class TmmUIHelper {
     }
   }
 
-  private static void previewImage(ImageLabel image) {
-    if (StringUtils.isNotBlank(image.getImagePath())) {
-      ImagePreviewDialog dialog = new ImagePreviewDialog(Paths.get(image.getImagePath()));
-      dialog.setVisible(true);
-    }
-    else {
-      ImagePreviewDialog dialog = new ImagePreviewDialog(image.getImageUrl());
-      dialog.setVisible(true);
-    }
-  }
-
   public static LinkLabel createLinkForImage(LinkLabel linklabel, ImageLabel image) {
-    linklabel.addActionListener(e -> previewImage(image));
+    linklabel.addActionListener(e -> {
+      if (StringUtils.isNotBlank(image.getImagePath())) {
+        ImagePreviewDialog dialog = new ImagePreviewDialog(Paths.get(image.getImagePath()));
+        dialog.setVisible(true);
+      }
+      else {
+        ImagePreviewDialog dialog = new ImagePreviewDialog(image.getImageUrl());
+        dialog.setVisible(true);
+      }
+    });
 
     return linklabel;
   }
