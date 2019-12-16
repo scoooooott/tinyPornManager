@@ -55,7 +55,7 @@ import net.miginfocom.swing.MigLayout;
 public class ImagePreviewDialog extends TmmDialog {
   private static final long           serialVersionUID = -7479476493187235867L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(SaveToDiskAction.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 
   private String                      imageUrl;
   private String                      imagePath;
@@ -156,7 +156,7 @@ public class ImagePreviewDialog extends TmmDialog {
     @Override
     protected void processAction(ActionEvent e) {
       // open save to dialog
-      Path file = null;
+      Path file;
       try {
         String filename = "";
         if (StringUtils.isNotBlank(imagePath)) {
@@ -175,8 +175,8 @@ public class ImagePreviewDialog extends TmmDialog {
       }
       catch (Exception ex) {
         LOGGER.error("Could not save image file: {}", ex.getMessage());
-        MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, file != null ? file.toString() : "", "message.erroropenfile",
-            new String[] { ":", ex.getLocalizedMessage() }));
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, "", "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
       }
     }
   }

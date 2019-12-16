@@ -28,8 +28,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
@@ -43,7 +41,6 @@ import okhttp3.OkHttpClient;
  * @since 1.0
  */
 public class TmmHttpClient {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TmmHttpClient.class);
   private static final Cache  CACHE;
   private static OkHttpClient client = createHttpClient();
 
@@ -64,7 +61,11 @@ public class TmmHttpClient {
       parent = "cache";
     }
 
-    CACHE = new Cache(Paths.get(parent, "http").toFile(), 25 * 1024 * 1024);
+    CACHE = new Cache(Paths.get(parent, "http").toFile(), 25L * 1024 * 1024);
+  }
+
+  private TmmHttpClient() {
+    // hide public constructor for utility classas
   }
 
   /**
@@ -101,15 +102,17 @@ public class TmmHttpClient {
           }
 
           @Override
-          public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
+          public void checkServerTrusted(final X509Certificate[] chain, final String authType) { // NOSONAR
+            // not needed
           }
 
           @Override
-          public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
+          public void checkClientTrusted(final X509Certificate[] chain, final String authType) { // NOSONAR
+            // not needed
           }
         } };
         // Install the all-trusting trust manager
-        final SSLContext sslContext = SSLContext.getInstance("SSL");
+        final SSLContext sslContext = SSLContext.getInstance("SSL"); // NOSONAR
         sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 
         // Create an ssl socket factory with our all-trusting manager
@@ -117,6 +120,7 @@ public class TmmHttpClient {
         builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
       }
       catch (Exception ignored) {
+        // not needed
       }
     }
 

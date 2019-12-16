@@ -169,7 +169,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   private JTextField                              tfOriginalTitle;
   private JTextField                              tfThumb;
   private JTextField                              tfNote;
-  private LinkLabel                               lblThumbSize;
 
   /**
    * Instantiates a new TV show episode scrape dialog.
@@ -358,7 +357,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       {
         detailsPanel.add(new TmmLabel(BUNDLE.getString("mediafiletype.thumb")), "cell 9 0");
 
-        lblThumbSize = new LinkLabel();
+        LinkLabel lblThumbSize = new LinkLabel();
         detailsPanel.add(lblThumbSize, "cell 9 0");
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);

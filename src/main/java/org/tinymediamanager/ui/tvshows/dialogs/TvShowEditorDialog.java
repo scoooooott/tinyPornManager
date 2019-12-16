@@ -200,16 +200,6 @@ public class TvShowEditorDialog extends TmmDialog {
   private JTextField                              tfCharacterart;
   private JTextField                              tfKeyart;
 
-  private LinkLabel                               lblBannerSize;
-  private LinkLabel                               lblPosterSize;
-  private LinkLabel                               lblFanartSize;
-  private LinkLabel                               lblLogoSize;
-  private LinkLabel                               lblClearlogoSize;
-  private LinkLabel                               lblClearartSize;
-  private LinkLabel                               lblThumbSize;
-  private LinkLabel                               lblCharacterartSize;
-  private LinkLabel                               lblKeyartSize;
-
   private TmmTable                                tableTrailer;
 
   /**
@@ -397,7 +387,7 @@ public class TvShowEditorDialog extends TmmDialog {
         });
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.poster")), "cell 8 0");
-        lblPosterSize = new LinkLabel();
+        LinkLabel lblPosterSize = new LinkLabel();
         details1Panel.add(lblPosterSize, "cell 8 0");
 
         JButton btnDeletePoster = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -520,7 +510,7 @@ public class TvShowEditorDialog extends TmmDialog {
         });
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
 
-        lblFanartSize = new LinkLabel();
+        LinkLabel lblFanartSize = new LinkLabel();
         details1Panel.add(lblFanartSize, "cell 8 8");
 
         JButton btnDeleteFanart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -689,7 +679,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
         artworkPanel.add(lblClearlogoT, "cell 0 0");
 
-        lblClearlogoSize = new LinkLabel();
+        LinkLabel lblClearlogoSize = new LinkLabel();
         artworkPanel.add(lblClearlogoSize, "cell 0 0");
 
         JButton btnDeleteClearLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -717,7 +707,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
         artworkPanel.add(lblBannerT, "cell 2 0 3 1");
 
-        lblBannerSize = new LinkLabel();
+        LinkLabel lblBannerSize = new LinkLabel();
         artworkPanel.add(lblBannerSize, "cell 2 0 3 1");
 
         JButton btnDeleteBanner = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -745,7 +735,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblClearartT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
         artworkPanel.add(lblClearartT, "cell 2 3");
 
-        lblClearartSize = new LinkLabel();
+        LinkLabel lblClearartSize = new LinkLabel();
         artworkPanel.add(lblClearartSize, "cell 2 3");
 
         JButton btnDeleteClearart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -773,7 +763,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "cell 0 3");
 
-        lblLogoSize = new LinkLabel();
+        LinkLabel lblLogoSize = new LinkLabel();
         artworkPanel.add(lblLogoSize, "cell 0 3");
 
         JButton btnDeleteLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -800,7 +790,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
         artworkPanel.add(lblKeyartT, "cell 4 3");
 
-        lblKeyartSize = new LinkLabel();
+        LinkLabel lblKeyartSize = new LinkLabel();
         artworkPanel.add(lblKeyartSize, "cell 4 3");
 
         JButton btnDeleteKeyart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -827,7 +817,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
         artworkPanel.add(lblThumbT, "cell 0 6");
 
-        lblThumbSize = new LinkLabel();
+        LinkLabel lblThumbSize = new LinkLabel();
         artworkPanel.add(lblThumbSize, "cell 0 6");
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -854,7 +844,7 @@ public class TvShowEditorDialog extends TmmDialog {
         JLabel lblCharacterartT = new TmmLabel(BUNDLE.getString("mediafiletype.characterart")); //$NON-NLS-1$
         artworkPanel.add(lblCharacterartT, "cell 2 6");
 
-        lblCharacterartSize = new LinkLabel();
+        LinkLabel lblCharacterartSize = new LinkLabel();
         artworkPanel.add(lblCharacterartSize, "cell 2 6");
 
         JButton btnDeleteCharacterart = new FlatButton(SPACER, IconManager.DELETE_GRAY);

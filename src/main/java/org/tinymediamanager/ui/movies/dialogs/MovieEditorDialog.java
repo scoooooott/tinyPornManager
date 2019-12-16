@@ -214,16 +214,6 @@ public class MovieEditorDialog extends TmmDialog {
   private TmmTable                                tableDirectors;
   private TmmTable                                tableWriters;
 
-  private LinkLabel                               lblPosterSize;
-  private LinkLabel                               lblFanartSize;
-  private LinkLabel                               lblLogoSize;
-  private LinkLabel                               lblClearlogoSize;
-  private LinkLabel                               lblBannerSize;
-  private LinkLabel                               lblClearartSize;
-  private LinkLabel                               lblThumbSize;
-  private LinkLabel                               lblDiscSize;
-  private LinkLabel                               lblKeyartSize;
-
   /**
    * Create the dialog.
    * 
@@ -424,7 +414,7 @@ public class MovieEditorDialog extends TmmDialog {
         lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.poster")), "cell 8 0");
 
-        lblPosterSize = new LinkLabel();
+        LinkLabel lblPosterSize = new LinkLabel();
         details1Panel.add(lblPosterSize, "cell 8 0");
 
         JButton btnDeletePoster = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -554,7 +544,7 @@ public class MovieEditorDialog extends TmmDialog {
         });
         details1Panel.add(new TmmLabel(BUNDLE.getString("mediafiletype.fanart")), "cell 8 8");
 
-        lblFanartSize = new LinkLabel();
+        LinkLabel lblFanartSize = new LinkLabel();
         details1Panel.add(lblFanartSize, "cell 8 8");
 
         JButton btnDeleteFanart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -903,7 +893,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "cell 0 0");
 
-        lblLogoSize = new LinkLabel();
+        LinkLabel lblLogoSize = new LinkLabel();
         artworkPanel.add(lblLogoSize, "cell 0 0");
 
         JButton btnDeleteLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -932,7 +922,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
         artworkPanel.add(lblKeyartT, "cell 4 0");
 
-        lblKeyartSize = new LinkLabel();
+        LinkLabel lblKeyartSize = new LinkLabel();
         artworkPanel.add(lblKeyartSize, "cell 4 0");
 
         JButton btnDeleteKeyart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -959,7 +949,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
         artworkPanel.add(lblClearlogoT, "cell 2 0");
 
-        lblClearlogoSize = new LinkLabel();
+        LinkLabel lblClearlogoSize = new LinkLabel();
         artworkPanel.add(lblClearlogoSize, "cell 2 0");
 
         JButton btnDeleteClearLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -987,7 +977,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
         artworkPanel.add(lblBannerT, "cell 0 3");
 
-        lblBannerSize = new LinkLabel();
+        LinkLabel lblBannerSize = new LinkLabel();
         artworkPanel.add(lblBannerSize, "cell 0 3");
 
         JButton btnDeleteBanner = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -1014,7 +1004,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblClearartT = new TmmLabel("ClearArt");
         artworkPanel.add(lblClearartT, "cell 0 6");
 
-        lblClearartSize = new LinkLabel();
+        LinkLabel lblClearartSize = new LinkLabel();
         artworkPanel.add(lblClearartSize, "cell 0 6");
 
         JButton btnDeleteClearart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -1043,7 +1033,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblThumbT = new TmmLabel("Thumb");
         artworkPanel.add(lblThumbT, "cell 2 6");
 
-        lblThumbSize = new LinkLabel();
+        LinkLabel lblThumbSize = new LinkLabel();
         artworkPanel.add(lblThumbSize, "cell 2 6");
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
@@ -1070,7 +1060,7 @@ public class MovieEditorDialog extends TmmDialog {
         JLabel lblDiscT = new TmmLabel("Disc");
         artworkPanel.add(lblDiscT, "cell 4 6");
 
-        lblDiscSize = new LinkLabel();
+        LinkLabel lblDiscSize = new LinkLabel();
         artworkPanel.add(lblDiscSize, "cell 4 6");
 
         JButton btnDeleteDisc = new FlatButton(SPACER, IconManager.DELETE_GRAY);
