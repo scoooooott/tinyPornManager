@@ -67,6 +67,7 @@ import org.tinymediamanager.core.tasks.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.VSMeta;
@@ -479,7 +480,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             String tmdb = StrgUtils.substr(content, "themoviedb\\.org\\/movie\\/(\\d+)");
             if (movie.getTmdbId() == 0 && !tmdb.isEmpty()) {
               LOGGER.debug("| Found TMDB id: {}", tmdb);
-              movie.setImdbId(tmdb);
+              movie.setTmdbId(MetadataUtil.parseInt(tmdb, 0));
             }
           }
           catch (IOException e) {
