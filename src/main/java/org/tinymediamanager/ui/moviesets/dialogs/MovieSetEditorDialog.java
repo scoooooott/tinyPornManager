@@ -273,7 +273,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()), ImageType.LOGO,
-                  movieList.getDefaultArtworkScrapers(), lblLogo, null, null, MediaType.MOVIE);
+                  movieList.getDefaultArtworkScrapers(), lblLogo, null, null, MediaType.MOVIE_SET);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
@@ -293,7 +293,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()),
-                  ImageType.CLEARLOGO, movieList.getDefaultArtworkScrapers(), lblClearlogo, null, null, MediaType.MOVIE);
+                  ImageType.CLEARLOGO, movieList.getDefaultArtworkScrapers(), lblClearlogo, null, null, MediaType.MOVIE_SET);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
@@ -314,7 +314,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()), ImageType.BANNER,
-                  movieList.getDefaultArtworkScrapers(), lblBanner, null, null, MediaType.MOVIE);
+                  movieList.getDefaultArtworkScrapers(), lblBanner, null, null, MediaType.MOVIE_SET);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
@@ -338,7 +338,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
               ImageChooserDialog dialog = new ImageChooserDialog(MovieSetEditorDialog.this, new HashMap<>(movieSetToEdit.getIds()),
-                  ImageType.CLEARART, movieList.getDefaultArtworkScrapers(), lblClearart, null, null, MediaType.MOVIE);
+                  ImageType.CLEARART, movieList.getDefaultArtworkScrapers(), lblClearart, null, null, MediaType.MOVIE_SET);
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
               dialog.setVisible(true);
             }
