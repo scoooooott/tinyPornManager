@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.converter;
 import java.util.Locale;
 
 import org.jdesktop.beansbinding.Converter;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaRating;
 
 /**
@@ -25,19 +26,20 @@ import org.tinymediamanager.core.entities.MediaRating;
  *
  * @author Manuel Laggner
  */
-public class RatingConverter extends Converter<MediaRating, String> {
+public class RatingConverter<T extends MediaEntity> extends Converter<T, String> {
   private Locale locale = Locale.getDefault();
 
   @Override
-  public String convertForward(MediaRating arg0) {
+  public String convertForward(T arg0) {
     if (arg0 != null) {
-      return String.format(locale, "%.1f / %,d", arg0.getRating(), arg0.getMaxValue());
+      MediaRating rating = arg0.getRating();
+      return String.format(locale, "%.1f / %,d", rating.getRating(), rating.getMaxValue());
     }
     return "";
   }
 
   @Override
-  public MediaRating convertReverse(String arg0) {
+  public T convertReverse(String arg0) {
     return null;
   }
 }

@@ -40,8 +40,8 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -292,11 +292,10 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, panelRatingStars, starRaterBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<TvShowEpisodeSelectionModel, MediaRating> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty
-        .create("selectedTvShowEpisode.rating");
-    AutoBinding<TvShowEpisodeSelectionModel, MediaRating, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    BeanProperty<TvShowEpisodeSelectionModel, MediaEntity> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShowEpisode");
+    AutoBinding<TvShowEpisodeSelectionModel, MediaEntity, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_6, lblRating, jLabelBeanProperty);
-    autoBinding_5.setConverter(new RatingConverter());
+    autoBinding_5.setConverter(new RatingConverter<>());
     autoBinding_5.bind();
     //
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty
