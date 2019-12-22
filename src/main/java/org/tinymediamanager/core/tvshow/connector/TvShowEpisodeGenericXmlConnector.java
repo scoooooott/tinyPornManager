@@ -674,7 +674,13 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
     transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
-    transformer.setOutputProperty(ORACLE_IS_STANDALONE, "yes");
+    // not supported in all JVMs
+    try {
+      transformer.setOutputProperty(ORACLE_IS_STANDALONE, "yes");
+    }
+    catch (Exception ignored) {
+      // okay, seems we're not on OracleJDK, OPenJDK or AdopOpenJDK
+    }
     transformer.setOutputProperty(OutputKeys.METHOD, "xml");
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
