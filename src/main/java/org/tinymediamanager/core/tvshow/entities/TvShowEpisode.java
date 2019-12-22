@@ -584,9 +584,26 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * download the specified type of artwork for this episode
+   *
+   * @param type
+   *          the chosen artwork type to be downloaded
+   */
+  public void downloadArtwork(MediaFileType type) {
+    switch (type) {
+      case THUMB:
+        writeThumbImage();
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  /**
    * Write thumb image.
    */
-  public void writeThumbImage() {
+  private void writeThumbImage() {
     String thumbUrl = getArtworkUrl(MediaFileType.THUMB);
     if (StringUtils.isNotBlank(thumbUrl)) {
       boolean firstImage = false;

@@ -392,7 +392,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeletePoster = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeletePoster.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeletePoster.addActionListener(e -> lblPoster.clearImage());
+        btnDeletePoster.addActionListener(e -> {
+          lblPoster.clearImage();
+          tfPoster.setText("");
+        });
         details1Panel.add(btnDeletePoster, "cell 8 0");
 
         details1Panel.add(lblPoster, "cell 8 1 1 6, grow");
@@ -515,7 +518,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteFanart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteFanart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteFanart.addActionListener(e -> lblFanart.clearImage());
+        btnDeleteFanart.addActionListener(e -> {
+          lblFanart.clearImage();
+          tfFanart.setText("");
+        });
         details1Panel.add(btnDeleteFanart, "cell 8 8");
 
         details1Panel.add(lblFanart, "cell 8 9 1 4,grow");
@@ -684,7 +690,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteClearLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteClearLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteClearLogo.addActionListener(e -> lblClearlogo.clearImage());
+        btnDeleteClearLogo.addActionListener(e -> {
+          lblClearlogo.clearImage();
+          tfClearLogo.setText("");
+        });
         artworkPanel.add(btnDeleteClearLogo, "cell 0 0");
 
         lblClearlogo = new ImageLabel();
@@ -712,7 +721,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteBanner = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteBanner.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteBanner.addActionListener(e -> lblBanner.clearImage());
+        btnDeleteBanner.addActionListener(e -> {
+          lblBanner.clearImage();
+          tfBanner.setText("");
+        });
         artworkPanel.add(btnDeleteBanner, "cell 2 0 3 1");
 
         lblBanner = new ImageLabel();
@@ -740,7 +752,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteClearart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteClearart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteClearart.addActionListener(e -> lblClearart.clearImage());
+        btnDeleteClearart.addActionListener(e -> {
+          lblClearart.clearImage();
+          tfClearArt.setText("");
+        });
         artworkPanel.add(btnDeleteClearart, "cell 2 3");
 
         lblClearart = new ImageLabel();
@@ -768,7 +783,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteLogo.addActionListener(e -> lblLogo.clearImage());
+        btnDeleteLogo.addActionListener(e -> {
+          lblLogo.clearImage();
+          tfLogo.setText("");
+        });
         artworkPanel.add(btnDeleteLogo, "cell 0 3");
 
         lblLogo = new ImageLabel();
@@ -795,7 +813,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteKeyart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteKeyart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteKeyart.addActionListener(e -> lblKeyart.clearImage());
+        btnDeleteKeyart.addActionListener(e -> {
+          lblKeyart.clearImage();
+          tfKeyart.setText("");
+        });
         artworkPanel.add(btnDeleteKeyart, "cell 4 3");
 
         lblKeyart = new ImageLabel();
@@ -822,7 +843,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        btnDeleteThumb.addActionListener(e -> {
+          lblThumb.clearImage();
+          tfThumb.setText("");
+        });
         artworkPanel.add(btnDeleteThumb, "cell 0 6");
 
         lblThumb = new ImageLabel();
@@ -849,7 +873,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
         JButton btnDeleteCharacterart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteCharacterart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteCharacterart.addActionListener(e -> lblCharacterart.clearImage());
+        btnDeleteCharacterart.addActionListener(e -> {
+          lblCharacterart.clearImage();
+          tfCharacterart.setText("");
+        });
         artworkPanel.add(btnDeleteCharacterart, "cell 2 6");
 
         lblCharacterart = new ImageLabel();
@@ -1083,142 +1110,16 @@ public class TvShowEditorDialog extends TmmDialog {
         tvShowToEdit.setCertification((MediaCertification) certification);
       }
 
-      // POSTER
-      if (StringUtils.isBlank(lblPoster.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.POSTER))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.POSTER);
-      }
-      else if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
-        tvShowToEdit.downloadArtwork(MediaFileType.POSTER);
-      }
-      else if (StringUtils.isEmpty(tfPoster.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.POSTER);
-      }
-
-      // FANART
-      if (StringUtils.isBlank(lblFanart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.FANART))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.FANART);
-      }
-      else if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
-        tvShowToEdit.downloadArtwork(MediaFileType.FANART);
-      }
-      else if (StringUtils.isEmpty(tfFanart.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.FANART);
-      }
-
-      // BANNER
-      if (StringUtils.isBlank(lblBanner.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.BANNER))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.BANNER);
-      }
-      else if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
-        tvShowToEdit.downloadArtwork(MediaFileType.BANNER);
-      }
-      else if (StringUtils.isEmpty(tfBanner.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.BANNER);
-      }
-
-      // LOGO
-      if (StringUtils.isBlank(lblLogo.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.LOGO))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.LOGO);
-      }
-      else if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.LOGO))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
-        tvShowToEdit.downloadArtwork(MediaFileType.LOGO);
-      }
-      else if (StringUtils.isEmpty(tfLogo.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.LOGO);
-      }
-
-      // CLEARLOGO
-      if (StringUtils.isBlank(lblClearlogo.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARLOGO))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.CLEARLOGO);
-      }
-      else if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
-        tvShowToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
-      }
-      else if (StringUtils.isEmpty(tfClearLogo.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARLOGO);
-      }
-
-      // CLEARART
-      if (StringUtils.isBlank(lblClearart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARART))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.CLEARART);
-      }
-      else if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
-        tvShowToEdit.downloadArtwork(MediaFileType.CLEARART);
-      }
-      else if (StringUtils.isEmpty(tfClearArt.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.CLEARART);
-      }
-
-      // THUMB
-      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.THUMB))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.THUMB))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
-        tvShowToEdit.downloadArtwork(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isEmpty(tfThumb.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.THUMB);
-      }
-
-      // CHARACTERART
-      if (StringUtils.isBlank(lblCharacterart.getImagePath())
-          && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.CHARACTERART))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.CHARACTERART);
-      }
-      else if (StringUtils.isNotEmpty(tfCharacterart.getText())
-          && !tfCharacterart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.CHARACTERART))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfCharacterart.getText(), MediaFileType.CHARACTERART);
-        tvShowToEdit.downloadArtwork(MediaFileType.CHARACTERART);
-      }
-      else if (StringUtils.isEmpty(tfCharacterart.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.CHARACTERART);
-      }
-
-      // KEYART
-      if (StringUtils.isBlank(lblKeyart.getImagePath()) && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(MediaFileType.KEYART))) {
-        // artwork has been explicitly deleted
-        tvShowToEdit.deleteMediaFiles(MediaFileType.KEYART);
-      }
-      else if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(tvShowToEdit.getArtworkUrl(MediaFileType.KEYART))) {
-        // artwork url and textfield do not match -> redownload
-        tvShowToEdit.setArtworkUrl(tfKeyart.getText(), MediaFileType.KEYART);
-        tvShowToEdit.downloadArtwork(MediaFileType.KEYART);
-      }
-      else if (StringUtils.isEmpty(tfKeyart.getText())) {
-        // remove the artwork url
-        tvShowToEdit.removeArtworkUrl(MediaFileType.KEYART);
-      }
+      // process artwork
+      processArtwork(MediaFileType.POSTER, lblPoster, tfPoster);
+      processArtwork(MediaFileType.FANART, lblFanart, tfFanart);
+      processArtwork(MediaFileType.LOGO, lblLogo, tfLogo);
+      processArtwork(MediaFileType.CLEARLOGO, lblClearlogo, tfClearLogo);
+      processArtwork(MediaFileType.BANNER, lblBanner, tfBanner);
+      processArtwork(MediaFileType.CLEARART, lblClearart, tfClearArt);
+      processArtwork(MediaFileType.THUMB, lblThumb, tfThumb);
+      processArtwork(MediaFileType.CHARACTERART, lblCharacterart, tfCharacterart);
+      processArtwork(MediaFileType.KEYART, lblKeyart, tfKeyart);
 
       // set extrafanarts
       if (extrafanarts != null && (extrafanarts.size() != tvShowToEdit.getExtraFanartUrls().size()
@@ -1334,6 +1235,24 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       setVisible(false);
+    }
+  }
+
+  private void processArtwork(MediaFileType type, ImageLabel imageLabel, JTextField textField) {
+    if (StringUtils.isAllBlank(imageLabel.getImagePath(), imageLabel.getImageUrl())
+        && StringUtils.isNotBlank(tvShowToEdit.getArtworkFilename(type))) {
+      // artwork has been explicitly deleted
+      tvShowToEdit.deleteMediaFiles(type);
+    }
+
+    if (StringUtils.isNotEmpty(textField.getText()) && !textField.getText().equals(tvShowToEdit.getArtworkUrl(type))) {
+      // artwork url and textfield do not match -> redownload
+      tvShowToEdit.setArtworkUrl(textField.getText(), type);
+      tvShowToEdit.downloadArtwork(type);
+    }
+    else if (StringUtils.isEmpty(textField.getText())) {
+      // remove the artwork url
+      tvShowToEdit.removeArtworkUrl(type);
     }
   }
 

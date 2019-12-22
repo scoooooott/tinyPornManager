@@ -362,7 +362,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        btnDeleteThumb.addActionListener(e -> {
+          lblThumb.clearImage();
+          tfThumb.setText("");
+        });
         detailsPanel.add(btnDeleteThumb, "cell 9 0");
 
         lblThumb = new ImageLabel();
@@ -784,27 +787,32 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDirectors(directors);
       episodeToEdit.setWriters(writers);
 
-      // THUMB
-      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(episodeToEdit.getArtworkFilename(MediaFileType.THUMB))) {
-        // artwork has been explicitly deleted
-        episodeToEdit.deleteMediaFiles(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isNotEmpty(tfThumb.getText()) && (!tfThumb.getText().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
-          || StringUtils.isBlank(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)))) {
-        // artwork url and textfield do not match -> redownload
-        episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
-        episodeToEdit.writeThumbImage();
-      }
-      else if (StringUtils.isBlank(tfThumb.getText())) {
-        // remove the artwork url
-        episodeToEdit.removeArtworkUrl(MediaFileType.THUMB);
-      }
+      // process artwork
+      processArtwork(MediaFileType.THUMB, lblThumb, tfThumb);
 
       episodeToEdit.setTags(tags);
       episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
 
       setVisible(false);
+    }
+  }
+
+  private void processArtwork(MediaFileType type, ImageLabel imageLabel, JTextField textField) {
+    if (StringUtils.isAllBlank(imageLabel.getImagePath(), imageLabel.getImageUrl())
+        && StringUtils.isNotBlank(episodeToEdit.getArtworkFilename(type))) {
+      // artwork has been explicitly deleted
+      episodeToEdit.deleteMediaFiles(type);
+    }
+
+    if (StringUtils.isNotEmpty(textField.getText()) && !textField.getText().equals(episodeToEdit.getArtworkUrl(type))) {
+      // artwork url and textfield do not match -> redownload
+      episodeToEdit.setArtworkUrl(textField.getText(), type);
+      episodeToEdit.downloadArtwork(type);
+    }
+    else if (StringUtils.isEmpty(textField.getText())) {
+      // remove the artwork url
+      episodeToEdit.removeArtworkUrl(type);
     }
   }
 

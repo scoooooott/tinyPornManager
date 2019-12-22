@@ -123,9 +123,6 @@ public class MovieSetInformationPanel extends JPanel {
     };
 
     selectionModel.addPropertyChangeListener(propertyChangeListener);
-
-    // select first entry
-
   }
 
   private void initComponents() {
