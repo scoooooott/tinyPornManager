@@ -202,6 +202,8 @@ public class MovieSetArtworkHelper {
         }
       }
     }
+
+    movieSet.saveToDb();
   }
 
   /**
