@@ -48,7 +48,7 @@ public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     for (TvShowEpisode episode : episodes) {
-      if (invert ^ !episode.hasSubtitles()) {
+      if (invert ^ !episode.getHasSubtitles()) {
         return true;
       }
     }

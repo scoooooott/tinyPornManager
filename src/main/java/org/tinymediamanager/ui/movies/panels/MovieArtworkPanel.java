@@ -24,7 +24,6 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.panels.ImagePanel;
 
@@ -49,7 +48,12 @@ public class MovieArtworkPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      if (source instanceof MovieSelectionModel || (source instanceof Movie && MEDIA_FILES.equals(property))) {
+
+      if (source.getClass() != MovieSelectionModel.class) {
+        return;
+      }
+
+      if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property)) {
         synchronized (mediaFiles) {
           mediaFiles.clear();
           for (MediaFile mediafile : selectionModel.getSelectedMovie().getMediaFiles()) {

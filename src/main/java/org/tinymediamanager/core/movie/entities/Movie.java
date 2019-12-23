@@ -150,8 +150,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private String                                spokenLanguages            = "";
   @JsonProperty
-  private boolean                               subtitles                  = false;
-  @JsonProperty
   private String                                country                    = "";
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -542,12 +540,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /** has movie local (or any mediafile inline) subtitles? */
-  public boolean hasSubtitles() {
-    if (this.subtitles) {
-      return true; // local ones found
-    }
-
-    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+  public boolean getHasSubtitles() {
+    if (!getMediaFiles(MediaFileType.SUBTITLE).isEmpty()) {
       return true;
     }
 
@@ -558,11 +552,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     return false;
-  }
-
-  /** set subtitles */
-  public void setSubtitles(boolean sub) {
-    this.subtitles = sub;
   }
 
   /**
@@ -2328,6 +2317,46 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     if (dirty) {
       firePropertyChange(TRAILER, null, trailer);
+    }
+  }
+
+  @Override
+  protected void fireAddedEventForMediaFile(MediaFile mediaFile) {
+    super.fireAddedEventForMediaFile(mediaFile);
+
+    // movie related media file types
+    switch (mediaFile.getType()) {
+      case TRAILER:
+        firePropertyChange(TRAILER, false, true);
+        break;
+
+      case SUBTITLE:
+        firePropertyChange("hasSubtitle", false, true);
+        break;
+
+      default:
+        break;
+
+    }
+  }
+
+  @Override
+  protected void fireRemoveEventForMediaFile(MediaFile mediaFile) {
+    super.fireRemoveEventForMediaFile(mediaFile);
+
+    // movie related media file types
+    switch (mediaFile.getType()) {
+      case TRAILER:
+        firePropertyChange(TRAILER, true, false);
+        break;
+
+      case SUBTITLE:
+        firePropertyChange("hasSubtitle", true, false);
+        break;
+
+      default:
+        break;
+
     }
   }
 }

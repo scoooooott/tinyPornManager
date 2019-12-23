@@ -78,11 +78,11 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
         mediaFile.gatherMediaInformation(forceUpdate);
         if (mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
           Movie movie = (Movie) mediaEntity;
-          movie.setSubtitles(true);
+          movie.firePropertyChange("hasSubtitles", false, true);
         }
         if (mediaEntity instanceof TvShowEpisode && mediaFile.hasSubtitles()) {
           TvShowEpisode episode = (TvShowEpisode) mediaEntity;
-          episode.setSubtitles(true);
+          episode.firePropertyChange("hasSubtitles", false, true);
         }
       }
     }

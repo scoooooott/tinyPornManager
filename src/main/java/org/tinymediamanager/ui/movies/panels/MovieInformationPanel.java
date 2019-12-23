@@ -1,7 +1,7 @@
 package org.tinymediamanager.ui.movies.panels;
 
-import static org.tinymediamanager.core.Constants.FANART;
-import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -160,30 +160,18 @@ public class MovieInformationPanel extends JPanel {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
       // react on selection of a movie and change of a movie
-      if (source instanceof MovieSelectionModel) {
-        MovieSelectionModel selectionModel = (MovieSelectionModel) source;
-        Movie movie = selectionModel.getSelectedMovie();
 
-        if (movie != null && movie != selectionModel.initialMovie) {
-          setPoster(movie);
-          setFanart(movie);
-          panelLogos.setMediaInformationSource(movie);
-        }
+      if (source.getClass() != MovieSelectionModel.class) {
+        return;
       }
-      if (source instanceof Movie || source instanceof MediaFile) {
-        // if there is another change in the movie/media file, just update the logos to be sure
-        Movie movie = movieSelectionModel.getSelectedMovie();
-        if (movie != null) {
-          panelLogos.setMediaInformationSource(movie);
-        }
-      }
-      if (source instanceof Movie && FANART.equals(property)) {
-        Movie movie = (Movie) source;
-        setFanart(movie);
-      }
-      if (source instanceof Movie && POSTER.equals(property)) {
-        Movie movie = (Movie) source;
+
+      MovieSelectionModel selectionModel = (MovieSelectionModel) source;
+      Movie movie = selectionModel.getSelectedMovie();
+
+      if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         setPoster(movie);
+        setFanart(movie);
+        panelLogos.setMediaInformationSource(movie);
       }
     };
 

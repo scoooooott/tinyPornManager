@@ -921,7 +921,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
           case SUBTITLE:
             if (!mf.isPacked()) {
-              movie.setSubtitles(true);
               movie.addToMediaFiles(mf);
             }
             break;

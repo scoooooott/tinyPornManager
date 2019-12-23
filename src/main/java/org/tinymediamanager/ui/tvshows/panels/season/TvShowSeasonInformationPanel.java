@@ -16,11 +16,8 @@
 package org.tinymediamanager.ui.tvshows.panels.season;
 
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
-import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
-import static org.tinymediamanager.core.Constants.THUMB;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
@@ -105,18 +102,16 @@ public class TvShowSeasonInformationPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a tv show
-      if (source instanceof TvShowSeasonSelectionModel
-          || (source instanceof TvShowSeason && (MEDIA_FILES.equals(propertyChangeEvent.getPropertyName())
-              || ADDED_EPISODE.equals(propertyChangeEvent.getPropertyName()) || REMOVED_EPISODE.equals(propertyChangeEvent.getPropertyName())))) {
-        TvShowSeason selectedSeason;
-        if (source instanceof TvShowSeasonSelectionModel) {
-          TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;
-          selectedSeason = model.getSelectedTvShowSeason();
-        }
-        else {
-          selectedSeason = (TvShowSeason) source;
-        }
+      // react on selection/change of a seson
+      if (source.getClass() != TvShowSeasonSelectionModel.class) {
+        return;
+      }
+
+      TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;
+      TvShowSeason selectedSeason = model.getSelectedTvShowSeason();
+
+      if ("selectedTvShowSeason".equals(property) || MEDIA_FILES.equals(property) || ADDED_EPISODE.equals(property)
+          || REMOVED_EPISODE.equals(property)) {
         setPoster(selectedSeason);
         setBanner(selectedSeason);
         setThumb(selectedSeason);
@@ -128,22 +123,11 @@ public class TvShowSeasonInformationPanel extends JPanel {
           tableEpisodes.adjustColumnPreferredWidths(6);
         }
         catch (Exception ignored) {
+          // nothing to do here
         }
         finally {
           episodeEventList.getReadWriteLock().writeLock().unlock();
         }
-      }
-      if ((source instanceof TvShowSeason && POSTER.equals(property))) {
-        TvShowSeason season = (TvShowSeason) source;
-        setPoster(season);
-      }
-      if ((source instanceof TvShowSeason && BANNER.equals(property))) {
-        TvShowSeason season = (TvShowSeason) source;
-        setBanner(season);
-      }
-      if ((source instanceof TvShowSeason && THUMB.equals(property))) {
-        TvShowSeason season = (TvShowSeason) source;
-        setThumb(season);
       }
     };
     tvShowSeasonSelectionModel.addPropertyChangeListener(propertyChangeListener);

@@ -24,7 +24,6 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.panels.ImagePanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -49,7 +48,11 @@ public class TvShowArtworkPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      if (source instanceof TvShowSelectionModel || (source instanceof TvShow && MEDIA_FILES.equals(property))) {
+
+      if (source.getClass() != TvShowSelectionModel.class) {
+        return;
+      }
+      if ("selectedTvShow".equals(property) || MEDIA_FILES.equals(property)) {
         synchronized (mediaFiles) {
           mediaFiles.clear();
           for (MediaFile mediafile : new ArrayList<>(selectionModel.getSelectedTvShow().getMediaFiles())) {

@@ -68,15 +68,17 @@ public class MovieMediaInformationPanel extends MediaInformationPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
+
+      if (source.getClass() != MovieSelectionModel.class) {
+        return;
+      }
+
       // react on selection of a movie and change of media files
-      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)
-          || MEDIA_SOURCE.equals(property)) {
+      if ("selectedMovie".equals(property) || MEDIA_INFORMATION.equals(property) || MEDIA_SOURCE.equals(property) || MEDIA_FILES.equals(property)) {
         fillVideoStreamDetails();
         buildAudioStreamDetails();
         buildSubtitleStreamDetails();
-      }
-      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-          || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
+
         // this does sometimes not work. simply wrap it
         try {
           mediaFileEventList.getReadWriteLock().writeLock().lock();

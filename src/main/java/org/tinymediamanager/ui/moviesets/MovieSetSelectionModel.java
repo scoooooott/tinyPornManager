@@ -44,7 +44,12 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    */
   public MovieSetSelectionModel() {
     selectedMovieSet = initalMovieSet;
-    propertyChangeListener = this::firePropertyChange;
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedMovieSet) {
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+      }
+    };
   }
 
   public void setTreeTable(TmmTreeTable treeTable) {

@@ -1453,7 +1453,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     boolean subtitles = true;
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.hasSubtitles()) {
+      if (!episode.getHasSubtitles()) {
         subtitles = false;
         break;
       }
@@ -2167,5 +2167,25 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
     return filesize;
+  }
+
+  @Override
+  protected void fireAddedEventForMediaFile(MediaFile mediaFile) {
+    super.fireAddedEventForMediaFile(mediaFile);
+
+    // TV show related media file types
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      firePropertyChange(TRAILER, false, true);
+    }
+  }
+
+  @Override
+  protected void fireRemoveEventForMediaFile(MediaFile mediaFile) {
+    super.fireRemoveEventForMediaFile(mediaFile);
+
+    // TV show related media file types
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      firePropertyChange(TRAILER, true, false);
+    }
   }
 }

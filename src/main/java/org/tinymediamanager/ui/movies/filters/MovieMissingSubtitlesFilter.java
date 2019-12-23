@@ -44,7 +44,7 @@ public class MovieMissingSubtitlesFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    return !movie.hasSubtitles();
+    return !movie.getHasSubtitles();
   }
 
   @Override

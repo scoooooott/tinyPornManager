@@ -757,7 +757,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  private void fireAddedEventForMediaFile(MediaFile mediaFile) {
+  protected void fireAddedEventForMediaFile(MediaFile mediaFile) {
     switch (mediaFile.getType()) {
       case FANART:
         firePropertyChange(FANART, null, mediaFile.getPath());
@@ -814,7 +814,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  private void fireRemoveEventForMediaFile(MediaFile mediaFile) {
+  protected void fireRemoveEventForMediaFile(MediaFile mediaFile) {
     switch (mediaFile.getType()) {
       case FANART:
         firePropertyChange(FANART, null, "");

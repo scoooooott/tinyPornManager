@@ -285,7 +285,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     /*
      * subtitles
      */
-    col = new Column(BUNDLE.getString("tmm.subtitles"), "subtitles", movie -> getCheckIcon(movie.hasSubtitles()), ImageIcon.class);
+    col = new Column(BUNDLE.getString("tmm.subtitles"), "subtitles", movie -> getCheckIcon(movie.getHasSubtitles()), ImageIcon.class);
     col.setColumnComparator(imageComparator);
     col.setHeaderIcon(IconManager.SUBTITLES);
     col.setColumnResizeable(false);

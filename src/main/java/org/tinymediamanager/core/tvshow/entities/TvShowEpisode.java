@@ -135,8 +135,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonProperty
   private boolean                            watched               = false;
   @JsonProperty
-  private boolean                            subtitles             = false;
-  @JsonProperty
   private boolean                            isDvdOrder            = false;
   @JsonProperty
   private UUID                               tvShowId              = null;
@@ -290,7 +288,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     disc = source.disc;
     watched = source.watched;
-    subtitles = source.subtitles;
 
     for (Person actor : source.getActors()) {
       actors.add(new Person(actor));
@@ -1136,12 +1133,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return mediaFilesWithSubtitles;
   }
 
-  public boolean hasSubtitles() {
-    if (this.subtitles) {
-      return true; // can be set in GUI
-    }
-
-    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+  public boolean getHasSubtitles() {
+    if (!getMediaFiles(MediaFileType.SUBTITLE).isEmpty()) {
       return true;
     }
 
@@ -1152,10 +1145,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return false;
-  }
-
-  public void setSubtitles(boolean sub) {
-    this.subtitles = sub;
   }
 
   public int getRuntimeFromMediaFiles() {
@@ -1636,6 +1625,26 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
         mf.removeStackingInformation();
       }
+    }
+  }
+
+  @Override
+  protected void fireAddedEventForMediaFile(MediaFile mediaFile) {
+    super.fireAddedEventForMediaFile(mediaFile);
+
+    // episode related media file types
+    if (mediaFile.getType() == MediaFileType.SUBTITLE) {
+      firePropertyChange("hasSubtitle", false, true);
+    }
+  }
+
+  @Override
+  protected void fireRemoveEventForMediaFile(MediaFile mediaFile) {
+    super.fireRemoveEventForMediaFile(mediaFile);
+
+    // episode related media file types
+    if (mediaFile.getType() == MediaFileType.SUBTITLE) {
+      firePropertyChange("hasSubtitle", true, false);
     }
   }
 }

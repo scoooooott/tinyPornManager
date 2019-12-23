@@ -68,7 +68,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
 
     propertyChangeListener = evt -> {
       if (evt.getSource() == selectedMovie) {
-        firePropertyChange(evt);
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
       }
       if (evt.getSource() instanceof IMovieUIFilter) {
         firePropertyChange("filterChanged", null, evt.getSource());

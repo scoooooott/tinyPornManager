@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
-import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -36,7 +37,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
@@ -108,27 +108,18 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a movie
-      if (source instanceof TvShowEpisodeSelectionModel) {
-        TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
-        setSeasonPoster(model.getSelectedTvShowEpisode());
-        setEpisodeThumb(model.getSelectedTvShowEpisode());
-        panelLogos.setMediaInformationSource(model.getSelectedTvShowEpisode());
+      // react on selection/change of an episode
+      if (source.getClass() != TvShowEpisodeSelectionModel.class) {
+        return;
       }
-      if (source instanceof TvShowEpisode || source instanceof MediaFile) {
-        // if there is another change in the episode/media file, just update the logos to be sure
-        TvShowEpisode episode = tvShowEpisodeSelectionModel.getSelectedTvShowEpisode();
-        if (episode != null) {
-          panelLogos.setMediaInformationSource(episode);
-        }
-      }
-      if (source instanceof TvShowEpisode && THUMB.equals(property)) {
-        TvShowEpisode episode = (TvShowEpisode) source;
-        setEpisodeThumb(episode);
-      }
-      if (source instanceof TvShowEpisode && Constants.SEASON_POSTER.equals(property)) {
-        TvShowEpisode episode = (TvShowEpisode) source;
+
+      TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
+      TvShowEpisode episode = model.getSelectedTvShowEpisode();
+
+      if ("selectedTvShowEpisode".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         setSeasonPoster(episode);
+        setEpisodeThumb(episode);
+        panelLogos.setMediaInformationSource(episode);
       }
     };
 

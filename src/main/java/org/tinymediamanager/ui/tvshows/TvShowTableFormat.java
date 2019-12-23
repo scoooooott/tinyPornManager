@@ -274,7 +274,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     }
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = ((TvShowEpisode) userObject);
-      return getCheckIcon(episode.hasSubtitles());
+      return getCheckIcon(episode.getHasSubtitles());
     }
     return null;
   }

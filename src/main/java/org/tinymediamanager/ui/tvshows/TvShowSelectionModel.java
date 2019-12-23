@@ -45,7 +45,12 @@ public class TvShowSelectionModel extends AbstractModelObject {
    */
   public TvShowSelectionModel() {
     selectedTvShow = initalTvShow;
-    propertyChangeListener = this::firePropertyChange;
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedTvShow) {
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+      }
+    };
   }
 
   public void setTreeTable(TmmTreeTable treeTable) {

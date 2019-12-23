@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
@@ -79,12 +78,15 @@ public class TvShowCastPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a tv show
-      if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
-          || (source.getClass() == TvShow.class && ACTORS.equals(property))) {
+      // react on selection/change of a TV show
+      if (source.getClass() != TvShowSelectionModel.class) {
+        return;
+      }
+
+      if ("selectedTvShow".equals(property) || ACTORS.equals(property)) {
         actorEventList.clear();
         actorEventList.addAll(selectionModel.getSelectedTvShow().getActors());
-        if (actorEventList.size() > 0) {
+        if (!actorEventList.isEmpty()) {
           tableActors.getSelectionModel().setSelectionInterval(0, 0);
         }
       }

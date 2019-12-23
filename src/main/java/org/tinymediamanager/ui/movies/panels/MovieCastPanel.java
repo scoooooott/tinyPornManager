@@ -30,7 +30,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
@@ -96,19 +95,23 @@ public class MovieCastPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
+
+      if (source.getClass() != MovieSelectionModel.class) {
+        return;
+      }
+
       // react on selection of a movie and change of a movie
-      if ((source instanceof MovieSelectionModel && "selectedMovie".equals(property)) || (source instanceof Movie && ACTORS.equals(property))) {
+      if ("selectedMovie".equals(property) || ACTORS.equals(property)) {
         actorEventList.clear();
         actorEventList.addAll(selectionModel.getSelectedMovie().getActors());
-        if (actorEventList.size() > 0) {
+        if (!actorEventList.isEmpty()) {
           tableActors.getSelectionModel().setSelectionInterval(0, 0);
         }
       }
-      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-          || (source.getClass() == Movie.class && PRODUCERS.equals(property))) {
+      if ("selectedMovie".equals(property) || PRODUCERS.equals(property)) {
         producerEventList.clear();
         producerEventList.addAll(selectionModel.getSelectedMovie().getProducers());
-        if (producerEventList.size() > 0) {
+        if (!producerEventList.isEmpty()) {
           tableProducer.getSelectionModel().setSelectionInterval(0, 0);
         }
       }

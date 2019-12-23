@@ -29,7 +29,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.PersonTable;
@@ -84,12 +83,16 @@ public class TvShowEpisodeCastPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of an episode
-      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
-          || (source.getClass() == TvShowEpisode.class && ACTORS.equals(property))) {
+      // react on selection/change of an episode
+
+      if (source.getClass() != TvShowEpisodeSelectionModel.class) {
+        return;
+      }
+
+      if ("selectedTvShowEpisode".equals(property) || ACTORS.equals(property)) {
         actorEventList.clear();
         actorEventList.addAll(selectionModel.getSelectedTvShowEpisode().getActors());
-        if (actorEventList.size() > 0) {
+        if (!actorEventList.isEmpty()) {
           tableActors.getSelectionModel().setSelectionInterval(0, 0);
         }
       }
