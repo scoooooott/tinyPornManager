@@ -65,7 +65,7 @@ public class MediaFileHelper {
   private static final Logger      LOGGER             = LoggerFactory.getLogger(MediaFileHelper.class);
 
   public static final List<String> PLEX_EXTRA_FOLDERS = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes", "deletedscenes",
-      "featurettes", "interviews", "scenes", "shorts");
+      "featurettes", "interviews", "scenes", "shorts", "other");
 
   public static final List<String> SUPPORTED_ARTWORK_FILETYPES;
   public static final List<String> DEFAULT_VIDEO_FILETYPES;
@@ -212,7 +212,7 @@ public class MediaFileHelper {
         || foldername.equalsIgnoreCase("extras") // preferred folder name
         || foldername.equalsIgnoreCase("extra") // preferred folder name
         || (!parentparent.isEmpty() && parentparent.matches("extra[s]?")) // extras folder a level deeper
-        || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
+        || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short|other)$") // Plex (w/o trailer)
         || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
     {
       return MediaFileType.EXTRA;
