@@ -36,7 +36,7 @@ public class NamedFilesizeRenderer implements NamedRenderer {
     // part 2 is the unit (default = G)
     float value = 0;
     if (o instanceof Number) {
-      value = ((Number) o).intValue() / (1024 * 1024 * 1024f);
+      value = ((Number) o).intValue() / (1000 * 1000 * 1000f);
     }
     format += " G";
 

@@ -477,7 +477,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getFilesizeInMegabytes() {
     DecimalFormat df = new DecimalFormat("#0.00");
-    return df.format(filesize / (1024.0 * 1024.0)) + " M";
+    return df.format(filesize / (1000.0 * 1000.0)) + " M";
   }
 
   public MediaFileType getType() {

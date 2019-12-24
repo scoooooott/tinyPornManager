@@ -216,7 +216,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
       for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
         size += mf.getFilesize();
       }
-      return (int) (size / (1024.0 * 1024.0)) + " M";
+      return (int) (size / (1000.0 * 1000.0)) + " M";
     }, String.class);
     col.setColumnComparator(fileSizeComparator);
     col.setHeaderIcon(IconManager.FILE_SIZE);

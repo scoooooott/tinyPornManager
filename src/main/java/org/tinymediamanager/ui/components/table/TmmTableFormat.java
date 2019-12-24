@@ -280,10 +280,10 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
           float value = Float.parseFloat(matcher.group(1));
           String unit = matcher.group(2);
           if ("G".equals(unit)) {
-            size = (long) (value * 1024 * 1024 * 1024);
+            size = (long) (value * 1000 * 1000 * 1000);
           }
           else if ("M".equals(unit)) {
-            size = (long) (value * 1024 * 1024);
+            size = (long) (value * 1000 * 1000);
           }
           else {
             size = (long) value;

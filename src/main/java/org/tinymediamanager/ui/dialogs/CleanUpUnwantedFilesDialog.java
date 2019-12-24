@@ -158,7 +158,7 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
 
     String getFilesizeInKilobytes() {
       DecimalFormat df = new DecimalFormat("#0.00");
-      return df.format(filesize / (1024.0)) + " kB";
+      return df.format(filesize / (1000.0)) + " kB";
     }
 
     String getExtension() {

@@ -301,10 +301,10 @@ public class DownloadTask extends TmmTask {
   }
 
   private String formatBytesForOutput(long bytes) {
-    return String.format("%.2fM", (double) bytes / (1024d * 1024d));
+    return String.format("%.2fM", (double) bytes / (1000d * 1000d));
   }
 
   private String formatSpeedForOutput(double speed) {
-    return String.format("%.2fkB/s", speed / 1024d);
+    return String.format("%.2fkB/s", speed / 1000d);
   }
 }

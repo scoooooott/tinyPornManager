@@ -219,7 +219,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
         size += mf.getFilesize();
       }
 
-      return (int) (size / (1024.0 * 1024.0)) + " M";
+      return (int) (size / (1000.0 * 1000.0)) + " M";
     }
     return "";
   }
