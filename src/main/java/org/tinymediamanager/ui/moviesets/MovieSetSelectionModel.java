@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
  * @author Manuel Laggner
  */
 public class MovieSetSelectionModel extends AbstractModelObject {
-  private static final String    SELECTED_MOVIE_SET = "selectedMovieSet";
+  public static final String     SELECTED_MOVIE_SET = "selectedMovieSet";
 
   private MovieSet               selectedMovieSet;
   private MovieSet               initalMovieSet     = new MovieSet("");

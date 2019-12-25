@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.moviesets.panels;
 
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.ui.moviesets.MovieSetSelectionModel.SELECTED_MOVIE_SET;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -108,7 +109,7 @@ public class MovieSetInformationPanel extends JPanel {
 
       MovieSetSelectionModel model = (MovieSetSelectionModel) source;
 
-      if ("selectedMovieSet".equals(property) || MEDIA_FILES.equals(property) || "movies".equals(property)) {
+      if (SELECTED_MOVIE_SET.equals(property) || MEDIA_FILES.equals(property) || "movies".equals(property)) {
         movieEventList.clear();
         movieEventList.addAll(selectionModel.getSelectedMovieSet().getMovies());
 
