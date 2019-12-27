@@ -45,7 +45,8 @@ x TMDB: clean search string (move The, ... to the front on search)
 x fixed scraping with MovieMeter.nl scraper (API changes on their side)
 x updated the download missing artwork task to do a "light" cleanup of artwork files according to the settings
 x the rating in the details panel now updates correctly
-
+x fixed Youtube downloader
+x fixed Mpdb.tv scaper
 
 Version 3.0.5
 =======================

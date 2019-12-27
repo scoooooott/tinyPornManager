@@ -29,12 +29,12 @@ public class Release {
   public String countryNameEn;
 
   @SerializedName("year")
-  public Object year;
+  public int    year;
 
   @SerializedName("certification")
-  public Object certification;
+  public String certification;
 
   @SerializedName("description")
-  public Object description;
+  public String description;
 
 }

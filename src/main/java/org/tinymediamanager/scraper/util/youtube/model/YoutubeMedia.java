@@ -16,12 +16,9 @@
 package org.tinymediamanager.scraper.util.youtube.model;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -37,7 +34,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Represents the parsed media information from the Youtube Parser for a given Youtube link
+ * Represents the parsed media information from the Youtube Parser for a given
+ * Youtube link
  *
  * @author Wolfgang Janes
  */
@@ -115,7 +113,8 @@ public class YoutubeMedia {
   }
 
   /**
-   * Parsing the Youtube Webpage from the given YoutubeID to get all the information for downloading audio and video
+   * Parsing the Youtube Webpage from the given YoutubeID to get all the
+   * information for downloading audio and video
    *
    * @throws IOException
    *           any {@link IOException occurred while downloading}
@@ -147,10 +146,19 @@ public class YoutubeMedia {
 
     // Get Video Details
     JsonNode cfgArgs = objectMapper.readTree(page.substring(start + CONFIG_START.length(), end)).get("args");
-    videoDetails.setDetails(objectMapper.readTree(cfgArgs.get("player_response").asText()).get("videoDetails"));
+    ObjectNode player_response = (ObjectNode) objectMapper.readTree(cfgArgs.get("player_response").asText());
+    ObjectNode streamingData = (ObjectNode) player_response.get("streamingData");
+
+    videoDetails.setDetails(player_response.get("videoDetails"));
 
     // Get Video / Audio Formats
-    ArrayNode jsonAdaptiveFormats = parseFormats(cfgArgs.get("adaptive_fmts").asText());
+    ArrayNode jsonFormats = (ArrayNode) streamingData.get("formats");
+    ArrayNode jsonAdaptiveFormats = (ArrayNode) streamingData.get("adaptiveFormats");
+
+    if (jsonFormats != null) {
+      jsonAdaptiveFormats.addAll(jsonFormats);
+    }
+
     formats = new ArrayList<>(jsonAdaptiveFormats.size() + 1);
 
     for (int i = 0; i < jsonAdaptiveFormats.size(); i++) {
@@ -173,43 +181,5 @@ public class YoutubeMedia {
         LOGGER.error("Error while getting video and audioformats");
       }
     }
-  }
-
-  private ArrayNode parseFormats(String formats) {
-    ArrayNode array = new ObjectMapper().createArrayNode();
-    String splitBy = formats.substring(0, formats.indexOf('=') + 1);
-    Pattern pattern = Pattern.compile("&" + splitBy + "|^" + splitBy + "|," + splitBy);
-    for (String s : pattern.split(formats)) {
-      if (StringUtils.isNotBlank(s)) {
-        ObjectNode params = (splitQuery(splitBy + s));
-        if (params.has("url")) {
-          array.add(params);
-        }
-      }
-    }
-    return array;
-  }
-
-  private ObjectNode splitQuery(String requestString) {
-    ObjectNode queryPairs = new ObjectMapper().createObjectNode();
-    try {
-      if (requestString != null) {
-        String[] pairs = requestString.split("&");
-
-        for (String pair : pairs) {
-          String[] commaPairs = pair.split(",");
-          for (String commaPair : commaPairs) {
-            int idx = commaPair.indexOf('=');
-            if (idx > 0) {
-              queryPairs.put(URLDecoder.decode(commaPair.substring(0, idx), "UTF-8"), URLDecoder.decode(commaPair.substring(idx + 1), "UTF-8"));
-            }
-          }
-        }
-      }
-    }
-    catch (Exception e) {
-      LOGGER.error("Cannot split request string: {}", requestString);
-    }
-    return queryPairs;
   }
 }
