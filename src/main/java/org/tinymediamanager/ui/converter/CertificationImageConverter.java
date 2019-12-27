@@ -40,7 +40,7 @@ public class CertificationImageConverter extends Converter<MediaCertification, I
   @Override
   public Icon convertForward(MediaCertification cert) {
     // we have no certification here
-    if (cert == MediaCertification.UNKNOWN) {
+    if (cert == null || cert == MediaCertification.UNKNOWN) {
       return null;
     }
     // try to find an image for this genre

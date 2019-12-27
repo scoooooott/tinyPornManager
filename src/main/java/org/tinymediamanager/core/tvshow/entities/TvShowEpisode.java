@@ -1394,7 +1394,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public MediaCertification getCertification() {
-    return getTvShow().getCertification();
+    // we do not have a dedicated certification for the episode
+    return null;
   }
 
   @Override
