@@ -1536,7 +1536,7 @@ public class MediaFileHelper {
       mediaFile.setAspectRatio(arf);
     }
     catch (Exception e) {
-      LOGGER.warn("Could not parse AspectRatio {}", ar);
+      LOGGER.trace("Could not parse AspectRatio {}", ar);
     }
 
     String mvc = getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "MultiView_Count");

@@ -39,6 +39,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.filters.ITvShowUIFilter;
+import org.tinymediamanager.ui.tvshows.filters.TvShowAspectRatioFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowCastFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowDatasourceFilter;
@@ -124,6 +125,7 @@ public class TvShowFilterDialog extends TmmDialog {
 
         addFilter(new TvShowVideoFormatFilter(), panelMediaData);
         addFilter(new TvShowVideoCodecFilter(), panelMediaData);
+        addFilter(new TvShowAspectRatioFilter(), panelMediaData);
         addFilter(new TvShowFrameRateFilter(), panelMediaData);
         addFilter(new TvShowVideoContainerFilter(), panelMediaData);
         addFilter(new TvShowAudioCodecFilter(), panelMediaData);
