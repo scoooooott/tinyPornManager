@@ -820,12 +820,12 @@ public class MovieList extends AbstractModelObject {
   private void updateMediaInformationLists(Movie movie) {
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
-      if (videoCodecsInMovies.add(mf.getVideoCodec())) {
+      if (StringUtils.isNotBlank(mf.getVideoCodec()) && videoCodecsInMovies.add(mf.getVideoCodec())) {
         firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsInMovies);
       }
 
       // frame rate
-      if (frameRatesInMovies.add(mf.getFrameRate())) {
+      if (mf.getFrameRate() > 0 && frameRatesInMovies.add(mf.getFrameRate())) {
         firePropertyChange(Constants.FRAME_RATE, null, frameRatesInMovies);
       }
 
@@ -837,7 +837,7 @@ public class MovieList extends AbstractModelObject {
 
       // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        if (audioCodecsInMovies.add(audio.getCodec())) {
+        if (StringUtils.isNotBlank(audio.getCodec()) && audioCodecsInMovies.add(audio.getCodec())) {
           firePropertyChange(Constants.AUDIO_CODEC, null, audioCodecsInMovies);
         }
       }

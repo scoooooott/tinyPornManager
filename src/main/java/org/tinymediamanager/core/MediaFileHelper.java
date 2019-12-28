@@ -168,7 +168,7 @@ public class MediaFileHelper {
   public static List<String> getVideoFormats() {
     List<String> videoFormats = new ArrayList<>();
 
-    Field[] declaredFields = MediaFile.class.getDeclaredFields();
+    Field[] declaredFields = MediaFileHelper.class.getDeclaredFields();
     for (Field field : declaredFields) {
       if (Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("VIDEO_FORMAT_") && !field.isAnnotationPresent(Deprecated.class)) {
         try {
