@@ -128,7 +128,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       add(lblTagsT, "cell 0 3");
 
       lblTags = new JLabel("");
-      add(lblTags, "cell 2 3");
+      add(lblTags, "cell 2 3, wmin 0");
     }
     {
       JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$

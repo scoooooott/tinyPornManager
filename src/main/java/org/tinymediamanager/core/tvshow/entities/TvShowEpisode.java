@@ -705,6 +705,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       setRatings(newRatings);
     }
 
+    if (config.contains(TvShowEpisodeScraperMetadataConfig.TAGS)) {
+      setTags(metadata.getTags());
+    }
+
     if (ScraperMetadataConfig.containsAnyCast(config)) {
       if (config.contains(TvShowEpisodeScraperMetadataConfig.ACTORS)) {
         setActors(metadata.getCastMembers(Person.Type.ACTOR));

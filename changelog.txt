@@ -24,6 +24,7 @@ Version 3.1
 + added an option to delete artwork from within the editor (movies, TV shows, episodes) #367
 + (Movies) added a new export template: DarkTemplate (thx @maxburon)
 + added a aspect ratio filter for common aspect ratios #644
++ IMDB: added option to scrape keywords (tags) #666
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678

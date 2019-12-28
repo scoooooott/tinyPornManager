@@ -928,6 +928,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       setGenres(metadata.getGenres());
     }
 
+    if (config.contains(TvShowScraperMetadataConfig.TAGS)) {
+      setTags(metadata.getTags());
+    }
+
     if (config.contains(TvShowScraperMetadataConfig.SEASON_NAMES)) {
       // only take _non common_ season names
       for (Map.Entry<Integer, String> entry : metadata.getSeasonNames().entrySet()) {
