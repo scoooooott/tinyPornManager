@@ -74,6 +74,7 @@ public enum MediaLanguages {
   uk("Українська"),
   vi("Tiếng Việt"),
   zh("华语"),
+  zh_TW("臺灣華語"),
   none("-");
   //@formatter:on
 
