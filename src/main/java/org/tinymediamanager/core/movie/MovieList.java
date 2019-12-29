@@ -348,6 +348,14 @@ public class MovieList extends AbstractModelObject {
         json = movieMap.get(uuid);
         Movie movie = movieObjectReader.readValue(json);
         movie.setDbId(uuid);
+
+        // sanity check: only movies with a video file are valid
+        if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          // no video file? drop it
+          LOGGER.info("movie \"{}\" without video file - dropping", movie.getTitle());
+          movieMap.remove(uuid);
+        }
+
         // for performance reasons we add movies directly
         movieList.add(movie);
       }

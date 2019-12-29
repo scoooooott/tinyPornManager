@@ -147,7 +147,8 @@ public class TvShowList extends AbstractModelObject {
   /**
    * get all specified trailer scrapers.
    *
-   * @param providerIds the scrapers
+   * @param providerIds
+   *          the scrapers
    * @return the trailer providers
    */
   public List<MediaScraper> getTrailerScrapers(List<String> providerIds) {
@@ -351,12 +352,12 @@ public class TvShowList extends AbstractModelObject {
         tvShowList.add(tvShow);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding TV show json string: " + e.getMessage());
+        LOGGER.warn("problem decoding TV show json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt TV show: {}", json);
         tvShowMap.remove(uuid);
       }
     }
-    LOGGER.info("found " + tvShowList.size() + " TV shows in database");
+    LOGGER.info("found {} TV shows in database", tvShowList.size());
   }
 
   /**
@@ -375,6 +376,13 @@ public class TvShowList extends AbstractModelObject {
         json = episodesMap.get(uuid);
         TvShowEpisode episode = episodeObjectReader.readValue(json);
         episode.setDbId(uuid);
+
+        // sanity check: only episodes with a video file are valid
+        if (episode.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          // no video file? drop it
+          LOGGER.info("episode \"S{}E{}\" without video file - dropping", episode.getSeason(), episode.getEpisode());
+          episodesMap.remove(uuid);
+        }
 
         // check for orphaned episodes
         boolean found = false;
@@ -395,7 +403,7 @@ public class TvShowList extends AbstractModelObject {
         }
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding episode json string: " + e.getMessage());
+        LOGGER.warn("problem decoding episode json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt episode: {}", json);
         episodesMap.remove(uuid);
       }
@@ -406,7 +414,7 @@ public class TvShowList extends AbstractModelObject {
       episodesMap.remove(uuid);
     }
 
-    LOGGER.info("found " + episodeCount + " episodes in database");
+    LOGGER.info("found {} episodes in database", episodeCount);
   }
 
   void initDataAfterLoading() {
