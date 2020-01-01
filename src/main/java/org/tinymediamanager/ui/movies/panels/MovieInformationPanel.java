@@ -1,7 +1,9 @@
 package org.tinymediamanager.ui.movies.panels;
 
+import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -168,9 +170,15 @@ public class MovieInformationPanel extends JPanel {
       MovieSelectionModel selectionModel = (MovieSelectionModel) source;
       Movie movie = selectionModel.getSelectedMovie();
 
-      if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
+      if ("selectedMovie".equals(property) || POSTER.equals(property)) {
         setPoster(movie);
+      }
+
+      if ("selectedMovie".equals(property) || FANART.equals(property)) {
         setFanart(movie);
+      }
+
+      if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         panelLogos.setMediaInformationSource(movie);
       }
     };
@@ -184,7 +192,7 @@ public class MovieInformationPanel extends JPanel {
           TmmUIHelper.openFile(mf.getFileAsPath());
         }
         catch (Exception ex) {
-          LOGGER.error("open file", e);
+          LOGGER.error("open file", ex);
           MessageManager.instance
               .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
         }

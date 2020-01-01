@@ -16,8 +16,11 @@
 package org.tinymediamanager.ui.tvshows.panels.season;
 
 import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.THUMB;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_BANNER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_POSTER;
 import static org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType.SEASON_THUMB;
@@ -110,12 +113,20 @@ public class TvShowSeasonInformationPanel extends JPanel {
       TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;
       TvShowSeason selectedSeason = model.getSelectedTvShowSeason();
 
+      if ("selectedTvShowSeason".equals(property) || POSTER.equals(property)) {
+        setPoster(selectedSeason);
+      }
+
+      if ("selectedTvShowSeason".equals(property) || BANNER.equals(property)) {
+        setBanner(selectedSeason);
+      }
+
+      if ("selectedTvShowSeason".equals(property) || THUMB.equals(property)) {
+        setThumb(selectedSeason);
+      }
+
       if ("selectedTvShowSeason".equals(property) || MEDIA_FILES.equals(property) || ADDED_EPISODE.equals(property)
           || REMOVED_EPISODE.equals(property)) {
-        setPoster(selectedSeason);
-        setBanner(selectedSeason);
-        setThumb(selectedSeason);
-
         try {
           episodeEventList.getReadWriteLock().writeLock().lock();
           episodeEventList.clear();

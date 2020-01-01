@@ -17,6 +17,9 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -116,9 +119,15 @@ public class TvShowEpisodeInformationPanel extends JPanel {
       TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
       TvShowEpisode episode = model.getSelectedTvShowEpisode();
 
-      if ("selectedTvShowEpisode".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
+      if ("selectedTvShowEpisode".equals(property) || POSTER.equals(property) || SEASON_POSTER.equals(property)) {
         setSeasonPoster(episode);
+      }
+
+      if ("selectedTvShowEpisode".equals(property) || THUMB.equals(property)) {
         setEpisodeThumb(episode);
+      }
+
+      if ("selectedTvShowEpisode".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         panelLogos.setMediaInformationSource(episode);
       }
     };

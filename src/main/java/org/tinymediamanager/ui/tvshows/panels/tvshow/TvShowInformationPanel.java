@@ -15,8 +15,11 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.FANART;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -106,10 +109,19 @@ public class TvShowInformationPanel extends JPanel {
       TvShowSelectionModel model = (TvShowSelectionModel) source;
       TvShow tvShow = model.getSelectedTvShow();
 
-      if ("selectedTvShow".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
-        setFanart(tvShow);
+      if ("selectedTvShow".equals(property) || POSTER.equals(property)) {
         setPoster(tvShow);
+      }
+
+      if ("selectedTvShow".equals(property) || FANART.equals(property)) {
+        setFanart(tvShow);
+      }
+
+      if ("selectedTvShow".equals(property) || BANNER.equals(property)) {
         setBanner(tvShow);
+      }
+
+      if ("selectedTvShow".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         panelLogos.setMediaInformationSource(tvShow);
       }
     };
