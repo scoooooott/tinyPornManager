@@ -232,7 +232,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         continue;
       }
 
-      int season = -1;
+      int season = Integer.MIN_VALUE;
       try {
         if (mf.getFilename().startsWith("season-specials")) {
           season = 0;
@@ -248,13 +248,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           }
 
           // try to parse out the season from the parent
-          if (season == -1) {
+          if (season == Integer.MIN_VALUE) {
             matcher = SEASON_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
             if (matcher.matches()) {
               season = Integer.parseInt(matcher.group(1));
             }
           }
-          if (season == -1) {
+          if (season == Integer.MIN_VALUE) {
             matcher = SEASON_FOLDER_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
             if (matcher.matches()) {
               season = Integer.parseInt(matcher.group(1));
@@ -263,7 +263,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
         }
 
-        if (season == -1) {
+        if (season == Integer.MIN_VALUE) {
           throw new IllegalStateException("did not find a season number");
         }
         else {

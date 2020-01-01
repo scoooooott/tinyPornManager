@@ -401,9 +401,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       if ("all".equals(image.season)) {
         ma.setSeason(0);
       }
-      else {
+      else if (StringUtils.isNotBlank(image.season)) {
         try {
-          ma.setSeason(Integer.valueOf(image.season));
+          ma.setSeason(Integer.parseInt(image.season));
         }
         catch (Exception e) {
           LOGGER.trace("could not parse int: {}", e.getMessage());

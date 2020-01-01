@@ -916,6 +916,12 @@ public class Utils {
       return false;
     }
 
+    // check if the file exists; if it does not exist any more we won't need to delete it ;)
+    if (!Files.exists(file)) {
+      // this file is no more here - just return "true"
+      return true;
+    }
+
     // backup
     try {
       // create path
