@@ -89,11 +89,7 @@ public abstract class MediaFilesPanel extends JPanel {
   }
 
   public void adjustColumns() {
-    try {
-      TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
-    }
-    catch (Exception ignored) {
-    }
+    TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
   }
 
   /**

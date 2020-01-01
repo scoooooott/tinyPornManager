@@ -102,12 +102,7 @@ public class TrailerPanel extends JPanel {
       if ("selectedMovie".equals(property) || "trailer".equals(property)) {
         trailerEventList.clear();
         trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
-        try {
-          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
-        }
-        catch (Exception ignored) {
-          // nothing to do here
-        }
+        TableColumnResizer.adjustColumnPreferredWidths(table, 7);
       }
     };
 
@@ -133,12 +128,7 @@ public class TrailerPanel extends JPanel {
       if ("selectedTvShow".equals(property) || "trailer".equals(property)) {
         trailerEventList.clear();
         trailerEventList.addAll(tvShowSelectionModel.getSelectedTvShow().getTrailer());
-        try {
-          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
-        }
-        catch (Exception ignored) {
-          // nothing to do here
-        }
+        TableColumnResizer.adjustColumnPreferredWidths(table, 7);
       }
     };
 

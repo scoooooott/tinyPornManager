@@ -458,11 +458,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       for (MovieRenamerExample example : exampleEventList) {
         example.createExample(movie);
       }
-      try {
-        TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
-      }
-      catch (Exception ignored) {
-      }
+      TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
     }
     else {
       lblExample.setText(BUNDLE.getString("Settings.movie.renamer.nomovie")); //$NON-NLS-1$
