@@ -323,18 +323,6 @@
 			<id>gitlab-maven</id>
 			<url>https://gitlab.com/api/v4/projects/9945251/packages/maven</url>
 		</repository>
-		<repository>
-			<!-- we STILL have to use some non-mavenized libraries -->
-			<id>tinymediamanager-3rd-party</id>
-			<name>tinyMediaManager 3rd-party releases</name>
-			<url>https://tinymediamanager.github.io/artifacts/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
 	<distributionManagement>
 		<repository>
