@@ -1,18 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.tinymediamanager</groupId>
-		<artifactId>tmm-parent</artifactId>
-		<version>3.3</version>
-	</parent>
-
+	<groupId>org.tinymediamanager</groupId>
 	<artifactId>tinyMediaManager</artifactId>
 	<version>3.1-SNAPSHOT</version>
+
 	<name>tinyMediaManager</name>
+	<description>a media management tool written in Java</description>
+	<url>https://www.tinymediamanager.org/</url>
+	<inceptionYear>2012</inceptionYear>
+	<organization>
+		<name>tinyMediaManager</name>
+		<url>https://www.tinymediamanager.org</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>mlaggner</id>
+			<name>Manuel Laggner</name>
+			<email>manuel@tinymediamanager.org</email>
+			<roles>
+				<role>owner</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Vienna</timezone>
+		</developer>
+		<developer>
+			<id>myron</id>
+			<name>Myron Boyle</name>
+			<email>myron@tinymediamanager.org</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Vienna</timezone>
+			<properties>
+				<picUrl>http://www.gravatar.com/avatar/c9f1f8250a29405f5cbbab246a025fb4</picUrl>
+			</properties>
+		</developer>
+	</developers>
+
+	<mailingLists>
+		<mailingList>
+			<name>Kodi-Forum</name>
+			<post>http://forum.kodi.tv/forumdisplay.php?fid=204</post>
+		</mailingList>
+	</mailingLists>
+
+	<prerequisites>
+		<maven>3.2.5</maven>
+	</prerequisites>
 
 	<scm>
 		<url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
@@ -20,12 +67,44 @@
 		<developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
+	<ciManagement>
+		<system>GitLab CI</system>
+		<url>https://gitlab.com/tinyMediaManager/${project.artifactId}/pipelines</url>
+	</ciManagement>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<skipTests>true</skipTests><!-- to override on command line -->
+
+		<jar.version>3.2.0</jar.version>
+		<surefire.version>3.0.0-M3</surefire.version>
+		<compiler.version>3.8.1</compiler.version>
+		<enforcer.version>3.0.0-M2</enforcer.version>
+		<animal-sniffer.version>1.17</animal-sniffer.version>
+		<wagon-webdav-jackrabbit.version>3.0.0</wagon-webdav-jackrabbit.version>
 		<okhttp.version>3.12.1</okhttp.version>
+		<slf4j.version>1.7.30</slf4j.version>
+		<release.version>2.5.3</release.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.11.1</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -40,6 +119,11 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -168,7 +252,26 @@
 		<dependency>
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
 			<artifactId>loop-fs-iso-impl</artifactId>
-			<version>2.0.2-TMM</version>
+			<version>2.0.2-TMM-2</version>
+			<exclusions>
+				<exclusion>
+					<!-- we use JCL-over-slf4j -->
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.github.stephenc.java-iso-tools</groupId>
+			<artifactId>loop-fs-udf-impl</artifactId>
+			<version>2.0.2-TMM-2</version>
+			<exclusions>
+				<exclusion>
+					<!-- we use JCL-over-slf4j -->
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.nanohttpd</groupId>
@@ -215,6 +318,35 @@
 
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/9945251/packages/maven</url>
+		</repository>
+		<repository>
+			<!-- we STILL have to use some non-mavenized libraries -->
+			<id>tinymediamanager-3rd-party</id>
+			<name>tinyMediaManager 3rd-party releases</name>
+			<url>https://tinymediamanager.github.io/artifacts/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/9945251/packages/maven</url>
+		</repository>
+		<snapshotRepository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/9945251/packages/maven</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<resources>
 			<resource>
@@ -238,9 +370,80 @@
 				<filtering>false</filtering>
 			</testResource>
 		</testResources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${release.version}</version>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<useReleaseProfile>false</useReleaseProfile>
+						<releaseProfiles>release</releaseProfiles>
+						<goals>deploy</goals>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
-				<!-- get SVN/GIT revision numbers -->
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.version}</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<debug>true</debug>
+					<debuglevel>lines,vars,source</debuglevel>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.version}</version>
+				<configuration>
+					<skip>${skipTests}</skip>
+					<!-- spawn one jvm per test class per cpu core -->
+					<!-- needed for static settings per test -->
+					<parallel>classes</parallel>
+					<forkCount>1C</forkCount>
+					<threadCount>1</threadCount>
+					<reuseForks>false</reuseForks>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/IT*.java</exclude>
+						<exclude>**/*IT.java</exclude>
+						<exclude>**/*ITCase.java</exclude>
+						<exclude>**/integrationtest/**/*.java</exclude>
+						<exclude>**/integrationtests/**/*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${surefire.version}</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+					<skip>${skipTests}</skip>
+					<includes>
+						<include>**/IT*.java</include>
+						<include>**/*IT.java</include>
+						<include>**/*ITCase.java</include>
+						<include>**/integrationtest/**/*.java</include>
+						<include>**/integrationtests/**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin><!-- get SVN/GIT revision numbers -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.4</version>
@@ -256,8 +459,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<!-- generate a timestamp -->
+			<plugin><!-- generate a timestamp -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>3.0.0</version>
@@ -279,6 +481,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar.version}</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -287,6 +490,9 @@
 							<customClasspathLayout>lib/${artifact.artifactId}.${artifact.extension}
 							</customClasspathLayout>
 							<mainClass>org.tinymediamanager.TinyMediaManager</mainClass>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>splashscreen.png</SplashScreen-Image>
@@ -298,25 +504,9 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<!-- spawn one jvm per test class per cpu core -->
-					<!-- needed for static settings per test -->
-					<parallel>classes</parallel>
-					<forkCount>1C</forkCount>
-					<threadCount>1</threadCount>
-					<reuseForks>false</reuseForks>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<skipITs>true</skipITs><!-- always skip ITs, even when skipTests=false -->
-				</configuration>
-			</plugin>
-			<plugin><!-- override from parent -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
+				<version>${animal-sniffer.version}</version>
 				<configuration>
 					<signature>
 						<groupId>org.codehaus.mojo.signature</groupId>
@@ -325,6 +515,15 @@
 					</signature>
 					<!-- ignoreDependencies>false</ignoreDependencies -->
 				</configuration>
+				<executions>
+					<execution>
+						<id>check-jdk-versions</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<!-- copies our dependencies WITHOUT version number for packaging -->
@@ -339,15 +538,13 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeGroupIds>org.tinymediamanager.plugins</excludeGroupIds>
 							<includeScope>runtime</includeScope>
 							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<!-- call our ant file, since it's too complicated to do our packaging 
+			<plugin><!-- call our ant file, since it's too complicated to do our packaging 
 					solely in maven -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -364,18 +561,35 @@
 				<configuration>
 					<exportAntProperties>true</exportAntProperties>
 					<target>
-						<property name="tmmName" value="${project.artifactId}" />
-						<property name="tmmVersion" value="${project.version}" />
-						<property name="tmmRevision" value="${buildNumber}" />
-						<property name="tmmTimestamp" value="${timestamp}" />
+						<property name="tmmName" value="${project.artifactId}"/>
+						<property name="tmmVersion" value="${project.version}"/>
+						<property name="tmmRevision" value="${buildNumber}"/>
+						<property name="tmmTimestamp" value="${timestamp}"/>
 
 						<ant antfile="${project.basedir}/ant-package.xml">
-							<target name="package-app" />
+							<target name="package-app"/>
 						</ant>
 					</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${enforcer.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.6.0.1398</version>
+			</plugin>
 		</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav-jackrabbit</artifactId>
+				<version>${wagon-webdav-jackrabbit.version}</version>
+			</extension>
+		</extensions>
 	</build>
 
 	<profiles>
@@ -393,8 +607,7 @@
 			<build>
 				<plugins>
 					<!-- skip getting revision number on ci build -->
-					<plugin>
-						<!-- get SVN/GIT revision numbers -->
+					<plugin><!-- get SVN/GIT revision numbers -->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>buildnumber-maven-plugin</artifactId>
 						<version>1.4</version>
@@ -444,6 +657,20 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>net.nicoulaj.maven.plugins</groupId>
+						<artifactId>checksum-maven-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>artifacts</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -451,8 +678,7 @@
 			<id>qa</id>
 			<build>
 				<plugins>
-					<plugin>
-						<!-- skip packaging on QA build -->
+					<plugin><!-- skip packaging on QA build -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
@@ -518,5 +744,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

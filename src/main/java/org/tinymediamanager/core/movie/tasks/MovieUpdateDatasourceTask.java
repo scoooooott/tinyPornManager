@@ -654,7 +654,18 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     // ***************************************************************
-    // third round - now add all the other known files
+    // third round - check for UNKNOWN, if they match a video file name - we might keep them
+    // ***************************************************************
+    for (MediaFile mf : getMediaFiles(mfs, MediaFileType.UNKNOWN)) {
+      for (MediaFile vid : getMediaFiles(mfs, MediaFileType.VIDEO)) {
+        if (mf.getFilename().startsWith(vid.getFilename())) {
+          mf.setType(MediaFileType.DOUBLE_EXT);
+        }
+      }
+    }
+
+    // ***************************************************************
+    // fourth round - now add all the other known files
     // ***************************************************************
     addMediafilesToMovie(movie, mfs);
 
@@ -825,30 +836,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.debug("| parsing video file " + mf.getFilename());
       movie.setMultiMovieDir(true);
 
-      // 3) find additional files, which start with videoFileName
-      // List<MediaFile> existingMediaFiles = new ArrayList<>(movie.getMediaFiles());
-      // List<MediaFile> foundMediaFiles = new ArrayList<>();
-      // for (int i = allFiles.size() - 1; i >= 0; i--) {
-      // Path fileInDir = allFiles.get(i);
-      // if (fileInDir.getFileName().toString().startsWith(basename)) { // need
-      // // toString
-      // // b/c of
-      // // possible
-      // // spaces!!
-      // MediaFile mediaFile = new MediaFile(fileInDir);
-      // if (!existingMediaFiles.contains(mediaFile)) {
-      // if (mediaFile.getType() == MediaFileType.GRAPHIC) {
-      // // same named graphics (unknown, not detected without postfix)
-      // // treated as posters
-      // mediaFile.setType(MediaFileType.POSTER);
-      // }
-      // foundMediaFiles.add(mediaFile);
-      // }
-      // // started with basename, so remove it for others
-      // allFiles.remove(i);
-      // }
-      // }
-      // addMediafilesToMovie(movie, foundMediaFiles);
+      // ***************************************************************
+      // third round - check for UNKNOWN, if they match a video file name - we might keep them
+      // ***************************************************************
+      for (MediaFile unk : getMediaFiles(sameName, MediaFileType.UNKNOWN)) {
+        for (MediaFile vid : getMediaFiles(mfs, MediaFileType.VIDEO)) {
+          if (unk.getFilename().startsWith(vid.getFilename())) {
+            unk.setType(MediaFileType.DOUBLE_EXT);
+          }
+        }
+      }
       addMediafilesToMovie(movie, sameName);
       mfs.removeAll(sameName);
 
@@ -962,6 +959,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case THEME:
           case CHARACTERART:
           case KEYART:
+          case DOUBLE_EXT:
             movie.addToMediaFiles(mf);
             break;
 

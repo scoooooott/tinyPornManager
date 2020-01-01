@@ -58,6 +58,7 @@ public enum MediaFileType {
   VSMETA, // xxx.ext.vsmeta Synology
   THEME, // "theme" files for some skins, like theme.mp3 (or bg video)
   TEXT, // various text infos, like BDinfo.txt or others...
+  DOUBLE_EXT, // the filename startsWith video filename (and added extension), so we keep them...
   UNKNOWN;
   // @formatter:on
 

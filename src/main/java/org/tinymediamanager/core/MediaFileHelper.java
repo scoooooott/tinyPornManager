@@ -51,10 +51,13 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
+import org.tinymediamanager.thirdparty.MediaInfoFile;
 import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
+import com.github.stephenc.javaisotools.loopfs.udf.UDFFileEntry;
+import com.github.stephenc.javaisotools.loopfs.udf.UDFFileSystem;
 
 /**
  * the class {@link MediaFileHelper} is used to extract all unneeded logic/variables from the media file (for lower memory consumption)
@@ -677,8 +680,22 @@ public class MediaFileHelper {
 
     // get media info
     LOGGER.debug("start MediaInfo for {}", mediaFile.getFileAsPath());
-    Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = getMediaInfoSnapshot(mediaFile);
+    if (mediaFile.isISO()) {
+      getMediaInfoSnapshotFromISO(mediaFile);
+    }
+    else {
+      Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = getMediaInfoSnapshot(mediaFile);
+      parseMediainfoSnapshot(mediaFile, miSnapshot);
+    }
+  }
 
+  /**
+   * if you have an MI snapshot prepared, parse it
+   * 
+   * @param mediaFile
+   * @param miSnapshot
+   */
+  public static void parseMediainfoSnapshot(MediaFile mediaFile, Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot) {
     if (miSnapshot == null) {
       // MI could not be opened
       LOGGER.error("error getting MediaInfo for {}", mediaFile.getFilename());
@@ -814,7 +831,13 @@ public class MediaFileHelper {
         String dur = getMediaInfo(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration");
         if (!dur.isEmpty()) {
           try {
-            mediaFile.setDuration((int) (Double.parseDouble(dur) / 1000));
+            double ddur = Double.parseDouble(dur);
+            if (ddur > 10000) {
+              mediaFile.setDuration((int) ddur / 1000);
+            }
+            else {
+              mediaFile.setDuration((int) ddur);
+            }
           }
           catch (NumberFormatException e) {
             mediaFile.setDuration(0);
@@ -858,34 +881,34 @@ public class MediaFileHelper {
    * @return a map with all libmediainfo data
    */
   private static synchronized Map<MediaInfo.StreamKind, List<Map<String, String>>> getMediaInfoSnapshot(MediaFile mediaFile) {
+    Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = null;
+
     // check if we have a snapshot xml
     String xmlFilename = FilenameUtils.getBaseName(mediaFile.getFilename()) + "-mediainfo.xml";
     Path xmlFile = Paths.get(mediaFile.getPath(), xmlFilename);
     if (Files.exists(xmlFile)) {
       try {
         LOGGER.info("Try to parse {}", xmlFile);
-        MediaInfoXMLParser xml = MediaInfoXMLParser.parseXML(xmlFile);
+        MediaInfoXMLParser xml = new MediaInfoXMLParser(xmlFile);
+        List<MediaInfoFile> miFiles = new ArrayList<MediaInfoFile>();
+        miFiles = xml.parseXML();
         // XML has now ALL the files, as mediainfo would have read it.
 
-        // inject the duration into the main file
-        Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = xml.getMainFile().snapshot;
-        injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration",
-            String.valueOf((Math.max(xml.getMainFile().getDuration(), xml.getRuntimeFromDvdFiles())) * 1000)); // in ms
-
-        return miSnapshot;
+        MediaInfoFile mif = miFiles.get(0);
+        if (mif != null) {
+          // since we operate on file basis, there should be only one filled...
+          miSnapshot = mif.getSnapshot();
+          if (!miSnapshot.isEmpty()) {
+            return miSnapshot;
+          }
+        }
       }
       catch (Exception e) {
         LOGGER.warn("Unable to parse " + xmlFile, e);
       }
     }
 
-    // for ISO files we need another logic to extract mediainformation
-    if (mediaFile.isISO()) {
-      return getMediaInfoSnapshotFromISO(mediaFile);
-    }
-
-    Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = null;
-
+    // open mediaInfo directly on file
     try (MediaInfo mediaInfo = new MediaInfo()) {
       if (!mediaInfo.open(mediaFile.getFileAsPath())) {
         LOGGER.error("Mediainfo could not open file: {}", mediaFile.getFileAsPath());
@@ -909,43 +932,125 @@ public class MediaFileHelper {
    *          the media file
    * @return a map with all libmediainfo data
    */
-  private static synchronized Map<MediaInfo.StreamKind, List<Map<String, String>>> getMediaInfoSnapshotFromISO(MediaFile mediaFile) {
-    // try to load and parse the ISO file itself
-    int bufferSize = 64 * 1024;
+  private static synchronized void getMediaInfoSnapshotFromISO(MediaFile mediaFile) {
+    List<MediaInfoFile> miFiles = new ArrayList<MediaInfoFile>();
 
-    try (Iso9660FileSystem image = new Iso9660FileSystem(mediaFile.getFileAsPath().toFile(), true)) {
-      LOGGER.trace("ISO: Open");
-      int dur = 0;
-      long siz = 0L; // accumulated filesize
-      long biggest = 0L;
+    // check if we have a snapshot xml, and load all DVD files from XML
+    String xmlFilename = FilenameUtils.getBaseName(mediaFile.getFilename()) + "-mediainfo.xml";
+    Path xmlFile = Paths.get(mediaFile.getPath(), xmlFilename);
+    if (Files.exists(xmlFile)) {
+      try {
+        LOGGER.info("ISO: try to parse {}", xmlFile);
+        MediaInfoXMLParser xml = new MediaInfoXMLParser(xmlFile);
+        miFiles = xml.parseXML();
+      }
+      catch (Exception e) {
+        LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
+      }
+    }
 
-      Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = null;
+    // No? try parse ISO as DVD directly...
+    if (miFiles.isEmpty()) {
+      int bufferSize = 64 * 1024;
+      try (Iso9660FileSystem image = new Iso9660FileSystem(mediaFile.getFileAsPath().toFile(), true)) {
+        LOGGER.trace("ISO: Open");
 
-      for (Iso9660FileEntry entry : image) {
-        LOGGER.trace("ISO: got entry {}, size : {}", entry.getName(), entry.getSize());
-        siz += entry.getSize();
+        for (Iso9660FileEntry entry : image) {
+          if (entry.getSize() <= 3000) { // small files and folder entries
+            continue;
+          }
+          LOGGER.trace("ISO: got entry {}, size : {}", entry.getName(), entry.getSize());
 
-        if (entry.getSize() <= 5000) { // small files and "." entries
-          continue;
+          MediaFile mf = new MediaFile(Paths.get(mediaFile.getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
+          if (mf.isDiscFile()) { // count all known DVD files!
+
+            try (MediaInfo fileMI = new MediaInfo()) {
+              byte[] fromBuffer = new byte[bufferSize];
+              int fromBufferSize; // The size of the read file buffer
+
+              // Preparing to fill MediaInfo with a buffer
+              fileMI.openBufferInit(entry.getSize(), 0);
+
+              long pos = 0L;
+              // The parsing loop
+              do {
+                // limit read to maxBuffer, or to end of file size (cannot determine file end in stream!!)
+                long toread = pos + bufferSize > entry.getSize() ? entry.getSize() - pos : bufferSize;
+
+                // Reading data somewhere, do what you want for this.
+                fromBufferSize = image.readBytes(entry, pos, fromBuffer, 0, (int) toread);
+                if (fromBufferSize > 0) {
+                  pos += fromBufferSize; // add bytes read to file position
+
+                  // Sending the buffer to MediaInfo
+                  int result = fileMI.openBufferContinue(fromBuffer, fromBufferSize);
+                  if ((result & 8) == 8) { // Status.Finalized
+                    break;
+                  }
+
+                  // Testing if MediaInfo request to go elsewhere
+                  if (fileMI.openBufferContinueGoToGet() != -1) {
+                    pos = fileMI.openBufferContinueGoToGet();
+                    LOGGER.trace("ISO: Seek to {}", pos);
+                    fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
+                  }
+                }
+              } while (fromBufferSize > 0);
+
+              // Finalizing
+              LOGGER.trace("ISO: finalize entry");
+              fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
+
+              MediaInfoFile mif = new MediaInfoFile(entry.getName(), entry.getSize());
+              mif.setSnapshot(fileMI.snapshot());
+              miFiles.add(mif);
+            }
+            // sometimes also an error is thrown
+            catch (Exception | Error e) {
+              LOGGER.error("Mediainfo could not open file STREAM for file {}", entry.getName(), e);
+            }
+          } // end VIDEO
+        } // end entry
+      }
+      catch (Exception e) {
+        LOGGER.error("Mediainfo could not open as ISO9660", e);
+      }
+    }
+
+    // STILL No? try parse ISO as UDF directly, taking the biggest file (for now)...
+    if (miFiles.isEmpty()) {
+      UDFFileEntry biggest = null;
+      UDFFileSystem image = null;
+
+      try {
+        image = new UDFFileSystem(mediaFile.getFileAsPath().toFile(), true);
+        int bufferSize = 64 * 1024;
+        for (UDFFileEntry entry : image) {
+          if (biggest == null || entry.getSize() > biggest.getSize()) {
+            biggest = entry;
+          }
         }
 
-        MediaFile mf = new MediaFile(Paths.get(mediaFile.getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
-        if (mf.getType() == MediaFileType.VIDEO && mf.isDiscFile()) { // would not count video_ts.bup for ex (and not .dat files or other types)
+        LOGGER.trace("ISO: got entry {}, size : {}", biggest.getPath(), biggest.getSize());
+
+        MediaFile mf = new MediaFile(Paths.get(mediaFile.getFileAsPath().toString(), biggest.getPath())); // set ISO as MF path
+        if (mf.isDiscFile()) { // count all known DVD files!
+
           try (MediaInfo fileMI = new MediaInfo()) {
             byte[] fromBuffer = new byte[bufferSize];
             int fromBufferSize; // The size of the read file buffer
 
             // Preparing to fill MediaInfo with a buffer
-            fileMI.openBufferInit(entry.getSize(), 0);
+            fileMI.openBufferInit(biggest.getSize(), 0);
 
             long pos = 0L;
             // The parsing loop
             do {
               // limit read to maxBuffer, or to end of file size (cannot determine file end in stream!!)
-              long toread = pos + bufferSize > entry.getSize() ? entry.getSize() - pos : bufferSize;
+              long toread = pos + bufferSize > biggest.getSize() ? biggest.getSize() - pos : bufferSize;
 
               // Reading data somewhere, do what you want for this.
-              fromBufferSize = image.readBytes(entry, pos, fromBuffer, 0, (int) toread);
+              fromBufferSize = image.readFileContent(biggest, pos, fromBuffer, 0, (int) toread);
               if (fromBufferSize > 0) {
                 pos += fromBufferSize; // add bytes read to file position
 
@@ -959,86 +1064,108 @@ public class MediaFileHelper {
                 if (fileMI.openBufferContinueGoToGet() != -1) {
                   pos = fileMI.openBufferContinueGoToGet();
                   LOGGER.trace("ISO: Seek to {}", pos);
-                  fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
+                  fileMI.openBufferInit(biggest.getSize(), pos); // Informing MediaInfo we have seek
                 }
               }
             } while (fromBufferSize > 0);
 
-            LOGGER.trace("ISO: finalize");
             // Finalizing
+            LOGGER.trace("ISO: finalize entry");
             fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
-            Map<MediaInfo.StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
-
-            int tempDur = MetadataUtil.parseInt(getMediaInfo(tempSnapshot, MediaInfo.StreamKind.General, 0, "Duration"), 0);
-
-            // set ISO snapshot ONCE from biggest video file, so we copy all the resolutions & co
-            if (entry.getSize() > biggest) {
-              biggest = entry.getSize();
-              miSnapshot = tempSnapshot;
-            }
-
-            // set highest duration
-            if (tempDur > dur) {
-              dur = tempDur;
-            }
-            // accumulate durations from every MF (except disc ID files, and for DVD all IFOs
-            // if (isMainDiscIdentifierFile() || getFilename().toLowerCase(Locale.ROOT).endsWith("ifo")) {
-            // LOGGER.debug("do not get duration from disc identifier file.");
-            // }
-            // else {
-            // dur += mf.getDuration();
-            // }
-            LOGGER.trace("ISO: file duration: {} - highest dur {} min", mf.getDurationHHMMSS(), dur / 60);
+            parseMediainfoSnapshot(mediaFile, fileMI.snapshot());
+            return;
           }
           // sometimes also an error is thrown
           catch (Exception | Error e) {
-            LOGGER.error("Mediainfo could not open file STREAM", e);
+            LOGGER.error("Mediainfo could not open file UDF for file {}", biggest.getPath(), e);
           }
         } // end VIDEO
-      } // end entry
-
-      // inject values into the snapshot
-      injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "Duration", String.valueOf(dur));
-      injectValueIntoMediaInfoSnapshot(miSnapshot, MediaInfo.StreamKind.General, 0, "DiscFileSize", String.valueOf(siz));
-
-      LOGGER.trace("ISO: final duration: {}", dur);
-      return miSnapshot;
+      }
+      catch (Exception e) {
+        LOGGER.error("Mediainfo could not open as UDF", e);
+      }
+      finally {
+        if (image != null) {
+          try {
+            image.close();
+          }
+          catch (IOException e) {
+            LOGGER.warn("Could not close image", e);
+          }
+        }
+      }
     }
-    catch (Exception e) {
-      LOGGER.error("Mediainfo could not open STREAM", e);
+
+    // now we have an array with complete MI of all DVD files
+    // lets do our workflow:
+
+    // find the IFO/BDMV with longest duration
+    int dur = 0;
+    MediaInfoFile ifo = null;
+    MediaInfoFile bd = null;
+    for (MediaInfoFile mif : miFiles) {
+      String ext = mif.getFilename().toUpperCase();
+      // DVD
+      if (ext.endsWith("IFO")) {
+        if (mif.getDuration() > dur) {
+          ifo = mif;
+          dur = mif.getDuration();
+        }
+      }
+      // BD
+      if (ext.endsWith("BDMV") || ext.endsWith("MPLS")) {
+        if (mif.getDuration() > dur) {
+          bd = mif;
+          dur = mif.getDuration();
+        }
+      }
     }
 
-    return null;
-  }
-
-  /**
-   * inject a value into the given libmediainfo snapshot. This comes in handy if libmediainfo collects wrong data, but we know the right ones
-   * (especially for ISO files)
-   * 
-   * @param miSnapshot
-   *          the snapshot
-   * @param streamKind
-   *          the stream kind
-   * @param streamNumber
-   *          the stream number
-   * @param key
-   *          the key
-   * @param value
-   *          the value
-   */
-  private static void injectValueIntoMediaInfoSnapshot(Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot,
-      MediaInfo.StreamKind streamKind, int streamNumber, String key, String value) {
-    if (miSnapshot == null) {
+    if (ifo == null && bd == null) {
+      LOGGER.info("Could not find a valid MediaFile.");
       return;
     }
 
-    List<Map<String, String>> stream = miSnapshot.get(streamKind);
-    if (stream != null) {
-      LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
-      if (info != null) {
-        info.put(key, value);
-      }
+    if (bd != null) {
+      LOGGER.debug("Considering file: {}", bd.getFilename());
+      parseMediainfoSnapshot(mediaFile, bd.getSnapshot());
+      mediaFile.setDuration(bd.getDuration());
     }
+    else {
+      LOGGER.debug("Considering file: {}", ifo.getFilename());
+      // now find the associated VOB with same VTS prefix.
+      // VTS_01_0.IFO <-- meta, full audio language
+      // VTS_01_0.VOB <-- menu
+      // VTS_01_1.VOB <-- main video
+      MediaInfoFile vob = null;
+      // check DVD VOBs
+      String prefix = StrgUtils.substr(ifo.getFilename(), "(?i)^(VTS_\\d+).*");
+      if (prefix.isEmpty()) {
+        // check HD-DVD
+        prefix = StrgUtils.substr(ifo.getFilename(), "(?i)^(HV\\d+)I.*");
+      }
+      for (MediaInfoFile mif : miFiles) {
+        // TODO: check HD-DVD
+        if (mif.getFilename().startsWith(prefix) && !mif.getFilename().endsWith("IFO")) {
+          vob = mif;
+          // take last to not get the menu one...
+        }
+      }
+      LOGGER.debug("Considering file: {}", vob.getFilename());
+
+      // now we have the 2 files to consider...
+      parseMediainfoSnapshot(mediaFile, vob.getSnapshot());
+
+      // vob resets wrong duration - take from ifo
+      mediaFile.setDuration(ifo.getDuration());
+      // audio & subtitle streams should be parsed from IFO
+      mediaFile.getAudioStreams().clear();
+      gatherAudioInformation(mediaFile, ifo.getSnapshot());
+      mediaFile.getSubtitles().clear();
+      gatherSubtitleInformation(mediaFile, ifo.getSnapshot());
+    }
+
+    miFiles.clear();
   }
 
   /**
@@ -1055,7 +1182,7 @@ public class MediaFileHelper {
    * @return the media information you asked<br>
    *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b> (never NULL)
    */
-  private static String getMediaInfo(Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot, MediaInfo.StreamKind streamKind,
+  public static String getMediaInfo(Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot, MediaInfo.StreamKind streamKind,
       int streamNumber, String... keys) {
     // prevent NPE
     if (miSnapshot == null) {
@@ -1365,7 +1492,8 @@ public class MediaFileHelper {
           stream.setBitrate(brMult / 1000);
         }
         else {
-          stream.setBitrate(Integer.parseInt(br) / 1000);
+          br = br.replace("kb/s", "");// 448 / 1000 = 0
+          stream.setBitrate(Integer.parseInt(br.trim()) / 1000);
         }
       }
       catch (Exception e) {
@@ -1532,11 +1660,15 @@ public class MediaFileHelper {
     String ar = getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "DisplayAspectRatio", "Display_aspect_ratio", "DisplayAspectRatio/String",
         "DisplayAspectRatio_Origin");
     try {
+      if (ar.equals("16:9")) {
+        ar = "1.78";
+      }
+      ar = ar.replace(":1", ""); // eg 2.40:1
       float arf = Float.parseFloat(ar);
       mediaFile.setAspectRatio(arf);
     }
     catch (Exception e) {
-      LOGGER.trace("Could not parse AspectRatio {}", ar);
+      LOGGER.warn("Could not parse AspectRatio '{}'", ar);
     }
 
     String mvc = getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "MultiView_Count");
