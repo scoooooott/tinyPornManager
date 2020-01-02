@@ -15,8 +15,8 @@
  */
 package org.tinymediamanager.ui.moviesets.panels;
 
-import static org.tinymediamanager.core.Constants.FANART;
-import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.ui.moviesets.MovieSetSelectionModel.SELECTED_MOVIE_SET;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -101,31 +101,24 @@ public class MovieSetInformationPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a movie set
-      if ((source.getClass() == MovieSetSelectionModel.class && "selectedMovieSet".equals(property))
-          || (source.getClass() == MovieSet.class && "movies".equals(property))) {
+      // react on selection/change of a movie set
+
+      if (source.getClass() != MovieSetSelectionModel.class) {
+        return;
+      }
+
+      MovieSetSelectionModel model = (MovieSetSelectionModel) source;
+
+      if (SELECTED_MOVIE_SET.equals(property) || MEDIA_FILES.equals(property) || "movies".equals(property)) {
         movieEventList.clear();
         movieEventList.addAll(selectionModel.getSelectedMovieSet().getMovies());
-      }
-      if (source.getClass() == MovieSetSelectionModel.class && "selectedMovieSet".equals(property)) {
-        MovieSetSelectionModel model = (MovieSetSelectionModel) source;
+
         setFanart(model.getSelectedMovieSet());
         setPoster(model.getSelectedMovieSet());
-      }
-      if ((source instanceof MovieSet && FANART.equals(property))) {
-        MovieSet movieSet = (MovieSet) source;
-        setFanart(movieSet);
-      }
-      if ((source instanceof MovieSet && POSTER.equals(property))) {
-        MovieSet movieSet = (MovieSet) source;
-        setPoster(movieSet);
       }
     };
 
     selectionModel.addPropertyChangeListener(propertyChangeListener);
-
-    // select first entry
-
   }
 
   private void initComponents() {

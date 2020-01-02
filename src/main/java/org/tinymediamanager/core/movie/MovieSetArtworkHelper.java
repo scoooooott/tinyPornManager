@@ -59,7 +59,7 @@ public class MovieSetArtworkHelper {
   private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   private static final List<MediaFileType> SUPPORTED_ARTWORK_TYPES     = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART,
-      MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
+      MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.DISC);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
   private MovieSetArtworkHelper() {
@@ -131,7 +131,9 @@ public class MovieSetArtworkHelper {
       if (artworkFile != null) {
         // copy to the movie set folder
         if (artworkFolder != null) {
-          MediaFile newFile = new MediaFile(createArtworkPathInArtworkFolder(movieSet, type, artworkFile.getExtension()));
+          // clone mf
+          MediaFile newFile = new MediaFile(artworkFile);
+          newFile.setFile(createArtworkPathInArtworkFolder(movieSet, type, artworkFile.getExtension()));
           boolean ok = MovieRenamer.copyFile(artworkFile.getFileAsPath(), newFile.getFileAsPath());
           if (ok) {
             needed.add(newFile);
@@ -147,7 +149,9 @@ public class MovieSetArtworkHelper {
           for (Movie movie : movieSet.getMovies()) {
             try {
               if (!movie.isMultiMovieDir()) {
-                MediaFile newFile = new MediaFile(movie.getPathNIO().resolve(filename));
+                // clone mf
+                MediaFile newFile = new MediaFile(artworkFile);
+                newFile.setFile(movie.getPathNIO().resolve(filename));
                 boolean ok = MovieRenamer.copyFile(artworkFile.getFileAsPath(), newFile.getFileAsPath());
                 if (ok) {
                   needed.add(newFile);
@@ -198,6 +202,8 @@ public class MovieSetArtworkHelper {
         }
       }
     }
+
+    movieSet.saveToDb();
   }
 
   /**

@@ -195,7 +195,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
     this.episodeToEdit = episode;
     this.queueIndex = queueIndex;
     this.queueSize = queueSize;
-    this.ratings = MediaRatingTable.convertRatingMapToEventList(episode.getRatings(), false);
+    this.ratings = GlazedLists.threadSafeList(MediaRatingTable.convertRatingMapToEventList(episode.getRatings(), false));
     MediaRating userMediaRating = episodeToEdit.getRating(MediaRating.USER);
 
     initComponents();
@@ -362,7 +362,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        btnDeleteThumb.addActionListener(e -> {
+          lblThumb.clearImage();
+          tfThumb.setText("");
+        });
         detailsPanel.add(btnDeleteThumb, "cell 9 0");
 
         lblThumb = new ImageLabel();
@@ -784,27 +787,32 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
       episodeToEdit.setDirectors(directors);
       episodeToEdit.setWriters(writers);
 
-      // THUMB
-      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(episodeToEdit.getArtworkFilename(MediaFileType.THUMB))) {
-        // artwork has been explicitly deleted
-        episodeToEdit.deleteMediaFiles(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isNotEmpty(tfThumb.getText()) && (!tfThumb.getText().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
-          || StringUtils.isBlank(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)))) {
-        // artwork url and textfield do not match -> redownload
-        episodeToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
-        episodeToEdit.writeThumbImage();
-      }
-      else if (StringUtils.isBlank(tfThumb.getText())) {
-        // remove the artwork url
-        episodeToEdit.removeArtworkUrl(MediaFileType.THUMB);
-      }
+      // process artwork
+      processArtwork(MediaFileType.THUMB, lblThumb, tfThumb);
 
       episodeToEdit.setTags(tags);
       episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
 
       setVisible(false);
+    }
+  }
+
+  private void processArtwork(MediaFileType type, ImageLabel imageLabel, JTextField textField) {
+    if (StringUtils.isAllBlank(imageLabel.getImagePath(), imageLabel.getImageUrl())
+        && StringUtils.isNotBlank(episodeToEdit.getArtworkFilename(type))) {
+      // artwork has been explicitly deleted
+      episodeToEdit.deleteMediaFiles(type);
+    }
+
+    if (StringUtils.isNotEmpty(textField.getText()) && !textField.getText().equals(episodeToEdit.getArtworkUrl(type))) {
+      // artwork url and textfield do not match -> redownload
+      episodeToEdit.setArtworkUrl(textField.getText(), type);
+      episodeToEdit.downloadArtwork(type);
+    }
+    else if (StringUtils.isEmpty(textField.getText())) {
+      // remove the artwork url
+      episodeToEdit.removeArtworkUrl(type);
     }
   }
 
@@ -840,7 +848,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
   }
 
   private class ScrapeTask extends SwingWorker<Void, Void> {
-    MediaScraper mediaScraper;
+    private MediaScraper  mediaScraper;
+    private MediaMetadata metadata = null;
 
     ScrapeTask(MediaScraper mediaScraper) {
       this.mediaScraper = mediaScraper;
@@ -866,58 +875,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
         LOGGER.info("Scraper metadata with scraper: {}", mediaScraper.getMediaProvider().getProviderInfo().getId());
         LOGGER.info(options.toString());
         LOGGER.info("=====================================================");
-        MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
-
-        // if nothing has been found -> open the search box
-        if (metadata == null || StringUtils.isBlank(metadata.getTitle())) {
-          // message
-          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$
-        }
-        else {
-          tfTitle.setText(metadata.getTitle());
-          taPlot.setText(metadata.getPlot());
-          dpFirstAired.setDate(metadata.getReleaseDate());
-
-          // set aired or dvd ep/season
-          spSeason.setValue(metadata.getSeasonNumber());
-          spEpisode.setValue(metadata.getEpisodeNumber());
-          spDvdSeason.setValue(metadata.getDvdSeasonNumber());
-          spDvdEpisode.setValue(metadata.getDvdEpisodeNumber());
-          spDisplayEpisode.setValue(metadata.getDisplayEpisodeNumber());
-          spDisplaySeason.setValue(metadata.getDisplaySeasonNumber());
-
-          // cast
-          guests.clear();
-          directors.clear();
-          writers.clear();
-
-          // force copy constructors here
-          for (Person member : metadata.getCastMembers()) {
-            switch (member.getType()) {
-              case ACTOR:
-                guests.add(new Person(member));
-                break;
-
-              case DIRECTOR:
-                directors.add(new Person(member));
-                break;
-
-              case WRITER:
-                writers.add(new Person(member));
-                break;
-
-              default:
-                break;
-            }
-          }
-
-          // artwork
-          MediaArtwork ma = metadata.getMediaArt(MediaArtworkType.THUMB).stream().findFirst().orElse(null);
-          if (ma != null) {
-            lblThumb.setImageUrl(ma.getDefaultUrl());
-            tfThumb.setText(ma.getDefaultUrl());
-          }
-        }
+        metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
       }
       catch (ScrapeException e) {
         LOGGER.error("getMetadata", e);
@@ -935,6 +893,69 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
 
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       return null;
+    }
+
+    @Override
+    protected void done() {
+      super.done();
+
+      // if nothing has been found -> open the search box
+      if (metadata == null || StringUtils.isBlank(metadata.getTitle())) {
+        // message
+        JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$
+      }
+      else {
+        tfTitle.setText(metadata.getTitle());
+        tfOriginalTitle.setText(metadata.getOriginalTitle());
+        taPlot.setText(metadata.getPlot());
+        dpFirstAired.setDate(metadata.getReleaseDate());
+
+        // set aired or dvd ep/season
+        spSeason.setValue(metadata.getSeasonNumber());
+        spEpisode.setValue(metadata.getEpisodeNumber());
+        spDvdSeason.setValue(metadata.getDvdSeasonNumber());
+        spDvdEpisode.setValue(metadata.getDvdEpisodeNumber());
+        spDisplayEpisode.setValue(metadata.getDisplayEpisodeNumber());
+        spDisplaySeason.setValue(metadata.getDisplaySeasonNumber());
+
+        ratings.clear();
+        ratings.addAll(MediaRatingTable.convertRatingMapToEventList(metadata.getRatings()));
+
+        tags.clear();
+        tags.addAll(metadata.getTags());
+
+        // cast
+        guests.clear();
+        directors.clear();
+        writers.clear();
+
+        // force copy constructors here
+        for (Person member : metadata.getCastMembers()) {
+          switch (member.getType()) {
+            case ACTOR:
+              guests.add(new Person(member));
+              break;
+
+            case DIRECTOR:
+              directors.add(new Person(member));
+              break;
+
+            case WRITER:
+              writers.add(new Person(member));
+              break;
+
+            default:
+              break;
+          }
+        }
+
+        // artwork
+        MediaArtwork ma = metadata.getMediaArt(MediaArtworkType.THUMB).stream().findFirst().orElse(null);
+        if (ma != null) {
+          lblThumb.setImageUrl(ma.getDefaultUrl());
+          tfThumb.setText(ma.getDefaultUrl());
+        }
+      }
     }
   }
 

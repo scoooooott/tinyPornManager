@@ -15,6 +15,13 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.SwingUtilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -49,12 +56,6 @@ import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
-
-import javax.swing.SwingUtilities;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * The Class MovieScrapeTask.
@@ -217,7 +218,7 @@ public class MovieScrapeTask extends TmmThreadPool {
             }
 
             // scrape trailer if wanted
-            if (ScraperMetadataConfig.containsAnyCast(scraperMetadataConfig)) {
+            if (scraperMetadataConfig.contains(MovieScraperMetadataConfig.TRAILER)) {
               movie.setTrailers(getTrailers(movie, md, trailerScrapers));
               movie.saveToDb();
               movie.writeNFO();
@@ -277,8 +278,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setDataFromOtherOptions(searchAndScrapeOptions);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setImdbId(movie.getImdbId());
-      options.setTmdbId(movie.getTmdbId());
+      options.setIds(metadata.getIds());
       options.setLanguage(MovieModuleManager.SETTINGS.getImageScraperLanguage());
       options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
@@ -319,6 +319,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.MOVIE);
       options.setDataFromOtherOptions(searchAndScrapeOptions);
       options.setMetadata(metadata);
+      options.setIds(metadata.getIds());
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {

@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
 import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.Dimension;
@@ -36,12 +40,11 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -108,27 +111,24 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a movie
-      if (source instanceof TvShowEpisodeSelectionModel) {
-        TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
-        setSeasonPoster(model.getSelectedTvShowEpisode());
-        setEpisodeThumb(model.getSelectedTvShowEpisode());
-        panelLogos.setMediaInformationSource(model.getSelectedTvShowEpisode());
+      // react on selection/change of an episode
+      if (source.getClass() != TvShowEpisodeSelectionModel.class) {
+        return;
       }
-      if (source instanceof TvShowEpisode || source instanceof MediaFile) {
-        // if there is another change in the episode/media file, just update the logos to be sure
-        TvShowEpisode episode = tvShowEpisodeSelectionModel.getSelectedTvShowEpisode();
-        if (episode != null) {
-          panelLogos.setMediaInformationSource(episode);
-        }
+
+      TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
+      TvShowEpisode episode = model.getSelectedTvShowEpisode();
+
+      if ("selectedTvShowEpisode".equals(property) || POSTER.equals(property) || SEASON_POSTER.equals(property)) {
+        setSeasonPoster(episode);
       }
-      if (source instanceof TvShowEpisode && THUMB.equals(property)) {
-        TvShowEpisode episode = (TvShowEpisode) source;
+
+      if ("selectedTvShowEpisode".equals(property) || THUMB.equals(property)) {
         setEpisodeThumb(episode);
       }
-      if (source instanceof TvShowEpisode && Constants.SEASON_POSTER.equals(property)) {
-        TvShowEpisode episode = (TvShowEpisode) source;
-        setSeasonPoster(episode);
+
+      if ("selectedTvShowEpisode".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
+        panelLogos.setMediaInformationSource(episode);
       }
     };
 
@@ -292,11 +292,10 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, panelRatingStars, starRaterBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<TvShowEpisodeSelectionModel, MediaRating> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty
-        .create("selectedTvShowEpisode.rating");
-    AutoBinding<TvShowEpisodeSelectionModel, MediaRating, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    BeanProperty<TvShowEpisodeSelectionModel, MediaEntity> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShowEpisode");
+    AutoBinding<TvShowEpisodeSelectionModel, MediaEntity, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_6, lblRating, jLabelBeanProperty);
-    autoBinding_5.setConverter(new RatingConverter());
+    autoBinding_5.setConverter(new RatingConverter<>());
     autoBinding_5.bind();
     //
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty

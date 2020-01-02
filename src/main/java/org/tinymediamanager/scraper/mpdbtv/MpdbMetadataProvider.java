@@ -15,6 +15,18 @@
  */
 package org.tinymediamanager.scraper.mpdbtv;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -43,23 +55,12 @@ import org.tinymediamanager.scraper.mpdbtv.entities.HDLogo;
 import org.tinymediamanager.scraper.mpdbtv.entities.MovieEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.Poster;
 import org.tinymediamanager.scraper.mpdbtv.entities.Producer;
+import org.tinymediamanager.scraper.mpdbtv.entities.Release;
 import org.tinymediamanager.scraper.mpdbtv.entities.SearchEntity;
 import org.tinymediamanager.scraper.mpdbtv.entities.Studio;
 import org.tinymediamanager.scraper.mpdbtv.entities.Trailer;
 import org.tinymediamanager.scraper.mpdbtv.services.Controller;
 import org.tinymediamanager.scraper.util.ApiKey;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
 
 /**
  * The Class MpdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -102,6 +103,15 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
     if (StringUtils.isAnyBlank(getAboKey(), getUserName())) {
       LOGGER.warn("no username/ABO Key found");
       throw new ScrapeException(new HttpException(401, "Unauthorized"));
+    }
+
+    // due to the poor API of mpdb we have to check if the selected language is FR
+    // or EN.
+    if (!options.getLanguage().getLanguage().toUpperCase().equals("FR")) {
+
+      LOGGER.info("Scraper only supports Language FR");
+      return results;
+
     }
 
     LOGGER.info("========= BEGIN MPDB.tv Scraper Search for Movie: {} ", options.getSearchQuery());
@@ -174,7 +184,7 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
 
     // Rating
     if (scrapeResult.rating != null) {
-      MediaRating rating = new MediaRating(providerInfo.getId());
+      MediaRating rating = new MediaRating("mpdb.tv");
       rating.setRating(scrapeResult.rating.floatValue());
       rating.setVotes(scrapeResult.ratingVotes);
       rating.setMaxValue(10);
@@ -290,6 +300,15 @@ public class MpdbMetadataProvider implements IMovieMetadataProvider {
       mediaArtwork.setPreviewUrl(hdLogo.preview);
       mediaArtwork.setDefaultUrl(hdLogo.original);
       mediaArtwork.setLikes(hdLogo.votes);
+    }
+
+    // Year
+    // Get Year from Release Information for given Language
+    // I see no other possibility :(
+    for (Release release : scrapeResult.releases) {
+      if (release.countryId.equals(mediaScrapeOptions.getLanguage().getLanguage().toUpperCase())) {
+        metadata.setYear(release.year);
+      }
     }
 
     metadata.setId("allocine", scrapeResult.idAllocine);

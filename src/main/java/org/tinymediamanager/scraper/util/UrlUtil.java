@@ -320,7 +320,7 @@ public class UrlUtil {
     Locale l = getLocaleFromLanguage(language);
 
     // @formatter:off
-    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:57.0) Gecko/20100101 Firefox/57.0", hardcodeOS,
+    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:71.0) Gecko/20100101 Firefox/71.0", hardcodeOS,
         System.getProperty("os.name", ""), System.getProperty("os.version", ""), System.getProperty("os.arch", ""), l.getLanguage(), l.getCountry());
     // @formatter:on
   }

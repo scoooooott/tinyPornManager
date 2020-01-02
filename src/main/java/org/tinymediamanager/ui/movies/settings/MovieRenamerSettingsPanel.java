@@ -416,14 +416,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     if (!tfMoviePath.getText().isEmpty() && !MovieRenamer.isFolderPatternUnique(tfMoviePath.getText())) {
       warning = BUNDLE.getString("Settings.renamer.folder.warning");
     }
-    String okFolder = MovieRenamer.isPatternValid(tfMoviePath.getText());
-    if (!okFolder.isEmpty()) {
-      warning = BUNDLE.getString("Settings.movie.renamer.folder.patterninvalid") + "  " + okFolder;
-    }
-    String okFile = MovieRenamer.isPatternValid(tfMovieFilename.getText());
-    if (!okFile.isEmpty()) {
-      warning = BUNDLE.getString("Settings.movie.renamer.file.patterninvalid") + "  " + okFile;
-    }
     if (!warning.isEmpty()) {
       taWarning.setVisible(true);
       taWarning.setText(warning);
@@ -451,7 +443,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
       if (StringUtils.isNotBlank(tfMovieFilename.getText())) {
         List<MediaFile> mediaFiles = movie.getMediaFiles(MediaFileType.VIDEO);
-        if (mediaFiles.size() > 0) {
+        if (!mediaFiles.isEmpty()) {
           String extension = FilenameUtils.getExtension(mediaFiles.get(0).getFilename());
           filename = MovieRenamer.createDestinationForFilename(tfMovieFilename.getText(), movie) + "." + extension;
         }
@@ -466,11 +458,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       for (MovieRenamerExample example : exampleEventList) {
         example.createExample(movie);
       }
-      try {
-        TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
-      }
-      catch (Exception ignored) {
-      }
+      TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
     }
     else {
       lblExample.setText(BUNDLE.getString("Settings.movie.renamer.nomovie")); //$NON-NLS-1$

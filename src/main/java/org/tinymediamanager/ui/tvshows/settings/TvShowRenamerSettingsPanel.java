@@ -461,11 +461,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         for (TvShowRenamerExample example : exampleEventList) {
           example.createExample(episode);
         }
-        try {
-          TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
-        }
-        catch (Exception ignored) {
-        }
+        TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
       }
       else {
         lblExample.setText("");

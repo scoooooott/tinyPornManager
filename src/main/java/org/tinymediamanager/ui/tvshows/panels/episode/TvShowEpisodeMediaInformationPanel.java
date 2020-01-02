@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -62,15 +63,17 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of media files
-      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
-          || MEDIA_INFORMATION.equals(property)) {
+      // react on selection of an episode and change of media files
+      if (source.getClass() != TvShowEpisodeSelectionModel.class) {
+        return;
+      }
+
+      if ("selectedTvShowEpisode".equals(property) || MEDIA_INFORMATION.equals(property) || MEDIA_FILES.equals(property)
+          || MEDIA_SOURCE.equals(property)) {
         fillVideoStreamDetails();
         buildAudioStreamDetails();
         buildSubtitleStreamDetails();
-      }
-      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
-          || (source.getClass() == TvShowEpisode.class && MEDIA_FILES.equals(property))) {
+
         // this does sometimes not work. simply wrap it
         try {
           mediaFileEventList.getReadWriteLock().writeLock().lock();
@@ -78,6 +81,7 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
           mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
         }
         catch (Exception ignored) {
+          // nothing to do here
         }
         finally {
           mediaFileEventList.getReadWriteLock().writeLock().unlock();

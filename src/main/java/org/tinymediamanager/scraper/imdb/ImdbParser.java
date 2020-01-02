@@ -124,6 +124,15 @@ public abstract class ImdbParser {
     return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo");
   }
 
+  /**
+   * should we scrape the keywords page too
+   *
+   * @return true/false
+   */
+  protected boolean isScrapeKeywordsPage() {
+    return ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeKeywordsPage");
+  }
+
   protected SortedSet<MediaSearchResult> search(MediaSearchAndScrapeOptions options) throws ScrapeException {
     getLogger().debug("search(): {}", options);
     SortedSet<MediaSearchResult> result = new TreeSet<>();
@@ -376,7 +385,6 @@ public abstract class ImdbParser {
       }
     }
 
-
     return result;
   }
 
@@ -576,6 +584,10 @@ public abstract class ImdbParser {
       }
 
       String elementText = element.ownText();
+
+      if (elementText.equals("Plot Keywords")) {
+        parseKeywords(element, md);
+      }
 
       if (elementText.equals("Taglines") && !isUseTmdbForMovies()) {
         Element taglineElement = element.nextElementSibling();
@@ -824,6 +836,42 @@ public abstract class ImdbParser {
       for (Element prodCompElement : prodCompElements) {
         String prodComp = prodCompElement.ownText();
         md.addProductionCompany(prodComp);
+      }
+    }
+  }
+
+  private void parseKeywords(Element element, MediaMetadata md) {
+    // <td>
+    // <ul class="ipl-inline-list">
+    // <li class="ipl-inline-list__item"><a href="/keyword/male-alien">male-alien</a></li>
+    // <li class="ipl-inline-list__item"><a href="/keyword/planetary-romance">planetary-romance</a></li>
+    // <li class="ipl-inline-list__item"><a href="/keyword/female-archer">female-archer</a></li>
+    // <li class="ipl-inline-list__item"><a href="/keyword/warrioress">warrioress</a></li>
+    // <li class="ipl-inline-list__item"><a href="/keyword/original-story">original-story</a></li>
+    // <li class="ipl-inline-list__item"><a href="/title/tt0499549/keywords">See All (379) »</a></li>
+    // </ul>
+    // </td>
+
+    Element parent = element.nextElementSibling();
+    Elements keywords = parent.getElementsByClass("ipl-inline-list__item");
+    for (Element keyword : keywords) {
+      Element a = keyword.getElementsByTag("a").first();
+      if (a != null && !a.attr("href").contains("/keywords")) {
+        md.addTag(a.ownText());
+      }
+    }
+  }
+
+  protected void parseKeywordsPage(Document doc, MediaSearchAndScrapeOptions options, MediaMetadata md) {
+    Element div = doc.getElementById("keywords_content");
+    if (div == null) {
+      return;
+    }
+
+    Elements keywords = div.getElementsByClass("sodatext");
+    for (Element keyword : keywords) {
+      if (StringUtils.isNotBlank(keyword.text())) {
+        md.addTag(keyword.text());
       }
     }
   }

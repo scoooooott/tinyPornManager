@@ -70,7 +70,7 @@ public class ImagePreviewDialog extends TmmDialog {
   }
 
   public ImagePreviewDialog(Path pathToImage) {
-    super("", "imagePreview");
+    super(BUNDLE.getString("image.show"), "imagePreview");
     init();
 
     this.imagePath = pathToImage.toString();

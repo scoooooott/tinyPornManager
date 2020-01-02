@@ -38,7 +38,12 @@ public class TvShowEpisodeSelectionModel extends AbstractModelObject {
   public TvShowEpisodeSelectionModel() {
     selectedTvShowEpisode = initalTvShowEpisode;
 
-    propertyChangeListener = this::firePropertyChange;
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedTvShowEpisode) {
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+      }
+    };
   }
 
   /**

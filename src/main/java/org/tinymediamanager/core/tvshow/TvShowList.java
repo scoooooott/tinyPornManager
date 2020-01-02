@@ -15,11 +15,29 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.AUDIO_CODEC;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
+import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
+
+import java.beans.PropertyChangeListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.slf4j.Logger;
@@ -43,28 +61,12 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 
-import java.beans.PropertyChangeListener;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
-import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.AUDIO_CODEC;
-import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
-import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.TV_SHOWS;
-import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
-import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 
 /**
  * The Class TvShowList.
@@ -145,7 +147,8 @@ public class TvShowList extends AbstractModelObject {
   /**
    * get all specified trailer scrapers.
    *
-   * @param providerIds the scrapers
+   * @param providerIds
+   *          the scrapers
    * @return the trailer providers
    */
   public List<MediaScraper> getTrailerScrapers(List<String> providerIds) {
@@ -349,12 +352,12 @@ public class TvShowList extends AbstractModelObject {
         tvShowList.add(tvShow);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding TV show json string: " + e.getMessage());
+        LOGGER.warn("problem decoding TV show json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt TV show: {}", json);
         tvShowMap.remove(uuid);
       }
     }
-    LOGGER.info("found " + tvShowList.size() + " TV shows in database");
+    LOGGER.info("found {} TV shows in database", tvShowList.size());
   }
 
   /**
@@ -373,6 +376,13 @@ public class TvShowList extends AbstractModelObject {
         json = episodesMap.get(uuid);
         TvShowEpisode episode = episodeObjectReader.readValue(json);
         episode.setDbId(uuid);
+
+        // sanity check: only episodes with a video file are valid
+        if (episode.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          // no video file? drop it
+          LOGGER.info("episode \"S{}E{}\" without video file - dropping", episode.getSeason(), episode.getEpisode());
+          episodesMap.remove(uuid);
+        }
 
         // check for orphaned episodes
         boolean found = false;
@@ -393,7 +403,7 @@ public class TvShowList extends AbstractModelObject {
         }
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding episode json string: " + e.getMessage());
+        LOGGER.warn("problem decoding episode json string: {}", e.getMessage());
         LOGGER.info("dropping corrupt episode: {}", json);
         episodesMap.remove(uuid);
       }
@@ -404,7 +414,7 @@ public class TvShowList extends AbstractModelObject {
       episodesMap.remove(uuid);
     }
 
-    LOGGER.info("found " + episodeCount + " episodes in database");
+    LOGGER.info("found {} episodes in database", episodeCount);
   }
 
   void initDataAfterLoading() {
@@ -698,13 +708,13 @@ public class TvShowList extends AbstractModelObject {
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
       String codec = mf.getVideoCodec();
-      if (!videoCodecsObservable.contains(codec)) {
+      if (StringUtils.isNotBlank(codec) && !videoCodecsObservable.contains(codec)) {
         addVideoCodec(codec);
       }
 
       // frame rate
       Double frameRate = mf.getFrameRate();
-      if (!frameRateObservable.contains(frameRate)) {
+      if (frameRate > 0 && !frameRateObservable.contains(frameRate)) {
         addFrameRate(frameRate);
       }
 
@@ -717,7 +727,7 @@ public class TvShowList extends AbstractModelObject {
       // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String audioCodec = audio.getCodec();
-        if (!audioCodecsObservable.contains(audioCodec)) {
+        if (StringUtils.isNotBlank(audioCodec) && !audioCodecsObservable.contains(audioCodec)) {
           addAudioCodec(audioCodec);
         }
       }

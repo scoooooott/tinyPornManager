@@ -348,6 +348,14 @@ public class MovieList extends AbstractModelObject {
         json = movieMap.get(uuid);
         Movie movie = movieObjectReader.readValue(json);
         movie.setDbId(uuid);
+
+        // sanity check: only movies with a video file are valid
+        if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          // no video file? drop it
+          LOGGER.info("movie \"{}\" without video file - dropping", movie.getTitle());
+          movieMap.remove(uuid);
+        }
+
         // for performance reasons we add movies directly
         movieList.add(movie);
       }
@@ -820,12 +828,12 @@ public class MovieList extends AbstractModelObject {
   private void updateMediaInformationLists(Movie movie) {
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       // video codec
-      if (videoCodecsInMovies.add(mf.getVideoCodec())) {
+      if (StringUtils.isNotBlank(mf.getVideoCodec()) && videoCodecsInMovies.add(mf.getVideoCodec())) {
         firePropertyChange(Constants.VIDEO_CODEC, null, videoCodecsInMovies);
       }
 
       // frame rate
-      if (frameRatesInMovies.add(mf.getFrameRate())) {
+      if (mf.getFrameRate() > 0 && frameRatesInMovies.add(mf.getFrameRate())) {
         firePropertyChange(Constants.FRAME_RATE, null, frameRatesInMovies);
       }
 
@@ -837,7 +845,7 @@ public class MovieList extends AbstractModelObject {
 
       // audio codec
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
-        if (audioCodecsInMovies.add(audio.getCodec())) {
+        if (StringUtils.isNotBlank(audio.getCodec()) && audioCodecsInMovies.add(audio.getCodec())) {
           firePropertyChange(Constants.AUDIO_CODEC, null, audioCodecsInMovies);
         }
       }

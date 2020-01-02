@@ -30,6 +30,7 @@ import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -66,6 +67,11 @@ class TmdbArtworkProvider {
 
     int tmdbId = options.getTmdbId();
     String imdbId = options.getImdbId();
+
+    // for movie sets we need another if
+    if (options.getMediaType() == MediaType.MOVIE_SET && options.getIdAsInt(MediaMetadata.TMDB_SET) > 0) {
+      tmdbId = options.getIdAsInt(MediaMetadata.TMDB_SET);
+    }
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId

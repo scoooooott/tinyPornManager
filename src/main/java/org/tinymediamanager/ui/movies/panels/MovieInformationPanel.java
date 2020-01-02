@@ -1,6 +1,8 @@
 package org.tinymediamanager.ui.movies.panels;
 
 import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Cursor;
@@ -30,7 +32,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -161,30 +162,24 @@ public class MovieInformationPanel extends JPanel {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
       // react on selection of a movie and change of a movie
-      if (source instanceof MovieSelectionModel) {
-        MovieSelectionModel selectionModel = (MovieSelectionModel) source;
-        Movie movie = selectionModel.getSelectedMovie();
 
-        if (movie != null && movie != selectionModel.initialMovie) {
-          setPoster(movie);
-          setFanart(movie);
-          panelLogos.setMediaInformationSource(movie);
-        }
+      if (source.getClass() != MovieSelectionModel.class) {
+        return;
       }
-      if (source instanceof Movie || source instanceof MediaFile) {
-        // if there is another change in the movie/media file, just update the logos to be sure
-        Movie movie = movieSelectionModel.getSelectedMovie();
-        if (movie != null) {
-          panelLogos.setMediaInformationSource(movie);
-        }
+
+      MovieSelectionModel selectionModel = (MovieSelectionModel) source;
+      Movie movie = selectionModel.getSelectedMovie();
+
+      if ("selectedMovie".equals(property) || POSTER.equals(property)) {
+        setPoster(movie);
       }
-      if (source instanceof Movie && FANART.equals(property)) {
-        Movie movie = (Movie) source;
+
+      if ("selectedMovie".equals(property) || FANART.equals(property)) {
         setFanart(movie);
       }
-      if (source instanceof Movie && POSTER.equals(property)) {
-        Movie movie = (Movie) source;
-        setPoster(movie);
+
+      if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
+        panelLogos.setMediaInformationSource(movie);
       }
     };
 
@@ -197,7 +192,7 @@ public class MovieInformationPanel extends JPanel {
           TmmUIHelper.openFile(mf.getFileAsPath());
         }
         catch (Exception ex) {
-          LOGGER.error("open file", e);
+          LOGGER.error("open file", ex);
           MessageManager.instance
               .pushMessage(new Message(Message.MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
         }
@@ -477,11 +472,11 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_7, starRater, starRaterBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<MovieSelectionModel, MediaRating> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.rating");
+    BeanProperty<MovieSelectionModel, Movie> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie");
     BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, MediaRating, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+    AutoBinding<MovieSelectionModel, Movie, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_9, lblRating, jLabelBeanProperty_1);
-    autoBinding_1.setConverter(new RatingConverter());
+    autoBinding_1.setConverter(new RatingConverter<>());
     autoBinding_1.bind();
     //
     BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty = BeanProperty.create("showLogosPanel");

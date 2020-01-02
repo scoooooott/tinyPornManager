@@ -581,6 +581,21 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
 
+        // was NFO, but parsing exception. try to find at least imdb id within
+        if (tvShow.getImdbId().isEmpty() && Files.exists(showNFO.getFileAsPath())) {
+          try {
+            String content = Utils.readFileToString(showNFO.getFileAsPath());
+            String imdb = ParserUtils.detectImdbId(content);
+            if (!imdb.isEmpty()) {
+              LOGGER.debug("| Found IMDB id: {}", imdb);
+              tvShow.setImdbId(imdb);
+            }
+          }
+          catch (IOException e) {
+            LOGGER.warn("| couldn't read NFO {}", showNFO);
+          }
+        }
+
         tvShow.setPath(showDir.toAbsolutePath().toString());
         tvShow.setDataSource(datasource.toString());
         tvShow.setNewlyAdded(true);

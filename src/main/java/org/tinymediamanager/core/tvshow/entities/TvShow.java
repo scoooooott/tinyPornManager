@@ -232,7 +232,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         continue;
       }
 
-      int season = -1;
+      int season = Integer.MIN_VALUE;
       try {
         if (mf.getFilename().startsWith("season-specials")) {
           season = 0;
@@ -248,13 +248,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           }
 
           // try to parse out the season from the parent
-          if (season == -1) {
+          if (season == Integer.MIN_VALUE) {
             matcher = SEASON_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
             if (matcher.matches()) {
               season = Integer.parseInt(matcher.group(1));
             }
           }
-          if (season == -1) {
+          if (season == Integer.MIN_VALUE) {
             matcher = SEASON_FOLDER_NUMBER.matcher(mf.getFileAsPath().getParent().toString());
             if (matcher.matches()) {
               season = Integer.parseInt(matcher.group(1));
@@ -263,7 +263,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
         }
 
-        if (season == -1) {
+        if (season == Integer.MIN_VALUE) {
           throw new IllegalStateException("did not find a season number");
         }
         else {
@@ -928,6 +928,10 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       setGenres(metadata.getGenres());
     }
 
+    if (config.contains(TvShowScraperMetadataConfig.TAGS)) {
+      setTags(metadata.getTags());
+    }
+
     if (config.contains(TvShowScraperMetadataConfig.SEASON_NAMES)) {
       // only take _non common_ season names
       for (Map.Entry<Integer, String> entry : metadata.getSeasonNames().entrySet()) {
@@ -1453,7 +1457,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     boolean subtitles = true;
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.hasSubtitles()) {
+      if (!episode.getHasSubtitles()) {
         subtitles = false;
         break;
       }
@@ -2167,5 +2171,25 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
     }
     return filesize;
+  }
+
+  @Override
+  protected void fireAddedEventForMediaFile(MediaFile mediaFile) {
+    super.fireAddedEventForMediaFile(mediaFile);
+
+    // TV show related media file types
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      firePropertyChange(TRAILER, false, true);
+    }
+  }
+
+  @Override
+  protected void fireRemoveEventForMediaFile(MediaFile mediaFile) {
+    super.fireRemoveEventForMediaFile(mediaFile);
+
+    // TV show related media file types
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      firePropertyChange(TRAILER, true, false);
+    }
   }
 }

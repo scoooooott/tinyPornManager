@@ -15,6 +15,18 @@
  */
 package org.tinymediamanager.core.tasks;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -35,18 +47,6 @@ import org.tinymediamanager.scraper.util.youtube.model.formats.VideoFormat;
 import org.tinymediamanager.scraper.util.youtube.model.quality.VideoQuality;
 import org.tinymediamanager.scraper.util.youtube.muxer.TmmMuxer;
 import org.tinymediamanager.ui.UTF8Control;
-
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * A task for downloading trailers from youtube
@@ -233,11 +233,11 @@ public class YoutubeDownloadTask extends TmmTask {
   }
 
   private String formatBytesForOutput(long bytes) {
-    return String.format("%.2fM", (double) bytes / (1024d * 1024d));
+    return String.format("%.2fM", (double) bytes / (1000d * 1000d));
   }
 
   private String formatSpeedForOutput(double speed) {
-    return String.format("%.2fkB/s", speed / 1024d);
+    return String.format("%.2fkB/s", speed / 1000d);
   }
 
   private static String cleanFilename(String filename) {

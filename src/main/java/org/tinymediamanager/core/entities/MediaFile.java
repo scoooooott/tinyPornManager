@@ -477,7 +477,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getFilesizeInMegabytes() {
     DecimalFormat df = new DecimalFormat("#0.00");
-    return df.format(filesize / (1024.0 * 1024.0)) + " M";
+    return df.format(filesize / (1000.0 * 1000.0)) + " M";
   }
 
   public MediaFileType getType() {
@@ -932,11 +932,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // aspect ratios, particularly when cropping prior to video encoding is taken into account
     // the best we can do is take the "common" aspect ratios, and return the closest one available.
     // The cutoffs are the geometric mean of the two aspect ratios either side.
+
+    // the original list of kodi has been enhanced by some other common resolutions
     if (ar < 1.3499f) { // sqrt(1.33*1.37)
       ret = 1.33F;
     }
-    else if (ar < 1.5080f) { // sqrt(1.37*1.66)
+    else if (ar < 1.3997f) { // sqrt(1.37*1.43)
       ret = 1.37F;
+    }
+    else if (ar < 1.4935f) { // sqrt(1.43*1.56)
+      ret = 1.43F;
+    }
+    else if (ar < 1.6092f) { // sqrt(1.56*1.66)
+      ret = 1.56F;
     }
     else if (ar < 1.7190f) { // sqrt(1.66*1.78)
       ret = 1.66F;
@@ -944,8 +952,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else if (ar < 1.8147f) { // sqrt(1.78*1.85)
       ret = 1.78F;
     }
-    else if (ar < 2.0174f) { // sqrt(1.85*2.20)
+    else if (ar < 1.8748f) { // sqrt(1.85*1.90)
       ret = 1.85F;
+    }
+    else if (ar < 2.0445f) { // sqrt(1.90*2.20)
+      ret = 1.90F;
     }
     else if (ar < 2.2738f) { // sqrt(2.20*2.35)
       ret = 2.20F;

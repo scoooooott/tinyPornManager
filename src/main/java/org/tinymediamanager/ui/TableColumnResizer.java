@@ -47,31 +47,36 @@ public class TableColumnResizer {
    *          the margin left and right
    */
   public static void adjustColumnPreferredWidths(JTable table, int margin) {
-    // strategy - get max width for cells in header and column and
-    // make that the preferred width
-    TableColumnModel columnModel = table.getColumnModel();
-    for (int col = 0; col < table.getColumnCount(); col++) {
+    try {
+      // strategy - get max width for cells in header and column and
+      // make that the preferred width
+      TableColumnModel columnModel = table.getColumnModel();
+      for (int col = 0; col < table.getColumnCount(); col++) {
 
-      int maxwidth = 0;
-      // header
-      TableCellRenderer rend = columnModel.getColumn(col).getHeaderRenderer();
-      Object value = columnModel.getColumn(col).getHeaderValue();
-      if (rend == null) {
-        rend = table.getTableHeader().getDefaultRenderer();
+        int maxwidth = 0;
+        // header
+        TableCellRenderer rend = columnModel.getColumn(col).getHeaderRenderer();
+        Object value = columnModel.getColumn(col).getHeaderValue();
+        if (rend == null) {
+          rend = table.getTableHeader().getDefaultRenderer();
+        }
+        Component comp = rend.getTableCellRendererComponent(table, value, false, false, -1, col);
+        maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
+
+        // rows
+        for (int row = 0; row < table.getRowCount(); row++) {
+          rend = table.getCellRenderer(row, col);
+          value = table.getValueAt(row, col);
+          comp = rend.getTableCellRendererComponent(table, value, false, false, row, col);
+          maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
+        }
+
+        TableColumn column = columnModel.getColumn(col);
+        column.setPreferredWidth(maxwidth);
       }
-      Component comp = rend.getTableCellRendererComponent(table, value, false, false, -1, col);
-      maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
-
-      // rows
-      for (int row = 0; row < table.getRowCount(); row++) {
-        rend = table.getCellRenderer(row, col);
-        value = table.getValueAt(row, col);
-        comp = rend.getTableCellRendererComponent(table, value, false, false, row, col);
-        maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
-      }
-
-      TableColumn column = columnModel.getColumn(col);
-      column.setPreferredWidth(maxwidth);
+    }
+    catch (Exception ignored) {
+      // nothing to do here if resizing did not work
     }
   }
 

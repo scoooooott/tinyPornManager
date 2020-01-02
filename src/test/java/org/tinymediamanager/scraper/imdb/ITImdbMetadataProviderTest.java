@@ -416,6 +416,7 @@ public class ITImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider();
       mp.getProviderInfo().getConfig().addBoolean("scrapeLanguageNames", false);
+      mp.getProviderInfo().getConfig().addBoolean("scrapeKeywordsPage", true);
       options = new MovieSearchAndScrapeOptions();
       options.setImdbId("tt0472033");
       MovieModuleManager.SETTINGS.setCertificationCountry(CountryCode.US);
@@ -426,7 +427,7 @@ public class ITImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("9", 2009, "9", 7.0, 63365, "When our world ended their mission began", 79, "Shane Acker", "Pamela Pettler, Shane Acker",
+      checkMovieDetails("9", 2009, "9", 7.0, 63365, "(1) To Protect Us...", 79, "Shane Acker", "Pamela Pettler, Shane Acker",
           "PG-13", "09-09-2009", md);
 
       // check poster
@@ -443,7 +444,7 @@ public class ITImdbMetadataProviderTest {
 
       // check plot
       checkPlot(
-          "In a world destroyed in a war between man and machine, a hand-stitched doll with the number 9 written on its back comes to life. The world he has awakened in is frightening, but he quickly learns that he is not alone and that there are others like him, also with a single digit written on their back. The first one he encounters is 2 who tells him something of what happened to the world. 2 is also thrilled with the disk 9 is carrying, one with three unique symbols on the front. 9 soon learns that the disk and some of the other dolls who are prepared to die for the good of humankind may be the last hope for man's salvation.",
+          "A rag doll that awakens in a postapocalyptic future holds the key to humanity's salvation.",
           md);
 
       // check cast
@@ -468,12 +469,14 @@ public class ITImdbMetadataProviderTest {
 
       // check production company
       checkProductionCompany(
-          Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
+          Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Tim Burton Productions"),
           md);
 
       // check localized values
       assertThat(md.getCountries()).containsOnly("US");
       assertThat(md.getSpokenLanguages()).containsOnly("en");
+
+      assertThat(md.getTags()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -542,6 +545,8 @@ public class ITImdbMetadataProviderTest {
       // check localized values
       assertThat(md.getCountries()).containsOnly("Vereinigte Staaten von Amerika");
       assertThat(md.getSpokenLanguages()).containsOnly("Englisch", "Französisch");
+
+      assertThat(md.getTags()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -606,6 +611,8 @@ public class ITImdbMetadataProviderTest {
       // check production company
       checkProductionCompany(Arrays.asList("Walt Disney Pictures", "Pixar Animation Studios"), md);
 
+      assertThat(md.getTags()).isNotEmpty();
+
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -630,6 +637,8 @@ public class ITImdbMetadataProviderTest {
       // check moviedetails
       checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93,
           "Mark Andrews, Brenda Chapman, Steve Purcell", "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
+
+      assertThat(md.getTags()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -691,6 +700,7 @@ public class ITImdbMetadataProviderTest {
       // check production company
       checkProductionCompany(Arrays.asList("Bear Media, The", "Field Guide Media"), md);
 
+      assertThat(md.getTags()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();

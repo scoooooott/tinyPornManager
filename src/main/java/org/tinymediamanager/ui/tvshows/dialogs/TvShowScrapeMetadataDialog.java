@@ -15,7 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import net.miginfocom.swing.MigLayout;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -31,14 +40,7 @@ import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.combobox.ScraperMetadataConfigCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowScrapeMetadataDialog.
@@ -88,7 +90,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new MigLayout("hidemode 3", "[][600lp:800lp,grow]", "[][][][shrink 0][200lp:n, grow]"));
+    panelContent.setLayout(new MigLayout("hidemode 3", "[][600lp:800lp,grow]", "[][][][][shrink 0][200lp:n, grow]"));
 
     JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("metatag.language"));
     panelContent.add(lblLanguageT, "cell 0 0,alignx trailing");
@@ -125,7 +127,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     if (tvShowMetadata || episodeMetadata) {
       JPanel panelScraperConfig = new JPanel();
       panelContent.add(panelScraperConfig, "cell 0 5 2 1,grow");
-      panelScraperConfig.setLayout(new MigLayout("", "[][300lp:500lp,grow]", "[][][]"));
+      panelScraperConfig.setLayout(new MigLayout("hidemode 3", "[][300lp:500lp,grow]", "[][][]"));
       {
         JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape"));
         panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0 2 1");

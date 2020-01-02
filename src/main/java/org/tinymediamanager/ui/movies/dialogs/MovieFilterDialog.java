@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
+import org.tinymediamanager.ui.movies.filters.MovieAspectRatioFilter;
 import org.tinymediamanager.ui.movies.filters.MovieAudioCodecFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCastFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCertificationFilter;
@@ -145,6 +146,7 @@ public class MovieFilterDialog extends TmmDialog {
 
         addFilter(new MovieVideoFormatFilter(), panelMediaData);
         addFilter(new MovieVideoCodecFilter(), panelMediaData);
+        addFilter(new MovieAspectRatioFilter(), panelMediaData);
         addFilter(new MovieFrameRateFilter(), panelMediaData);
         addFilter(new MovieVideo3DFilter(), panelMediaData);
         addFilter(new MovieVideoContainerFilter(), panelMediaData);

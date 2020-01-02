@@ -160,6 +160,19 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
+   * <b>PHYSICALLY</b> deletes all {@link MediaFile}s of the given type
+   *
+   * @param type
+   *          the {@link MediaFileType} for all {@link MediaFile}s to delete
+   */
+  public void deleteMediaFiles(MediaFileType type) {
+    getMediaFiles(type).forEach(mediaFile -> {
+      Utils.deleteFileSafely(mediaFile.getFile());
+      removeFromMediaFiles(mediaFile);
+    });
+  }
+
+  /**
    * Sets the artwork.
    *
    * @param artwork

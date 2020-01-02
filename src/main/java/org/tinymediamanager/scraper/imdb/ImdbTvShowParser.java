@@ -160,6 +160,14 @@ public class ImdbTvShowParser extends ImdbParser {
     url = IMDB_SITE + "title/" + imdbId + "/releaseinfo";
     worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
 
+    // worker for imdb keywords (/keywords)
+    Future<Document> futureKeywords = null;
+    if (isScrapeKeywordsPage()) {
+      url = IMDB_SITE + "title/" + imdbId + "/keywords";
+      worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
+      futureKeywords = compSvcImdb.submit(worker);
+    }
+
     Document doc;
     try {
       doc = futureReference.get();
@@ -172,6 +180,11 @@ public class ImdbTvShowParser extends ImdbParser {
       if (md.getReleaseDate() == null || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
         // get the date from the releaseinfo page
         parseReleaseinfoPage(compSvcImdb.submit(worker).get(), options, md);
+      }
+
+      if (futureKeywords != null) {
+        doc = futureKeywords.get();
+        parseKeywordsPage(doc, options, md);
       }
 
       // if everything worked so far, we can set the given id
@@ -288,21 +301,26 @@ public class ImdbTvShowParser extends ImdbParser {
     md.setReleaseDate(wantedEpisode.getReleaseDate());
 
     // and finally the cast which needed to be fetched from the reference page
-    if (wantedEpisode.getId(providerInfo.getId()) instanceof String && StringUtils.isNotBlank((String) wantedEpisode.getId(providerInfo.getId()))) {
 
-      Url url = null;
+    if (wantedEpisode.getId(providerInfo.getId()) instanceof String) {
+      String episodeId = (String) wantedEpisode.getId(providerInfo.getId());
+      if (MetadataUtil.isValidImdbId(episodeId)) {
+        ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
 
-      try {
-        url = new Url(IMDB_SITE + "/title/" + wantedEpisode.getId(providerInfo.getId()) + "/reference");
-        url.addHeader("Accept-Language", "en"); // force EN for parsing by HTMl texts
-      }
-      catch (Exception e) {
-        LOGGER.warn("could not get cast page: {}", e.getMessage());
-      }
+        String url = IMDB_SITE + "title/" + episodeId + "/reference";
+        Callable<Document> worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
+        Future<Document> futureReference = compSvcImdb.submit(worker);
 
-      if (url != null) {
-        try (InputStream is = url.getInputStream()) {
-          Document doc = Jsoup.parse(is, "UTF-8", "");
+        // worker for imdb keywords (/keywords)
+        Future<Document> futureKeywords = null;
+        if (isScrapeKeywordsPage()) {
+          url = IMDB_SITE + "title/" + episodeId + "/keywords";
+          worker = new ImdbWorker(url, options.getLanguage().getLanguage(), getCountry().getAlpha2());
+          futureKeywords = compSvcImdb.submit(worker);
+        }
+
+        try {
+          Document doc = futureReference.get();
 
           // director
           Element directorsElement = doc.getElementById("directors");
@@ -377,51 +395,56 @@ public class ImdbTvShowParser extends ImdbParser {
               md.addCastMember(cm);
             }
           }
+
+          if (futureKeywords != null) {
+            parseKeywordsPage(futureKeywords.get(), options, md);
+          }
+
         }
         catch (Exception e) {
           LOGGER.trace("problem parsing: {}", e.getMessage());
         }
       }
+    }
 
-      // get data from tmdb?
-      if (futureTmdb != null) {
-        try {
-          MediaMetadata tmdbMd = futureTmdb.get();
-          if (tmdbMd != null) {
-            // provide all IDs
-            for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
-              md.setId(entry.getKey(), entry.getValue());
-            }
-            // title
-            if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
-              md.setTitle(tmdbMd.getTitle());
-            }
-            // original title
-            if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
-              md.setOriginalTitle(tmdbMd.getOriginalTitle());
-            }
-            // tagline
-            if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
-              md.setTagline(tmdbMd.getTagline());
-            }
-            // plot
-            if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
-              md.setPlot(tmdbMd.getPlot());
-            }
-            // thumb (if nothing has been found in imdb)
-            if (md.getMediaArt(THUMB).isEmpty() && !tmdbMd.getMediaArt(THUMB).isEmpty()) {
-              MediaArtwork thumb = tmdbMd.getMediaArt(THUMB).get(0);
-              md.addMediaArt(thumb);
-            }
+    // get data from tmdb?
+    if (futureTmdb != null) {
+      try {
+        MediaMetadata tmdbMd = futureTmdb.get();
+        if (tmdbMd != null) {
+          // provide all IDs
+          for (Map.Entry<String, Object> entry : tmdbMd.getIds().entrySet()) {
+            md.setId(entry.getKey(), entry.getValue());
+          }
+          // title
+          if (StringUtils.isNotBlank(tmdbMd.getTitle())) {
+            md.setTitle(tmdbMd.getTitle());
+          }
+          // original title
+          if (StringUtils.isNotBlank(tmdbMd.getOriginalTitle())) {
+            md.setOriginalTitle(tmdbMd.getOriginalTitle());
+          }
+          // tagline
+          if (StringUtils.isNotBlank(tmdbMd.getTagline())) {
+            md.setTagline(tmdbMd.getTagline());
+          }
+          // plot
+          if (StringUtils.isNotBlank(tmdbMd.getPlot())) {
+            md.setPlot(tmdbMd.getPlot());
+          }
+          // thumb (if nothing has been found in imdb)
+          if (md.getMediaArt(THUMB).isEmpty() && !tmdbMd.getMediaArt(THUMB).isEmpty()) {
+            MediaArtwork thumb = tmdbMd.getMediaArt(THUMB).get(0);
+            md.addMediaArt(thumb);
           }
         }
-        catch (InterruptedException e) {
-          // do not swallow these Exceptions
-          Thread.currentThread().interrupt();
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not get cast page: {}", e.getMessage());
-        }
+      }
+      catch (InterruptedException e) {
+        // do not swallow these Exceptions
+        Thread.currentThread().interrupt();
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not get cast page: {}", e.getMessage());
       }
     }
 

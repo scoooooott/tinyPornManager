@@ -30,6 +30,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.fanarttv.entities.Image;
@@ -148,6 +149,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     Response<Images> images = null;
     String imdbId = options.getImdbId();
     int tmdbId = options.getTmdbId();
+
+    // for movie sets we need another if
+    if (options.getMediaType() == MediaType.MOVIE_SET && options.getIdAsInt(MediaMetadata.TMDB_SET) > 0) {
+      tmdbId = options.getIdAsInt(MediaMetadata.TMDB_SET);
+    }
 
     if (tmdbId == 0 && !MetadataUtil.isValidImdbId(imdbId)) {
       throw new MissingIdException(MediaMetadata.IMDB, MediaMetadata.TMDB);
@@ -395,9 +401,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       if ("all".equals(image.season)) {
         ma.setSeason(0);
       }
-      else {
+      else if (StringUtils.isNotBlank(image.season)) {
         try {
-          ma.setSeason(Integer.valueOf(image.season));
+          ma.setSeason(Integer.parseInt(image.season));
         }
         catch (Exception e) {
           LOGGER.trace("could not parse int: {}", e.getMessage());

@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
  * @author Manuel Laggner
  */
 public class MovieSetSelectionModel extends AbstractModelObject {
-  private static final String    SELECTED_MOVIE_SET = "selectedMovieSet";
+  public static final String     SELECTED_MOVIE_SET = "selectedMovieSet";
 
   private MovieSet               selectedMovieSet;
   private MovieSet               initalMovieSet     = new MovieSet("");
@@ -44,7 +44,12 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    */
   public MovieSetSelectionModel() {
     selectedMovieSet = initalMovieSet;
-    propertyChangeListener = this::firePropertyChange;
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedMovieSet) {
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+      }
+    };
   }
 
   public void setTreeTable(TmmTreeTable treeTable) {

@@ -419,7 +419,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeletePoster = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeletePoster.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeletePoster.addActionListener(e -> lblPoster.clearImage());
+        btnDeletePoster.addActionListener(e -> {
+          lblPoster.clearImage();
+          tfPoster.setText("");
+        });
         details1Panel.add(btnDeletePoster, "cell 8 0");
 
         details1Panel.add(lblPoster, "cell 8 1 1 6,grow");
@@ -549,7 +552,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteFanart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteFanart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteFanart.addActionListener(e -> lblFanart.clearImage());
+        btnDeleteFanart.addActionListener(e -> {
+          lblFanart.clearImage();
+          tfFanart.setText("");
+        });
         details1Panel.add(btnDeleteFanart, "cell 8 8");
 
         details1Panel.add(lblFanart, "cell 8 9 1 4,grow");
@@ -898,7 +904,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteLogo.addActionListener(e -> lblLogo.clearImage());
+        btnDeleteLogo.addActionListener(e -> {
+          lblLogo.clearImage();
+          tfLogo.setText("");
+        });
         artworkPanel.add(btnDeleteLogo, "cell 0 0");
 
         lblLogo = new ImageLabel();
@@ -927,7 +936,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteKeyart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteKeyart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteKeyart.addActionListener(e -> lblKeyart.clearImage());
+        btnDeleteKeyart.addActionListener(e -> {
+          lblKeyart.clearImage();
+          tfKeyart.setText("");
+        });
         artworkPanel.add(btnDeleteKeyart, "cell 4 0");
 
         lblKeyart = new ImageLabel();
@@ -954,7 +966,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteClearLogo = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteClearLogo.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteClearLogo.addActionListener(e -> lblClearlogo.clearImage());
+        btnDeleteClearLogo.addActionListener(e -> {
+          lblClearlogo.clearImage();
+          tfClearLogo.setText("");
+        });
         artworkPanel.add(btnDeleteClearLogo, "cell 2 0");
 
         lblClearlogo = new ImageLabel();
@@ -982,7 +997,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteBanner = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteBanner.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteBanner.addActionListener(e -> lblBanner.clearImage());
+        btnDeleteBanner.addActionListener(e -> {
+          lblBanner.clearImage();
+          tfBanner.setText("");
+        });
         artworkPanel.add(btnDeleteBanner, "cell 0 3");
 
         lblBanner = new ImageLabel();
@@ -1009,7 +1027,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteClearart = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteClearart.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteClearart.addActionListener(e -> lblClearart.clearImage());
+        btnDeleteClearart.addActionListener(e -> {
+          lblClearart.clearImage();
+          tfClearArt.setText("");
+        });
         artworkPanel.add(btnDeleteClearart, "cell 0 6");
 
         lblClearart = new ImageLabel();
@@ -1038,7 +1059,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteThumb = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteThumb.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteThumb.addActionListener(e -> lblThumb.clearImage());
+        btnDeleteThumb.addActionListener(e -> {
+          lblThumb.clearImage();
+          tfThumb.setText("");
+        });
         artworkPanel.add(btnDeleteThumb, "cell 2 6");
 
         lblThumb = new ImageLabel();
@@ -1065,7 +1089,10 @@ public class MovieEditorDialog extends TmmDialog {
 
         JButton btnDeleteDisc = new FlatButton(SPACER, IconManager.DELETE_GRAY);
         btnDeleteDisc.setToolTipText(BUNDLE.getString("Button.deleteartwork.desc"));
-        btnDeleteDisc.addActionListener(e -> lblDisc.clearImage());
+        btnDeleteDisc.addActionListener(e -> {
+          lblDisc.clearImage();
+          tfDisc.setText("");
+        });
         artworkPanel.add(btnDeleteDisc, "cell 4 6");
 
         lblDisc = new ImageLabel();
@@ -1310,140 +1337,16 @@ public class MovieEditorDialog extends TmmDialog {
       MediaFileEditorPanel.syncMediaFiles(mediaFiles, movieToEdit.getMediaFiles());
       movieToEdit.fireEventForChangedMediaInformation();
 
-      // POSTER
-      if (StringUtils.isBlank(lblPoster.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.POSTER))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.POSTER);
-      }
-      else if (StringUtils.isNotEmpty(tfPoster.getText()) && !tfPoster.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfPoster.getText(), MediaFileType.POSTER);
-        movieToEdit.downloadArtwork(MediaFileType.POSTER);
-      }
-      else if (StringUtils.isEmpty(tfPoster.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.POSTER);
-      }
-
-      // FANART
-      if (StringUtils.isBlank(lblFanart.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.FANART))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.FANART);
-      }
-      else if (StringUtils.isNotEmpty(tfFanart.getText()) && !tfFanart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.FANART))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfFanart.getText(), MediaFileType.FANART);
-        movieToEdit.downloadArtwork(MediaFileType.FANART);
-      }
-      else if (StringUtils.isEmpty(tfFanart.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.FANART);
-      }
-
-      // LOGO
-      if (StringUtils.isBlank(lblLogo.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.LOGO))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.LOGO);
-      }
-      else if (StringUtils.isNotEmpty(tfLogo.getText()) && !tfLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfLogo.getText(), MediaFileType.LOGO);
-        movieToEdit.downloadArtwork(MediaFileType.LOGO);
-      }
-      else if (StringUtils.isEmpty(tfLogo.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.LOGO);
-      }
-
-      // CLEARLOGO
-      if (StringUtils.isBlank(lblClearlogo.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.CLEARLOGO))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.CLEARLOGO);
-      }
-      else if (StringUtils.isNotEmpty(tfClearLogo.getText()) && !tfClearLogo.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfClearLogo.getText(), MediaFileType.CLEARLOGO);
-        movieToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
-      }
-      else if (StringUtils.isEmpty(tfClearLogo.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.CLEARLOGO);
-      }
-
-      // BANNER
-      if (StringUtils.isBlank(lblBanner.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.BANNER))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.BANNER);
-      }
-      else if (StringUtils.isNotEmpty(tfBanner.getText()) && !tfBanner.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfBanner.getText(), MediaFileType.BANNER);
-        movieToEdit.downloadArtwork(MediaFileType.BANNER);
-      }
-      else if (StringUtils.isEmpty(tfBanner.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.BANNER);
-      }
-
-      // CLEARART
-      if (StringUtils.isBlank(lblClearart.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.CLEARART))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.CLEARART);
-      }
-      else if (StringUtils.isNotEmpty(tfClearArt.getText()) && !tfClearArt.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARART))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfClearArt.getText(), MediaFileType.CLEARART);
-        movieToEdit.downloadArtwork(MediaFileType.CLEARART);
-      }
-      else if (StringUtils.isEmpty(tfClearArt.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.CLEARART);
-      }
-
-      // THUMB
-      if (StringUtils.isBlank(lblThumb.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.THUMB))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isNotEmpty(tfThumb.getText()) && !tfThumb.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.THUMB))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfThumb.getText(), MediaFileType.THUMB);
-        movieToEdit.downloadArtwork(MediaFileType.THUMB);
-      }
-      else if (StringUtils.isEmpty(tfThumb.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.THUMB);
-      }
-
-      // DISC
-      if (StringUtils.isBlank(lblPoster.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.POSTER))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.DISC);
-      }
-      else if (StringUtils.isNotEmpty(tfDisc.getText()) && !tfDisc.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfDisc.getText(), MediaFileType.DISC);
-        movieToEdit.downloadArtwork(MediaFileType.DISC);
-      }
-      else if (StringUtils.isEmpty(tfDisc.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.DISC);
-      }
-
-      // KEYART
-      if (StringUtils.isBlank(lblKeyart.getImagePath()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(MediaFileType.KEYART))) {
-        // artwork has been explicitly deleted
-        movieToEdit.deleteMediaFiles(MediaFileType.KEYART);
-      }
-      else if (StringUtils.isNotEmpty(tfKeyart.getText()) && !tfKeyart.getText().equals(movieToEdit.getArtworkUrl(MediaFileType.KEYART))) {
-        // artwork url and textfield do not match -> redownload
-        movieToEdit.setArtworkUrl(tfKeyart.getText(), MediaFileType.KEYART);
-        movieToEdit.downloadArtwork(MediaFileType.KEYART);
-      }
-      else if (StringUtils.isEmpty(tfKeyart.getText())) {
-        // remove the artwork url
-        movieToEdit.removeArtworkUrl(MediaFileType.KEYART);
-      }
+      // process artwork
+      processArtwork(MediaFileType.POSTER, lblPoster, tfPoster);
+      processArtwork(MediaFileType.FANART, lblFanart, tfFanart);
+      processArtwork(MediaFileType.LOGO, lblLogo, tfLogo);
+      processArtwork(MediaFileType.CLEARLOGO, lblClearlogo, tfClearLogo);
+      processArtwork(MediaFileType.BANNER, lblBanner, tfBanner);
+      processArtwork(MediaFileType.CLEARART, lblClearart, tfClearArt);
+      processArtwork(MediaFileType.THUMB, lblThumb, tfThumb);
+      processArtwork(MediaFileType.DISC, lblDisc, tfDisc);
+      processArtwork(MediaFileType.KEYART, lblKeyart, tfKeyart);
 
       // set extrathumbs
       if (extrathumbs != null && (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
@@ -1515,6 +1418,23 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       setVisible(false);
+    }
+  }
+
+  private void processArtwork(MediaFileType type, ImageLabel imageLabel, JTextField textField) {
+    if (StringUtils.isAllBlank(imageLabel.getImagePath(), imageLabel.getImageUrl()) && StringUtils.isNotBlank(movieToEdit.getArtworkFilename(type))) {
+      // artwork has been explicitly deleted
+      movieToEdit.deleteMediaFiles(type);
+    }
+
+    if (StringUtils.isNotEmpty(textField.getText()) && !textField.getText().equals(movieToEdit.getArtworkUrl(type))) {
+      // artwork url and textfield do not match -> redownload
+      movieToEdit.setArtworkUrl(textField.getText(), type);
+      movieToEdit.downloadArtwork(type);
+    }
+    else if (StringUtils.isEmpty(textField.getText())) {
+      // remove the artwork url
+      movieToEdit.removeArtworkUrl(type);
     }
   }
 

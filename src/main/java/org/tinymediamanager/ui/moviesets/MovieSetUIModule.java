@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetFilterDialog;
+import org.tinymediamanager.ui.moviesets.panels.MovieSetArtworkPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetInformationPanel;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
@@ -94,6 +95,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     };
 
     movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));//$NON-NLS-1$
+    movieSetDetailPanel.addTab(BUNDLE.getString("metatag.artwork"), new MovieSetArtworkPanel(selectionModel));
     dataPanel.add(movieSetDetailPanel, "movieSet");
 
     // panel for movies
@@ -107,11 +109,11 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
         super.updateUI();
       }
     };
-    movieDetailPanel.addTab("Details", new MovieInformationPanel(movieSelectionModel));
-    movieDetailPanel.addTab("Cast", new MovieCastPanel(movieSelectionModel));
-    movieDetailPanel.addTab("Media files", new MovieMediaInformationPanel(movieSelectionModel));
-    movieDetailPanel.addTab("Artwork", new MovieArtworkPanel(movieSelectionModel));
-    movieDetailPanel.addTab("Trailer", new TrailerPanel(movieSelectionModel));
+    movieDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieInformationPanel(movieSelectionModel));
+    movieDetailPanel.addTab(BUNDLE.getString("metatag.cast"), new MovieCastPanel(movieSelectionModel));
+    movieDetailPanel.addTab(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(movieSelectionModel));
+    movieDetailPanel.addTab(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(movieSelectionModel));
+    movieDetailPanel.addTab(BUNDLE.getString("metatag.trailer"), new TrailerPanel(movieSelectionModel));
     dataPanel.add(movieDetailPanel, "movie");
 
     movieSetFilterDialog = new MovieSetFilterDialog(treePanel.getTreeTable());

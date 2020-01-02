@@ -17,6 +17,8 @@ package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
 import static org.tinymediamanager.core.Constants.BANNER;
 import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Cursor;
@@ -37,8 +39,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaRating;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -101,32 +101,28 @@ public class TvShowInformationPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
       Object source = propertyChangeEvent.getSource();
-      // react on selection of a movie and change of a tv show
-      if (source instanceof TvShowSelectionModel) {
-        TvShowSelectionModel model = (TvShowSelectionModel) source;
-        setFanart(model.getSelectedTvShow());
-        setPoster(model.getSelectedTvShow());
-        setBanner(model.getSelectedTvShow());
-        panelLogos.setMediaInformationSource(model.getSelectedTvShow());
+      // react on selection/change of a TV show
+      if (source.getClass() != TvShowSelectionModel.class) {
+        return;
       }
-      if (source instanceof TvShow || source instanceof MediaFile) {
-        // if there is another change in the episode/media file, just update the logos to be sure
-        TvShow tvShow = tvShowSelectionModel.getSelectedTvShow();
-        if (tvShow != null) {
-          panelLogos.setMediaInformationSource(tvShow);
-        }
-      }
-      if (source instanceof TvShow && FANART.equals(property)) {
-        TvShow tvShow = (TvShow) source;
-        setFanart(tvShow);
-      }
-      if (source instanceof TvShow && POSTER.equals(property)) {
-        TvShow tvShow = (TvShow) source;
+
+      TvShowSelectionModel model = (TvShowSelectionModel) source;
+      TvShow tvShow = model.getSelectedTvShow();
+
+      if ("selectedTvShow".equals(property) || POSTER.equals(property)) {
         setPoster(tvShow);
       }
-      if (source instanceof TvShow && BANNER.equals(property)) {
-        TvShow tvShow = (TvShow) source;
+
+      if ("selectedTvShow".equals(property) || FANART.equals(property)) {
+        setFanart(tvShow);
+      }
+
+      if ("selectedTvShow".equals(property) || BANNER.equals(property)) {
         setBanner(tvShow);
+      }
+
+      if ("selectedTvShow".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
+        panelLogos.setMediaInformationSource(tvShow);
       }
     };
 
@@ -284,10 +280,10 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_2, panelRatingStars, starRaterBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<TvShowSelectionModel, MediaRating> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.rating");
-    AutoBinding<TvShowSelectionModel, MediaRating, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowSelectionModel, tvShowSelectionModelBeanProperty_5, lblRating, jLabelBeanProperty);
-    autoBinding_3.setConverter(new RatingConverter());
+    BeanProperty<TvShowSelectionModel, TvShow> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow");
+    AutoBinding<TvShowSelectionModel, TvShow, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_5, lblRating, jLabelBeanProperty);
+    autoBinding_3.setConverter(new RatingConverter<>());
     autoBinding_3.bind();
     //
     BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.rating.votes");

@@ -165,7 +165,7 @@ public class MovieHelpers {
     }
 
     try {
-      if (movie.getTrailer().get(0).getProvider().equalsIgnoreCase("youtube")) {
+      if (trailer.getProvider().equalsIgnoreCase("youtube")) {
         YoutubeDownloadTask task = new YoutubeDownloadTask(trailer, movie, filename);
         TmmTaskManager.getInstance().addDownloadTask(task);
       } else {

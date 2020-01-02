@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.components;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -98,6 +99,22 @@ public class MediaRatingTable extends TmmTable {
 
       MediaRating id = new MediaRating(entry.getKey());
       org.tinymediamanager.core.entities.MediaRating mediaRating = entry.getValue();
+
+      id.value = mediaRating.getRating();
+      id.votes = mediaRating.getVotes();
+      id.maxValue = mediaRating.getMaxValue();
+
+      idList.add(id);
+    }
+
+    return idList;
+  }
+
+  public static EventList<MediaRating> convertRatingMapToEventList(List<org.tinymediamanager.core.entities.MediaRating> ratings) {
+    EventList<MediaRating> idList = new BasicEventList<>();
+    for (org.tinymediamanager.core.entities.MediaRating rating : ratings) {
+      MediaRating id = new MediaRating(rating.getId());
+      org.tinymediamanager.core.entities.MediaRating mediaRating = rating;
 
       id.value = mediaRating.getRating();
       id.votes = mediaRating.getVotes();

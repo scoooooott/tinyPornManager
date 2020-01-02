@@ -219,7 +219,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
         size += mf.getFilesize();
       }
 
-      return (int) (size / (1024.0 * 1024.0)) + " M";
+      return (int) (size / (1000.0 * 1000.0)) + " M";
     }
     return "";
   }
@@ -274,7 +274,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
     }
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = ((TvShowEpisode) userObject);
-      return getCheckIcon(episode.hasSubtitles());
+      return getCheckIcon(episode.getHasSubtitles());
     }
     return null;
   }

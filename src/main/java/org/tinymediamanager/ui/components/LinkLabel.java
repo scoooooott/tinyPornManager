@@ -40,6 +40,7 @@ public class LinkLabel extends JLabel {
   private static final long serialVersionUID = 3762584745632060187L;
 
   protected String          link;
+  protected ActionListener  activeListener   = null;
 
   /**
    * Creates a new LinkLabel with the given text.
@@ -118,7 +119,12 @@ public class LinkLabel extends JLabel {
    *          the listener
    */
   public void addActionListener(ActionListener listener) {
+    // remove any previous set listener
+    if (activeListener != null) {
+      removeActionListener(activeListener);
+    }
     listenerList.add(ActionListener.class, listener);
+    activeListener = listener;
   }
 
   /**

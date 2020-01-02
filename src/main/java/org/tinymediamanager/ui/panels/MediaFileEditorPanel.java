@@ -448,6 +448,7 @@ public class MediaFileEditorPanel extends JPanel {
 
     public void removeAudioStream(int index) {
       audioStreams.remove(index);
+      mediaFile.setAudioStreams(audioStreams);
     }
 
     public void addSubtitle() {
@@ -457,6 +458,7 @@ public class MediaFileEditorPanel extends JPanel {
 
     public void removeSubtitle(int index) {
       subtitles.remove(index);
+      mediaFile.setSubtitles(subtitles);
     }
   }
 

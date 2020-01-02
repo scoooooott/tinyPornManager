@@ -1367,55 +1367,6 @@ public class MovieRenamer {
   }
 
   /**
-   * checks supplied renamer pattern against our tokenmap, if everything could be found
-   * 
-   * @param pattern
-   * @return error string, what token(s) are wrong
-   */
-  public static String isPatternValid(String pattern) {
-    String err = "";
-    Pattern p = Pattern.compile("\\$\\{(.*?)\\}");
-    Matcher matcher = p.matcher(pattern);
-    while (matcher.find()) {
-      String fulltoken = matcher.group(1);
-      String token = "";
-      if (fulltoken.contains(",")) {
-        // split additional like ${-,token,replace}
-        String[] split = fulltoken.split(",");
-        token = split[1];
-      }
-      else if (fulltoken.contains("[")) {
-        // strip all after parenthesis
-        token = fulltoken.substring(0, fulltoken.indexOf('['));
-      }
-      else if (fulltoken.contains(";")) {
-        // strip all after semicolon like ${title;first}
-        token = fulltoken.substring(0, fulltoken.indexOf(';'));
-        String first = fulltoken.substring(fulltoken.indexOf(';') + 1);
-        if (!first.equals("first")) {
-          err += "  " + matcher.group(); // "first" is missing
-        }
-      }
-      else if (fulltoken.startsWith("movie.")) {
-        // ex: ${movie.year}
-        token = fulltoken.substring(6);
-        // String mapped = getTokenValue(movie, token)
-        // TODO: check via JMTE, if this is a valid token?
-        // currently ignore
-        continue;
-      }
-      else {
-        token = fulltoken;
-      }
-      String tok = TOKEN_MAP.get(token.trim());
-      if (tok == null) {
-        err += "  " + matcher.group(); // complete token with ${}
-      }
-    }
-    return err;
-  }
-
-  /**
    * replaces all invalid/illegal characters for filenames/foldernames with ""<br>
    * except the colon, which will be changed to a dash
    *

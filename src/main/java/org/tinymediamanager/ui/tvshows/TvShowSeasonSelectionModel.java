@@ -35,7 +35,12 @@ public class TvShowSeasonSelectionModel extends AbstractModelObject {
    * Instantiates a new tv show season selection model. Usage in TvShowPanel
    */
   public TvShowSeasonSelectionModel() {
-    propertyChangeListener = this::firePropertyChange;
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedTvShowSeason) {
+        // wrap this event in a new event for listeners of the selection model
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+      }
+    };
   }
 
   /**

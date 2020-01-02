@@ -153,6 +153,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
       catch (Exception e) {
         LOGGER.warn("could not initialize API: {}", e.getMessage());
+        // force re-initialization the next time this will be called
+        tvdb = null;
         throw new ScrapeException(e);
       }
     }
@@ -635,7 +637,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             ma.setSeason(Integer.parseInt(image.subKey));
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season: {}", image.subKey);
+            LOGGER.trace("could not parse season: {}", image.subKey);
           }
           break;
 
@@ -645,7 +647,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             ma.setSeason(Integer.parseInt(image.subKey));
           }
           catch (Exception e) {
-            LOGGER.warn("could not parse season: {}", image.subKey);
+            LOGGER.trace("could not parse season: {}", image.subKey);
           }
           break;
 
@@ -725,7 +727,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         ma.setPreviewUrl(ma.getDefaultUrl());
       }
 
-      // ma.setLanguage(banner.getLanguage());
+      ma.setLanguage(ma.getLanguage());
 
       artwork.add(ma);
     }
@@ -811,7 +813,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         episode.setReleaseDate(StrgUtils.parseDate(ep.firstAired));
       }
       catch (Exception ignored) {
-        LOGGER.warn("Could not parse date: {}", ep.firstAired);
+        LOGGER.trace("Could not parse date: {}", ep.firstAired);
       }
 
       try {

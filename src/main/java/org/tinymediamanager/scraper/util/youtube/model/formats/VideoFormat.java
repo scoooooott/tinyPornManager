@@ -36,7 +36,7 @@ public class VideoFormat extends Format {
   public VideoFormat(JsonNode json, Itag itag) {
     super(json, itag);
     fps = YoutubeHelper.getInt(json, "fps");
-    qualityLabel = YoutubeHelper.getString(json, "quality_label");
+    qualityLabel = YoutubeHelper.getString(json, "qualityLabel");
     if (json.has("size")) {
       String[] split = YoutubeHelper.getString(json, "size").split("x");
       width = Integer.parseInt(split[0]);
