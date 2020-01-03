@@ -17,9 +17,12 @@ package org.tinymediamanager.ui.movies.filters;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
@@ -35,6 +38,7 @@ import org.tinymediamanager.ui.components.table.TmmTableFormat;
 public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
   private TmmTableFormat.StringComparator comparator;
   private MovieList                       movieList = MovieList.getInstance();
+  private Set<String>                     oldTags   = new HashSet<>();
 
   public MovieTagFilter() {
     super();
@@ -73,10 +77,27 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
   }
 
   private void buildAndInstallTagsArray() {
-    List<String> tags = new ArrayList<>(movieList.getTagsInMovies());
-    tags.sort(comparator);
+    // do it lazy because otherwise there is too much UI overhead
+    // also use a set for faster lookups
+    boolean dirty = false;
+    Set<String> tags = new HashSet<>(movieList.getTagsInMovies());
 
-    setValues(tags);
+    if (oldTags.size() != tags.size()) {
+      dirty = true;
+    }
+
+    if (!oldTags.containsAll(tags) || !tags.containsAll(oldTags)) {
+      dirty = true;
+    }
+
+    if (dirty) {
+      oldTags.clear();
+      oldTags.addAll(tags);
+
+      List<String> newTags = new ArrayList<>(tags);
+      newTags.sort(comparator);
+      setValues(newTags);
+    }
   }
 
   @Override
@@ -87,5 +108,18 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
   @Override
   protected String parseStringToType(String string) throws Exception {
     return string;
+  }
+
+  private class TagsWorker extends SwingWorker<Void, Void> {
+
+    @Override
+    protected Void doInBackground() throws Exception {
+      return null;
+    }
+
+    @Override
+    protected void done() {
+      super.done();
+    }
   }
 }
