@@ -51,6 +51,7 @@ x the rating in the details panel now updates correctly
 x fixed Youtube downloader
 x fixed Mpdb.tv scaper
 x do not open the image preview dialog multiple times #738
+x IMDB: fixed checking of IMDB id
 
 
 Version 3.0.5

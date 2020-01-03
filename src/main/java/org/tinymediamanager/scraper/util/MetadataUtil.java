@@ -142,7 +142,7 @@ public class MetadataUtil {
       return false;
     }
 
-    return imdbId.matches("tt\\d{6,8}");
+    return imdbId.matches("tt\\d{6,}");
   }
 
   /**

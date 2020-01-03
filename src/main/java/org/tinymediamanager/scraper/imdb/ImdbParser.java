@@ -72,8 +72,8 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner
  */
 public abstract class ImdbParser {
-  protected static final Pattern IMDB_ID_PATTERN   = Pattern.compile("/title/(tt[0-9]{7})/");
-  protected static final Pattern PERSON_ID_PATTERN = Pattern.compile("/name/(nm[0-9]{7})/");
+  protected static final Pattern IMDB_ID_PATTERN   = Pattern.compile("/title/(tt[0-9]{6,})/");
+  protected static final Pattern PERSON_ID_PATTERN = Pattern.compile("/name/(nm[0-9]{6,})/");
   protected static final String  IMDB_SITE         = "http://www.imdb.com/";
 
   protected final MediaType      type;

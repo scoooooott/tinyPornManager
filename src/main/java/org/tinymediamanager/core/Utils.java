@@ -477,7 +477,7 @@ public class Utils {
       return false;
     }
 
-    return imdbId.matches("tt\\d{6,8}");
+    return imdbId.matches("tt\\d{6,}");
   }
 
   /**
