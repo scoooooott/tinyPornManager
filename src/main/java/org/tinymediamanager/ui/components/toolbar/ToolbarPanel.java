@@ -54,6 +54,7 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearHttpCacheAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
+import org.tinymediamanager.ui.actions.DocsAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExportLogAction;
 import org.tinymediamanager.ui.actions.FaqAction;
@@ -64,7 +65,6 @@ import org.tinymediamanager.ui.actions.LaunchUpdaterAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.ShowChangelogAction;
-import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.dialogs.FullLogDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
@@ -316,7 +316,7 @@ public class ToolbarPanel extends JPanel {
     JPopupMenu menu = new JPopupMenu();
 
     menu.add(new FaqAction());
-    menu.add(new WikiAction());
+    menu.add(new DocsAction());
     menu.add(new ForumAction());
     menu.add(new ShowChangelogAction());
     menu.addSeparator();
