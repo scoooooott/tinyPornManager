@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,18 +108,5 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
   @Override
   protected String parseStringToType(String string) throws Exception {
     return string;
-  }
-
-  private class TagsWorker extends SwingWorker<Void, Void> {
-
-    @Override
-    protected Void doInBackground() throws Exception {
-      return null;
-    }
-
-    @Override
-    protected void done() {
-      super.done();
-    }
   }
 }
