@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -45,6 +47,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -90,14 +93,14 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long                        serialVersionUID = 5189531235704401313L;
+  private static final long                        serialVersionUID  = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle              BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
-  private static final Logger                      LOGGER           = LoggerFactory.getLogger(TvShowRenamerSettingsPanel.class);
+  private static final ResourceBundle              BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final Logger                      LOGGER            = LoggerFactory.getLogger(TvShowRenamerSettingsPanel.class);
 
-  private TvShowSettings                           settings         = TvShowModuleManager.SETTINGS;
-  private List<String>                             spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
-  private List<String>                             colonReplacement = new ArrayList<>(Arrays.asList(" ", "-"));
+  private TvShowSettings                           settings          = TvShowModuleManager.SETTINGS;
+  private List<String>                             spaceReplacements = new ArrayList<>(Arrays.asList("_", ".", "-"));
+  private List<String>                             colonReplacements = new ArrayList<>(Arrays.asList(" ", "-"));
   private EventList<TvShowRenamerExample>          exampleEventList;
 
   /*
@@ -154,14 +157,14 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
     // space replacement
     String spaceReplacement = settings.getRenamerSpaceReplacement();
-    int index = this.spaceReplacement.indexOf(spaceReplacement);
+    int index = this.spaceReplacements.indexOf(spaceReplacement);
     if (index >= 0) {
       cbSpaceReplacement.setSelectedIndex(index);
     }
 
     // colon replacement
     String colonReplacement = settings.getRenamerColonReplacement();
-    index = this.colonReplacement.indexOf(colonReplacement);
+    index = this.colonReplacements.indexOf(colonReplacement);
     if (index >= 0) {
       cbColonReplacement.setSelectedIndex(index);
     }
@@ -329,7 +332,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
         panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 1 2 1");
 
-        cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
+        cbSpaceReplacement = new JComboBox(spaceReplacements.toArray());
         panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 1");
       }
       {
@@ -337,7 +340,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         panelAdvancedOptions.add(lblColonReplacement, "cell 2 2");
         lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint"));
 
-        cbColonReplacement = new JComboBox(colonReplacement.toArray());
+        cbColonReplacement = new JComboBox(colonReplacements.toArray());
         panelAdvancedOptions.add(cbColonReplacement, "cell 2 2");
       }
 
@@ -385,6 +388,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         tableExamples.configureScrollPane(scrollPane);
         panelExample.add(scrollPane, "cell 1 2,grow");
         scrollPane.setViewportView(tableExamples);
+        tableExamples.setRowHeight(35);
       }
     }
   }
@@ -480,7 +484,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   /*************************************************************
    * helper classes
    *************************************************************/
-  private class TvShowPreviewContainer {
+  private static class TvShowPreviewContainer {
     TvShow tvShow;
 
     @Override
@@ -489,7 +493,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     }
   }
 
-  private class TvShowEpisodePreviewContainer {
+  private static class TvShowEpisodePreviewContainer {
     TvShowEpisode episode;
 
     @Override
@@ -498,7 +502,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     }
   }
 
-  private class TvShowComparator implements Comparator<TvShow> {
+  private static class TvShowComparator implements Comparator<TvShow> {
     @Override
     public int compare(TvShow arg0, TvShow arg1) {
       return arg0.getTitle().compareTo(arg1.getTitle());
@@ -506,19 +510,37 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   @SuppressWarnings("unused")
-  private class TvShowRenamerExample extends AbstractModelObject {
-    private String token;
-    private String description;
-    private String example = "";
+  private static class TvShowRenamerExample extends AbstractModelObject {
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("^\\$\\{(.*?)([\\}\\[;\\.]+.*)");
+    private String               token;
+    private String               completeToken;
+    private String               description;
+    private String               example       = "";
 
     public TvShowRenamerExample(String token) {
       this.token = token;
+      this.completeToken = createCompleteToken();
       try {
         this.description = BUNDLE.getString("Settings.tvshow.renamer." + token); //$NON-NLS-1$
       }
       catch (Exception e) {
         this.description = "";
       }
+    }
+
+    private String createCompleteToken() {
+      String result = token;
+
+      Matcher matcher = TOKEN_PATTERN.matcher(token);
+      if (matcher.find() && matcher.groupCount() > 1) {
+        String alias = matcher.group(1);
+        String sourceToken = TvShowRenamer.TOKEN_MAP.get(alias);
+
+        if (StringUtils.isNotBlank(sourceToken)) {
+          result = "<html>" + token + "<br>${" + sourceToken + matcher.group(2) + "</html>";
+        }
+      }
+      return result;
     }
 
     public String getDescription() {
@@ -549,7 +571,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     }
   }
 
-  private class TvShowRenamerExampleTableFormat implements TableFormat<TvShowRenamerExample> {
+  private static class TvShowRenamerExampleTableFormat implements TableFormat<TvShowRenamerExample> {
     @Override
     public int getColumnCount() {
       return 3;
@@ -567,15 +589,16 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         case 2:
           return BUNDLE.getString("Settings.renamer.value"); //$NON-NLS-1$
 
+        default:
+          return null;
       }
-      return null;
     }
 
     @Override
     public Object getColumnValue(TvShowRenamerExample baseObject, int column) {
       switch (column) {
         case 0:
-          return baseObject.token;
+          return baseObject.completeToken;
 
         case 1:
           return baseObject.description;
