@@ -52,6 +52,7 @@ x fixed Youtube downloader
 x fixed Mpdb.tv scaper
 x do not open the image preview dialog multiple times #738
 x IMDB: fixed checking of IMDB id
+x parse plot/tagline from NFO respecting line breaks #742
 
 
 Version 3.0.5

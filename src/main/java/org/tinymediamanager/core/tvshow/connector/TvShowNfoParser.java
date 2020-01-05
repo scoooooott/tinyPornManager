@@ -421,7 +421,7 @@ public class TvShowNfoParser {
 
     Element element = getSingleElement(root, "plot");
     if (element != null) {
-      plot = element.ownText();
+      plot = element.wholeText();
     }
 
     return null;
@@ -435,7 +435,7 @@ public class TvShowNfoParser {
 
     Element element = getSingleElement(root, "outline");
     if (element != null) {
-      outline = element.ownText();
+      outline = element.wholeText();
     }
 
     return null;
@@ -449,7 +449,7 @@ public class TvShowNfoParser {
 
     Element element = getSingleElement(root, "tagline");
     if (element != null) {
-      tagline = element.ownText();
+      tagline = element.wholeText();
     }
 
     return null;
