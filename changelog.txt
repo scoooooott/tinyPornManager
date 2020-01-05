@@ -26,6 +26,7 @@ Version 3.1
 + added a aspect ratio filter for common aspect ratios #644
 + IMDB: added option to scrape keywords (tags) #666
 + added regexp support in badwords
++ added navigation in the TV show tree by typing
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678

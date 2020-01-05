@@ -471,7 +471,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     abstract String getOriginalTitle();
   }
 
-  static class TvShowTreeNode extends AbstractTvShowTreeNode {
+  public static class TvShowTreeNode extends AbstractTvShowTreeNode {
     private static final long serialVersionUID = -1316609340104597133L;
 
     /**

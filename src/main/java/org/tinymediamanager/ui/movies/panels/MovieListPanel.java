@@ -260,6 +260,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
 
         if (arg0.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
           searchTerm += arg0.getKeyChar();
+          searchTerm = searchTerm.toLowerCase();
         }
 
         if (StringUtils.isNotBlank(searchTerm)) {
