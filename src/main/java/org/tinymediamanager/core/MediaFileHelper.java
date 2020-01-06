@@ -1026,7 +1026,7 @@ public class MediaFileHelper {
         image = new UDFFileSystem(mediaFile.getFileAsPath().toFile(), true);
         int bufferSize = 64 * 1024;
         for (UDFFileEntry entry : image) {
-          if (biggest == null || entry.getSize() > biggest.getSize()) {
+          if (biggest == null || (entry.getSize() > biggest.getSize() && entry.getName().toLowerCase(Locale.ROOT).endsWith("m2ts"))) {
             biggest = entry;
           }
         }
