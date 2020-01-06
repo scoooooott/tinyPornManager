@@ -2161,18 +2161,34 @@ public class Movie extends MediaEntity implements IMediaInformation {
         }
       }
     }
-    // no IFO? - might be bluray
-    if (vid == null) {
-      return vid;
-    }
-
     // find the vob matching to our ifo
-    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-      if (mf.getExtension().equalsIgnoreCase("vob") && mf.getBasename().equalsIgnoreCase(vid.getBasename())) {
-        vid = mf;
-        break;
+    if (vid != null) {
+      // check DVD VOBs
+      String prefix = StrgUtils.substr(vid.getFilename(), "(?i)^(VTS_\\d+).*");
+      if (prefix.isEmpty()) {
+        // check HD-DVD
+        prefix = StrgUtils.substr(vid.getFilename(), "(?i)^(HV\\d+)I.*");
+      }
+      for (MediaFile mif : getMediaFiles(MediaFileType.VIDEO)) {
+        // TODO: check HD-DVD
+        if (mif.getFilename().startsWith(prefix) && !mif.getFilename().endsWith("IFO")) {
+          vid = mif;
+          // take last to not get the menu one...
+        }
       }
     }
+
+    // no IFO/VOB? - might be bluray
+    if (vid == null) {
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+        if (mf.getExtension().equalsIgnoreCase("m2ts")) {
+          if (vid == null || mf.getDuration() > vid.getDuration()) {
+            vid = mf;
+          }
+        }
+      }
+    }
+
     return vid;
   }
 
