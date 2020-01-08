@@ -105,6 +105,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private List<MediaFileSubtitle>    subtitles         = null;
 
   private Path                       file              = null;
+  @JsonProperty
   private boolean                    isISO             = false;
   @JsonProperty
   private boolean                    isAnimatedGraphic = false;
@@ -506,6 +507,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public boolean isISO() {
     return isISO;
+  }
+
+  public void setIsISO(boolean newValue) {
+    this.isISO = newValue;
   }
 
   /**

@@ -253,25 +253,11 @@
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
 			<artifactId>loop-fs-iso-impl</artifactId>
 			<version>2.0.2-TMM-2</version>
-			<exclusions>
-				<exclusion>
-					<!-- we use JCL-over-slf4j -->
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
 			<artifactId>loop-fs-udf-impl</artifactId>
 			<version>2.0.2-TMM-2</version>
-			<exclusions>
-				<exclusion>
-					<!-- we use JCL-over-slf4j -->
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.nanohttpd</groupId>

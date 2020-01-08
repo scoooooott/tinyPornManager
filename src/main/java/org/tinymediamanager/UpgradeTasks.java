@@ -281,6 +281,10 @@ public class UpgradeTasks {
             mf.setHdrFormat("HDR10");
             dirty = true;
           }
+          if ("iso".equalsIgnoreCase(mf.getExtension()) && !mf.isISO()) {
+            mf.setIsISO(true);
+            dirty = true;
+          }
         }
         if (dirty) {
           movie.saveToDb();
@@ -293,6 +297,10 @@ public class UpgradeTasks {
           for (MediaFile mf : episode.getMediaFiles()) {
             if (mf.HDR && mf.getHdrFormat().isEmpty()) {
               mf.setHdrFormat("HDR10");
+              dirty = true;
+            }
+            if ("iso".equalsIgnoreCase(mf.getExtension()) && !mf.isISO()) {
+              mf.setIsISO(true);
               dirty = true;
             }
           }
