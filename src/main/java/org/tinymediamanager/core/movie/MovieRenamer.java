@@ -700,6 +700,8 @@ public class MovieRenamer {
     if (downloadMissingArtworks) {
       LOGGER.debug("Yay - movie upgrade :) download missing artworks");
       MovieArtworkHelper.downloadMissingArtwork(movie);
+      // also trigger a download of actor images
+      movie.writeActorImages();
     }
   }
 
