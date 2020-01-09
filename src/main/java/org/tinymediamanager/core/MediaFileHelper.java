@@ -967,15 +967,16 @@ public class MediaFileHelper {
             try (MediaInfo fileMI = new MediaInfo()) {
               byte[] fromBuffer = new byte[bufferSize];
               int fromBufferSize; // The size of the read file buffer
+              long fileSize = entry.getSize();
 
               // Preparing to fill MediaInfo with a buffer
-              fileMI.openBufferInit(entry.getSize(), 0);
+              fileMI.openBufferInit(fileSize, 0);
 
               long pos = 0L;
               // The parsing loop
               do {
                 // limit read to maxBuffer, or to end of file size (cannot determine file end in stream!!)
-                long toread = pos + bufferSize > entry.getSize() ? entry.getSize() - pos : bufferSize;
+                long toread = pos + bufferSize > fileSize ? fileSize - pos : bufferSize;
 
                 // Reading data somewhere, do what you want for this.
                 fromBufferSize = image.readBytes(entry, pos, fromBuffer, 0, (int) toread);
@@ -992,7 +993,7 @@ public class MediaFileHelper {
                   if (fileMI.openBufferContinueGoToGet() != -1) {
                     pos = fileMI.openBufferContinueGoToGet();
                     LOGGER.trace("ISO: Seek to {}", pos);
-                    fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
+                    fileMI.openBufferInit(fileSize, pos); // Informing MediaInfo we have seek
                   }
                 }
               } while (fromBufferSize > 0);
@@ -1007,13 +1008,13 @@ public class MediaFileHelper {
             }
             // sometimes also an error is thrown
             catch (Exception | Error e) {
-              LOGGER.error("Mediainfo could not open file STREAM for file {}", entry.getName(), e);
+              LOGGER.debug("Mediainfo could not open file STREAM for file {}", entry.getName(), e);
             }
           } // end VIDEO
         } // end entry
       }
       catch (Exception e) {
-        LOGGER.error("Mediainfo could not open as ISO9660", e);
+        LOGGER.info("Mediainfo could not open as ISO9660 - {}", e.getMessage());
       }
     }
 
@@ -1039,15 +1040,16 @@ public class MediaFileHelper {
           try (MediaInfo fileMI = new MediaInfo()) {
             byte[] fromBuffer = new byte[bufferSize];
             int fromBufferSize; // The size of the read file buffer
+            long fileSize = biggest.getSize();
 
             // Preparing to fill MediaInfo with a buffer
-            fileMI.openBufferInit(biggest.getSize(), 0);
+            fileMI.openBufferInit(fileSize, 0);
 
             long pos = 0L;
             // The parsing loop
             do {
               // limit read to maxBuffer, or to end of file size (cannot determine file end in stream!!)
-              long toread = pos + bufferSize > biggest.getSize() ? biggest.getSize() - pos : bufferSize;
+              long toread = pos + bufferSize > fileSize ? fileSize - pos : bufferSize;
 
               // Reading data somewhere, do what you want for this.
               fromBufferSize = image.readFileContent(biggest, pos, fromBuffer, 0, (int) toread);
@@ -1064,7 +1066,7 @@ public class MediaFileHelper {
                 if (fileMI.openBufferContinueGoToGet() != -1) {
                   pos = fileMI.openBufferContinueGoToGet();
                   LOGGER.trace("ISO: Seek to {}", pos);
-                  fileMI.openBufferInit(biggest.getSize(), pos); // Informing MediaInfo we have seek
+                  fileMI.openBufferInit(fileSize, pos); // Informing MediaInfo we have seek
                 }
               }
             } while (fromBufferSize > 0);
@@ -1077,12 +1079,12 @@ public class MediaFileHelper {
           }
           // sometimes also an error is thrown
           catch (Exception | Error e) {
-            LOGGER.error("Mediainfo could not open file UDF for file {}", biggest.getPath(), e);
+            LOGGER.debug("Mediainfo could not open file UDF for file {}", biggest.getPath(), e);
           }
         } // end VIDEO
       }
       catch (Exception e) {
-        LOGGER.error("Mediainfo could not open as UDF", e);
+        LOGGER.info("Mediainfo could not open as UDF - {}", e.getMessage());
       }
       finally {
         if (image != null) {
