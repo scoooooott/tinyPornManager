@@ -35,6 +35,7 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -54,6 +55,7 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearHttpCacheAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
+import org.tinymediamanager.ui.actions.CreateDesktopFileAction;
 import org.tinymediamanager.ui.actions.DocsAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExportLogAction;
@@ -308,6 +310,11 @@ public class ToolbarPanel extends JPanel {
     menu.addSeparator();
     menu.add(new BugReportAction());
     menu.add(new ExportLogAction());
+
+    if (SystemUtils.IS_OS_LINUX) {
+      menu.addSeparator();
+      menu.add(new CreateDesktopFileAction());
+    }
 
     return menu;
   }
