@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,18 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-public class WikiAction extends TmmAction {
+public class DocsAction extends TmmAction {
   private static final long           serialVersionUID = 1668251251156765161L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(WikiAction.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(DocsAction.class);
 
-  public WikiAction() {
-    putValue(NAME, BUNDLE.getString("tmm.wiki")); //$NON-NLS-1$
+  public DocsAction() {
+    putValue(NAME, BUNDLE.getString("tmm.docs")); //$NON-NLS-1$
   }
 
   @Override
   protected void processAction(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/home");
+    String url = StringEscapeUtils.unescapeHtml4("https://www.tinymediamanager.org/docs");
     try {
       TmmUIHelper.browseUrl(url);
     }

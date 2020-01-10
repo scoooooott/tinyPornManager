@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,6 +260,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
 
         if (arg0.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
           searchTerm += arg0.getKeyChar();
+          searchTerm = searchTerm.toLowerCase();
         }
 
         if (StringUtils.isNotBlank(searchTerm)) {

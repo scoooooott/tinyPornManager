@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -54,6 +55,8 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearHttpCacheAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
+import org.tinymediamanager.ui.actions.CreateDesktopFileAction;
+import org.tinymediamanager.ui.actions.DocsAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExportLogAction;
 import org.tinymediamanager.ui.actions.FaqAction;
@@ -64,7 +67,6 @@ import org.tinymediamanager.ui.actions.LaunchUpdaterAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.ShowChangelogAction;
-import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.dialogs.FullLogDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
@@ -309,6 +311,11 @@ public class ToolbarPanel extends JPanel {
     menu.add(new BugReportAction());
     menu.add(new ExportLogAction());
 
+    if (SystemUtils.IS_OS_LINUX) {
+      menu.addSeparator();
+      menu.add(new CreateDesktopFileAction());
+    }
+
     return menu;
   }
 
@@ -316,7 +323,7 @@ public class ToolbarPanel extends JPanel {
     JPopupMenu menu = new JPopupMenu();
 
     menu.add(new FaqAction());
-    menu.add(new WikiAction());
+    menu.add(new DocsAction());
     menu.add(new ForumAction());
     menu.add(new ShowChangelogAction());
     menu.addSeparator();

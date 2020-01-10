@@ -15,6 +15,10 @@ stages:
   - test
   - deploy
 
+# use dependency scanning
+include:
+  template: Dependency-Scanning.gitlab-ci.yml
+
 compile:
   stage: compile
   script:

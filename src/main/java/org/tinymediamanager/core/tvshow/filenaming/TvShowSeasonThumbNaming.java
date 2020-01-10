@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,22 @@ public enum TvShowSeasonThumbNaming implements ITvShowSeasonFileNaming {
     }
   },
 
+  /** seasonXX-landscape.* */
+  SEASON_LANDSCAPE {
+    @Override
+    public String getFilename(TvShow tvShow, int season, String extension) {
+      if (season == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
+        return "season-specials-landscape." + extension;
+      }
+      else if (season > -1) {
+        return String.format("season%02d-landscape.%s", season, extension);
+      }
+      else {
+        return "";
+      }
+    }
+  },
+
   /** season_folder/seasonXX-thumb.* */
   SEASON_FOLDER {
     @Override
@@ -65,6 +81,33 @@ public enum TvShowSeasonThumbNaming implements ITvShowSeasonFileNaming {
       }
       else if (season > -1) {
         filename += String.format("season%02d-thumb", season);
+      }
+      else {
+        return "";
+      }
+      return filename + "." + extension;
+    }
+  },
+
+  /** season_folder/seasonXX-landscape.* */
+  SEASON_FOLDER_LANDSCAPE {
+    @Override
+    public String getFilename(TvShow tvShow, int season, String extension) {
+      String seasonFoldername = TvShowHelpers.detectSeasonFolder(tvShow, season);
+
+      // check whether the season folder name exists or not; do not create it just for the artwork!
+      if (StringUtils.isBlank(seasonFoldername)) {
+        // no season folder name in the templates found - fall back to the the show base filename style
+        return SEASON_THUMB.getFilename(tvShow, season, extension);
+      }
+
+      String filename = seasonFoldername + File.separator;
+
+      if (season == 0 && TvShowModuleManager.SETTINGS.isSpecialSeason()) {
+        filename += "season-specials-landscape";
+      }
+      else if (season > -1) {
+        filename += String.format("season%02d-landscape", season);
       }
       else {
         return "";

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -281,6 +281,10 @@ public class UpgradeTasks {
             mf.setHdrFormat("HDR10");
             dirty = true;
           }
+          if ("iso".equalsIgnoreCase(mf.getExtension()) && !mf.isISO()) {
+            mf.setIsISO(true);
+            dirty = true;
+          }
         }
         if (dirty) {
           movie.saveToDb();
@@ -293,6 +297,10 @@ public class UpgradeTasks {
           for (MediaFile mf : episode.getMediaFiles()) {
             if (mf.HDR && mf.getHdrFormat().isEmpty()) {
               mf.setHdrFormat("HDR10");
+              dirty = true;
+            }
+            if ("iso".equalsIgnoreCase(mf.getExtension()) && !mf.isISO()) {
+              mf.setIsISO(true);
               dirty = true;
             }
           }

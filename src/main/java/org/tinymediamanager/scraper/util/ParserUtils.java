@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@ public class ParserUtils {
   public static String detectImdbId(String text) {
     String imdb = "";
     if (text != null && !text.isEmpty()) {
-      imdb = StrgUtils.substr(text, ".*(tt\\d{7}).*");
+      imdb = StrgUtils.substr(text, ".*(tt\\d{6,}).*");
       if (imdb.isEmpty()) {
         imdb = StrgUtils.substr(text, ".*imdb\\.com\\/Title\\?(\\d{7}).*");
         if (!imdb.isEmpty()) {

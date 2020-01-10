@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -514,7 +514,7 @@ public class TvShowEpisodeNfoParser {
 
       Element element = getSingleElement(root, "plot");
       if (element != null) {
-        plot = element.ownText();
+        plot = element.wholeText();
       }
 
       return null;
@@ -528,7 +528,7 @@ public class TvShowEpisodeNfoParser {
 
       Element element = getSingleElement(root, "outline");
       if (element != null) {
-        outline = element.ownText();
+        outline = element.wholeText();
       }
 
       return null;
@@ -542,7 +542,7 @@ public class TvShowEpisodeNfoParser {
 
       Element element = getSingleElement(root, "tagline");
       if (element != null) {
-        tagline = element.ownText();
+        tagline = element.wholeText();
       }
 
       return null;

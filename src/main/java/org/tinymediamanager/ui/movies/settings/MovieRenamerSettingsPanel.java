@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -393,6 +395,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPaneExamples);
         panelExample.add(scrollPaneExamples, "cell 1 2,grow");
+        tableExamples.setRowHeight(35);
       }
     }
   }
@@ -501,7 +504,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   /*****************************************************************************
    * helper classes
    *****************************************************************************/
-  private class MoviePreviewContainer {
+  private static class MoviePreviewContainer {
     Movie movie;
 
     @Override
@@ -510,7 +513,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     }
   }
 
-  private class MovieComparator implements Comparator<Movie> {
+  private static class MovieComparator implements Comparator<Movie> {
     @Override
     public int compare(Movie arg0, Movie arg1) {
       return arg0.getTitle().compareTo(arg1.getTitle());
@@ -518,19 +521,37 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   }
 
   @SuppressWarnings("unused")
-  private class MovieRenamerExample extends AbstractModelObject {
-    private String token;
-    private String description;
-    private String example = "";
+  private static class MovieRenamerExample extends AbstractModelObject {
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("^\\$\\{(.*?)([\\}\\[;\\.]+.*)");
+    private String               token;
+    private String               completeToken;
+    private String               description;
+    private String               example       = "";
 
     private MovieRenamerExample(String token) {
       this.token = token;
+      this.completeToken = createCompleteToken();
       try {
         this.description = BUNDLE.getString("Settings.movie.renamer." + token); //$NON-NLS-1$
       }
       catch (Exception e) {
         this.description = "";
       }
+    }
+
+    private String createCompleteToken() {
+      String result = token;
+
+      Matcher matcher = TOKEN_PATTERN.matcher(token);
+      if (matcher.find() && matcher.groupCount() > 1) {
+        String alias = matcher.group(1);
+        String sourceToken = MovieRenamer.TOKEN_MAP.get(alias);
+
+        if (StringUtils.isNotBlank(sourceToken)) {
+          result = "<html>" + token + "<br>${" + sourceToken + matcher.group(2) + "</html>";
+        }
+      }
+      return result;
     }
 
     public String getDescription() {
@@ -561,7 +582,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     }
   }
 
-  private class MovieRenamerExampleTableFormat implements TableFormat<MovieRenamerExample> {
+  private static class MovieRenamerExampleTableFormat implements TableFormat<MovieRenamerExample> {
     @Override
     public int getColumnCount() {
       return 3;
@@ -579,15 +600,16 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         case 2:
           return BUNDLE.getString("Settings.renamer.value"); //$NON-NLS-1$
 
+        default:
+          return null;
       }
-      return null;
     }
 
     @Override
     public Object getColumnValue(MovieRenamerExample baseObject, int column) {
       switch (column) {
         case 0:
-          return baseObject.token;
+          return baseObject.completeToken;
 
         case 1:
           return baseObject.description;

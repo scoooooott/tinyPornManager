@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,8 @@ class TvShowImageTypeSettingsPanel extends JPanel {
   private JCheckBox                   chckbxSeasonBanner2;
   private JCheckBox                   chckbxSeasonThumb1;
   private JCheckBox                   chckbxSeasonThumb2;
+  private JCheckBox                   chckbxSeasonThumb3;
+  private JCheckBox                   chckbxSeasonThumb4;
   private JCheckBox                   chckbxKeyart1;
   private JCheckBox                   chckbxDiscart1;
   private JCheckBox                   chckbxDiscart2;
@@ -110,7 +112,7 @@ class TvShowImageTypeSettingsPanel extends JPanel {
     setLayout(new MigLayout("", "[grow]", "[]"));
     {
       JPanel panelFileNaming = new JPanel(new MigLayout("", "[25lp,shrink 0][][][100lp,grow][]",
-          "[][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][][10lp!][][10lp!][][10lp!][10lp][][10lp!][10lp][10lp!][10lp][10lp!][10lp][][][20lp][]"));
+          "[][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][][10lp!][][10lp!][][10lp!][10lp][][10lp!][10lp][10lp!][10lp][][10lp!][10lp][][][20lp][]"));
 
       JLabel lblFiletypes = new TmmLabel(BUNDLE.getString("Settings.artwork.naming"), H3); //$NON-NLS-1$
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelFileNaming, lblFiletypes, true);
@@ -215,20 +217,26 @@ class TvShowImageTypeSettingsPanel extends JPanel {
         chckbxSeasonThumb2 = new JCheckBox("<season_folder>/seasonXX-thumb.ext");
         panelFileNaming.add(chckbxSeasonThumb2, "cell 3 25");
 
+        chckbxSeasonThumb3 = new JCheckBox("seasonXX-landscape.ext");
+        panelFileNaming.add(chckbxSeasonThumb3, "cell 2 26");
+
+        chckbxSeasonThumb4 = new JCheckBox("<season_folder>/seasonXX-landscape.ext");
+        panelFileNaming.add(chckbxSeasonThumb4, "cell 3 26");
+
         JLabel lblThumbNaming = new TmmLabel(BUNDLE.getString("mediafiletype.episode_thumb"));
-        panelFileNaming.add(lblThumbNaming, "cell 1 27");
+        panelFileNaming.add(lblThumbNaming, "cell 1 28");
 
         chckbxEpisodeThumb1 = new JCheckBox("<dynamic>-thumb.ext");
-        panelFileNaming.add(chckbxEpisodeThumb1, "cell 2 27");
+        panelFileNaming.add(chckbxEpisodeThumb1, "cell 2 28");
 
         chckbxEpisodeThumb3 = new JCheckBox("<dynamic>.ext");
-        panelFileNaming.add(chckbxEpisodeThumb3, "cell 3 27");
+        panelFileNaming.add(chckbxEpisodeThumb3, "cell 3 28");
 
         chckbxEpisodeThumb4 = new JCheckBox("<dynamic>.tbn");
-        panelFileNaming.add(chckbxEpisodeThumb4, "cell 2 28");
+        panelFileNaming.add(chckbxEpisodeThumb4, "cell 2 29");
 
         JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-        panelFileNaming.add(tpFileNamingHint, "cell 1 30 3 1,growx");
+        panelFileNaming.add(tpFileNamingHint, "cell 1 31 3 1,growx");
         TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
       }
     }
@@ -279,7 +287,9 @@ class TvShowImageTypeSettingsPanel extends JPanel {
 
     chckbxSeasonThumb1.removeItemListener(checkBoxListener);
     chckbxSeasonThumb2.removeItemListener(checkBoxListener);
-    clearSelection(chckbxSeasonThumb1, chckbxSeasonThumb2);
+    chckbxSeasonThumb3.removeItemListener(checkBoxListener);
+    chckbxSeasonThumb4.removeItemListener(checkBoxListener);
+    clearSelection(chckbxSeasonThumb1, chckbxSeasonThumb2, chckbxSeasonThumb3, chckbxSeasonThumb4);
 
     chckbxEpisodeThumb1.removeItemListener(checkBoxListener);
     chckbxEpisodeThumb3.removeItemListener(checkBoxListener);
@@ -415,6 +425,14 @@ class TvShowImageTypeSettingsPanel extends JPanel {
         case SEASON_FOLDER:
           chckbxSeasonThumb2.setSelected(true);
           break;
+
+        case SEASON_LANDSCAPE:
+          chckbxSeasonThumb3.setSelected(true);
+          break;
+
+        case SEASON_FOLDER_LANDSCAPE:
+          chckbxSeasonThumb4.setSelected(true);
+          break;
       }
     }
 
@@ -464,6 +482,8 @@ class TvShowImageTypeSettingsPanel extends JPanel {
 
     chckbxSeasonThumb1.addItemListener(checkBoxListener);
     chckbxSeasonThumb2.addItemListener(checkBoxListener);
+    chckbxSeasonThumb3.addItemListener(checkBoxListener);
+    chckbxSeasonThumb4.addItemListener(checkBoxListener);
 
     chckbxEpisodeThumb1.addItemListener(checkBoxListener);
     chckbxEpisodeThumb3.addItemListener(checkBoxListener);
@@ -566,6 +586,12 @@ class TvShowImageTypeSettingsPanel extends JPanel {
     }
     if (chckbxSeasonThumb2.isSelected()) {
       settings.addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_FOLDER);
+    }
+    if (chckbxSeasonThumb3.isSelected()) {
+      settings.addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_LANDSCAPE);
+    }
+    if (chckbxSeasonThumb4.isSelected()) {
+      settings.addSeasonThumbFilename(TvShowSeasonThumbNaming.SEASON_FOLDER_LANDSCAPE);
     }
 
     settings.clearEpisodeThumbFilenames();

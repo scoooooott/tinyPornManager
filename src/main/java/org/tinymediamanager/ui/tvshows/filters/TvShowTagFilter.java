@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2019 Manuel Laggner
+ * Copyright 2012 - 2020 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 
@@ -37,6 +39,7 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
   private TmmTableFormat.StringComparator comparator;
 
   private TvShowList                      tvShowList = TvShowList.getInstance();
+  private Set<String>                     oldTags    = new HashSet<>();
 
   public TvShowTagFilter() {
     super();
@@ -94,11 +97,28 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
   }
 
   private void buildAndInstallTagsArray() {
-    List<String> tags = new ArrayList<>(tvShowList.getTagsInTvShows());
+    // do it lazy because otherwise there is too much UI overhead
+    // also use a set for faster lookups
+    boolean dirty = false;
+    Set<String> tags = new HashSet<>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
-    tags.sort(comparator);
 
-    setValues(tags);
+    if (oldTags.size() != tags.size()) {
+      dirty = true;
+    }
+
+    if (!oldTags.containsAll(tags) || !tags.containsAll(oldTags)) {
+      dirty = true;
+    }
+
+    if (dirty) {
+      oldTags.clear();
+      oldTags.addAll(tags);
+
+      List<String> newTags = new ArrayList<>(tags);
+      newTags.sort(comparator);
+      setValues(newTags);
+    }
   }
 
   @Override
