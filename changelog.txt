@@ -29,6 +29,7 @@ Version 3.1
 + added navigation in the TV show tree by typing
 + added seasonXX-landscape naming scheme
 + (Linux) added an action to create a desktop entry in ~/.local/share/applications
++ added bahasa Indonesia to scraper languages #757
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678
