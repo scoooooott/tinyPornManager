@@ -17,10 +17,7 @@ package org.tinymediamanager.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -46,6 +43,8 @@ import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmLabel;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class MediaScraperConfigurationPanel is used to display configurable scraper options
@@ -100,16 +99,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
   }
 
   private JPanel createConfigPanel() {
-    JPanel panel = new JPanel();
-    GridBagLayout gridBagLayout = new GridBagLayout();
-    gridBagLayout.columnWidths = new int[] { 0 };
-    gridBagLayout.rowHeights = new int[] { 0 };
-    gridBagLayout.columnWeights = new double[] { Double.MIN_VALUE };
-    gridBagLayout.rowWeights = new double[] { Double.MIN_VALUE };
-    panel.setLayout(gridBagLayout);
+    JPanel panel = new JPanel(new MigLayout("gapy 0lp", "[][20lp!][]", ""));
 
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.gridy = 0;
+    int row = 0;
 
     // build up the panel for being displayed in the popup
     MediaProviderConfig config = mediaProvider.getProviderInfo().getConfig();
@@ -117,9 +109,6 @@ public class MediaScraperConfigurationPanel extends JPanel {
       if (!entry.getValue().isVisible()) {
         continue;
       }
-
-      constraints.anchor = GridBagConstraints.LINE_START;
-      constraints.ipadx = 20;
 
       // label
       // try different ways to get a meaningful key description
@@ -131,8 +120,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
         keyDescription = entry.getValue().getKeyDescription();
       }
       JLabel label = new JLabel(keyDescription);
-      constraints.gridx = 0;
-      panel.add(label, constraints);
+      panel.add(label, "cell 0 " + row);
 
       JComponent comp;
       switch (entry.getValue().getType()) {
@@ -163,7 +151,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
             tf = new JTextField(config.getValue(entry.getKey()));
           }
 
-          tf.setPreferredSize(new Dimension(250, 24));
+          tf.setColumns(20);
           tf.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent e) {
@@ -185,9 +173,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
       }
 
       comp.putClientProperty(entry.getKey(), entry.getKey());
-      constraints.ipadx = 0;
-      constraints.gridx = 1;
-      panel.add(comp, constraints);
+      panel.add(comp, "cell 3 " + row);
 
       // add a hint if a long text has been found
       try {
@@ -195,14 +181,13 @@ public class MediaScraperConfigurationPanel extends JPanel {
         if (StringUtils.isNotBlank(desc)) {
           JLabel lblHint = new JLabel(IconManager.HINT);
           lblHint.setToolTipText(desc);
-          constraints.gridx = 2;
-          panel.add(lblHint, constraints);
+          panel.add(lblHint, "cell 3 " + row);
         }
       }
       catch (Exception e) {
         LOGGER.debug("failed to add a hint: {}", e.getMessage());
       }
-      constraints.gridy++;
+      row++;
     }
     return panel;
   }
