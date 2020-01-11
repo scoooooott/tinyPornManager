@@ -491,7 +491,8 @@ public class MovieSet extends MediaEntity {
       return;
     }
 
-    // populate ids
+    // populate ids (and remove old ones)
+    ids.clear();
     setIds(metadata.getIds());
 
     // set chosen metadata
