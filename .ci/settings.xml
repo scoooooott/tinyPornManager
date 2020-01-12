@@ -7,6 +7,17 @@
             <password>${env.MAVEN_REPO_PASS}</password>
         </server>
         <server>
+            <id>gitlab-maven</id>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Job-Token</name>
+                        <value>${env.CI_JOB_TOKEN}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
+        </server>
+        <server>
             <id>gpg.passphrase</id>
             <passphrase>${env.GPG_PASSPHRASE}</passphrase>
         </server>
