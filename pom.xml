@@ -636,7 +636,7 @@
 											<classifier>mac</classifier>
 										</artifact>
 										<artifact>
-											<file>dist/tmm_${project.version}}_linux.tar.gz</file>
+											<file>dist/tmm_${project.version}_linux.tar.gz</file>
 											<type>tar.gz</type>
 											<classifier>linux</classifier>
 										</artifact>
