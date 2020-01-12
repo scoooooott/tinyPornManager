@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import static org.tinymediamanager.core.movie.MovieSettings.DEFAULT_RENAMER_FILE_PATTERN;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,7 +185,7 @@ public class MovieExporter extends MediaEntityExporter {
     }
 
     // fallback (no renamer settings)
-    filename = MovieRenamer.createDestinationForFilename("$T ($Y)", movie);
+    filename = MovieRenamer.createDestinationForFilename(DEFAULT_RENAMER_FILE_PATTERN, movie);
     if (StringUtils.isNotBlank(filename)) {
       return filename;
     }

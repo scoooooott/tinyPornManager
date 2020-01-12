@@ -15,10 +15,11 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb2.Tmdb;
-import com.uwetrottmann.tmdb2.entities.Videos;
-import com.uwetrottmann.tmdb2.entities.Videos.Video;
-import com.uwetrottmann.tmdb2.enumerations.VideoType;
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.getRequestLanguage;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,10 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Videos;
+import com.uwetrottmann.tmdb2.entities.Videos.Video;
+import com.uwetrottmann.tmdb2.enumerations.VideoType;
 
 /**
  * The class TmdbTrailerProvider. For managing all trailer provided tasks with tmdb
@@ -73,10 +76,7 @@ class TmdbTrailerProvider {
       throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
-    String language = options.getLanguage().getLanguage();
-    if (options.getLanguage().toLocale() != null && StringUtils.isNotBlank(options.getLanguage().toLocale().getCountry())) {
-      language += "-" + options.getLanguage().toLocale().getCountry();
-    }
+    String language = getRequestLanguage(options.getLanguage());
 
     LOGGER.debug("TMDB: getTrailers(tmdbId): {}", tmdbId);
 

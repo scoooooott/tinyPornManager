@@ -58,7 +58,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "fanart.tv",
-        "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
+        "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music. This service can be consumed with the API key tinyMediaManager offers, but if you want to have faster access to the artwork, you should become a VIP at fanart.tv (https://fanart.tv/vip/).</html>",
         FanartTvMetadataProvider.class.getResource("/org/tinymediamanager/scraper/fanart_tv.png"));
 
     // configure/load settings

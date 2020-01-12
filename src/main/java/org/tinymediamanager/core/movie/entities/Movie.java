@@ -695,7 +695,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    // populate ids
+    // populate ids (and remove old ones)
+    ids.clear();
     setIds(metadata.getIds());
 
     // set chosen metadata

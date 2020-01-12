@@ -29,6 +29,7 @@ Version 3.1
 + added navigation in the TV show tree by typing
 + added seasonXX-landscape naming scheme
 + (Linux) added an action to create a desktop entry in ~/.local/share/applications
++ added bahasa Indonesia to scraper languages #757
 x NFO: always write at least one id entry with default="true"
 x do not move episode files if the episode and season renamer patterns are empty #667
 x use temp files to create backups #678
@@ -56,6 +57,9 @@ x fixed Mpdb.tv scaper
 x do not open the image preview dialog multiple times #738
 x IMDB: fixed checking of IMDB id
 x parse plot/tagline from NFO respecting line breaks #742
+x allow choosing an episode of season 0 in the episode chooser
+x fixed exporting of artwork in the exporter under certain circumstances #756
+x (TMDB) pass full language tags to the API because of a bug at TMDB #708
 
 
 Version 3.0.5

@@ -651,7 +651,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     boolean writeNewThumb = false;
 
-    // populate ids
+    // populate ids (and remove old ones)
+    ids.clear();
     setIds(metadata.getIds());
 
     if (config.contains(TvShowEpisodeScraperMetadataConfig.TITLE)) {

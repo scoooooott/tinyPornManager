@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import static org.tinymediamanager.core.tvshow.TvShowSettings.DEFAULT_RENAMER_FILE_PATTERN;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -203,7 +205,8 @@ public class TvShowExporter extends MediaEntityExporter {
     if (entity instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) entity;
       List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
-      return FilenameUtils.getBaseName(TvShowRenamer.generateEpisodeFilenames(episode.getTvShow(), mfs.get(0)).get(0).getFilename());
+      return FilenameUtils
+          .getBaseName(TvShowRenamer.generateEpisodeFilenames(DEFAULT_RENAMER_FILE_PATTERN, episode.getTvShow(), mfs.get(0)).get(0).getFilename());
     }
     return "";
   }

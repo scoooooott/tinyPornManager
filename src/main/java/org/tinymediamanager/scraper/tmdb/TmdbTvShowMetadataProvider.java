@@ -21,6 +21,7 @@ import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
 import static org.tinymediamanager.core.entities.Person.Type.WRITER;
 import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
 import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.getRequestLanguage;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 import java.io.IOException;
@@ -121,7 +122,7 @@ class TmdbTvShowMetadataProvider {
 
     int tmdbId = options.getTmdbId();
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: {}", searchString);
@@ -227,7 +228,7 @@ class TmdbTvShowMetadataProvider {
       throw new MissingIdException(MediaMetadata.TMDB);
     }
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
 
     // the API does not provide a complete access to all episodes, so we have to
     // fetch the show summary first and every season afterwards..
@@ -282,7 +283,7 @@ class TmdbTvShowMetadataProvider {
       throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
 
     TvShow complete = null;
     synchronized (api) {
@@ -457,7 +458,8 @@ class TmdbTvShowMetadataProvider {
       throw new MissingIdException(MediaMetadata.SEASON_NR, MediaMetadata.EPISODE_NR);
     }
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
+
     // get the data from tmdb
     TvEpisode episode = null;
     TvSeason fullSeason = null;
@@ -669,7 +671,7 @@ class TmdbTvShowMetadataProvider {
       }
     }
     catch (Exception e) {
-      LOGGER.debug("failed to get tmdb id: " + e.getMessage());
+      LOGGER.debug("failed to get tmdb id: {}" + e.getMessage());
     }
 
     return 0;

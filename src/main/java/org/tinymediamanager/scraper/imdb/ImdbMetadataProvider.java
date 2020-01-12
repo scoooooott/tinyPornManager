@@ -57,7 +57,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "IMDb.com",
-        "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
+        "<html><h3>Internet Movie Database (IMDb)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDb<br /><br />Available languages: multiple</html>",
         ImdbMetadataProvider.class.getResource("/org/tinymediamanager/scraper/imdb_com.png"));
 
     // configure/load settings

@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.tmdb;
 import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
 import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
 import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.getRequestLanguage;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 import java.io.IOException;
@@ -119,7 +120,7 @@ class TmdbMovieMetadataProvider {
 
     boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: {}", searchString);
@@ -366,7 +367,7 @@ class TmdbMovieMetadataProvider {
       throw new MissingIdException(MediaMetadata.TMDB, MediaMetadata.IMDB);
     }
 
-    String language = options.getLanguage().toLocale().toLanguageTag();
+    String language = getRequestLanguage(options.getLanguage());
 
     // scrape
     Movie movie = null;
