@@ -91,6 +91,23 @@ public class UpgradeTasks {
       }
     }
 
+    // move old plugins to the backup folder
+    if (StrgUtils.compareVersion(v, "3.1") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 3.1");
+
+      Path pluginFolder = Paths.get("plugins");
+
+      // clear all files from /cache (except the all subfolders)
+      if (Files.exists(pluginFolder) && pluginFolder.toFile().isDirectory()) {
+        try {
+          Path backupFolder = Paths.get(Globals.BACKUP_FOLDER);
+          Utils.moveDirectorySafe(pluginFolder, backupFolder.resolve(pluginFolder.getFileName()));
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not movie plugins folder to the backup folder: {}", e.getMessage());
+        }
+      }
+    }
   }
 
   /**
