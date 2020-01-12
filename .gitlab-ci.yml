@@ -15,10 +15,6 @@ stages:
   - test
   - deploy
 
-# use dependency scanning
-include:
-  template: Dependency-Scanning.gitlab-ci.yml
-
 compile:
   stage: compile
   script:
@@ -72,6 +68,16 @@ test:jdk11:
     - dpkg -i libmediainfo0v5_18.12-1_amd64.Debian_9.0.deb
     - mvn $MAVEN_CLI_OPTS -DskipTests=false -DskipITs=true -Dmaven.test.failure.ignore=false test
 
+# use dependency scanning (only on QA)
+include:
+  template: Dependency-Scanning.gitlab-ci.yml
+
+dependency_scanning:
+  only:
+    variables:
+      - $QA_BUILD == "true"
+
+# sonarqube analysis
 sonarqube-qa:
   stage: test
   only:
