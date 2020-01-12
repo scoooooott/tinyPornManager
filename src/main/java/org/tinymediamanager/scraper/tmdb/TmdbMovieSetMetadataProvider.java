@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.getRequestLanguage;
 import static org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.providerInfo;
 
 import java.util.ArrayList;
@@ -79,10 +80,7 @@ class TmdbMovieSetMetadataProvider {
       return movieSetsFound;
     }
 
-    String language = query.getLanguage().getLanguage();
-    if (query.getLanguage().toLocale() != null && StringUtils.isNotBlank(query.getLanguage().toLocale().getCountry())) {
-      language += "-" + query.getLanguage().toLocale().getCountry();
-    }
+    String language = getRequestLanguage(query.getLanguage());
 
     synchronized (api) {
       try {
@@ -181,10 +179,7 @@ class TmdbMovieSetMetadataProvider {
       throw new MissingIdException(MediaMetadata.TMDB_SET);
     }
 
-    String language = options.getLanguage().getLanguage();
-    if (options.getLanguage().toLocale() != null && StringUtils.isNotBlank(options.getLanguage().toLocale().getCountry())) {
-      language += "-" + options.getLanguage().toLocale().getCountry();
-    }
+    String language = getRequestLanguage(options.getLanguage());
 
     Collection collection = null;
     synchronized (api) {

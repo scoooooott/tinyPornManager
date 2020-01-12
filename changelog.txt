@@ -59,6 +59,7 @@ x IMDB: fixed checking of IMDB id
 x parse plot/tagline from NFO respecting line breaks #742
 x allow choosing an episode of season 0 in the episode chooser
 x fixed exporting of artwork in the exporter under certain circumstances #756
+x (TMDB) pass full language tags to the API because of a bug at TMDB #708
 
 
 Version 3.0.5

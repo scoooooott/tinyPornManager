@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
@@ -458,5 +460,40 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
       g = MediaGenres.getGenre(genre.name);
     }
     return g;
+  }
+
+  /**
+   * tmdb works better if we send a "real" language tag (containing language AND country); since we have only the language tag we do the same hack as
+   * described in the tmdb api (By default, a bare ISO-639-1 language will default to its matching pair, ie. pt-PT - source
+   * https://developers.themoviedb.org/3/getting-started/languages), but without the bug they have ;)
+   * 
+   * @param language
+   *          the {@link MediaLanguages} to parse
+   * @return a {@link String} containing the language and country code
+   */
+  static String getRequestLanguage(MediaLanguages language) {
+    String name = language.name();
+
+    Locale locale;
+
+    if (name.length() > 2) {
+      // language tag is longer than 2 characters -> we have the country
+      locale = language.toLocale();
+    }
+    else {
+      // try to get the right locale with the language tag in front an end (e.g. de-DE)
+      locale = new Locale(name, name.toUpperCase(Locale.ROOT));
+      // now check if the resulting locale is valid
+      if (!LocaleUtils.isAvailableLocale(locale)) {
+        // no => fallback to default
+        locale = language.toLocale();
+      }
+    }
+
+    if (locale == null) {
+      return null;
+    }
+
+    return locale.toLanguageTag();
   }
 }
