@@ -2,6 +2,7 @@ Version 3.1.1
 =======================
 + re-added AniDB scraper to the ui #759
 + use another algorithm for title case rendering
++ fixed movie set name cleanup for file-/folder names
 
 
 Version 3.1

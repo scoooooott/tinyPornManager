@@ -270,7 +270,12 @@ public class MovieSetArtworkHelper {
     for (MediaFile mediaFile : mediaFiles) {
       // a) is the artwork in the preferred artwork folder?
       if (MovieModuleManager.SETTINGS.isMovieSetArtworkFolderStyleKodi()) {
-        if (mediaFile.getFileAsPath().startsWith(artworkFolder.resolve(MovieRenamer.replaceInvalidCharacters(movieSet.getTitle())))) {
+        String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+
+        // also remove illegal separators
+        movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
+
+        if (mediaFile.getFileAsPath().startsWith(artworkFolder.resolve(movieSetName))) {
           return mediaFile;
         }
       }
@@ -308,7 +313,12 @@ public class MovieSetArtworkHelper {
         }
       }
       else {
-        if (mediaFile.getFileAsPath().startsWith(artworkFolder.resolve(MovieRenamer.replaceInvalidCharacters(movieSet.getTitle())))) {
+        String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+
+        // also remove illegal separators
+        movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
+
+        if (mediaFile.getFileAsPath().startsWith(artworkFolder.resolve(movieSetName))) {
           return mediaFile;
         }
       }
@@ -346,8 +356,12 @@ public class MovieSetArtworkHelper {
       if (mf.isGraphic() && mf.getFile().getParent().endsWith(artworkFolder)) {
         try {
           String extension = FilenameUtils.getExtension(mf.getFilename());
-          String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + mf.getType().name().toLowerCase(Locale.ROOT)
-              + "." + extension;
+          String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+
+          // also remove illegal separators
+          movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
+
+          String artworkFileName = movieSetName + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + "." + extension;
           Path artworkFile = Paths.get(artworkFolder, artworkFileName);
           Utils.moveFileSafe(mf.getFileAsPath(), artworkFile);
 
@@ -384,7 +398,12 @@ public class MovieSetArtworkHelper {
     // a)
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "."
+        String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+
+        // also remove illegal separators
+        movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
+
+        String artworkFileName = movieSetName + "-" + type.name().toLowerCase(Locale.ROOT) + "."
             + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
@@ -400,6 +419,10 @@ public class MovieSetArtworkHelper {
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String movieSetName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle());
+
+        // also remove illegal separators
+        movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
+
         String artworkFileName = type.name().toLowerCase(Locale.ROOT) + "." + fileType;
         Path artworkFile = Paths.get(artworkFolder, movieSetName, artworkFileName);
         if (Files.exists(artworkFile)) {
