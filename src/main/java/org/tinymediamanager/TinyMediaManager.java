@@ -133,7 +133,7 @@ public class TinyMediaManager {
     }
 
     LOGGER.info("=====================================================");
-    LOGGER.info("=== tinyMediaManager (c) 2012-2019 Manuel Laggner ===");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2020 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : {}", ReleaseInfo.getRealVersion());
     LOGGER.info("os.name          : {}", System.getProperty("os.name"));

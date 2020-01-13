@@ -188,7 +188,7 @@ class TinyMediaManagerCMD {
     // @formatter:off
     System.out.println("\n" +
         "=====================================================\n" +
-        "=== tinyMediaManager (c) 2012-2019 Manuel Laggner ===\n" +
+        "=== tinyMediaManager (c) 2012-2020 Manuel Laggner ===\n" +
         "=====================================================\n" +
         "\n" +
         "SYNTAX:    Windows:   tinyMediaManagerCMD.exe <parameters>\n" +
