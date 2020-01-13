@@ -4,7 +4,7 @@
 
 	<groupId>org.tinymediamanager</groupId>
 	<artifactId>tinyMediaManager</artifactId>
-	<version>3.2-SNAPSHOT</version>
+	<version>3.1.1-SNAPSHOT</version>
 
 	<name>tinyMediaManager</name>
 	<description>a media management tool written in Java</description>
