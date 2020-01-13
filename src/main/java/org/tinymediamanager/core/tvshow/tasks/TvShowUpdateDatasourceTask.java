@@ -246,6 +246,15 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             submitTask(new FindTvShowTask(subdir, dsAsPath.toAbsolutePath()));
           }
           waitForCompletionOrCancel();
+
+          // print stats
+          LOGGER.debug("FilesFound: {}", filesFound.size());
+          LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
+          LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
+          LOGGER.debug("PreDir: {}", preDir);
+          LOGGER.debug("PostDir: {}", postDir);
+          LOGGER.debug("VisFile: {}", visFile);
+
           if (cancel) {
             break;
           }
@@ -265,8 +274,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         for (Path path : tvShowFolders) {
           // first of all check if the DS is available; we can take the
           // Files.exist here:
-          // if the DS exists (and we have access to read it): Files.exist =
-          // true
+          // if the DS exists (and we have access to read it): Files.exist = true
           if (!Files.exists(path)) {
             // error - continue with next datasource
             LOGGER.warn("Datasource not available/empty - {}", path.toAbsolutePath());
@@ -277,6 +285,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
         waitForCompletionOrCancel();
+
+        // print stats
+        LOGGER.debug("FilesFound: {}", filesFound.size());
+        LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
+        LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
+        LOGGER.debug("PreDir: {}", preDir);
+        LOGGER.debug("PostDir: {}", postDir);
+        LOGGER.debug("VisFile: {}", visFile);
 
         if (!cancel) {
           cleanupShows();
@@ -322,12 +338,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       stopWatch.stop();
       LOGGER.info("Done updating datasource :) - took {}", stopWatch);
 
-      LOGGER.debug("FilesFound: {}", filesFound.size());
-      LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
-      LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
-      LOGGER.debug("PreDir: {}", preDir);
-      LOGGER.debug("PostDir: {}", postDir);
-      LOGGER.debug("VisFile: {}", visFile);
       resetCounters();
     }
     catch (
