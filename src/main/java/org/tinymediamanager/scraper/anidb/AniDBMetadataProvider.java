@@ -62,7 +62,6 @@ import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.interfaces.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.omdb.OmdbConnectionCounter;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -581,7 +580,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       if (oldestConnection > (currentTime - 2000)) {
         LOGGER.debug("connection limit reached, throttling...");
         do {
-          OmdbConnectionCounter.class.wait(2000 - (currentTime - oldestConnection));
+          AniDBMetadataProvider.class.wait(2000 - (currentTime - oldestConnection));
           currentTime = System.currentTimeMillis();
         } while (oldestConnection > (currentTime - 2000));
       }
