@@ -84,8 +84,7 @@ public class VSMeta {
   private static final byte             TAG_RATING                = 0x60;
   private static final int              TAG_POSTER_DATA           = 0x8a;
   private static final int              TAG_POSTER_MD5            = 0x92;
-  private static final int              TAG_BACKDROP_DATA         = 0xaa;
-  // private static final int TAG_BACKDROP_MD5 = 0x??;
+  private static final int              TAG_GROUP3                = 0xaa;                                 // on v1, the backdrop is in its own group
 
   private static final byte             TAG_GROUP1                = 0x52;
   private static final byte             TAG1_CAST                 = 0x0A;
@@ -302,9 +301,13 @@ public class VSMeta {
           case TAG_POSTER_DATA:
             info.images.poster = fromBase64IgnoreSpaces(data.readStringVL());
             break;
-          case TAG_BACKDROP_DATA:
+          case TAG_GROUP3:
             // TODO: avatar (v1) fails, check with actual movie
-            info.images.backdrop = fromBase64IgnoreSpaces(data.readStringVL());
+            // info.images.backdrop = fromBase64IgnoreSpaces(data.readStringVL());
+            int data3Size = data.readU_VL_Int();
+            long pos3 = (int) data.position();
+            byte[] meta3 = data.readBytes(data3Size);
+            parseGroup3(openSync(meta3), info, (int) pos3);
             break;
           case TAG_POSTER_MD5:
             // assert (hex(md5(info.imagedata.episodeImage)).equals(data.readStringVL()));
@@ -786,7 +789,7 @@ public class VSMeta {
         out = out | ((long) (v & 0x7F) << offset);
         offset += 7;
       } while ((v & 0x80) != 0 && hasMore());
-      LOGGER.trace("SYNO int: {}", out);
+      LOGGER.trace("SYNO long  dec: {}  hex: {}", out, String.format("%02X", out));
       return out;
     }
 
