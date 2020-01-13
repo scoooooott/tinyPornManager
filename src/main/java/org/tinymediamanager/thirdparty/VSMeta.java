@@ -785,7 +785,7 @@ public class VSMeta {
         v = readU8();
         out = out | ((long) (v & 0x7F) << offset);
         offset += 7;
-      } while ((v & 0x80) != 0);
+      } while ((v & 0x80) != 0 && hasMore());
       LOGGER.trace("SYNO int: {}", out);
       return out;
     }
