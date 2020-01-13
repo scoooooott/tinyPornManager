@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 
 import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
@@ -33,7 +34,7 @@ public class NamedTitleCaseRenderer implements NamedRenderer {
   @Override
   public String render(Object o, String s, Locale locale, Map<String, Object> map) {
     if (o instanceof String && StringUtils.isNotBlank((String) o)) {
-      return StringUtils.capitalize(((String) o).toLowerCase(Locale.ROOT));
+      return WordUtils.capitalizeFully(((String) o));
     }
     return "";
   }

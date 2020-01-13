@@ -455,7 +455,12 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         filename = movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
       }
 
-      lblExample.setText(Paths.get(path, filename).toString());
+      try {
+        lblExample.setText(Paths.get(path, filename).toString());
+      }
+      catch (Exception e) {
+        // not changing on errors
+      }
 
       // create examples
       for (MovieRenamerExample example : exampleEventList) {
