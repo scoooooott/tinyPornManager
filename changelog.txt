@@ -1,3 +1,8 @@
+Version 3.1.2
+=======================
+x reverted usage of NativeFileDialogs for macOS users #762 #764
+x fixed some issues in the file-/folder dialogs
+
 Version 3.1.1
 =======================
 + re-added AniDB scraper to the ui #759
