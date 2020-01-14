@@ -146,6 +146,12 @@ public class KodiScraper implements IMediaProvider {
           // }
         }
       }
+      if (this.scraperXml.toLowerCase(Locale.ROOT).endsWith(".py")) {
+        LOGGER.info("Found a python scraper {}, but we can only load XML based ones - sorry.", scraperFolder);
+        providerInfo = new MediaProviderInfo("", name, ""); // set blank ID, so the outer loop ignores
+        return;
+      }
+
       providerInfo = new MediaProviderInfo(id, "Kodi: " + name, "<h3>" + summary + "</h3><br>" + description);
       providerInfo.setVersion(version); // deprecated solely for Kodi, so ok
 
@@ -303,7 +309,7 @@ public class KodiScraper implements IMediaProvider {
       }
     }
     catch (IOException e) {
-      e.printStackTrace();
+      LOGGER.error("Unable to generate Kodi scraper for folder {}", scraperFolder, e);
     }
   }
 

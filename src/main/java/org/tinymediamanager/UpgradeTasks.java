@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
@@ -106,6 +107,16 @@ public class UpgradeTasks {
         catch (Exception e) {
           LOGGER.warn("could not movie plugins folder to the backup folder: {}", e.getMessage());
         }
+      }
+    }
+
+    // delete nfd on osx
+    if (StrgUtils.compareVersion(v, "3.1.2") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 3.1");
+
+      if (SystemUtils.IS_OS_MAC) {
+        Utils.deleteFileSafely(Paths.get("native", "mac", "liblwjgl.dylib"));
+        Utils.deleteFileSafely(Paths.get("native", "mac", "liblwjgl_nfd.dylib"));
       }
     }
   }

@@ -40,6 +40,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -127,6 +128,7 @@ public class TvShowModuleManager implements ITmmModule {
     objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
     objectMapper.setSerializerProvider(new CustomNullStringSerializerProvider());
