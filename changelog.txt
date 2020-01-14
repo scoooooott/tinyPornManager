@@ -2,6 +2,7 @@ Version 3.1.2
 =======================
 x reverted usage of NativeFileDialogs for macOS users #762 #764
 x fixed some issues in the file-/folder dialogs
+x fixed migration of movies from 3.0.x to 3.1.x style
 
 Version 3.1.1
 =======================
