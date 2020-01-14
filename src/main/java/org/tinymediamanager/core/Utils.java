@@ -1028,7 +1028,8 @@ public class Utils {
           parseLocaleFromFilename(resource);
         }
       }
-      else {
+
+      if (availableLocales.size() == 1) {
         // we may be in a .jar file
         CodeSource src = Utils.class.getProtectionDomain().getCodeSource();
         if (src != null) {
