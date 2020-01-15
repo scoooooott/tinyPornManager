@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
@@ -42,6 +43,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -335,6 +337,23 @@ public class UpgradeTasks {
           if (dirty) {
             episode.saveToDb();
           }
+        }
+      }
+    }
+
+    if (StrgUtils.compareVersion(v, "3.1.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.1.3");
+
+      // convert movie set ids from tmdb to tmdbSet
+      for (MovieSet movieSet : MovieList.getInstance().getMovieSetList()) {
+        if (movieSet.getId(Constants.TMDB) != null) {
+          // do not overwrite any existing new one
+          if (movieSet.getId(Constants.TMDB_SET) == null) {
+            movieSet.setId(Constants.TMDB_SET, movieSet.getId(Constants.TMDB));
+          }
+          // remove the old one
+          movieSet.setId(Constants.TMDB, null);
+          movieSet.saveToDb();
         }
       }
     }
