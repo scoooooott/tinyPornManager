@@ -114,7 +114,7 @@ public class MovieSet extends MediaEntity {
 
     if (!StringUtils.equals(oldValue, newValue)) {
       // update artwork
-      MovieSetArtworkHelper.renameArtwork(this);
+      MovieSetArtworkHelper.cleanupArtwork(this);
 
       synchronized (movies) {
         for (Movie movie : movies) {
