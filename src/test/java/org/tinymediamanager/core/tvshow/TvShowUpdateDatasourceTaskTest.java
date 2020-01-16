@@ -12,10 +12,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 
@@ -56,6 +58,11 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     TvShowList tvShowList = TvShowList.getInstance();
     for (TvShow show : tvShowList.getTvShows()) {
       System.out.println(show.getPath());
+
+      // check for every found episode that it has at least one VIDEO file
+      for (TvShowEpisode episode : show.getEpisodes()) {
+        assertThat(episode.getMediaFiles(MediaFileType.VIDEO)).isNotEmpty();
+      }
     }
 
     assertThat(tvShowList.getTvShows().size()).isEqualTo(NUMBER_OF_EXPECTED_SHOWS);
