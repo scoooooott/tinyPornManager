@@ -36,7 +36,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +105,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private List<String>                dataSources;
   private List<Movie>                 movieFolders   = new ArrayList<>();
   private MovieList                   movieList;
-  private HashSet<Path>               filesFound     = new HashSet<>();
+  private Set<Path>                   filesFound     = ConcurrentHashMap.newKeySet();
 
   public MovieUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
