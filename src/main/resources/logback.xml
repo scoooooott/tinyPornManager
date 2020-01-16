@@ -50,32 +50,48 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
-
-    <appender name="ASYNC500" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>5000</queueSize>
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>500</queueSize>
         <discardingThreshold>0</discardingThreshold>
         <appender-ref ref="FILE"/>
     </appender>
 
+    <!-- file appender - for our trace logging; instead of InMemory keep a logfile per session -->
+    <appender name="FILE_TRACE" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <file>${logfolder}/trace.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_TRACE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>5000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE_TRACE"/>
+    </appender>
+
     <!-- memory appender for collection of logs - TRACE and above -->
-    <appender name="INMEMORY" class="org.tinymediamanager.InMemoryAppender">
+    <!-- appender name="INMEMORY" class="org.tinymediamanager.InMemoryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>TRACE</level>
         </filter>
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
         </encoder>
-    </appender>
+    </appender -->
 
     <!-- default settings -->
     <logger name="org.tinymediamanager" level="TRACE"/>
 
-
     <!-- appender activation -->
     <root>
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ASYNC500"/>
-        <appender-ref ref="INMEMORY"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_TRACE"/>
+        <!-- appender-ref ref="INMEMORY"/ -->
     </root>
 
 </configuration>
