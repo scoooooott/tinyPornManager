@@ -168,7 +168,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     boolean watched = true;
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.isWatched()) {
+      if (!episode.isDummy() && !episode.isWatched()) {
         watched = false;
         break;
       }
@@ -186,7 +186,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     boolean subtitles = true;
 
     for (TvShowEpisode episode : episodes) {
-      if (!episode.getHasSubtitles()) {
+      if (!episode.isDummy() && !episode.getHasSubtitles()) {
         subtitles = false;
         break;
       }
@@ -216,7 +216,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
    */
   public Boolean getHasEpisodeImages() {
     for (TvShowEpisode episode : episodes) {
-      if (!episode.getHasImages()) {
+      if (!episode.isDummy() && !episode.getHasImages()) {
         return false;
       }
     }
@@ -231,7 +231,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
   public Boolean getHasEpisodeNfoFiles() {
     boolean nfo = true;
     for (TvShowEpisode episode : episodes) {
-      if (!episode.getHasNfoFile()) {
+      if (!episode.isDummy() && !episode.getHasNfoFile()) {
         nfo = false;
         break;
       }
