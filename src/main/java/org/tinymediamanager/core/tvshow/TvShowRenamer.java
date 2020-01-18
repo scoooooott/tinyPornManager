@@ -379,6 +379,14 @@ public class TvShowRenamer {
       }
     }
 
+    // delete empty subfolders
+    try {
+      Utils.deleteEmptyDirectoryRecursive(tvShow.getPathNIO());
+    }
+    catch (Exception e) {
+      LOGGER.warn("could not delete empty subfolders: {}", e.getMessage());
+    }
+
     // ######################################################################
     // ## build up image cache
     // ######################################################################

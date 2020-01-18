@@ -1310,7 +1310,7 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
-    if (!Files.exists(dir)) {
+    if (!Files.exists(dir) || !Files.isDirectory(dir)) {
       return;
     }
 
@@ -1340,6 +1340,46 @@ public class Utils {
         return FileVisitResult.CONTINUE;
       }
 
+    });
+  }
+
+  /**
+   * Deletes a complete directory recursively, but checking if empty (from inside out) - using Java NIO
+   *
+   * @param dir
+   *          directory to delete
+   * @throws IOException
+   */
+  public static void deleteEmptyDirectoryRecursive(Path dir) throws IOException {
+    if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+      return;
+    }
+
+    LOGGER.info("Deleting complete directory: {}", dir);
+    Files.walkFileTree(dir, new FileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        if (isFolderEmpty(dir)) {
+          Files.delete(dir);
+        }
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFileFailed(Path file, IOException exc) {
+        return FileVisitResult.CONTINUE;
+      }
     });
   }
 

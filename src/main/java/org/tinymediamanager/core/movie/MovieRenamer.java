@@ -70,6 +70,7 @@ import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieTrailerNaming;
 import org.tinymediamanager.scraper.util.LanguageUtils;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.floreysoft.jmte.Engine;
@@ -206,7 +207,7 @@ public class MovieRenamer {
         // remove the filename of movie from subtitle, to ease parsing
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase(Locale.ROOT);
-        if (mfs != null && mfs.size() > 0) {
+        if (ListUtils.isNotEmpty(mfs)) {
           shortname = sub.getBasename().toLowerCase(Locale.ROOT).replace(m.getVideoBasenameWithoutStacking(), "");
         }
 
@@ -303,6 +304,26 @@ public class MovieRenamer {
       }
     } // end MF loop
     m.saveToDb();
+  }
+
+  /**
+   * remove empty subfolders in this folder after renaming; only valid if we're in a single movie folder!
+   * 
+   * @param movie
+   *          the movie to clean
+   */
+  private static void removeEmptySubfolders(Movie movie) {
+    if (movie.isMultiMovieDir()) {
+      return;
+    }
+
+    // check all subfolders if they're empty (recursively)
+    try {
+      Utils.deleteEmptyDirectoryRecursive(movie.getPathNIO());
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not delete empty subfolders: {}", e.getMessage());
+    }
   }
 
   /**
@@ -696,6 +717,8 @@ public class MovieRenamer {
         }
       }
     }
+
+    removeEmptySubfolders(movie);
 
     if (downloadMissingArtworks) {
       LOGGER.debug("Yay - movie upgrade :) download missing artworks");
