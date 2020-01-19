@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.MediaFileHelper;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -48,15 +49,23 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
     for (String videoFormat : selectedValues) {
 
       for (TvShowEpisode episode : episodes) {
+        MediaFile mf = episode.getMainVideoFile();
+        if (mf == null) {
+          return false;
+        }
+
         if (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) || MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat)
-            || MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat)) {
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) && isVideoUHD(episode.getMediaInfoVideoFormat()))) {
+            || MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) || MediaFileHelper.VIDEO_FORMAT_LD.equals(videoFormat)) {
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) && mf.isVideoDefinitionUHD())) {
             return true;
           }
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat) && isVideoHD(episode.getMediaInfoVideoFormat()))) {
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat) && mf.isVideoDefinitionHD())) {
             return true;
           }
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) && !isVideoHD(episode.getMediaInfoVideoFormat()))) {
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) && mf.isVideoDefinitionSD())) {
+            return true;
+          }
+          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_LD.equals(videoFormat) && mf.isVideoDefinitionLD())) {
             return true;
           }
         }
@@ -74,26 +83,6 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
   @Override
   protected JLabel createLabel() {
     return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
-  }
-
-  private boolean isVideoUHD(String videoFormat) {
-    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_2160P)) {
-      return true;
-    }
-    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_4320P)) {
-      return true;
-    }
-    return false;
-  }
-
-  private boolean isVideoHD(String videoFormat) {
-    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_720P)) {
-      return true;
-    }
-    if (videoFormat.equals(MediaFileHelper.VIDEO_FORMAT_1080P)) {
-      return true;
-    }
-    return false;
   }
 
   @Override
