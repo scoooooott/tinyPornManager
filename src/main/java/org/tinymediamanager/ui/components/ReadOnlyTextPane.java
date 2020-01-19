@@ -17,6 +17,7 @@
 package org.tinymediamanager.ui.components;
 
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 
 /**
  * A readonly variant of the JTextPane
@@ -32,5 +33,7 @@ public class ReadOnlyTextPane extends JTextPane {
     setOpaque(false);
     setEditable(false);
     setText(text);
+    setFocusable(false);
+    setForeground(UIManager.getColor("Label.foreground"));
   }
 }
