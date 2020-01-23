@@ -241,6 +241,7 @@ public class TinyMediaManager {
             updateProgress(g2, "loading MediaInfo libs", 20);
             splash.update();
           }
+
           MediaInfoUtils.loadMediaInfo();
 
           // load modules //////////////////////////////////////////////////

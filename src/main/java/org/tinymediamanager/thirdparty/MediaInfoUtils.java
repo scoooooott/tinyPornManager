@@ -28,12 +28,31 @@ import org.tinymediamanager.core.Utils;
 import com.sun.jna.Platform;
 
 public class MediaInfoUtils {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfoUtils.class);
+  public static final boolean USE_LIBMEDIAINFO = useMediaInfo();
+
+  private static final Logger LOGGER           = LoggerFactory.getLogger(MediaInfoUtils.class);
+
+  private MediaInfoUtils() {
+    // private constructor for utility classes
+  }
+
+  /**
+   * checks if we should use libMediaInfo
+   * 
+   * @return true/false
+   */
+  private static boolean useMediaInfo() {
+    return Boolean.parseBoolean(System.getProperty("tmm.uselibmediainfo", "true"));
+  }
 
   /**
    * load media info from /native/*
    */
   public static void loadMediaInfo() {
+    if (!USE_LIBMEDIAINFO) {
+      return;
+    }
+
     try {
       String miv = "";
       String nativepath = "native/";
@@ -83,7 +102,7 @@ public class MediaInfoUtils {
       miv = MediaInfo.version(); // load class
 
       if (!StringUtils.isEmpty(miv)) {
-        LOGGER.info("Using " + miv);
+        LOGGER.info("Using {}", miv);
       }
       else {
         LOGGER.error("could not load MediaInfo!");
