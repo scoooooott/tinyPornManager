@@ -169,6 +169,19 @@ public class TmmTaskManager implements TmmTaskListener {
   }
 
   /**
+   * add a tasks which does not fit in the named queues (like caching or TV show episode scraping task)
+   *
+   * @param task
+   *          the task to be added
+   */
+  public void addUnnamedTask(Runnable task) {
+    if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
+      unnamedTaskExecutor = createUnnamedTaskExecutor();
+    }
+    unnamedTaskExecutor.execute(task);
+  }
+
+  /**
    * add a download task to the queue
    * 
    * @param task

@@ -17,10 +17,6 @@ package org.tinymediamanager.core.tasks;
 
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
@@ -37,13 +33,13 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * 
  * @author Manuel Laggner
  */
-public class MediaFileInformationFetcherTask implements Callable<Object> {
+public class MediaFileInformationFetcherTask implements Runnable {
   private static final Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
-  private List<MediaFile>     mediaFiles;
-  private MediaEntity         mediaEntity;
-  private long                uniqueId;
-  private boolean             forceUpdate;
+  protected final MediaFile   mediaFile;
+  protected final MediaEntity mediaEntity;
+  private final long          uniqueId;
+  private final boolean       forceUpdate;
 
   /**
    * Instantiates a new media file information fetcher task.
@@ -56,15 +52,14 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
    *          force an update
    */
   public MediaFileInformationFetcherTask(MediaFile mediaFile, MediaEntity mediaEntity, boolean forceUpdate) {
-    this.mediaFiles = new ArrayList<>();
-    this.mediaFiles.add(mediaFile);
+    this.mediaFile = mediaFile;
     this.mediaEntity = mediaEntity;
     this.forceUpdate = forceUpdate;
     this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
   @Override
-  public String call() {
+  public void run() {
     // try/catch block in the root of the thread to log crashes
     try {
       String name = Thread.currentThread().getName();
@@ -74,16 +69,14 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
       name = name.replaceAll("\\-G\\d+", "-G" + uniqueId);
       Thread.currentThread().setName(name);
 
-      for (MediaFile mediaFile : mediaFiles) {
-        mediaFile.gatherMediaInformation(forceUpdate);
-        if (mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
-          Movie movie = (Movie) mediaEntity;
-          movie.firePropertyChange("hasSubtitles", false, true);
-        }
-        if (mediaEntity instanceof TvShowEpisode && mediaFile.hasSubtitles()) {
-          TvShowEpisode episode = (TvShowEpisode) mediaEntity;
-          episode.firePropertyChange("hasSubtitles", false, true);
-        }
+      mediaFile.gatherMediaInformation(forceUpdate);
+      if (mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
+        Movie movie = (Movie) mediaEntity;
+        movie.firePropertyChange("hasSubtitles", false, true);
+      }
+      if (mediaEntity instanceof TvShowEpisode && mediaFile.hasSubtitles()) {
+        TvShowEpisode episode = (TvShowEpisode) mediaEntity;
+        episode.firePropertyChange("hasSubtitles", false, true);
       }
     }
     catch (Exception e) {
@@ -92,12 +85,18 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
           new Message(MessageLevel.ERROR, "MediaInformation", "message.mediainfo.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
 
+    callback();
+
     if (mediaEntity != null) {
       mediaEntity.saveToDb();
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
-      return "getting MediaInfo from " + mediaEntity.getTitle();
+      return;
     }
+  }
 
-    return "getting MediaInfo";
+  /**
+   * a callback which could be called after finishing this task
+   */
+  public void callback() {
   }
 }

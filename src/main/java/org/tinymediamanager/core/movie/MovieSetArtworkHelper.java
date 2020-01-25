@@ -46,6 +46,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.tasks.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -363,13 +364,12 @@ public class MovieSetArtworkHelper {
         // also remove illegal separators
         movieSetName = MovieRenamer.replacePathSeparators(movieSetName);
 
-        String artworkFileName = movieSetName + "-" + type.name().toLowerCase(Locale.ROOT) + "."
-            + fileType;
+        String artworkFileName = movieSetName + "-" + type.name().toLowerCase(Locale.ROOT) + "." + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
-          mediaFile.gatherMediaInformation();
+          TmmTaskManager.getInstance().addUnnamedTask(new MediaFileInformationFetcherTask(mediaFile, movieSet, false));
           movieSet.addToMediaFiles(mediaFile);
         }
       }
@@ -388,7 +388,7 @@ public class MovieSetArtworkHelper {
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
-          mediaFile.gatherMediaInformation();
+          TmmTaskManager.getInstance().addUnnamedTask(new MediaFileInformationFetcherTask(mediaFile, movieSet, false));
           movieSet.addToMediaFiles(mediaFile);
         }
       }
@@ -416,7 +416,7 @@ public class MovieSetArtworkHelper {
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
-          mediaFile.gatherMediaInformation();
+          TmmTaskManager.getInstance().addUnnamedTask(new MediaFileInformationFetcherTask(mediaFile, movieSet, false));
           movieSet.addToMediaFiles(mediaFile);
         }
       }
