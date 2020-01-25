@@ -46,7 +46,7 @@ public class MovieDeleteAction extends TmmAction {
     putValue(SMALL_ICON, IconManager.DELETE_FOREVER);
     putValue(NAME, BUNDLE.getString("movie.delete")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.delete.hint")); //$NON-NLS-1$
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK));
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
   @Override

@@ -48,7 +48,7 @@ public class TvShowDeleteAction extends TmmAction {
     putValue(NAME, BUNDLE.getString("tvshow.delete")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.DELETE_FOREVER);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.delete.hint")); //$NON-NLS-1$
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK));
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
   @Override
