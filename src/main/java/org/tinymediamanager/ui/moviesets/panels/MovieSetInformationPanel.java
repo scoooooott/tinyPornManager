@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -194,15 +195,13 @@ public class MovieSetInformationPanel extends JPanel {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }
     else {
-      if (StringUtils.isNotBlank(lblPoster.getImagePath()) && Files.exists(Paths.get(lblPoster.getImagePath()))) {
-        try {
-          BufferedImage img = ImageIO.read(new File(lblPoster.getImagePath()));
-          lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
-        }
-        catch (Exception e) {
-          LOGGER.warn("Could not read poster dimensions: {}", e.getMessage());
-          lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
-        }
+      if (StringUtils.isNotBlank(lblPoster.getImagePath())) {
+        // do this async to prevent lockups of the UI
+        ImageSizeLoader loader = new ImageSizeLoader(lblPoster.getImagePath(), "poster", lblPosterSize);
+        loader.execute();
+      }
+      else {
+        lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster"));
       }
     }
   }
@@ -215,15 +214,13 @@ public class MovieSetInformationPanel extends JPanel {
       lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
     }
     else {
-      if (StringUtils.isNotBlank(lblFanart.getImagePath()) && Files.exists(Paths.get(lblFanart.getImagePath()))) {
-        try {
-          BufferedImage img = ImageIO.read(new File(lblFanart.getImagePath()));
-          lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + img.getWidth() + "x" + img.getHeight()); //$NON-NLS-1$
-        }
-        catch (Exception e) {
-          LOGGER.warn("Could not read fanart dimensions: {}", e.getMessage());
-          lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
-        }
+      if (StringUtils.isNotBlank(lblFanart.getImagePath())) {
+        // do this async to prevent lockups of the UI
+        ImageSizeLoader loader = new ImageSizeLoader(lblFanart.getImagePath(), "fanart", lblFanartSize);
+        loader.execute();
+      }
+      else {
+        lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart"));
       }
     }
   }
@@ -240,5 +237,48 @@ public class MovieSetInformationPanel extends JPanel {
     AutoBinding<MovieSetSelectionModel, String, JTextArea, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_1, taOverview, JTextAreaBeanProperty);
     autoBinding_1.bind();
+  }
+
+  private class ImageSizeLoader extends SwingWorker<Void, Void> {
+    private final String path;
+    private final String type;
+    private final JLabel label;
+
+    private int          width;
+    private int          height;
+
+    public ImageSizeLoader(String path, String type, JLabel label) {
+      this.path = path;
+      this.type = type;
+      this.label = label;
+    }
+
+    @Override
+    protected Void doInBackground() {
+      if (!Files.exists(Paths.get(path))) {
+        return null;
+      }
+
+      try {
+        BufferedImage img = ImageIO.read(new File(path));
+        this.width = img.getWidth();
+        this.height = img.getHeight();
+      }
+      catch (Exception e) {
+        LOGGER.warn("Could not read {} dimensions: {}", "mediafiletype." + type, e.getMessage());
+      }
+      return null;
+    }
+
+    @Override
+    protected void done() {
+      super.done();
+      if (width > 0 && height > 0) {
+        label.setText(BUNDLE.getString("mediafiletype." + type) + " - " + width + "x" + height); //$NON-NLS-1$
+      }
+      else {
+        label.setText(BUNDLE.getString("mediafiletype." + type)); // $NON-NLS-1$
+      }
+    }
   }
 }
