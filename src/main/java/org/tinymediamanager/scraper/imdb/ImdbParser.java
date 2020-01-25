@@ -917,11 +917,21 @@ public abstract class ImdbParser {
         Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
         if (anchor != null) {
           Matcher matcher = pattern.matcher(anchor.attr("href"));
-          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+          if (matcher.find()) {
+            String country = matcher.group(1);
+
             Element column = row.getElementsByClass("release_date").first();
             if (column != null) {
-              releaseDate = parseDate(column.text());
-              break;
+              Date parsedDate = parseDate(column.text());
+              // do not overwrite any parsed date with a null value!
+              if (parsedDate != null && (releaseDate == null || getCountry().getAlpha2().equalsIgnoreCase(country))) {
+                releaseDate = parsedDate;
+
+                // abort the loop if we have found a valid date in our desired language
+                if (getCountry().getAlpha2().equalsIgnoreCase(country)) {
+                  break;
+                }
+              }
             }
           }
         }
@@ -930,20 +940,29 @@ public abstract class ImdbParser {
 
     // new way; iterating over class name items
     if (releaseDate == null) {
+      Date firstDate = null;
       Elements rows = doc.getElementsByClass("release-date-item");
       for (Element row : rows) {
         Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
         if (anchor != null) {
           Matcher matcher = pattern.matcher(anchor.attr("href"));
-          if (matcher.find() && getCountry().getAlpha2().equalsIgnoreCase(matcher.group(1))) {
+          // continue if we either do not have found any date yet or the country matches
+          if (matcher.find()) {
+            String country = matcher.group(1);
+
             Element column = row.getElementsByClass("release-date-item__date").first();
             if (column != null) {
-              releaseDate = parseDate(column.text());
-              break;
+              Date parsedDate = parseDate(column.text());
+              // do not overwrite any parsed date with a null value!
+              if (parsedDate != null && (releaseDate == null || getCountry().getAlpha2().equalsIgnoreCase(country))) {
+                releaseDate = parsedDate;
+
+                // abort the loop if we have found a valid date in our desired language
+                if (getCountry().getAlpha2().equalsIgnoreCase(country)) {
+                  break;
+                }
+              }
             }
-          }
-          else {
-            getLogger().trace("country {} does not match ours {}", matcher.group(1), getCountry().getAlpha2());
           }
         }
       }

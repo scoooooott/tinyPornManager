@@ -6,6 +6,7 @@ x do an artwork cleanup when changing the movie set name
 x do not count missing episodes several calculations #769
 x (TV show) moved name setting for special season to the image setting panel #775
 x (TV show) removed duplicate hotkey
+x (IMDB) enhanced parsing of release dates #777
 
 
 Version 3.1.2
