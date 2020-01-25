@@ -88,7 +88,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class Utils {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(Utils.class);
-  private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
+  private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2,4}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})(\\.[^.]+)$",
