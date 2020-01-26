@@ -940,7 +940,6 @@ public abstract class ImdbParser {
 
     // new way; iterating over class name items
     if (releaseDate == null) {
-      Date firstDate = null;
       Elements rows = doc.getElementsByClass("release-date-item");
       for (Element row : rows) {
         Element anchor = row.getElementsByAttributeValueStarting("href", "/calendar/").first();
