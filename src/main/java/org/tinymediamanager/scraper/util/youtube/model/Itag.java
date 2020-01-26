@@ -35,61 +35,72 @@ public enum Itag {
     }
   },
 
-  I_5(VideoQuality.SMALL, AudioQuality.UNKNOWN),
-  I_6(VideoQuality.SMALL, AudioQuality.UNKNOWN),
-  I_17(VideoQuality.TINY, AudioQuality.UNKNOWN),
-  I_18(VideoQuality.MEDIUM, AudioQuality.UNKNOWN),
-  I_22(VideoQuality.HD_720, AudioQuality.UNKNOWN),
+  I_5(VideoQuality.SMALL, AudioQuality.LOW),
+  I_6(VideoQuality.SMALL, AudioQuality.LOW),
+  I_13(VideoQuality.UNKNOWN, AudioQuality.LOW),
+  I_17(VideoQuality.TINY, AudioQuality.LOW),
+  I_18(VideoQuality.MEDIUM, AudioQuality.LOW),
+  I_22(VideoQuality.HD_720, AudioQuality.MEDIUM),
 
-  I_34(VideoQuality.MEDIUM, AudioQuality.UNKNOWN),
-  I_35(VideoQuality.LARGE, AudioQuality.UNKNOWN),
+  I_34(VideoQuality.MEDIUM, AudioQuality.MEDIUM),
+  I_35(VideoQuality.LARGE, AudioQuality.MEDIUM),
   I_36(VideoQuality.TINY, AudioQuality.UNKNOWN),
-  I_37(VideoQuality.HD_1080, AudioQuality.UNKNOWN),
-  I_38(VideoQuality.HIGHRES, AudioQuality.UNKNOWN),
+  I_37(VideoQuality.HD_1080, AudioQuality.MEDIUM),
+  I_38(VideoQuality.HIGHRES, AudioQuality.MEDIUM),
 
-  I_43(VideoQuality.MEDIUM, AudioQuality.UNKNOWN),
-  I_44(VideoQuality.LARGE, AudioQuality.UNKNOWN),
-  I_45(VideoQuality.HD_720, AudioQuality.UNKNOWN),
-  I_46(VideoQuality.HD_1080, AudioQuality.UNKNOWN),
+  I_43(VideoQuality.MEDIUM, AudioQuality.MEDIUM),
+  I_44(VideoQuality.LARGE, AudioQuality.MEDIUM),
+  I_45(VideoQuality.HD_720, AudioQuality.MEDIUM),
+  I_46(VideoQuality.HD_1080, AudioQuality.MEDIUM),
 
-  I_82(VideoQuality.MEDIUM, AudioQuality.UNKNOWN, true),
-  I_83(VideoQuality.LARGE, AudioQuality.UNKNOWN, true),
-  I_84(VideoQuality.HD_720, AudioQuality.UNKNOWN, true),
-  I_85(VideoQuality.HD_1080, AudioQuality.UNKNOWN, true),
+  //3D
+  I_82(VideoQuality.MEDIUM, AudioQuality.MEDIUM, true),
+  I_83(VideoQuality.LARGE, AudioQuality.MEDIUM, true),
+  I_84(VideoQuality.HD_720, AudioQuality.MEDIUM, true),
+  I_85(VideoQuality.HD_1080, AudioQuality.MEDIUM, true),
+  I_100(VideoQuality.MEDIUM, AudioQuality.MEDIUM, true),
+  I_101(VideoQuality.LARGE, AudioQuality.MEDIUM, true),
+  I_102(VideoQuality.HD_720, AudioQuality.MEDIUM, true),
 
-  I_92(VideoQuality.SMALL, AudioQuality.UNKNOWN, true),
-  I_93(VideoQuality.MEDIUM, AudioQuality.UNKNOWN, true),
-  I_94(VideoQuality.LARGE, AudioQuality.UNKNOWN, true),
-  I_95(VideoQuality.HD_720, AudioQuality.UNKNOWN, true),
-  I_96(VideoQuality.HD_1080, AudioQuality.UNKNOWN),
+  //Apple Live Streaming
+  I_91(VideoQuality.TINY, AudioQuality.LOW),
+  I_92(VideoQuality.SMALL, AudioQuality.LOW),
+  I_93(VideoQuality.MEDIUM, AudioQuality.MEDIUM),
+  I_94(VideoQuality.LARGE, AudioQuality.MEDIUM),
+  I_95(VideoQuality.HD_720, AudioQuality.HIGH),
+  I_96(VideoQuality.HD_1080, AudioQuality.HIGH),
+  I_132(VideoQuality.SMALL, AudioQuality.LOW),
+  I_151(VideoQuality.TINY, AudioQuality.LOW),
 
-  I_100(VideoQuality.MEDIUM, AudioQuality.UNKNOWN, true),
-  I_101(VideoQuality.LARGE, AudioQuality.UNKNOWN, true),
-  I_102(VideoQuality.HD_720, AudioQuality.UNKNOWN, true),
-
-  I_132(VideoQuality.SMALL, AudioQuality.UNKNOWN),
+  // DASH MP4 Video
   I_133(VideoQuality.SMALL),
   I_134(VideoQuality.MEDIUM),
   I_135(VideoQuality.LARGE),
   I_136(VideoQuality.HD_720),
   I_137(VideoQuality.HD_1080),
   I_138(VideoQuality.HD_2160),
+  I_160(VideoQuality.TINY),
+  I_212(VideoQuality.LARGE),
+  I_264(VideoQuality.HD_1440),
+  I_266(VideoQuality.HD_2160),
+  I_298(VideoQuality.HD_720),
+  I_299(VideoQuality.HD_1080),
+
+  //DASH MP4 Audio
   I_139(AudioQuality.LOW),
   I_140(AudioQuality.MEDIUM),
   I_141(AudioQuality.HIGH),
+  I_256(AudioQuality.UNKNOWN),
+  I_325(AudioQuality.UNKNOWN),
+  I_328(AudioQuality.UNKNOWN),
 
-  I_151(VideoQuality.TINY, AudioQuality.UNKNOWN),
-
-  I_160(VideoQuality.TINY),
+  // DASH webm video
   I_167(VideoQuality.MEDIUM),
   I_168(VideoQuality.LARGE),
   I_169(VideoQuality.HD_1080),
-
-  I_171(AudioQuality.MEDIUM),
-
+  I_170(VideoQuality.HD_1080),
   I_218(VideoQuality.LARGE),
   I_219(VideoQuality.TINY),
-
   I_242(VideoQuality.SMALL),
   I_243(VideoQuality.MEDIUM),
   I_244(VideoQuality.LARGE),
@@ -97,27 +108,25 @@ public enum Itag {
   I_246(VideoQuality.LARGE),
   I_247(VideoQuality.HD_720),
   I_248(VideoQuality.HD_1080),
+  I_271(VideoQuality.HD_1440),
+  I_272(VideoQuality.HIGHRES),
+  I_278(VideoQuality.TINY),
+  I_302(VideoQuality.HD_720),
+  I_303(VideoQuality.HD_1080),
+  I_308(VideoQuality.HD_1440),
+  I_313(VideoQuality.HD_2160),
+  I_315(VideoQuality.HD_2160),
+
+  //DASH webm audio
+  I_171(AudioQuality.MEDIUM),
+  I_172(AudioQuality.HIGH),
+
+  //DASH webm audio with opus inside
   I_249(AudioQuality.LOW),
   I_250(AudioQuality.MEDIUM),
   I_251(AudioQuality.MEDIUM),
 
-  I_264(VideoQuality.HD_1440),
-  I_266(VideoQuality.HD_2160),
-
-  I_271(VideoQuality.HD_1440),
-  I_272(VideoQuality.HIGHRES),
-  I_278(VideoQuality.TINY),
-
-  I_298(VideoQuality.HD_720),
-  I_299(VideoQuality.HD_1080),
-
-  I_302(VideoQuality.HD_720),
-  I_303(VideoQuality.HD_1080),
-  I_308(VideoQuality.HD_1440),
-
-  I_313(VideoQuality.HD_2160),
-  I_315(VideoQuality.HD_2160),
-
+  //DASH webm HDR video
   I_330(VideoQuality.TINY),
   I_331(VideoQuality.SMALL),
   I_332(VideoQuality.MEDIUM),
@@ -127,12 +136,16 @@ public enum Itag {
   I_336(VideoQuality.HD_1440),
   I_337(VideoQuality.HD_2160),
 
+  //AV1 Video only formats
   I_394(VideoQuality.TINY),
   I_395(VideoQuality.SMALL),
   I_396(VideoQuality.MEDIUM),
   I_397(VideoQuality.LARGE),
   I_398(VideoQuality.HD_720),
-  I_399(VideoQuality.HD_1080);
+  I_399(VideoQuality.HD_1080),
+  I_400(VideoQuality.HD_1440),
+  I_401(VideoQuality.HD_2160),
+  I_402(VideoQuality.HD_2880);
 
   protected int        id;
   private VideoQuality videoQuality;

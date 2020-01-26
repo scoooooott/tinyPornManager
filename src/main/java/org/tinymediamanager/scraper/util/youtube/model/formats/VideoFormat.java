@@ -32,6 +32,7 @@ public class VideoFormat extends Format {
   private final String  qualityLabel;
   private final Integer width;
   private final Integer height;
+  private final VideoQuality videoQuality;
 
   public VideoFormat(JsonNode json, Itag itag) {
     super(json, itag);
@@ -46,6 +47,16 @@ public class VideoFormat extends Format {
       width = YoutubeHelper.getInt(json, "width");
       height = YoutubeHelper.getInt(json, "height");
     }
+
+    VideoQuality videoQuality = null;
+    if (json.has("quality")) {
+      try {
+        videoQuality = VideoQuality.valueOf(json.get("quality").asText());
+      } catch (IllegalArgumentException ignore) {
+      }
+    }
+    this.videoQuality = videoQuality;
+
   }
 
   @Override
@@ -58,7 +69,7 @@ public class VideoFormat extends Format {
   }
 
   public VideoQuality videoQuality() {
-    return itag.videoQuality();
+    return videoQuality != null ? videoQuality : itag.videoQuality();
   }
 
   public String qualityLabel() {
