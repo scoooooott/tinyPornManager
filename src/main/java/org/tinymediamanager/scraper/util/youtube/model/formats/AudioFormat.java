@@ -15,11 +15,10 @@
  */
 package org.tinymediamanager.scraper.util.youtube.model.formats;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.tinymediamanager.scraper.util.youtube.YoutubeHelper;
 import org.tinymediamanager.scraper.util.youtube.model.Itag;
 import org.tinymediamanager.scraper.util.youtube.model.quality.AudioQuality;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * AudioFormat
@@ -29,10 +28,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class AudioFormat extends Format {
 
   private final Integer audioSampleRate;
+  private final Integer averageBitrate;
+  private final AudioQuality audioQuality;
 
   public AudioFormat(JsonNode json, Itag itag) {
     super(json, itag);
-    audioSampleRate = YoutubeHelper.getInt(json, "audio_sample_rate");
+    audioSampleRate = YoutubeHelper.getInt(json, "getAudioSampleRate");
+    averageBitrate = YoutubeHelper.getInt(json, "averageBitrate");
+
+    AudioQuality audioQuality = null;
+    if (json.has("audioQuality")) {
+      String[] split = json.get("audioQuality").asText().split("_");
+      String quality = split[split.length - 1].toLowerCase();
+      try {
+        audioQuality = AudioQuality.valueOf(quality);
+      } catch (IllegalArgumentException ignore) {}
+    }
+    this.audioQuality = audioQuality;
   }
 
   @Override
@@ -41,10 +53,14 @@ public class AudioFormat extends Format {
   }
 
   public AudioQuality audioQuality() {
-    return itag.audioQuality();
+    return audioQuality != null ? audioQuality : itag.audioQuality();
   }
 
-  public Integer audioSampleRate() {
+  public Integer getAudioSampleBitrate() {
     return audioSampleRate;
+  }
+
+  public Integer getAverageBitrate() {
+    return averageBitrate;
   }
 }

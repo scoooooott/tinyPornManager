@@ -21,15 +21,16 @@ package org.tinymediamanager.scraper.util.youtube.model.quality;
 public enum VideoQuality {
 
   UNKNOWN("UNKNOWN"),
-  HIGHRES("3072p"), // 3072p
+  HIGHRES("3072p"),
+  HD_2880("2880p"),
   HD_2160("2160p"),
   HD_1440("1440p"),
   HD_1080("1080p"),
   HD_720("720p"),
-  LARGE("480p"), // 480p
-  MEDIUM("360p"), // 360p
-  SMALL("240p"), // 240p
-  TINY("144p"), // 144p
+  LARGE("480p"),
+  MEDIUM("360p"),
+  SMALL("240p"),
+  TINY("144p"),
   NO_VIDEO("NO_VIDEO");
 
   private String text;
