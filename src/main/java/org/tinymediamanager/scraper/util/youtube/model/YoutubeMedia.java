@@ -16,12 +16,17 @@
 package org.tinymediamanager.scraper.util.youtube.model;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.UrlUtil;
+import org.tinymediamanager.scraper.util.youtube.cipher.Cipher;
+import org.tinymediamanager.scraper.util.youtube.cipher.CipherFactory;
 import org.tinymediamanager.scraper.util.youtube.model.formats.AudioFormat;
 import org.tinymediamanager.scraper.util.youtube.model.formats.Format;
 import org.tinymediamanager.scraper.util.youtube.model.formats.VideoFormat;
@@ -41,15 +46,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class YoutubeMedia {
 
-  private MediaDetails        videoDetails;
-  private List<Format>        formats;
-  private String              videoId;
+  private MediaDetails              videoDetails;
+  private List<Format>              formats;
+  private String                    videoId;
 
-  private static final Logger LOGGER       = LoggerFactory.getLogger(YoutubeMedia.class);
-  private static final String CONFIG_START = "ytplayer.config = ";
-  private static final String CONFIG_END   = ";ytplayer.load";
-  private static final String ERROR        = "\"status\":\"ERROR\",\"reason\":\"";
-  private static final String URL          = "https://www.youtube.com/watch?v=";
+  private static final Logger       LOGGER           = LoggerFactory.getLogger(YoutubeMedia.class);
+  private static final String       CONFIG_START     = "ytplayer.config = ";
+  private static final String       CONFIG_END       = ";ytplayer.load";
+  private static final String       ERROR            = "\"status\":\"ERROR\",\"reason\":\"";
+  private static final String       URL              = "https://www.youtube.com/watch?v=";
+  public static Map<String, Cipher> ciphers          = new HashMap<>();
+
 
   public YoutubeMedia(String videoId) {
     this.videoId = videoId;
@@ -121,7 +128,7 @@ public class YoutubeMedia {
    * @throws InterruptedException
    *           indicates that the thread has been interrupted
    */
-  public void parseVideo() throws InterruptedException, IOException {
+  public void parseVideo() throws Exception {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -145,7 +152,10 @@ public class YoutubeMedia {
     }
 
     // Get Video Details
-    JsonNode cfgArgs = objectMapper.readTree(page.substring(start + CONFIG_START.length(), end)).get("args");
+    String substring = page.substring(start + CONFIG_START.length(), end);
+
+    JsonNode cfgArgs = objectMapper.readTree(substring).get("args");
+    JsonNode cfgAssets = objectMapper.readTree(substring).get("assets");
     ObjectNode player_response = (ObjectNode) objectMapper.readTree(cfgArgs.get("player_response").asText());
     ObjectNode streamingData = (ObjectNode) player_response.get("streamingData");
 
@@ -163,6 +173,41 @@ public class YoutubeMedia {
 
     for (int i = 0; i < jsonAdaptiveFormats.size(); i++) {
       JsonNode json = jsonAdaptiveFormats.get(i);
+
+      // Check for ciphered Youtube Link
+
+      if (json.has("cipher")) {
+        HashMap<String, String> cipherMap = new HashMap<>();
+        String[] cipherdata = json.get("cipher").asText().replace("\\u0026", "&").split("&");
+
+        for (String s : cipherdata) {
+          String[] keyValue = s.split("=");
+          cipherMap.put(keyValue[0], keyValue[1]);
+        }
+
+        if (!cipherMap.containsKey("url")) {
+          LOGGER.error("Could not found url in cipher data");
+        }
+
+        String urlWithSignature = cipherMap.get("url");
+        urlWithSignature = URLDecoder.decode(urlWithSignature, "UTF-8");
+
+        if (urlWithSignature.contains("signature")
+            || (!cipherMap.containsKey("s") && (urlWithSignature.contains("&sig=") || urlWithSignature.contains("&lsig=")))) {
+          // pre signed signature -> do nothing
+        }
+        else {
+          String s = cipherMap.get("s");
+          s = URLDecoder.decode(s, "UTF-8");
+          String jsUrl = getJsUrl(cfgAssets);
+          Cipher cipher = new CipherFactory().createCipher(jsUrl);
+
+          String signature = cipher.getSignature(s);
+          String decipheredUrl = urlWithSignature + "&sig=" + signature;
+          ((ObjectNode) json).put("url", decipheredUrl);
+        }
+      }
+
       try {
         Itag itag = Itag.findItag(json.get("itag").asInt(0));
 
@@ -176,10 +221,18 @@ public class YoutubeMedia {
         else if (itag.isAudio()) {
           formats.add(new AudioFormat(json, itag));
         }
+
       }
       catch (Exception e) {
-        LOGGER.error("Error while getting video and audioformats");
+        LOGGER.warn("Itag : " + Itag.findItag(json.get("itag").asInt(0)) + " seems to be  Audio/Video Stream -> not supported yet" );
       }
     }
+  }
+
+  public String getJsUrl(JsonNode config) {
+    if (!config.has("js")) {
+      LOGGER.error("Could not extract js url");
+    }
+    return "https://youtube.com" + config.get("js").asText();
   }
 }

@@ -127,6 +127,7 @@ public final class Constants {
   // some hardcoded, well known meta data provider IDs
   // may add new ones in MediaEntity.setId()
   public static final String TMDB                   = "tmdb";
+  public static final String TMDB_SET               = "tmdbSet";
   public static final String IMDB                   = "imdb";
   public static final String TVDB                   = "tvdb";
   public static final String TRAKT                  = "trakt";

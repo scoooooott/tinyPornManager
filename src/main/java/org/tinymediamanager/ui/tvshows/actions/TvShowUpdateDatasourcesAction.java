@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
@@ -41,7 +42,7 @@ public class TvShowUpdateDatasourcesAction extends TmmAction {
     putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
     putValue(SMALL_ICON, IconManager.REFRESH);
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
   @Override

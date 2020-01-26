@@ -13,27 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.scraper.util.youtube.cipher;
 
-package org.tinymediamanager.ui.components;
+public interface CipherFunction {
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-
-/**
- * A readonly variant of the JTextPane
- *
- * @author Manuel Laggner
- */
-public class ReadOnlyTextPane extends JTextPane {
-  public ReadOnlyTextPane() {
-    this("");
-  }
-
-  public ReadOnlyTextPane(String text) {
-    setOpaque(false);
-    setEditable(false);
-    setText(text);
-    setFocusable(false);
-    setForeground(UIManager.getColor("Label.foreground"));
-  }
+  char[] apply(char[] array, String argument);
 }

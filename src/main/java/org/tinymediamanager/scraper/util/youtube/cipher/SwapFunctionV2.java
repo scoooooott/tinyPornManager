@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.scraper.util.youtube.cipher;
 
-package org.tinymediamanager.ui.components;
+class SwapFunctionV2 implements CipherFunction {
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-
-/**
- * A readonly variant of the JTextPane
- *
- * @author Manuel Laggner
- */
-public class ReadOnlyTextPane extends JTextPane {
-  public ReadOnlyTextPane() {
-    this("");
+  @Override
+  public char[] apply(char[] array, String argument) {
+    int position = Integer.parseInt(argument);
+    char c = array[0];
+    array[0] = array[position % array.length];
+    array[position % array.length] = c;
+    return array;
   }
 
-  public ReadOnlyTextPane(String text) {
-    setOpaque(false);
-    setEditable(false);
-    setText(text);
-    setFocusable(false);
-    setForeground(UIManager.getColor("Label.foreground"));
-  }
 }

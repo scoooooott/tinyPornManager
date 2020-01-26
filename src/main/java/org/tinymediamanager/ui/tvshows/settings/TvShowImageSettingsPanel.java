@@ -58,6 +58,7 @@ import org.tinymediamanager.ui.ScraperInTable;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
+import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -88,6 +89,7 @@ class TvShowImageSettingsPanel extends JPanel {
   private JComboBox<MediaLanguages>   cbScraperLanguage;
   private JComboBox                   cbImagePosterSize;
   private JComboBox                   cbImageFanartSize;
+  private JCheckBox                   chckbxSpecialSeason;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -181,8 +183,7 @@ class TvShowImageSettingsPanel extends JPanel {
         panelScraper.add(panelScraperDetails, "cell 1 2,grow");
         panelScraperDetails.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 
-        tpScraperDescription = new JTextPane();
-        tpScraperDescription.setOpaque(false);
+        tpScraperDescription = new ReadOnlyTextPane();
         tpScraperDescription.setEditorKit(new HTMLEditorKit());
         panelScraperDetails.add(tpScraperDescription, "cell 0 0,grow");
 
@@ -219,15 +220,18 @@ class TvShowImageSettingsPanel extends JPanel {
         cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
         panelOptions.add(cbActorImages, "cell 1 3 2 1");
 
+        chckbxSpecialSeason = new JCheckBox(BUNDLE.getString("tvshow.renamer.specialseason")); //$NON-NLS-1$
+        panelOptions.add(chckbxSpecialSeason, "cell 1 4 2 1");
+
         chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
-        panelOptions.add(chckbxEnableExtrafanart, "cell 1 4 2 1");
+        panelOptions.add(chckbxEnableExtrafanart, "cell 1 5 2 1");
 
         JLabel lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-        panelOptions.add(lblDownloadCount, "cell 2 5");
+        panelOptions.add(lblDownloadCount, "cell 2 6");
 
         spDownloadCountExtrafanart = new JSpinner();
         spDownloadCountExtrafanart.setMinimumSize(new Dimension(60, 20));
-        panelOptions.add(spDownloadCountExtrafanart, "cell 2 5");
+        panelOptions.add(spDownloadCountExtrafanart, "cell 2 6");
       }
     }
   }
@@ -290,5 +294,10 @@ class TvShowImageSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, FanartSizes, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_5, cbImageFanartSize, jComboBoxBeanProperty);
     autoBinding_7.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_6 = BeanProperty.create("specialSeason");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_6, chckbxSpecialSeason, jCheckBoxBeanProperty);
+    autoBinding_8.bind();
   }
 }

@@ -67,7 +67,7 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
 
       waitForCompletionOrCancel();
       stopWatch.stop();
-      LOGGER.info("Done getting MediaInfo - took " + stopWatch);
+      LOGGER.info("Done getting MediaInfo - took {}", stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);

@@ -116,7 +116,6 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private TmmTable                                 tableExamples;
   private EnhancedTextField                        tfTvShowFolder;
   private EnhancedTextField                        tfEpisodeFilename;
-  private JCheckBox                                chckbxSpecialSeason;
   private JComboBox                                cbColonReplacement;
 
   public TvShowRenamerSettingsPanel() {
@@ -217,7 +216,6 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     };
     chckbxSpaceReplacement.addActionListener(renamerActionListener);
     chckbxAsciiReplacement.addActionListener(renamerActionListener);
-    chckbxSpecialSeason.addActionListener(renamerActionListener);
     cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
     cbSpaceReplacement.addActionListener(renamerActionListener);
     cbColonReplacement.addActionListener(renamerActionListener);
@@ -324,32 +322,28 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAdvancedOptions, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 2,growx");
       {
-        chckbxSpecialSeason = new JCheckBox(BUNDLE.getString("tvshow.renamer.specialseason")); //$NON-NLS-1$
-        panelAdvancedOptions.add(chckbxSpecialSeason, "cell 1 0 2 1");
-      }
-      {
         chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
         chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
-        panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 1 2 1");
+        panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 0 2 1");
 
         cbSpaceReplacement = new JComboBox(spaceReplacements.toArray());
-        panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 1");
+        panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 0");
       }
       {
         JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement")); //$NON-NLS-1$
-        panelAdvancedOptions.add(lblColonReplacement, "cell 2 2");
+        panelAdvancedOptions.add(lblColonReplacement, "cell 2 1");
         lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint"));
 
         cbColonReplacement = new JComboBox(colonReplacements.toArray());
-        panelAdvancedOptions.add(cbColonReplacement, "cell 2 2");
+        panelAdvancedOptions.add(cbColonReplacement, "cell 2 1");
       }
 
       {
         chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement"));
-        panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 3 2 1");
+        panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 2 2 1");
 
         JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-        panelAdvancedOptions.add(lblAsciiHint, "cell 2 4");
+        panelAdvancedOptions.add(lblAsciiHint, "cell 2 3");
         TmmFontHelper.changeFont(lblAsciiHint, L2);
       }
     }
@@ -642,10 +636,5 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_3, tfSeasonFolderName, jTextFieldBeanProperty);
     autoBinding_2.bind();
-    //
-    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_4 = BeanProperty.create("specialSeason");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        tvShowSettingsBeanProperty_4, chckbxSpecialSeason, jCheckBoxBeanProperty);
-    autoBinding_3.bind();
   }
 }

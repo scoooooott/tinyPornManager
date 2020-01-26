@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +53,7 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfoFile;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
@@ -684,8 +686,7 @@ public class MediaFileHelper {
       getMediaInfoSnapshotFromISO(mediaFile);
     }
     else {
-      Map<MediaInfo.StreamKind, List<Map<String, String>>> miSnapshot = getMediaInfoSnapshot(mediaFile);
-      parseMediainfoSnapshot(mediaFile, miSnapshot);
+      parseMediainfoSnapshot(mediaFile, getMediaInfoSnapshot(mediaFile));
     }
   }
 
@@ -890,8 +891,7 @@ public class MediaFileHelper {
       try {
         LOGGER.info("Try to parse {}", xmlFile);
         MediaInfoXMLParser xml = new MediaInfoXMLParser(xmlFile);
-        List<MediaInfoFile> miFiles = new ArrayList<MediaInfoFile>();
-        miFiles = xml.parseXML();
+        List<MediaInfoFile> miFiles = xml.parseXML();
         // XML has now ALL the files, as mediainfo would have read it.
 
         MediaInfoFile mif = miFiles.get(0);
@@ -906,6 +906,10 @@ public class MediaFileHelper {
       catch (Exception e) {
         LOGGER.warn("Unable to parse " + xmlFile, e);
       }
+    }
+
+    if (!MediaInfoUtils.USE_LIBMEDIAINFO) {
+      return new HashMap<>();
     }
 
     // open mediaInfo directly on file
@@ -933,7 +937,7 @@ public class MediaFileHelper {
    * @return a map with all libmediainfo data
    */
   private static synchronized void getMediaInfoSnapshotFromISO(MediaFile mediaFile) {
-    List<MediaInfoFile> miFiles = new ArrayList<MediaInfoFile>();
+    List<MediaInfoFile> miFiles = new ArrayList<>();
 
     // check if we have a snapshot xml, and load all DVD files from XML
     String xmlFilename = FilenameUtils.getBaseName(mediaFile.getFilename()) + "-mediainfo.xml";
@@ -947,6 +951,10 @@ public class MediaFileHelper {
       catch (Exception e) {
         LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
       }
+    }
+
+    if (!MediaInfoUtils.USE_LIBMEDIAINFO) {
+      return;
     }
 
     // No? try parse ISO as DVD directly...

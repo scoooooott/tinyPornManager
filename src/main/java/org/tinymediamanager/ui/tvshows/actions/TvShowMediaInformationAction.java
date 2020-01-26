@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class TvShowMediaInformationAction extends TmmAction {
     putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.MEDIAINFO);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
   @Override

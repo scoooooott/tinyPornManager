@@ -17,12 +17,10 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -36,15 +34,11 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.InMemoryAppender;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Appender;
 
 /**
  * the class {@link ExportLogAction} is used to prepare debugging logs
@@ -84,19 +78,16 @@ public class ExportLogAction extends TmmAction {
     try (FileOutputStream os = new FileOutputStream(file); ZipOutputStream zos = new ZipOutputStream(os)) {
 
       // trace logs
-      LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-      Appender appender = lc.getLogger("ROOT").getAppender("INMEMORY");
-      if (appender instanceof InMemoryAppender) {
-        try (InputStream is = new ByteArrayInputStream(((InMemoryAppender) appender).getLog().getBytes())) {
-          ZipEntry ze = new ZipEntry("trace.log");
-          zos.putNextEntry(ze);
 
-          IOUtils.copy(is, zos);
-          zos.closeEntry();
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not append trace file to the zip file: {}", e.getMessage());
-        }
+      try (FileInputStream in = new FileInputStream("logs" + File.separator + "trace.log")) {
+        ZipEntry ze = new ZipEntry("trace.log");
+        zos.putNextEntry(ze);
+
+        IOUtils.copy(in, zos);
+        zos.closeEntry();
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not append trace file to the zip file: {}", e.getMessage());
       }
 
       // attach logs
@@ -134,7 +125,7 @@ public class ExportLogAction extends TmmAction {
         zos.closeEntry();
       }
       catch (Exception e) {
-        LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
+        LOGGER.warn("unable to attach launcher.log: {}", e.getMessage());
       }
 
       // attach config files, but not DB

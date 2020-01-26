@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.scraper.util.youtube.cipher;
 
-package org.tinymediamanager.ui.components;
+class SpliceFunction implements CipherFunction{
+    @Override
+    public char[] apply(char[] array, String argument) {
+        int deleteCount = Integer.parseInt(argument);
+        char[] spliced = new char[array.length - deleteCount];
+        System.arraycopy(array, 0, spliced, 0, deleteCount);
+        System.arraycopy(array, deleteCount * 2, spliced, deleteCount, spliced.length - deleteCount);
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
+        return spliced;
+    }
 
-/**
- * A readonly variant of the JTextPane
- *
- * @author Manuel Laggner
- */
-public class ReadOnlyTextPane extends JTextPane {
-  public ReadOnlyTextPane() {
-    this("");
-  }
-
-  public ReadOnlyTextPane(String text) {
-    setOpaque(false);
-    setEditable(false);
-    setText(text);
-    setFocusable(false);
-    setForeground(UIManager.getColor("Label.foreground"));
-  }
 }

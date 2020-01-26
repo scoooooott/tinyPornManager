@@ -88,7 +88,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class Utils {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(Utils.class);
-  private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
+  private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2,4}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})(\\.[^.]+)$",
@@ -1310,7 +1310,7 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
-    if (!Files.exists(dir)) {
+    if (!Files.exists(dir) || !Files.isDirectory(dir)) {
       return;
     }
 
@@ -1340,6 +1340,46 @@ public class Utils {
         return FileVisitResult.CONTINUE;
       }
 
+    });
+  }
+
+  /**
+   * Deletes a complete directory recursively, but checking if empty (from inside out) - using Java NIO
+   *
+   * @param dir
+   *          directory to delete
+   * @throws IOException
+   */
+  public static void deleteEmptyDirectoryRecursive(Path dir) throws IOException {
+    if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+      return;
+    }
+
+    LOGGER.info("Deleting complete directory: {}", dir);
+    Files.walkFileTree(dir, new FileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        if (isFolderEmpty(dir)) {
+          Files.delete(dir);
+        }
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFileFailed(Path file, IOException exc) {
+        return FileVisitResult.CONTINUE;
+      }
     });
   }
 

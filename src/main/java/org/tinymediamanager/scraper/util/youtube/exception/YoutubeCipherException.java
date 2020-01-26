@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.scraper.util.youtube.exception;
 
-package org.tinymediamanager.ui.components;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
+public class YoutubeCipherException extends Exception {
 
-/**
- * A readonly variant of the JTextPane
- *
- * @author Manuel Laggner
- */
-public class ReadOnlyTextPane extends JTextPane {
-  public ReadOnlyTextPane() {
-    this("");
+  private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeCipherException.class);
+
+  public YoutubeCipherException(String errorMessage) {
+    super(errorMessage);
+    LOGGER.error(errorMessage);
   }
 
-  public ReadOnlyTextPane(String text) {
-    setOpaque(false);
-    setEditable(false);
-    setText(text);
-    setFocusable(false);
-    setForeground(UIManager.getColor("Label.foreground"));
-  }
 }

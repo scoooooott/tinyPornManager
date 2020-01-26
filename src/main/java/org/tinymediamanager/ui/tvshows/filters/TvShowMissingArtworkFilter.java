@@ -52,6 +52,10 @@ public class TvShowMissingArtworkFilter extends AbstractTvShowUIFilter {
     }
 
     for (TvShowEpisode episode : episodes) {
+      if (episode.isDummy()) {
+        continue;
+      }
+
       if (invert ^ !episode.getHasImages()) {
         return true;
       }

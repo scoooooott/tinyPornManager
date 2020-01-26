@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.tinymediamanager.scraper.util.youtube.cipher;
 
-package org.tinymediamanager.ui.components;
+public class JsFunction {
+  private final String var;
+  private final String name;
+  private final String argument;
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-
-/**
- * A readonly variant of the JTextPane
- *
- * @author Manuel Laggner
- */
-public class ReadOnlyTextPane extends JTextPane {
-  public ReadOnlyTextPane() {
-    this("");
+  public JsFunction(String var, String name, String argument) {
+    this.var = var;
+    this.name = name;
+    this.argument = argument;
   }
 
-  public ReadOnlyTextPane(String text) {
-    setOpaque(false);
-    setEditable(false);
-    setText(text);
-    setFocusable(false);
-    setForeground(UIManager.getColor("Label.foreground"));
+  public String getVar() {
+    return var;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getArgument() {
+    return argument;
   }
 }

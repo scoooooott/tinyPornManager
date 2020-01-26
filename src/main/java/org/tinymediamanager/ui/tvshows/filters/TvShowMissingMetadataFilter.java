@@ -52,6 +52,10 @@ public class TvShowMissingMetadataFilter extends AbstractTvShowUIFilter {
     }
 
     for (TvShowEpisode episode : episodes) {
+      if (episode.isDummy()) {
+        continue;
+      }
+
       if (invert ^ !episode.isScraped()) {
         return true;
       }

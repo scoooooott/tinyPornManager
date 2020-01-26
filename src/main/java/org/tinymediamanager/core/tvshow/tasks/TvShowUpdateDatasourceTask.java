@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,7 +101,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<String>                dataSources;
   private List<Path>                  tvShowFolders = new ArrayList<>();
   private TvShowList                  tvShowList;
-  private HashSet<Path>               filesFound    = new HashSet<>();
+  private Set<Path>                   filesFound    = ConcurrentHashMap.newKeySet();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -248,9 +249,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           waitForCompletionOrCancel();
 
           // print stats
-          LOGGER.debug("FilesFound: {}", filesFound.size());
-          LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
-          LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
+          LOGGER.info("FilesFound: {}", filesFound.size());
+          LOGGER.info("tvShowsFound: {}", tvShowList.getTvShowCount());
+          LOGGER.info("episodesFound: {}", tvShowList.getEpisodeCount());
           LOGGER.debug("PreDir: {}", preDir);
           LOGGER.debug("PostDir: {}", postDir);
           LOGGER.debug("VisFile: {}", visFile);
@@ -287,9 +288,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         waitForCompletionOrCancel();
 
         // print stats
-        LOGGER.debug("FilesFound: {}", filesFound.size());
-        LOGGER.debug("tvShowsFound: {}", tvShowList.getTvShowCount());
-        LOGGER.debug("episodesFound: {}", tvShowList.getEpisodeCount());
+        LOGGER.info("FilesFound: {}", filesFound.size());
+        LOGGER.info("tvShowsFound: {}", tvShowList.getTvShowCount());
+        LOGGER.info("episodesFound: {}", tvShowList.getEpisodeCount());
         LOGGER.debug("PreDir: {}", preDir);
         LOGGER.debug("PostDir: {}", postDir);
         LOGGER.debug("VisFile: {}", visFile);

@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +37,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +106,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private List<String>                dataSources;
   private List<Movie>                 movieFolders   = new ArrayList<>();
   private MovieList                   movieList;
-  private HashSet<Path>               filesFound     = new HashSet<>();
+  private Set<Path>                   filesFound     = ConcurrentHashMap.newKeySet();
+  private List<Runnable>              miTasks        = Collections.synchronizedList(new ArrayList<>());
 
   public MovieUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
@@ -155,6 +159,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (movieFolders.isEmpty()) {
         for (String ds : dataSources) {
           LOGGER.info("Start UDS on datasource: {}", ds);
+          miTasks.clear();
           initThreadPool(3, "update");
           setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
           publishState();
@@ -209,7 +214,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           for (Path path : existingMovieDirs) {
             searchAndParse(dsAsPath.toAbsolutePath(), path, Integer.MAX_VALUE);
           }
-          if (rootFiles.size() > 0) {
+          if (!rootFiles.isEmpty()) {
             submitTask(new parseMultiMovieDirTask(dsAsPath.toAbsolutePath(), dsAsPath.toAbsolutePath(), rootFiles));
           }
 
@@ -302,7 +307,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
 
       stopWatch.stop();
-      LOGGER.info("Done updating datasource :) - took " + stopWatch);
+      LOGGER.info("Done updating datasource :) - took {}", stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -920,16 +925,25 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
 
           case TRAILER:
-            mf.gatherMediaInformation(); // do this exceptionally here, to set
-                                         // quality in one rush
+
             MediaTrailer mt = new MediaTrailer();
             mt.setName(mf.getFilename());
             mt.setProvider("downloaded");
-            mt.setQuality(mf.getVideoFormat());
             mt.setInNfo(false);
             mt.setUrl(mf.getFileAsPath().toUri().toString());
             movie.addTrailer(mt);
             movie.addToMediaFiles(mf);
+
+            // get quality async
+            Runnable miTask = new MediaFileInformationFetcherTask(mf, movie, false) {
+              @Override
+              public void callback() {
+                super.callback();
+                mt.setQuality(mediaFile.getVideoFormat());
+              }
+            };
+            miTasks.add(miTask);
+
             break;
 
           case SUBTITLE:
@@ -1140,6 +1154,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     initThreadPool(1, "mediainfo");
 
     LOGGER.info("getting Mediainfo...");
+
+    // first insert all collected MI tasks
+    for (Runnable task : miTasks) {
+      submitTask(task);
+    }
+
+    // and now get all mediafile from the movies to gather
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
       if (cancel) {
         break;
