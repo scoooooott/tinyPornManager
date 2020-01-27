@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.MediaFileHelper;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -46,33 +47,11 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
     List<String> selectedValues = checkComboBox.getSelectedItems();
 
-    for (String videoFormat : selectedValues) {
-
-      for (TvShowEpisode episode : episodes) {
-        MediaFile mf = episode.getMainVideoFile();
-        if (mf == null) {
-          return false;
-        }
-
-        if (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) || MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat)
-            || MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) || MediaFileHelper.VIDEO_FORMAT_LD.equals(videoFormat)) {
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_UHD.equals(videoFormat) && mf.isVideoDefinitionUHD())) {
-            return true;
-          }
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_HD.equals(videoFormat) && mf.isVideoDefinitionHD())) {
-            return true;
-          }
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_SD.equals(videoFormat) && mf.isVideoDefinitionSD())) {
-            return true;
-          }
-          if (invert ^ (MediaFileHelper.VIDEO_FORMAT_LD.equals(videoFormat) && mf.isVideoDefinitionLD())) {
-            return true;
-          }
-        }
-        else {
-          if (invert ^ videoFormat.equals(episode.getMediaInfoVideoFormat())) {
-            return true;
-          }
+    for (TvShowEpisode episode : episodes) {
+      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      for (MediaFile mf : mfs) {
+        if (invert ^ (selectedValues.contains(mf.getVideoFormat()) || selectedValues.contains(mf.getVideoDefinitionCategory()))) {
+          return true;
         }
       }
     }

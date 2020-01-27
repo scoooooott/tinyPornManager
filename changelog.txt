@@ -8,6 +8,7 @@ x (TV show) moved name setting for special season to the image setting panel #77
 x (TV show) removed duplicate hotkey
 x (IMDB) enhanced parsing of release dates #777
 x (YouTube) fixed extraction of newer YouTube trailers
+x (TV show) fixed filtering for video format
 
 
 Version 3.1.2
