@@ -195,7 +195,7 @@ public class VSMeta {
       else if (entity instanceof TvShowEpisode) {
         mf = new MediaFile(vsMetaFile.getParent().resolve(basename + "-thumb.jpg"), MediaFileType.THUMB);
       }
-      if (mf != null && !mf.exists()) {
+      if (mf != null && !mf.exists() && !Files.exists(vsMetaFile.getParent().resolve("poster.jpg"))) {
         writeImage(mf.getFileAsPath(), info.images.poster);
         mfs.add(mf);
       }
@@ -209,7 +209,7 @@ public class VSMeta {
       if (entity instanceof TvShow) {
         mf = new MediaFile(entity.getPathNIO().resolve("fanart.jpg"), MediaFileType.FANART);
       }
-      if (mf != null && !mf.exists()) {
+      if (mf != null && !mf.exists() && !Files.exists(vsMetaFile.getParent().resolve("fanart.jpg"))) {
         writeImage(mf.getFileAsPath(), info.images.backdrop);
         mfs.add(mf);
       }
