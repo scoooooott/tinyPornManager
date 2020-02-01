@@ -1735,6 +1735,40 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
   }
 
+  /**
+   * <b>PHYSICALLY</b> deletes all {@link MediaFile}s of the given type for the given season
+   *
+   * @param artworkType
+   *          the {@link MediaArtworkType} for all {@link MediaFile}s to delete
+   */
+  public void deleteSeasonArtworkFiles(int season, MediaArtworkType artworkType) {
+    MediaFile mf = null;
+    switch (artworkType) {
+      case SEASON_POSTER:
+        mf = seasonPosters.get(season);
+        seasonPosters.remove(season);
+        break;
+
+      case SEASON_BANNER:
+        mf = seasonBanners.get(season);
+        seasonBanners.remove(season);
+        break;
+
+      case SEASON_THUMB:
+        mf = seasonThumbs.get(season);
+        seasonThumbs.remove(season);
+        break;
+
+      default:
+        return;
+    }
+
+    if (mf != null) {
+      mf.deleteSafely(getDataSource());
+      removeFromMediaFiles(mf);
+    }
+  }
+
   Dimension getSeasonArtworkSize(int season, MediaArtworkType type) {
     MediaFile artworkFile = null;
     switch (type) {
