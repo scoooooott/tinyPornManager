@@ -67,6 +67,7 @@ import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.ScrollingEventDelegator;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -219,6 +220,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
     cbSpaceReplacement.addActionListener(renamerActionListener);
     cbColonReplacement.addActionListener(renamerActionListener);
+
+    // force the size of the table
+    tableExamples.setPreferredScrollableViewportSize(tableExamples.getPreferredSize());
   }
 
   private void initComponents() {
@@ -380,6 +384,8 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPane = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPane);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        ScrollingEventDelegator.install(scrollPane);
         panelExample.add(scrollPane, "cell 1 2,grow");
         scrollPane.setViewportView(tableExamples);
         tableExamples.setRowHeight(35);
