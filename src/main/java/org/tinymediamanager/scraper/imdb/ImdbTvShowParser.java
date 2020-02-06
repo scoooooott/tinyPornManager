@@ -525,6 +525,11 @@ public class ImdbTvShowParser extends ImdbParser {
 
     // parse episodes
     Elements tables = doc.getElementsByClass("eplist");
+    if (tables.isEmpty()) {
+      // no episodes here? break
+      return false;
+    }
+
     for (Element table : tables) {
       Elements rows = table.getElementsByClass("list_item");
       for (Element row : rows) {
