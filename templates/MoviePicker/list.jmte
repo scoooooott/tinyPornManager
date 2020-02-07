@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>TinyMediaManager Export</title>
+
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+
+        <!-- Load required Bootstrap and BootstrapVue CSS -->
+        <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+        <!-- Load Vue followed by BootstrapVue -->
+        <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
+        <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+        <!-- Lodash -->
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+        <!-- He -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
+
+		    <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="style.css">
+        
+    </head>
+    <body>
+        <div id="app">
+            <div class="header">
+                        <form class="form-inline right">
+                            Genres: 
+                            <b-form-select v-model="genre" :options="list_genres">
+                              <template slot="first">
+                                <option :value="null">All</option>
+                              </template>
+                            </b-form-select>
+
+                            Tags: 
+                            <b-form-select v-model="tag" :options="list_tags">
+                              <template slot="first">
+                                <option :value="null">All</option>
+                              </template>
+                            </b-form-select>
+
+                            Status: 
+                            <b-form-select v-model="status">
+                              <option :value="null">All</option>
+                              <option value="seen">Seen</option>
+                              <option value="unseen">Unseen</option>
+                            </b-form-select>
+
+                            Rating: 
+                            <b-form-select v-model="rating">
+                              <option :value="null">All</option>
+                              <option value="1">1+</option>
+                              <option value="2">2+</option>
+                              <option value="3">3+</option>
+                              <option value="4">4+</option>
+                              <option value="5">5+</option>
+                              <option value="6">6+</option>
+                              <option value="7">7+</option>
+                              <option value="8">8+</option>
+                              <option value="9">9+</option>
+                            </b-form-select>
+
+                            <b-input-group>
+                              <b-input-group-prepend>
+                                <i class="fas fa-search"></i>
+                              </b-input-group-prepend>
+                              <b-form-input class="input-group-text" placeholder="Search" v-model="search"></b-form-input>
+                            </b-input-group>
+
+                            <b-button v-on:click="toggle_selected_only()">
+                              <i class="fa-star"
+                                v-bind:class="selected_only ? 'fas' : 'far'"
+                              ></i>
+                            </b-button>
+
+                            <b-button v-on:click="reset_all">Reset all</b-button>
+                        </form>
+                        <form class="form-inline">
+                            {{result_movies.length}} results | Sort by: 
+                            <b-form-select v-model="sort">
+                              <option value="title">Title</option>
+                              <option value="year">Release Date</option>
+                              <option value="date_added">Added Date</option>
+                              <option value="rating">Rating</option>
+                              <option value="file_duration">Duration</option>
+                            </b-form-select>
+                        </form>
+            </div>
+            <div class="row">
+                <div id="movies_list" class="col-2"> 
+                    <b-list-group>
+                        <b-list-group-item
+                            v-for="movie in result_movies" 
+                            v-bind:id="movie.id" 
+                            v-bind:key="movie.id" 
+                            v-bind:class="(movie == clickedMovie) ? 'clicked' : ''" 
+                            v-on:mouseover="set_hovered(movie)" 
+                            v-on:mouseleave="clean_hovered"
+                            v-on:click="set_clicked(movie)"
+                        >
+                            <i class="fas fa-star preselect"
+                              v-on:click="select_movie(movie)"
+                              v-bind:key="movie.selected"
+                              v-bind:class="(movie.selected == true) ? 'yes' : 'no'" 
+                            ></i>
+                            <span>{{ movie.title }}</span>
+                        </b-list-group-item>
+                    </b-list-group>
+                </div>
+                <div class="col-10" style="padding: 0px;">
+                    <div class="bgimg" v-bind:style="'background-image:' + activeMovie.fanart"></div>
+                    <div class="text-zone">
+                      <img v-bind:src="activeMovie.poster" class="poster"/>
+                    	<div class="movie_details">
+                            <b-badge style="float:right;" variant="secondary" v-html="activeMovie.watched ? 'Seen' : 'Unseen'"></b-badge>
+                            <div class="title">{{activeMovie.title}}</div>
+
+                            <div class="subtitle">
+                                {{activeMovie.year}} | {{minutes_to_readable(activeMovie.file_duration)}} | {{activeMovie.genres}} | <i class='far fa-star'></i> {{activeMovie.rating}}
+                            </div>
+                            
+
+                            <div class="plot" v-html="activeMovie.plot_simple"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+
+	        var app = new Vue({
+			    el: '#app',
+			    data: {
+			  		activeMovie: {},
+			  		hoveredMovie: {},
+			  		clickedMovie: {},
+            genre: null,
+            tag: null,
+            status: null,
+            rating: null,
+            search: null,
+            selected_only: false,
+            sort: "title",
+			    	movies: [
+              ${foreach movies movie}
+                { 
+                  id: "${movie.dbId}", 
+                  title: he.decode("${movie.originalTitle}"), 
+                  year: "${movie.year}", 
+                  plot_simple: "${movie.plot}", 
+                  genres: "${movie.genresAsString}", 
+                  tags: "${movie.tagsAsString}", 
+                  rating: "${movie.rating.rating}", 
+                  watched: ${movie.watched}, 
+                  date_added: Date.parse("${movie.dateAddedAsString}"),
+                  poster: "images/${movie;copyArtwork(type=POSTER, escape=true)}", 
+                  fanart: "url('images/${movie;copyArtwork(type=FANART, escape=true)}')", 
+                  file_duration: "${movie.runtime}",
+                },
+              ${end}
+			    	]
+  				},
+          mounted: function (){
+            document.addEventListener("keydown", this.navigate);
+          },
+  			  methods: {
+  			    set_hovered: function (movie) {
+  				  	this.hoveredMovie = movie;
+  				  	this.activeMovie  = movie;
+  			    },
+  			    clean_hovered: function (){
+  			    	this.hoveredMovie = {};
+  			    	this.activeMovie  = this.clickedMovie; 
+  			    },
+            set_clicked: function (movie){
+                this.clickedMovie = movie;
+            },
+            navigate: function(){ 
+              currentIndex = this.result_movies.indexOf(this.clickedMovie); 
+
+              if ((event.keyCode == 38) || (event.keyCode == 40) || (event.keyCode == 32)) {
+                event.preventDefault();
+              }
+
+              if (event.keyCode == 38 && currentIndex > 0) { // key up
+                this.clickedMovie = this.result_movies[currentIndex - 1];
+                this.activeMovie  = this.result_movies[currentIndex - 1];
+                this.adjust_scroll();
+              } else if (event.keyCode == 40 && currentIndex < this.result_movies.length - 1) { // key down
+                this.clickedMovie = this.result_movies[currentIndex + 1];
+                this.activeMovie  = this.result_movies[currentIndex + 1];
+                this.adjust_scroll();
+              } else if (event.keyCode == 32 && currentIndex != -1) { // space
+                this.select_movie(this.activeMovie);
+              } else if ((event.keyCode >= 48) && (event.keyCode <= 90)) { // alphanum
+                c = String.fromCharCode(event.keyCode);
+                i = _.find(this.result_movies, function(m) { return _.startsWith(m.title.toUpperCase(), c) } )
+                if (i != undefined) {
+                  this.clickedMovie = i;
+                  this.activeMovie  = i;
+                  this.adjust_scroll();
+                }
+              }
+            },
+            adjust_scroll: function(){
+              movies_list = window.document.getElementById("movies_list")
+              screen_height = movies_list.getBoundingClientRect().bottom;
+
+              item_top    = window.document.getElementById(this.activeMovie.id).getBoundingClientRect().top;
+              item_bottom = window.document.getElementById(this.activeMovie.id).getBoundingClientRect().bottom;
+
+              if (item_top < 40) {
+                movies_list.scrollBy(0, item_top - 40);
+              } else if (item_bottom > screen_height) {
+                movies_list.scrollBy(0, item_bottom - screen_height);
+              }
+            },
+  			    minutes_to_readable: function(raw){
+  			    	hours   = Math.floor(raw/60);
+  			    	minutes = Math.floor(raw-hours*60);
+              if (minutes < 10){ minutes = "0" + minutes }
+  			    	return hours+"h"+minutes;
+  			    },
+            select_movie: function(movie){
+              movie.selected = !movie.selected;
+              this.$forceUpdate();
+            },
+            toggle_selected_only: function(){
+              this.selected_only = !this.selected_only;
+            },
+            reset_all: function(){
+              this.genre = null;
+              this.tag = null;
+              this.status = null;
+              this.rating = null;
+              this.search = null;
+              this.selected_only = false;
+            }
+          },
+          computed: {
+            list_tags: function(){
+              all_tags = _.flatMap(this.movies, function(m) {
+                return m.tags.split(", ")
+              });
+              all_tags = _.uniq(all_tags).sort();
+              all_tags = _.pull(all_tags, '');
+              options = _.map(all_tags, function(g) {
+                return {
+                  value: g,
+                  text: g
+                }
+              });
+              return options;
+            },
+            list_genres: function(){
+              all_genres = _.flatMap(this.movies, function(m) {
+                return m.genres.split(", ")
+              });
+              all_genres = _.uniq(all_genres).sort();
+              all_genres = _.pull(all_genres, '');
+              options = _.map(all_genres, function(g) {
+                return {
+                  value: g,
+                  text: g
+                }
+              });
+              return options;
+            },
+            result_movies: function(){
+              result_movies = this.movies;
+
+              if (this.selected_only) {
+                result_movies = _.filter(result_movies, { 'selected': true });
+              }
+
+              if (this.rating) {
+                result_movies = _.filter(result_movies, function(m) { 
+                  return (m.rating >= app.rating); 
+                });
+              }
+
+              if (this.status) {
+                if(this.status == "seen") {
+                  result_movies = _.filter(result_movies, function(m) { 
+                    return (m.watched == true); 
+                  });
+                } else if(this.status == "unseen") {
+                  result_movies = _.filter(result_movies, function(m) { 
+                    return (m.watched == false); 
+                  });
+                }
+              }
+
+              if (this.search) {
+                result_movies = _.filter(result_movies, function(m) { 
+                  return (m.title.toUpperCase().includes(app.search.toUpperCase()))
+                });
+              }
+
+              if (this.tag) {
+                result_movies = _.filter(result_movies, function(m) { 
+                  return (m.tags.toUpperCase().includes(app.tag.toUpperCase()))
+                });
+              }
+
+              if (this.genre) {
+                result_movies = _.filter(result_movies, function(m) { 
+                  return (m.genres.toUpperCase().includes(app.genre.toUpperCase()))
+                });
+              }
+
+              if (this.sort == 'title') {
+                return _.sortBy(result_movies, this.sort);
+              }
+              else {
+                return _.sortBy(result_movies, this.sort).reverse();
+              }
+              
+            }
+  			  }
+  			});
+
+  	    app.clickedMovie  = app.movies[0];
+  			app.activeMovie   = app.movies[0];
+
+  		</script>
+
+    </body>
+</html>
