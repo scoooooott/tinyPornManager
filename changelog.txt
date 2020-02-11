@@ -3,6 +3,7 @@ Version 3.1.3
 + clean empty subfolders after renaming movies/TV shows
 + added "remove artwork" for TV show seasons too
 + (Movie) added a new export template: MoviePicker (thx @bastienpruvost) #763
++ (TV shows) added filter for aired status #783
 x migrate existing movie set TMDB ids to the new form
 x do an artwork cleanup when changing the movie set name
 x do not count missing episodes several calculations #769

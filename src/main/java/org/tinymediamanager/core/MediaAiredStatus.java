@@ -16,6 +16,10 @@
 
 package org.tinymediamanager.core;
 
+import java.util.ResourceBundle;
+
+import org.tinymediamanager.ui.UTF8Control;
+
 /**
  * this enum is used to set different aired states
  *
@@ -26,8 +30,9 @@ public enum MediaAiredStatus {
   CONTINUING("Continuing", new String[] { "Continuing", "returning series" }),
   ENDED("Ended", new String[] { "Ended" });
 
-  private String   name;
-  private String[] possibleNotations;
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
+  private String                      name;
+  private String[]                    possibleNotations;
 
   MediaAiredStatus(String name, String[] possibleNotations) {
     this.name = name;
@@ -55,5 +60,16 @@ public enum MediaAiredStatus {
 
   public String getName() {
     return this.name;
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return BUNDLE.getString("MediaAiredStatus." + name());
+    }
+    catch (Exception ignored) {
+      // fallback
+      return this.name;
+    }
   }
 }
