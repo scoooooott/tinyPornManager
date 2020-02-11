@@ -15,6 +15,7 @@ x better scrolling in the renamer settings
 x (IMDB) do not lock the UI if there are no episodes on IMDB #785
 x cleanup of artwork when removing movie sets #789
 x (TV show) fixed display of artwork size for season artwork #793
+x (Trakt.tv) better test routine to show if the connection works
 
 
 Version 3.1.2

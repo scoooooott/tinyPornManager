@@ -125,7 +125,7 @@ public class TraktTv {
    */
   public static void refreshAccessToken() throws IOException {
     if (StringUtils.isBlank(Globals.settings.getTraktRefreshToken())) {
-      throw new IOException("not trakt.tv refresh token found");
+      throw new IOException("no trakt.tv refresh token found");
     }
 
     Response<AccessToken> response = TRAKT.refreshToken(Globals.settings.getTraktRefreshToken())
@@ -137,6 +137,9 @@ public class TraktTv {
         Globals.settings.setTraktRefreshToken(response.body().refresh_token);
         TRAKT.accessToken(Globals.settings.getTraktAccessToken());
       }
+    }
+    else {
+      throw new IOException("could not get trakt.tv refresh token (HTTP " + response.code() + ")");
     }
   }
 
