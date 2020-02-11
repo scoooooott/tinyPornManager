@@ -13,6 +13,7 @@ x (YouTube) fixed extraction of newer YouTube trailers
 x (TV show) fixed filtering for video format
 x better scrolling in the renamer settings
 x (IMDB) do not lock the UI if there are no episodes on IMDB #785
+x cleanup of artwork when removing movie sets #789
 
 
 Version 3.1.2
