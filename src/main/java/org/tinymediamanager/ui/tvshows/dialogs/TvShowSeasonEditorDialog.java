@@ -178,7 +178,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
 
         artworkPanel.add(lblPoster, "cell 0 2,grow");
         lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
-            e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaArtwork.MediaArtworkType.POSTER));
+            e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaArtwork.MediaArtworkType.SEASON_POSTER));
       }
       {
         JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
@@ -212,7 +212,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
 
         artworkPanel.add(lblThumb, "cell 2 2,grow");
         lblThumb.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
-            e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaArtwork.MediaArtworkType.THUMB));
+            e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaArtwork.MediaArtworkType.SEASON_THUMB));
       }
       {
         JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
@@ -249,7 +249,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
         artworkPanel.add(tfTitle, "cell 0 0,growx");
         tfTitle.setColumns(10);
         lblBanner.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE,
-            e -> setImageSizeAndCreateLink(lblBannerSize, lblBanner, MediaArtwork.MediaArtworkType.BANNER));
+            e -> setImageSizeAndCreateLink(lblBannerSize, lblBanner, MediaArtwork.MediaArtworkType.SEASON_BANNER));
       }
     }
 
