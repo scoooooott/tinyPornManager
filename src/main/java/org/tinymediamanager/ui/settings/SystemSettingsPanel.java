@@ -100,6 +100,7 @@ class SystemSettingsPanel extends JPanel {
       Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer"), path, null); //$NON-NLS-1$
       if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
         tfMediaPlayer.setText(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty("chooseplayer.path", file.getParent().toString()); //$NON-NLS-1$
       }
     });
   }

@@ -1129,7 +1129,7 @@ public class ImageChooserDialog extends TmmDialog {
         imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);
         task.cancel(true);
-        TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);
+        TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.getParent().toString());
         setVisible(false);
       }
     }

@@ -304,6 +304,30 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return tvShow.getSeasonArtworkSize(season, type);
   }
 
+  /**
+   * <b>PHYSICALLY</b> deletes all {@link MediaFile}s of the given type
+   *
+   * @param type
+   *          the {@link MediaArtworkType} for all {@link MediaFile}s to delete
+   */
+  public void deleteArtworkFiles(MediaArtworkType type) {
+    tvShow.deleteSeasonArtworkFiles(season, type);
+
+    switch (type) {
+      case SEASON_POSTER:
+        firePropertyChange(POSTER, null, "");
+        break;
+
+      case SEASON_BANNER:
+        firePropertyChange(BANNER, null, "");
+        break;
+
+      case SEASON_THUMB:
+        firePropertyChange(THUMB, null, "");
+        break;
+    }
+  }
+
   public void setArtworkUrl(String newValue, MediaArtworkType artworkType) {
     String oldValue = getArtworkUrl(artworkType);
     tvShow.setSeasonArtworkUrl(season, newValue, artworkType);
@@ -386,5 +410,4 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     }
     return Integer.compare(getSeason(), o.getSeason());
   }
-
 }

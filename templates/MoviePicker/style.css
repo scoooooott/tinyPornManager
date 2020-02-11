@@ -1,0 +1,221 @@
+
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.app {
+    height: 100%;
+}
+
+.header {
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    background-color: #171717 !important;
+    color: #919191;
+    position: absolute;
+    width: 100%;
+    opacity: 1;
+    z-index: 999;
+    vertical-align: middle;
+}
+
+.header form {
+    height: 100%;
+    padding-left: 10px;
+}
+
+.header form.right {
+    float: right;
+}
+
+.header .dropdown-menu {
+    background-color: #171717 !important;
+    padding: 10px 0px;
+}
+
+.header .dropdown-item {
+    background-color: #171717 !important;
+    color: #919191;
+    line-height: 15px;
+    font-size: 15px;
+}
+
+.header .dropdown .btn {
+    background-color: transparent;
+    border: none;
+}
+
+.header .btn {
+    color: #919191;
+}
+
+.header select {
+    background-color: #222 !important;
+    height: 26px;
+    line-height: 26px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border: none;
+    color: #919191;
+    font-size: 14px;
+    margin: 0px 10px;
+}
+
+.header .input-group-prepend {
+    background-color: #222;
+    height: 26px;
+    padding-top: 6px;
+}
+
+.header input {
+    font-size: 14px;
+    height: 26px;
+    background-color: #222 !important;
+    border: 0px solid;
+    margin-right: 10px;
+    text-align: left;
+}
+
+.header input:focus {
+    color: #919191;
+    outline: 0;
+}
+
+.header .btn {
+    height: 26px;
+    font-size: 14px;
+    line-height: 14px;
+    margin-right: 10px;
+    background-color: #222;
+    border: 0;
+}
+
+#movies_list {
+    padding: 0px;
+    height: 100vh;
+    overflow: scroll;
+    background-color: #111111;
+    color: #919191;
+    padding-top: 40px;
+}
+
+#movies_list .list-group-item {
+    font-size: 14px;
+    height: 36px;
+    border-bottom: 1px solid #303030;
+    background-color: #111111;
+    color: #DDDDDD;
+    opacity: 0.9;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0;
+    padding-left: 3px;
+    font-weight: 200;
+    display: flex;
+    align-items: center;
+}
+
+#movies_list .list-group-item:hover {
+    background-color: #1C1C1C;
+    color: white;
+}
+
+#movies_list .list-group-item.clicked {
+    background-color: #1C1C1C;
+    padding-left: 3px;
+    font-weight: 600;
+    color: white;
+}
+
+#movies_list .preselect {
+    padding-right: 5px;
+    line-height: 14px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+#movies_list .preselect.yes {
+    color: white !important;
+}
+
+#movies_list .order {
+    text-decoration: underline;
+}
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.poster {
+    vertical-align: bottom;
+    margin-right: 20px;
+    height: 250px;
+    float: left;
+    position: relative;
+    bottom: 110px;
+    border: 1px solid #111111;
+}
+
+.title {
+    font-size: 30px;
+    color: #DDDDDD;
+}
+
+.subtitle {
+    font-size: 16px;
+    opacity: 0.7;
+}
+
+.stars {
+    opacity: 0.8;
+    color: #FFDD03;
+    font-size: 16px;
+}
+
+.ratings {
+    opacity: 0.8;
+}
+
+.plot {
+    padding-top: 14px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.bgimg {
+    position: absolute;
+    opacity: 0.8;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+}
+
+.container {
+    min-height: 100vh;
+}
+
+.text-zone {
+    border: 1px dotted #1C1C1C;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    margin: 15px;
+    background-color: #111111;
+    color: #919191;
+    opacity: 0.9;
+    height: 170px;
+    width: -webkit-fill-available;
+}
+
+.badge {
+    background-color: #111111;
+    border: 1px solid #919191;
+    color: #919191;
+}

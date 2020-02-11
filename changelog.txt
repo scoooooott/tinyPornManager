@@ -1,6 +1,10 @@
 Version 3.1.3
 =======================
 + clean empty subfolders after renaming movies/TV shows
++ added "remove artwork" for TV show seasons too
++ (Movie) added a new export template: MoviePicker (thx @bastienpruvost) #763
++ (TV shows) added filter for aired status #783
++ updated JMTE to 6.0.0 (IF tokens can now compare to another properties)
 x migrate existing movie set TMDB ids to the new form
 x do an artwork cleanup when changing the movie set name
 x do not count missing episodes several calculations #769
@@ -8,6 +12,13 @@ x (TV show) moved name setting for special season to the image setting panel #77
 x (TV show) removed duplicate hotkey
 x (IMDB) enhanced parsing of release dates #777
 x (YouTube) fixed extraction of newer YouTube trailers
+x (TV show) fixed filtering for video format
+x better scrolling in the renamer settings
+x (IMDB) do not lock the UI if there are no episodes on IMDB #785
+x cleanup of artwork when removing movie sets #789
+x (TV show) fixed display of artwork size for season artwork #793
+x (Trakt.tv) better test routine to show if the connection works
+x remember last used folder when choosing files #791
 
 
 Version 3.1.2

@@ -1002,6 +1002,8 @@ public class MovieList extends AbstractModelObject {
     movieSet.removePropertyChangeListener(movieSetListener);
 
     try {
+      // remove artwork
+      MovieSetArtworkHelper.removeMovieSetArtwork(movieSet);
       movieSetList.remove(movieSet);
       MovieModuleManager.getInstance().removeMovieSetFromDb(movieSet);
     }

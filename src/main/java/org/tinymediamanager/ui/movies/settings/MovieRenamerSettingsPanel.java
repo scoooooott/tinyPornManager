@@ -66,6 +66,7 @@ import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.ScrollingEventDelegator;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -246,6 +247,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     chckbxAsciiReplacement.addActionListener(actionCreateRenamerExample);
     chckbxFilenameSpaceReplacement.addActionListener(actionCreateRenamerExample);
     chckbxFoldernameSpaceReplacement.addActionListener(actionCreateRenamerExample);
+
+    // force the size of the table
+    tableExamples.setPreferredScrollableViewportSize(tableExamples.getPreferredSize());
   }
 
   private void initComponents() {
@@ -394,6 +398,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         tableExamples = new TmmTable(exampleTableModel);
         JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
         tableExamples.configureScrollPane(scrollPaneExamples);
+        scrollPaneExamples.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        ScrollingEventDelegator.install(scrollPaneExamples);
         panelExample.add(scrollPaneExamples, "cell 1 2,grow");
         tableExamples.setRowHeight(35);
       }

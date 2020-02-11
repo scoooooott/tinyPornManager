@@ -377,7 +377,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog {
                 new FileNameExtensionFilter("Image files", ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tbn"));
             if (file != null && Utils.isRegularFile(file)) {
               String fileName = file.toAbsolutePath().toString();
-              TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);
+              TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.getParent().toString());
               lblThumb.setImageUrl("file:/" + fileName);
               tfThumb.setText(lblThumb.getImageUrl());
             }

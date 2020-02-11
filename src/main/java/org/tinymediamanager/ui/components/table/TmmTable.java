@@ -212,11 +212,13 @@ public class TmmTable extends JTable {
         super.paintComponent(g);
         // if this JTableHeader is parented in a JViewport, then paint the
         // table header background to the right of the last column if necessary.
-        JViewport viewport = (JViewport) table.getParent();
-        if (viewport != null && table.getWidth() < viewport.getWidth()) {
-          int x = table.getWidth();
-          int width = viewport.getWidth() - table.getWidth();
-          paintHeader(g, getTable(), x, width);
+        if (table.getParent() instanceof JViewport) {
+          JViewport viewport = (JViewport) table.getParent();
+          if (viewport != null && table.getWidth() < viewport.getWidth()) {
+            int x = table.getWidth();
+            int width = viewport.getWidth() - table.getWidth();
+            paintHeader(g, getTable(), x, width);
+          }
         }
       }
     };

@@ -680,6 +680,33 @@ public class MovieSetArtworkHelper {
     }
   }
 
+  /**
+   * remove the whole artwork for the given {@link MovieSet}
+   *
+   * @param movieSet
+   *          the movie set to remove the artwork for
+   */
+  public static void removeMovieSetArtwork(MovieSet movieSet) {
+    for (MediaFile mediaFile : movieSet.getMediaFiles()) {
+      if (!mediaFile.isGraphic()) {
+        continue;
+      }
+      Utils.deleteFileSafely(mediaFile.getFile());
+    }
+
+    // and also remove any empty subfolders from the artwork folder
+    if (!MovieModuleManager.SETTINGS.isEnableMovieSetArtworkFolder() || StringUtils.isBlank(MovieModuleManager.SETTINGS.getMovieSetArtworkFolder())) {
+      return;
+    }
+
+    try {
+      Utils.deleteEmptyDirectoryRecursive(Paths.get(MovieModuleManager.SETTINGS.getMovieSetArtworkFolder()));
+    }
+    catch (Exception e) {
+      LOGGER.warn("could not clean empty subfolders: {}", e.getMessage());
+    }
+  }
+
   public static boolean hasMissingArtwork(MovieSet movieSet) {
     if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && movieSet.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
       return true;

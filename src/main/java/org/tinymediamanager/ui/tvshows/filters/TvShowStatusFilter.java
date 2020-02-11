@@ -15,62 +15,60 @@
  */
 package org.tinymediamanager.ui.tvshows.filters;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JLabel;
 
-import org.tinymediamanager.core.MediaFileHelper;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.MediaAiredStatus;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
- * This class implements a video format filter for the TV show tree
+ * This class implements a status filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter<String> {
+public class TvShowStatusFilter extends AbstractCheckComboBoxTvShowUIFilter<MediaAiredStatus> {
 
-  public TvShowVideoFormatFilter() {
+  public TvShowStatusFilter() {
     super();
-    setValues(MediaFileHelper.getVideoFormats());
+    buildAndInstallCertificationArray();
   }
 
   @Override
   public String getId() {
-    return "tvShowVideoFormat";
+    return "tvShowStatus";
   }
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
-    List<String> selectedValues = checkComboBox.getSelectedItems();
+    List<MediaAiredStatus> airedStatuses = checkComboBox.getSelectedItems();
 
-    for (TvShowEpisode episode : episodes) {
-      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
-      for (MediaFile mf : mfs) {
-        if (invert ^ (selectedValues.contains(mf.getVideoFormat()) || selectedValues.contains(mf.getVideoDefinitionCategory()))) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return invert ^ airedStatuses.contains(tvShow.getStatus());
   }
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
+  }
+
+  private void buildAndInstallCertificationArray() {
+    List<MediaAiredStatus> airedStatuses = Arrays.asList(MediaAiredStatus.values());
+    Collections.sort(airedStatuses);
+
+    setValues(airedStatuses);
   }
 
   @Override
-  protected String parseTypeToString(String type) throws Exception {
-    return type;
+  protected String parseTypeToString(MediaAiredStatus type) throws Exception {
+    return type.name();
   }
 
   @Override
-  protected String parseStringToType(String string) throws Exception {
-    return string;
+  protected MediaAiredStatus parseStringToType(String string) throws Exception {
+    return MediaAiredStatus.valueOf(string);
   }
 }
