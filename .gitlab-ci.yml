@@ -73,6 +73,8 @@ include:
   template: Dependency-Scanning.gitlab-ci.yml
 
 dependency_scanning:
+  variables:
+    MAVEN_CLI_OPTS: "-s .ci/settings.xml -DskipTests --batch-mode"	
   only:
     variables:
       - $QA_BUILD == "true"
